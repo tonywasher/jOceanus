@@ -45,12 +45,10 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -58,7 +56,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXStateIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutionTextField;
@@ -73,9 +70,9 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXTextEditField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableMoneyColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTablePriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRawDecimalColumn;
@@ -276,18 +273,6 @@ public class TethysFXTableCellFactory<C, R>
     protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> iconCellFactory(final TethysFXTableColumn<T, C, R> pColumn,
                                                                                final Class<T> pClass) {
         return e -> listenToCell(new TethysFXTableIconCell<>(pColumn, theGuiFactory, pClass));
-    }
-
-    /**
-     * Obtain State Icon Cell Factory.
-     * @param <T> the column type
-     * @param pColumn the column
-     * @param pClass the class of the item
-     * @return the icon cell factory
-     */
-    protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> stateIconCellFactory(final TethysFXTableColumn<T, C, R> pColumn,
-                                                                                    final Class<T> pClass) {
-        return e -> listenToCell(new TethysFXTableStateIconCell<>(pColumn, theGuiFactory, pClass));
     }
 
     /**
@@ -981,8 +966,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableIconCell<T, C, R>
-            extends TethysFXTableCell<T, C, R>
-            implements TethysIconField<T, Node, Node> {
+            extends TethysFXTableCell<T, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -992,51 +976,29 @@ public class TethysFXTableCellFactory<C, R>
         protected TethysFXTableIconCell(final TethysFXTableColumn<T, C, R> pColumn,
                                         final TethysFXGuiFactory pFactory,
                                         final Class<T> pClass) {
-            super(pColumn, pFactory.newSimpleIconField(), pClass);
+            super(pColumn, pFactory.newIconField(), pClass);
+            getControl().setIconMapSet(p -> determineMapSet());
+        }
+
+        /**
+         * Determine the mapSet.
+         * @return the mapSet
+         */
+        private TethysIconMapSet<T> determineMapSet() {
+            R myRow = getActiveRow();
+            return myRow == null
+                                 ? null
+                                 : getColumn().getIconMapSet().apply(myRow);
+        }
+
+        @Override
+        public TethysFXTableIconColumn<T, C, R> getColumn() {
+            return (TethysFXTableIconColumn<T, C, R>) super.getColumn();
         }
 
         @Override
         public TethysFXIconButtonField<T> getControl() {
             return (TethysFXIconButtonField<T>) super.getControl();
-        }
-
-        @Override
-        public TethysSimpleIconButtonManager<T, Node, Node> getIconManager() {
-            return getControl().getIconManager();
-        }
-    }
-
-    /**
-     * IconStateCell.
-     * @param <T> the column item class
-     * @param <C> the column identity
-     * @param <R> the table item class
-     * @param <S> the state class
-     */
-    public static class TethysFXTableStateIconCell<T, C, R, S>
-            extends TethysFXTableCell<T, C, R>
-            implements TethysStateIconField<T, S, Node, Node> {
-        /**
-         * Constructor.
-         * @param pColumn the column
-         * @param pFactory the GUI Factory
-         * @param pClass the field class
-         */
-        protected TethysFXTableStateIconCell(final TethysFXTableColumn<T, C, R> pColumn,
-                                             final TethysFXGuiFactory pFactory,
-                                             final Class<T> pClass) {
-            super(pColumn, pFactory.newStateIconField(), pClass);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public TethysFXStateIconButtonField<T, S> getControl() {
-            return (TethysFXStateIconButtonField<T, S>) super.getControl();
-        }
-
-        @Override
-        public TethysFXStateIconButtonManager<T, S> getIconManager() {
-            return getControl().getIconManager();
         }
     }
 }

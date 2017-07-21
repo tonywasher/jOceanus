@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Currency;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
@@ -40,14 +41,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -662,48 +661,15 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
                                         final MetisDataField pField,
                                         final Class<T> pClass) {
             /* Initialise underlying class */
-            super(pPanel, pField, pClass, pPanel.getGuiFactory().newSimpleIconField());
+            super(pPanel, pField, pClass, pPanel.getGuiFactory().newIconField());
         }
 
         /**
-         * Obtain the Icon Manager.
-         * @return the manager
+         * Set IconMapSet supplier.
+         * @param pSupplier the supplier
          */
-        @SuppressWarnings("unchecked")
-        public TethysSimpleIconButtonManager<T, N, I> getIconManager() {
-            return ((TethysIconField<T, N, I>) getEditField()).getIconManager();
-        }
-    }
-
-    /**
-     * StateIconItem.
-     * @param <T> the item class
-     * @param <S> the state class
-     * @param <N> the node type
-     * @param <I> the icon type
-     */
-    public static class MetisFieldSetStateIconItem<T, S, N, I>
-            extends MetisFieldSetPanelItem<T, N, I> {
-        /**
-         * Constructor.
-         * @param pPanel the panel
-         * @param pField the field
-         * @param pClass the item class
-         */
-        protected MetisFieldSetStateIconItem(final MetisFieldSetPanel<N, I> pPanel,
-                                             final MetisDataField pField,
-                                             final Class<T> pClass) {
-            /* Initialise underlying class */
-            super(pPanel, pField, pClass, pPanel.getGuiFactory().newStateIconField());
-        }
-
-        /**
-         * Obtain the Icon Manager.
-         * @return the manager
-         */
-        @SuppressWarnings("unchecked")
-        public TethysStateIconButtonManager<T, S, N, I> getIconManager() {
-            return ((TethysStateIconField<T, S, N, I>) getEditField()).getIconManager();
+        public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSupplier) {
+            ((TethysIconButtonField<T, N, I>) getEditField()).setIconMapSet(pSupplier);
         }
     }
 }

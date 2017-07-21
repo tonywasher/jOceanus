@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXStateIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXDilutionTextField;
@@ -57,8 +57,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
 
 /**
  * Tethys GUI Factory.
@@ -216,6 +214,14 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    protected Node resolveIcon(final TethysIconId pIconId,
+                               final int pWidth) {
+        return pIconId == null
+                               ? null
+                               : TethysFXGuiUtils.getIconAtSize(pIconId, pWidth);
+    }
+
+    @Override
     public TethysFXLabel newLabel() {
         return new TethysFXLabel(this);
     }
@@ -270,13 +276,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXSimpleIconButtonManager<T> newSimpleIconButton() {
-        return new TethysFXSimpleIconButtonManager<>(this);
-    }
-
-    @Override
-    public <T, S> TethysFXStateIconButtonManager<T, S> newStateIconButton() {
-        return new TethysFXStateIconButtonManager<>(this);
+    public <T> TethysFXIconButtonManager<T> newIconButton() {
+        return new TethysFXIconButtonManager<>(this);
     }
 
     @Override
@@ -460,13 +461,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXIconButtonField<T> newSimpleIconField() {
+    public <T> TethysFXIconButtonField<T> newIconField() {
         return new TethysFXIconButtonField<>(this);
-    }
-
-    @Override
-    public <T, S> TethysFXStateIconButtonField<T, S> newStateIconField() {
-        return new TethysFXStateIconButtonField<>(this);
     }
 
     @Override

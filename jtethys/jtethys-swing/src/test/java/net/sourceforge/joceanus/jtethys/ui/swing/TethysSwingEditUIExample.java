@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
@@ -83,11 +83,6 @@ public class TethysSwingEditUIExample {
      * The value width.
      */
     private static final int VALUE_WIDTH = 300;
-
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 24;
 
     /**
      * The GuiFactory.
@@ -163,11 +158,6 @@ public class TethysSwingEditUIExample {
      * The colour edit field.
      */
     private final TethysSwingColorButtonField theColorField;
-
-    /**
-     * The icon button manager.
-     */
-    private final TethysSimpleIconButtonManager<Boolean, ?, ?> theIconButtonMgr;
 
     /**
      * The icon button field.
@@ -262,8 +252,7 @@ public class TethysSwingEditUIExample {
         theScrollField = theGuiFactory.newScrollField();
         theScrollButtonMgr = theScrollField.getScrollManager();
         theDateField = theGuiFactory.newDateField();
-        theIconField = theGuiFactory.newSimpleIconField();
-        theIconButtonMgr = theIconField.getIconManager();
+        theIconField = theGuiFactory.newIconField();
         theListField = theGuiFactory.newListField();
     }
 
@@ -513,10 +502,10 @@ public class TethysSwingEditUIExample {
         myGrid.addCell(theIconField);
         myGrid.allowCellGrowth(theIconField);
         myGrid.newRow();
-        theIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
-        theHelper.buildSimpleIconState(theIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        theIconField.setIconMapSet(p -> myMapSet);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
-        theIconField.setValue(false);
+        theIconField.setValue(Boolean.FALSE);
 
         /* Return the pane */
         return myGrid;

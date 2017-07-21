@@ -36,9 +36,9 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 
 /**
@@ -165,6 +165,14 @@ public abstract class TethysGuiFactory<N, I> {
     }
 
     /**
+     * Resolve Icon.
+     * @param pIconId the mapped IconId
+     * @param pWidth the icon width
+     * @return the icon
+     */
+    protected abstract I resolveIcon(TethysIconId pIconId, int pWidth);
+
+    /**
      * Obtain a new label.
      * @return the new label
      */
@@ -230,19 +238,11 @@ public abstract class TethysGuiFactory<N, I> {
     public abstract <T> TethysListButtonManager<T, N, I> newListButton();
 
     /**
-     * Obtain a new simple icon button manager.
+     * Obtain a new icon button manager.
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysSimpleIconButtonManager<T, N, I> newSimpleIconButton();
-
-    /**
-     * Obtain a new state icon button manager.
-     * @param <T> the item type
-     * @param <S> the state type
-     * @return the new manager
-     */
-    public abstract <T, S> TethysStateIconButtonManager<T, S, N, I> newStateIconButton();
+    public abstract <T> TethysIconButtonManager<T, N, I> newIconButton();
 
     /**
      * Obtain a new dateRange selector.
@@ -471,15 +471,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysBaseDataEditField<T, N, I> newSimpleIconField();
-
-    /**
-     * Obtain a new state icon data field.
-     * @param <T> the item type
-     * @param <S> the state type
-     * @return the new field
-     */
-    public abstract <T, S> TethysBaseDataEditField<T, N, I> newStateIconField();
+    public abstract <T> TethysIconButtonField<T, N, I> newIconField();
 
     /**
      * Obtain a new colour data field.

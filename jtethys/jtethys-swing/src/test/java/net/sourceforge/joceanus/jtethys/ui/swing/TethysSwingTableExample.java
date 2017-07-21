@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -37,19 +38,15 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableStateIconCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
@@ -64,7 +61,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRatioColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableShortColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStateIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableUnitsColumn;
 
@@ -72,11 +68,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
  * Test Swing Table Cells.
  */
 public class TethysSwingTableExample {
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 16;
-
     /**
      * Scroll Width.
      */
@@ -133,9 +124,6 @@ public class TethysSwingTableExample {
         /* Listen to the table requests */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.CELLCREATE, this::handleCreate);
-        myRegistrar.addEventListener(TethysUIEvent.CELLFORMAT, this::handleFormat);
-        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEdit);
-        myRegistrar.addEventListener(TethysUIEvent.CELLPRECOMMIT, this::handlePreCommit);
         myRegistrar.addEventListener(TethysUIEvent.CELLCOMMITTED, this::handleCommit);
 
         /* Create the name column */
@@ -206,13 +194,19 @@ public class TethysSwingTableExample {
         myBoolColumn.setCellValueFactory(p -> p.getBoolean());
         myBoolColumn.setCellCommitFactory((p, v) -> p.setBoolean(v));
         myBoolColumn.setName("B");
+        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        myBoolColumn.setIconMapSet(p -> myMapSet);
 
         /* Create the extra boolean column */
-        TethysSwingTableStateIconColumn<Boolean, TethysDataId, TethysSwingTableItem> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
+        TethysSwingTableIconColumn<Boolean, TethysDataId, TethysSwingTableItem> myXtraBoolColumn = theTable.declareIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getXtraBoolean());
         myXtraBoolColumn.setCellCommitFactory((p, v) -> p.setXtraBoolean(v));
         myXtraBoolColumn.setName("X");
         myXtraBoolColumn.setCellEditable(p -> p.getBoolean());
+        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        myXtraBoolColumn.setIconMapSet(p -> myMap.get(p.getBoolean()
+                                                                     ? IconState.OPEN
+                                                                     : IconState.CLOSED));
 
         /* Create the scroll column */
         TethysSwingTableScrollColumn<String, TethysDataId, TethysSwingTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
@@ -251,18 +245,6 @@ public class TethysSwingTableExample {
 
         /* Configure static configuration for cells */
         switch (myCell.getColumnId()) {
-            case BOOLEAN:
-                TethysIconField<Boolean, ?, ?> myBoolField = (TethysIconField<Boolean, ?, ?>) myCell;
-                TethysSimpleIconButtonManager<Boolean, ?, ?> myBoolMgr = myBoolField.getIconManager();
-                myBoolMgr.setWidth(DEFAULT_ICONWIDTH);
-                theHelper.buildSimpleIconState(myBoolMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
-                break;
-            case XTRABOOL:
-                TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
-                TethysStateIconButtonManager<Boolean, IconState, ?, ?> myStateMgr = myStateField.getIconManager();
-                myStateMgr.setWidth(DEFAULT_ICONWIDTH);
-                theHelper.buildStateIconState(myStateMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
-                break;
             case SCROLL:
                 TethysScrollField<String, ?, ?> myScrollField = (TethysScrollField<String, ?, ?>) myCell;
                 theHelper.buildContextMenu(myScrollField.getScrollManager().getMenu());
@@ -270,57 +252,6 @@ public class TethysSwingTableExample {
             default:
                 break;
         }
-    }
-
-    /**
-     * Handle format event=
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handleFormat(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Obtain the Cell */
-        TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
-
-        /* If this is the extra Boolean field */
-        if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
-            /* Set correct state for extra Boolean */
-            TethysSwingTableStateIconCell<Boolean, ?, ?, IconState> myStateCell = (TethysSwingTableStateIconCell<Boolean, ?, ?, IconState>) myCell;
-            TethysSwingTableItem myRow = myCell.getActiveRow();
-            myStateCell.setRenderMachineState(myRow.getBoolean()
-                                                                 ? IconState.OPEN
-                                                                 : IconState.CLOSED);
-        }
-    }
-
-    /**
-     * Handle preEdit event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Access column id */
-        TethysDataId myId = getColumnId(pEvent);
-
-        /* If this is the extra Boolean field */
-        if (TethysDataId.XTRABOOL.equals(myId)) {
-            /* Access details */
-            TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
-            TethysSwingTableStateIconCell<Boolean, ?, ?, IconState> myStateCell = (TethysSwingTableStateIconCell<Boolean, ?, ?, IconState>) myCell;
-            TethysSwingTableItem myRow = myCell.getActiveRow();
-
-            /* Set correct state for extra Boolean */
-            myStateCell.setEditMachineState(myRow.getBoolean()
-                                                               ? IconState.OPEN
-                                                               : IconState.CLOSED);
-        }
-    }
-
-    /**
-     * Handle preCommit event.
-     * @param pEvent the event
-     */
-    private void handlePreCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Consume the event if value is invalid */
     }
 
     /**
@@ -332,22 +263,8 @@ public class TethysSwingTableExample {
         TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
         TethysSwingTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
-        myCell.repaintColumnCell(TethysDataId.UPDATES);
-        myCell.repaintColumnCell(TethysDataId.NAME);
-        if (myCell.getColumnId().equals(TethysDataId.BOOLEAN)) {
-            myCell.repaintColumnCell(TethysDataId.XTRABOOL);
-        }
-    }
-
-    /**
-     * Obtain the cell id.
-     * @param pEvent the event
-     * @return the Id
-     */
-    @SuppressWarnings("unchecked")
-    private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysSwingTableCell<?, TethysDataId, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
-        return myCell.getColumnId();
+        myCell.repaintCellRow();
+        myCell.repaintColumnCell(TethysDataId.XTRABOOL);
     }
 
     /**
@@ -355,12 +272,7 @@ public class TethysSwingTableExample {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     /**

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 
 /**
@@ -246,20 +246,24 @@ public enum PrometheusIcon implements TethysIconId {
 
     /**
      * Configure status icon button.
-     * @param pButton the button manager
+     * @return the mapSet configuration
      */
-    public static void configureStatusIconButton(final TethysSimpleIconButtonManager<PrometheusAction, ?, ?> pButton) {
-        pButton.setSimpleDetailsForValue(PrometheusAction.ACTIVE, ACTIVE, TIP_ACTIVE);
-        pButton.setSimpleDetailsForValue(PrometheusAction.DELETE, DELETE, TIP_DELETE);
-        pButton.setSimpleDetailsForValue(PrometheusAction.INSERT, NEW, TIP_NEW);
+    public static TethysIconMapSet<PrometheusAction> configureStatusIconButton() {
+        TethysIconMapSet<PrometheusAction> myMapSet = new TethysIconMapSet<>();
+        myMapSet.setMappingsForValue(PrometheusAction.ACTIVE, PrometheusAction.ACTIVE, ACTIVE, TIP_ACTIVE);
+        myMapSet.setMappingsForValue(PrometheusAction.DELETE, PrometheusAction.DELETE, DELETE, TIP_DELETE);
+        myMapSet.setMappingsForValue(PrometheusAction.INSERT, PrometheusAction.INSERT, NEW, TIP_NEW);
+        return myMapSet;
     }
 
     /**
      * Configure enabled icon button.
-     * @param pButton the button manager
+     * @return the mapSet configuration
      */
-    public static void configureEnabledIconButton(final TethysSimpleIconButtonManager<Boolean, ?, ?> pButton) {
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, ACTIVE, TIP_DISABLE);
-        pButton.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, DISABLED, TIP_ENABLE);
+    public static TethysIconMapSet<Boolean> configureEnabledIconButton() {
+        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>();
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, ACTIVE, TIP_DISABLE);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, DISABLED, TIP_ENABLE);
+        return myMapSet;
     }
 }

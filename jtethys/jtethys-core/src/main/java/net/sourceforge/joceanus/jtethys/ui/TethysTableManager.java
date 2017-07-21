@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 
 /**
  * Tethys Table Manager.
@@ -413,18 +414,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<T, C, R, N, I> declareIconColumn(C pId,
-                                                                           Class<T> pClass);
-
-    /**
-     * Declare stateIcon column.
-     * @param <T> the column type
-     * @param pId the column id
-     * @param pClass the column class
-     * @return the column
-     */
-    public abstract <T> TethysTableColumn<T, C, R, N, I> declareStateIconColumn(C pId,
-                                                                                Class<T> pClass);
+    public abstract <T> TethysTableIconColumn<T, C, R, N, I> declareIconColumn(C pId,
+                                                                               Class<T> pClass);
 
     /**
      * Column Definition.
@@ -552,6 +543,23 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pSupplier the supplier
          */
         void setDeemedCurrency(Function<R, Currency> pSupplier);
+    }
+
+    /**
+     * IconTableColumn.
+     * @param <T> the data type
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableIconColumn<T, C, R, N, I>
+            extends TethysTableColumn<T, C, R, N, I> {
+        /**
+         * Set the IconMapSet supplier.
+         * @param pSupplier the supplier
+         */
+        void setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
     }
 
     /**

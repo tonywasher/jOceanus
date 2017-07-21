@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.function.Function;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
@@ -46,12 +47,10 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -59,7 +58,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.Teth
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingStateIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
@@ -74,9 +72,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingTextEditField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableMoneyColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTablePriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRawDecimalColumn;
@@ -272,18 +270,6 @@ public class TethysSwingTableCellFactory<C, R>
     protected <T> TethysSwingTableCell<T, C, R> iconCell(final TethysSwingTableColumn<T, C, R> pColumn,
                                                          final Class<T> pClass) {
         return listenToCell(new TethysSwingTableIconCell<>(pColumn, theGuiFactory, pClass));
-    }
-
-    /**
-     * Obtain State Icon Cell.
-     * @param <T> the column type
-     * @param pColumn the column
-     * @param pClass the class of the item
-     * @return the icon cell
-     */
-    protected <T> TethysSwingTableCell<T, C, R> stateIconCell(final TethysSwingTableColumn<T, C, R> pColumn,
-                                                              final Class<T> pClass) {
-        return listenToCell(new TethysSwingTableStateIconCell<>(pColumn, theGuiFactory, pClass));
     }
 
     /**
@@ -537,6 +523,11 @@ public class TethysSwingTableCellFactory<C, R>
             private static final long serialVersionUID = -3591698125380052152L;
 
             /**
+             * Are we in the middle of stopping edit?
+             */
+            private boolean stoppingEdit;
+
+            /**
              * Constructor.
              */
             protected TethysSwingTableCellEditor() {
@@ -583,24 +574,31 @@ public class TethysSwingTableCellFactory<C, R>
 
             @Override
             public boolean stopCellEditing() {
-                /* If we are OK with the value */
+                /* If we are already stopping edit */
+                if (stoppingEdit) {
+                    return true;
+                }
+
+                /* Check the data */
+                stoppingEdit = true;
                 theEditControl.parseData();
+
+                /* If there is no error */
+                boolean bComplete = false;
                 if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)
                     && theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, TethysSwingTableCell.this)) {
                     /* Pass call onwards */
-                    boolean bComplete = super.stopCellEditing();
+                    bComplete = super.stopCellEditing();
 
                     /* Notify of commit */
                     if (bComplete) {
                         theEventManager.fireEvent(TethysUIEvent.CELLCOMMITTED, TethysSwingTableCell.this);
                     }
-
-                    /* Return success */
-                    return bComplete;
                 }
 
-                /* Return failure */
-                return false;
+                /* Return status */
+                stoppingEdit = false;
+                return bComplete;
             }
         }
 
@@ -1077,8 +1075,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <T> the column item class
      */
     public static class TethysSwingTableIconCell<T, C, R>
-            extends TethysSwingTableCell<T, C, R>
-            implements TethysIconField<T, JComponent, Icon> {
+            extends TethysSwingTableCell<T, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -1088,7 +1085,15 @@ public class TethysSwingTableCellFactory<C, R>
         protected TethysSwingTableIconCell(final TethysSwingTableColumn<T, C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
-            super(pColumn, pFactory.newSimpleIconField(), pClass);
+            super(pColumn, pFactory.newIconField(), pClass);
+            Function<T, TethysIconMapSet<T>> mySupplier = p -> getColumn().getIconMapSet().apply(getActiveRow());
+            getControl().setIconMapSet(mySupplier);
+            getRenderControl().setIconMapSet(mySupplier);
+        }
+
+        @Override
+        public TethysSwingTableIconColumn<T, C, R> getColumn() {
+            return (TethysSwingTableIconColumn<T, C, R>) super.getColumn();
         }
 
         @Override
@@ -1097,72 +1102,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSimpleIconButtonManager<T, JComponent, Icon> getIconManager() {
-            return getControl().getIconManager();
-        }
-    }
-
-    /**
-     * IconStateCell.
-     * @param <C> the column identity
-     * @param <R> the table item class
-     * @param <T> the column item class
-     * @param <S> the state class
-     */
-    public static class TethysSwingTableStateIconCell<T, C, R, S>
-            extends TethysSwingTableCell<T, C, R>
-            implements TethysStateIconField<T, S, JComponent, Icon> {
-        /**
-         * Constructor.
-         * @param pColumn the column
-         * @param pFactory the GUI Factory
-         * @param pClass the field class
-         */
-        protected TethysSwingTableStateIconCell(final TethysSwingTableColumn<T, C, R> pColumn,
-                                                final TethysSwingGuiFactory pFactory,
-                                                final Class<T> pClass) {
-            super(pColumn, pFactory.newStateIconField(), pClass);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public TethysSwingStateIconButtonField<T, S> getControl() {
-            return (TethysSwingStateIconButtonField<T, S>) super.getControl();
-        }
-
-        @Override
-        public TethysSwingStateIconButtonManager<T, S> getIconManager() {
-            return getControl().getIconManager();
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        protected TethysSwingStateIconButtonField<T, S> getRenderControl() {
-            return (TethysSwingStateIconButtonField<T, S>) super.getRenderControl();
-        }
-
-        /**
-         * Obtain the render icon manager.
-         * @return the icon manager
-         */
-        private TethysSwingStateIconButtonManager<T, S> getRenderIconManager() {
-            return getRenderControl().getIconManager();
-        }
-
-        /**
-         * Set the edit machine state.
-         * @param pState the state
-         */
-        public void setEditMachineState(final S pState) {
-            getIconManager().setMachineState(pState);
-        }
-
-        /**
-         * Set the render machine state.
-         * @param pState the state
-         */
-        public void setRenderMachineState(final S pState) {
-            getRenderIconManager().setMachineState(pState);
+        public TethysSwingIconButtonField<T> getRenderControl() {
+            return (TethysSwingIconButtonField<T>) super.getRenderControl();
         }
     }
 }

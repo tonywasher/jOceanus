@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Rectangle;
+import java.util.function.Function;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -35,14 +36,12 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 
 /**
  * Generic class for displaying and editing a button data field.
@@ -57,63 +56,14 @@ public final class TethysSwingDataButtonField {
     /**
      * IconButtonField class.
      * @param <T> the data type
-     * @param <S> the state class
-     */
-    public static class TethysSwingStateIconButtonField<T, S>
-            extends TethysSwingIconButtonField<T>
-            implements TethysStateIconField<T, S, JComponent, Icon> {
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        protected TethysSwingStateIconButtonField(final TethysSwingGuiFactory pFactory) {
-            super(pFactory, pFactory.newStateIconButton(), new JLabel());
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         * @param pBase the icon manager
-         * @param pLabel the label
-         */
-        private TethysSwingStateIconButtonField(final TethysSwingGuiFactory pFactory,
-                                                final TethysSwingStateIconButtonManager<T, S> pBase,
-                                                final JLabel pLabel) {
-            super(pFactory, pBase, pLabel);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public TethysSwingStateIconButtonManager<T, S> getIconManager() {
-            return (TethysSwingStateIconButtonManager<T, S>) super.getIconManager();
-        }
-
-        @Override
-        protected TethysSwingStateIconButtonField<T, S> cloneField(final JLabel pLabel) {
-            TethysSwingStateIconButtonManager<T, S> myClone = new TethysSwingStateIconButtonManager<>(getGuiFactory(), getIconManager());
-            return new TethysSwingStateIconButtonField<>(getGuiFactory(), myClone, pLabel);
-        }
-
-        /**
-         * Set the machine state.
-         * @param pState the state
-         */
-        protected void setMachineState(final S pState) {
-            getIconManager().setMachineState(pState);
-        }
-    }
-
-    /**
-     * IconButtonField class.
-     * @param <T> the data type
      */
     public static class TethysSwingIconButtonField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysIconField<T, JComponent, Icon> {
+            implements TethysIconButtonField<T, JComponent, Icon> {
         /**
          * The icon manager.
          */
-        private final TethysSimpleIconButtonManager<T, JComponent, Icon> theManager;
+        private final TethysIconButtonManager<T, JComponent, Icon> theManager;
 
         /**
          * The button.
@@ -140,7 +90,7 @@ public final class TethysSwingDataButtonField {
          */
         private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
                                            final JLabel pLabel) {
-            this(pFactory, pFactory.newSimpleIconButton(), pLabel);
+            this(pFactory, pFactory.newIconButton(), pLabel);
         }
 
         /**
@@ -150,7 +100,7 @@ public final class TethysSwingDataButtonField {
          * @param pLabel the label
          */
         private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
-                                           final TethysSimpleIconButtonManager<T, JComponent, Icon> pManager,
+                                           final TethysIconButtonManager<T, JComponent, Icon> pManager,
                                            final JLabel pLabel) {
             /* Initialise underlying class */
             super(pFactory, pManager.getNode(), pLabel);
@@ -183,11 +133,6 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public TethysSimpleIconButtonManager<T, JComponent, Icon> getIconManager() {
-            return theManager;
-        }
-
-        @Override
         public JButton getEditControl() {
             return (JButton) super.getEditControl();
         }
@@ -205,7 +150,7 @@ public final class TethysSwingDataButtonField {
         @Override
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
-            SwingUtilities.invokeLater(() -> theButton.doClick());
+            SwingUtilities.invokeLater(theButton::doClick);
         }
 
         /**
@@ -219,8 +164,13 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
+        public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSupplier) {
+            theManager.setIconMapSet(pSupplier);
+        }
+
+        @Override
         protected TethysSwingIconButtonField<T> cloneField(final JLabel pLabel) {
-            TethysSwingSimpleIconButtonManager<T> myClone = new TethysSwingSimpleIconButtonManager<>(getGuiFactory(), getIconManager());
+            TethysSwingIconButtonManager<T> myClone = new TethysSwingIconButtonManager<>(getGuiFactory());
             return new TethysSwingIconButtonField<>(getGuiFactory(), myClone, pLabel);
         }
     }

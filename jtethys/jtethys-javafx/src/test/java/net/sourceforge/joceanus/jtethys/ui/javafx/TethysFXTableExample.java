@@ -22,8 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.Map;
+
 import javafx.application.Application;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -31,20 +32,16 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableStateIconCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
@@ -59,7 +56,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRatioColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableShortColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStateIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableUnitsColumn;
 
@@ -68,11 +64,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  */
 public class TethysFXTableExample
         extends Application {
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 16;
-
     /**
      * The GUI Factory.
      */
@@ -101,8 +92,7 @@ public class TethysFXTableExample
         theHelper = new TethysScrollUITestHelper<>();
 
         /* Create test Data */
-        theData = FXCollections.observableArrayList(p -> new Observable[]
-        { p.nameProperty(), p.dateProperty(), p.xtraBooleanProperty() });
+        theData = FXCollections.observableArrayList();
         theData.add(new TethysFXTableItem(theHelper, "Damage"));
         theData.add(new TethysFXTableItem(theHelper, "Tony"));
         theData.add(new TethysFXTableItem(theHelper, "Dave"));
@@ -114,9 +104,6 @@ public class TethysFXTableExample
         /* Listen to preCommit requests */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.CELLCREATE, this::handleCreate);
-        myRegistrar.addEventListener(TethysUIEvent.CELLFORMAT, this::handleFormat);
-        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEdit);
-        myRegistrar.addEventListener(TethysUIEvent.CELLPRECOMMIT, this::handlePreCommit);
         myRegistrar.addEventListener(TethysUIEvent.CELLCOMMITTED, this::handleCommit);
 
         /* Create the name column */
@@ -174,12 +161,18 @@ public class TethysFXTableExample
         TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getValue().booleanProperty());
         myBoolColumn.setName("B");
+        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        myBoolColumn.setIconMapSet(p -> myMapSet);
 
         /* Create the extra boolean column */
-        TethysFXTableStateIconColumn<Boolean, TethysDataId, TethysFXTableItem> myXtraBoolColumn = theTable.declareStateIconColumn(TethysDataId.XTRABOOL, Boolean.class);
+        TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myXtraBoolColumn = theTable.declareIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getValue().xtraBooleanProperty());
         myXtraBoolColumn.setName("X");
         myXtraBoolColumn.setCellEditable(p -> p.booleanProperty().getValue());
+        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        myXtraBoolColumn.setIconMapSet(p -> myMap.get(p.booleanProperty().getValue()
+                                                                                     ? IconState.OPEN
+                                                                                     : IconState.CLOSED));
 
         /* Create the scroll column */
         TethysFXTableScrollColumn<String, TethysDataId, TethysFXTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
@@ -215,18 +208,6 @@ public class TethysFXTableExample
 
         /* Configure static configuration for cells */
         switch (myCell.getColumnId()) {
-            case BOOLEAN:
-                TethysIconField<Boolean, ?, ?> myBoolField = (TethysIconField<Boolean, ?, ?>) myCell;
-                TethysSimpleIconButtonManager<Boolean, ?, ?> myBoolMgr = myBoolField.getIconManager();
-                myBoolMgr.setWidth(DEFAULT_ICONWIDTH);
-                theHelper.buildSimpleIconState(myBoolMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
-                break;
-            case XTRABOOL:
-                TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
-                TethysStateIconButtonManager<Boolean, IconState, ?, ?> myStateMgr = myStateField.getIconManager();
-                myStateMgr.setWidth(DEFAULT_ICONWIDTH);
-                theHelper.buildStateIconState(myStateMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
-                break;
             case SCROLL:
                 TethysScrollField<String, ?, ?> myScrollField = (TethysScrollField<String, ?, ?>) myCell;
                 theHelper.buildContextMenu(myScrollField.getScrollManager().getMenu());
@@ -234,57 +215,6 @@ public class TethysFXTableExample
             default:
                 break;
         }
-    }
-
-    /**
-     * Handle format event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handleFormat(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Obtain the Cell */
-        TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
-
-        /* If this is the extra Boolean field */
-        if (TethysDataId.XTRABOOL.equals(myCell.getColumnId())) {
-            /* Set correct state for extra Boolean */
-            TethysStateIconField<Boolean, IconState, ?, ?> myStateField = (TethysStateIconField<Boolean, IconState, ?, ?>) myCell;
-            TethysFXTableItem myRow = myCell.getActiveRow();
-            myStateField.getIconManager().setMachineState(myRow.booleanProperty().get()
-                                                                                        ? IconState.OPEN
-                                                                                        : IconState.CLOSED);
-        }
-    }
-
-    /**
-     * Handle preEdit event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Access column id */
-        TethysDataId myId = getColumnId(pEvent);
-
-        /* If this is the extra Boolean field */
-        if (TethysDataId.XTRABOOL.equals(myId)) {
-            /* Access details */
-            TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
-            TethysFXTableStateIconCell<Boolean, TethysDataId, TethysFXTableItem, IconState> myStateCell = (TethysFXTableStateIconCell<Boolean, TethysDataId, TethysFXTableItem, IconState>) myCell;
-            TethysFXTableItem myRow = myCell.getActiveRow();
-
-            /* Set correct state for extra Boolean */
-            myStateCell.getIconManager().setMachineState(myRow.booleanProperty().getValue()
-                                                                                            ? IconState.OPEN
-                                                                                            : IconState.CLOSED);
-        }
-    }
-
-    /**
-     * Handle preCommit event.
-     * @param pEvent the event
-     */
-    private void handlePreCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Consume the event if value is invalid */
     }
 
     /**
@@ -297,17 +227,7 @@ public class TethysFXTableExample
         TethysFXTableItem myRow = myCell.getActiveRow();
         myRow.incrementUpdates();
         myCell.repaintCellRow();
-    }
-
-    /**
-     * Obtain the cell id.
-     * @param pEvent the event
-     * @return the Id
-     */
-    @SuppressWarnings("unchecked")
-    private TethysDataId getColumnId(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<?, TethysDataId, ?, ?, ?> myCell = pEvent.getDetails(TethysTableCell.class);
-        return myCell.getColumnId();
+        myCell.repaintColumnCell(TethysDataId.XTRABOOL);
     }
 
     /**

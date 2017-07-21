@@ -141,7 +141,7 @@ public class TethysFXTableItem {
         theName.set(pName);
         theDate.set(new TethysDate());
         theBoolean.set(Boolean.FALSE);
-        theXtraBoolean.set(Boolean.TRUE);
+        theXtraBoolean.set(Boolean.FALSE);
         theShort.set(TethysScrollUITestHelper.SHORT_DEF);
         theInteger.set(TethysScrollUITestHelper.INT_DEF);
         theLong.set(TethysScrollUITestHelper.LONG_DEF);

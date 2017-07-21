@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRawDecimalEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
@@ -316,12 +317,6 @@ public class TethysFXTableManager<C, R>
     public <T> TethysFXTableIconColumn<T, C, R> declareIconColumn(final C pId,
                                                                   final Class<T> pClass) {
         return new TethysFXTableIconColumn<>(this, pId, pClass);
-    }
-
-    @Override
-    public <T> TethysFXTableStateIconColumn<T, C, R> declareStateIconColumn(final C pId,
-                                                                            final Class<T> pClass) {
-        return new TethysFXTableStateIconColumn<>(this, pId, pClass);
     }
 
     /**
@@ -799,7 +794,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableIconColumn<T, C, R>
-            extends TethysFXTableColumn<T, C, R> {
+            extends TethysFXTableColumn<T, C, R>
+            implements TethysTableIconColumn<T, C, R, Node, Node> {
+        /**
+         * IconMapSet supplier.
+         */
+        private Function<R, TethysIconMapSet<T>> theSupplier;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -811,28 +812,20 @@ public class TethysFXTableManager<C, R>
                                           final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.ICON);
             declareCellFactory(getTable().theCellFactory.iconCellFactory(this, pClass));
+            theSupplier = p -> null;
         }
-    }
 
-    /**
-     * StateIcon Column.
-     * @param <T> the column type
-     * @param <C> the column identity
-     * @param <R> the table item class
-     */
-    public static class TethysFXTableStateIconColumn<T, C, R>
-            extends TethysFXTableColumn<T, C, R> {
+        @Override
+        public void setIconMapSet(final Function<R, TethysIconMapSet<T>> pSupplier) {
+            theSupplier = pSupplier;
+        }
+
         /**
-         * Constructor.
-         * @param pTable the table
-         * @param pId the id
-         * @param pClass the item class
+         * Obtain the mapSet supplier.
+         * @return the supplier
          */
-        protected TethysFXTableStateIconColumn(final TethysFXTableManager<C, R> pTable,
-                                               final C pId,
-                                               final Class<T> pClass) {
-            super(pTable, pId, TethysFieldType.STATEICON);
-            declareCellFactory(getTable().theCellFactory.stateIconCellFactory(this, pClass));
+        protected Function<R, TethysIconMapSet<T>> getIconMapSet() {
+            return theSupplier;
         }
     }
 }

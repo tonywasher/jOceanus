@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -46,9 +47,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 public abstract class TethysIconButtonManager<T, N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
-     * Default icon width.
+     * The Factory.
      */
-    protected static final int DEFAULT_ICONWIDTH = TethysIconBuilder.DEFAULT_ICONWIDTH;
+    private final TethysGuiFactory<N, I> theFactory;
 
     /**
      * The Event Manager.
@@ -61,6 +62,16 @@ public abstract class TethysIconButtonManager<T, N, I>
     private final TethysButton<N, I> theButton;
 
     /**
+     * The iconMap.
+     */
+    private final Map<TethysIconId, I> theIconMap;
+
+    /**
+     * The icon Width.
+     */
+    private int theWidth;
+
+    /**
      * The Padding.
      */
     private Integer thePadding;
@@ -71,24 +82,27 @@ public abstract class TethysIconButtonManager<T, N, I>
     private String theTitle;
 
     /**
-     * The icon Width.
-     */
-    private int theWidth;
-
-    /**
      * The value.
      */
     private T theValue;
+
+    /**
+     * The function to determine the icon for the value.
+     */
+    private Function<T, TethysIconMapSet<T>> theMapSetForValue = p -> null;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     protected TethysIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
+        /* Store parameters */
+        theFactory = pFactory;
+
         /* Allocate resources */
         theEventManager = new TethysEventManager<>();
-        theButton = pFactory.newButton();
-        theWidth = DEFAULT_ICONWIDTH;
+        theButton = theFactory.newButton();
+        theIconMap = new HashMap<>();
 
         /* Note that the button should be Icon only */
         theButton.setIconOnly();
@@ -121,14 +135,6 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     protected TethysButton<N, I> getButton() {
         return theButton;
-    }
-
-    /**
-     * Obtain width.
-     * @return the width
-     */
-    public int getWidth() {
-        return theWidth;
     }
 
     @Override
@@ -181,12 +187,14 @@ public abstract class TethysIconButtonManager<T, N, I>
     public abstract void setPreferredHeight(Integer pHeight);
 
     /**
-     * Set the width.
-     * @param pWidth the width to set
+     * Check the icon width.
+     * @param pWidth the iconWidth
      */
-    public void setWidth(final int pWidth) {
-        /* Store the width */
-        theWidth = pWidth;
+    private void checkWidth(final int pWidth) {
+        if (theWidth != pWidth) {
+            theWidth = pWidth;
+            theIconMap.clear();
+        }
     }
 
     /**
@@ -199,6 +207,22 @@ public abstract class TethysIconButtonManager<T, N, I>
 
         /* Apply the button state */
         applyButtonState();
+    }
+
+    /**
+     * Set the mapSet selector.
+     * @param pSelector the selector
+     */
+    public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSelector) {
+        theMapSetForValue = pSelector;
+    }
+
+    /**
+     * Get the mapSet selector.
+     * @return the selector
+     */
+    public Function<T, TethysIconMapSet<T>> getIconMapSet() {
+        return theMapSetForValue;
     }
 
     @Override
@@ -221,14 +245,44 @@ public abstract class TethysIconButtonManager<T, N, I>
     /**
      * Apply button state.
      */
-    protected void applyButtonState() {
+    public void applyButtonState() {
+        /* Access MapSet and check iconWidth */
+        TethysIconMapSet<T> myMapSet = theMapSetForValue.apply(theValue);
+        if (myMapSet != null) {
+            checkWidth(myMapSet.getWidth());
+        }
+
         /* Access Icon and ToolTip */
-        I myIcon = getIconForValue(theValue);
-        String myTip = getToolTipForValue(theValue);
+        TethysIconId myIcon = myMapSet == null
+                                               ? null
+                                               : myMapSet.getIconForValue(theValue);
+        String myTip = myMapSet == null
+                                        ? null
+                                        : myMapSet.getTooltipForValue(theValue);
 
         /* Apply button state */
-        theButton.setIcon(myIcon);
+        theButton.setIcon(resolveIcon(myIcon));
         theButton.setToolTip(myTip);
+    }
+
+    /**
+     * ResolveIcon.
+     * @param pIconId the iconId
+     * @return the icon
+     */
+    private I resolveIcon(final TethysIconId pIconId) {
+        /* Handle null icon */
+        if (pIconId == null) {
+            return null;
+        }
+
+        /* Look up icon */
+        I myIcon = theIconMap.get(pIconId);
+        if (myIcon == null) {
+            myIcon = theFactory.resolveIcon(pIconId, theWidth);
+            theIconMap.put(pIconId, myIcon);
+        }
+        return myIcon;
     }
 
     /**
@@ -236,7 +290,12 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     public void progressToNextState() {
         /* Access next value */
-        T myValue = getNewValueForValue(theValue);
+        TethysIconMapSet<T> myMapSet = theMapSetForValue.apply(theValue);
+        T myValue = myMapSet == null
+                                     ? theValue
+                                     : myMapSet.getNextValueForValue(theValue);
+
+        /* If there has been a change */
         if (valueChanged(myValue)) {
             /* Set the value */
             setValue(myValue);
@@ -268,303 +327,15 @@ public abstract class TethysIconButtonManager<T, N, I>
     }
 
     /**
-     * Obtain icon for value.
-     * @param pValue the value
-     * @return the icon
-     */
-    protected abstract I getIconForValue(Object pValue);
-
-    /**
-     * Obtain toolTip for value.
-     * @param pValue the value
-     * @return the toolTip
-     */
-    protected abstract String getToolTipForValue(Object pValue);
-
-    /**
-     * Obtain new value on click.
-     * @param pValue the current value
-     * @return the new value
-     */
-    protected abstract T getNewValueForValue(Object pValue);
-
-    /**
-     * Simple IconButton Manager.
-     * @param <T> the object type
-     * @param <N> the button type
-     * @param <I> the Icon type
-     */
-    public abstract static class TethysSimpleIconButtonManager<T, N, I>
-            extends TethysIconButtonManager<T, N, I> {
-        /**
-         * Active Map Set.
-         */
-        private IconMapSet<T, I> theMapSet;
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        protected TethysSimpleIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
-            /* Initialise the underlying class */
-            super(pFactory);
-
-            /* Set a default mapSet */
-            setMapSet(new IconMapSet<T, I>());
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         * @param pBase the base icon manager
-         */
-        protected TethysSimpleIconButtonManager(final TethysGuiFactory<N, I> pFactory,
-                                                final TethysSimpleIconButtonManager<T, N, I> pBase) {
-            /* Initialise the underlying class */
-            super(pFactory);
-
-            /* Copy the map set */
-            setMapSet(pBase.getMapSet());
-        }
-
-        /**
-         * Obtain the mapSet.
-         * @return the mapSet
-         */
-        protected IconMapSet<T, I> getMapSet() {
-            return theMapSet;
-        }
-
-        /**
-         * Set the mapSet.
-         * @param pMapSet the mapSet
-         */
-        protected void setMapSet(final IconMapSet<T, I> pMapSet) {
-            theMapSet = pMapSet;
-        }
-
-        /**
-         * Reset the configuration.
-         */
-        public void clearMaps() {
-            theMapSet.clearMaps();
-        }
-
-        @Override
-        protected I getIconForValue(final Object pValue) {
-            Map<T, I> myMap = theMapSet.getIconMap();
-            return myMap.get(pValue);
-        }
-
-        @Override
-        protected String getToolTipForValue(final Object pValue) {
-            Map<T, String> myMap = theMapSet.getToolTipMap();
-            return myMap.get(pValue);
-        }
-
-        @Override
-        protected T getNewValueForValue(final Object pValue) {
-            Map<T, T> myMap = theMapSet.getValueMap();
-            return myMap.get(pValue);
-        }
-
-        /**
-         * Map value.
-         * @param pValue the value
-         * @param pIcon the mapped Icon
-         */
-        public void setIconForValue(final T pValue,
-                                    final I pIcon) {
-            /* Put value into map */
-            Map<T, I> myMap = theMapSet.getIconMap();
-            myMap.put(pValue, pIcon);
-        }
-
-        /**
-         * Map simple details.
-         * @param <K> the keyId type
-         * @param pValue the value
-         * @param pId the mapped IconId
-         * @param pToolTip the toolTip for value
-         */
-        public <K extends Enum<K> & TethysIconId> void setSimpleDetailsForValue(final T pValue,
-                                                                                final K pId,
-                                                                                final String pToolTip) {
-            setDetailsForValue(pValue, pValue, pId, pToolTip);
-        }
-
-        /**
-         * Map details.
-         * @param pValue the value
-         * @param pNext the next value for value
-         * @param pToolTip the toolTip for value
-         */
-        public void setDetailsForValue(final T pValue,
-                                       final T pNext,
-                                       final String pToolTip) {
-            setDetailsForValue(pValue, pNext, null, pToolTip);
-        }
-
-        /**
-         * Map details.
-         * @param <K> the keyId type
-         * @param pValue the value
-         * @param pNext the next value for value
-         * @param pId the mapped IconId
-         */
-        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
-                                                                          final T pNext,
-                                                                          final K pId) {
-            setDetailsForValue(pValue, pNext, pId, null);
-        }
-
-        /**
-         * Map details.
-         * @param <K> the keyId type
-         * @param pValue the value
-         * @param pNext the next value for value
-         * @param pId the mapped IconId
-         * @param pToolTip the toolTip for value
-         */
-        public abstract <K extends Enum<K> & TethysIconId> void setDetailsForValue(T pValue,
-                                                                                   T pNext,
-                                                                                   K pId,
-                                                                                   String pToolTip);
-
-        /**
-         * Map ToolTip.
-         * @param pValue the value
-         * @param pTip the mapped toolTip
-         */
-        public void setTooltipForValue(final T pValue,
-                                       final String pTip) {
-            /* Put value into map */
-            Map<T, String> myMap = theMapSet.getToolTipMap();
-            myMap.put(pValue, pTip);
-        }
-
-        /**
-         * Map New Value.
-         * @param pValue the value
-         * @param pNewValue the new value
-         */
-        public void setNewValueForValue(final T pValue,
-                                        final T pNewValue) {
-            /* Put value into map */
-            Map<T, T> myMap = theMapSet.getValueMap();
-            myMap.put(pValue, pNewValue);
-        }
-    }
-
-    /**
-     * State-based IconButton Manager.
-     * @param <T> the object type
-     * @param <S> the state
-     * @param <N> the button type
-     * @param <I> the Icon type
-     */
-    public abstract static class TethysStateIconButtonManager<T, S, N, I>
-            extends TethysSimpleIconButtonManager<T, N, I> {
-        /**
-         * State set?
-         */
-        private boolean stateSet;
-
-        /**
-         * Current state.
-         */
-        private S theMachineState;
-
-        /**
-         * MapSet Map.
-         */
-        private Map<S, IconMapSet<T, I>> theStateMap;
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        protected TethysStateIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
-            /* Initialise the underlying class */
-            super(pFactory);
-
-            /* Allocate the maps */
-            theStateMap = new HashMap<>();
-        }
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         * @param pBase the base icon manager
-         */
-        protected TethysStateIconButtonManager(final TethysGuiFactory<N, I> pFactory,
-                                               final TethysStateIconButtonManager<T, S, N, I> pBase) {
-            /* Initialise the underlying class */
-            super(pFactory, pBase);
-
-            /* Share the stateMap */
-            theStateMap = pBase.theStateMap;
-            stateSet = false;
-        }
-
-        /**
-         * Obtain state.
-         * @return the state
-         */
-        public S getMachineState() {
-            return theMachineState;
-        }
-
-        /**
-         * Set state.
-         * @param pState the new state
-         */
-        public void setMachineState(final S pState) {
-            /* Ignore if we are already correct state */
-            if (stateSet
-                && pState.equals(theMachineState)) {
-                return;
-            }
-
-            /* Look for existing state */
-            IconMapSet<T, I> mySet = theStateMap.get(pState);
-
-            /* If this is a new state */
-            if (mySet == null) {
-                /* Use initial state or new state if already used */
-                mySet = stateSet
-                                 ? new IconMapSet<>()
-                                 : getMapSet();
-                stateSet = true;
-
-                /* Store the set into the map */
-                theStateMap.put(pState, mySet);
-            }
-
-            /* Switch to this set */
-            setMapSet(mySet);
-
-            /* register the map Set */
-            theMachineState = pState;
-            applyButtonState();
-        }
-
-        @Override
-        public void clearMaps() {
-            /* Reset state Maps */
-            theStateMap.clear();
-
-            /* Clear the current map */
-            super.clearMaps();
-        }
-    }
-
-    /**
      * MapSet.
      * @param <T> the object type
-     * @param <I> the Icon type
      */
-    private static final class IconMapSet<T, I> {
+    public static class TethysIconMapSet<T> {
+        /**
+         * The icon Width.
+         */
+        private int theWidth;
+
         /**
          * Value Map.
          */
@@ -573,7 +344,7 @@ public abstract class TethysIconButtonManager<T, N, I>
         /**
          * Icon Map.
          */
-        private final Map<T, I> theIconMap;
+        private final Map<T, TethysIconId> theIconMap;
 
         /**
          * ToolTip Map.
@@ -583,7 +354,18 @@ public abstract class TethysIconButtonManager<T, N, I>
         /**
          * Constructor.
          */
-        private IconMapSet() {
+        public TethysIconMapSet() {
+            this(TethysIconBuilder.DEFAULT_ICONWIDTH);
+        }
+
+        /**
+         * Constructor.
+         * @param pWidth the icon width
+         */
+        public TethysIconMapSet(final int pWidth) {
+            /* Store parameters */
+            theWidth = pWidth;
+
             /* Allocate the maps */
             theValueMap = new HashMap<>();
             theIconMap = new HashMap<>();
@@ -591,36 +373,95 @@ public abstract class TethysIconButtonManager<T, N, I>
         }
 
         /**
+         * Obtain the iconWidth.
+         * @return the iconWidth
+         */
+        public int getWidth() {
+            return theWidth;
+        }
+
+        /**
          * Clear the mapSet.
          */
-        private void clearMaps() {
+        public void clearMaps() {
             theValueMap.clear();
             theIconMap.clear();
             theTipMap.clear();
         }
 
         /**
-         * Obtain the iconMap.
-         * @return the iconMap
+         * Set mappings for value with no icon.
+         * @param pValue the value
+         * @param pNext the next value for value
+         * @param pTooltip the toolTip
          */
-        private Map<T, I> getIconMap() {
-            return theIconMap;
+        public void setMappingsForValue(final T pValue,
+                                        final T pNext,
+                                        final String pTooltip) {
+            setMappingsForValue(pValue, pNext, null, pTooltip);
         }
 
         /**
-         * Obtain the toolTipMap.
-         * @return the toolTipMap
+         * Set mappings for value with no toolTip.
+         * @param <K> the keyId type
+         * @param pValue the value
+         * @param pNext the next value for value
+         * @param pId the mapped IconId
          */
-        private Map<T, String> getToolTipMap() {
-            return theTipMap;
+        public <K extends Enum<K> & TethysIconId> void setMappingsForValue(final T pValue,
+                                                                           final T pNext,
+                                                                           final K pId) {
+            setMappingsForValue(pValue, pNext, pId, null);
         }
 
         /**
-         * Obtain the valueTipMap.
-         * @return the valueTipMap
+         * Set mappings for value.
+         * @param <K> the keyId type
+         * @param pValue the value
+         * @param pNext the next value for value
+         * @param pId the mapped IconId
+         * @param pTooltip the toolTip
          */
-        private Map<T, T> getValueMap() {
-            return theValueMap;
+        public <K extends Enum<K> & TethysIconId> void setMappingsForValue(final T pValue,
+                                                                           final T pNext,
+                                                                           final K pId,
+                                                                           final String pTooltip) {
+            /* Store values */
+            theValueMap.put(pValue, pNext);
+            theIconMap.put(pValue, pId);
+            theTipMap.put(pValue, pTooltip);
+        }
+
+        /**
+         * Obtain Icon for value.
+         * @param pValue the value
+         * @return the value
+         */
+        protected TethysIconId getIconForValue(final T pValue) {
+            return theIconMap.get(pValue);
+        }
+
+        /**
+         * Obtain ToolTip for value.
+         * @param pValue the value
+         * @return the value
+         */
+        protected String getTooltipForValue(final T pValue) {
+            return theTipMap.get(pValue);
+        }
+
+        /**
+         * Obtain Next value for value.
+         * @param pValue the value
+         * @return the value
+         */
+        protected T getNextValueForValue(final T pValue) {
+            T myNext = theValueMap.get(pValue);
+            if (myNext == null
+                && !theValueMap.containsKey(pValue)) {
+                myNext = pValue;
+            }
+            return myNext;
         }
     }
 }

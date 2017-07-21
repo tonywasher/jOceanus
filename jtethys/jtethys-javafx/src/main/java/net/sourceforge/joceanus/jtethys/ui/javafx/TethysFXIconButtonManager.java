@@ -24,166 +24,66 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.scene.Node;
 import javafx.scene.layout.Region;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 
 /**
  * Simple button that displays icon.
+ * @param <T> the object type
  */
-public final class TethysFXIconButtonManager {
+public final class TethysFXIconButtonManager<T>
+        extends TethysIconButtonManager<T, Node, Node> {
+    /**
+     * The node.
+     */
+    private Region theNode;
+
     /**
      * Constructor.
+     * @param pFactory the GUI factory
      */
-    private TethysFXIconButtonManager() {
+    protected TethysFXIconButtonManager(final TethysFXGuiFactory pFactory) {
+        /* Initialise underlying class */
+        super(pFactory);
+        theNode = (Region) super.getNode();
+    }
+
+    @Override
+    public Region getNode() {
+        return theNode;
+    }
+
+    @Override
+    public void setVisible(final boolean pVisible) {
+        theNode.setManaged(pVisible);
+        theNode.setVisible(pVisible);
+    }
+
+    @Override
+    public void setPreferredWidth(final Integer pWidth) {
+        getNode().setPrefWidth(pWidth);
+    }
+
+    @Override
+    public void setPreferredHeight(final Integer pHeight) {
+        getNode().setPrefHeight(pHeight);
+    }
+
+    @Override
+    public void setBorderPadding(final Integer pPadding) {
+        super.setBorderPadding(pPadding);
+        createWrapperPane();
+    }
+
+    @Override
+    public void setBorderTitle(final String pTitle) {
+        super.setBorderTitle(pTitle);
+        createWrapperPane();
     }
 
     /**
-     * Simple FX IconButton Manager.
-     * @param <T> the object type
+     * create wrapper pane.
      */
-    public static class TethysFXSimpleIconButtonManager<T>
-            extends TethysSimpleIconButtonManager<T, Node, Node> {
-        /**
-         * The node.
-         */
-        private Region theNode;
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        protected TethysFXSimpleIconButtonManager(final TethysFXGuiFactory pFactory) {
-            /* Initialise underlying class */
-            super(pFactory);
-            theNode = (Region) super.getNode();
-        }
-
-        @Override
-        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
-                                                                          final T pNext,
-                                                                          final K pId,
-                                                                          final String pToolTip) {
-            setNewValueForValue(pValue, pNext);
-            setIconForValue(pValue, pId == null
-                                                ? null
-                                                : TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
-            setTooltipForValue(pValue, pToolTip);
-        }
-
-        @Override
-        public Region getNode() {
-            return theNode;
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            theNode.setManaged(pVisible);
-            theNode.setVisible(pVisible);
-        }
-
-        @Override
-        public void setPreferredWidth(final Integer pWidth) {
-            getNode().setPrefWidth(pWidth);
-        }
-
-        @Override
-        public void setPreferredHeight(final Integer pHeight) {
-            getNode().setPrefHeight(pHeight);
-        }
-
-        @Override
-        public void setBorderPadding(final Integer pPadding) {
-            super.setBorderPadding(pPadding);
-            createWrapperPane();
-        }
-
-        @Override
-        public void setBorderTitle(final String pTitle) {
-            super.setBorderTitle(pTitle);
-            createWrapperPane();
-        }
-
-        /**
-         * create wrapper pane.
-         */
-        private void createWrapperPane() {
-            theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
-        }
-    }
-
-    /**
-     * State-based FX IconButton Manager.
-     * @param <T> the object type
-     * @param <S> the state
-     */
-    public static class TethysFXStateIconButtonManager<T, S>
-            extends TethysStateIconButtonManager<T, S, Node, Node> {
-        /**
-         * The node.
-         */
-        private Region theNode;
-
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        protected TethysFXStateIconButtonManager(final TethysFXGuiFactory pFactory) {
-            /* Initialise underlying class */
-            super(pFactory);
-            theNode = (Region) super.getNode();
-        }
-
-        @Override
-        public <K extends Enum<K> & TethysIconId> void setDetailsForValue(final T pValue,
-                                                                          final T pNext,
-                                                                          final K pId,
-                                                                          final String pToolTip) {
-            setNewValueForValue(pValue, pNext);
-            setIconForValue(pValue, pId == null
-                                                ? null
-                                                : TethysFXGuiUtils.getIconAtSize(pId, getWidth()));
-            setTooltipForValue(pValue, pToolTip);
-        }
-
-        @Override
-        public Region getNode() {
-            return theNode;
-        }
-
-        @Override
-        public void setVisible(final boolean pVisible) {
-            theNode.setManaged(pVisible);
-            theNode.setVisible(pVisible);
-        }
-
-        @Override
-        public void setPreferredWidth(final Integer pWidth) {
-            getNode().setPrefWidth(pWidth);
-        }
-
-        @Override
-        public void setPreferredHeight(final Integer pHeight) {
-            getNode().setPrefHeight(pHeight);
-        }
-
-        @Override
-        public void setBorderPadding(final Integer pPadding) {
-            super.setBorderPadding(pPadding);
-            createWrapperPane();
-        }
-
-        @Override
-        public void setBorderTitle(final String pTitle) {
-            super.setBorderTitle(pTitle);
-            createWrapperPane();
-        }
-
-        /**
-         * create wrapper pane.
-         */
-        private void createWrapperPane() {
-            theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
-        }
+    private void createWrapperPane() {
+        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
     }
 }

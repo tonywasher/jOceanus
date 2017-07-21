@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.HeadlessException;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -36,13 +37,12 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 
 /**
  * Scroll utilities examples.
@@ -52,11 +52,6 @@ public class TethysSwingScrollUIExample {
      * The default width.
      */
     private static final int DEFAULT_VALUEWIDTH = 200;
-
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 24;
 
     /**
      * Logger.
@@ -86,12 +81,12 @@ public class TethysSwingScrollUIExample {
     /**
      * The simple icon button manager.
      */
-    private final TethysSwingSimpleIconButtonManager<Boolean> theSimpleIconButtonMgr;
+    private final TethysSwingIconButtonManager<Boolean> theSimpleIconButtonMgr;
 
     /**
      * The state icon button manager.
      */
-    private final TethysSwingStateIconButtonManager<Boolean, IconState> theStateIconButtonMgr;
+    private final TethysSwingIconButtonManager<Boolean> theStateIconButtonMgr;
 
     /**
      * The state scroll manager.
@@ -161,8 +156,8 @@ public class TethysSwingScrollUIExample {
         /* Create resources */
         theScrollMenu = theGuiFactory.newContextMenu();
         theScrollButtonMgr = theGuiFactory.newScrollButton();
-        theSimpleIconButtonMgr = theGuiFactory.newSimpleIconButton();
-        theStateIconButtonMgr = theGuiFactory.newStateIconButton();
+        theSimpleIconButtonMgr = theGuiFactory.newIconButton();
+        theStateIconButtonMgr = theGuiFactory.newIconButton();
         theStateButtonMgr = theGuiFactory.newScrollButton();
         theListButtonMgr = theGuiFactory.newListButton();
         theDateButtonMgr = theGuiFactory.newDateButton();
@@ -307,11 +302,9 @@ public class TethysSwingScrollUIExample {
         myGrid.addCell(theSimpleIconValue);
         myGrid.allowCellGrowth(theSimpleIconValue);
         myGrid.newRow();
-        theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
-        theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
-
-        theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
-        theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        theSimpleIconButtonMgr.setIconMapSet(p -> myMapSet);
+        theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
@@ -331,20 +324,18 @@ public class TethysSwingScrollUIExample {
         myGrid.newRow();
 
         theHelper.buildStateButton(theStateButtonMgr);
-        theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
+        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        theStateIconButtonMgr.setIconMapSet(p -> myMap.get(theStateButtonMgr.getValue()));
         theStateIconButtonMgr.setNullMargins();
-        theHelper.buildStateIconState(theStateIconButtonMgr,
-                TethysHelperIcon.OPENFALSE,
-                TethysHelperIcon.OPENTRUE,
-                TethysHelperIcon.CLOSEDTRUE);
+        theStateIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setStateIconValue(e.getDetails(Boolean.class)));
 
         /* Add listener */
         theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            theStateIconButtonMgr.setMachineState(e.getDetails(IconState.class));
             setStateIconValue(theStateIconButtonMgr.getValue());
+            theStateIconButtonMgr.applyButtonState();
         });
 
         /* Create colour picker line */

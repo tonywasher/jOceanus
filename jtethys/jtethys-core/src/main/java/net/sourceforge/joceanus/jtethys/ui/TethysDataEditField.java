@@ -35,8 +35,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 
@@ -489,7 +488,7 @@ public interface TethysDataEditField<T, N, I>
 
             /* Initialise edit text */
             theValue = pValue;
-            theEdit = null;
+            theEdit = theConverter.formatEditValue(pValue);
 
             /* Store the value */
             theField.setTheValue(pValue);
@@ -526,6 +525,21 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
+     * IconButtonFieldControl.
+     * @param <T> the data type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    interface TethysIconButtonField<T, N, I>
+            extends TethysDataEditField<T, N, I> {
+        /**
+         * Set the IconMapSet supplier.
+         * @param pSupplier the supplier
+         */
+        void setIconMapSet(Function<T, TethysIconMapSet<T>> pSupplier);
+    }
+
+    /**
      * Date Field interface.
      * @param <N> the Node type
      * @param <I> the Icon type
@@ -552,36 +566,5 @@ public interface TethysDataEditField<T, N, I>
          * @return the manager
          */
         TethysScrollButtonManager<T, N, I> getScrollManager();
-    }
-
-    /**
-     * Icon Field interface.
-     * @param <T> the value type
-     * @param <N> the Node type
-     * @param <I> the Icon type
-     */
-    @FunctionalInterface
-    interface TethysIconField<T, N, I> {
-        /**
-         * Obtain the manager.
-         * @return the manager
-         */
-        TethysSimpleIconButtonManager<T, N, I> getIconManager();
-    }
-
-    /**
-     * StateIcon Field interface.
-     * @param <T> the value type
-     * @param <S> the state type
-     * @param <N> the Node type
-     * @param <I> the Icon type
-     */
-    @FunctionalInterface
-    interface TethysStateIconField<T, S, N, I> {
-        /**
-         * Obtain the manager.
-         * @return the manager
-         */
-        TethysStateIconButtonManager<T, S, N, I> getIconManager();
     }
 }

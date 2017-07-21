@@ -22,11 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 
 /**
  * MoneyWise Icon IDs.
@@ -172,53 +175,96 @@ public enum MoneyWiseIcon implements TethysIconId {
 
     /**
      * Configure locked icon button.
-     * @param pButton the button manager
+     * @return the mapSet configuration
      */
-    public static void configureLockedIconButton(final TethysStateIconButtonManager<Boolean, Boolean, ?, ?> pButton) {
-        pButton.setMachineState(Boolean.TRUE);
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, UNLOCKABLE, TIP_UNLOCK);
-        pButton.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, LOCKABLE, TIP_LOCK);
-        pButton.setMachineState(Boolean.FALSE);
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.TRUE, LOCKED, TIP_LOCKED);
-        pButton.setDetailsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, PrometheusIcon.TIP_ACTIVE);
+    public static Map<Boolean, TethysIconMapSet<Boolean>> configureLockedIconButton() {
+        /* Create the map */
+        Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+
+        /* Create the TRUE state */
+        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, UNLOCKABLE, TIP_UNLOCK);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, LOCKABLE, TIP_LOCK);
+        myMap.put(Boolean.TRUE, myMapSet);
+
+        /* Create the FALSE state */
+        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, LOCKED, TIP_LOCKED);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, PrometheusIcon.TIP_ACTIVE);
+        myMap.put(Boolean.FALSE, myMapSet);
+
+        /* Return the map */
+        return myMap;
     }
 
     /**
      * Configure reconciled icon button.
-     * @param pButton the button manager
+     * @return the mapSet configuration
      */
-    public static void configureReconciledIconButton(final TethysStateIconButtonManager<Boolean, Boolean, ?, ?> pButton) {
-        pButton.setWidth(MetisIcon.ICON_SIZE);
-        pButton.setMachineState(Boolean.TRUE);
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, PrometheusIcon.COMMIT, TIP_RELEASE);
-        pButton.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);
-        pButton.setMachineState(Boolean.FALSE);
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.TRUE, FROZENRECONCILED, TIP_FROZEN);
+    public static Map<Boolean, TethysIconMapSet<Boolean>> configureReconciledIconButton() {
+        /* Create the map */
+        Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+
+        /* Create the TRUE state */
+        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, PrometheusIcon.COMMIT, TIP_RELEASE);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);
+        myMap.put(Boolean.TRUE, myMapSet);
+
+        /* Create the FALSE state */
+        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENRECONCILED, TIP_FROZEN);
+        myMap.put(Boolean.FALSE, myMapSet);
+
+        /* Return the map */
+        return myMap;
     }
 
     /**
      * Configure direction icon button.
-     * @param pButton the button manager
+     * @return the mapSet configuration
      */
-    public static void configureDirectionIconButton(final TethysStateIconButtonManager<AssetDirection, Boolean, ?, ?> pButton) {
-        pButton.setMachineState(Boolean.TRUE);
-        pButton.setDetailsForValue(AssetDirection.TO, AssetDirection.FROM, DIRTO, TIP_DIRTO);
-        pButton.setDetailsForValue(AssetDirection.FROM, AssetDirection.TO, DIRFROM, TIP_DIRFROM);
-        pButton.setMachineState(Boolean.FALSE);
-        pButton.setDetailsForValue(AssetDirection.TO, AssetDirection.TO, DIRTOLOCKED, TIP_DIRTO);
-        pButton.setDetailsForValue(AssetDirection.FROM, AssetDirection.FROM, DIRFROMLOCKED, TIP_DIRFROM);
+    public static Map<Boolean, TethysIconMapSet<AssetDirection>> configureDirectionIconButton() {
+        /* Create the map */
+        Map<Boolean, TethysIconMapSet<AssetDirection>> myMap = new HashMap<>();
+
+        /* Create the TRUE state */
+        TethysIconMapSet<AssetDirection> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.FROM, DIRTO, TIP_DIRTO);
+        myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.TO, DIRFROM, TIP_DIRFROM);
+        myMap.put(Boolean.TRUE, myMapSet);
+
+        /* Create the FALSE state */
+        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.TO, DIRTOLOCKED, TIP_DIRTO);
+        myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.FROM, DIRFROMLOCKED, TIP_DIRFROM);
+        myMap.put(Boolean.FALSE, myMapSet);
+
+        /* Return the map */
+        return myMap;
     }
 
     /**
      * Configure option icon button.
-     * @param pButton the button manager
+     * @return the mapSet configuration
      */
-    public static void configureOptionIconButton(final TethysStateIconButtonManager<Boolean, Boolean, ?, ?> pButton) {
-        pButton.setMachineState(Boolean.TRUE);
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, BOXCHECK);
-        pButton.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, BOXCLEAR);
-        pButton.setMachineState(Boolean.FALSE);
-        pButton.setDetailsForValue(Boolean.TRUE, Boolean.TRUE, FROZENBOXCHECK);
-        pButton.setDetailsForValue(Boolean.FALSE, Boolean.FALSE, FROZENBOXCLEAR);
+    public static Map<Boolean, TethysIconMapSet<Boolean>> configureOptionIconButton() {
+        /* Create the map */
+        Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+
+        /* Create the TRUE state */
+        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, BOXCHECK);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, BOXCLEAR);
+        myMap.put(Boolean.TRUE, myMapSet);
+
+        /* Create the FALSE state */
+        myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENBOXCHECK);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, FROZENBOXCLEAR);
+        myMap.put(Boolean.FALSE, myMapSet);
+
+        /* Return the map */
+        return myMap;
     }
 }

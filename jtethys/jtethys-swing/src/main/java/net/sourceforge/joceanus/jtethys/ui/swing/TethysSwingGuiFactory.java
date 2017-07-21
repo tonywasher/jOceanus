@@ -28,6 +28,7 @@ import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
@@ -35,7 +36,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.Teth
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingScrollButtonField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingStateIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingCharArrayTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutedPriceTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingDilutionTextField;
@@ -49,8 +49,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingShortTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager.TethysSwingStateIconButtonManager;
 
 /**
  * Tethys GUI Manager.
@@ -118,6 +116,14 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    protected Icon resolveIcon(final TethysIconId pIconId,
+                               final int pWidth) {
+        return pIconId == null
+                               ? null
+                               : TethysSwingGuiUtils.getIconAtSize(pIconId, pWidth);
+    }
+
+    @Override
     public TethysSwingLabel newLabel() {
         return new TethysSwingLabel(this);
     }
@@ -172,13 +178,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingSimpleIconButtonManager<T> newSimpleIconButton() {
-        return new TethysSwingSimpleIconButtonManager<>(this);
-    }
-
-    @Override
-    public <T, S> TethysSwingStateIconButtonManager<T, S> newStateIconButton() {
-        return new TethysSwingStateIconButtonManager<>(this);
+    public <T> TethysSwingIconButtonManager<T> newIconButton() {
+        return new TethysSwingIconButtonManager<>(this);
     }
 
     @Override
@@ -362,13 +363,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingIconButtonField<T> newSimpleIconField() {
+    public <T> TethysSwingIconButtonField<T> newIconField() {
         return new TethysSwingIconButtonField<>(this);
-    }
-
-    @Override
-    public <T, S> TethysSwingStateIconButtonField<T, S> newStateIconField() {
-        return new TethysSwingStateIconButtonField<>(this);
     }
 
     @Override

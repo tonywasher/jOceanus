@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -29,8 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysStateIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 
@@ -44,6 +46,11 @@ public class TethysScrollUITestHelper<N, I> {
      * The max items.
      */
     private static final int MAX_ITEMS = 4;
+
+    /**
+     * Default icon width.
+     */
+    private static final int DEFAULT_ICONWIDTH = 24;
 
     /**
      * The default password value.
@@ -173,43 +180,49 @@ public class TethysScrollUITestHelper<N, I> {
     }
 
     /**
-     * Build the simple IconState.
+     * Build the simple IconMapSet.
      * @param <K> the keyId type
-     * @param pIconManager the menu to build
      * @param pFalseIcon the icon for the false state
      * @param pTrueIcon the icon for the true state
+     * @return the new mapSet
      */
-    public <K extends Enum<K> & TethysIconId> void buildSimpleIconState(final TethysSimpleIconButtonManager<Boolean, ?, ?> pIconManager,
-                                                                        final K pFalseIcon,
-                                                                        final K pTrueIcon) {
-        /* Set the state */
-        pIconManager.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
-        pIconManager.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
-        pIconManager.setValue(Boolean.TRUE);
+    public <K extends Enum<K> & TethysIconId> TethysIconMapSet<Boolean> buildSimpleIconState(final K pFalseIcon,
+                                                                                             final K pTrueIcon) {
+        /* Create the state */
+        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(DEFAULT_ICONWIDTH);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
+        return myMapSet;
     }
 
     /**
      * Build the state IconState.
      * @param <K> the keyId type
-     * @param pIconManager the menu to build
      * @param pFalseIcon the icon for the false state
      * @param pTrueIcon the icon for the true state
      * @param pAltTrueIcon the icon for the true closed state
+     * @return the map
      */
-    public <K extends Enum<K> & TethysIconId> void buildStateIconState(final TethysStateIconButtonManager<Boolean, IconState, ?, ?> pIconManager,
-                                                                       final K pFalseIcon,
-                                                                       final K pTrueIcon,
-                                                                       final K pAltTrueIcon) {
-        /* Set the CLOSED state */
-        pIconManager.setMachineState(IconState.CLOSED);
-        pIconManager.setDetailsForValue(Boolean.FALSE, Boolean.FALSE, "False");
-        pIconManager.setDetailsForValue(Boolean.TRUE, Boolean.TRUE, pAltTrueIcon, "True");
+    public <K extends Enum<K> & TethysIconId> Map<IconState, TethysIconMapSet<Boolean>> buildStateIconState(final K pFalseIcon,
+                                                                                                            final K pTrueIcon,
+                                                                                                            final K pAltTrueIcon) {
+        /* Create the map */
+        Map<IconState, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
 
-        /* Set the OPEN state */
-        pIconManager.setMachineState(IconState.OPEN);
-        pIconManager.setDetailsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
-        pIconManager.setDetailsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
-        pIconManager.setValue(Boolean.TRUE);
+        /* Create the CLOSED state */
+        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(DEFAULT_ICONWIDTH);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, "False");
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, pAltTrueIcon, "True");
+        myMap.put(IconState.CLOSED, myMapSet);
+
+        /* Create the OPEN state */
+        myMapSet = new TethysIconMapSet<>(DEFAULT_ICONWIDTH);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
+        myMap.put(IconState.OPEN, myMapSet);
+
+        /* Return the map */
+        return myMap;
     }
 
     /**
@@ -220,7 +233,7 @@ public class TethysScrollUITestHelper<N, I> {
         TethysScrollMenu<IconState, I> myMenu = pManager.getMenu();
         myMenu.addItem(IconState.OPEN);
         myMenu.addItem(IconState.CLOSED);
-        pManager.setValue(IconState.OPEN);
+        pManager.setValue(IconState.CLOSED);
     }
 
     /**

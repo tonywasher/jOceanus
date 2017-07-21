@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFiel
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetRatioItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetScrollItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetShortItem;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetStateIconItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetStringItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetUnitsItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -446,19 +445,6 @@ public class MetisFieldSetPanel<N, I>
     public <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisDataField pField,
                                                                  final Class<T> pClass) {
         return registerField(new MetisFieldSetIconItem<>(this, pField, pClass));
-    }
-
-    /**
-     * Add stateIconButton field.
-     * @param <T> the item type
-     * @param <S> the state type
-     * @param pField the field
-     * @param pClass the item class
-     * @return the icon field
-     */
-    public <T, S> MetisFieldSetStateIconItem<T, S, N, I> addStateIconButtonField(final MetisDataField pField,
-                                                                                 final Class<T> pClass) {
-        return registerField(new MetisFieldSetStateIconItem<>(this, pField, pClass));
     }
 
     /**

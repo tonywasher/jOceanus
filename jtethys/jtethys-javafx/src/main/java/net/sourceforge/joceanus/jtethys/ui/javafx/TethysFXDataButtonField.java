@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.function.Function;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
@@ -32,13 +34,12 @@ import javafx.scene.control.Label;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysStateIconField;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysSimpleIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
 
 /**
  * Generic class for displaying and editing a button data field.
@@ -53,37 +54,14 @@ public final class TethysFXDataButtonField {
     /**
      * IconButtonField class.
      * @param <T> the data type
-     * @param <S> the state class
-     */
-    public static class TethysFXStateIconButtonField<T, S>
-            extends TethysFXIconButtonField<T>
-            implements TethysStateIconField<T, S, Node, Node> {
-        /**
-         * Constructor.
-         * @param pFactory the GUI factory
-         */
-        protected TethysFXStateIconButtonField(final TethysFXGuiFactory pFactory) {
-            super(pFactory, pFactory.newStateIconButton());
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public TethysFXStateIconButtonManager<T, S> getIconManager() {
-            return (TethysFXStateIconButtonManager<T, S>) super.getIconManager();
-        }
-    }
-
-    /**
-     * IconButtonField class.
-     * @param <T> the data type
      */
     public static class TethysFXIconButtonField<T>
             extends TethysFXDataTextField<T>
-            implements TethysIconField<T, Node, Node> {
+            implements TethysIconButtonField<T, Node, Node> {
         /**
          * The icon manager.
          */
-        private final TethysSimpleIconButtonManager<T, Node, Node> theManager;
+        private final TethysIconButtonManager<T, Node, Node> theManager;
 
         /**
          * The button.
@@ -100,7 +78,7 @@ public final class TethysFXDataButtonField {
          * @param pFactory the GUI factory
          */
         protected TethysFXIconButtonField(final TethysFXGuiFactory pFactory) {
-            this(pFactory, pFactory.newSimpleIconButton());
+            this(pFactory, pFactory.newIconButton());
         }
 
         /**
@@ -109,7 +87,7 @@ public final class TethysFXDataButtonField {
          * @param pManager the manager
          */
         protected TethysFXIconButtonField(final TethysFXGuiFactory pFactory,
-                                          final TethysSimpleIconButtonManager<T, Node, Node> pManager) {
+                                          final TethysIconButtonManager<T, Node, Node> pManager) {
             /* Initialise underlying class */
             super(pFactory, pManager.getNode());
 
@@ -125,11 +103,6 @@ public final class TethysFXDataButtonField {
                 setValue(theManager.getValue());
                 fireEvent(TethysUIEvent.NEWVALUE, e.getDetails());
             });
-        }
-
-        @Override
-        public TethysSimpleIconButtonManager<T, Node, Node> getIconManager() {
-            return theManager;
         }
 
         @Override
@@ -180,6 +153,11 @@ public final class TethysFXDataButtonField {
         @Override
         public void startCellEditing(final Node pCell) {
             Platform.runLater(theButton::fire);
+        }
+
+        @Override
+        public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSupplier) {
+            theManager.setIconMapSet(pSupplier);
         }
     }
 

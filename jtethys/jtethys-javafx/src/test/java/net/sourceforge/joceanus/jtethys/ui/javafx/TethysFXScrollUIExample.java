@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.Map;
+
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -29,24 +31,18 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXSimpleIconButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager.TethysFXStateIconButtonManager;
 
 /**
  * Scroll utilities examples.
  */
 public class TethysFXScrollUIExample
         extends Application {
-    /**
-     * Default icon width.
-     */
-    private static final int DEFAULT_ICONWIDTH = 24;
-
     /**
      * Value width.
      */
@@ -75,12 +71,12 @@ public class TethysFXScrollUIExample
     /**
      * The simple icon button manager.
      */
-    private final TethysFXSimpleIconButtonManager<Boolean> theSimpleIconButtonMgr;
+    private final TethysFXIconButtonManager<Boolean> theSimpleIconButtonMgr;
 
     /**
      * The state icon button manager.
      */
-    private final TethysFXStateIconButtonManager<Boolean, IconState> theStateIconButtonMgr;
+    private final TethysFXIconButtonManager<Boolean> theStateIconButtonMgr;
 
     /**
      * The state scroll manager.
@@ -150,8 +146,8 @@ public class TethysFXScrollUIExample
         /* Create resources */
         theContextMenu = theGuiFactory.newContextMenu();
         theScrollButtonMgr = theGuiFactory.newScrollButton();
-        theSimpleIconButtonMgr = theGuiFactory.newSimpleIconButton();
-        theStateIconButtonMgr = theGuiFactory.newStateIconButton();
+        theSimpleIconButtonMgr = theGuiFactory.newIconButton();
+        theStateIconButtonMgr = theGuiFactory.newIconButton();
         theStateButtonMgr = theGuiFactory.newScrollButton();
         theListButtonMgr = theGuiFactory.newListButton();
         theDateButtonMgr = theGuiFactory.newDateButton();
@@ -270,8 +266,9 @@ public class TethysFXScrollUIExample
         myGrid.addCell(theSimpleIconValue);
         myGrid.allowCellGrowth(theSimpleIconValue);
         myGrid.newRow();
-        theSimpleIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
-        theHelper.buildSimpleIconState(theSimpleIconButtonMgr, TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        theSimpleIconButtonMgr.setIconMapSet(p -> myMapSet);
+        theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
         theSimpleIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -292,11 +289,10 @@ public class TethysFXScrollUIExample
         myGrid.allowCellGrowth(theStateIconValue);
         myGrid.newRow();
         theHelper.buildStateButton(theStateButtonMgr);
-        theStateIconButtonMgr.setWidth(DEFAULT_ICONWIDTH);
-        theHelper.buildStateIconState(theStateIconButtonMgr,
-                TethysHelperIcon.OPENFALSE,
-                TethysHelperIcon.OPENTRUE,
-                TethysHelperIcon.CLOSEDTRUE);
+        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        theStateIconButtonMgr.setIconMapSet(p -> myMap.get(theStateButtonMgr.getValue()));
+        theStateIconButtonMgr.setNullMargins();
+        theStateIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
         theStateIconButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
@@ -306,8 +302,8 @@ public class TethysFXScrollUIExample
 
         /* Add listener */
         theStateButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            theStateIconButtonMgr.setMachineState(e.getDetails(IconState.class));
             setStateIconValue(theStateIconButtonMgr.getValue());
+            theStateIconButtonMgr.applyButtonState();
             pStage.sizeToScene();
         });
 

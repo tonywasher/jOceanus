@@ -61,7 +61,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableShortColumn;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStateIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableUnitsColumn;
 
@@ -344,14 +343,6 @@ public class MetisSwingTableManager<R extends MetisDataVersionedItem>
     public <T> TethysSwingTableIconColumn<T, MetisDataField, R> declareIconColumn(final MetisDataField pId,
                                                                                   final Class<T> pClass) {
         TethysSwingTableIconColumn<T, MetisDataField, R> myColumn = getTable().declareIconColumn(pId, pClass);
-        myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
-        return myColumn;
-    }
-
-    @Override
-    public <T> TethysSwingTableStateIconColumn<T, MetisDataField, R> declareStateIconColumn(final MetisDataField pId,
-                                                                                            final Class<T> pClass) {
-        TethysSwingTableStateIconColumn<T, MetisDataField, R> myColumn = getTable().declareStateIconColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
         return myColumn;
     }

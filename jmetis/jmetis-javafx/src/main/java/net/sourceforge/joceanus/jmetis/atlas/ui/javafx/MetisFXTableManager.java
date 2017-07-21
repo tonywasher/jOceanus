@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableShortColumn;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStateIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableUnitsColumn;
 
@@ -244,14 +243,6 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public <T> TethysFXTableIconColumn<T, MetisDataField, R> declareIconColumn(final MetisDataField pId,
                                                                                final Class<T> pClass) {
         TethysFXTableIconColumn<T, MetisDataField, R> myColumn = getTable().declareIconColumn(pId, pClass);
-        myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
-        return myColumn;
-    }
-
-    @Override
-    public <T> TethysFXTableStateIconColumn<T, MetisDataField, R> declareStateIconColumn(final MetisDataField pId,
-                                                                                         final Class<T> pClass) {
-        TethysFXTableStateIconColumn<T, MetisDataField, R> myColumn = getTable().declareStateIconColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
         return myColumn;
     }
