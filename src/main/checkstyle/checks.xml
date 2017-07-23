@@ -122,8 +122,8 @@
             <!-- Checks for Size Violations.                    -->
             <!-- See http://checkstyle.sf.net/config_sizes.html -->
             <module name="LineLength">
-              <property name="ignorePattern" value="^ \* \$URL: http://.*\$$"/>
-              <property name="max" value="200"/>
+              <property name="ignorePattern" value="^ \* \$URL: http.*\$$"/>
+               <property name="max" value="200"/>
             </module>
             <module name="MethodLength">
               <property name="max" value="250"/>

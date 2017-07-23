@@ -1246,8 +1246,7 @@ public class BouncyKeyPair
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
-         * @param pSecond the second key
+         * @param pThat the key to compare with
          * @return true/false
          */
         private boolean compareKeys(final BouncyMcEliecePublicKey pThat) {
@@ -1382,8 +1381,7 @@ public class BouncyKeyPair
 
         /**
          * CompareKeys.
-         * @param pFirst the first key
-         * @param pSecond the second key
+         * @param pThat the key to compare with
          * @return true/false
          */
         private boolean compareKeys(final BouncyMcEliecePrivateKey pThat) {

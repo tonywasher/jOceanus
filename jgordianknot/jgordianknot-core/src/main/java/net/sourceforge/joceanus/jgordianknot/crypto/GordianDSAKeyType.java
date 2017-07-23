@@ -58,8 +58,8 @@ public enum GordianDSAKeyType {
 
     /**
      * Constructor.
-     * @param pName the name of the curve
-     * @param pSize the bitSize of the curve
+     * @param pKeySize the keySize
+     * @param pHashSize the hashSize
      */
     GordianDSAKeyType(final int pKeySize,
                       final int pHashSize) {
