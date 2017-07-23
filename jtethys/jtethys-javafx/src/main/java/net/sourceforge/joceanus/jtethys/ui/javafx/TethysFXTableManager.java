@@ -32,6 +32,8 @@ import java.util.Comparator;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -44,6 +46,7 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -56,6 +59,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRawDeci
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 
@@ -398,12 +402,53 @@ public class TethysFXTableManager<C, R>
     }
 
     /**
+     * Column Definition.
+     * @param <T> the value type
+     * @param <C> the column identity
+     * @param <R> the row type
+     */
+    public abstract static class TethysFXTableValidatedColumn<T, C, R>
+            extends TethysFXTableColumn<T, C, R>
+            implements TethysTableValidatedColumn<T, C, R, Node, Node> {
+        /**
+         * The validator.
+         */
+        private BiFunction<T, R, String> theValidator;
+
+        /**
+         * Constructor.
+         * @param pTable the containing table
+         * @param pId the id of the column
+         * @param pType the type of the column
+         */
+        protected TethysFXTableValidatedColumn(final TethysFXTableManager<C, R> pTable,
+                                               final C pId,
+                                               final TethysFieldType pType) {
+            /* Call super-constructor */
+            super(pTable, pId, pType);
+
+            /* Initialise validator */
+            theValidator = (t, r) -> null;
+        }
+
+        @Override
+        public void setValidator(final BiFunction<T, R, String> pValidator) {
+            theValidator = pValidator;
+        }
+
+        @Override
+        public BiFunction<T, R, String> getValidator() {
+            return theValidator;
+        }
+    }
+
+    /**
      * String Column.
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysFXTableStringColumn<C, R>
-            extends TethysFXTableColumn<String, C, R> {
+            extends TethysFXTableValidatedColumn<String, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -422,7 +467,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableCharArrayColumn<C, R>
-            extends TethysFXTableColumn<char[], C, R> {
+            extends TethysFXTableValidatedColumn<char[], C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -441,7 +486,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableShortColumn<C, R>
-            extends TethysFXTableColumn<Short, C, R> {
+            extends TethysFXTableValidatedColumn<Short, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -460,7 +505,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableIntegerColumn<C, R>
-            extends TethysFXTableColumn<Integer, C, R> {
+            extends TethysFXTableValidatedColumn<Integer, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -479,7 +524,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableLongColumn<C, R>
-            extends TethysFXTableColumn<Long, C, R> {
+            extends TethysFXTableValidatedColumn<Long, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -498,7 +543,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRawDecimalColumn<C, R>
-            extends TethysFXTableColumn<TethysDecimal, C, R>
+            extends TethysFXTableValidatedColumn<TethysDecimal, C, R>
             implements TethysTableRawDecimalColumn<C, R, Node, Node> {
         /**
          * Raw decimals supplier.
@@ -537,7 +582,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableMoneyColumn<C, R>
-            extends TethysFXTableColumn<TethysMoney, C, R>
+            extends TethysFXTableValidatedColumn<TethysMoney, C, R>
             implements TethysTableCurrencyColumn<TethysMoney, C, R, Node, Node> {
         /**
          * Currency supplier.
@@ -576,7 +621,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTablePriceColumn<C, R>
-            extends TethysFXTableColumn<TethysPrice, C, R>
+            extends TethysFXTableValidatedColumn<TethysPrice, C, R>
             implements TethysTableCurrencyColumn<TethysPrice, C, R, Node, Node> {
         /**
          * Currency supplier.
@@ -615,7 +660,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRateColumn<C, R>
-            extends TethysFXTableColumn<TethysRate, C, R> {
+            extends TethysFXTableValidatedColumn<TethysRate, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -634,7 +679,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableUnitsColumn<C, R>
-            extends TethysFXTableColumn<TethysUnits, C, R> {
+            extends TethysFXTableValidatedColumn<TethysUnits, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -653,7 +698,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutionColumn<C, R>
-            extends TethysFXTableColumn<TethysDilution, C, R> {
+            extends TethysFXTableValidatedColumn<TethysDilution, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -672,7 +717,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRatioColumn<C, R>
-            extends TethysFXTableColumn<TethysRatio, C, R> {
+            extends TethysFXTableValidatedColumn<TethysRatio, C, R> {
         /**
          * Constructor.
          * @param pTable the table
@@ -691,7 +736,7 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutedPriceColumn<C, R>
-            extends TethysFXTableColumn<TethysDilutedPrice, C, R>
+            extends TethysFXTableValidatedColumn<TethysDilutedPrice, C, R>
             implements TethysTableCurrencyColumn<TethysDilutedPrice, C, R, Node, Node> {
         /**
          * Currency supplier.
@@ -730,7 +775,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDateColumn<C, R>
-            extends TethysFXTableColumn<TethysDate, C, R> {
+            extends TethysFXTableColumn<TethysDate, C, R>
+            implements TethysTableDateColumn<C, R, Node, Node> {
+        /**
+         * Date configurator.
+         */
+        private BiConsumer<R, TethysDateConfig> theConfigurator;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -740,6 +791,21 @@ public class TethysFXTableManager<C, R>
                                           final C pId) {
             super(pTable, pId, TethysFieldType.DATE);
             declareCellFactory(getTable().theCellFactory.dateCellFactory(this));
+            theConfigurator = (r, c) -> {
+            };
+        }
+
+        @Override
+        public void setDateConfigurator(final BiConsumer<R, TethysDateConfig> pConfigurator) {
+            theConfigurator = pConfigurator;
+        }
+
+        /**
+         * Obtain the date configurator.
+         * @return the configurator
+         */
+        protected BiConsumer<R, TethysDateConfig> getDateConfigurator() {
+            return theConfigurator;
         }
     }
 
@@ -750,7 +816,13 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableScrollColumn<T, C, R>
-            extends TethysFXTableColumn<T, C, R> {
+            extends TethysFXTableColumn<T, C, R>
+            implements TethysTableScrollColumn<T, C, R, Node, Node> {
+        /**
+         * Menu configurator.
+         */
+        private BiConsumer<R, TethysScrollMenu<T, Node>> theConfigurator;
+
         /**
          * Constructor.
          * @param pTable the table
@@ -762,6 +834,21 @@ public class TethysFXTableManager<C, R>
                                             final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.SCROLL);
             declareCellFactory(getTable().theCellFactory.scrollCellFactory(this, pClass));
+            theConfigurator = (r, c) -> {
+            };
+        }
+
+        @Override
+        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T, Node>> pConfigurator) {
+            theConfigurator = pConfigurator;
+        }
+
+        /**
+         * Obtain the menu configurator.
+         * @return the configurator
+         */
+        protected BiConsumer<R, TethysScrollMenu<T, Node>> getMenuConfigurator() {
+            return theConfigurator;
         }
     }
 

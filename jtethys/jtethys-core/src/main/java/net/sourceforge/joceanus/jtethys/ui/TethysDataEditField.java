@@ -26,10 +26,13 @@ import java.util.Currency;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -78,10 +81,10 @@ public interface TethysDataEditField<T, N, I>
     void showCmdButton(boolean pShow);
 
     /**
-     * Obtain the command menu.
-     * @return the command menu.
+     * Set the command menu configurator.
+     * @param pConfigurator the configurator.
      */
-    TethysScrollMenu<String, I> getCmdMenu();
+    void setCmdMenuConfigurator(Consumer<TethysScrollMenu<String, I>> pConfigurator);
 
     /**
      * Set the attribute state.
@@ -166,6 +169,12 @@ public interface TethysDataEditField<T, N, I>
         private TethysScrollMenu<String, I> theCmdMenu;
 
         /**
+         * The CommandMenu Configurator.
+         */
+        private Consumer<TethysScrollMenu<String, I>> theCmdMenuConfigurator = c -> {
+        };
+
+        /**
          * Constructor.
          * @param pFactory the GUI factory
          */
@@ -234,24 +243,22 @@ public interface TethysDataEditField<T, N, I>
             return theValue;
         }
 
-        @Override
-        public TethysScrollMenu<String, I> getCmdMenu() {
+        /**
+         * Obtain the command menu.
+         * @return the command menu
+         */
+        protected TethysScrollMenu<String, I> getCmdMenu() {
             return theCmdMenu;
+        }
+
+        @Override
+        public void setCmdMenuConfigurator(final Consumer<TethysScrollMenu<String, I>> pConfigurator) {
+            theCmdMenuConfigurator = pConfigurator;
         }
 
         @Override
         public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
             return theEventManager.getEventRegistrar();
-        }
-
-        /**
-         * Set the validator.
-         * <p>
-         * This should validate the value and return null for OK, and an error text for failure
-         * @param pValidator the validator
-         */
-        public void setValidator(final Function<T, String> pValidator) {
-            throw new UnsupportedOperationException();
         }
 
         /**
@@ -274,9 +281,9 @@ public interface TethysDataEditField<T, N, I>
         /**
          * handleCmdMenuRequest.
          */
-        public void handleCmdMenuRequest() {
+        protected void handleCmdMenuRequest() {
             /* fire menuBuild actionEvent */
-            fireEvent(TethysUIEvent.PREPARECMDDIALOG, theCmdMenu);
+            theCmdMenuConfigurator.accept(theCmdMenu);
 
             /* If a menu is provided */
             if (!theCmdMenu.isEmpty()) {
@@ -310,6 +317,23 @@ public interface TethysDataEditField<T, N, I>
             /* Store the menu */
             theCmdMenu = pMenu;
         }
+    }
+
+    /**
+     * Generic class for displaying and editing a data field.
+     * @param <T> the data type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    interface TethysValidatedEditField<T, N, I>
+            extends TethysDataEditField<T, N, I> {
+        /**
+         * Set the validator.
+         * <p>
+         * This should validate the value and return null for OK, and an error text for failure
+         * @param pValidator the validator
+         */
+        void setValidator(final Function<T, String> pValidator);
     }
 
     /**
@@ -501,7 +525,7 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysRawDecimalEditField<N, I>
-            extends TethysDataEditField<TethysDecimal, N, I> {
+            extends TethysValidatedEditField<TethysDecimal, N, I> {
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
@@ -516,7 +540,7 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysCurrencyEditField<T extends TethysMoney, N, I>
-            extends TethysDataEditField<T, N, I> {
+            extends TethysValidatedEditField<T, N, I> {
         /**
          * Set the Deemed Currency supplier.
          * @param pSupplier the supplier
@@ -540,31 +564,31 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * Date Field interface.
+     * DateButton Control.
      * @param <N> the Node type
      * @param <I> the Icon type
      */
-    @FunctionalInterface
-    interface TethysDateField<N, I> {
+    interface TethysDateButtonField<N, I>
+            extends TethysDataEditField<TethysDate, N, I> {
         /**
-         * Obtain the manager.
-         * @return the manager
+         * Set the dateConfig configurator.
+         * @param pConfigurator the configurator
          */
-        TethysDateButtonManager<N, I> getDateManager();
+        void setDateConfigurator(Consumer<TethysDateConfig> pConfigurator);
     }
 
     /**
-     * Scroll Field interface.
+     * Scroll Button Control.
      * @param <T> the value type
      * @param <N> the Node type
      * @param <I> the Icon type
      */
-    @FunctionalInterface
-    interface TethysScrollField<T, N, I> {
+    interface TethysScrollButtonField<T, N, I>
+            extends TethysDataEditField<T, N, I> {
         /**
-         * Obtain the manager.
-         * @return the manager
+         * Set the menu configurator.
+         * @param pConfigurator the configurator
          */
-        TethysScrollButtonManager<T, N, I> getScrollManager();
+        void setMenuConfigurator(Consumer<TethysScrollMenu<T, I>> pConfigurator);
     }
 }

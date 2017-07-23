@@ -67,29 +67,9 @@ public enum TethysUIEvent {
     EDITFOCUSLOST,
 
     /**
-     * Cell newly created.
-     */
-    CELLCREATE,
-
-    /**
-     * Cell about to be formatted.
-     */
-    CELLFORMAT,
-
-    /**
-     * Cell about to be edited.
-     */
-    CELLPREEDIT,
-
-    /**
-     * Cell about to be committed.
-     */
-    CELLPRECOMMIT,
-
-    /**
      * Cell has been committed.
      */
-    CELLCOMMITTED,
+    CELLCOMMIT,
 
     /**
      * New Stage declared.

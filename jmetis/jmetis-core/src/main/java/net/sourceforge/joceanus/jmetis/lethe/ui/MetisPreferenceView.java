@@ -209,7 +209,7 @@ public class MetisPreferenceView<N, I>
         /* Set listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePropertySetSelect());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPreferenceMenu());
+        theSelectButton.setMenuConfigurator(e -> buildPreferenceMenu());
 
         /* Create a new Scroll Pane and add the card to it */
         TethysScrollPaneManager<N, I> myScrollPane = theGuiFactory.newScrollPane();

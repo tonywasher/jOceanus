@@ -121,7 +121,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         /* Create the listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPortfolioMenu());
+        thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
     }
 
     @Override

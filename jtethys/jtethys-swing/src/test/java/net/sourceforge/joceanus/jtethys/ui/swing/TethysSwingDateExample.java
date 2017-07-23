@@ -40,14 +40,9 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 
@@ -362,35 +357,17 @@ public class TethysSwingDateExample {
         myDateColumn.setCellValueFactory(p -> p.getDate());
         myDateColumn.setCellCommitFactory((p, v) -> p.setDate(v));
         myDateColumn.setColumnWidth(COL_1_WIDTH);
+        myDateColumn.setDateConfigurator((r, c) -> {
+            c.setEarliestDate(theStartDate.getSelectedDate());
+            c.setLatestDate(theEndDate.getSelectedDate());
+            c.setShowNarrowDays(theNarrowSelect.isSelected());
+        });
 
         /* Create the comments column */
         TethysSwingTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(p -> p.getComments());
         myCommentsColumn.setCellCommitFactory((p, v) -> p.setComments(v));
         myCommentsColumn.setColumnWidth(COL_2_WIDTH);
-
-        /* Listen to preEdit requests */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEdit);
-    }
-
-    /**
-     * Handle preEdit event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysSwingTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysSwingTableCell.class);
-
-        /* If this is the Date column */
-        if (DateItem.PROP_DATE.equals(myCell.getColumnId())) {
-            /* Configure the button */
-            TethysDateField<?, ?> myDateField = (TethysDateField<?, ?>) myCell;
-            TethysDateButtonManager<?, ?> myManager = myDateField.getDateManager();
-            myManager.setEarliestDate(theStartDate.getSelectedDate());
-            myManager.setLatestDate(theEndDate.getSelectedDate());
-            myManager.setShowNarrowDays(theNarrowSelect.isSelected());
-        }
     }
 
     /**

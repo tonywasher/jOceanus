@@ -231,7 +231,7 @@ public abstract class TethysSwingDataTextField<T>
     }
 
     @Override
-    public TethysSwingScrollContextMenu<String> getCmdMenu() {
+    protected TethysSwingScrollContextMenu<String> getCmdMenu() {
         return (TethysSwingScrollContextMenu<String>) super.getCmdMenu();
     }
 
@@ -312,7 +312,8 @@ public abstract class TethysSwingDataTextField<T>
      * @param <T> the data type
      */
     public abstract static class TethysSwingTextEditField<T>
-            extends TethysSwingDataTextField<T> {
+            extends TethysSwingDataTextField<T>
+            implements TethysValidatedEditField<T, JComponent, Icon> {
         /**
          * The standard border.
          */

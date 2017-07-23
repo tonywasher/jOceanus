@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.function.Consumer;
+
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -34,8 +36,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <p>
  * Provides the following events.
  * <dl>
- * <dt>PREPAREDIALOG
- * <dd>fired prior to dialog being displayed to allow for configuration of dialog
  * <dt>NEWVALUE
  * <dd>fired when a new value is selected. <br>
  * Detail is new value
@@ -62,6 +62,12 @@ public abstract class TethysScrollButtonManager<T, N, I>
      * The Button.
      */
     private final TethysButton<N, I> theButton;
+
+    /**
+     * The MenuConfigurator.
+     */
+    private Consumer<TethysScrollMenu<T, I>> theMenuConfigurator = p -> {
+    };
 
     /**
      * The Padding.
@@ -217,6 +223,14 @@ public abstract class TethysScrollButtonManager<T, N, I>
     }
 
     /**
+     * Set the menuConfig configurator.
+     * @param pConfigurator the configurator
+     */
+    public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, I>> pConfigurator) {
+        theMenuConfigurator = pConfigurator;
+    }
+
+    /**
      * Set the value.
      * @param pValue the value to set.
      */
@@ -312,7 +326,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
         ensureMenu();
 
         /* fire menuBuild Event */
-        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theMenu);
+        theMenuConfigurator.accept(theMenu);
 
         /* If a menu is provided */
         if (!theMenu.isEmpty()) {

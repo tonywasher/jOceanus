@@ -40,14 +40,9 @@ import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
 
@@ -538,34 +533,16 @@ public class TethysFXDateExample
         TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
         myDateColumn.setColumnWidth(COL_DATE_WIDTH);
+        myDateColumn.setDateConfigurator((r, c) -> {
+            c.setEarliestDate(theStartDate.getSelectedDate());
+            c.setLatestDate(theEndDate.getSelectedDate());
+            c.setShowNarrowDays(showNarrowDays.get());
+        });
 
         /* Create the comments column */
         TethysFXTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(p -> p.getValue().commentsProperty());
         myCommentsColumn.setColumnWidth(COL_COMMENT_WIDTH);
-
-        /* Listen to preEdit requests */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.CELLPREEDIT, this::handlePreEdit);
-    }
-
-    /**
-     * Handle preEdit event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handlePreEdit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysFXTableCell<String, DateItem, ?> myCell = pEvent.getDetails(TethysFXTableCell.class);
-
-        /* If this is the Date column */
-        if (DateItem.PROP_DATE.equals(myCell.getColumnId())) {
-            /* Configure the button */
-            TethysDateField<?, ?> myDateField = (TethysDateField<?, ?>) myCell;
-            TethysDateButtonManager<?, ?> myManager = myDateField.getDateManager();
-            myManager.setEarliestDate(theStartDate.getSelectedDate());
-            myManager.setLatestDate(theEndDate.getSelectedDate());
-            myManager.setShowNarrowDays(showNarrowDays.get());
-        }
     }
 
     /**

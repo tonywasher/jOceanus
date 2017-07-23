@@ -279,7 +279,7 @@ public class LoanCategoryTable
         /* Listen to swing events */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleLoanSelection());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildSelectMenu());
+        theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
         theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
     }
 

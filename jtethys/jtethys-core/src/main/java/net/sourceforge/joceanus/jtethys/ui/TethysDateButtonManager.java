@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.function.Consumer;
+
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -34,8 +36,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * <p>
  * Provides the following events.
  * <dl>
- * <dt>PREPAREDIALOG
- * <dd>fired prior to dialog being displayed to allow for configuration of dialog
  * <dt>NEWVALUE
  * <dd>fired when a new date value is selected. <br>
  * Detail is new date value
@@ -66,6 +66,12 @@ public abstract class TethysDateButtonManager<N, I>
      * The Configuration.
      */
     private final TethysDateConfig theConfig;
+
+    /**
+     * The DateConfigurator.
+     */
+    private Consumer<TethysDateConfig> theDateConfigurator = p -> {
+    };
 
     /**
      * The Padding.
@@ -295,10 +301,18 @@ public abstract class TethysDateButtonManager<N, I>
     }
 
     /**
+     * Set the dateConfig configurator.
+     * @param pConfigurator the configurator
+     */
+    public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
+        theDateConfigurator = pConfigurator;
+    }
+
+    /**
      * handleDialogRequest.
      */
     protected void handleDialogRequest() {
-        theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
+        theDateConfigurator.accept(theConfig);
         menuShowing = true;
     }
 

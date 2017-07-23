@@ -150,7 +150,7 @@ public class MoneyWiseReportSelect<N, I>
         /* Add the listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theReportButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildReportMenu());
+        theReportButton.setMenuConfigurator(e -> buildReportMenu());
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
         theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());

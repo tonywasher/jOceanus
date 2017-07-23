@@ -105,7 +105,7 @@ public class PrometheusItemActions<G extends Enum<G>, N, I>
 
         /* Add the listener for item changes */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theGoToButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, e.getDetails()));
+        theGoToButton.setMenuConfigurator(c -> theEventManager.fireEvent(PrometheusUIEvent.BUILDGOTO, c));
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theEventManager.fireEvent(PrometheusUIEvent.GOTO, theGoToButton.getValue()));
         theEditButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.EDIT));
         theDeleteButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.DELETE));

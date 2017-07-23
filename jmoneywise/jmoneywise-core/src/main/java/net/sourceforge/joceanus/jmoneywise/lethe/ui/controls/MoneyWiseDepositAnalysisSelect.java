@@ -156,10 +156,10 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         /* Create the listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+        theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
         myRegistrar = theDepositButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDeposit());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildDepositMenu());
+        theDepositButton.setMenuConfigurator(e -> buildDepositMenu());
     }
 
     @Override

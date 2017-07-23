@@ -46,8 +46,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -73,11 +71,14 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingTextEditField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableMoneyColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTablePriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRawDecimalColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableScrollColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableValidatedColumn;
 
 /**
  * Swing Table Cell Factory.
@@ -279,7 +280,6 @@ public class TethysSwingTableCellFactory<C, R>
      * @return the cell
      */
     private <T> TethysSwingTableCell<T, C, R> listenToCell(final TethysSwingTableCell<T, C, R> pCell) {
-        theEventManager.fireEvent(TethysUIEvent.CELLCREATE, pCell);
         pCell.getEventRegistrar().addEventListener(theEventManager::cascadeEvent);
         return pCell;
     }
@@ -381,9 +381,11 @@ public class TethysSwingTableCellFactory<C, R>
             theRenderControl = pControl.cloneField(theRenderer);
 
             /* Apply validator to text field */
-            if (theEditControl instanceof TethysSwingTextEditField) {
+            if (theEditControl instanceof TethysSwingTextEditField
+                && theColumn instanceof TethysSwingTableValidatedColumn) {
                 TethysSwingTextEditField<T> myField = (TethysSwingTextEditField<T>) theEditControl;
-                myField.setValidator(t -> theColumn.getValidator().apply(t, theRow));
+                TethysSwingTableValidatedColumn<T, C, R> myColumn = (TethysSwingTableValidatedColumn<T, C, R>) theColumn;
+                myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             }
         }
 
@@ -586,14 +588,9 @@ public class TethysSwingTableCellFactory<C, R>
                 /* If there is no error */
                 boolean bComplete = false;
                 if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)
-                    && theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, TethysSwingTableCell.this)) {
+                    && theEventManager.fireEvent(TethysUIEvent.CELLCOMMIT, TethysSwingTableCell.this)) {
                     /* Pass call onwards */
                     bComplete = super.stopCellEditing();
-
-                    /* Notify of commit */
-                    if (bComplete) {
-                        theEventManager.fireEvent(TethysUIEvent.CELLCOMMITTED, TethysSwingTableCell.this);
-                    }
                 }
 
                 /* Return status */
@@ -635,9 +632,6 @@ public class TethysSwingTableCellFactory<C, R>
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.ERROR, myTable.isError(myId, myRow));
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.SELECTED, pSelected);
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.ALTERNATE, (pRow & 1) == 0);
-
-                /* Format the cell */
-                theEventManager.fireEvent(TethysUIEvent.CELLFORMAT, TethysSwingTableCell.this);
 
                 /* Set details and stop editing */
                 theRenderControl.setValue(getCastValue(pValue));
@@ -978,8 +972,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableDateCell<C, R>
-            extends TethysSwingTableCell<TethysDate, C, R>
-            implements TethysDateField<JComponent, Icon> {
+            extends TethysSwingTableCell<TethysDate, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -989,6 +982,7 @@ public class TethysSwingTableCellFactory<C, R>
                                            final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newDateField(), TethysDate.class);
             useDialog();
+            getControl().setDateConfigurator(c -> getColumn().getDateConfigurator().accept(getActiveRow(), c));
         }
 
         @Override
@@ -997,8 +991,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingDateButtonManager getDateManager() {
-            return getControl().getDateManager();
+        public TethysSwingTableDateColumn<C, R> getColumn() {
+            return (TethysSwingTableDateColumn<C, R>) super.getColumn();
         }
     }
 
@@ -1009,8 +1003,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableScrollCell<T, C, R>
-            extends TethysSwingTableCell<T, C, R>
-            implements TethysScrollField<T, JComponent, Icon> {
+            extends TethysSwingTableCell<T, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -1022,6 +1015,7 @@ public class TethysSwingTableCellFactory<C, R>
                                              final Class<T> pClass) {
             super(pColumn, pFactory.newScrollField(), pClass);
             useDialog();
+            getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
 
         @Override
@@ -1030,8 +1024,8 @@ public class TethysSwingTableCellFactory<C, R>
         }
 
         @Override
-        public TethysSwingScrollButtonManager<T> getScrollManager() {
-            return getControl().getScrollManager();
+        public TethysSwingTableScrollColumn<T, C, R> getColumn() {
+            return (TethysSwingTableScrollColumn<T, C, R>) super.getColumn();
         }
     }
 

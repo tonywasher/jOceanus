@@ -146,10 +146,10 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         /* Create the listener */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPortfolioMenu());
+        thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
         myRegistrar = theSecButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewSecurity());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildSecurityMenu());
+        theSecButton.setMenuConfigurator(e -> buildSecurityMenu());
     }
 
     @Override

@@ -236,7 +236,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
         /* Add the listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPortfolioMenu());
+        thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
         theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
         theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
         theShowClosed.getEventRegistrar().addEventListener(e -> handleNewClosed());

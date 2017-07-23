@@ -125,7 +125,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         /* Create the listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+        theButton.setMenuConfigurator(e -> buildCategoryMenu());
     }
 
     @Override

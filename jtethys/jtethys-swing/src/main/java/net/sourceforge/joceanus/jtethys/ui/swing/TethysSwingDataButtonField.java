@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Rectangle;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.swing.Icon;
@@ -33,14 +34,16 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -181,11 +184,16 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingScrollButtonField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysScrollField<T, JComponent, Icon> {
+            implements TethysScrollButtonField<T, JComponent, Icon> {
         /**
          * The scroll manager.
          */
         private final TethysSwingScrollButtonManager<T> theManager;
+
+        /**
+         * The configurator.
+         */
+        private Consumer<TethysScrollMenu<T, Icon>> theConfigurator;
 
         /**
          * The button.
@@ -233,6 +241,10 @@ public final class TethysSwingDataButtonField {
 
             /* Set listener on manager */
             pManager.getEventRegistrar().addEventListener(this::handleEvent);
+
+            /* Set configurator */
+            theConfigurator = p -> {
+            };
         }
 
         /**
@@ -245,9 +257,6 @@ public final class TethysSwingDataButtonField {
                     setValue(theManager.getValue());
                     fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
-                case PREPAREDIALOG:
-                    fireEvent(TethysUIEvent.PREPAREDIALOG, this);
-                    break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
                     break;
@@ -257,8 +266,9 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public TethysSwingScrollButtonManager<T> getScrollManager() {
-            return theManager;
+        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, Icon>> pConfigurator) {
+            theConfigurator = pConfigurator;
+            theManager.setMenuConfigurator(theConfigurator);
         }
 
         @Override
@@ -280,7 +290,12 @@ public final class TethysSwingDataButtonField {
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
             TethysSwingScrollContextMenu<T> myMenu = theManager.getMenu();
-            myMenu.showMenuAtPosition(pCell, SwingConstants.BOTTOM);
+            theConfigurator.accept(myMenu);
+            if (!myMenu.isEmpty()) {
+                myMenu.showMenuAtPosition(pCell, SwingConstants.BOTTOM);
+            } else {
+                haltCellEditing();
+            }
         }
 
         /**
@@ -304,7 +319,7 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingDateButtonField
             extends TethysSwingDataTextField<TethysDate>
-            implements TethysDateField<JComponent, Icon> {
+            implements TethysDateButtonField<JComponent, Icon> {
         /**
          * The date manager.
          */
@@ -362,9 +377,6 @@ public final class TethysSwingDataButtonField {
                     setValue(theManager.getSelectedDate());
                     fireEvent(TethysUIEvent.NEWVALUE, pEvent.getDetails());
                     break;
-                case PREPAREDIALOG:
-                    fireEvent(TethysUIEvent.PREPAREDIALOG, this);
-                    break;
                 case EDITFOCUSLOST:
                     haltCellEditing();
                     break;
@@ -374,8 +386,8 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public TethysSwingDateButtonManager getDateManager() {
-            return theManager;
+        public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
+            theManager.setDateConfigurator(pConfigurator);
         }
 
         @Override

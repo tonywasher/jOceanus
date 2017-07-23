@@ -374,13 +374,13 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Create the listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theFilterTypeButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleFilterType());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAnalysisTypeMenu());
+        theFilterTypeButton.setMenuConfigurator(e -> buildAnalysisTypeMenu());
         myRegistrar = theBucketButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBucket());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildBucketMenu());
+        theBucketButton.setMenuConfigurator(e -> buildBucketMenu());
         myRegistrar = theColumnButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewColumns());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildColumnsMenu());
+        theColumnButton.setMenuConfigurator(e -> buildColumnsMenu());
         theAnalysisView.getEventRegistrar().addEventListener(e -> setAnalysisView());
 
         /* Handle buttons */

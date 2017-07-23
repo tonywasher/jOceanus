@@ -27,12 +27,14 @@ import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -46,6 +48,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 
 /**
  * Tethys Table Manager.
@@ -294,35 +297,35 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<String, C, R, N, I> declareStringColumn(C pId);
+    public abstract TethysTableValidatedColumn<String, C, R, N, I> declareStringColumn(C pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<char[], C, R, N, I> declareCharArrayColumn(C pId);
+    public abstract TethysTableValidatedColumn<char[], C, R, N, I> declareCharArrayColumn(C pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<Short, C, R, N, I> declareShortColumn(C pId);
+    public abstract TethysTableValidatedColumn<Short, C, R, N, I> declareShortColumn(C pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<Integer, C, R, N, I> declareIntegerColumn(C pId);
+    public abstract TethysTableValidatedColumn<Integer, C, R, N, I> declareIntegerColumn(C pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<Long, C, R, N, I> declareLongColumn(C pId);
+    public abstract TethysTableValidatedColumn<Long, C, R, N, I> declareLongColumn(C pId);
 
     /**
      * Declare rawDecimal column.
@@ -350,28 +353,28 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysRate, C, R, N, I> declareRateColumn(C pId);
+    public abstract TethysTableValidatedColumn<TethysRate, C, R, N, I> declareRateColumn(C pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysUnits, C, R, N, I> declareUnitsColumn(C pId);
+    public abstract TethysTableValidatedColumn<TethysUnits, C, R, N, I> declareUnitsColumn(C pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysDilution, C, R, N, I> declareDilutionColumn(C pId);
+    public abstract TethysTableValidatedColumn<TethysDilution, C, R, N, I> declareDilutionColumn(C pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysRatio, C, R, N, I> declareRatioColumn(C pId);
+    public abstract TethysTableValidatedColumn<TethysRatio, C, R, N, I> declareRatioColumn(C pId);
 
     /**
      * Declare dilutedPrice column.
@@ -385,7 +388,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableColumn<TethysDate, C, R, N, I> declareDateColumn(C pId);
+    public abstract TethysTableDateColumn<C, R, N, I> declareDateColumn(C pId);
 
     /**
      * Declare scroll column.
@@ -394,8 +397,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<T, C, R, N, I> declareScrollColumn(C pId,
-                                                                             Class<T> pClass);
+    public abstract <T> TethysTableScrollColumn<T, C, R, N, I> declareScrollColumn(C pId,
+                                                                                   Class<T> pClass);
 
     /**
      * Declare list column.
@@ -498,7 +501,18 @@ public abstract class TethysTableManager<C, R, N, I>
          * @return the current tester
          */
         Predicate<R> getCellEditable();
+    }
 
+    /**
+     * Validated Column Definition.
+     * @param <T> the value type
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableValidatedColumn<T, C, R, N, I>
+            extends TethysTableColumn<T, C, R, N, I> {
         /**
          * Set the validity tester.
          * @param pValidator the validator
@@ -520,7 +534,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableRawDecimalColumn<C, R, N, I>
-            extends TethysTableColumn<TethysDecimal, C, R, N, I> {
+            extends TethysTableValidatedColumn<TethysDecimal, C, R, N, I> {
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
@@ -537,7 +551,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableCurrencyColumn<T extends TethysMoney, C, R, N, I>
-            extends TethysTableColumn<T, C, R, N, I> {
+            extends TethysTableValidatedColumn<T, C, R, N, I> {
         /**
          * Set the Deemed Currency supplier.
          * @param pSupplier the supplier
@@ -560,6 +574,39 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pSupplier the supplier
          */
         void setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
+    }
+
+    /**
+     * DateTableColumn.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableDateColumn<C, R, N, I>
+            extends TethysTableColumn<TethysDate, C, R, N, I> {
+        /**
+         * Set the Date configurator.
+         * @param pConfigurator the configurator
+         */
+        void setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
+    }
+
+    /**
+     * ScrollTableColumn.
+     * @param <T> the data type
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableScrollColumn<T, C, R, N, I>
+            extends TethysTableColumn<T, C, R, N, I> {
+        /**
+         * Set the Menu configurator.
+         * @param pConfigurator the configurator
+         */
+        void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T, I>> pConfigurator);
     }
 
     /**
@@ -618,11 +665,6 @@ public abstract class TethysTableManager<C, R, N, I>
         private Predicate<R> isCellEditable;
 
         /**
-         * The validator.
-         */
-        private BiFunction<T, R, String> theValidator;
-
-        /**
          * Constructor.
          * @param pTable the containing table
          * @param pId the id of the column
@@ -655,9 +697,8 @@ public abstract class TethysTableManager<C, R, N, I>
             /* Register the column */
             theTable.registerColumn(this);
 
-            /* Initialise editable and validator */
+            /* Initialise editable */
             isCellEditable = p -> true;
-            theValidator = (t, r) -> null;
         }
 
         @Override
@@ -759,16 +800,6 @@ public abstract class TethysTableManager<C, R, N, I>
         @Override
         public Predicate<R> getCellEditable() {
             return isCellEditable;
-        }
-
-        @Override
-        public void setValidator(final BiFunction<T, R, String> pValidator) {
-            theValidator = pValidator;
-        }
-
-        @Override
-        public BiFunction<T, R, String> getValidator() {
-            return theValidator;
         }
     }
 

@@ -218,7 +218,7 @@ public class StaticDataTable<L extends StaticList<T, S, E>, T extends StaticData
         /* Add listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewClass());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildNewMenu());
+        theNewButton.setMenuConfigurator(e -> buildNewMenu());
         theUpdateSet.getEventRegistrar().addEventListener(e -> theModel.fireNewDataEvents());
         theMenu = theNewButton.getMenu();
     }

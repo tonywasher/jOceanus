@@ -181,6 +181,11 @@ public abstract class TethysFXDataTextField<T>
                 e -> handleCmdMenuClosed());
     }
 
+    @Override
+    protected TethysFXScrollContextMenu<String> getCmdMenu() {
+        return (TethysFXScrollContextMenu<String>) super.getCmdMenu();
+    }
+
     /**
      * Obtain the label.
      * @return the label
@@ -195,11 +200,6 @@ public abstract class TethysFXDataTextField<T>
      */
     protected Control getEditControl() {
         return theEditControl;
-    }
-
-    @Override
-    public TethysFXScrollContextMenu<String> getCmdMenu() {
-        return (TethysFXScrollContextMenu<String>) super.getCmdMenu();
     }
 
     @Override
@@ -324,7 +324,8 @@ public abstract class TethysFXDataTextField<T>
      * @param <T> the data type
      */
     public abstract static class TethysFXTextEditField<T>
-            extends TethysFXDataTextField<T> {
+            extends TethysFXDataTextField<T>
+            implements TethysValidatedEditField<T, Node, Node> {
         /**
          * The error pseudoClass.
          */

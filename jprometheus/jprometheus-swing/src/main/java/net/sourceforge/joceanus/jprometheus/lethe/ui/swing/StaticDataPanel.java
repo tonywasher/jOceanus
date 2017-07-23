@@ -242,7 +242,7 @@ public class StaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         /* Add listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePanelSelection());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildDataMenu());
+        theSelectButton.setMenuConfigurator(e -> buildDataMenu());
         theDisabledCheckBox.getEventRegistrar().addEventListener(e -> showDisabled(theDisabledCheckBox.isSelected()));
         theActionButtons.getEventRegistrar().addEventListener(this::handleActionButtons);
         theError.getEventRegistrar().addEventListener(e -> handleErrorPanel());

@@ -240,13 +240,13 @@ public class CoeusStatementSelect<N, I>
 
         /* Add the listeners */
         theTotalsButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTotalSet());
-        theTotalsButton.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleTotalSetMenu());
+        theTotalsButton.setMenuConfigurator(this::handleTotalSetMenu);
         theMarketButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMarket());
         theMarketTypeButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMarketType());
         theMonthButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewMonth());
-        theMonthButton.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleMonthMenu());
+        theMonthButton.setMenuConfigurator(this::handleMonthMenu);
         theLoanButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
-        theLoanButton.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleLoanMenu());
+        theLoanButton.setMenuConfigurator(this::handleLoanMenu);
         theDateButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewDate());
 
         /* Add the cache listener */
@@ -278,11 +278,11 @@ public class CoeusStatementSelect<N, I>
 
     /**
      * Build totals menu.
+     * @param pMenu the menu to build
      */
-    private void handleTotalSetMenu() {
-        /* Create builder */
-        TethysScrollMenu<CoeusTotalSet, ?> myBuilder = theTotalsButton.getMenu();
-        myBuilder.removeAllItems();
+    private void handleTotalSetMenu(final TethysScrollMenu<CoeusTotalSet, I> pMenu) {
+        /* Reset menu */
+        pMenu.removeAllItems();
 
         /* Access the selected market */
         CoeusMarketProvider myProvider = theState.getProvider();
@@ -292,45 +292,45 @@ public class CoeusStatementSelect<N, I>
             /* If the totalSet is supported */
             if (myProvider.supportsTotalSet(myTotals)) {
                 /* Create a new MenuItem for the totalSet */
-                myBuilder.addItem(myTotals);
+                pMenu.addItem(myTotals);
             }
         }
     }
 
     /**
      * Build month menu.
+     * @param pMenu the menu to build
      */
-    private void handleMonthMenu() {
-        /* Create builder */
-        TethysScrollMenu<Month, ?> myBuilder = theMonthButton.getMenu();
-        myBuilder.removeAllItems();
+    private void handleMonthMenu(final TethysScrollMenu<Month, I> pMenu) {
+        /* Reset menu */
+        pMenu.removeAllItems();
 
         /* Add the AllMonths item */
-        myBuilder.addItem(null, NLS_ALL);
+        pMenu.addItem(null, NLS_ALL);
 
         /* Loop through the months */
         for (Month myMonth : Month.values()) {
             /* If the month is available */
             if (theState.availableMonth(myMonth)) {
                 /* Create a new MenuItem for the month */
-                myBuilder.addItem(myMonth);
+                pMenu.addItem(myMonth);
             }
         }
     }
 
     /**
      * Build loan menu.
+     * @param pMenu the menu to build
      */
-    private void handleLoanMenu() {
-        /* Create builder */
-        TethysScrollMenu<CoeusLoan, ?> myBuilder = theLoanButton.getMenu();
-        myBuilder.removeAllItems();
+    private void handleLoanMenu(final TethysScrollMenu<CoeusLoan, I> pMenu) {
+        /* Reset menu */
+        pMenu.removeAllItems();
 
         /* Add the AllLoans item */
-        myBuilder.addItem(null, NLS_ALL);
+        pMenu.addItem(null, NLS_ALL);
 
         /* Build the loans menu */
-        theState.buildLoansMenu(myBuilder);
+        theState.buildLoansMenu(pMenu);
     }
 
     /**

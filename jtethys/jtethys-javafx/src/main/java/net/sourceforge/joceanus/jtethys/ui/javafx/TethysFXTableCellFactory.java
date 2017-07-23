@@ -44,8 +44,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -71,11 +69,14 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXTextEditField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFXUnitsTextField;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableIconColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableMoneyColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTablePriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableRawDecimalColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableScrollColumn;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableValidatedColumn;
 
 /**
  * TableCell implementations built on DataEditFields.
@@ -282,7 +283,6 @@ public class TethysFXTableCellFactory<C, R>
      * @return the cell
      */
     private <T> TethysFXTableCell<T, C, R> listenToCell(final TethysFXTableCell<T, C, R> pCell) {
-        theEventManager.fireEvent(TethysUIEvent.CELLCREATE, pCell);
         pCell.getEventRegistrar().addEventListener(theEventManager::cascadeEvent);
         return pCell;
     }
@@ -359,9 +359,11 @@ public class TethysFXTableCellFactory<C, R>
             myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> handleCancel());
 
             /* Apply validator to a text field */
-            if (theControl instanceof TethysFXTextEditField) {
+            if (theControl instanceof TethysFXTextEditField
+                && theColumn instanceof TethysFXTableValidatedColumn) {
                 TethysFXTextEditField<T> myField = (TethysFXTextEditField<T>) theControl;
-                myField.setValidator(t -> theColumn.getValidator().apply(t, getActiveRow()));
+                TethysFXTableValidatedColumn<T, C, R> myColumn = (TethysFXTableValidatedColumn<T, C, R>) theColumn;
+                myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             }
         }
 
@@ -486,30 +488,24 @@ public class TethysFXTableCellFactory<C, R>
          * @param pNewValue the new value
          * @return continue edit true/false
          */
-        private boolean preCommitHook(final T pNewValue) {
+        private boolean commitHook(final T pNewValue) {
             theNewValue = pNewValue;
-            return theEventManager.fireEvent(TethysUIEvent.CELLPRECOMMIT, this);
+            return theEventManager.fireEvent(TethysUIEvent.CELLCOMMIT, this);
         }
 
         @Override
         public void commitEdit(final T pNewValue) {
-            /* Perform preCommitCheck */
-            if (!isCellInError()
-                && preCommitHook(pNewValue)) {
-                /* pass on the call */
-                super.commitEdit(pNewValue);
+            /* If we have no error */
+            if (!isCellInError()) {
+                /* Perform the commit */
+                if (commitHook(pNewValue)) {
+                    /* pass on the call */
+                    super.commitEdit(pNewValue);
+                }
 
-                /* Note that we have made a change */
-                postCommitHook();
+                /* Note that we are no longer editing */
                 getTable().setActiveCell(null);
             }
-        }
-
-        /**
-         * Method that should be overridden to provide control over postProcessing of a commit.
-         */
-        protected void postCommitHook() {
-            theEventManager.fireEvent(TethysUIEvent.CELLCOMMITTED, this);
         }
 
         /**
@@ -872,8 +868,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDateCell<C, R>
-            extends TethysFXTableCell<TethysDate, C, R>
-            implements TethysDateField<Node, Node> {
+            extends TethysFXTableCell<TethysDate, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -882,6 +877,7 @@ public class TethysFXTableCellFactory<C, R>
         protected TethysFXTableDateCell(final TethysFXTableColumn<TethysDate, C, R> pColumn,
                                         final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newDateField(), TethysDate.class);
+            getControl().setDateConfigurator(c -> getColumn().getDateConfigurator().accept(getActiveRow(), c));
         }
 
         @Override
@@ -890,8 +886,8 @@ public class TethysFXTableCellFactory<C, R>
         }
 
         @Override
-        public TethysFXDateButtonManager getDateManager() {
-            return getControl().getDateManager();
+        public TethysFXTableDateColumn<C, R> getColumn() {
+            return (TethysFXTableDateColumn<C, R>) super.getColumn();
         }
     }
 
@@ -902,8 +898,7 @@ public class TethysFXTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableScrollCell<T, C, R>
-            extends TethysFXTableCell<T, C, R>
-            implements TethysScrollField<T, Node, Node> {
+            extends TethysFXTableCell<T, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
@@ -914,6 +909,7 @@ public class TethysFXTableCellFactory<C, R>
                                           final TethysFXGuiFactory pFactory,
                                           final Class<T> pClass) {
             super(pColumn, pFactory.newScrollField(), pClass);
+            getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
 
         @Override
@@ -922,8 +918,8 @@ public class TethysFXTableCellFactory<C, R>
         }
 
         @Override
-        public TethysFXScrollButtonManager<T> getScrollManager() {
-            return getControl().getScrollManager();
+        public TethysFXTableScrollColumn<T, C, R> getColumn() {
+            return (TethysFXTableScrollColumn<T, C, R>) super.getColumn();
         }
     }
 

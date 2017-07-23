@@ -156,10 +156,10 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         /* Create the listener */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theCatButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu());
+        theCatButton.setMenuConfigurator(e -> buildCategoryMenu());
         myRegistrar = theLoanButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewLoan());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildLoanMenu());
+        theLoanButton.setMenuConfigurator(e -> buildLoanMenu());
     }
 
     @Override

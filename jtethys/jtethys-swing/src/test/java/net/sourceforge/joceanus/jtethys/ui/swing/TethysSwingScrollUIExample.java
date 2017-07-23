@@ -261,8 +261,7 @@ public class TethysSwingScrollUIExample {
         /* Add listener */
         theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> setScrollValue(e.getDetails(String.class)));
-        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG,
-                e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
+        theScrollButtonMgr.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
 
         /* Create list button line */
         theListButtonMgr.setBorderTitle("ListButton");

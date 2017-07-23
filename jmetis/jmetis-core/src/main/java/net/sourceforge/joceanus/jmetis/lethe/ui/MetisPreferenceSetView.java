@@ -49,8 +49,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysBaseDataEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysValidatedEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
@@ -374,7 +374,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysBaseDataEditField<Integer, N, I> theField;
+        private final TethysValidatedEditField<Integer, N, I> theField;
 
         /**
          * The Label item.
@@ -613,7 +613,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<E, N, I> theField;
+        private final TethysScrollButtonField<E, N, I> theField;
 
         /**
          * Constructor.
@@ -642,8 +642,8 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theGrid.newRow();
 
             /* Create listeners */
+            theField.setMenuConfigurator(this::buildMenu);
             TethysEventRegistrar<TethysUIEvent> myRegistrar = theField.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildMenu());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 pItem.setValue(theField.getValue());
                 notifyChanges();
@@ -652,15 +652,11 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
         /**
          * Build menu.
+         * @param pMenu the menu
          */
-        private void buildMenu() {
-            /* Access field details */
-            @SuppressWarnings("unchecked")
-            TethysScrollField<E, N, I> myField = (TethysScrollField<E, N, I>) theField;
-            TethysScrollMenu<E, I> myMenu = myField.getScrollManager().getMenu();
-
+        private void buildMenu(final TethysScrollMenu<E, I> pMenu) {
             /* reset the menu */
-            myMenu.removeAllItems();
+            pMenu.removeAllItems();
 
             /* Obtain the filter */
             Predicate<E> myFilter = theItem.getFilter();
@@ -670,7 +666,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
                 /* If the element is not filtered */
                 if (myFilter.test(myEnum)) {
                     /* Create a new MenuItem and add it to the popUp */
-                    myMenu.addItem(myEnum);
+                    pMenu.addItem(myEnum);
                 }
             }
         }

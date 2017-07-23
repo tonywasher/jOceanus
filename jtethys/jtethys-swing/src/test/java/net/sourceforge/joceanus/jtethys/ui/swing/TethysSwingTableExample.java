@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -123,8 +122,7 @@ public class TethysSwingTableExample {
 
         /* Listen to the table requests */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.CELLCREATE, this::handleCreate);
-        myRegistrar.addEventListener(TethysUIEvent.CELLCOMMITTED, this::handleCommit);
+        myRegistrar.addEventListener(TethysUIEvent.CELLCOMMIT, this::handleCommit);
 
         /* Create the name column */
         TethysSwingTableStringColumn<TethysDataId, TethysSwingTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);
@@ -212,6 +210,7 @@ public class TethysSwingTableExample {
         TethysSwingTableScrollColumn<String, TethysDataId, TethysSwingTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
         myScrollColumn.setCellValueFactory(p -> p.getScroll());
         myScrollColumn.setCellCommitFactory((p, v) -> p.setScroll(v));
+        myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
         TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
@@ -232,26 +231,6 @@ public class TethysSwingTableExample {
         /* Set Disabled indicator */
         theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.getUpdates() > 0);
         theTable.setDisabled(r -> r.getBoolean());
-    }
-
-    /**
-     * Handle create event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handleCreate(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Obtain the Cell */
-        TethysSwingTableCell<?, TethysDataId, TethysSwingTableItem> myCell = pEvent.getDetails(TethysSwingTableCell.class);
-
-        /* Configure static configuration for cells */
-        switch (myCell.getColumnId()) {
-            case SCROLL:
-                TethysScrollField<String, ?, ?> myScrollField = (TethysScrollField<String, ?, ?>) myCell;
-                theHelper.buildContextMenu(myScrollField.getScrollManager().getMenu());
-                break;
-            default:
-                break;
-        }
     }
 
     /**

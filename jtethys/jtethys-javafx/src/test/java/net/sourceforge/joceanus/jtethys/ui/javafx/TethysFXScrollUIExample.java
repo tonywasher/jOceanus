@@ -219,8 +219,7 @@ public class TethysFXScrollUIExample
             setScrollValue(e.getDetails(String.class));
             pStage.sizeToScene();
         });
-        theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG,
-                e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
+        theScrollButtonMgr.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
 
         /* Create list button line */
         theListButtonMgr.setBorderTitle("ListButton");

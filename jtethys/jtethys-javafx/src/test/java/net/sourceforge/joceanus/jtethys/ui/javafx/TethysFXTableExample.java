@@ -32,7 +32,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -41,7 +40,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
@@ -101,10 +99,9 @@ public class TethysFXTableExample
         theTable = theGuiFactory.newTable();
         theTable.setItems(theData);
 
-        /* Listen to preCommit requests */
+        /* Listen to Commit requests */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.CELLCREATE, this::handleCreate);
-        myRegistrar.addEventListener(TethysUIEvent.CELLCOMMITTED, this::handleCommit);
+        myRegistrar.addEventListener(TethysUIEvent.CELLCOMMIT, this::handleCommit);
 
         /* Create the name column */
         TethysFXTableStringColumn<TethysDataId, TethysFXTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);
@@ -177,6 +174,7 @@ public class TethysFXTableExample
         /* Create the scroll column */
         TethysFXTableScrollColumn<String, TethysDataId, TethysFXTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
         myScrollColumn.setCellValueFactory(p -> p.getValue().scrollProperty());
+        myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
         TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
@@ -195,26 +193,6 @@ public class TethysFXTableExample
         /* Set Disabled indicator */
         theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.updatesProperty().getValue() > 0);
         theTable.setDisabled(r -> r.booleanProperty().getValue());
-    }
-
-    /**
-     * Handle create event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handleCreate(final TethysEvent<TethysUIEvent> pEvent) {
-        /* Obtain the Cell */
-        TethysFXTableCell<?, TethysDataId, TethysFXTableItem> myCell = pEvent.getDetails(TethysFXTableCell.class);
-
-        /* Configure static configuration for cells */
-        switch (myCell.getColumnId()) {
-            case SCROLL:
-                TethysScrollField<String, ?, ?> myScrollField = (TethysScrollField<String, ?, ?>) myCell;
-                theHelper.buildContextMenu(myScrollField.getScrollManager().getMenu());
-                break;
-            default:
-                break;
-        }
     }
 
     /**

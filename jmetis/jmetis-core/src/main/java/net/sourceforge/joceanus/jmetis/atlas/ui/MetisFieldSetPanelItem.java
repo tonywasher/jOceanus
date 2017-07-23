@@ -23,11 +23,13 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Currency;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -40,17 +42,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollField;
-import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -147,7 +148,6 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
         /* Add listeners */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theEdit.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, this::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, this::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, this::cascadeEvent);
@@ -572,12 +572,11 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
         }
 
         /**
-         * Obtain the Date Manager.
-         * @return the manager
+         * Set Date configurator.
+         * @param pConfigurator the configurator
          */
-        @SuppressWarnings("unchecked")
-        public TethysDateButtonManager<N, I> getDateManager() {
-            return ((TethysDateField<N, I>) getEditField()).getDateManager();
+        public void setConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
+            ((TethysDateButtonField<N, I>) getEditField()).setDateConfigurator(pConfigurator);
         }
     }
 
@@ -603,12 +602,11 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
         }
 
         /**
-         * Obtain the Scroll Manager.
-         * @return the manager
+         * Set Menu configurator.
+         * @param pConfigurator the configurator
          */
-        @SuppressWarnings("unchecked")
-        public TethysScrollButtonManager<T, N, I> getScrollManager() {
-            return ((TethysScrollField<T, N, I>) getEditField()).getScrollManager();
+        public void setConfigurator(final Consumer<TethysScrollMenu<T, I>> pConfigurator) {
+            ((TethysScrollButtonField<T, N, I>) getEditField()).setMenuConfigurator(pConfigurator);
         }
     }
 

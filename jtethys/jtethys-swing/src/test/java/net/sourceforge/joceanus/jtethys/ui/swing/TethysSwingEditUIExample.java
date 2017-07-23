@@ -165,11 +165,6 @@ public class TethysSwingEditUIExample {
     private final TethysSwingIconButtonField<Boolean> theIconField;
 
     /**
-     * The scroll button manager.
-     */
-    private final TethysSwingScrollButtonManager<String> theScrollButtonMgr;
-
-    /**
      * The scroll button field.
      */
     private final TethysSwingScrollButtonField<String> theScrollField;
@@ -231,7 +226,7 @@ public class TethysSwingEditUIExample {
 
         /* Create resources */
         theStringField = theGuiFactory.newStringField();
-        theStringField.showCmdButton(true);
+        configureCmdMenu(theStringField);
         thePassField = theGuiFactory.newCharArrayField();
         theShortField = theGuiFactory.newShortField();
         theIntegerField = theGuiFactory.newIntegerField();
@@ -250,7 +245,6 @@ public class TethysSwingEditUIExample {
         /* Create button fields */
         theColorField = theGuiFactory.newColorField();
         theScrollField = theGuiFactory.newScrollField();
-        theScrollButtonMgr = theScrollField.getScrollManager();
         theDateField = theGuiFactory.newDateField();
         theIconField = theGuiFactory.newIconField();
         theListField = theGuiFactory.newListField();
@@ -472,7 +466,7 @@ public class TethysSwingEditUIExample {
         myGrid.allowCellGrowth(theScrollField);
         myGrid.newRow();
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
-        theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theHelper.buildContextMenu(theScrollButtonMgr.getMenu()));
+        theScrollField.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
         theScrollField.setValue("First");
 
         /* Create DateButton field line */
@@ -636,13 +630,22 @@ public class TethysSwingEditUIExample {
             case NEWCOMMAND:
                 setResults(mySource + "-Cmd", pEvent.getDetails());
                 break;
-            case PREPARECMDDIALOG:
-                pField.getCmdMenu().removeAllItems();
-                pField.getCmdMenu().addItem("TestCmd");
-                break;
             default:
                 break;
         }
+    }
+
+    /**
+     * Configure a cmdMenu.
+     * @param pField the command menu to configure
+     */
+    private void configureCmdMenu(final TethysSwingDataTextField<?> pField) {
+        /* Configure the command menu */
+        pField.showCmdButton(true);
+        pField.setCmdMenuConfigurator(c -> {
+            c.removeAllItems();
+            c.addItem("TestCmd");
+        });
     }
 
     /**

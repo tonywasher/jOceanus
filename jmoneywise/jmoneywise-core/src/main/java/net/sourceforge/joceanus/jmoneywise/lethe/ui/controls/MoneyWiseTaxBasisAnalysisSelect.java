@@ -150,10 +150,10 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         /* Create the listener */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theBasisButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewBasis());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildBasisMenu());
+        theBasisButton.setMenuConfigurator(e -> buildBasisMenu());
         myRegistrar = theAccountButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewAccount());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAccountMenu());
+        theAccountButton.setMenuConfigurator(e -> buildAccountMenu());
     }
 
     @Override

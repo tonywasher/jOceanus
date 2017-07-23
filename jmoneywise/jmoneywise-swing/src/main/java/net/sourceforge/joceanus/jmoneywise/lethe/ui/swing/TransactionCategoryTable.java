@@ -280,7 +280,7 @@ public class TransactionCategoryTable
         /* Listen to swing events */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleCategorySelection());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildSelectMenu());
+        theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
         theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
     }
 

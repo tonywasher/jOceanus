@@ -118,7 +118,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
         /* Create the listener */
         TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
-        myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildTagMenu());
+        theTagButton.setMenuConfigurator(e -> buildTagMenu());
         theTagMenu = theTagButton.getMenu();
     }
 
