@@ -160,13 +160,14 @@ public final class GordianStreamManager {
             boolean bLast = !myIterator.hasNext();
 
             /* Determine mode and padding */
-            GordianPadding myPadding = bFirst
-                                              ? GordianPadding.NONE
-                                              : bLast
-                                                      ? GordianPadding.ISO7816D4
-                                                      : myKey.getKeyType().isStdBlock()
-                                                                                        ? GordianPadding.NONE
-                                                                                        : GordianPadding.CTS;
+            GordianPadding myPadding = GordianPadding.NONE;
+            if (!bFirst) {
+                if (bLast) {
+                    myPadding = GordianPadding.ISO7816D4;
+                } else if (!myKey.getKeyType().isStdBlock()) {
+                    myPadding = GordianPadding.CTS;
+                }
+            }
             GordianSymCipherSpec mySpec = bFirst
                                                  ? GordianSymCipherSpec.sic(myKey.getKeyType())
                                                  : GordianSymCipherSpec.ecb(myKey.getKeyType(), myPadding);

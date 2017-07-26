@@ -214,7 +214,7 @@ public class CoeusMarketSnapShot
                 myLoan = getSnapShotLoan(myLoan);
 
                 /* Add to the loans history */
-                myLoan.addTransactionToHistory(myDate, myTransaction);
+                myLoan.addTransactionToHistory(myTransaction);
             }
         }
 

@@ -1336,7 +1336,7 @@ public class TethysFXScrollContextMenu<T>
         /**
          * The item.
          */
-        private final TethysFXScrollMenuItem<T> theItem;
+        private final transient TethysFXScrollMenuItem<T> theItem;
 
         /**
          * Constructor.

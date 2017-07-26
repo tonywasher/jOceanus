@@ -191,9 +191,8 @@ public abstract class CoeusMarket
      * Obtain preExisting loan.
      * @param pId the id of the loan
      * @return the loan
-     * @throws OceanusException on error
      */
-    public CoeusLoan getLoanById(final String pId) throws OceanusException {
+    public CoeusLoan getLoanById(final String pId) {
         return theLoanMap.get(pId);
     }
 
@@ -264,7 +263,6 @@ public abstract class CoeusMarket
         Iterator<CoeusTransaction> myIterator = transactionIterator();
         while (myIterator.hasNext()) {
             CoeusTransaction myTransaction = myIterator.next();
-            TethysDate myDate = myTransaction.getDate();
 
             /* Adjust the history */
             theHistory.addTransactionToHistory(myTransaction);
@@ -273,7 +271,7 @@ public abstract class CoeusMarket
             CoeusLoan myLoan = myTransaction.getLoan();
             if (myLoan != null) {
                 /* Add to the loans history */
-                myLoan.addTransactionToHistory(myDate, myTransaction);
+                myLoan.addTransactionToHistory(myTransaction);
             }
         }
     }

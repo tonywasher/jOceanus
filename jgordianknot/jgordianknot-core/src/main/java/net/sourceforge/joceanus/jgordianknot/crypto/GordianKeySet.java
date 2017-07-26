@@ -296,9 +296,9 @@ public final class GordianKeySet {
      * @param pKeyMap the keyMap
      * @throws OceanusException on error
      */
-    private <T> void declareKey(final GordianKey<T> pKey,
-                                final Predicate<T> pPredicate,
-                                final Map<T, GordianKey<T>> pKeyMap) throws OceanusException {
+    private static <T> void declareKey(final GordianKey<T> pKey,
+                                       final Predicate<T> pPredicate,
+                                       final Map<T, GordianKey<T>> pKeyMap) throws OceanusException {
         /* Access keyType */
         T myKeyType = pKey.getKeyType();
 

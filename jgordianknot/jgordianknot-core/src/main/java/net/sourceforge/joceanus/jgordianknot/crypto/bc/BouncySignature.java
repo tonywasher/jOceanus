@@ -83,6 +83,16 @@ public final class BouncySignature {
     private static final int MGF1_SALTLEN = 64;
 
     /**
+     * Signature generation error.
+     */
+    private static final String ERROR_SIGGEN = "Failed to generate signature";
+
+    /**
+     * Signature validation error.
+     */
+    private static final String ERROR_SIGPARSE = "Failed to parse signature";
+
+    /**
      * Private constructor.
      */
     private BouncySignature() {
@@ -241,7 +251,7 @@ public final class BouncySignature {
                 return getSigner().generateSignature();
             } catch (DataLengthException
                     | CryptoException e) {
-                throw new GordianCryptoException("Failed to generate signature", e);
+                throw new GordianCryptoException(ERROR_SIGGEN, e);
             }
         }
     }
@@ -311,15 +321,8 @@ public final class BouncySignature {
 
         @Override
         public byte[] sign() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                BigInteger[] myValues = theSigner.generateSignature(getDigest());
-                return dsaEncode(myValues[0], myValues[1]);
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianCryptoException("Failed to generate signature", e);
-            }
+            BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            return dsaEncode(myValues[0], myValues[1]);
         }
     }
 
@@ -356,15 +359,8 @@ public final class BouncySignature {
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                BigInteger[] myValues = dsaDecode(pSignature);
-                return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianCryptoException("Failed to parse signature", e);
-            }
+            BigInteger[] myValues = dsaDecode(pSignature);
+            return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }
 
@@ -373,32 +369,40 @@ public final class BouncySignature {
      * @param r first integer
      * @param s second integer
      * @return encoded set
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
     private static byte[] dsaEncode(final BigInteger r,
-                                    final BigInteger s) throws IOException {
-        ASN1EncodableVector v = new ASN1EncodableVector();
+                                    final BigInteger s) throws OceanusException {
+        try {
+            ASN1EncodableVector v = new ASN1EncodableVector();
 
-        v.add(new ASN1Integer(r));
-        v.add(new ASN1Integer(s));
+            v.add(new ASN1Integer(r));
+            v.add(new ASN1Integer(s));
 
-        return new DERSequence(v).getEncoded(ASN1Encoding.DER);
+            return new DERSequence(v).getEncoded(ASN1Encoding.DER);
+        } catch (IOException e) {
+            throw new GordianCryptoException(ERROR_SIGGEN, e);
+        }
     }
 
     /**
      * BouncyCastle DSA Decoder. Copied from SignatureSpi.java
      * @param pEncoded the encode set
      * @return array of integers
-     * @throws IOException on error
+     * @throws OceanusException on error
      */
-    private static BigInteger[] dsaDecode(final byte[] pEncoded) throws IOException {
-        ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
-        BigInteger[] sig = new BigInteger[2];
+    private static BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
+        try {
+            ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
+            BigInteger[] sig = new BigInteger[2];
 
-        sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
-        sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
+            sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
+            sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
 
-        return sig;
+            return sig;
+        } catch (IOException e) {
+            throw new GordianCryptoException(ERROR_SIGPARSE, e);
+        }
     }
 
     /**
@@ -474,15 +478,8 @@ public final class BouncySignature {
 
         @Override
         public byte[] sign() throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                BigInteger[] myValues = theSigner.generateSignature(getDigest());
-                return dsaEncode(myValues[0], myValues[1]);
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianCryptoException("Failed to generate signature", e);
-            }
+            BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            return dsaEncode(myValues[0], myValues[1]);
         }
     }
 
@@ -519,15 +516,8 @@ public final class BouncySignature {
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
-            /* Protect against exceptions */
-            try {
-                BigInteger[] myValues = dsaDecode(pSignature);
-                return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
-
-                /* Handle exceptions */
-            } catch (IOException e) {
-                throw new GordianCryptoException("Failed to parse signature", e);
-            }
+            BigInteger[] myValues = dsaDecode(pSignature);
+            return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }
 
@@ -547,13 +537,11 @@ public final class BouncySignature {
          * @param pFactory the factory
          * @param pPrivateKey the private key
          * @param pSpec the signatureSpec.
-         * @param pRandom the secure Random
          * @throws OceanusException on error
          */
         protected BouncySPHINCSSigner(final BouncyFactory pFactory,
                                       final BouncySPHINCSPrivateKey pPrivateKey,
-                                      final GordianSignatureSpec pSpec,
-                                      final SecureRandom pRandom) throws OceanusException {
+                                      final GordianSignatureSpec pSpec) throws OceanusException {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 

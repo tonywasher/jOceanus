@@ -50,7 +50,7 @@ public final class TethysSplash {
                 /* Determine X and Y for name */
                 Rectangle2D myBounds = myMetrics.getStringBounds(pName, myGraphics);
                 double myX = (mySize.width - myBounds.getWidth()) / 2d;
-                double myY = mySize.height - (mySize.height >> 2);
+                double myY = mySize.height - (double) (mySize.height >> 2);
                 double myHeight = myBounds.getHeight();
                 int myDescent = myMetrics.getDescent();
 

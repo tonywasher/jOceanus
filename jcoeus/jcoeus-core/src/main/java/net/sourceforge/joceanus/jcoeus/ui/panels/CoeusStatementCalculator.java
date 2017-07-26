@@ -36,11 +36,6 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 public class CoeusStatementCalculator
         implements MetisTableCalculator<CoeusTotals> {
     /**
-     * The current totalSet.
-     */
-    private CoeusTotalSet theTotalSet;
-
-    /**
      * The current underlying field.
      */
     private MetisDataField theField;
@@ -55,8 +50,7 @@ public class CoeusStatementCalculator
      * @param pTotalSet the totalSet
      */
     protected void setTotalSet(final CoeusTotalSet pTotalSet) {
-        theTotalSet = pTotalSet;
-        theField = theTotalSet.getBalanceField();
+        theField = pTotalSet.getBalanceField();
         theFilter = p -> calculateValue(p, CoeusTotals.FIELD_DELTA) != null;
     }
 

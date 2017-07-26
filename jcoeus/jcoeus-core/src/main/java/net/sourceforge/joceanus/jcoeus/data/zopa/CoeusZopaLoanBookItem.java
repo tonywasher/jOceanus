@@ -80,6 +80,21 @@ public class CoeusZopaLoanBookItem
     private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
 
     /**
+     * Repaid Field Id.
+     */
+    private static final MetisDataField FIELD_REPAID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_REPAID.getValue());
+
+    /**
+     * Capital Field Id.
+     */
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_CAPITAL.getValue());
+
+    /**
+     * Interest Field Id.
+     */
+    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
+
+    /**
      * Missing Field Id.
      */
     private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
@@ -202,6 +217,14 @@ public class CoeusZopaLoanBookItem
         theMissing = new TethysDecimal(theLent);
         theMissing.subtractValue(theCapital);
         theMissing.subtractValue(theBalance);
+
+        /* Check that repaid is the total of capital and interest */
+        TethysDecimal myRepaid = new TethysDecimal(theRepaid);
+        myRepaid.subtractValue(theCapital);
+        myRepaid.subtractValue(theInterest);
+        if (myRepaid.isNonZero()) {
+            throw new CoeusDataException("Repaid is not the sum of capital and interest");
+        }
 
         /* Add to the total missing book */
         pParser.getMarket().recordMissingBook(theMissing);
@@ -516,6 +539,15 @@ public class CoeusZopaLoanBookItem
         }
         if (FIELD_BALANCE.equals(pField)) {
             return theBalance;
+        }
+        if (FIELD_REPAID.equals(pField)) {
+            return theRepaid;
+        }
+        if (FIELD_CAPITAL.equals(pField)) {
+            return theCapital;
+        }
+        if (FIELD_INTEREST.equals(pField)) {
+            return theInterest;
         }
         if (FIELD_MISSING.equals(pField)) {
             return theMissing.isZero()

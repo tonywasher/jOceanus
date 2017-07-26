@@ -139,11 +139,6 @@ public class CoeusZopaTransaction
     private final CoeusZopaLoan theLoan;
 
     /**
-     * Prefix.
-     */
-    private String thePrefix;
-
-    /**
      * Invested.
      */
     private final TethysDecimal theInvested;
@@ -182,6 +177,16 @@ public class CoeusZopaTransaction
      * Recovered.
      */
     private final TethysDecimal theRecovered;
+
+    /**
+     * Prefix.
+     */
+    private String thePrefix;
+
+    /**
+     * is upFront interest.
+     */
+    private boolean isUpFront;
 
     /**
      * Constructor.
@@ -228,6 +233,11 @@ public class CoeusZopaTransaction
 
         /* Check transaction validity */
         checkValidity();
+
+        /* If this is an upFront interest payment */
+        if (isUpFront && theLoan != null) {
+            theLoan.addUpFrontInterest(theInterest);
+        }
     }
 
     /**
@@ -394,22 +404,24 @@ public class CoeusZopaTransaction
 
     @Override
     public TethysDecimal getBadDebtInterest() {
-        return theLoan == null
-               || theLoan.isBadDebtCapital()
-                                             ? ZERO_MONEY
-                                             : CoeusTransactionType.RECOVERY.equals(theTransType)
-                                                                                                  ? theRecovered
-                                                                                                  : theBadDebt;
+        if (theLoan == null
+            || theLoan.isBadDebtCapital()) {
+            return ZERO_MONEY;
+        }
+        return CoeusTransactionType.RECOVERY.equals(theTransType)
+                                                                  ? theRecovered
+                                                                  : theBadDebt;
     }
 
     @Override
     public TethysDecimal getBadDebtCapital() {
-        return theLoan != null
-               && theLoan.isBadDebtCapital()
-                                             ? CoeusTransactionType.RECOVERY.equals(theTransType)
-                                                                                                  ? theRecovered
-                                                                                                  : theBadDebt
-                                             : ZERO_MONEY;
+        if (theLoan == null
+            || theLoan.isBadDebtCapital()) {
+            return ZERO_MONEY;
+        }
+        return CoeusTransactionType.RECOVERY.equals(theTransType)
+                                                                  ? theRecovered
+                                                                  : theBadDebt;
     }
 
     @Override
@@ -435,6 +447,14 @@ public class CoeusZopaTransaction
     @Override
     public TethysDecimal getRecovered() {
         return theRecovered;
+    }
+
+    /**
+     * Is this transaction upFront interest?
+     * @return true/false
+     */
+    protected boolean isUpFront() {
+        return isUpFront;
     }
 
     /**
@@ -484,6 +504,7 @@ public class CoeusZopaTransaction
         /* If the description is UpFront Interest */
         if (theDesc.startsWith(PFIX_UPFRONTINTEREST)) {
             thePrefix = PFIX_UPFRONTINTEREST;
+            isUpFront = true;
             return CoeusTransactionType.INTEREST;
         }
 

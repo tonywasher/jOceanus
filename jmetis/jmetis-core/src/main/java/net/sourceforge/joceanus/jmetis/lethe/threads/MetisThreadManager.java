@@ -208,10 +208,10 @@ public abstract class MetisThreadManager<N, I>
      */
     private boolean prepareThread() {
         /* Protect against exceptions */
+        boolean myResult = true;
         try {
             /* Prepare the task and continue */
             theThread.prepareTask(theToolkit);
-            return true;
 
             /* Catch exceptions */
         } catch (OceanusException e) {
@@ -219,8 +219,9 @@ public abstract class MetisThreadManager<N, I>
             setError(e);
             theStatusManager.setFailure(e);
             threadCompleted();
-            return false;
+            myResult = false;
         }
+        return myResult;
     }
 
     /**

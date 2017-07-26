@@ -967,7 +967,7 @@ public final class BouncyFactory
             case DSA:
                 return new BouncyDSASigner(this, (BouncyDSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
-                return new BouncySPHINCSSigner(this, (BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+                return new BouncySPHINCSSigner(this, (BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
             case RAINBOW:
                 return new BouncyRainbowSigner(this, (BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             default:

@@ -691,7 +691,7 @@ public class TethysFXDateDialog
             /* Loop through remaining columns in row */
             for (
 
-            int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
+                    int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
                 /* Access the label */
                 PanelDay myLabel = theDays[iRow][iCol];
 
@@ -829,11 +829,6 @@ public class TethysFXDateDialog
         private int theDay = -1;
 
         /**
-         * Is the item Select-able?
-         */
-        private boolean isSelectable;
-
-        /**
          * Constructor.
          * @param pDialog the owning dialog
          */
@@ -868,7 +863,6 @@ public class TethysFXDateDialog
                             final boolean pSelectable) {
             /* Record the day */
             theDay = pDay;
-            isSelectable = pSelectable;
 
             /* Set the text for the item */
             if (pDay > 0) {
@@ -878,7 +872,7 @@ public class TethysFXDateDialog
             }
 
             /* Enable/Disable the label */
-            setDisable(!isSelectable);
+            setDisable(!pSelectable);
         }
 
         /**

@@ -95,6 +95,5 @@ public class TethysFXAbout
     @Override
     protected void closeDialog() {
         theDialog.close();
-        theDialog = null;
     }
 }

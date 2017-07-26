@@ -387,22 +387,24 @@ public class CoeusFundingCircleTransaction
 
     @Override
     public TethysMoney getBadDebtInterest() {
-        return theLoan == null
-               || theLoan.isBadDebtCapital()
-                                             ? ZERO_MONEY
-                                             : CoeusTransactionType.RECOVERY.equals(theTransType)
-                                                                                                  ? theRecovered
-                                                                                                  : theBadDebt;
+        if (theLoan == null
+            || theLoan.isBadDebtCapital()) {
+            return ZERO_MONEY;
+        }
+        return CoeusTransactionType.RECOVERY.equals(theTransType)
+                                                                  ? theRecovered
+                                                                  : theBadDebt;
     }
 
     @Override
     public TethysMoney getBadDebtCapital() {
-        return theLoan != null
-               && theLoan.isBadDebtCapital()
-                                             ? CoeusTransactionType.RECOVERY.equals(theTransType)
-                                                                                                  ? theRecovered
-                                                                                                  : theBadDebt
-                                             : ZERO_MONEY;
+        if (theLoan == null
+            || theLoan.isBadDebtCapital()) {
+            return ZERO_MONEY;
+        }
+        return CoeusTransactionType.RECOVERY.equals(theTransType)
+                                                                  ? theRecovered
+                                                                  : theBadDebt;
     }
 
     @Override

@@ -57,14 +57,14 @@ public class CoeusZopaLoan
     private static final MetisDataField FIELD_BOOKITEMLIST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BOOKITEMS.getValue());
 
     /**
-     * Missing Field Id.
+     * MissingCapital Field Id.
      */
-    private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSING.getValue());
+    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGCAPITAL.getValue());
 
     /**
-     * The bookItem.
+     * MissingInterest Field Id.
      */
-    private CoeusZopaLoanBookItem theBookItem;
+    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGINTEREST.getValue());
 
     /**
      * The list of bookItems.
@@ -72,9 +72,29 @@ public class CoeusZopaLoan
     private final List<CoeusZopaLoanBookItem> theBookItems;
 
     /**
-     * The Missing.
+     * The MissingCapital.
      */
-    private final TethysDecimal theMissing;
+    private final TethysDecimal theMissingCapital;
+
+    /**
+     * The MissingInterest.
+     */
+    private final TethysDecimal theMissingInterest;
+
+    /**
+     * The UpFront interest.
+     */
+    private final TethysDecimal theUpFrontInterest;
+
+    /**
+     * The bookItem.
+     */
+    private CoeusZopaLoanBookItem theBookItem;
+
+    /**
+     * is the loan a zombie loan?
+     */
+    private boolean isZombie;
 
     /**
      * Constructor.
@@ -83,10 +103,7 @@ public class CoeusZopaLoan
      */
     protected CoeusZopaLoan(final CoeusZopaMarket pMarket,
                             final CoeusZopaLoanBookItem pBookItem) {
-        super(pMarket, pBookItem.getLoanId());
-        theBookItems = new ArrayList<>();
-        theBookItem = pBookItem;
-        theMissing = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        this(pMarket, pBookItem.getLoanId(), pBookItem);
     }
 
     /**
@@ -96,10 +113,24 @@ public class CoeusZopaLoan
      */
     protected CoeusZopaLoan(final CoeusZopaMarket pMarket,
                             final String pId) {
+        this(pMarket, pId, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pMarket the market
+     * @param pId the loanId
+     * @param pBookItem the loanBookItem
+     */
+    private CoeusZopaLoan(final CoeusZopaMarket pMarket,
+                          final String pId,
+                          final CoeusZopaLoanBookItem pBookItem) {
         super(pMarket, pId);
         theBookItems = new ArrayList<>();
-        theBookItem = null;
-        theMissing = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theBookItem = pBookItem;
+        theMissingCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theMissingInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+        theUpFrontInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
     }
 
     @Override
@@ -154,6 +185,14 @@ public class CoeusZopaLoan
         return !theBookItems.isEmpty();
     }
 
+    /**
+     * Add upFrontInterest.
+     * @param pInterest the upFrontInterest
+     */
+    protected void addUpFrontInterest(final TethysDecimal pInterest) {
+        theUpFrontInterest.addValue(pInterest);
+    }
+
     @Override
     protected CoeusZopaHistory newHistory() {
         return new CoeusZopaHistory(this);
@@ -178,6 +217,7 @@ public class CoeusZopaLoan
         if (CoeusLoanStatus.BADDEBT.equals(myStatus)) {
             /* Loan Balance is badDebt */
             myLoanBalance = myTotals.getBadDebt();
+            myLoanBalance.negate();
         }
 
         /* Check that this matches the book balance */
@@ -185,18 +225,32 @@ public class CoeusZopaLoan
             /* Calculate the missing payments */
             myLoanBalance = new TethysDecimal(myLoanBalance);
             myLoanBalance.subtractValue(myBookBalance);
-            getMarket().recordMissingPayments(myLoanBalance);
-            theMissing.addValue(myLoanBalance);
+            getMarket().recordMissingCapital(myLoanBalance);
+            theMissingCapital.addValue(myLoanBalance);
+        }
+
+        /* Check bookItem interest */
+        TethysDecimal myInterest = new TethysDecimal(myTotals.getInterest());
+        myInterest.subtractValue(theUpFrontInterest);
+        if (!myInterest.equals(theBookItem.getInterestRepaid())) {
+            myInterest.subtractValue(theBookItem.getInterestRepaid());
+            getMarket().recordMissingInterest(myLoanBalance);
+            theMissingInterest.addValue(myInterest);
         }
 
         /* Check for zombieLoan */
-        boolean isZombie = CoeusLoanStatus.REPAID.equals(myStatus) && theBookItem.getBalance().isNonZero();
+        isZombie = CoeusLoanStatus.REPAID.equals(myStatus)
+                   && myLoanBalance.isNonZero();
         if (isZombie) {
-            getMarket().recordZombieLoan(theBookItem.getBalance());
+            getMarket().recordZombieLoan(myLoanBalance);
         }
 
-        /* If the bookBalance is negative */
-        if (hasMultipleBookItems() || theMissing.isNonZero() || isZombie) {
+        /* If the we have questions over the item */
+        boolean isInteresting = theBookItem.getMissing().isNonZero()
+                                || theMissingCapital.isNonZero();
+        isInteresting |= theMissingInterest.isNonZero();
+        isInteresting &= !theMissingCapital.equals(theBookItem.getMissing());
+        if (isInteresting || isZombie) {
             /* Record the interesting loan */
             getMarket().recordInterestingLoan(this);
         }
@@ -215,8 +269,14 @@ public class CoeusZopaLoan
     @Override
     public String toString() {
         String myID = super.toString();
-        if (theMissing.isNonZero()) {
+        if (theMissingCapital.isNonZero()) {
             myID = "M:" + myID;
+        }
+        if (theMissingInterest.isNonZero()) {
+            myID = "I:" + myID;
+        }
+        if (isZombie) {
+            myID = "Z:" + myID;
         }
         return myID;
     }
@@ -232,10 +292,15 @@ public class CoeusZopaLoan
                                           ? MetisDataFieldValue.SKIP
                                           : theBookItems;
         }
-        if (FIELD_MISSING.equals(pField)) {
-            return theMissing.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : theMissing;
+        if (FIELD_MISSINGCAPITAL.equals(pField)) {
+            return theMissingCapital.isZero()
+                                              ? MetisDataFieldValue.SKIP
+                                              : theMissingCapital;
+        }
+        if (FIELD_MISSINGINTEREST.equals(pField)) {
+            return theMissingInterest.isZero()
+                                               ? MetisDataFieldValue.SKIP
+                                               : theMissingInterest;
         }
 
         /* Pass call on */

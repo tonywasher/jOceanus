@@ -237,11 +237,9 @@ public abstract class CoeusLoan
 
     /**
      * Add the transaction to the history.
-     * @param pDate the date
      * @param pTrans the transaction
      */
-    protected void addTransactionToHistory(final TethysDate pDate,
-                                           final CoeusTransaction pTrans) {
+    protected void addTransactionToHistory(final CoeusTransaction pTrans) {
         /* Adjust the history */
         theHistory.addTransactionToHistory(pTrans);
 
@@ -300,6 +298,19 @@ public abstract class CoeusLoan
     @Override
     public int compareTo(final CoeusLoan pThat) {
         return theLoanId.compareTo(pThat.getLoanId());
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        if (!(pThat instanceof CoeusLoan)) {
+            return false;
+        }
+        return theLoanId.equals(((CoeusLoan) pThat).getLoanId());
+    }
+
+    @Override
+    public int hashCode() {
+        return theLoanId.hashCode();
     }
 
     /**

@@ -230,8 +230,7 @@ public abstract class GordianKeyGenerator<T> {
         }
 
         /* Return the new key */
-        GordianKey<T> myKey = buildKeyFromBytes(myKeyBytes);
-        return myKey;
+        return buildKeyFromBytes(myKeyBytes);
     }
 
     /**

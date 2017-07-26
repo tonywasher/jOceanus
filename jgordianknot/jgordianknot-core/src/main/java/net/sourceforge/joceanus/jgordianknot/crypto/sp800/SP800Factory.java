@@ -200,7 +200,7 @@ public final class SP800Factory {
      * Create a default initVector.
      * @return initVector.
      */
-    private byte[] defaultInitVector() {
+    private static byte[] defaultInitVector() {
         return TethysDataConverter.longToByteArray(System.currentTimeMillis());
     }
 
@@ -271,7 +271,8 @@ public final class SP800Factory {
      * SecureRandom wrapper class.
      */
     protected static final class SP800SecureRandom
-            extends SecureRandom {
+            extends
+            SecureRandom {
         /**
          * Serial Id.
          */

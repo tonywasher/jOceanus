@@ -415,6 +415,16 @@ public enum CoeusResource
     DATA_BOOKITEMS("data.bookitems"),
 
     /**
+     * Data Capital.
+     */
+    DATA_CAPITAL("data.capital"),
+
+    /**
+     * Data Repaid.
+     */
+    DATA_REPAID("data.repaid"),
+
+    /**
      * Data Missing.
      */
     DATA_MISSING("data.missing"),
@@ -425,9 +435,14 @@ public enum CoeusResource
     DATA_MISSINGBOOK("data.missing.loanbook"),
 
     /**
+     * Data Missing Capital.
+     */
+    DATA_MISSINGCAPITAL("data.missing.capital"),
+
+    /**
      * Data Missing Payments.
      */
-    DATA_MISSINGPAY("data.missing.payments"),
+    DATA_MISSINGINTEREST("data.missing.interest"),
 
     /**
      * Data Zombie Loans.

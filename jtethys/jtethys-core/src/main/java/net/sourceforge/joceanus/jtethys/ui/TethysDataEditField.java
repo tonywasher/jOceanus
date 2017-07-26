@@ -49,7 +49,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the Icon type
  */
 public interface TethysDataEditField<T, N, I>
-        extends TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+        extends
+        TethysEventProvider<TethysUIEvent>,
+        TethysNode<N> {
     /**
      * Set Editable state.
      * @param pEditable true/false.
@@ -137,7 +139,8 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     abstract class TethysBaseDataEditField<T, N, I>
-            implements TethysDataEditField<T, N, I> {
+            implements
+            TethysDataEditField<T, N, I> {
         /**
          * The Event Manager.
          */
@@ -326,14 +329,15 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysValidatedEditField<T, N, I>
-            extends TethysDataEditField<T, N, I> {
+            extends
+            TethysDataEditField<T, N, I> {
         /**
          * Set the validator.
          * <p>
          * This should validate the value and return null for OK, and an error text for failure
          * @param pValidator the validator
          */
-        void setValidator(final Function<T, String> pValidator);
+        void setValidator(Function<T, String> pValidator);
     }
 
     /**
@@ -525,7 +529,8 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysRawDecimalEditField<N, I>
-            extends TethysValidatedEditField<TethysDecimal, N, I> {
+            extends
+            TethysValidatedEditField<TethysDecimal, N, I> {
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
@@ -540,7 +545,8 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysCurrencyEditField<T extends TethysMoney, N, I>
-            extends TethysValidatedEditField<T, N, I> {
+            extends
+            TethysValidatedEditField<T, N, I> {
         /**
          * Set the Deemed Currency supplier.
          * @param pSupplier the supplier
@@ -555,7 +561,8 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysIconButtonField<T, N, I>
-            extends TethysDataEditField<T, N, I> {
+            extends
+            TethysDataEditField<T, N, I> {
         /**
          * Set the IconMapSet supplier.
          * @param pSupplier the supplier
@@ -569,7 +576,8 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysDateButtonField<N, I>
-            extends TethysDataEditField<TethysDate, N, I> {
+            extends
+            TethysDataEditField<TethysDate, N, I> {
         /**
          * Set the dateConfig configurator.
          * @param pConfigurator the configurator
@@ -584,7 +592,8 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysScrollButtonField<T, N, I>
-            extends TethysDataEditField<T, N, I> {
+            extends
+            TethysDataEditField<T, N, I> {
         /**
          * Set the menu configurator.
          * @param pConfigurator the configurator

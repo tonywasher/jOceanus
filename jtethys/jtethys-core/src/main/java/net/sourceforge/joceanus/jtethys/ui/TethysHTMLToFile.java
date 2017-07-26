@@ -129,8 +129,8 @@ public class TethysHTMLToFile<N, I> {
      * @return the document
      * @throws OceanusException on error
      */
-    private Document createXMLDocument(final String pXML,
-                                       final String pStyleSheet) {
+    private static Document createXMLDocument(final String pXML,
+                                              final String pStyleSheet) {
         /* Parse the document */
         Document myDoc = Jsoup.parse(pXML);
 
@@ -166,8 +166,8 @@ public class TethysHTMLToFile<N, I> {
      * @param pFile the file to write to
      * @throws OceanusException on error
      */
-    private void writeDocumentToFile(final Document pDoc,
-                                     final File pFile) throws OceanusException {
+    private static void writeDocumentToFile(final Document pDoc,
+                                            final File pFile) throws OceanusException {
         /* Protect the write */
         try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
             /* Format the XML and write to stream */

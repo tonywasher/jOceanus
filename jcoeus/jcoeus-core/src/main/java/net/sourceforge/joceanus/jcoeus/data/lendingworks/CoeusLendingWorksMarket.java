@@ -100,7 +100,7 @@ public class CoeusLendingWorksMarket
     }
 
     @Override
-    public CoeusLendingWorksLoan getLoanById(final String pId) throws OceanusException {
+    public CoeusLendingWorksLoan getLoanById(final String pId) {
         return (CoeusLendingWorksLoan) super.getLoanById(pId);
     }
 

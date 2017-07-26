@@ -55,9 +55,14 @@ public class CoeusZopaMarket
     private static final MetisDataField FIELD_MISSINGBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGBOOK.getValue());
 
     /**
-     * Missing Payments Field Id.
+     * Missing Capital Field Id.
      */
-    private static final MetisDataField FIELD_MISSINGPAY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGPAY.getValue());
+    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGCAPITAL.getValue());
+
+    /**
+     * Missing Interest Field Id.
+     */
+    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGINTEREST.getValue());
 
     /**
      * Zombie Loans Field Id.
@@ -95,9 +100,14 @@ public class CoeusZopaMarket
     private final TethysDecimal theMissingLoanBook;
 
     /**
-     * The Missing LoanPayments.
+     * The Missing Capital.
      */
-    private final TethysDecimal theMissingPayments;
+    private final TethysDecimal theMissingCapital;
+
+    /**
+     * The Missing Interest.
+     */
+    private final TethysDecimal theMissingInterest;
 
     /**
      * The ZombieLoans.
@@ -124,7 +134,8 @@ public class CoeusZopaMarket
 
         /* Create missing counters */
         theMissingLoanBook = new TethysDecimal(0, DECIMAL_SIZE);
-        theMissingPayments = new TethysDecimal(0, DECIMAL_SIZE);
+        theMissingCapital = new TethysDecimal(0, DECIMAL_SIZE);
+        theMissingInterest = new TethysDecimal(0, DECIMAL_SIZE);
         theZombieLoans = new TethysDecimal(0, DECIMAL_SIZE);
         theInterestingLoans = new ArrayList<>();
     }
@@ -209,7 +220,7 @@ public class CoeusZopaMarket
     }
 
     @Override
-    public CoeusZopaLoan getLoanById(final String pId) throws OceanusException {
+    public CoeusZopaLoan getLoanById(final String pId) {
         return (CoeusZopaLoan) super.getLoanById(pId);
     }
 
@@ -249,11 +260,19 @@ public class CoeusZopaMarket
     }
 
     /**
-     * Record missing loan payments.
+     * Record missing capital.
      * @param pMissing the missing amount
      */
-    protected void recordMissingPayments(final TethysDecimal pMissing) {
-        theMissingPayments.addValue(pMissing);
+    protected void recordMissingCapital(final TethysDecimal pMissing) {
+        theMissingCapital.addValue(pMissing);
+    }
+
+    /**
+     * Record missing loan interest.
+     * @param pMissing the missing amount
+     */
+    protected void recordMissingInterest(final TethysDecimal pMissing) {
+        theMissingInterest.addValue(pMissing);
     }
 
     /**
@@ -290,10 +309,15 @@ public class CoeusZopaMarket
                                                ? MetisDataFieldValue.SKIP
                                                : theMissingLoanBook;
         }
-        if (FIELD_MISSINGPAY.equals(pField)) {
-            return theMissingPayments.isZero()
+        if (FIELD_MISSINGCAPITAL.equals(pField)) {
+            return theMissingCapital.isZero()
+                                              ? MetisDataFieldValue.SKIP
+                                              : theMissingCapital;
+        }
+        if (FIELD_MISSINGINTEREST.equals(pField)) {
+            return theMissingInterest.isZero()
                                                ? MetisDataFieldValue.SKIP
-                                               : theMissingPayments;
+                                               : theMissingInterest;
         }
         if (FIELD_ZOMBIELOANS.equals(pField)) {
             return theZombieLoans.isZero()

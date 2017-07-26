@@ -362,12 +362,10 @@ public abstract class JcaSignature
          * Constructor.
          * @param pPrivateKey the private key
          * @param pSignatureSpec the signatureSpec
-         * @param pRandom the secure random
          * @throws OceanusException on error
          */
         protected JcaSPHINCSSigner(final JcaPrivateKey pPrivateKey,
-                                   final GordianSignatureSpec pSignatureSpec,
-                                   final SecureRandom pRandom) throws OceanusException {
+                                   final GordianSignatureSpec pSignatureSpec) throws OceanusException {
             /* Create the Signer */
             try {
                 String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());

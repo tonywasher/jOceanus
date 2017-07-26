@@ -116,13 +116,11 @@ public class CoeusReportBuilder {
 
         /* If we have not previously allocated this report */
         if (myReport == null) {
-            /* Switch on the report type */
-            switch (pType) {
-                case ANNUAL:
-                    myReport = new CoeusReportAnnual(theManager);
-                    break;
-                default:
-                    return null;
+            /* Handle report type */
+            if (CoeusReportType.ANNUAL.equals(pType)) {
+                myReport = new CoeusReportAnnual(theManager);
+            } else {
+                return null;
             }
 
             /* Store allocated report */
