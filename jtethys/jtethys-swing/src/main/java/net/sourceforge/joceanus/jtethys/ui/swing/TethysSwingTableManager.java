@@ -124,9 +124,6 @@ public class TethysSwingTableManager<C, R>
         theSorter = new TethysSwingTableSorter<>(theModel);
         theTable.setRowSorter(theSorter);
 
-        /* Listen to factory */
-        theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);
-
         /* Listen to the valueSet */
         pFactory.getValueSet().getEventRegistrar().addEventListener(e -> theModel.fireTableDataChanged());
 
@@ -441,11 +438,6 @@ public class TethysSwingTableManager<C, R>
         private Function<R, T> theValueFactory;
 
         /**
-         * Cell commit factory.
-         */
-        private BiConsumer<R, T> theCommitFactory;
-
-        /**
          * Constructor.
          * @param pTable the owning table
          * @param pId the column id
@@ -479,14 +471,6 @@ public class TethysSwingTableManager<C, R>
          */
         public void setCellValueFactory(final Function<R, T> pFactory) {
             theValueFactory = pFactory;
-        }
-
-        /**
-         * Set cell commit Factory.
-         * @param pFactory the cell factory
-         */
-        public void setCellCommitFactory(final BiConsumer<R, T> pFactory) {
-            theCommitFactory = pFactory;
         }
 
         /**
@@ -551,10 +535,11 @@ public class TethysSwingTableManager<C, R>
          */
         private void setCellValue(final int pIndex,
                                   final Object pValue) {
+            /* Set the active row */
             theCell.setActiveRow(pIndex);
-            if (theCommitFactory != null) {
-                theCommitFactory.accept(theCell.getActiveRow(), theCell.getCastValue(pValue));
-            }
+
+            /* Call the commit hook */
+            processOnCommit(theCell.getActiveRow(), theCell.getCastValue(pValue));
         }
 
         /**

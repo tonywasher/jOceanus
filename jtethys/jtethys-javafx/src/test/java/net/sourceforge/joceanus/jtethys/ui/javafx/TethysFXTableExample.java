@@ -25,21 +25,18 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 import java.util.Map;
 
 import javafx.application.Application;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDilutedPriceColumn;
@@ -90,7 +87,8 @@ public class TethysFXTableExample
         theHelper = new TethysScrollUITestHelper<>();
 
         /* Create test Data */
-        theData = FXCollections.observableArrayList();
+        theData = FXCollections.observableArrayList(p -> new Observable[]
+        { p.nameProperty() });
         theData.add(new TethysFXTableItem(theHelper, "Damage"));
         theData.add(new TethysFXTableItem(theHelper, "Tony"));
         theData.add(new TethysFXTableItem(theHelper, "Dave"));
@@ -98,22 +96,25 @@ public class TethysFXTableExample
         /* Create tableView */
         theTable = theGuiFactory.newTable();
         theTable.setItems(theData);
-
-        /* Listen to Commit requests */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.CELLCOMMIT, this::handleCommit);
+        theTable.setRepaintRowOnCommit(true);
+        theTable.setComparator((l, r) -> l.nameProperty().getValue().compareTo(r.nameProperty().getValue()));
+        theTable.setOnCommit(r -> r.incrementUpdates());
 
         /* Create the name column */
         TethysFXTableStringColumn<TethysDataId, TethysFXTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);
         myNameColumn.setCellValueFactory(p -> p.getValue().nameProperty());
+        myNameColumn.setOnCommit((r, v) -> r.nameProperty().setValue(v));
+        myNameColumn.setRepaintColumnOnCommit(true);
 
         /* Create the date column */
         TethysFXTableDateColumn<TethysDataId, TethysFXTableItem> myDateColumn = theTable.declareDateColumn(TethysDataId.DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
+        myDateColumn.setOnCommit((r, v) -> r.dateProperty().setValue(v));
 
         /* Create the short column */
         TethysFXTableShortColumn<TethysDataId, TethysFXTableItem> myShortColumn = theTable.declareShortColumn(TethysDataId.SHORT);
         myShortColumn.setCellValueFactory(p -> p.getValue().shortProperty());
+        myShortColumn.setOnCommit((r, v) -> r.shortProperty().setValue(v));
         myShortColumn.setValidator((v, r) -> v < 0
                                                    ? "Must be positive"
                                                    : null);
@@ -121,42 +122,52 @@ public class TethysFXTableExample
         /* Create the integer column */
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myIntColumn = theTable.declareIntegerColumn(TethysDataId.INTEGER);
         myIntColumn.setCellValueFactory(p -> p.getValue().integerProperty());
+        myIntColumn.setOnCommit((r, v) -> r.integerProperty().setValue(v));
 
         /* Create the long column */
         TethysFXTableLongColumn<TethysDataId, TethysFXTableItem> myLongColumn = theTable.declareLongColumn(TethysDataId.LONG);
         myLongColumn.setCellValueFactory(p -> p.getValue().longProperty());
+        myLongColumn.setOnCommit((r, v) -> r.longProperty().setValue(v));
 
         /* Create the money column */
         TethysFXTableMoneyColumn<TethysDataId, TethysFXTableItem> myMoneyColumn = theTable.declareMoneyColumn(TethysDataId.MONEY);
         myMoneyColumn.setCellValueFactory(p -> p.getValue().moneyProperty());
+        myMoneyColumn.setOnCommit((r, v) -> r.moneyProperty().setValue(v));
 
         /* Create the price column */
         TethysFXTablePriceColumn<TethysDataId, TethysFXTableItem> myPriceColumn = theTable.declarePriceColumn(TethysDataId.PRICE);
         myPriceColumn.setCellValueFactory(p -> p.getValue().priceProperty());
+        myPriceColumn.setOnCommit((r, v) -> r.priceProperty().setValue(v));
 
         /* Create the units column */
         TethysFXTableUnitsColumn<TethysDataId, TethysFXTableItem> myUnitsColumn = theTable.declareUnitsColumn(TethysDataId.UNITS);
         myUnitsColumn.setCellValueFactory(p -> p.getValue().unitsProperty());
+        myUnitsColumn.setOnCommit((r, v) -> r.unitsProperty().setValue(v));
 
         /* Create the rate column */
         TethysFXTableRateColumn<TethysDataId, TethysFXTableItem> myRateColumn = theTable.declareRateColumn(TethysDataId.RATE);
         myRateColumn.setCellValueFactory(p -> p.getValue().rateProperty());
+        myRateColumn.setOnCommit((r, v) -> r.rateProperty().setValue(v));
 
         /* Create the ratio column */
         TethysFXTableRatioColumn<TethysDataId, TethysFXTableItem> myRatioColumn = theTable.declareRatioColumn(TethysDataId.RATIO);
         myRatioColumn.setCellValueFactory(p -> p.getValue().ratioProperty());
+        myRatioColumn.setOnCommit((r, v) -> r.ratioProperty().setValue(v));
 
         /* Create the dilution column */
         TethysFXTableDilutionColumn<TethysDataId, TethysFXTableItem> myDilutionColumn = theTable.declareDilutionColumn(TethysDataId.DILUTION);
         myDilutionColumn.setCellValueFactory(p -> p.getValue().dilutionProperty());
+        myDilutionColumn.setOnCommit((r, v) -> r.dilutionProperty().setValue(v));
 
         /* Create the dilutedPrice column */
         TethysFXTableDilutedPriceColumn<TethysDataId, TethysFXTableItem> myDilutedPriceColumn = theTable.declareDilutedPriceColumn(TethysDataId.DILUTEDPRICE);
         myDilutedPriceColumn.setCellValueFactory(p -> p.getValue().dilutedPriceProperty());
+        myDilutedPriceColumn.setOnCommit((r, v) -> r.dilutedPriceProperty().setValue(v));
 
         /* Create the boolean column */
         TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getValue().booleanProperty());
+        myBoolColumn.setOnCommit((r, v) -> r.booleanProperty().setValue(v));
         myBoolColumn.setName("B");
         TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         myBoolColumn.setIconMapSet(p -> myMapSet);
@@ -164,25 +175,30 @@ public class TethysFXTableExample
         /* Create the extra boolean column */
         TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myXtraBoolColumn = theTable.declareIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getValue().xtraBooleanProperty());
+        myXtraBoolColumn.setOnCommit((r, v) -> r.xtraBooleanProperty().setValue(v));
         myXtraBoolColumn.setName("X");
         myXtraBoolColumn.setCellEditable(p -> p.booleanProperty().getValue());
         Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
         myXtraBoolColumn.setIconMapSet(p -> myMap.get(p.booleanProperty().getValue()
                                                                                      ? IconState.OPEN
                                                                                      : IconState.CLOSED));
+        myXtraBoolColumn.setRepaintColumnId(TethysDataId.BOOLEAN);
 
         /* Create the scroll column */
         TethysFXTableScrollColumn<String, TethysDataId, TethysFXTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
         myScrollColumn.setCellValueFactory(p -> p.getValue().scrollProperty());
+        myScrollColumn.setOnCommit((r, v) -> r.scrollProperty().setValue(v));
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
         TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
         myListColumn.setCellValueFactory(p -> p.getValue().listProperty());
+        myListColumn.setOnCommit((r, v) -> r.listProperty().setValue(v));
 
         /* Create the password column */
         TethysFXTableCharArrayColumn<TethysDataId, TethysFXTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);
         myPassColumn.setCellValueFactory(p -> p.getValue().passwordProperty());
+        myPassColumn.setOnCommit((r, v) -> r.passwordProperty().setValue(v));
 
         /* Create the updates column */
         TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
@@ -193,19 +209,6 @@ public class TethysFXTableExample
         /* Set Disabled indicator */
         theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.updatesProperty().getValue() > 0);
         theTable.setDisabled(r -> r.booleanProperty().getValue());
-    }
-
-    /**
-     * Handle Commit event.
-     * @param pEvent the event
-     */
-    @SuppressWarnings("unchecked")
-    private void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-        TethysTableCell<?, TethysDataId, TethysFXTableItem, ?, ?> myCell = pEvent.getDetails(TethysTableCell.class);
-        TethysFXTableItem myRow = myCell.getActiveRow();
-        myRow.incrementUpdates();
-        myCell.repaintCellRow();
-        myCell.repaintColumnCell(TethysDataId.XTRABOOL);
     }
 
     /**

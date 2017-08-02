@@ -26,36 +26,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference.MetisDataDiffers;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 
 /**
  * Metis Set of versioned Values.
  */
 public class MetisDataVersionValues {
-    /**
-     * ValueSet object interface.
-     */
-    public interface MetisDataVersionedItem
-            extends MetisDataFieldItem, MetisIndexedItem {
-        /**
-         * Does the object support versions?
-         * @return true/false
-         */
-        default boolean isVersioned() {
-            return getVersionControl() != null;
-        }
-
-        /**
-         * Obtain Object Version Control.
-         * @return the versionControl of the object
-         */
-        default MetisDataVersionControl getVersionControl() {
-            return null;
-        }
-    }
-
     /**
      * The hash value for deletion flag.
      */

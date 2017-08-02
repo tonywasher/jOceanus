@@ -176,7 +176,7 @@ public class JIconButton<T>
          * @param pValue the value
          * @return the icon
          */
-        public abstract Icon getIconForValue(final Object pValue);
+        public abstract Icon getIconForValue(Object pValue);
 
         /**
          * Obtain toolTip for value.
@@ -192,7 +192,7 @@ public class JIconButton<T>
          * @param pValue the current value
          * @return the new value
          */
-        protected abstract T getNewValueForValue(final Object pValue);
+        protected abstract T getNewValueForValue(Object pValue);
 
         /**
          * Button Listener class.

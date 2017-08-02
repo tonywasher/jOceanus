@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
@@ -48,7 +48,7 @@ public class CoeusStatementTable<N, I>
     /**
      * The List.
      */
-    private final MetisBaseList<CoeusTotals> theList;
+    private final MetisIndexedList<CoeusTotals> theList;
 
     /**
      * The Table.
@@ -86,7 +86,7 @@ public class CoeusStatementTable<N, I>
         TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the list */
-        theList = new MetisBaseList<>(CoeusTotals.class, CoeusTotals.getBaseFieldSet());
+        theList = new MetisIndexedList<>();
 
         /* Create the table */
         theTable = pToolkit.newTableManager(theList);

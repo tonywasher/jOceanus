@@ -25,9 +25,8 @@ package net.sourceforge.joceanus.jmetis.atlas.threads;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
@@ -256,20 +255,12 @@ public abstract class MetisToolkit<N, I> {
     public abstract TethysHelpWindow<N, I> newHelpWindow();
 
     /**
-     * Create a readOnly TableManager.
+     * Create a TableManager.
      * @param <R> the row type
-     * @param pBaseList the base list
-     * @return the error panel
+     * @param pList the base list
+     * @return the table manager
      */
-    public abstract <R extends MetisDataVersionedItem> MetisTableManager<R, N, I> newTableManager(MetisBaseList<R> pBaseList);
-
-    /**
-     * Create an editable TableManager.
-     * @param <R> the row type
-     * @param pEditList the edit list
-     * @return the error panel
-     */
-    public abstract <R extends MetisDataVersionedItem> MetisTableManager<R, N, I> newTableManager(MetisEditList<R> pEditList);
+    public abstract <R extends MetisDataTableItem> MetisTableManager<R, N, I> newTableManager(MetisIndexedList<R> pList);
 
     /**
      * Create an ErrorPanel.

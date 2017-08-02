@@ -204,7 +204,7 @@ public class MetisFieldManager
          * Get field data for row.
          * @param pData the Field details
          */
-        void populateFieldData(final MetisFieldData pData);
+        void populateFieldData(MetisFieldData pData);
     }
 
     /**

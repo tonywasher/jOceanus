@@ -31,9 +31,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDateItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;

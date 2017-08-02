@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -38,11 +37,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Metis swing table list manager.
  * @param <R> the item type
  */
-public class MetisSwingTableListManager<R extends MetisDataVersionedItem> {
+public class MetisSwingTableListManager<R extends MetisDataTableItem> {
     /**
-     * The underlying VersionedList.
+     * The underlying List.
      */
-    private final MetisVersionedList<R> theVersionedList;
+    private final MetisIndexedList<R> theCoreList;
 
     /**
      * The TableList.
@@ -65,10 +64,10 @@ public class MetisSwingTableListManager<R extends MetisDataVersionedItem> {
      * @param pList the list
      */
     protected MetisSwingTableListManager(final MetisSwingTableManager<R> pTable,
-                                         final MetisVersionedList<R> pList) {
+                                         final MetisIndexedList<R> pList) {
         /* Store parameters */
         theTable = pTable;
-        theVersionedList = pList;
+        theCoreList = pList;
 
         /* Create the lists */
         theTableList = new ArrayList<>();
@@ -78,11 +77,10 @@ public class MetisSwingTableListManager<R extends MetisDataVersionedItem> {
         initialiseLists();
 
         /* Listen to events on the editList */
-        TethysEventRegistrar<MetisListEvent> myRegistrar = theVersionedList.getEventRegistrar();
+        TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> handleRefresh());
-        if (theVersionedList instanceof MetisEditList) {
-            myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
-        }
+        myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
+
     }
 
     /**
@@ -113,7 +111,7 @@ public class MetisSwingTableListManager<R extends MetisDataVersionedItem> {
         theIdList.clear();
 
         /* Loop through the underlying list */
-        Iterator<R> myIterator = theVersionedList.iterator();
+        Iterator<R> myIterator = theCoreList.iterator();
         while (myIterator.hasNext()) {
             R myItem = myIterator.next();
 

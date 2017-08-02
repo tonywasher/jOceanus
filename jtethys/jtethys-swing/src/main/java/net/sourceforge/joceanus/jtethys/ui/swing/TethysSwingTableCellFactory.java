@@ -43,9 +43,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
@@ -70,14 +68,24 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingTextEditField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingUnitsTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutionColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIconColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableIntegerColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableListColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableLongColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableMoneyColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTablePriceColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRateColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRatioColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableScrollColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableShortColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableUnitsColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableValidatedColumn;
 
 /**
@@ -85,13 +93,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
  * @param <C> the column identity
  * @param <R> the table row type
  */
-public class TethysSwingTableCellFactory<C, R>
-        implements TethysEventProvider<TethysUIEvent> {
-    /**
-     * The Event Manager.
-     */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
-
+public class TethysSwingTableCellFactory<C, R> {
     /**
      * The GUI Factory.
      */
@@ -102,13 +104,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pFactory the GUI factory
      */
     protected TethysSwingTableCellFactory(final TethysSwingGuiFactory pFactory) {
-        theEventManager = new TethysEventManager<>();
         theGuiFactory = pFactory;
-    }
-
-    @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -116,8 +112,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the string cell
      */
-    protected TethysSwingTableCell<String, C, R> stringCell(final TethysSwingTableColumn<String, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableStringCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<String, C, R> stringCell(final TethysSwingTableStringColumn<C, R> pColumn) {
+        return new TethysSwingTableStringCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -125,8 +121,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the charArray cell
      */
-    protected TethysSwingTableCell<char[], C, R> charArrayCell(final TethysSwingTableColumn<char[], C, R> pColumn) {
-        return listenToCell(new TethysSwingTableCharArrayCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<char[], C, R> charArrayCell(final TethysSwingTableCharArrayColumn<C, R> pColumn) {
+        return new TethysSwingTableCharArrayCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -134,8 +130,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the short cell
      */
-    protected TethysSwingTableCell<Short, C, R> shortCell(final TethysSwingTableColumn<Short, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableShortCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<Short, C, R> shortCell(final TethysSwingTableShortColumn<C, R> pColumn) {
+        return new TethysSwingTableShortCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -143,8 +139,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the integer cell
      */
-    protected TethysSwingTableCell<Integer, C, R> integerCell(final TethysSwingTableColumn<Integer, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableIntegerCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<Integer, C, R> integerCell(final TethysSwingTableIntegerColumn<C, R> pColumn) {
+        return new TethysSwingTableIntegerCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -152,8 +148,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the long cell
      */
-    protected TethysSwingTableCell<Long, C, R> longCell(final TethysSwingTableColumn<Long, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableLongCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<Long, C, R> longCell(final TethysSwingTableLongColumn<C, R> pColumn) {
+        return new TethysSwingTableLongCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -161,8 +157,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the money cell
      */
-    protected TethysSwingTableCell<TethysDecimal, C, R> rawDecimalCell(final TethysSwingTableColumn<TethysDecimal, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableRawDecimalCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysDecimal, C, R> rawDecimalCell(final TethysSwingTableRawDecimalColumn<C, R> pColumn) {
+        return new TethysSwingTableRawDecimalCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -170,8 +166,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the money cell
      */
-    protected TethysSwingTableCell<TethysMoney, C, R> moneyCell(final TethysSwingTableColumn<TethysMoney, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableMoneyCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysMoney, C, R> moneyCell(final TethysSwingTableMoneyColumn<C, R> pColumn) {
+        return new TethysSwingTableMoneyCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -179,8 +175,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the price cell
      */
-    protected TethysSwingTableCell<TethysPrice, C, R> priceCell(final TethysSwingTableColumn<TethysPrice, C, R> pColumn) {
-        return listenToCell(new TethysSwingTablePriceCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysPrice, C, R> priceCell(final TethysSwingTablePriceColumn<C, R> pColumn) {
+        return new TethysSwingTablePriceCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -188,8 +184,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the rate cell
      */
-    protected TethysSwingTableCell<TethysRate, C, R> rateCell(final TethysSwingTableColumn<TethysRate, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableRateCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysRate, C, R> rateCell(final TethysSwingTableRateColumn<C, R> pColumn) {
+        return new TethysSwingTableRateCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -197,8 +193,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the units cell
      */
-    protected TethysSwingTableCell<TethysUnits, C, R> unitsCell(final TethysSwingTableColumn<TethysUnits, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableUnitsCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysUnits, C, R> unitsCell(final TethysSwingTableUnitsColumn<C, R> pColumn) {
+        return new TethysSwingTableUnitsCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -206,8 +202,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the dilution cell
      */
-    protected TethysSwingTableCell<TethysDilution, C, R> dilutionCell(final TethysSwingTableColumn<TethysDilution, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableDilutionCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysDilution, C, R> dilutionCell(final TethysSwingTableDilutionColumn<C, R> pColumn) {
+        return new TethysSwingTableDilutionCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -215,8 +211,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the ratio cell
      */
-    protected TethysSwingTableCell<TethysRatio, C, R> ratioCell(final TethysSwingTableColumn<TethysRatio, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableRatioCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysRatio, C, R> ratioCell(final TethysSwingTableRatioColumn<C, R> pColumn) {
+        return new TethysSwingTableRatioCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -224,8 +220,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the dilutedPrice cell
      */
-    protected TethysSwingTableCell<TethysDilutedPrice, C, R> dilutedPriceCell(final TethysSwingTableColumn<TethysDilutedPrice, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableDilutedPriceCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysDilutedPrice, C, R> dilutedPriceCell(final TethysSwingTableDilutedPriceColumn<C, R> pColumn) {
+        return new TethysSwingTableDilutedPriceCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -235,9 +231,9 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pClass the class of the item
      * @return the scroll cell
      */
-    protected <T> TethysSwingTableCell<T, C, R> scrollCell(final TethysSwingTableColumn<T, C, R> pColumn,
+    protected <T> TethysSwingTableCell<T, C, R> scrollCell(final TethysSwingTableScrollColumn<T, C, R> pColumn,
                                                            final Class<T> pClass) {
-        return listenToCell(new TethysSwingTableScrollCell<>(pColumn, theGuiFactory, pClass));
+        return new TethysSwingTableScrollCell<>(pColumn, theGuiFactory, pClass);
     }
 
     /**
@@ -247,9 +243,9 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pClass the class of the item
      * @return the list cell
      */
-    protected <T> TethysSwingTableCell<TethysItemList<T>, C, R> listCell(final TethysSwingTableColumn<TethysItemList<T>, C, R> pColumn,
+    protected <T> TethysSwingTableCell<TethysItemList<T>, C, R> listCell(final TethysSwingTableListColumn<T, C, R> pColumn,
                                                                          final Class<T> pClass) {
-        return listenToCell(new TethysSwingTableListCell<>(pColumn, theGuiFactory, pClass));
+        return new TethysSwingTableListCell<>(pColumn, theGuiFactory, pClass);
     }
 
     /**
@@ -257,8 +253,8 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pColumn the column
      * @return the date cell
      */
-    protected TethysSwingTableCell<TethysDate, C, R> dateCell(final TethysSwingTableColumn<TethysDate, C, R> pColumn) {
-        return listenToCell(new TethysSwingTableDateCell<>(pColumn, theGuiFactory));
+    protected TethysSwingTableCell<TethysDate, C, R> dateCell(final TethysSwingTableDateColumn<C, R> pColumn) {
+        return new TethysSwingTableDateCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -268,20 +264,9 @@ public class TethysSwingTableCellFactory<C, R>
      * @param pClass the class of the item
      * @return the icon cell
      */
-    protected <T> TethysSwingTableCell<T, C, R> iconCell(final TethysSwingTableColumn<T, C, R> pColumn,
+    protected <T> TethysSwingTableCell<T, C, R> iconCell(final TethysSwingTableIconColumn<T, C, R> pColumn,
                                                          final Class<T> pClass) {
-        return listenToCell(new TethysSwingTableIconCell<>(pColumn, theGuiFactory, pClass));
-    }
-
-    /**
-     * Listen to cell.
-     * @param <T> the column type
-     * @param pCell the cell
-     * @return the cell
-     */
-    private <T> TethysSwingTableCell<T, C, R> listenToCell(final TethysSwingTableCell<T, C, R> pCell) {
-        pCell.getEventRegistrar().addEventListener(theEventManager::cascadeEvent);
-        return pCell;
+        return new TethysSwingTableIconCell<>(pColumn, theGuiFactory, pClass);
     }
 
     /**
@@ -291,7 +276,7 @@ public class TethysSwingTableCellFactory<C, R>
      * @param <R> the table item class
      */
     public abstract static class TethysSwingTableCell<T, C, R>
-            implements TethysEventProvider<TethysUIEvent>, TethysTableCell<T, C, R, JComponent, Icon> {
+            implements TethysTableCell<T, C, R, JComponent, Icon> {
         /**
          * The Column.
          */
@@ -311,11 +296,6 @@ public class TethysSwingTableCellFactory<C, R>
          * The Data class.
          */
         private final Class<T> theClass;
-
-        /**
-         * The Event Manager.
-         */
-        private final TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The Editor.
@@ -372,9 +352,6 @@ public class TethysSwingTableCellFactory<C, R>
             theEditControl = pControl;
             theClass = pClass;
 
-            /* Create the event manager */
-            theEventManager = new TethysEventManager<>();
-
             /* Create the editor and renderer */
             theEditor = new TethysSwingTableCellEditor();
             theRenderer = new TethysSwingTableCellRenderer();
@@ -387,11 +364,6 @@ public class TethysSwingTableCellFactory<C, R>
                 TethysSwingTableValidatedColumn<T, C, R> myColumn = (TethysSwingTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             }
-        }
-
-        @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -419,11 +391,6 @@ public class TethysSwingTableCellFactory<C, R>
         @Override
         public C getColumnId() {
             return theColumn.getId();
-        }
-
-        @Override
-        public T getNewValue() {
-            return theEditor.getCellEditorValue();
         }
 
         @Override
@@ -587,10 +554,12 @@ public class TethysSwingTableCellFactory<C, R>
 
                 /* If there is no error */
                 boolean bComplete = false;
-                if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)
-                    && theEventManager.fireEvent(TethysUIEvent.CELLCOMMIT, TethysSwingTableCell.this)) {
+                if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)) {
                     /* Pass call onwards */
                     bComplete = super.stopCellEditing();
+
+                    /* Repaint any cells necessary */
+                    getTable().rePaintOnCommit(TethysSwingTableCell.this);
                 }
 
                 /* Return status */
@@ -655,7 +624,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableStringCell(final TethysSwingTableColumn<String, C, R> pColumn,
+        protected TethysSwingTableStringCell(final TethysSwingTableStringColumn<C, R> pColumn,
                                              final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newStringField(), String.class);
         }
@@ -678,7 +647,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableCharArrayCell(final TethysSwingTableColumn<char[], C, R> pColumn,
+        protected TethysSwingTableCharArrayCell(final TethysSwingTableCharArrayColumn<C, R> pColumn,
                                                 final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newCharArrayField(), char[].class);
         }
@@ -701,7 +670,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableShortCell(final TethysSwingTableColumn<Short, C, R> pColumn,
+        protected TethysSwingTableShortCell(final TethysSwingTableShortColumn<C, R> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newShortField(), Short.class);
         }
@@ -724,7 +693,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableIntegerCell(final TethysSwingTableColumn<Integer, C, R> pColumn,
+        protected TethysSwingTableIntegerCell(final TethysSwingTableIntegerColumn<C, R> pColumn,
                                               final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newIntegerField(), Integer.class);
         }
@@ -747,7 +716,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableLongCell(final TethysSwingTableColumn<Long, C, R> pColumn,
+        protected TethysSwingTableLongCell(final TethysSwingTableLongColumn<C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newLongField(), Long.class);
         }
@@ -770,7 +739,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableRawDecimalCell(final TethysSwingTableColumn<TethysDecimal, C, R> pColumn,
+        protected TethysSwingTableRawDecimalCell(final TethysSwingTableRawDecimalColumn<C, R> pColumn,
                                                  final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newRawDecimalField(), TethysDecimal.class);
             getControl().setNumDecimals(() -> getColumn().getNumDecimals().apply(getActiveRow()));
@@ -799,7 +768,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableMoneyCell(final TethysSwingTableColumn<TethysMoney, C, R> pColumn,
+        protected TethysSwingTableMoneyCell(final TethysSwingTableMoneyColumn<C, R> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newMoneyField(), TethysMoney.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
@@ -828,7 +797,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTablePriceCell(final TethysSwingTableColumn<TethysPrice, C, R> pColumn,
+        protected TethysSwingTablePriceCell(final TethysSwingTablePriceColumn<C, R> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newPriceField(), TethysPrice.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
@@ -857,7 +826,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableRateCell(final TethysSwingTableColumn<TethysRate, C, R> pColumn,
+        protected TethysSwingTableRateCell(final TethysSwingTableRateColumn<C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newRateField(), TethysRate.class);
         }
@@ -880,7 +849,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableUnitsCell(final TethysSwingTableColumn<TethysUnits, C, R> pColumn,
+        protected TethysSwingTableUnitsCell(final TethysSwingTableUnitsColumn<C, R> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newUnitsField(), TethysUnits.class);
         }
@@ -903,7 +872,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableDilutionCell(final TethysSwingTableColumn<TethysDilution, C, R> pColumn,
+        protected TethysSwingTableDilutionCell(final TethysSwingTableDilutionColumn<C, R> pColumn,
                                                final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newDilutionField(), TethysDilution.class);
         }
@@ -926,7 +895,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableDilutedPriceCell(final TethysSwingTableColumn<TethysDilutedPrice, C, R> pColumn,
+        protected TethysSwingTableDilutedPriceCell(final TethysSwingTableDilutedPriceColumn<C, R> pColumn,
                                                    final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newDilutedPriceField(), TethysDilutedPrice.class);
             getControl().setDeemedCurrency(() -> getColumn().getDeemedCurrency().apply(getActiveRow()));
@@ -955,7 +924,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableRatioCell(final TethysSwingTableColumn<TethysRatio, C, R> pColumn,
+        protected TethysSwingTableRatioCell(final TethysSwingTableRatioColumn<C, R> pColumn,
                                             final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newRatioField(), TethysRatio.class);
         }
@@ -978,7 +947,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pColumn the column
          * @param pFactory the GUI Factory
          */
-        protected TethysSwingTableDateCell(final TethysSwingTableColumn<TethysDate, C, R> pColumn,
+        protected TethysSwingTableDateCell(final TethysSwingTableDateColumn<C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newDateField(), TethysDate.class);
             useDialog();
@@ -1010,7 +979,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysSwingTableScrollCell(final TethysSwingTableColumn<T, C, R> pColumn,
+        protected TethysSwingTableScrollCell(final TethysSwingTableScrollColumn<T, C, R> pColumn,
                                              final TethysSwingGuiFactory pFactory,
                                              final Class<T> pClass) {
             super(pColumn, pFactory.newScrollField(), pClass);
@@ -1043,7 +1012,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysSwingTableListCell(final TethysSwingTableColumn<TethysItemList<T>, C, R> pColumn,
+        protected TethysSwingTableListCell(final TethysSwingTableListColumn<T, C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
             super(pColumn, pFactory.newListField());
@@ -1076,7 +1045,7 @@ public class TethysSwingTableCellFactory<C, R>
          * @param pFactory the GUI Factory
          * @param pClass the field class
          */
-        protected TethysSwingTableIconCell(final TethysSwingTableColumn<T, C, R> pColumn,
+        protected TethysSwingTableIconCell(final TethysSwingTableIconColumn<T, C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
             super(pColumn, pFactory.newIconField(), pClass);

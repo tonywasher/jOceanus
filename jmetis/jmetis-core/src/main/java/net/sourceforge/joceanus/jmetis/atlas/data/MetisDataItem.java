@@ -63,6 +63,44 @@ public final class MetisDataItem {
     }
 
     /**
+     * Data Field Item.
+     */
+    public interface MetisDataFieldItem
+            extends MetisDataObjectFormat {
+        /**
+         * Obtain the Data FieldSet.
+         * @return the report fields
+         */
+        MetisDataFieldSet getDataFieldSet();
+
+        /**
+         * Obtain Field value.
+         * @param pField the field
+         * @return the value of the field
+         */
+        Object getFieldValue(MetisDataField pField);
+    }
+
+    /**
+     * Table Item.
+     */
+    public interface MetisDataTableItem
+            extends MetisDataFieldItem, MetisIndexedItem {
+    }
+
+    /**
+     * ValueSet object interface.
+     */
+    public interface MetisDataVersionedItem
+            extends MetisDataTableItem {
+        /**
+         * Obtain Object Version Control.
+         * @return the versionControl of the object
+         */
+        MetisDataVersionControl getVersionControl();
+    }
+
+    /**
      * Interface for items that wish to control disabled items.
      */
     @FunctionalInterface

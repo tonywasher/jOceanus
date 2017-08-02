@@ -22,15 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 
 /**
  * Data Version History.
  */
 public class MetisDataVersionControl
-        implements MetisIndexedItem, MetisDataFieldItem {
+        implements MetisDataTableItem {
     /**
      * Report fields.
      */
@@ -72,6 +71,16 @@ public class MetisDataVersionControl
     private static final MetisDataField FIELD_VALIDATION = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS.getValue());
 
     /**
+     * The history of values for this object.
+     */
+    private final MetisDataVersionHistory theHistory;
+
+    /**
+     * The Data Item Validation.
+     */
+    private final MetisDataItemValidation theValidation;
+
+    /**
      * The id.
      */
     private Integer theId;
@@ -85,16 +94,6 @@ public class MetisDataVersionControl
      * The editState.
      */
     private MetisDataEditState theEditState;
-
-    /**
-     * The history of values for this object.
-     */
-    private final MetisDataVersionHistory theHistory;
-
-    /**
-     * The Data Item Validation.
-     */
-    private final MetisDataItemValidation theValidation;
 
     /**
      * Constructor.

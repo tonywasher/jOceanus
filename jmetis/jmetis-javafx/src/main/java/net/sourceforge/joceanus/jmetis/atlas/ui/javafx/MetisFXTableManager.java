@@ -24,10 +24,8 @@ package net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
 
 import javafx.scene.Node;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
@@ -54,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  * Metis javaFX table manager.
  * @param <R> the item type
  */
-public class MetisFXTableManager<R extends MetisDataVersionedItem>
+public class MetisFXTableManager<R extends MetisDataTableItem>
         extends MetisTableManager<R, Node, Node> {
     /**
      * Table List.
@@ -67,44 +65,16 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     private final MetisFXTableListFields<R> theItemFields;
 
     /**
-     * is the table readOnly.
-     */
-    private final boolean isReadOnly;
-
-    /**
-     * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pList the edit list
-     */
-    public MetisFXTableManager(final TethysFXGuiFactory pFactory,
-                               final MetisEditList<R> pList) {
-        this(pFactory, pList, false);
-    }
-
-    /**
-     * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pList the base list
-     */
-    public MetisFXTableManager(final TethysFXGuiFactory pFactory,
-                               final MetisBaseList<R> pList) {
-        this(pFactory, pList, true);
-    }
-
-    /**
      * Constructor.
      * @param pFactory the GUI Factory
      * @param pList the versioned list
-     * @param pReadOnly is the table readOnly?
      */
-    private MetisFXTableManager(final TethysFXGuiFactory pFactory,
-                                final MetisVersionedList<R> pList,
-                                final boolean pReadOnly) {
+    public MetisFXTableManager(final TethysFXGuiFactory pFactory,
+                               final MetisIndexedList<R> pList) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the table list */
-        isReadOnly = pReadOnly;
         theList = new MetisFXTableList<>(pList);
         theItemFields = theList.getListFields();
         getTable().setItems(theList.getUnderlyingList());
@@ -116,11 +86,6 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     }
 
     @Override
-    public boolean isReadOnly() {
-        return isReadOnly;
-    }
-
-    @Override
     public void setCalculator(final MetisTableCalculator<R> pCalculator) {
         theItemFields.setCalculator(pCalculator);
     }
@@ -129,6 +94,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableStringColumn<MetisDataField, R> declareStringColumn(final MetisDataField pId) {
         TethysFXTableStringColumn<MetisDataField, R> myColumn = getTable().declareStringColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -136,6 +102,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableCharArrayColumn<MetisDataField, R> declareCharArrayColumn(final MetisDataField pId) {
         TethysFXTableCharArrayColumn<MetisDataField, R> myColumn = getTable().declareCharArrayColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -143,6 +110,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableShortColumn<MetisDataField, R> declareShortColumn(final MetisDataField pId) {
         TethysFXTableShortColumn<MetisDataField, R> myColumn = getTable().declareShortColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -150,6 +118,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableIntegerColumn<MetisDataField, R> declareIntegerColumn(final MetisDataField pId) {
         TethysFXTableIntegerColumn<MetisDataField, R> myColumn = getTable().declareIntegerColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -157,6 +126,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableLongColumn<MetisDataField, R> declareLongColumn(final MetisDataField pId) {
         TethysFXTableLongColumn<MetisDataField, R> myColumn = getTable().declareLongColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -164,6 +134,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableRawDecimalColumn<MetisDataField, R> declareRawDecimalColumn(final MetisDataField pId) {
         TethysFXTableRawDecimalColumn<MetisDataField, R> myColumn = getTable().declareRawDecimalColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -171,6 +142,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableMoneyColumn<MetisDataField, R> declareMoneyColumn(final MetisDataField pId) {
         TethysFXTableMoneyColumn<MetisDataField, R> myColumn = getTable().declareMoneyColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -178,6 +150,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTablePriceColumn<MetisDataField, R> declarePriceColumn(final MetisDataField pId) {
         TethysFXTablePriceColumn<MetisDataField, R> myColumn = getTable().declarePriceColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -185,6 +158,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableRateColumn<MetisDataField, R> declareRateColumn(final MetisDataField pId) {
         TethysFXTableRateColumn<MetisDataField, R> myColumn = getTable().declareRateColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -192,6 +166,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableUnitsColumn<MetisDataField, R> declareUnitsColumn(final MetisDataField pId) {
         TethysFXTableUnitsColumn<MetisDataField, R> myColumn = getTable().declareUnitsColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -199,6 +174,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableDilutionColumn<MetisDataField, R> declareDilutionColumn(final MetisDataField pId) {
         TethysFXTableDilutionColumn<MetisDataField, R> myColumn = getTable().declareDilutionColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -206,6 +182,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableRatioColumn<MetisDataField, R> declareRatioColumn(final MetisDataField pId) {
         TethysFXTableRatioColumn<MetisDataField, R> myColumn = getTable().declareRatioColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -213,6 +190,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableDilutedPriceColumn<MetisDataField, R> declareDilutedPriceColumn(final MetisDataField pId) {
         TethysFXTableDilutedPriceColumn<MetisDataField, R> myColumn = getTable().declareDilutedPriceColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -220,6 +198,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
     public TethysFXTableDateColumn<MetisDataField, R> declareDateColumn(final MetisDataField pId) {
         TethysFXTableDateColumn<MetisDataField, R> myColumn = getTable().declareDateColumn(pId);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -228,6 +207,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
                                                                                    final Class<T> pClass) {
         TethysFXTableScrollColumn<T, MetisDataField, R> myColumn = getTable().declareScrollColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -236,6 +216,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
                                                                                final Class<T> pClass) {
         TethysFXTableListColumn<T, MetisDataField, R> myColumn = getTable().declareListColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 
@@ -244,6 +225,7 @@ public class MetisFXTableManager<R extends MetisDataVersionedItem>
                                                                                final Class<T> pClass) {
         TethysFXTableIconColumn<T, MetisDataField, R> myColumn = getTable().declareIconColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pId));
+        theItemFields.declareField(pId);
         return myColumn;
     }
 }

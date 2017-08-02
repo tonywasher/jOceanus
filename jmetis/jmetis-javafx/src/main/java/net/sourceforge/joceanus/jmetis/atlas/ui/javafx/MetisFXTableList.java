@@ -27,11 +27,10 @@ import java.util.Iterator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -39,17 +38,17 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Table FieldSet.
  * @param <R> the item type
  */
-public class MetisFXTableList<R extends MetisDataVersionedItem>
+public class MetisFXTableList<R extends MetisDataTableItem>
         implements MetisDataList<R> {
     /**
-     * The underlying EditList.
+     * The core List.
      */
-    private final MetisVersionedList<R> theVersionedList;
+    private final MetisIndexedList<R> theCoreList;
 
     /**
      * The observableList.
      */
-    private final ObservableList<R> theList;
+    private ObservableList<R> theList;
 
     /**
      * The ListFields.
@@ -60,24 +59,20 @@ public class MetisFXTableList<R extends MetisDataVersionedItem>
      * Constructor.
      * @param pList the list
      */
-    protected MetisFXTableList(final MetisVersionedList<R> pList) {
+    protected MetisFXTableList(final MetisIndexedList<R> pList) {
         /* Store parameters */
-        theVersionedList = pList;
+        theCoreList = pList;
 
         /* Create the list field manager */
-        theListFields = new MetisFXTableListFields<>(theVersionedList);
+        theListFields = new MetisFXTableListFields<>(theCoreList);
 
         /* Create the list */
-        theList = theListFields.hasComparisons()
-                                                 ? FXCollections.observableArrayList(theListFields::getComparisons)
-                                                 : FXCollections.observableArrayList();
+        theList = FXCollections.observableArrayList(theListFields::getObservables);
 
         /* Listen to events on the versionedList */
-        TethysEventRegistrar<MetisListEvent> myRegistrar = theVersionedList.getEventRegistrar();
+        TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> refreshList());
-        if (theVersionedList instanceof MetisEditList) {
-            myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
-        }
+        myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
     }
 
     @Override
@@ -102,7 +97,7 @@ public class MetisFXTableList<R extends MetisDataVersionedItem>
         theListFields.clear();
 
         /* Add all the elements of the list */
-        theList.addAll(theVersionedList.getUnderlyingList());
+        theList.addAll(theCoreList.getUnderlyingList());
     }
 
     /**

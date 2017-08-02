@@ -27,11 +27,9 @@ import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisBaseList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisEditList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -68,17 +66,12 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
  * Metis swing table manager.
  * @param <R> the item type
  */
-public class MetisSwingTableManager<R extends MetisDataVersionedItem>
+public class MetisSwingTableManager<R extends MetisDataTableItem>
         extends MetisTableManager<R, JComponent, Icon> {
     /**
      * Table List.
      */
     private final MetisSwingTableListManager<R> theList;
-
-    /**
-     * is the table readOnly.
-     */
-    private final boolean isReadOnly;
 
     /**
      * Table Calculator.
@@ -87,38 +80,15 @@ public class MetisSwingTableManager<R extends MetisDataVersionedItem>
 
     /**
      * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pList the edit list
-     */
-    public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
-                                  final MetisEditList<R> pList) {
-        this(pFactory, pList, false);
-    }
-
-    /**
-     * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pList the base list
-     */
-    public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
-                                  final MetisBaseList<R> pList) {
-        this(pFactory, pList, true);
-    }
-
-    /**
-     * Constructor.
      * @param pFactory the GUI factory
      * @param pList the versioned list
-     * @param pReadOnly is the table readOnly?
      */
-    protected MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
-                                     final MetisVersionedList<R> pList,
-                                     final boolean pReadOnly) {
+    public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
+                                  final MetisIndexedList<R> pList) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the table list */
-        isReadOnly = pReadOnly;
         theList = new MetisSwingTableListManager<>(this, pList);
         getTable().setItems(theList.getTableList());
     }
@@ -126,11 +96,6 @@ public class MetisSwingTableManager<R extends MetisDataVersionedItem>
     @Override
     protected TethysSwingTableManager<MetisDataField, R> getTable() {
         return (TethysSwingTableManager<MetisDataField, R>) super.getTable();
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        return isReadOnly;
     }
 
     /**

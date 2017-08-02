@@ -22,27 +22,28 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisVersionedList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 
 /**
  * Table List fields.
  * @param <R> the item type
  */
-public class MetisFXTableListFields<R extends MetisDataVersionedItem> {
+public class MetisFXTableListFields<R extends MetisDataTableItem> {
     /**
-     * The field list.
+     * The fieldSet.
      */
-    private final MetisDataFieldSet theFields;
+    private final List<MetisDataField> theFields;
 
     /**
      * The fieldSet Map.
@@ -58,8 +59,8 @@ public class MetisFXTableListFields<R extends MetisDataVersionedItem> {
      * Constructor.
      * @param pList the editList
      */
-    public MetisFXTableListFields(final MetisVersionedList<R> pList) {
-        theFields = pList.getItemFieldSet();
+    public MetisFXTableListFields(final MetisIndexedList<R> pList) {
+        theFields = new ArrayList<>();
         theIdMap = new HashMap<>();
     }
 
@@ -67,7 +68,7 @@ public class MetisFXTableListFields<R extends MetisDataVersionedItem> {
      * Obtain the fields.
      * @return the fields
      */
-    protected MetisDataFieldSet getFields() {
+    protected List<MetisDataField> getFields() {
         return theFields;
     }
 
@@ -89,6 +90,14 @@ public class MetisFXTableListFields<R extends MetisDataVersionedItem> {
     }
 
     /**
+     * Declare field.
+     * @param pField the field
+     */
+    protected void declareField(final MetisDataField pField) {
+        theFields.add(pField);
+    }
+
+    /**
      * Obtain the field set for the item.
      * @param pItem the item
      * @return the fieldSet
@@ -104,13 +113,13 @@ public class MetisFXTableListFields<R extends MetisDataVersionedItem> {
     }
 
     /**
-     * Obtain the comparisons array for an item.
+     * Obtain the observable array for an item.
      * @param pItem the item
      * @return the array
      */
-    protected Observable[] getComparisons(final R pItem) {
+    protected Observable[] getObservables(final R pItem) {
         MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
-        return myFieldSet.getComparisons();
+        return myFieldSet.getObservables();
     }
 
     /**
@@ -159,14 +168,6 @@ public class MetisFXTableListFields<R extends MetisDataVersionedItem> {
 
         /* No item found */
         return null;
-    }
-
-    /**
-     * Do we have comparisons?
-     * @return true/false
-     */
-    protected boolean hasComparisons() {
-        return theFields.hasComparisons();
     }
 
     /**

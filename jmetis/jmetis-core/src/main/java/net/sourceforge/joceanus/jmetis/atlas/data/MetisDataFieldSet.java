@@ -28,32 +28,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 
 /**
  * Metis Data FieldSet.
  */
 public class MetisDataFieldSet {
-    /**
-     * Data Field Item.
-     */
-    public interface MetisDataFieldItem
-            extends MetisDataObjectFormat {
-        /**
-         * Obtain the Data FieldSet.
-         * @return the report fields
-         */
-        MetisDataFieldSet getDataFieldSet();
-
-        /**
-         * Obtain Field value.
-         * @param pField the field
-         * @return the value of the field
-         */
-        Object getFieldValue(MetisDataField pField);
-    }
-
     /**
      * Hash Prime.
      */
@@ -95,11 +75,6 @@ public class MetisDataFieldSet {
     private final MetisDataFieldSet theParent;
 
     /**
-     * has comparisons?
-     */
-    private boolean hasComparisons;
-
-    /**
      * has versions?
      */
     private boolean hasVersions;
@@ -130,7 +105,6 @@ public class MetisDataFieldSet {
         theFields = new ArrayList<>();
         if (theParent != null) {
             theNextValue = theParent.getNumValues();
-            hasComparisons = theParent.hasComparisons();
             hasVersions = theParent.hasVersions();
             hasIndices = theParent.hasIndices();
         } else {
@@ -166,14 +140,6 @@ public class MetisDataFieldSet {
      */
     public String getName() {
         return theName;
-    }
-
-    /**
-     * Does the item have comparisons?
-     * @return true/false
-     */
-    public boolean hasComparisons() {
-        return hasComparisons;
     }
 
     /**
@@ -245,15 +211,6 @@ public class MetisDataFieldSet {
     }
 
     /**
-     * Declare field used for equality and comparison test.
-     * @param pName the name of the field
-     * @return the field
-     */
-    public MetisDataField declareComparisonField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.COMPARISON, MetisFieldStorage.LOCAL);
-    }
-
-    /**
      * Declare versioned field not used for equality test.
      * @param pName the name of the field
      * @return the field
@@ -284,30 +241,6 @@ public class MetisDataFieldSet {
                                                         final MetisDataType pDataType,
                                                         final Integer pMaxLength) {
         return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VERSIONED);
-    }
-
-    /**
-     * Declare versioned field used for equality and comparison test.
-     * @param pName the name of the field
-     * @param pDataType the dataType of the field
-     * @return the field
-     */
-    public MetisDataField declareComparisonVersionedField(final String pName,
-                                                          final MetisDataType pDataType) {
-        return declareComparisonVersionedField(pName, pDataType, FIELD_NO_MAXLENGTH);
-    }
-
-    /**
-     * Declare versioned field used for equality and comparison test.
-     * @param pName the name of the field
-     * @param pDataType the dataType of the field
-     * @param pMaxLength the maximum length of the field
-     * @return the field
-     */
-    public MetisDataField declareComparisonVersionedField(final String pName,
-                                                          final MetisDataType pDataType,
-                                                          final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.COMPARISON, MetisFieldStorage.VERSIONED);
     }
 
     /**
@@ -371,9 +304,6 @@ public class MetisDataFieldSet {
         theFields.add(pField);
 
         /* Adjust indications */
-        if (pField.getEquality().isComparison()) {
-            hasComparisons = true;
-        }
         if (pField.getStorage().isVersioned()) {
             hasVersions = true;
         }
@@ -515,27 +445,14 @@ public class MetisDataFieldSet {
         /**
          * Equality.
          */
-        EQUALITY,
-
-        /**
-         * Comparison.
-         */
-        COMPARISON;
+        EQUALITY;
 
         /**
          * Is the field used in equality?
          * @return true/false
          */
         public boolean isEquality() {
-            return this != DERIVED;
-        }
-
-        /**
-         * Is the field used in comparison?
-         * @return true/false
-         */
-        public boolean isComparison() {
-            return this == COMPARISON;
+            return this == EQUALITY;
         }
     }
 

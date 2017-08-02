@@ -28,15 +28,15 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -255,9 +255,7 @@ public class MetisViewerFormatter {
         /* Access details */
         MetisDataFieldSet myFields = pItem.getDataFieldSet();
         MetisDataVersionControl myControl = pItem.getVersionControl();
-        MetisDataVersionValues myValues = myControl == null
-                                                            ? null
-                                                            : myControl.getValueSet();
+        MetisDataVersionValues myValues = myControl.getValueSet();
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());

@@ -67,11 +67,6 @@ public enum TethysUIEvent {
     EDITFOCUSLOST,
 
     /**
-     * Cell has been committed.
-     */
-    CELLCOMMIT,
-
-    /**
      * New Stage declared.
      */
     NEWSTAGE;

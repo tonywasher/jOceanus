@@ -32,18 +32,22 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Java Indexed List.
  * @param <T> the item type
  */
 public class MetisIndexedList<T extends MetisIndexedItem>
-        implements MetisDataList<T>, MetisDataFieldItem {
+        implements MetisDataList<T>, TethysEventProvider<MetisListEvent>, MetisDataFieldItem {
     /**
      * Report fields.
      */
@@ -58,6 +62,11 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      * The First Id.
      */
     private static final Integer ID_FIRST = Integer.valueOf(1);
+
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager<MetisListEvent> theEventManager;
 
     /**
      * The underlying list.
@@ -82,10 +91,18 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     /**
      * Constructor.
      */
-    protected MetisIndexedList() {
+    public MetisIndexedList() {
+        /* Create the event manager */
+        theEventManager = new TethysEventManager<>();
+
         /* Create the list and map map */
         theList = new ArrayList<>();
         theIdMap = new HashMap<>();
+    }
+
+    @Override
+    public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -308,6 +325,48 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         if (pId >= theNextId) {
             /* Adjust the nextId */
             theNextId = pId + 1;
+        }
+    }
+
+    /**
+     * Reset content.
+     * @param pSource the source list
+     */
+    public void resetContent(final MetisIndexedList<T> pSource) {
+        /* Reset the list */
+        resetContent(pSource.iterator());
+    }
+
+    /**
+     * Reset content.
+     * @param pSource the source iterator
+     */
+    public void resetContent(final Iterator<T> pSource) {
+        /* Clear the list */
+        clear();
+
+        /* Loop through the list */
+        while (pSource.hasNext()) {
+            T myCurr = pSource.next();
+
+            /* Add the item to the list */
+            addToList(myCurr);
+        }
+
+        /* Report the refresh */
+        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REFRESH);
+        fireEvent(myChange);
+    }
+
+    /**
+     * Fire event.
+     * @param pEvent the event
+     */
+    protected void fireEvent(final MetisListChange<T> pEvent) {
+        /* If the change is non-empty */
+        if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
+            || !pEvent.isEmpty()) {
+            theEventManager.fireEvent(pEvent.getEventType(), pEvent);
         }
     }
 

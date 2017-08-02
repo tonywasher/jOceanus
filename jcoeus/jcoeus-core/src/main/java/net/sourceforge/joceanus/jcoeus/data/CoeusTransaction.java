@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jcoeus.data;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * Coeus Transaction.
  */
 public abstract class CoeusTransaction
-        implements MetisDataVersionedItem {
+        implements MetisDataTableItem {
     /**
      * Report fields.
      */

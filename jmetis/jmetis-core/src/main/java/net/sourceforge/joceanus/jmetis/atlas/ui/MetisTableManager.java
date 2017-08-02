@@ -24,12 +24,14 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDisableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -37,9 +39,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -51,7 +50,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconCol
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableValidatedColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Table Manager.
@@ -59,13 +57,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
-    /**
-     * The event manager.
-     */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
-
+public abstract class MetisTableManager<R extends MetisDataTableItem, N, I>
+        implements TethysNode<N> {
     /**
      * The underlying table.
      */
@@ -78,13 +71,6 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
     protected MetisTableManager(final TethysGuiFactory<N, I> pFactory) {
         /* Create the table */
         theTable = pFactory.newTable();
-
-        /* Create event manager */
-        theEventManager = new TethysEventManager<>();
-
-        /* Handle events */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTable.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.CELLCOMMIT, theEventManager::cascadeEvent);
 
         /* Set the changed, disabled and error tests */
         theTable.setChanged(MetisTableManager::isFieldChanged);
@@ -112,11 +98,6 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
         theTable.setEnabled(pEnabled);
     }
 
-    @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
     /**
      * Set the disabled predicate.
      * @param pDisabled the disabled predicate
@@ -132,6 +113,30 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      */
     public boolean isDisabled(final R pRow) {
         return theTable.isDisabled(pRow);
+    }
+
+    /**
+     * Set the on-commit consumer.
+     * @param pOnCommit the consumer
+     */
+    public void setOnCommit(final Consumer<R> pOnCommit) {
+        theTable.setOnCommit(pOnCommit);
+    }
+
+    /**
+     * do we rePaintRow on commit?
+     * @return true/false
+     */
+    public boolean doRePaintRowOnCommit() {
+        return theTable.doRePaintRowOnCommit();
+    }
+
+    /**
+     * Set repaintRow on Commit.
+     * @param pRePaint the flag
+     */
+    public void setRepaintRowOnCommit(final boolean pRePaint) {
+        theTable.setRepaintRowOnCommit(pRePaint);
     }
 
     /**
@@ -334,21 +339,15 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
                                                                                             Class<T> pClass);
 
     /**
-     * Is the table readOnly?
-     * @return true/false
-     */
-    public abstract boolean isReadOnly();
-
-    /**
      * is field in error?
      * @param pField the field
      * @param pItem the item
      * @return true/false
      */
     private static boolean isFieldInError(final MetisDataField pField,
-                                          final MetisDataVersionedItem pItem) {
-        if (pItem.isVersioned()) {
-            MetisDataVersionControl myControl = pItem.getVersionControl();
+                                          final MetisDataTableItem pItem) {
+        if (pItem instanceof MetisDataVersionedItem) {
+            MetisDataVersionControl myControl = ((MetisDataVersionedItem) pItem).getVersionControl();
             return myControl.getValidation().hasErrors(pField);
         }
         return false;
@@ -361,9 +360,9 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @return true/false
      */
     private static boolean isFieldChanged(final MetisDataField pField,
-                                          final MetisDataVersionedItem pItem) {
-        if (pItem.isVersioned()) {
-            MetisDataVersionControl myControl = pItem.getVersionControl();
+                                          final MetisDataTableItem pItem) {
+        if (pItem instanceof MetisDataVersionedItem) {
+            MetisDataVersionControl myControl = ((MetisDataVersionedItem) pItem).getVersionControl();
             return myControl.fieldChanged(pField).isDifferent();
         }
         return false;
@@ -374,7 +373,7 @@ public abstract class MetisTableManager<R extends MetisDataVersionedItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private static boolean isItemDisabled(final MetisDataVersionedItem pItem) {
+    private static boolean isItemDisabled(final MetisDataTableItem pItem) {
         if (pItem instanceof MetisDisableItem) {
             MetisDisableItem myItem = (MetisDisableItem) pItem;
             return myItem.isDisabled();

@@ -532,6 +532,7 @@ public class TethysFXDateExample
         /* Create the date column */
         TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
+        myDateColumn.setOnCommit((p, v) -> p.setDate(v));
         myDateColumn.setColumnWidth(COL_DATE_WIDTH);
         myDateColumn.setDateConfigurator((r, c) -> {
             c.setEarliestDate(theStartDate.getSelectedDate());
@@ -542,6 +543,7 @@ public class TethysFXDateExample
         /* Create the comments column */
         TethysFXTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(p -> p.getValue().commentsProperty());
+        myCommentsColumn.setOnCommit((p, v) -> p.setComments(v));
         myCommentsColumn.setColumnWidth(COL_COMMENT_WIDTH);
     }
 

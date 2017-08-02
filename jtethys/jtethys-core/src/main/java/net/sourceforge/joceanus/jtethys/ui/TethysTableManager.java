@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -58,12 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the icon type
  */
 public abstract class TethysTableManager<C, R, N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
-    /**
-     * The event manager.
-     */
-    private final TethysEventManager<TethysUIEvent> theEventManager;
-
+        implements TethysNode<N> {
     /**
      * The Id.
      */
@@ -72,7 +67,7 @@ public abstract class TethysTableManager<C, R, N, I>
     /**
      * The map of columns.
      */
-    private final Map<C, TethysTableColumn<?, C, R, N, I>> theColumnMap;
+    private final Map<C, TethysBaseTableColumn<?, C, R, N, I>> theColumnMap;
 
     /**
      * The last child item.
@@ -95,6 +90,11 @@ public abstract class TethysTableManager<C, R, N, I>
     private Predicate<R> theDisabled;
 
     /**
+     * The OnCommit Consumer.
+     */
+    private Consumer<R> theOnCommit;
+
+    /**
      * The Comparator.
      */
     private Comparator<R> theComparator;
@@ -110,11 +110,15 @@ public abstract class TethysTableManager<C, R, N, I>
     private boolean isEditable;
 
     /**
+     * Repaint the row on commit?
+     */
+    private boolean doRePaintRowOnCommit;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
     protected TethysTableManager(final TethysGuiFactory<N, I> pFactory) {
-        theEventManager = new TethysEventManager<>();
         theId = pFactory.getNextId();
         theColumnMap = new HashMap<>();
         isEditable = true;
@@ -125,13 +129,8 @@ public abstract class TethysTableManager<C, R, N, I>
         return theId;
     }
 
-    @Override
-    public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
-    }
-
     /**
-     * Is the column editable?
+     * Is the table editable?
      * @return true/false
      */
     public boolean isEditable() {
@@ -144,6 +143,22 @@ public abstract class TethysTableManager<C, R, N, I>
      */
     public void setEditable(final boolean pEditable) {
         isEditable = pEditable;
+    }
+
+    /**
+     * do we rePaintRow on commit?
+     * @return true/false
+     */
+    public boolean doRePaintRowOnCommit() {
+        return doRePaintRowOnCommit;
+    }
+
+    /**
+     * Set repaintRow on Commit.
+     * @param pRePaint the flag
+     */
+    public void setRepaintRowOnCommit(final boolean pRePaint) {
+        doRePaintRowOnCommit = pRePaint;
     }
 
     /**
@@ -237,6 +252,26 @@ public abstract class TethysTableManager<C, R, N, I>
     }
 
     /**
+     * Set the on-commit consumer.
+     * @param pOnCommit the consumer
+     */
+    public void setOnCommit(final Consumer<R> pOnCommit) {
+        theOnCommit = pOnCommit;
+    }
+
+    /**
+     * process onCommit.
+     * @param pRow the row
+     */
+    public void processOnCommit(final R pRow) {
+        /* If we have an onCommit consumer */
+        if (theOnCommit != null) {
+            /* call it */
+            theOnCommit.accept(pRow);
+        }
+    }
+
+    /**
      * Obtain an iterator over the unsorted items.
      * @return the iterator.
      */
@@ -253,14 +288,6 @@ public abstract class TethysTableManager<C, R, N, I>
      * @return the iterator.
      */
     public abstract Iterator<R> viewIterator();
-
-    /**
-     * Cascade event.
-     * @param pEvent the event
-     */
-    protected void cascadeEvent(final TethysEvent<TethysUIEvent> pEvent) {
-        theEventManager.cascadeEvent(pEvent);
-    }
 
     /**
      * Obtain the column for the id.
@@ -288,8 +315,38 @@ public abstract class TethysTableManager<C, R, N, I>
      * Register the column.
      * @param pColumn the column
      */
-    private void registerColumn(final TethysTableColumn<?, C, R, N, I> pColumn) {
+    private void registerColumn(final TethysBaseTableColumn<?, C, R, N, I> pColumn) {
         theColumnMap.put(pColumn.getId(), pColumn);
+    }
+
+    /**
+     * Repaint on Commit.
+     * @param pCell the cell that was committed.
+     */
+    public void rePaintOnCommit(final TethysTableCell<?, C, R, N, I> pCell) {
+        /* If we should rePaint the row on commit */
+        if (doRePaintRowOnCommit) {
+            /* Action the repaint */
+            pCell.repaintCellRow();
+        }
+
+        /* Obtain the update id */
+        C myId = pCell.getColumnId();
+
+        /* Loop through the columns */
+        for (TethysBaseTableColumn<?, C, R, N, I> myColumn : theColumnMap.values()) {
+            /* If we should rePaint the column on commit */
+            if (myColumn.doRePaintColumnOnCommit()) {
+                /* Action the repaint */
+                repaintColumn(myColumn.getId());
+            }
+
+            /* If we should repaint this cell on commit */
+            if (myId.equals(myColumn.getRePaintColumnId())) {
+                /* Action the rePaint */
+                pCell.repaintColumnCell(myColumn.getId());
+            }
+        }
     }
 
     /**
@@ -392,7 +449,7 @@ public abstract class TethysTableManager<C, R, N, I>
 
     /**
      * Declare scroll column.
-     * @param <T> the column type
+     * @param <T> the data type
      * @param pId the column id
      * @param pClass the column class
      * @return the column
@@ -402,7 +459,7 @@ public abstract class TethysTableManager<C, R, N, I>
 
     /**
      * Declare list column.
-     * @param <T> the column type
+     * @param <T> the data type
      * @param pId the column id
      * @param pClass the column class
      * @return the column
@@ -412,7 +469,7 @@ public abstract class TethysTableManager<C, R, N, I>
 
     /**
      * Declare icon column.
-     * @param <T> the column type
+     * @param <T> the data type
      * @param pId the column id
      * @param pClass the column class
      * @return the column
@@ -422,7 +479,7 @@ public abstract class TethysTableManager<C, R, N, I>
 
     /**
      * Column Definition.
-     * @param <T> the value type
+     * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
      * @param <N> the node type
@@ -501,11 +558,17 @@ public abstract class TethysTableManager<C, R, N, I>
          * @return the current tester
          */
         Predicate<R> getCellEditable();
+
+        /**
+         * Set the on-commit consumer.
+         * @param pOnCommit the consumer
+         */
+        void setOnCommit(BiConsumer<R, T> pOnCommit);
     }
 
     /**
      * Validated Column Definition.
-     * @param <T> the value type
+     * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
      * @param <N> the node type
@@ -611,7 +674,7 @@ public abstract class TethysTableManager<C, R, N, I>
 
     /**
      * Column Definition.
-     * @param <T> the value type
+     * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
      * @param <N> the node type
@@ -663,6 +726,21 @@ public abstract class TethysTableManager<C, R, N, I>
          * The cell-editable predicate.
          */
         private Predicate<R> isCellEditable;
+
+        /**
+         * The cell-editable predicate.
+         */
+        private BiConsumer<R, T> theOnCommit;
+
+        /**
+         * Repaint the column on commit?
+         */
+        private boolean doRePaintColOnCommit;
+
+        /**
+         * The column that when updated, will force this column to update.
+         */
+        private C theRePaintId;
 
         /**
          * Constructor.
@@ -741,6 +819,38 @@ public abstract class TethysTableManager<C, R, N, I>
             return isEditable;
         }
 
+        /**
+         * do we rePaintColumn on commit?
+         * @return true/false
+         */
+        public boolean doRePaintColumnOnCommit() {
+            return doRePaintColOnCommit;
+        }
+
+        /**
+         * Set repaintColumn on Commit.
+         * @param pRePaint the flag
+         */
+        public void setRepaintColumnOnCommit(final boolean pRePaint) {
+            doRePaintColOnCommit = pRePaint;
+        }
+
+        /**
+         * get the column id which forces a rePaint.
+         * @return the column id
+         */
+        public C getRePaintColumnId() {
+            return theRePaintId;
+        }
+
+        /**
+         * Set repaintColumnId.
+         * @param pRePaintId the repaint id
+         */
+        public void setRepaintColumnId(final C pRePaintId) {
+            theRePaintId = pRePaintId;
+        }
+
         @Override
         public void setVisible(final boolean pVisible) {
             /* If we are changing visibility */
@@ -801,6 +911,28 @@ public abstract class TethysTableManager<C, R, N, I>
         public Predicate<R> getCellEditable() {
             return isCellEditable;
         }
+
+        @Override
+        public void setOnCommit(final BiConsumer<R, T> pOnCommit) {
+            theOnCommit = pOnCommit;
+        }
+
+        /**
+         * process onCommit.
+         * @param pRow the row
+         * @param pValue the value
+         */
+        public void processOnCommit(final R pRow,
+                                    final T pValue) {
+            /* If we have an onCommit consumer */
+            if (theOnCommit != null) {
+                /* call it */
+                theOnCommit.accept(pRow, pValue);
+            }
+
+            /* Call the table onCommit */
+            getTable().processOnCommit(pRow);
+        }
     }
 
     /**
@@ -829,12 +961,6 @@ public abstract class TethysTableManager<C, R, N, I>
          * @return the field
          */
         TethysDataEditField<T, N, I> getControl();
-
-        /**
-         * Obtain the new value.
-         * @return the new value
-         */
-        T getNewValue();
 
         /**
          * obtain the current row.

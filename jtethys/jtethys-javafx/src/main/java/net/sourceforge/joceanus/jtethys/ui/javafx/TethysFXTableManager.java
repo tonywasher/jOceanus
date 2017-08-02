@@ -119,9 +119,6 @@ public class TethysFXTableManager<C, R>
         theCellFactory = new TethysFXTableCellFactory<>(pFactory);
         theTable.getStyleClass().add(CSS_STYLE_BASE);
 
-        /* Listen to factory */
-        theCellFactory.getEventRegistrar().addEventListener(this::cascadeEvent);
-
         /* Configure the table */
         theTable.setEditable(true);
     }

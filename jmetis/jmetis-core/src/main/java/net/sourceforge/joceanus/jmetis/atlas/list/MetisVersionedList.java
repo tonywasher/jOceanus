@@ -33,21 +33,17 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Versioned List implementation.
  * @param <T> the item type
  */
 public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
-        extends MetisIndexedList<T>
-        implements TethysEventProvider<MetisListEvent> {
+        extends MetisIndexedList<T> {
     /**
      * Logger.
      */
@@ -72,11 +68,6 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
      * Version Field Id.
      */
     private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
-
-    /**
-     * The Event Manager.
-     */
-    private final TethysEventManager<MetisListEvent> theEventManager;
 
     /**
      * The list type.
@@ -136,9 +127,8 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         /* Determine whether this is a readOnly list */
         isReadOnly = !pFields.hasVersions();
 
-        /* Obtain the constructor and event manager */
+        /* Obtain the constructor */
         theConstructor = getConstructor();
-        theEventManager = new TethysEventManager<>();
     }
 
     @Override
@@ -168,11 +158,6 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
      */
     protected static MetisDataFieldSet getBaseFields() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -324,18 +309,6 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
 
         /* Set the version */
         theVersion = myMaxVersion;
-    }
-
-    /**
-     * Fire event.
-     * @param pEvent the event
-     */
-    protected void fireEvent(final MetisListChange<T> pEvent) {
-        /* If the change is non-empty */
-        if (MetisListEvent.REFRESH.equals(pEvent.getEventType())
-            || !pEvent.isEmpty()) {
-            theEventManager.fireEvent(pEvent.getEventType(), pEvent);
-        }
     }
 
     /**

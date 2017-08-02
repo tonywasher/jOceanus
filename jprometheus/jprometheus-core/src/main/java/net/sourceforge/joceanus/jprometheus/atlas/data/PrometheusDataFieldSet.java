@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Prometheus Data fieldSet.
@@ -77,30 +77,6 @@ public class PrometheusDataFieldSet
                                                              final MetisDataType pDataType,
                                                              final Integer pMaxLength) {
         return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY);
-    }
-
-    /**
-     * Declare encrypted valueSet field used for equality and comparison test.
-     * @param pName the name of the field
-     * @param pDataType the dataType of the field
-     * @return the field
-     */
-    public PrometheusDataField declareComparisonEncryptedField(final String pName,
-                                                               final MetisDataType pDataType) {
-        return declareComparisonEncryptedField(pName, pDataType, FIELD_NO_MAXLENGTH);
-    }
-
-    /**
-     * Declare encrypted valueSet field used for equality and comparison test.
-     * @param pName the name of the field
-     * @param pDataType the dataType of the field
-     * @param pMaxLength the maximum length of the field
-     * @return the field
-     */
-    public PrometheusDataField declareComparisonEncryptedField(final String pName,
-                                                               final MetisDataType pDataType,
-                                                               final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.COMPARISON);
     }
 
     /**

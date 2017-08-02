@@ -22,19 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 
@@ -42,7 +41,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
  * Table FieldSet.
  * @param <R> the item type
  */
-public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
+public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
     /**
      * List Fields.
      */
@@ -59,9 +58,9 @@ public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
     private final Map<MetisDataField, ObjectProperty<Object>> thePropertyMap;
 
     /**
-     * The Array of Comparison properties.
+     * The Array of Observable properties.
      */
-    private final Observable[] theComparisons;
+    private Observable[] theObservables;
 
     /**
      * Constructor.
@@ -76,7 +75,7 @@ public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
 
         /* Create the map and populate it */
         thePropertyMap = new HashMap<>();
-        theComparisons = initialiseMap(pFields.getFields());
+        theObservables = initialiseMap(pFields.getFields());
     }
 
     /**
@@ -88,11 +87,11 @@ public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
     }
 
     /**
-     * Return the comparisons array.
+     * Return the observable array.
      * @return the array
      */
-    protected Observable[] getComparisons() {
-        return theComparisons;
+    protected Observable[] getObservables() {
+        return theObservables;
     }
 
     /**
@@ -107,16 +106,16 @@ public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
     /**
      * Initialise the map.
      * @param pFields the fields
-     * @return the comparisons array
+     * @return the observable array
      */
-    private Observable[] initialiseMap(final MetisDataFieldSet pFields) {
-        /* Create the comparisons array */
-        int myMax = theItem.getDataFieldSet().getNumValues();
-        Observable[] myComparisons = new Observable[myMax];
-        int myNumCompares = 0;
+    private Observable[] initialiseMap(final List<MetisDataField> pFields) {
+        /* Create the observable array */
+        int myMax = pFields.size();
+        Observable[] myObservables = new Observable[myMax];
+        int myNumFields = 0;
 
         /* Iterate through the fields */
-        Iterator<MetisDataField> myIterator = pFields.fieldIterator();
+        Iterator<MetisDataField> myIterator = pFields.iterator();
         while (myIterator.hasNext()) {
             MetisDataField myField = myIterator.next();
 
@@ -127,22 +126,12 @@ public class MetisFXTableFieldSet<R extends MetisDataVersionedItem> {
             /* Initialise the value */
             setValue(myField, myProperty);
 
-            /* If the field is a comparison field */
-            if (myField.getEquality().isComparison()) {
-                /* Add it to the comparisons array */
-                myComparisons[myNumCompares++] = myProperty;
-            }
+            /* Add it to the observable array */
+            myObservables[myNumFields++] = myProperty;
         }
 
-        /* If we have less than the max comparisons adjust the array */
-        if (myNumCompares == 0) {
-            myComparisons = null;
-        } else if (myNumCompares < myMax) {
-            myComparisons = Arrays.copyOf(myComparisons, myNumCompares);
-        }
-
-        /* Return the comparison array */
-        return myComparisons;
+        /* Return the observable array */
+        return myObservables;
     }
 
     /**

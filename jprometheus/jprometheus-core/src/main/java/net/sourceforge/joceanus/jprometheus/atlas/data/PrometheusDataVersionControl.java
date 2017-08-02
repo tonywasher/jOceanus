@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisDataVersionedItem;
 
 /**
  * Prometheus Set of versioned Values.
