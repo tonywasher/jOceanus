@@ -36,10 +36,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Set of EditLists.
- * @param <E> the list type identifier
  */
-public class MetisEditListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisEditList<MetisDataVersionedItem>>
+public class MetisEditListSet
+        extends MetisVersionedListSet
         implements TethysEventProvider<MetisListEvent> {
     /**
      * Report fields.
@@ -59,7 +58,7 @@ public class MetisEditListSet<E extends Enum<E>>
     /**
      * The base list.
      */
-    private final MetisBaseListSet<E> theBaseSet;
+    private final MetisBaseListSet theBaseSet;
 
     /**
      * The edit version of the listSet.
@@ -70,10 +69,14 @@ public class MetisEditListSet<E extends Enum<E>>
      * Constructor.
      * @param pBase the baseSet
      */
-    protected MetisEditListSet(final MetisBaseListSet<E> pBase) {
-        super(MetisListType.EDIT, pBase.getEnumClass(), FIELD_DEFS);
+    protected MetisEditListSet(final MetisBaseListSet pBase) {
         theBaseSet = pBase;
         theEventManager = new TethysEventManager<>();
+    }
+
+    @Override
+    public MetisDataFieldSet getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override
@@ -92,6 +95,11 @@ public class MetisEditListSet<E extends Enum<E>>
     @Override
     public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    @Override
+    public MetisEditList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisEditList<MetisDataVersionedItem>) super.getList(pListKey);
     }
 
     /**
@@ -149,9 +157,10 @@ public class MetisEditListSet<E extends Enum<E>>
         /* If we are currently editing */
         if (isEditing()) {
             /* Loop through the lists */
-            Iterator<MetisEditList<MetisDataVersionedItem>> myIterator = listIterator();
+            Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
-                MetisEditList<MetisDataVersionedItem> myList = myIterator.next();
+                MetisListKey myKey = myIterator.next();
+                MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -172,9 +181,10 @@ public class MetisEditListSet<E extends Enum<E>>
         /* Commit the edit version */
         if (isEditing()) {
             /* Loop through the lists */
-            Iterator<MetisEditList<MetisDataVersionedItem>> myIterator = listIterator();
+            Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
-                MetisEditList<MetisDataVersionedItem> myList = myIterator.next();
+                MetisListKey myKey = myIterator.next();
+                MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -196,9 +206,10 @@ public class MetisEditListSet<E extends Enum<E>>
         /* If we have editing updates */
         if (getVersion() > 0) {
             /* Loop through the lists */
-            Iterator<MetisEditList<MetisDataVersionedItem>> myIterator = listIterator();
+            Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
-                MetisEditList<MetisDataVersionedItem> myList = myIterator.next();
+                MetisListKey myKey = myIterator.next();
+                MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
 
                 /* Commit any pending version */
                 myList.commitEditVersion();
@@ -221,7 +232,7 @@ public class MetisEditListSet<E extends Enum<E>>
      * @param pItemType the item type
      * @param pItem the item
      */
-    public void prepareItemForEdit(final E pItemType,
+    public void prepareItemForEdit(final MetisListKey pItemType,
                                    final Object pItem) {
         /* Start editing */
         startEditVersion();
@@ -231,11 +242,15 @@ public class MetisEditListSet<E extends Enum<E>>
         myList.prepareItemForEdit(pItem);
     }
 
-    @Override
-    protected void declareList(final E pId,
+    /**
+     * declare Edit list.
+     * @param pKey the key for the list
+     * @param pList the list
+     */
+    protected void declareList(final MetisListKey pKey,
                                final MetisEditList<MetisDataVersionedItem> pList) {
         /* Pass call through */
-        super.declareList(pId, pList);
+        super.declareList(pKey, pList);
 
         /* Listen to Refresh of the list */
         TethysEventRegistrar<MetisListEvent> myRegistrar = pList.getEventRegistrar();

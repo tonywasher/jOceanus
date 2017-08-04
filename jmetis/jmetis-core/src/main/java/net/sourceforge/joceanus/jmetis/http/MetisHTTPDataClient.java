@@ -117,10 +117,9 @@ public abstract class MetisHTTPDataClient
      * Constructor.
      * @param pBaseAddress the base address for the client.
      * @param pAuth the authorisation string
-     * @throws OceanusException on error
      */
     protected MetisHTTPDataClient(final String pBaseAddress,
-                                  final String pAuth) throws OceanusException {
+                                  final String pAuth) {
         theBaseAddress = pBaseAddress;
         theClient = HttpClients.createDefault();
 

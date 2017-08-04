@@ -286,8 +286,7 @@ public class MetisViewerFormatter {
             /* Start the field */
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getName());
-            if (myControl != null
-                && myControl.fieldChanged(myField).isDifferent()) {
+            if (myControl.fieldChanged(myField).isDifferent()) {
                 theBuilder.newDataCell(myValue, true);
             } else {
                 theBuilder.newDataCell(myValue);

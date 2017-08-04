@@ -464,13 +464,8 @@ public class MetisViewerPage {
         }
 
         /* Handle simple objects */
-        if ((myObject instanceof Throwable)
-            || (myObject instanceof StackTraceElement[])) {
-            return true;
-        }
-
-        /* Not build-able */
-        return false;
+        return (myObject instanceof Throwable)
+               || (myObject instanceof StackTraceElement[]);
     }
 
     /**

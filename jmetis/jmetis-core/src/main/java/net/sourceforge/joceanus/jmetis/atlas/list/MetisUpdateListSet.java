@@ -30,10 +30,9 @@ import net.sourceforge.joceanus.jmetis.atlas.list.MetisUpdateList.MetisUpdatePha
 
 /**
  * Set of UpdateLists.
- * @param <E> the list type identifier
  */
-public class MetisUpdateListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisUpdateList<MetisDataVersionedItem>> {
+public final class MetisUpdateListSet
+        extends MetisVersionedListSet {
     /**
      * Report fields.
      */
@@ -41,10 +40,19 @@ public class MetisUpdateListSet<E extends Enum<E>>
 
     /**
      * Constructor.
-     * @param pClass the enum class
      */
-    protected MetisUpdateListSet(final Class<E> pClass) {
-        super(MetisListType.UPDATE, pClass, FIELD_DEFS);
+    protected MetisUpdateListSet() {
+        super();
+    }
+
+    @Override
+    public MetisDataFieldSet getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public MetisUpdateList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisUpdateList<MetisDataVersionedItem>) super.getList(pListKey);
     }
 
     /**
@@ -59,11 +67,14 @@ public class MetisUpdateListSet<E extends Enum<E>>
         int myNumItems = pNumItems;
 
         /* Loop through the lists */
-        Iterator<MetisUpdateList<MetisDataVersionedItem>> myIterator = listIterator();
+        Iterator<MetisListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
+                                                                                   ? reverseKeyIterator()
+                                                                                   : keyIterator();
         while (myIterator.hasNext()) {
-            MetisUpdateList<MetisDataVersionedItem> myList = myIterator.next();
+            MetisListKey myKey = myIterator.next();
 
             /* If the list is non-empty */
+            MetisUpdateList<MetisDataVersionedItem> myList = getList(myKey);
             if (!myList.isEmpty()) {
                 /* Commit the items */
                 myNumItems = myList.commitUpdateBatch(pPhase, pNumItems);

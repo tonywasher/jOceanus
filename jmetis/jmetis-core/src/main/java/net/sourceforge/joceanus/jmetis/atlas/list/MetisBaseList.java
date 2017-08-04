@@ -48,17 +48,7 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      * @param pClass the class of the item
      */
     public MetisBaseList(final Class<T> pClass) {
-        super(MetisListType.BASE, pClass);
-    }
-
-    /**
-     * Constructor for readOnly items.
-     * @param pClass the class of the item
-     * @param pFields the fields
-     */
-    public MetisBaseList(final Class<T> pClass,
-                         final MetisDataFieldSet pFields) {
-        super(MetisListType.BASE, pClass, pFields);
+        super(pClass);
     }
 
     @Override
@@ -75,10 +65,7 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
         resetContent(pSource.iterator(), pSource.getVersion());
     }
 
-    /**
-     * Reset content.
-     * @param pSource the source list
-     */
+    @Override
     public void resetContent(final Iterator<T> pSource) {
         resetContent(pSource, 0);
     }
@@ -90,23 +77,11 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      */
     private void resetContent(final Iterator<T> pSource,
                               final int pVersion) {
-        /* Clear the list */
-        clear();
-
-        /* Loop through the list */
-        while (pSource.hasNext()) {
-            T myCurr = pSource.next();
-
-            /* Add the item to the list */
-            addToList(myCurr);
-        }
-
         /* Reset the version */
         setVersion(pVersion);
 
-        /* Report the refresh */
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REFRESH);
-        fireEvent(myChange);
+        /* reset the content */
+        super.resetContent(pSource);
     }
 
     /**
@@ -122,11 +97,6 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      * @param pBase the base list
      */
     public void reBaseList(final MetisBaseList<T> pBase) {
-        /* Not supported for readOnly lists */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
         /* Access a copy of the idMap of the base list */
         Map<Integer, T> myOld = new HashMap<>(pBase.getIdMap());
         boolean hasChanges = false;
@@ -134,7 +104,7 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
         /* List versions must be 0 */
         if ((getVersion() != 0)
             || (pBase.getVersion() != 0)) {
-            throw new IllegalStateException("Versioned List being reBased");
+            throw new IllegalStateException("Changed List being reBased");
         }
 
         /* Create a new Change Detail */
@@ -204,13 +174,8 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      * @return the difference list
      */
     public MetisDifferenceList<T> deriveDifferences(final MetisBaseList<T> pCompare) {
-        /* Not supported for readOnly lists */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
         /* Create the difference list */
-        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClass());
+        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClazz());
         myDifferences.deriveTheDifferences(this, pCompare);
         return myDifferences;
     }
@@ -229,11 +194,6 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      * @return the update list
      */
     public MetisUpdateList<T> deriveUpdates() {
-        /* Not supported for readOnly lists */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
         /* Create the update list */
         return new MetisUpdateList<>(this);
     }
@@ -243,11 +203,6 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      * @return the edit list
      */
     public MetisEditList<T> deriveEditList() {
-        /* Not supported for readOnly lists */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
         /* Create the edit list */
         return new MetisEditList<>(this);
     }

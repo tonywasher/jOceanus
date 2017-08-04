@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent
  * Versioned List implementation.
  * @param <T> the item type
  */
-public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
+public class MetisVersionedList<T extends MetisDataVersionedItem>
         extends MetisIndexedList<T> {
     /**
      * Logger.
@@ -50,14 +50,14 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     private static final Logger LOGGER = LoggerFactory.getLogger(MetisVersionedList.class);
 
     /**
+     * Prime for hashing.
+     */
+    protected static final int HASH_PRIME = 67;
+
+    /**
      * Report fields.
      */
     private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class, MetisIndexedList.getBaseFields());
-
-    /**
-     * ListType Field Id.
-     */
-    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE.getValue());
 
     /**
      * Class Field Id.
@@ -70,29 +70,14 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
 
     /**
-     * The list type.
-     */
-    private final MetisListType theListType;
-
-    /**
      * The class of the list.
      */
-    private final Class<T> theClass;
+    private final Class<T> theClazz;
 
     /**
      * The constructor for the item.
      */
     private final Constructor<T> theConstructor;
-
-    /**
-     * The fields.
-     */
-    private final MetisDataFieldSet theItemFields;
-
-    /**
-     * Is this a readOnly list.
-     */
-    private final boolean isReadOnly;
 
     /**
      * The version of the list.
@@ -101,34 +86,24 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
 
     /**
      * Constructor.
-     * @param pListType the list type
      * @param pClazz the class of the item
      */
-    protected MetisVersionedList(final MetisListType pListType,
-                                 final Class<T> pClazz) {
+    protected MetisVersionedList(final Class<T> pClazz) {
         /* Store parameters */
-        this(pListType, pClazz, null);
+        theClazz = pClazz;
+        theConstructor = getConstructor();
     }
 
     /**
      * Constructor.
-     * @param pListType the list type
      * @param pClazz the class of the item
-     * @param pFields the item fields
+     * @param pConstructor the constructor
      */
-    protected MetisVersionedList(final MetisListType pListType,
-                                 final Class<T> pClazz,
-                                 final MetisDataFieldSet pFields) {
+    protected MetisVersionedList(final Class<T> pClazz,
+                                 final Constructor<T> pConstructor) {
         /* Store parameters */
-        theListType = pListType;
-        theClass = pClazz;
-        theItemFields = pFields;
-
-        /* Determine whether this is a readOnly list */
-        isReadOnly = !pFields.hasVersions();
-
-        /* Obtain the constructor */
-        theConstructor = getConstructor();
+        theClazz = pClazz;
+        theConstructor = pConstructor;
     }
 
     @Override
@@ -136,18 +111,23 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         return FIELD_DEFS;
     }
 
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisDataFieldSet getBaseFieldSet() {
+        return FIELD_DEFS;
+    }
+
     @Override
     public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_TYPE.equals(pField)) {
-            return theListType;
-        }
         if (FIELD_CLASS.equals(pField)) {
-            return theClass;
+            return theClazz;
         }
         if (FIELD_VERSION.equals(pField)) {
-            return !isReadOnly && theVersion != 0
-                                                  ? theVersion
-                                                  : MetisDataFieldValue.SKIP;
+            return theVersion != 0
+                                   ? theVersion
+                                   : MetisDataFieldValue.SKIP;
         }
         return super.getFieldValue(pField);
     }
@@ -158,22 +138,6 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
      */
     protected static MetisDataFieldSet getBaseFields() {
         return FIELD_DEFS;
-    }
-
-    /**
-     * Obtain the dataFields for an item.
-     * @return the dataFields
-     */
-    public MetisDataFieldSet getItemFieldSet() {
-        return theItemFields;
-    }
-
-    /**
-     * Obtain the listType.
-     * @return the listType
-     */
-    public MetisListType getListType() {
-        return theListType;
     }
 
     /**
@@ -188,33 +152,8 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
      * Obtain the class.
      * @return the version
      */
-    public Class<T> getTheClass() {
-        return theClass;
-    }
-
-    /**
-     * Is the list readOnly?
-     * @return true/false
-     */
-    public boolean isReadOnly() {
-        return isReadOnly;
-    }
-
-    /**
-     * Obtain the standard constructor for the item.
-     * @return the constructor
-     */
-    private Constructor<T> getConstructor() {
-        /* Protect against exceptions */
-        try {
-            return isReadOnly
-                              ? null
-                              : theClass.getConstructor();
-        } catch (NoSuchMethodException
-                | SecurityException e) {
-            LOGGER.error("Unable to instantiate constructor", e);
-            return null;
-        }
+    public Class<T> getTheClazz() {
+        return theClazz;
     }
 
     /**
@@ -226,6 +165,29 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     }
 
     /**
+     * Obtain the standard constructor for the item.
+     * @return the constructor
+     */
+    private Constructor<T> getConstructor() {
+        /* Protect against exceptions */
+        try {
+            return theClazz.getConstructor();
+        } catch (NoSuchMethodException
+                | SecurityException e) {
+            LOGGER.error("Unable to instantiate constructor", e);
+            return null;
+        }
+    }
+
+    /**
+     * Produce a new list of the same type.
+     * @return the new list
+     */
+    protected MetisVersionedList<T> newList() {
+        return new MetisVersionedList<>(theClazz, theConstructor);
+    }
+
+    /**
      * Cast List to correct type if possible.
      * @param pSource the source list
      * @return the correctly cast list list
@@ -233,7 +195,7 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     @SuppressWarnings("unchecked")
     protected MetisVersionedList<T> castList(final MetisVersionedList<?> pSource) {
         /* Class must be the same */
-        if (!theClass.equals(pSource.getTheClass())) {
+        if (!theClazz.equals(pSource.getTheClazz())) {
             throw new InvalidParameterException("Inconsistent class");
         }
 
@@ -241,16 +203,48 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
         return (MetisVersionedList<T>) pSource;
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (!(pThat instanceof MetisVersionedList)) {
+            return false;
+        }
+
+        /* Cast as list */
+        MetisVersionedList<?> myThat = (MetisVersionedList<?>) pThat;
+
+        /* Check local fields */
+        if (theVersion != myThat.getVersion()
+            || !theClazz.equals(myThat.getTheClazz())) {
+            return false;
+        }
+
+        /* Pass call onwards */
+        return super.equals(pThat);
+    }
+
+    @Override
+    public int hashCode() {
+        int myHash = super.hashCode();
+        myHash *= HASH_PRIME;
+        myHash += theClazz.hashCode();
+        myHash *= HASH_PRIME;
+        return myHash + theVersion;
+    }
+
     /**
      * Check reWind version.
      * @param pVersion the version to reWind to
      */
     protected void checkReWindVersion(final int pVersion) {
-        /* Not supported for readOnly lists */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
         /* Version must be less than current version and positive */
         if ((theVersion < pVersion)
             || (pVersion < 0)) {
@@ -259,7 +253,7 @@ public abstract class MetisVersionedList<T extends MetisDataVersionedItem>
     }
 
     /**
-     * ReWind the list to a particular version (Base and EditList only).
+     * ReWind the list to a particular version.
      * @param pVersion the version to reWind to
      */
     protected void doReWindToVersion(final int pVersion) {

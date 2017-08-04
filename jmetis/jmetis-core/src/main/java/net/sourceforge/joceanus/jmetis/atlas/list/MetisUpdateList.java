@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
+import java.util.Comparator;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
@@ -39,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Update List.
  * @param <T> the item type
  */
-public class MetisUpdateList<T extends MetisDataVersionedItem>
+public final class MetisUpdateList<T extends MetisDataVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Report fields.
@@ -57,15 +58,21 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
     private final MetisBaseList<T> theBase;
 
     /**
+     * The base comparator.
+     */
+    private final Comparator<T> theComparator;
+
+    /**
      * Constructor.
      * @param pBase the base list
      */
     protected MetisUpdateList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(MetisListType.UPDATE, pBase.getTheClass(), pBase.getItemFieldSet());
+        super(pBase.getTheClazz());
 
         /* Copy the comparator from the base list */
-        setComparator(pBase.getComparator());
+        theComparator = pBase.getComparator();
+        setComparator(this::doCompare);
 
         /* Store source and initialise the update list */
         theBase = pBase;
@@ -92,6 +99,40 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
                                      : theBase;
         }
         return super.getFieldValue(pField);
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (!(pThat instanceof MetisUpdateList)) {
+            return false;
+        }
+
+        /* Cast as list */
+        MetisUpdateList<?> myThat = (MetisUpdateList<?>) pThat;
+
+        /* Check local fields */
+        if (!theBase.equals(myThat.theBase)) {
+            return false;
+        }
+
+        /* Pass call onwards */
+        return super.equals(pThat);
+    }
+
+    @Override
+    public int hashCode() {
+        int myHash = super.hashCode();
+        myHash *= HASH_PRIME;
+        return myHash + theBase.hashCode();
     }
 
     /**
@@ -201,7 +242,9 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
         MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.UPDATE);
 
         /* Loop through the list */
-        Iterator<T> myIterator = iterator();
+        Iterator<T> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
+                                                                        ? reverseIterator()
+                                                                        : iterator();
         while (myIterator.hasNext()
                && myNumItems > 0) {
             T myCurr = myIterator.next();
@@ -211,7 +254,7 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
             MetisDataState myState = myControl.getState();
 
             /* If this is to be handled in this phase */
-            if (checkStateInPhase(pPhase, myState)) {
+            if (pPhase.checkStateInPhase(myState)) {
                 /* Access further details */
                 MetisDataVersionValues myValues = myControl.getValueSet();
                 int myId = myCurr.getIndexedId();
@@ -243,28 +286,6 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
 
         /* Return the new count */
         return myNumItems;
-    }
-
-    /**
-     * Check State for action in this phase.
-     * @param pPhase the update phase
-     * @param pState the State of the item
-     * @return true/false is the item to be committed in this phase
-     */
-    private boolean checkStateInPhase(final MetisUpdatePhase pPhase,
-                                      final MetisDataState pState) {
-        /* Switch on the state */
-        switch (pState) {
-            case NEW:
-            case DELNEW:
-                return MetisUpdatePhase.INSERT.equals(pPhase);
-            case CHANGED:
-                return MetisUpdatePhase.UPDATE.equals(pPhase);
-            case DELETED:
-                return MetisUpdatePhase.DELETE.equals(pPhase);
-            default:
-                return false;
-        }
     }
 
     /**
@@ -398,6 +419,28 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
     }
 
     /**
+     * the comparator.
+     * @param pFirst the first item to compare
+     * @param pSecond the second item to compare
+     * @return (-1,0,1) as to whether first is less than, equal to or greater than second
+     */
+    protected int doCompare(final T pFirst,
+                            final T pSecond) {
+        /* Compare on update phase */
+        MetisUpdatePhase myFirst = MetisUpdatePhase.getPhaseForItem(pFirst);
+        MetisUpdatePhase mySecond = MetisUpdatePhase.getPhaseForItem(pSecond);
+        int iCompare = myFirst.compareTo(mySecond);
+        if (iCompare != 0) {
+            return iCompare;
+        }
+
+        /* Sort on comparator */
+        return theComparator == null
+                                     ? 0
+                                     : theComparator.compare(pFirst, pSecond);
+    }
+
+    /**
      * Update phase.
      */
     public enum MetisUpdatePhase {
@@ -414,6 +457,50 @@ public class MetisUpdateList<T extends MetisDataVersionedItem>
         /**
          * Delete.
          */
-        DELETE;
+        DELETE,
+
+        /**
+         * None.
+         */
+        NONE;
+
+        /**
+         * Check State for action in this phase.
+         * @param pState the State of the item
+         * @return true/false is the item to be committed in this phase
+         */
+        private boolean checkStateInPhase(final MetisDataState pState) {
+            return this == getPhaseForState(pState);
+        }
+
+        /**
+         * Determine the updatePhase corresponding to the dataState.
+         * @param pState the State of the item
+         * @return the corresponding update phase
+         */
+        private static MetisUpdatePhase getPhaseForState(final MetisDataState pState) {
+            /* Switch on the state */
+            switch (pState) {
+                case NEW:
+                case DELNEW:
+                    return INSERT;
+                case CHANGED:
+                    return UPDATE;
+                case DELETED:
+                    return DELETE;
+                default:
+                    return NONE;
+            }
+        }
+
+        /**
+         * Determine the updatePhase corresponding to the item.
+         * @param pItem the item
+         * @return the corresponding update phase
+         */
+        private static MetisUpdatePhase getPhaseForItem(final MetisDataVersionedItem pItem) {
+            MetisDataVersionControl myControl = pItem.getVersionControl();
+            return getPhaseForState(myControl.getState());
+        }
     }
 }

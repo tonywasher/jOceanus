@@ -22,27 +22,39 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
+import java.util.Iterator;
+import java.util.ListIterator;
+
 /**
- * ListType.
+ * Reverse iterator.
+ * @param <T> the item type
  */
-public enum MetisListType {
+public class MetisReverseIterator<T> implements Iterator<T> {
     /**
-     * Base list.
+     * The underlying iterator.
      */
-    BASE,
+    private final ListIterator<T> theIterator;
 
     /**
-     * Edit List.
+     * Constructor.
+     * @param pIterator the iterator
      */
-    EDIT,
+    public MetisReverseIterator(final ListIterator<T> pIterator) {
+        theIterator = pIterator;
+    }
 
-    /**
-     * Update List.
-     */
-    UPDATE,
+    @Override
+    public boolean hasNext() {
+        return theIterator.hasPrevious();
+    }
 
-    /**
-     * Difference List.
-     */
-    DIFFERENCE;
+    @Override
+    public T next() {
+        return theIterator.previous();
+    }
+
+    @Override
+    public void remove() {
+        theIterator.remove();
+    }
 }

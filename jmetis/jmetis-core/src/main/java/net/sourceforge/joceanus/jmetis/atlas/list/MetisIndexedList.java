@@ -297,6 +297,14 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         return new MetisIndexedListIterator<>(this);
     }
 
+    /**
+     * Obtain a reverse list iterator.
+     * @return the iterator
+     */
+    public Iterator<T> reverseIterator() {
+        return new MetisReverseIterator<>(listIterator(size()));
+    }
+
     @Override
     public ListIterator<T> listIterator(final int pIndex) {
         return new MetisIndexedListIterator<>(this, pIndex);

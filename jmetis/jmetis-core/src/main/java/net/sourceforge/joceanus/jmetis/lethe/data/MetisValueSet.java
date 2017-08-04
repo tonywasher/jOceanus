@@ -387,8 +387,8 @@ public class MetisValueSet {
      * @param pField the field
      * @param pValue the value
      */
-    private void checkValueType(final MetisField pField,
-                                final Object pValue) {
+    private static void checkValueType(final MetisField pField,
+                                       final Object pValue) {
         /* Null/String is always allowed */
         if (pValue == null
             || pValue instanceof String) {

@@ -51,7 +51,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     /**
      * Bad update error.
      */
-    private static final String ERROR_BADUPDATE = "Versioned List being updated";
+    private static final String ERROR_BADUPDATE = "Changed List being updated";
 
     /**
      * Report fields.
@@ -99,7 +99,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      */
     protected MetisEditList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(MetisListType.EDIT, pBase.getTheClass(), pBase.getItemFieldSet());
+        super(pBase.getTheClazz());
 
         /* Copy the comparator from the base list */
         setComparator(pBase.getComparator());
@@ -142,6 +142,43 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      */
     protected static MetisDataFieldSet getBaseFields() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Make sure that the object is the same class */
+        if (!(pThat instanceof MetisEditList)) {
+            return false;
+        }
+
+        /* Cast as list */
+        MetisEditList<?> myThat = (MetisEditList<?>) pThat;
+
+        /* Check local fields */
+        if (theEditVersion != myThat.getVersion()
+            || !theBase.equals(myThat.theBase)) {
+            return false;
+        }
+
+        /* Pass call onwards */
+        return super.equals(pThat);
+    }
+
+    @Override
+    public int hashCode() {
+        int myHash = super.hashCode();
+        myHash *= HASH_PRIME;
+        myHash += theBase.hashCode();
+        myHash *= HASH_PRIME;
+        return myHash + theEditVersion;
     }
 
     /**
@@ -193,11 +230,6 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      * Start Edit Version.
      */
     public void startEditVersion() {
-        /* Not supported for readOnly lists */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
         /* If we are not currently editing */
         if (!isEditing()) {
             /* Set next edit version */
@@ -337,7 +369,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      * @param pItem the item
      */
     protected void prepareItemForEdit(final Object pItem) {
-        prepareItemForEdit(getTheClass().cast(pItem));
+        prepareItemForEdit(getTheClazz().cast(pItem));
     }
 
     /**

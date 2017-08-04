@@ -22,19 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
-import java.security.InvalidParameterException;
 import java.util.Iterator;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 
 /**
  * Set of BaseLists.
- * @param <E> the list type identifier
  */
-public class MetisBaseListSet<E extends Enum<E>>
-        extends MetisVersionedListSet<E, MetisBaseList<MetisDataVersionedItem>> {
+public final class MetisBaseListSet
+        extends MetisVersionedListSet {
     /**
      * Report fields.
      */
@@ -42,28 +39,34 @@ public class MetisBaseListSet<E extends Enum<E>>
 
     /**
      * Constructor.
-     * @param pClass the enum class
      */
-    protected MetisBaseListSet(final Class<E> pClass) {
-        super(MetisListType.BASE, pClass, FIELD_DEFS);
+    protected MetisBaseListSet() {
+        super();
+    }
+
+    @Override
+    public MetisDataFieldSet getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public MetisBaseList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisBaseList<MetisDataVersionedItem>) super.getList(pListKey);
     }
 
     /**
      * Reset the content.
      * @param pSource the source content to reset to
      */
-    public void resetContent(final MetisBaseListSet<E> pSource) {
-        /* Check that this is a valid Base partner */
-        checkValidBasePartner(pSource);
-
+    public void resetContent(final MetisBaseListSet pSource) {
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
+        Iterator<MetisListKey> myIterator = keyIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
+            MetisListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            MetisBaseList<?> mySource = pSource.getList(myEntry.getKey());
-            MetisBaseList<?> myTarget = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> mySource = pSource.getList(myKey);
+            MetisBaseList<MetisDataVersionedItem> myTarget = getList(myKey);
 
             /* Reset the content */
             myTarget.doResetContent(mySource);
@@ -77,15 +80,7 @@ public class MetisBaseListSet<E extends Enum<E>>
      * ReBase the listSet.
      * @param pBase the base listSet
      */
-    public void reBaseListSet(final MetisBaseListSet<E> pBase) {
-        /* Not supported for readOnly listSets */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* Check that this is a valid Base partner */
-        checkValidBasePartner(pBase);
-
+    public void reBaseListSet(final MetisBaseListSet pBase) {
         /* ListSet versions must be 0 */
         if ((getVersion() != 0)
             || (pBase.getVersion() != 0)) {
@@ -96,13 +91,13 @@ public class MetisBaseListSet<E extends Enum<E>>
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
+        Iterator<MetisListKey> myIterator = keyIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
+            MetisListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            MetisBaseList<MetisDataVersionedItem> myBase = pBase.getList(myEntry.getKey());
-            MetisBaseList<MetisDataVersionedItem> myTarget = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myBase = pBase.getList(myKey);
+            MetisBaseList<MetisDataVersionedItem> myTarget = getList(myKey);
 
             /* reBase the list */
             myTarget.doReBaseList(myBase);
@@ -120,35 +115,26 @@ public class MetisBaseListSet<E extends Enum<E>>
      * @param pOld the old listSet to compare to
      * @return the difference set
      */
-    public MetisDifferenceListSet<E> deriveDifferences(final MetisBaseListSet<E> pOld) {
-        /* Not supported for readOnly listSets */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* Check that this is a valid partner */
-        checkValidBasePartner(pOld);
-
+    public MetisDifferenceListSet deriveDifferences(final MetisBaseListSet pOld) {
         /* Create a new difference set */
-        MetisDifferenceListSet<E> myDifferences = new MetisDifferenceListSet<>(getEnumClass());
+        MetisDifferenceListSet myDifferences = new MetisDifferenceListSet();
 
         /* Determine the new Version */
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
+        Iterator<MetisListKey> myIterator = keyIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
+            MetisListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            E myType = myEntry.getKey();
-            MetisBaseList<MetisDataVersionedItem> myOld = pOld.getList(myType);
-            MetisBaseList<MetisDataVersionedItem> myNew = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myOld = pOld.getList(myKey);
+            MetisBaseList<MetisDataVersionedItem> myNew = getList(myKey);
 
             /* Obtain the difference list and add if non-empty */
             MetisDifferenceList<MetisDataVersionedItem> myDifference = myNew.doDeriveDifferences(myOld);
             if (!myDifference.isEmpty()) {
-                myDifferences.declareList(myType, myDifference);
+                myDifferences.declareList(myKey, myDifference);
                 myNewVersion = 1;
             }
         }
@@ -162,30 +148,24 @@ public class MetisBaseListSet<E extends Enum<E>>
      * Derive an update set.
      * @return the update set
      */
-    public MetisUpdateListSet<E> deriveUpdates() {
-        /* Not supported for readOnly listSets */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
+    public MetisUpdateListSet deriveUpdates() {
         /* Create a new update set */
-        MetisUpdateListSet<E> myUpdates = new MetisUpdateListSet<>(getEnumClass());
+        MetisUpdateListSet myUpdates = new MetisUpdateListSet();
 
         /* Determine the new Version */
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
+        Iterator<MetisListKey> myIterator = keyIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
+            MetisListKey myKey = myIterator.next();
 
             /* Obtain the list */
-            E myType = myEntry.getKey();
-            MetisBaseList<MetisDataVersionedItem> myList = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myList = getList(myKey);
 
             /* Obtain the update list and add */
             MetisUpdateList<MetisDataVersionedItem> myUpdate = myList.deriveUpdates();
-            myUpdates.declareList(myType, myUpdate);
+            myUpdates.declareList(myKey, myUpdate);
 
             /* Note maximum version */
             myNewVersion = Math.max(myNewVersion, myUpdates.getVersion());
@@ -200,27 +180,21 @@ public class MetisBaseListSet<E extends Enum<E>>
      * Derive an edit set.
      * @return the edit set
      */
-    public MetisEditListSet<E> deriveEditSet() {
-        /* Not supported for readOnly listSets */
-        if (isReadOnly()) {
-            throw new UnsupportedOperationException();
-        }
-
+    public MetisEditListSet deriveEditSet() {
         /* Create a new edit set */
-        MetisEditListSet<E> myEdits = new MetisEditListSet<>(this);
+        MetisEditListSet myEdits = new MetisEditListSet(this);
 
         /* Loop through the lists */
-        Iterator<Map.Entry<E, MetisBaseList<MetisDataVersionedItem>>> myIterator = entrySetIterator();
+        Iterator<MetisListKey> myIterator = keyIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<E, MetisBaseList<MetisDataVersionedItem>> myEntry = myIterator.next();
+            MetisListKey myKey = myIterator.next();
 
             /* Obtain the list */
-            E myType = myEntry.getKey();
-            MetisBaseList<MetisDataVersionedItem> myList = myEntry.getValue();
+            MetisBaseList<MetisDataVersionedItem> myList = getList(myKey);
 
             /* Obtain the edit list and add */
             MetisEditList<MetisDataVersionedItem> myEdit = myList.deriveEditList();
-            myEdits.declareList(myType, myEdit);
+            myEdits.declareList(myKey, myEdit);
         }
 
         /* Return the editSet */
@@ -248,29 +222,5 @@ public class MetisBaseListSet<E extends Enum<E>>
 
         /* ReWind it */
         doReWindToVersion(pVersion);
-    }
-
-    /**
-     * Check validity of base partner set.
-     * @param pPartner the partnerSet
-     */
-    private void checkValidBasePartner(final MetisBaseListSet<E> pPartner) {
-        /* Loop through the lists */
-        Iterator<E> myIterator = enumIterator();
-        while (myIterator.hasNext()) {
-            E myKey = myIterator.next();
-
-            /* Obtain the source list */
-            MetisBaseList<?> mySource = pPartner.getList(myKey);
-            MetisBaseList<?> myTarget = getList(myKey);
-
-            /* Check that we have a similar set */
-            boolean bValid = mySource == null
-                                              ? myTarget == null
-                                              : myTarget != null;
-            if (!bValid) {
-                throw new InvalidParameterException("Inconsistent Partner listSet");
-            }
-        }
     }
 }

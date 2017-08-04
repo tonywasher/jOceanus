@@ -221,11 +221,12 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         MetisPreferenceItem<K> myPref = getPreference(pField.getName());
 
         /* Return the value */
-        return (myPref == null)
-                                ? MetisFieldValue.UNKNOWN
-                                : myPref.isHidden()
-                                                    ? MetisFieldValue.SKIP
-                                                    : myPref.getValue();
+        if (myPref == null) {
+            return MetisFieldValue.UNKNOWN;
+        }
+        return myPref.isHidden()
+                                 ? MetisFieldValue.SKIP
+                                 : myPref.getValue();
     }
 
     @Override
