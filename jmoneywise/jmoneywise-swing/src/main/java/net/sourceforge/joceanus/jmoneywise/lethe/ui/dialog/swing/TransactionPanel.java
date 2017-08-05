@@ -302,7 +302,7 @@ public class TransactionPanel
         restrictField(myReconciledButton, Transaction.DESCLEN);
 
         /* Declare fields */
-        theFieldSet.addFieldElement(Transaction.FIELD_DATE, MetisDataType.DATE, theDateButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_DATE, theDateButton);
         theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, TransactionAsset.class, theAccountButton);
         theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
         theFieldSet.addFieldElement(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);

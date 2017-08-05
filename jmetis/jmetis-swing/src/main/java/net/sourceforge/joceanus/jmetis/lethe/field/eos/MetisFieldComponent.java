@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.lethe.field.swing;
+package net.sourceforge.joceanus.jmetis.lethe.field.eos;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -29,14 +29,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -158,7 +155,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pTextField the textField
-     * @param pClass the data type
+     * @param pClass the class of item.
      * @return the field component
      */
     protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
@@ -210,7 +207,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pTextArea the textArea
-     * @param pClass the data type
+     * @param pClass the class of item.
      * @return the field component
      */
     private static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
@@ -625,78 +622,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     }
 
     /**
-     * The JComboBox implementation.
-     * @param <I> ComboBox element type
-     * @param <T> the Data Item type
-     */
-    protected static final class MetisFieldCombo<I, T extends MetisFieldSetItem>
-            extends MetisFieldComponent<T> {
-        /**
-         * The Component.
-         */
-        private final JComboBox<I> theComponent;
-
-        /**
-         * The DataModel.
-         */
-        private final JModelObject<I, T> theModel;
-
-        /**
-         * Constructor.
-         * @param pComponent the component.
-         * @param pModel the data model.
-         */
-        private MetisFieldCombo(final JComboBox<I> pComponent,
-                                final JModelObject<I, T> pModel) {
-            /* Call super-constructor */
-            super(pComponent, pModel);
-
-            /* Store parameters */
-            theComponent = pComponent;
-            theModel = pModel;
-
-            /* Create the listener and attach it */
-            ComboListener myListener = new ComboListener();
-            pComponent.addItemListener(myListener);
-        }
-
-        @Override
-        protected void displayField() {
-            /* Access value from model */
-            I myValue = theModel.getValue();
-            JLabel myLabel = getReadOnlyLabel();
-
-            /* Display it */
-            if (myValue != null) {
-                theComponent.setSelectedItem(myValue);
-                myLabel.setText(myValue.toString());
-            } else {
-                theComponent.setSelectedIndex(-1);
-                myLabel.setText(null);
-            }
-        }
-
-        /**
-         * ComboListener class.
-         */
-        private final class ComboListener
-                implements ItemListener {
-
-            @Override
-            public void itemStateChanged(final ItemEvent evt) {
-                /* Ignore selection if not selecting item */
-                if (evt.getStateChange() != ItemEvent.SELECTED) {
-                    return;
-                }
-
-                /* Set the new value */
-                theModel.processValue(theComponent.getSelectedItem());
-            }
-        }
-    }
-
-    /**
-     * The JDateDayButton implementation.
+     * The DateButton implementation.
      * @param <T> the Data Item type
      */
     private static class MetisFieldDate<T extends MetisFieldSetItem>

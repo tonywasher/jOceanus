@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.lethe.field.swing;
+package net.sourceforge.joceanus.jmetis.lethe.field.eos;
 
 import java.awt.Point;
 import java.awt.Rectangle;

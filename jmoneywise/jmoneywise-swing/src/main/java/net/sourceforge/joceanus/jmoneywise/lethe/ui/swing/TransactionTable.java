@@ -89,6 +89,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateConfig;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton.JScrollListMenuBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -1234,12 +1235,19 @@ public class TransactionTable
         }
 
         /**
+         * handle Date event.
+         */
+        private void handleDateEvent() {
+            /* Access details */
+            TethysSwingDateConfig myConfig = theDateEditor.getDateConfig();
+            myConfig.setEarliestDateDay(theRange.getStart());
+            myConfig.setLatestDateDay(theRange.getEnd());
+        }
+
+        /**
          * RefreshData.
          */
         private void refreshData() {
-            /* Update the range for the date editor */
-            theDateEditor.setRange(theRange);
-
             /* Update details for the tag menu */
             theActiveTrans.updateTagMenuBuilder(theTagEditor.getMenuBuilder());
         }

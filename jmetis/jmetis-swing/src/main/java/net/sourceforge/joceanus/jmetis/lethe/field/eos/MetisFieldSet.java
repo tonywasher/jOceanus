@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.lethe.field.swing;
+package net.sourceforge.joceanus.jmetis.lethe.field.eos;
 
 import java.util.Currency;
 import java.util.HashMap;
@@ -104,7 +104,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add dateButton Element to field set.
+     * Add Element to field set.
      * @param pField the field id
      * @param pButton the button
      */
@@ -118,7 +118,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add scrollButton Element to field set.
+     * Add Element to field set.
      * @param <I> Scroll button element type
      * @param pField the field id
      * @param pClass the class of the value
@@ -135,7 +135,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add listButton Element to field set.
+     * Add Element to field set.
      * @param <I> List button element type
      * @param pField the field id
      * @param pButton the button
@@ -150,7 +150,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add iconButton Element to field set.
+     * Add Element to field set.
      * @param <I> Icon button element type
      * @param pField the field id
      * @param pClass the class of the value

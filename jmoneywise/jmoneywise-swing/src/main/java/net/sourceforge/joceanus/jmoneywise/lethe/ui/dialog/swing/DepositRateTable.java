@@ -35,7 +35,7 @@ import javax.swing.JTable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.DateDayCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.RateCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
@@ -439,7 +439,7 @@ public class DepositRateTable
         /**
          * Date editor.
          */
-        private final DateDayCellEditor theDateEditor;
+        private final CalendarCellEditor theDateEditor;
 
         /**
          * Date configuration.
@@ -466,7 +466,7 @@ public class DepositRateTable
 
             /* Create the relevant formatters */
             theRateEditor = theFieldMgr.allocateRateCellEditor();
-            theDateEditor = theFieldMgr.allocateDateDayCellEditor();
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
             theDateConfig = theDateEditor.getDateConfig();
             theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
             theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();

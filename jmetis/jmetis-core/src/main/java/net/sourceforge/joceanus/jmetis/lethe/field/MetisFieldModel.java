@@ -27,9 +27,9 @@ import java.util.Currency;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
@@ -71,7 +71,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
     /**
      * The Item field value.
      */
-    private Object theValue = null;
+    private Object theValue;
 
     /**
      * Constructor.
@@ -462,10 +462,6 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
                             isError = true;
                             break;
                     }
-                } catch (NumberFormatException e) {
-                    /* Set error indication */
-                    isError = true;
-
                 } catch (IllegalArgumentException e) {
                     /* Set error indication */
                     isError = true;
@@ -569,85 +565,21 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
     }
 
     /**
-     * Boolean model.
+     * Date model.
      * @param <T> itemType
      */
-    public static class JModelBoolean<T extends MetisFieldSetItem>
+    public static class JModelDate<T extends MetisFieldSetItem>
             extends MetisFieldModel<T> {
 
         /**
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
-         * @param pClass the class of the model
          */
-        public JModelBoolean(final MetisFieldSetBase pFieldSet,
-                             final MetisField pField,
-                             final MetisDataType pClass) {
+        public JModelDate(final MetisFieldSetBase pFieldSet,
+                          final MetisField pField) {
             /* Pass call onwards */
-            super(pFieldSet, pField, pClass);
-
-            /* Switch on class */
-            switch (pClass) {
-                /* Supported classes */
-                case BOOLEAN:
-                    break;
-
-                /* Unsupported classes */
-                default:
-                    throw new IllegalArgumentException(ERROR_TYPE
-                                                       + pClass);
-            }
-        }
-
-        /**
-         * Process value.
-         * @param pValue the value
-         */
-        public void processValue(final Boolean pValue) {
-            /* If this is a new value */
-            if (!MetisDifference.isEqual(pValue, getValue())) {
-                /* Record new value */
-                setValue(pValue);
-            }
-        }
-
-        @Override
-        public Boolean getValue() {
-            return (Boolean) super.getValue();
-        }
-    }
-
-    /**
-     * DateDay model.
-     * @param <T> itemType
-     */
-    public static class JModelDateDay<T extends MetisFieldSetItem>
-            extends MetisFieldModel<T> {
-
-        /**
-         * Constructor.
-         * @param pFieldSet the fieldSet
-         * @param pField the field for the model
-         * @param pClass the class of the model
-         */
-        public JModelDateDay(final MetisFieldSetBase pFieldSet,
-                             final MetisField pField,
-                             final MetisDataType pClass) {
-            /* Pass call onwards */
-            super(pFieldSet, pField, pClass);
-
-            /* Switch on class */
-            switch (pClass) {
-                /* Supported classes */
-                case DATE:
-                    break;
-
-                /* Unsupported classes */
-                default:
-                    throw new IllegalArgumentException(ERROR_TYPE
-                                                       + pClass);
-            }
+            super(pFieldSet, pField, MetisDataType.DATE);
         }
 
         /**
