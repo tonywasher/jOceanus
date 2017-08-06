@@ -524,13 +524,9 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * RawDecimalTextFieldControl.
-     * @param <N> the Node type
-     * @param <I> the Icon type
+     * RawDecimalTextField.
      */
-    interface TethysRawDecimalEditField<N, I>
-            extends
-            TethysValidatedEditField<TethysDecimal, N, I> {
+    interface TethysRawDecimalField {
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
@@ -539,14 +535,17 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * CurrencyTextFieldControl.
-     * @param <T> the data type
+     * RawDecimalTextFieldControl.
      * @param <N> the Node type
      * @param <I> the Icon type
      */
-    interface TethysCurrencyEditField<T extends TethysMoney, N, I>
-            extends
-            TethysValidatedEditField<T, N, I> {
+    interface TethysRawDecimalEditField<N, I> extends TethysValidatedEditField<TethysDecimal, N, I>, TethysRawDecimalField {
+    }
+
+    /**
+     * CurrencyField.
+     */
+    interface TethysCurrencyField {
         /**
          * Set the Deemed Currency supplier.
          * @param pSupplier the supplier
@@ -555,14 +554,19 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * IconButtonFieldControl.
+     * CurrencyTextFieldControl.
      * @param <T> the data type
      * @param <N> the Node type
      * @param <I> the Icon type
      */
-    interface TethysIconButtonField<T, N, I>
-            extends
-            TethysDataEditField<T, N, I> {
+    interface TethysCurrencyEditField<T extends TethysMoney, N, I> extends TethysValidatedEditField<T, N, I>, TethysCurrencyField {
+    }
+
+    /**
+     * IconButton Configuration.
+     * @param <T> the data type
+     */
+    interface TethysIconButton<T> {
         /**
          * Set the IconMapSet supplier.
          * @param pSupplier the supplier
@@ -571,13 +575,18 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * DateButton Control.
+     * IconButtonFieldControl.
+     * @param <T> the data type
      * @param <N> the Node type
      * @param <I> the Icon type
      */
-    interface TethysDateButtonField<N, I>
-            extends
-            TethysDataEditField<TethysDate, N, I> {
+    interface TethysIconButtonField<T, N, I> extends TethysDataEditField<T, N, I>, TethysIconButton<T> {
+    }
+
+    /**
+     * DateButton Configuration.
+     */
+    interface TethysDateButton {
         /**
          * Set the dateConfig configurator.
          * @param pConfigurator the configurator
@@ -586,18 +595,32 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * Scroll Button Control.
-     * @param <T> the value type
+     * DateButton Field.
      * @param <N> the Node type
      * @param <I> the Icon type
      */
-    interface TethysScrollButtonField<T, N, I>
-            extends
-            TethysDataEditField<T, N, I> {
+    interface TethysDateButtonField<N, I> extends TethysDataEditField<TethysDate, N, I>, TethysDateButton {
+    }
+
+    /**
+     * Scroll Button Configuration.
+     * @param <T> the value type
+     * @param <I> the Icon type
+     */
+    interface TethysScrollButton<T, I> {
         /**
          * Set the menu configurator.
          * @param pConfigurator the configurator
          */
         void setMenuConfigurator(Consumer<TethysScrollMenu<T, I>> pConfigurator);
+    }
+
+    /**
+     * Scroll Button Field.
+     * @param <T> the value type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    interface TethysScrollButtonField<T, N, I> extends TethysDataEditField<T, N, I>, TethysScrollButton<T, I> {
     }
 }

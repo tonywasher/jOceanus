@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButton;
 
 /**
  * DateButton Manager.
@@ -46,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <I> the icon type
  */
 public abstract class TethysDateButtonManager<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+        implements TethysDateButton, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The Event Manager.
      */
@@ -142,7 +143,7 @@ public abstract class TethysDateButtonManager<N, I>
      * Obtain the configuration.
      * @return the configuration
      */
-    protected TethysDateConfig getConfig() {
+    public TethysDateConfig getConfig() {
         return theConfig;
     }
 
@@ -300,10 +301,7 @@ public abstract class TethysDateButtonManager<N, I>
         theConfig.setShowNarrowDays(pShowNarrowDays);
     }
 
-    /**
-     * Set the dateConfig configurator.
-     * @param pConfigurator the configurator
-     */
+    @Override
     public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
         theDateConfigurator = pConfigurator;
     }

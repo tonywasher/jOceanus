@@ -29,6 +29,7 @@ import java.util.function.Function;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
@@ -45,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
  * @param <I> the Icon type
  */
 public abstract class TethysIconButtonManager<T, N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+        implements TethysIconButton<T>, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The Factory.
      */
@@ -437,7 +438,7 @@ public abstract class TethysIconButtonManager<T, N, I>
          * @param pValue the value
          * @return the value
          */
-        protected TethysIconId getIconForValue(final T pValue) {
+        public TethysIconId getIconForValue(final T pValue) {
             return theIconMap.get(pValue);
         }
 
@@ -446,7 +447,7 @@ public abstract class TethysIconButtonManager<T, N, I>
          * @param pValue the value
          * @return the value
          */
-        protected String getTooltipForValue(final T pValue) {
+        public String getTooltipForValue(final T pValue) {
             return theTipMap.get(pValue);
         }
 

@@ -55,9 +55,8 @@ public class CoeusLendingWorksMarket
     /**
      * Constructor.
      * @param pFormatter the formatter
-     * @throws OceanusException on error
      */
-    public CoeusLendingWorksMarket(final MetisDataFormatter pFormatter) throws OceanusException {
+    public CoeusLendingWorksMarket(final MetisDataFormatter pFormatter) {
         /* Initialise underlying class */
         super(pFormatter, CoeusMarketProvider.LENDINGWORKS);
 

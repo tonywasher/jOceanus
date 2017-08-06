@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.JModelString;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelString;
 import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
@@ -95,10 +95,10 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pClass the data type of the value
      * @param pTextField the textField
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
-                                    final MetisField pField,
-                                    final MetisDataType pClass,
-                                    final JTextField pTextField) {
+    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+                                final MetisField pField,
+                                final MetisDataType pClass,
+                                final JTextField pTextField) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pTextField, pClass));
     }
@@ -110,10 +110,10 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pClass the data type of the value
      * @param pScrollPane the scrollPane
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
-                                    final MetisField pField,
-                                    final MetisDataType pClass,
-                                    final JScrollPane pScrollPane) {
+    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+                                final MetisField pField,
+                                final MetisDataType pClass,
+                                final JScrollPane pScrollPane) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pScrollPane, pClass));
     }
@@ -124,9 +124,9 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pField the field id
      * @param pButton the date button
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
-                                    final MetisField pField,
-                                    final TethysSwingDateButton pButton) {
+    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+                                final MetisField pField,
+                                final TethysSwingDateButton pButton) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton));
     }
@@ -283,9 +283,9 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      */
     protected void setAssumedCurrency(final Currency pCurrency) {
         /* If the model is a string model */
-        if (theModel instanceof JModelString) {
+        if (theModel instanceof TethysFieldModelString) {
             /* Pass call onwards */
-            JModelString<?> myModel = (JModelString<?>) theModel;
+            TethysFieldModelString<?> myModel = (TethysFieldModelString<?>) theModel;
             myModel.setAssumedCurrency(pCurrency);
         }
     }

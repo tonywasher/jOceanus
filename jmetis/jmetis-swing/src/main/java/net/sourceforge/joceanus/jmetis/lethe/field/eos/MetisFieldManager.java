@@ -54,6 +54,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRender
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Class to determine rendering details for an item.
@@ -127,6 +128,11 @@ public class MetisFieldManager
     private static final Font FONT_HI_NUMCHANGED = new Font(FONTFACE_NUMERIC, Font.BOLD + Font.ITALIC, PITCH_HILITE);
 
     /**
+     * The GUI Factory.
+     */
+    private final TethysSwingGuiFactory theFactory;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<MetisFieldEvent> theEventManager;
@@ -148,10 +154,13 @@ public class MetisFieldManager
 
     /**
      * Constructor.
+     * @param pGuiFactory the gui factory
      * @param pConfig the render configuration
      */
-    public MetisFieldManager(final MetisFieldConfig pConfig) {
+    public MetisFieldManager(final TethysSwingGuiFactory pGuiFactory,
+                             final MetisFieldConfig pConfig) {
         /* Store the parameters */
+        theFactory = pGuiFactory;
         theConfig = pConfig;
 
         /* Create the event manager */
@@ -259,12 +268,12 @@ public class MetisFieldManager
     /**
      * Allocate an IconButtonRenderer object.
      * @param <T> the type of the object
-     * @param pEditor the cell editor
+     * @param pClazz the class of the objects
      * @return the icon renderer
      */
-    public <T> IconButtonCellRenderer<T> allocateIconButtonCellRenderer(final IconButtonCellEditor<T> pEditor) {
+    public <T> IconButtonCellRenderer<T> allocateIconButtonCellRenderer(final Class<T> pClazz) {
         /* Return a new IconRenderer object */
-        return new IconButtonCellRenderer<>(this, pEditor);
+        return new IconButtonCellRenderer<>(theFactory, this, pClazz);
     }
 
     /**
@@ -327,31 +336,29 @@ public class MetisFieldManager
      */
     public CalendarCellEditor allocateCalendarCellEditor() {
         /* Return a new CalendarEditor object */
-        return new CalendarCellEditor(theFormatter.getDateFormatter());
+        return new CalendarCellEditor(theFactory.newDateButton());
     }
 
     /**
      * Allocate an IconButtonEditor object.
      * @param <T> the type of the object
-     * @param pClass the class of the objects
-     * @param pComplex use complex state true/false
+     * @param pClazz the class of the objects
      * @return the icon editor
      */
-    public <T> IconButtonCellEditor<T> allocateIconButtonCellEditor(final Class<T> pClass,
-                                                                    final boolean pComplex) {
+    public <T> IconButtonCellEditor<T> allocateIconButtonCellEditor(final Class<T> pClazz) {
         /* Return a new IconButtonEditor object */
-        return new IconButtonCellEditor<>(pClass, pComplex);
+        return new IconButtonCellEditor<>(theFactory.newIconButton(), pClazz);
     }
 
     /**
      * Allocate a ScrollButtonEditor object.
      * @param <T> the type of the object
-     * @param pClass the class of the objects
+     * @param pClazz the class of the objects
      * @return the ScrollButton editor
      */
-    public <T> ScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClass) {
+    public <T> ScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClazz) {
         /* Return a new ScrollButtonEditor object */
-        return new ScrollButtonCellEditor<>(pClass);
+        return new ScrollButtonCellEditor<>(theFactory.newScrollButton(), pClazz);
     }
 
     /**
@@ -361,7 +368,7 @@ public class MetisFieldManager
      */
     public <T> ScrollListButtonCellEditor<T> allocateScrollListButtonCellEditor() {
         /* Return a new ScrollListButtonEditor object */
-        return new ScrollListButtonCellEditor<>();
+        return new ScrollListButtonCellEditor<>(theFactory.newListButton());
     }
 
     /**
@@ -487,16 +494,14 @@ public class MetisFieldManager
     protected Font determineFont(final MetisFieldState pState,
                                  final boolean isFixed) {
         /* Switch on the state */
-        switch (pState) {
-            case CHANGED:
-                return isFixed
-                               ? FONT_NUMCHANGED
-                               : FONT_CHANGED;
-            default:
-                return isFixed
-                               ? FONT_NUMERIC
-                               : FONT_STANDARD;
+        if (MetisFieldState.CHANGED.equals(pState)) {
+            return isFixed
+                           ? FONT_NUMCHANGED
+                           : FONT_CHANGED;
         }
+        return isFixed
+                       ? FONT_NUMERIC
+                       : FONT_STANDARD;
     }
 
     /**
@@ -522,16 +527,14 @@ public class MetisFieldManager
     protected Font determineHiFont(final MetisFieldState pState,
                                    final boolean isFixed) {
         /* Switch on the state */
-        switch (pState) {
-            case CHANGED:
-                return isFixed
-                               ? FONT_HI_NUMCHANGED
-                               : FONT_HI_CHANGED;
-            default:
-                return isFixed
-                               ? FONT_HI_NUMERIC
-                               : FONT_HI_STANDARD;
+        if (MetisFieldState.CHANGED.equals(pState)) {
+            return isFixed
+                           ? FONT_HI_NUMCHANGED
+                           : FONT_HI_CHANGED;
         }
+        return isFixed
+                       ? FONT_HI_NUMERIC
+                       : FONT_HI_STANDARD;
     }
 
     /**
@@ -557,12 +560,9 @@ public class MetisFieldManager
                                 final MetisFieldSetItem pItem,
                                 final MetisField pField) {
         /* Switch on the state */
-        switch (pState) {
-            case ERROR:
-                return pItem.getFieldErrors(pField);
-            default:
-                return null;
-        }
+        return MetisFieldState.ERROR.equals(pState)
+                                                    ? pItem.getFieldErrors(pField)
+                                                    : null;
     }
 
     /**
@@ -589,12 +589,8 @@ public class MetisFieldManager
     protected <X extends MetisFieldSetItem> String determineToolTip(final MetisFieldState pState,
                                                                     final X pItem,
                                                                     final MetisField pField) {
-        /* Switch on the state */
-        switch (pState) {
-            case ERROR:
-                return pItem.getFieldErrors(pField);
-            default:
-                return null;
-        }
+        return MetisFieldState.ERROR.equals(pState)
+                                                    ? pItem.getFieldErrors(pField)
+                                                    : null;
     }
 }

@@ -51,10 +51,10 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.JModelDate;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.JModelObject;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.JModelObjectList;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.JModelString;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelDate;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelObject;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelObjectList;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelString;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
 import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
@@ -166,7 +166,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                           final JTextField pTextField,
                                                                                           final MetisDataType pClass) {
         /* Allocate component */
-        JModelString<X> myModel = new JModelString<>(pFieldSet, pField, pClass);
+        TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
         return new MetisFieldText<>(pTextField, myModel);
     }
 
@@ -218,7 +218,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                         final JTextArea pTextArea,
                                                                                         final MetisDataType pClass) {
         /* Allocate component */
-        JModelString<X> myModel = new JModelString<>(pFieldSet, pField, pClass);
+        TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
         return new MetisFieldArea<>(pTextArea, myModel);
     }
 
@@ -234,7 +234,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                           final MetisField pField,
                                                                                           final TethysSwingDateButton pButton) {
         /* Allocate component */
-        JModelDate<X> myModel = new JModelDate<>(pFieldSet, pField);
+        TethysFieldModelDate<X> myModel = new TethysFieldModelDate<>(pFieldSet, pField);
         return new MetisFieldDate<>(pButton, myModel);
     }
 
@@ -253,7 +253,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                              final JScrollButton<I> pButton,
                                                                                              final Class<I> pClass) {
         /* Allocate component */
-        JModelObject<I, X> myModel = new JModelObject<>(pFieldSet, pField, pClass);
+        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClass);
         return new MetisFieldScrollButton<>(pButton, myModel);
     }
 
@@ -270,7 +270,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                              final MetisField pField,
                                                                                              final JScrollListButton<I> pButton) {
         /* Allocate component */
-        JModelObjectList<I, X> myModel = new JModelObjectList<>(pFieldSet, pField);
+        TethysFieldModelObjectList<I, X> myModel = new TethysFieldModelObjectList<>(pFieldSet, pField);
         return new MetisFieldScrollListButton<>(pButton, myModel);
     }
 
@@ -289,7 +289,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                              final JIconButton<I> pButton,
                                                                                              final Class<I> pClass) {
         /* Allocate component */
-        JModelObject<I, X> myModel = new JModelObject<>(pFieldSet, pField, pClass);
+        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClass);
         return new MetisFieldIconButton<>(pButton, myModel);
     }
 
@@ -389,7 +389,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelString<T> theModel;
+        private final TethysFieldModelString<T> theModel;
 
         /**
          * Constructor.
@@ -397,7 +397,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         private MetisFieldText(final JTextField pComponent,
-                               final JModelString<T> pModel) {
+                               final TethysFieldModelString<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -517,7 +517,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelString<T> theModel;
+        private final TethysFieldModelString<T> theModel;
 
         /**
          * Constructor.
@@ -525,7 +525,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         private MetisFieldArea(final JTextArea pComponent,
-                               final JModelString<T> pModel) {
+                               final TethysFieldModelString<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -544,8 +544,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         }
 
         @Override
-        protected JModelString<T> getModel() {
-            return (JModelString<T>) super.getModel();
+        protected TethysFieldModelString<T> getModel() {
+            return (TethysFieldModelString<T>) super.getModel();
         }
 
         @Override
@@ -639,7 +639,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelObject<I, T> theModel;
+        private final TethysFieldModelObject<I, T> theModel;
 
         /**
          * Constructor.
@@ -647,7 +647,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         private MetisFieldCombo(final JComboBox<I> pComponent,
-                                final JModelObject<I, T> pModel) {
+                                final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -709,7 +709,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelDate<T> theModel;
+        private final TethysFieldModelDate<T> theModel;
 
         /**
          * Constructor.
@@ -717,7 +717,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         protected MetisFieldDate(final TethysSwingDateButton pComponent,
-                                 final JModelDate<T> pModel) {
+                                 final TethysFieldModelDate<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -768,7 +768,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelObject<I, T> theModel;
+        private final TethysFieldModelObject<I, T> theModel;
 
         /**
          * Constructor.
@@ -776,7 +776,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         protected MetisFieldScrollButton(final JScrollButton<I> pComponent,
-                                         final JModelObject<I, T> pModel) {
+                                         final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -828,7 +828,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelObjectList<I, T> theModel;
+        private final TethysFieldModelObjectList<I, T> theModel;
 
         /**
          * Constructor.
@@ -836,7 +836,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         protected MetisFieldScrollListButton(final JScrollListButton<I> pComponent,
-                                             final JModelObjectList<I, T> pModel) {
+                                             final TethysFieldModelObjectList<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -869,7 +869,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The DataModel.
          */
-        private final JModelObject<I, T> theModel;
+        private final TethysFieldModelObject<I, T> theModel;
 
         /**
          * Constructor.
@@ -877,7 +877,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pModel the data model.
          */
         protected MetisFieldIconButton(final JIconButton<I> pComponent,
-                                       final JModelObject<I, T> pModel) {
+                                       final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 

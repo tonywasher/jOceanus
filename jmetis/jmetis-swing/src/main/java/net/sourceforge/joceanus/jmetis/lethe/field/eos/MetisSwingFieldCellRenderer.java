@@ -22,6 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.lethe.field.eos;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -30,13 +34,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisFieldManager.PopulateFieldData;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.IconButtonCellEditor;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateCellRenderer;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.IconButtonState;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Cell renderers.
@@ -191,36 +196,66 @@ public final class MetisSwingFieldCellRenderer {
         private static final long serialVersionUID = 103642334541674910L;
 
         /**
+         * The GUI factory.
+         */
+        private final transient TethysSwingGuiFactory theFactory;
+
+        /**
          * The Render Data.
          */
         private final transient MetisFieldData theData;
 
         /**
-         * IconState.
+         * The Class of the data.
          */
-        private final transient IconButtonState<T> theState;
+        private final transient Class<T> theClazz;
+
+        /**
+         * The iconMap.
+         */
+        private final Map<TethysIconId, Icon> theIconMap;
+
+        /**
+         * The MapSet supplier.
+         */
+        private transient BiFunction<Integer, T, TethysIconMapSet<T>> theSupplier;
 
         /**
          * Constructor.
+         * @param pFactory the GUI factory
          * @param pManager the renderer manager
-         * @param pEditor the cell editor
+         * @param pClazz the item class
          */
-        protected IconButtonCellRenderer(final MetisFieldManager pManager,
-                                         final IconButtonCellEditor<T> pEditor) {
-            this(pManager.allocateRenderData(true), pEditor);
+        protected IconButtonCellRenderer(final TethysSwingGuiFactory pFactory,
+                                         final MetisFieldManager pManager,
+                                         final Class<T> pClazz) {
+            this(pFactory, pManager.allocateRenderData(true), pClazz);
         }
 
         /**
          * Constructor for fixed width.
+         * @param pFactory the GUI factory
          * @param pData the render data
-         * @param pEditor the cell editor
+         * @param pClazz the item class
          */
-        protected IconButtonCellRenderer(final MetisFieldData pData,
-                                         final IconButtonCellEditor<T> pEditor) {
+        private IconButtonCellRenderer(final TethysSwingGuiFactory pFactory,
+                                       final MetisFieldData pData,
+                                       final Class<T> pClazz) {
             /* Store data */
+            theFactory = pFactory;
             theData = pData;
-            theState = pEditor.getState();
+            theClazz = pClazz;
             setHorizontalAlignment(SwingConstants.CENTER);
+            theSupplier = (i, v) -> null;
+            theIconMap = new HashMap<>();
+        }
+
+        /**
+         * Set the IconMapSet supplier.
+         * @param pSupplier the supplier
+         */
+        public void setIconMapSet(final BiFunction<Integer, T, TethysIconMapSet<T>> pSupplier) {
+            theSupplier = pSupplier;
         }
 
         @Override
@@ -239,26 +274,25 @@ public final class MetisSwingFieldCellRenderer {
             /* Determine the render data */
             renderComponent(pTable, this, theData);
 
-            /* If we are using a complexState */
-            Icon myIcon;
-            String myTooltip;
-            if (theState instanceof ComplexIconButtonState) {
-                ComplexIconButtonState<T, Boolean> myState = getComplexState();
+            /* Determine the row and value */
+            int iRow = pTable.convertRowIndexToModel(pRowIndex);
+            T myValue = theClazz.cast(pValue);
 
-                /* Determine whether the cell is editable */
-                int iRow = pTable.convertRowIndexToModel(pRowIndex);
-                int iCol = pTable.convertColumnIndexToModel(pColIndex);
-                Boolean isEditable = pTable.getModel().isCellEditable(iRow, iCol);
+            /* Determine the IconMapSet */
+            TethysIconMapSet<T> myMapSet = theSupplier == null
+                                                               ? null
+                                                               : theSupplier.apply(iRow, myValue);
 
-                /* Determine icon */
-                myIcon = myState.getIconForValueAndState(pValue, isEditable);
-                myTooltip = myState.getToolTipForValueAndState(pValue, isEditable);
-            } else {
-                myIcon = theState.getIconForValue(pValue);
-                myTooltip = theState.getToolTipForValue(pValue);
-            }
+            /* Determine the icon and toolTip */
+            TethysIconId myIconId = myMapSet == null
+                                                     ? null
+                                                     : myMapSet.getIconForValue(myValue);
+            String myTooltip = myMapSet == null
+                                                ? null
+                                                : myMapSet.getTooltipForValue(myValue);
 
             /* Store details */
+            Icon myIcon = resolveIcon(myIconId);
             setIcon(myIcon);
             setText(null);
             if (theData.getToolTip() == null) {
@@ -270,14 +304,23 @@ public final class MetisSwingFieldCellRenderer {
         }
 
         /**
-         * Obtain complex state.
-         * @return the state machine
+         * ResolveIcon.
+         * @param pIconId the iconId
+         * @return the icon
          */
-        @SuppressWarnings("unchecked")
-        public ComplexIconButtonState<T, Boolean> getComplexState() {
-            return (theState instanceof ComplexIconButtonState)
-                                                                ? (ComplexIconButtonState<T, Boolean>) theState
-                                                                : null;
+        private Icon resolveIcon(final TethysIconId pIconId) {
+            /* Handle null icon */
+            if (pIconId == null) {
+                return null;
+            }
+
+            /* Look up icon */
+            Icon myIcon = theIconMap.get(pIconId);
+            if (myIcon == null) {
+                myIcon = theFactory.resolveIcon(pIconId, TethysIconBuilder.DEFAULT_ICONWIDTH);
+                theIconMap.put(pIconId, myIcon);
+            }
+            return myIcon;
         }
     }
 
@@ -285,16 +328,16 @@ public final class MetisSwingFieldCellRenderer {
      * Calendar Cell Renderer.
      */
     public static class CalendarCellRenderer
-            extends TethysSwingDateCellRenderer {
+            extends StringCellRenderer {
         /**
          * Serial Id.
          */
         private static final long serialVersionUID = 1947211408966548011L;
 
         /**
-         * The Render Data.
+         * Date Formatter.
          */
-        private final transient MetisFieldData theData;
+        private final transient TethysDateFormatter theFormatter;
 
         /**
          * Constructor.
@@ -303,29 +346,22 @@ public final class MetisSwingFieldCellRenderer {
          */
         protected CalendarCellRenderer(final MetisFieldManager pManager,
                                        final TethysDateFormatter pFormatter) {
-            super(pFormatter);
-            theData = pManager.allocateRenderData(true);
-            setHorizontalAlignment(SwingConstants.LEFT);
+            super(pManager.allocateRenderData(true), SwingConstants.CENTER);
+            theFormatter = pFormatter;
         }
 
         @Override
-        public JComponent getTableCellRendererComponent(final JTable pTable,
-                                                        final Object pValue,
-                                                        final boolean isSelected,
-                                                        final boolean hasFocus,
-                                                        final int pRowIndex,
-                                                        final int pColIndex) {
-            /* Pass call on */
-            super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
+        public void setValue(final Object pValue) {
+            Object o = pValue;
 
-            /* Declare the Cell position in terms of the model */
-            theData.setPosition(pRowIndex, pColIndex, isSelected);
+            /* If the value is a Date */
+            if (o instanceof TethysDate) {
+                /* Format it */
+                o = theFormatter.formatDate((TethysDate) o);
+            }
 
-            /* Determine the render data */
-            renderComponent(pTable, this, theData);
-
-            /* Return this as the render item */
-            return this;
+            /* Pass value on */
+            super.setValue(o);
         }
     }
 

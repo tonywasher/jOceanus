@@ -82,6 +82,11 @@ public class TethysSwingScrollPaneManager
     }
 
     @Override
+    public TethysNode<JComponent> getContent() {
+        return theContent;
+    }
+
+    @Override
     public void setPreferredWidth(final Integer pWidth) {
         Dimension myDim = theScrollPane.getPreferredSize();
         myDim = new Dimension(pWidth, myDim.height);

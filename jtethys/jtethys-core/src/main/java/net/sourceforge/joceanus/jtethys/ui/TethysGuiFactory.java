@@ -171,7 +171,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pWidth the icon width
      * @return the icon
      */
-    protected abstract I resolveIcon(TethysIconId pIconId, int pWidth);
+    public abstract I resolveIcon(TethysIconId pIconId, int pWidth);
 
     /**
      * Obtain a new label.

@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportManager;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Report Builder.
@@ -56,9 +55,8 @@ public class CoeusReportBuilder {
     /**
      * Constructor.
      * @param pManager the report manager
-     * @throws OceanusException on error
      */
-    public CoeusReportBuilder(final MetisReportManager<CoeusFilter> pManager) throws OceanusException {
+    public CoeusReportBuilder(final MetisReportManager<CoeusFilter> pManager) {
         /* Record the details */
         theManager = pManager;
 

@@ -177,7 +177,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
      * String model.
      * @param <T> itemType
      */
-    public static class JModelString<T extends MetisFieldSetItem>
+    public static class TethysFieldModelString<T extends MetisFieldSetItem>
             extends MetisFieldModel<T> {
         /**
          * The Decimal Parser.
@@ -220,9 +220,9 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
          * @param pField the field for the model
          * @param pClass the class of the model
          */
-        public JModelString(final MetisFieldSetBase pFieldSet,
-                            final MetisField pField,
-                            final MetisDataType pClass) {
+        public TethysFieldModelString(final MetisFieldSetBase pFieldSet,
+                                      final MetisField pField,
+                                      final MetisDataType pClass) {
             /* Pass call onwards */
             super(pFieldSet, pField, pClass);
 
@@ -490,27 +490,27 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
      * @param <I> element type
      * @param <T> itemType
      */
-    public static class JModelObject<I, T extends MetisFieldSetItem>
+    public static class TethysFieldModelObject<I, T extends MetisFieldSetItem>
             extends MetisFieldModel<T> {
         /**
          * Class of object.
          */
-        private final Class<I> theClass;
+        private final Class<I> theClazz;
 
         /**
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
-         * @param pClass the class of the model
+         * @param pClazz the class of the model
          */
-        public JModelObject(final MetisFieldSetBase pFieldSet,
-                            final MetisField pField,
-                            final Class<I> pClass) {
+        public TethysFieldModelObject(final MetisFieldSetBase pFieldSet,
+                                      final MetisField pField,
+                                      final Class<I> pClazz) {
             /* Pass call onwards */
             super(pFieldSet, pField, null);
 
             /* Store the class */
-            theClass = pClass;
+            theClazz = pClazz;
         }
 
         /**
@@ -527,7 +527,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
 
         @Override
         public I getValue() {
-            return theClass.cast(super.getValue());
+            return theClazz.cast(super.getValue());
         }
     }
 
@@ -536,15 +536,15 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
      * @param <I> element type
      * @param <T> itemType
      */
-    public static class JModelObjectList<I, T extends MetisFieldSetItem>
+    public static class TethysFieldModelObjectList<I, T extends MetisFieldSetItem>
             extends MetisFieldModel<T> {
         /**
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
          */
-        public JModelObjectList(final MetisFieldSetBase pFieldSet,
-                                final MetisField pField) {
+        public TethysFieldModelObjectList(final MetisFieldSetBase pFieldSet,
+                                          final MetisField pField) {
             /* Pass call onwards */
             super(pFieldSet, pField, null);
         }
@@ -568,16 +568,15 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
      * Date model.
      * @param <T> itemType
      */
-    public static class JModelDate<T extends MetisFieldSetItem>
+    public static class TethysFieldModelDate<T extends MetisFieldSetItem>
             extends MetisFieldModel<T> {
-
         /**
          * Constructor.
          * @param pFieldSet the fieldSet
          * @param pField the field for the model
          */
-        public JModelDate(final MetisFieldSetBase pFieldSet,
-                          final MetisField pField) {
+        public TethysFieldModelDate(final MetisFieldSetBase pFieldSet,
+                                    final MetisField pField) {
             /* Pass call onwards */
             super(pFieldSet, pField, MetisDataType.DATE);
         }

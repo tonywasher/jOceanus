@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -47,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <I> the Icon type
  */
 public abstract class TethysScrollButtonManager<T, N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+        implements TethysScrollButton<T, I>, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The GUI Manager.
      */
@@ -222,10 +223,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
         return theEventManager.getEventRegistrar();
     }
 
-    /**
-     * Set the menuConfig configurator.
-     * @param pConfigurator the configurator
-     */
+    @Override
     public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, I>> pConfigurator) {
         theMenuConfigurator = pConfigurator;
     }

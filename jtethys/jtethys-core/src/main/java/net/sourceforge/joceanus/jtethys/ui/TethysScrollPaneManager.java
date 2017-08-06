@@ -64,6 +64,12 @@ public abstract class TethysScrollPaneManager<N, I>
     public abstract void setContent(TethysNode<N> pNode);
 
     /**
+     * Get the content.
+     * @return the content.
+     */
+    public abstract TethysNode<N> getContent();
+
+    /**
      * Obtain the Border Padding.
      * @return the Padding.
      */

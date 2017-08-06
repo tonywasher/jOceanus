@@ -116,8 +116,8 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    protected Icon resolveIcon(final TethysIconId pIconId,
-                               final int pWidth) {
+    public Icon resolveIcon(final TethysIconId pIconId,
+                            final int pWidth) {
         return pIconId == null
                                ? null
                                : TethysSwingGuiUtils.getIconAtSize(pIconId, pWidth);

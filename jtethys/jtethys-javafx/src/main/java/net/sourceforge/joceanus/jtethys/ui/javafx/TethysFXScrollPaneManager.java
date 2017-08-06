@@ -88,6 +88,11 @@ public class TethysFXScrollPaneManager
     }
 
     @Override
+    public TethysNode<Node> getContent() {
+        return theContent;
+    }
+
+    @Override
     public void setPreferredWidth(final Integer pWidth) {
         getNode().setPrefWidth(pWidth);
     }

@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import java.util.Iterator;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Reverse iterator.
@@ -50,6 +51,9 @@ public class MetisReverseIterator<T> implements Iterator<T> {
 
     @Override
     public T next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         return theIterator.previous();
     }
 

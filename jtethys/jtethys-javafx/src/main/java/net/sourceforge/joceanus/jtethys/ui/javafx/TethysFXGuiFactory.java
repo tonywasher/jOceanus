@@ -214,8 +214,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    protected Node resolveIcon(final TethysIconId pIconId,
-                               final int pWidth) {
+    public Node resolveIcon(final TethysIconId pIconId,
+                            final int pWidth) {
         return pIconId == null
                                ? null
                                : TethysFXGuiUtils.getIconAtSize(pIconId, pWidth);
