@@ -35,16 +35,16 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 /**
  * The Render Data class.
  */
-public final class MetisFieldData {
+public final class MetisEosFieldData {
     /**
      * The Manager.
      */
-    private final MetisFieldManager theManager;
+    private final MetisEosFieldManager theManager;
 
     /**
      * The toolTip text.
      */
-    private String theToolTipText = null;
+    private String theToolTipText;
 
     /**
      * The font.
@@ -64,17 +64,17 @@ public final class MetisFieldData {
     /**
      * The row.
      */
-    private int theRow = 0;
+    private int theRow;
 
     /**
      * The column.
      */
-    private int theCol = 0;
+    private int theCol;
 
     /**
      * Is the row selected?
      */
-    private boolean isSelected = false;
+    private boolean isSelected;
 
     /**
      * Is the item fixed width?
@@ -91,8 +91,8 @@ public final class MetisFieldData {
      * @param pManager the field manager
      * @param pFixed is the item fixed width?
      */
-    protected MetisFieldData(final MetisFieldManager pManager,
-                             final boolean pFixed) {
+    protected MetisEosFieldData(final MetisEosFieldManager pManager,
+                                final boolean pFixed) {
         /* Record parameters */
         theManager = pManager;
         isFixed = pFixed;

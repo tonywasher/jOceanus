@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.StaticDataPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusStaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -136,7 +136,7 @@ public class MaintenanceTab
     /**
      * The Static Panel.
      */
-    private final StaticDataPanel<MoneyWiseDataType> theStatic;
+    private final PrometheusStaticDataPanel<MoneyWiseDataType> theStatic;
 
     /**
      * The Preferences Panel.
@@ -179,7 +179,7 @@ public class MaintenanceTab
         theTabs.addTabItem(TITLE_CATEGORY, theCategoryTab);
 
         /* Create the Static Tab */
-        theStatic = new StaticDataPanel<>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
+        theStatic = new PrometheusStaticDataPanel<>(theView, theView.getUtilitySet(), MoneyWiseDataType.class);
         theTabs.addTabItem(TITLE_STATIC, theStatic);
 
         /* Add the static elements */

@@ -159,7 +159,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pClass the class of item.
      * @return the field component
      */
-    protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
                                                                                           final TethysSwingDataTextField<String> pTextField,
                                                                                           final MetisDataType pClass) {
@@ -177,7 +177,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pClass the data type
      * @return the field component
      */
-    protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
                                                                                           final TethysSwingScrollPaneManager pScrollPane,
                                                                                           final MetisDataType pClass) {
@@ -211,7 +211,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pClass the class of item.
      * @return the field component
      */
-    private static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    private static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                         final MetisField pField,
                                                                                         final TethysSwingTextArea pTextArea,
                                                                                         final MetisDataType pClass) {
@@ -228,7 +228,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pButton the button
      * @return the field component
      */
-    protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
                                                                                           final TethysSwingDateButtonManager pButton) {
         /* Allocate component */
@@ -246,7 +246,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pClazz the class of the button elements.
      * @return the field component
      */
-    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                              final MetisField pField,
                                                                                              final TethysSwingScrollButtonManager<I> pButton,
                                                                                              final Class<I> pClazz) {
@@ -264,7 +264,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pButton the button
      * @return the field component
      */
-    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                              final MetisField pField,
                                                                                              final TethysSwingListButtonManager<I> pButton) {
         /* Allocate component */
@@ -282,7 +282,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pClazz the class of the button elements.
      * @return the field component
      */
-    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                              final MetisField pField,
                                                                                              final TethysSwingIconButtonManager<I> pButton,
                                                                                              final Class<I> pClazz) {
@@ -296,7 +296,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pRender the render data.
      * @param pItem the item
      */
-    protected void renderData(final MetisFieldData pRender,
+    protected void renderData(final MetisEosFieldData pRender,
                               final T pItem) {
         /* Obtain details from render data */
         Color myFore = pRender.getForeGround();

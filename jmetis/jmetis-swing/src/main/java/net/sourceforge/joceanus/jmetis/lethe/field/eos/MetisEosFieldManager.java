@@ -33,24 +33,24 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldEvent;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.PriceCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.RateCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.RatioCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.ScrollListButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.UnitsCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.RowCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldListButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldMoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldPriceCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldRateCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldRatioCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldUnitsCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldRowCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -58,9 +58,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Class to determine rendering details for an item.
- * @author Tony Washer
  */
-public class MetisFieldManager
+public class MetisEosFieldManager
         implements TethysEventProvider<MetisFieldEvent> {
     /**
      * Money accounting format width.
@@ -145,7 +144,7 @@ public class MetisFieldManager
     /**
      * The Configuration.
      */
-    private MetisFieldConfig theConfig;
+    private MetisEosFieldConfig theConfig;
 
     /**
      * The Error Border.
@@ -157,8 +156,8 @@ public class MetisFieldManager
      * @param pGuiFactory the gui factory
      * @param pConfig the render configuration
      */
-    public MetisFieldManager(final TethysSwingGuiFactory pGuiFactory,
-                             final MetisFieldConfig pConfig) {
+    public MetisEosFieldManager(final TethysSwingGuiFactory pGuiFactory,
+                                final MetisEosFieldConfig pConfig) {
         /* Store the parameters */
         theFactory = pGuiFactory;
         theConfig = pConfig;
@@ -188,7 +187,7 @@ public class MetisFieldManager
      * Obtain the configuration.
      * @return the configuration
      */
-    public MetisFieldConfig getConfig() {
+    public MetisEosFieldConfig getConfig() {
         return theConfig;
     }
 
@@ -209,14 +208,14 @@ public class MetisFieldManager
          * Get field data for row.
          * @param pData the Field details
          */
-        void populateFieldData(MetisFieldData pData);
+        void populateFieldData(MetisEosFieldData pData);
     }
 
     /**
      * Set configuration.
      * @param pConfig the render configuration
      */
-    public void setConfig(final MetisFieldConfig pConfig) {
+    public void setConfig(final MetisEosFieldConfig pConfig) {
         /* Store the parameters */
         theConfig = pConfig;
 
@@ -232,9 +231,9 @@ public class MetisFieldManager
      * @param isFixed is the data fixed width
      * @return the render data
      */
-    protected MetisFieldData allocateRenderData(final boolean isFixed) {
+    protected MetisEosFieldData allocateRenderData(final boolean isFixed) {
         /* Return a new RenderData object */
-        return new MetisFieldData(this, isFixed);
+        return new MetisEosFieldData(this, isFixed);
     }
 
     /**
@@ -244,10 +243,10 @@ public class MetisFieldManager
      * @param pItem the data item
      * @return the render data
      */
-    protected <X extends MetisFieldSetItem> MetisFieldData determineRenderData(final MetisFieldElement<X> pElement,
-                                                                               final X pItem) {
+    protected <X extends MetisFieldSetItem> MetisEosFieldData determineRenderData(final MetisFieldElement<X> pElement,
+                                                                                  final X pItem) {
         /* Allocate the render data */
-        MetisFieldData myData = new MetisFieldData(this, pElement.isFixedWidth());
+        MetisEosFieldData myData = new MetisEosFieldData(this, pElement.isFixedWidth());
 
         /* Determine the render data */
         myData.determineData(pElement, pItem);
@@ -260,9 +259,9 @@ public class MetisFieldManager
      * Allocate a StringRenderer object.
      * @return the string renderer
      */
-    public StringCellRenderer allocateStringCellRenderer() {
+    public MetisFieldStringCellRenderer allocateStringCellRenderer() {
         /* Return a new StringRenderer object */
-        return new StringCellRenderer(this);
+        return new MetisFieldStringCellRenderer(this);
     }
 
     /**
@@ -271,72 +270,72 @@ public class MetisFieldManager
      * @param pClazz the class of the objects
      * @return the icon renderer
      */
-    public <T> IconButtonCellRenderer<T> allocateIconButtonCellRenderer(final Class<T> pClazz) {
+    public <T> MetisFieldIconButtonCellRenderer<T> allocateIconButtonCellRenderer(final Class<T> pClazz) {
         /* Return a new IconRenderer object */
-        return new IconButtonCellRenderer<>(theFactory, this, pClazz);
+        return new MetisFieldIconButtonCellRenderer<>(theFactory, this, pClazz);
     }
 
     /**
      * Allocate an IntegerRenderer object.
      * @return the integer renderer
      */
-    public IntegerCellRenderer allocateIntegerCellRenderer() {
+    public MetisFieldIntegerCellRenderer allocateIntegerCellRenderer() {
         /* Return a new IntegerRenderer object */
-        return new IntegerCellRenderer(this);
+        return new MetisFieldIntegerCellRenderer(this);
     }
 
     /**
      * Allocate a CalendarRenderer object.
      * @return the calendar renderer
      */
-    public CalendarCellRenderer allocateCalendarCellRenderer() {
+    public MetisFieldCalendarCellRenderer allocateCalendarCellRenderer() {
         /* Return a new CalendarRenderer object */
-        return new CalendarCellRenderer(this, theFormatter.getDateFormatter());
+        return new MetisFieldCalendarCellRenderer(this, theFormatter.getDateFormatter());
     }
 
     /**
      * Allocate a DecimalRenderer object.
      * @return the decimal renderer
      */
-    public DecimalCellRenderer allocateDecimalCellRenderer() {
+    public MetisFieldDecimalCellRenderer allocateDecimalCellRenderer() {
         /* Return a new DecimalRenderer object */
-        return new DecimalCellRenderer(this, theFormatter.getDecimalFormatter());
+        return new MetisFieldDecimalCellRenderer(this, theFormatter.getDecimalFormatter());
     }
 
     /**
      * Allocate a RowRenderer object.
      * @return the row renderer
      */
-    public RowCellRenderer allocateRowRenderer() {
+    public MetisFieldRowCellRenderer allocateRowRenderer() {
         /* Return a new RowRenderer object */
-        return new RowCellRenderer(this);
+        return new MetisFieldRowCellRenderer(this);
     }
 
     /**
      * Allocate a StringEditor object.
      * @return the string editor
      */
-    public StringCellEditor allocateStringCellEditor() {
+    public MetisFieldStringCellEditor allocateStringCellEditor() {
         /* Return a new StringEditor object */
-        return new StringCellEditor();
+        return new MetisFieldStringCellEditor();
     }
 
     /**
      * Allocate an IntegerEditor object.
      * @return the integer editor
      */
-    public IntegerCellEditor allocateIntegerCellEditor() {
+    public MetisFieldIntegerCellEditor allocateIntegerCellEditor() {
         /* Return a new IntegerEditor object */
-        return new IntegerCellEditor();
+        return new MetisFieldIntegerCellEditor();
     }
 
     /**
      * Allocate a CalendarEditor object.
      * @return the calendar editor
      */
-    public CalendarCellEditor allocateCalendarCellEditor() {
+    public MetisFieldCalendarCellEditor allocateCalendarCellEditor() {
         /* Return a new CalendarEditor object */
-        return new CalendarCellEditor(theFactory.newDateButton());
+        return new MetisFieldCalendarCellEditor(theFactory.newDateButton());
     }
 
     /**
@@ -345,9 +344,9 @@ public class MetisFieldManager
      * @param pClazz the class of the objects
      * @return the icon editor
      */
-    public <T> IconButtonCellEditor<T> allocateIconButtonCellEditor(final Class<T> pClazz) {
+    public <T> MetisFieldIconButtonCellEditor<T> allocateIconButtonCellEditor(final Class<T> pClazz) {
         /* Return a new IconButtonEditor object */
-        return new IconButtonCellEditor<>(theFactory.newIconButton(), pClazz);
+        return new MetisFieldIconButtonCellEditor<>(theFactory.newIconButton(), pClazz);
     }
 
     /**
@@ -356,9 +355,9 @@ public class MetisFieldManager
      * @param pClazz the class of the objects
      * @return the ScrollButton editor
      */
-    public <T> ScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClazz) {
+    public <T> MetisFieldScrollButtonCellEditor<T> allocateScrollButtonCellEditor(final Class<T> pClazz) {
         /* Return a new ScrollButtonEditor object */
-        return new ScrollButtonCellEditor<>(theFactory.newScrollButton(), pClazz);
+        return new MetisFieldScrollButtonCellEditor<>(theFactory.newScrollButton(), pClazz);
     }
 
     /**
@@ -366,63 +365,63 @@ public class MetisFieldManager
      * @param <T> the type of the object
      * @return the ScrollListButton editor
      */
-    public <T> ScrollListButtonCellEditor<T> allocateScrollListButtonCellEditor() {
+    public <T> MetisFieldListButtonCellEditor<T> allocateScrollListButtonCellEditor() {
         /* Return a new ScrollListButtonEditor object */
-        return new ScrollListButtonCellEditor<>(theFactory.newListButton());
+        return new MetisFieldListButtonCellEditor<>(theFactory.newListButton());
     }
 
     /**
      * Allocate a MoneyEditor object.
      * @return the money editor
      */
-    public MoneyCellEditor allocateMoneyCellEditor() {
+    public MetisFieldMoneyCellEditor allocateMoneyCellEditor() {
         /* Return a new MoneyEditor object */
-        return new MoneyCellEditor(theFormatter.getDecimalParser());
+        return new MetisFieldMoneyCellEditor(theFormatter.getDecimalParser());
     }
 
     /**
      * Allocate a RateEditor object.
      * @return the rate editor
      */
-    public RateCellEditor allocateRateCellEditor() {
+    public MetisFieldRateCellEditor allocateRateCellEditor() {
         /* Return a new RateEditor object */
-        return new RateCellEditor(theFormatter.getDecimalParser());
+        return new MetisFieldRateCellEditor(theFormatter.getDecimalParser());
     }
 
     /**
      * Allocate a UnitsEditor object.
      * @return the units editor
      */
-    public UnitsCellEditor allocateUnitsCellEditor() {
+    public MetisFieldUnitsCellEditor allocateUnitsCellEditor() {
         /* Return a new UnitsEditor object */
-        return new UnitsCellEditor(theFormatter.getDecimalParser());
+        return new MetisFieldUnitsCellEditor(theFormatter.getDecimalParser());
     }
 
     /**
      * Allocate a RatioEditor object.
      * @return the ratio editor
      */
-    public RatioCellEditor allocateRatioCellEditor() {
+    public MetisFieldRatioCellEditor allocateRatioCellEditor() {
         /* Return a new RatioEditor object */
-        return new RatioCellEditor(theFormatter.getDecimalParser());
+        return new MetisFieldRatioCellEditor(theFormatter.getDecimalParser());
     }
 
     /**
      * Allocate a PriceEditor object.
      * @return the price editor
      */
-    public PriceCellEditor allocatePriceCellEditor() {
+    public MetisFieldPriceCellEditor allocatePriceCellEditor() {
         /* Return a new PriceEditor object */
-        return new PriceCellEditor(theFormatter.getDecimalParser());
+        return new MetisFieldPriceCellEditor(theFormatter.getDecimalParser());
     }
 
     /**
      * Allocate a RateEditor object.
      * @return the rate editor
      */
-    public DilutionCellEditor allocateDilutionCellEditor() {
+    public MetisFieldDilutionCellEditor allocateDilutionCellEditor() {
         /* Return a new DilutionEditor object */
-        return new DilutionCellEditor(theFormatter.getDecimalParser());
+        return new MetisFieldDilutionCellEditor(theFormatter.getDecimalParser());
     }
 
     /**

@@ -251,8 +251,8 @@ public enum PrometheusIcon implements TethysIconId {
     public static TethysIconMapSet<PrometheusAction> configureStatusIconButton() {
         TethysIconMapSet<PrometheusAction> myMapSet = new TethysIconMapSet<>();
         myMapSet.setMappingsForValue(PrometheusAction.ACTIVE, PrometheusAction.ACTIVE, ACTIVE, TIP_ACTIVE);
-        myMapSet.setMappingsForValue(PrometheusAction.DELETE, PrometheusAction.DELETE, DELETE, TIP_DELETE);
-        myMapSet.setMappingsForValue(PrometheusAction.INSERT, PrometheusAction.INSERT, NEW, TIP_NEW);
+        myMapSet.setMappingsForValue(PrometheusAction.DELETE, PrometheusAction.DO, DELETE, TIP_DELETE);
+        myMapSet.setMappingsForValue(PrometheusAction.INSERT, PrometheusAction.DO, NEW, TIP_NEW);
         return myMapSet;
     }
 

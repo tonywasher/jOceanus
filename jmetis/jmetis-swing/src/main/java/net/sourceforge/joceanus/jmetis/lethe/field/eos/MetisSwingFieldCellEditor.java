@@ -74,7 +74,7 @@ public final class MetisSwingFieldCellEditor {
     /**
      * String Cell Editor.
      */
-    public static class StringCellEditor
+    public static class MetisFieldStringCellEditor
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -95,7 +95,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * Constructor.
          */
-        protected StringCellEditor() {
+        protected MetisFieldStringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
         }
@@ -168,8 +168,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Integer Cell Editor.
      */
-    public static class IntegerCellEditor
-            extends StringCellEditor {
+    public static class MetisFieldIntegerCellEditor
+            extends MetisFieldStringCellEditor {
         /**
          * Serial Id.
          */
@@ -213,7 +213,7 @@ public final class MetisSwingFieldCellEditor {
      * IconButton Cell Editor.
      * @param <T> the object type
      */
-    public static class IconButtonCellEditor<T>
+    public static class MetisFieldIconButtonCellEditor<T>
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -256,8 +256,8 @@ public final class MetisSwingFieldCellEditor {
          * @param pButton the button
          * @param pClazz the class of the object
          */
-        protected IconButtonCellEditor(final TethysSwingIconButtonManager<T> pButton,
-                                       final Class<T> pClazz) {
+        protected MetisFieldIconButtonCellEditor(final TethysSwingIconButtonManager<T> pButton,
+                                                 final Class<T> pClazz) {
             /* Store parameters */
             theButton = pButton;
             theClazz = pClazz;
@@ -356,7 +356,7 @@ public final class MetisSwingFieldCellEditor {
      * ScrollButton Cell Editor.
      * @param <T> the object type
      */
-    public static class ScrollButtonCellEditor<T>
+    public static class MetisFieldScrollButtonCellEditor<T>
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -399,8 +399,8 @@ public final class MetisSwingFieldCellEditor {
          * @param pButton the button
          * @param pClazz the class of the object
          */
-        protected ScrollButtonCellEditor(final TethysSwingScrollButtonManager<T> pButton,
-                                         final Class<T> pClazz) {
+        protected MetisFieldScrollButtonCellEditor(final TethysSwingScrollButtonManager<T> pButton,
+                                                   final Class<T> pClazz) {
             /* Store parameters */
             theClazz = pClazz;
             theButton = pButton;
@@ -495,10 +495,10 @@ public final class MetisSwingFieldCellEditor {
     }
 
     /**
-     * ScrollListButton Cell Editor.
+     * ListButton Cell Editor.
      * @param <T> the object type
      */
-    public static class ScrollListButtonCellEditor<T>
+    public static class MetisFieldListButtonCellEditor<T>
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -535,7 +535,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pButton the button
          */
-        protected ScrollListButtonCellEditor(final TethysSwingListButtonManager<T> pButton) {
+        protected MetisFieldListButtonCellEditor(final TethysSwingListButtonManager<T> pButton) {
             /* Store parameters */
             theButton = pButton;
 
@@ -624,7 +624,7 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Calendar Cell Editor.
      */
-    public static class CalendarCellEditor
+    public static class MetisFieldCalendarCellEditor
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -651,7 +651,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pButton the button
          */
-        protected CalendarCellEditor(final TethysSwingDateButtonManager pButton) {
+        protected MetisFieldCalendarCellEditor(final TethysSwingDateButtonManager pButton) {
             /* Create a new button */
             theButton = pButton;
 
@@ -709,8 +709,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Decimal Cell Editor.
      */
-    private abstract static class DecimalCellEditor
-            extends StringCellEditor {
+    private abstract static class MetisFieldDecimalCellEditor
+            extends MetisFieldStringCellEditor {
         /**
          * Serial Id.
          */
@@ -739,8 +739,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Rate Cell Editor.
      */
-    public static class RateCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldRateCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -755,7 +755,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected RateCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldRateCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -777,8 +777,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Money Cell Editor.
      */
-    public static class MoneyCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldMoneyCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -798,7 +798,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected MoneyCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldMoneyCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
             theCurrency = r -> theParser.getDefaultCurrency();
         }
@@ -833,8 +833,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Units Cell Editor.
      */
-    public static class UnitsCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldUnitsCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -849,7 +849,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected UnitsCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldUnitsCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -871,8 +871,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Ratio Cell Editor.
      */
-    public static class RatioCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldRatioCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -887,7 +887,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected RatioCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldRatioCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -909,8 +909,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Dilutions Cell Editor.
      */
-    public static class DilutionCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldDilutionCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -925,7 +925,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected DilutionCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldDilutionCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -947,8 +947,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Price Cell Editor.
      */
-    public static class PriceCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldPriceCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -968,7 +968,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected PriceCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldPriceCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
             theCurrency = r -> theParser.getDefaultCurrency();
         }
@@ -1003,8 +1003,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * DilutedPrice Cell Editor.
      */
-    public static class DilutedPriceCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldDilutedPriceCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -1024,7 +1024,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected DilutedPriceCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldDilutedPriceCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
             theCurrency = r -> theParser.getDefaultCurrency();
         }

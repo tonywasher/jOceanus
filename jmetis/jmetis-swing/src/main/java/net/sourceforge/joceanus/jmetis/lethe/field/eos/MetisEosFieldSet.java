@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
  * the data.
  * @param <T> the Data Item type
  */
-public class MetisFieldSet<T extends MetisFieldSetItem>
+public class MetisEosFieldSet<T extends MetisFieldSetItem>
         extends MetisFieldSetBase {
     /**
      * The map of fields.
@@ -54,13 +54,13 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     /**
      * The Render Manager.
      */
-    private final MetisFieldManager theRenderMgr;
+    private final MetisEosFieldManager theRenderMgr;
 
     /**
      * Constructor.
      * @param pRenderMgr the render manager
      */
-    public MetisFieldSet(final MetisFieldManager pRenderMgr) {
+    public MetisEosFieldSet(final MetisEosFieldManager pRenderMgr) {
         /* Call super constructor */
         super(pRenderMgr.getDataFormatter());
 
@@ -260,7 +260,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
         /* Loop through all the map entries */
         for (MetisFieldElement<T> myEl : theMap.values()) {
             /* Determine the renderData */
-            MetisFieldData myRender = theRenderMgr.determineRenderData(myEl, pItem);
+            MetisEosFieldData myRender = theRenderMgr.determineRenderData(myEl, pItem);
 
             /* Render the element */
             myEl.renderData(myRender, pItem);

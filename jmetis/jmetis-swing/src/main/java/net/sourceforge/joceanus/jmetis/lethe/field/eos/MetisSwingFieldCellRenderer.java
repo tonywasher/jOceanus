@@ -33,7 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -62,7 +62,7 @@ public final class MetisSwingFieldCellRenderer {
      */
     private static void renderComponent(final JTable pTable,
                                         final JComponent pComponent,
-                                        final MetisFieldData pData) {
+                                        final MetisEosFieldData pData) {
         /* Ignore if the model is not applicable */
         TableModel myTableModel = pTable.getModel();
         if (!(myTableModel instanceof PopulateFieldData)) {
@@ -85,7 +85,7 @@ public final class MetisSwingFieldCellRenderer {
     /**
      * String Cell Renderer.
      */
-    public static class StringCellRenderer
+    public static class MetisFieldStringCellRenderer
             extends DefaultTableCellRenderer {
         /**
          * Serial Id.
@@ -95,13 +95,13 @@ public final class MetisSwingFieldCellRenderer {
         /**
          * The Render Data.
          */
-        private final transient MetisFieldData theData;
+        private final transient MetisEosFieldData theData;
 
         /**
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected StringCellRenderer(final MetisFieldManager pManager) {
+        protected MetisFieldStringCellRenderer(final MetisEosFieldManager pManager) {
             this(pManager.allocateRenderData(false), SwingConstants.LEFT);
         }
 
@@ -110,8 +110,8 @@ public final class MetisSwingFieldCellRenderer {
          * @param pData the render data
          * @param pAlignment the alignment
          */
-        private StringCellRenderer(final MetisFieldData pData,
-                                   final int pAlignment) {
+        private MetisFieldStringCellRenderer(final MetisEosFieldData pData,
+                                             final int pAlignment) {
             theData = pData;
             setHorizontalAlignment(pAlignment);
         }
@@ -153,8 +153,8 @@ public final class MetisSwingFieldCellRenderer {
     /**
      * Integer Cell Renderer.
      */
-    public static class IntegerCellRenderer
-            extends StringCellRenderer {
+    public static class MetisFieldIntegerCellRenderer
+            extends MetisFieldStringCellRenderer {
         /**
          * Serial Id.
          */
@@ -164,7 +164,7 @@ public final class MetisSwingFieldCellRenderer {
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected IntegerCellRenderer(final MetisFieldManager pManager) {
+        protected MetisFieldIntegerCellRenderer(final MetisEosFieldManager pManager) {
             super(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 
@@ -188,7 +188,7 @@ public final class MetisSwingFieldCellRenderer {
      * Icon Cell Renderer.
      * @param <T> the object type
      */
-    public static class IconButtonCellRenderer<T>
+    public static class MetisFieldIconButtonCellRenderer<T>
             extends DefaultTableCellRenderer {
         /**
          * Serial Id.
@@ -203,7 +203,7 @@ public final class MetisSwingFieldCellRenderer {
         /**
          * The Render Data.
          */
-        private final transient MetisFieldData theData;
+        private final transient MetisEosFieldData theData;
 
         /**
          * The Class of the data.
@@ -226,9 +226,9 @@ public final class MetisSwingFieldCellRenderer {
          * @param pManager the renderer manager
          * @param pClazz the item class
          */
-        protected IconButtonCellRenderer(final TethysSwingGuiFactory pFactory,
-                                         final MetisFieldManager pManager,
-                                         final Class<T> pClazz) {
+        protected MetisFieldIconButtonCellRenderer(final TethysSwingGuiFactory pFactory,
+                                                   final MetisEosFieldManager pManager,
+                                                   final Class<T> pClazz) {
             this(pFactory, pManager.allocateRenderData(true), pClazz);
         }
 
@@ -238,9 +238,9 @@ public final class MetisSwingFieldCellRenderer {
          * @param pData the render data
          * @param pClazz the item class
          */
-        private IconButtonCellRenderer(final TethysSwingGuiFactory pFactory,
-                                       final MetisFieldData pData,
-                                       final Class<T> pClazz) {
+        private MetisFieldIconButtonCellRenderer(final TethysSwingGuiFactory pFactory,
+                                                 final MetisEosFieldData pData,
+                                                 final Class<T> pClazz) {
             /* Store data */
             theFactory = pFactory;
             theData = pData;
@@ -327,8 +327,8 @@ public final class MetisSwingFieldCellRenderer {
     /**
      * Calendar Cell Renderer.
      */
-    public static class CalendarCellRenderer
-            extends StringCellRenderer {
+    public static class MetisFieldCalendarCellRenderer
+            extends MetisFieldStringCellRenderer {
         /**
          * Serial Id.
          */
@@ -344,8 +344,8 @@ public final class MetisSwingFieldCellRenderer {
          * @param pManager the renderer manager
          * @param pFormatter the formatter
          */
-        protected CalendarCellRenderer(final MetisFieldManager pManager,
-                                       final TethysDateFormatter pFormatter) {
+        protected MetisFieldCalendarCellRenderer(final MetisEosFieldManager pManager,
+                                                 final TethysDateFormatter pFormatter) {
             super(pManager.allocateRenderData(true), SwingConstants.CENTER);
             theFormatter = pFormatter;
         }
@@ -368,8 +368,8 @@ public final class MetisSwingFieldCellRenderer {
     /**
      * Decimal Cell Renderer.
      */
-    public static class DecimalCellRenderer
-            extends StringCellRenderer {
+    public static class MetisFieldDecimalCellRenderer
+            extends MetisFieldStringCellRenderer {
         /**
          * Serial Id.
          */
@@ -385,8 +385,8 @@ public final class MetisSwingFieldCellRenderer {
          * @param pManager the renderer manager
          * @param pFormatter the formatter
          */
-        protected DecimalCellRenderer(final MetisFieldManager pManager,
-                                      final TethysDecimalFormatter pFormatter) {
+        protected MetisFieldDecimalCellRenderer(final MetisEosFieldManager pManager,
+                                                final TethysDecimalFormatter pFormatter) {
             super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
             theFormatter = pFormatter;
         }
@@ -409,8 +409,8 @@ public final class MetisSwingFieldCellRenderer {
     /**
      * Row Cell Renderer.
      */
-    public static class RowCellRenderer
-            extends StringCellRenderer {
+    public static class MetisFieldRowCellRenderer
+            extends MetisFieldStringCellRenderer {
         /**
          * SerialId.
          */
@@ -420,7 +420,7 @@ public final class MetisSwingFieldCellRenderer {
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected RowCellRenderer(final MetisFieldManager pManager) {
+        protected MetisFieldRowCellRenderer(final MetisEosFieldManager pManager) {
             super(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 

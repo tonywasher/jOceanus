@@ -20,29 +20,8 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.data;
-
 /**
- * Prometheus Actions.
+ * User interface classes for jPrometheus.
+ * @author Tony Washer
  */
-public enum PrometheusAction {
-    /**
-     * Active.
-     */
-    ACTIVE,
-
-    /**
-     * Delete.
-     */
-    DELETE,
-
-    /**
-     * Insert.
-     */
-    INSERT,
-
-    /**
-     * Do.
-     */
-    DO;
-}
+package net.sourceforge.joceanus.jprometheus.lethe.ui.eos;

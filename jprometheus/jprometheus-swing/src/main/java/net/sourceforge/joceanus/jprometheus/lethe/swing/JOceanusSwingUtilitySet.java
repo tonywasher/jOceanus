@@ -26,6 +26,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldConfig;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceEvent;
@@ -48,6 +50,11 @@ public class JOceanusSwingUtilitySet
     private final MetisFieldManager theFieldManager;
 
     /**
+     * Field Manager.
+     */
+    private final MetisEosFieldManager theEosFieldManager;
+
+    /**
      * Colour Preferences.
      */
     private final MetisColorPreferences theColorPreferences;
@@ -66,6 +73,9 @@ public class JOceanusSwingUtilitySet
 
         /* Allocate the FieldManager */
         theFieldManager = new MetisFieldManager(new MetisFieldConfig(theColorPreferences));
+
+        /* Allocate the EosFieldManager */
+        theEosFieldManager = new MetisEosFieldManager(getGuiFactory(), new MetisEosFieldConfig(theColorPreferences));
 
         /* Process the colour preferences */
         processColorPreferences();
@@ -104,5 +114,13 @@ public class JOceanusSwingUtilitySet
      */
     public MetisFieldManager getFieldManager() {
         return theFieldManager;
+    }
+
+    /**
+     * Obtain the Eod field manager.
+     * @return the field manager
+     */
+    public MetisEosFieldManager getEosFieldManager() {
+        return theEosFieldManager;
     }
 }
