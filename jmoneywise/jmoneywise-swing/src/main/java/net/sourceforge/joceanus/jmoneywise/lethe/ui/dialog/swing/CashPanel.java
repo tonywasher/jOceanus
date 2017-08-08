@@ -29,19 +29,15 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
@@ -58,72 +54,36 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
  * Panel to display/edit/create a Cash.
  */
 public class CashPanel
-        extends MoneyWiseDataItemPanel<Cash> {
+        extends MoneyWiseEosItemPanel<Cash> {
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<Cash> theFieldSet;
+    private final MetisEosFieldSet<Cash> theFieldSet;
 
     /**
-     * CashCategory Button Field.
+     * The Closed State.
      */
-    private final JScrollButton<CashCategory> theCategoryButton;
-
-    /**
-     * Currency Button Field.
-     */
-    private final JScrollButton<AssetCurrency> theCurrencyButton;
-
-    /**
-     * AutoExpense Button Field.
-     */
-    private final JScrollButton<TransactionCategory> theAutoExpenseButton;
-
-    /**
-     * AutoPayee Button Field.
-     */
-    private final JScrollButton<Payee> theAutoPayeeButton;
-
-    /**
-     * Closed Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
-
-    /**
-     * The Category Menu Builder.
-     */
-    private final JScrollMenuBuilder<CashCategory> theCategoryMenuBuilder;
-
-    /**
-     * The Currency Menu Builder.
-     */
-    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-    /**
-     * The AutoExpense Menu Builder.
-     */
-    private final JScrollMenuBuilder<TransactionCategory> theAutoExpenseMenuBuilder;
-
-    /**
-     * The AutoPayee Menu Builder.
-     */
-    private final JScrollMenuBuilder<Payee> theAutoPayeeMenuBuilder;
+    private Boolean theClosedState = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -133,36 +93,27 @@ public class CashPanel
      * @param pError the error panel
      */
     public CashPanel(final TethysSwingGuiFactory pFactory,
-                     final MetisFieldManager pFieldMgr,
+                     final MetisEosFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                      final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Create the buttons */
-        theCategoryButton = new JScrollButton<>();
-        theCurrencyButton = new JScrollButton<>();
-        theAutoExpenseButton = new JScrollButton<>();
-        theAutoPayeeButton = new JScrollButton<>();
-
-        /* Set closed button */
-        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel();
+        JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel(pFactory);
         myTabs.add(TAB_DETAILS, myPanel);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel();
+        myPanel = buildNotesPanel(pFactory);
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Layout the main panel */
@@ -173,43 +124,35 @@ public class CashPanel
 
         /* Layout the panel */
         layoutPanel();
-
-        /* Create the listener */
-        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
-        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
-        theAutoExpenseMenuBuilder = theAutoExpenseButton.getMenuBuilder();
-        theAutoExpenseMenuBuilder.getEventRegistrar().addEventListener(e -> buildAutoExpenseMenu(theAutoExpenseMenuBuilder, getItem()));
-        theAutoPayeeMenuBuilder = theAutoPayeeButton.getMenuBuilder();
-        theAutoPayeeMenuBuilder.getEventRegistrar().addEventListener(e -> buildAutoPayeeMenu(theAutoPayeeMenuBuilder, getItem()));
     }
 
     /**
      * Build Main subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel() {
-        /* Set states */
-        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
-        MoneyWiseIcons.buildLockedButton(theClosedState);
-
+    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField myDesc = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<CashCategory> myCategoryButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Cash.NAMELEN);
         restrictField(myDesc, Cash.NAMELEN);
-        restrictField(theCategoryButton, Cash.NAMELEN);
-        restrictField(theCurrencyButton, Cash.NAMELEN);
+        restrictField(myCategoryButton, Cash.NAMELEN);
+        restrictField(myCurrencyButton, Cash.NAMELEN);
         restrictField(myClosedButton, Cash.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Cash.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Cash.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Cash.FIELD_CATEGORY, CashCategory.class, theCategoryButton);
-        theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Cash.FIELD_CATEGORY, CashCategory.class, myCategoryButton);
+        theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         theFieldSet.addFieldElement(Cash.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -225,27 +168,38 @@ public class CashPanel
         theFieldSet.addFieldToPanel(Cash.FIELD_CLOSED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
+        myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
+        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build extras subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildXtrasPanel() {
+    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField myOpening = new JTextField();
+        TethysSwingStringTextField myOpening = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         int myWidth = Cash.NAMELEN >> 1;
-        restrictField(theAutoExpenseButton, myWidth);
-        restrictField(theAutoPayeeButton, myWidth);
+        restrictField(myAutoExpenseButton, myWidth);
+        restrictField(myAutoPayeeButton, myWidth);
         restrictField(myOpening, myWidth);
 
         /* Build the FieldSet */
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, theAutoExpenseButton);
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, theAutoPayeeButton);
+        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);
+        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, myAutoPayeeButton);
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Create the extras panel */
@@ -259,18 +213,24 @@ public class CashPanel
         theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
+        myAutoPayeeButton.setMenuConfigurator(c -> buildAutoPayeeMenu(c, getItem()));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build Notes subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildNotesPanel() {
+    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextArea myNotes = new JTextArea();
-        JScrollPane myScroll = new JScrollPane(myNotes);
+        TethysSwingTextArea myNotes = pFactory.newTextArea();
+        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
@@ -318,7 +278,7 @@ public class CashPanel
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed || !bIsRelevant;
         theFieldSet.setEditable(Cash.FIELD_CLOSED, isEditable && bEditClosed);
-        theClosedState.setState(bEditClosed);
+        theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myCash.getDesc() != null;
@@ -411,24 +371,24 @@ public class CashPanel
     }
 
     /**
-     * Build the category list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the category menu for an item.
+     * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    public void buildCategoryMenu(final JScrollMenuBuilder<CashCategory> pMenuBuilder,
+    public void buildCategoryMenu(final TethysScrollMenu<CashCategory, Icon> pMenu,
                                   final Cash pCash) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         CashCategory myCurr = pCash.getCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<CashCategory> myActive = null;
 
         /* Access Cash Categories */
         CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<>();
+        Map<String, TethysScrollSubMenu<CashCategory, Icon>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<CashCategory> myIterator = myCategories.iterator();
@@ -444,48 +404,49 @@ public class CashPanel
             /* Determine menu to add to */
             CashCategory myParent = myCategory.getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<CashCategory, Icon> myMenu = myMap.get(myParentName);
 
-            /* If this is a new menu */
+            /* If this is a new subMenu */
             if (myMenu == null) {
-                /* Create a new JMenu and add it to the popUp */
-                myMenu = pMenuBuilder.addSubMenu(myParentName);
+                /* Create a new subMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
-                myActive = myMenu;
-                myMenu.showItem(myItem);
+                myActive = myItem;
             }
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the autoExpense list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the autoExpense menu for an item.
+     * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    private void buildAutoExpenseMenu(final JScrollMenuBuilder<TransactionCategory> pMenuBuilder,
+    private void buildAutoExpenseMenu(final TethysScrollMenu<TransactionCategory, Icon> pMenu,
                                       final Cash pCash) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         TransactionCategory myCurr = pCash.getAutoExpense();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TransactionCategory> myActive = null;
 
         /* Access Transaction Categories */
         TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<>();
+        Map<String, TethysScrollSubMenu<TransactionCategory, Icon>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<TransactionCategory> myIterator = myCategories.iterator();
@@ -503,42 +464,43 @@ public class CashPanel
             /* Determine menu to add to */
             TransactionCategory myParent = myCategory.getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<TransactionCategory, Icon> myMenu = myMap.get(myParentName);
 
-            /* If this is a new menu */
+            /* If this is a new subMenu */
             if (myMenu == null) {
-                /* Create a new JMenu and add it to the popUp */
-                myMenu = pMenuBuilder.addSubMenu(myParentName);
+                /* Create a new subMMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<TransactionCategory> myItem = myMenu.getSubMenu().addItem(myCategory);
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
-                myActive = myMenu;
-                myMenu.showItem(myItem);
+                myActive = myItem;
             }
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the payee list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the autoPayee menu for an item.
+     * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    private void buildAutoPayeeMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+    private void buildAutoPayeeMenu(final TethysScrollMenu<Payee, Icon> pMenu,
                                     final Cash pCash) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         Payee myCurr = pCash.getAutoPayee();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
         PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -554,7 +516,7 @@ public class CashPanel
             }
 
             /* Create a new action for the payee */
-            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -564,22 +526,24 @@ public class CashPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the currency list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the currency menu for an item.
+     * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
                                   final Cash pCash) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         AssetCurrency myCurr = pCash.getAssetCurrency();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -596,7 +560,7 @@ public class CashPanel
             }
 
             /* Create a new action for the currency */
-            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {
@@ -606,6 +570,8 @@ public class CashPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

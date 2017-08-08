@@ -497,7 +497,7 @@ public class TethysSwingEditUIExample {
         myGrid.allowCellGrowth(theIconField);
         myGrid.newRow();
         TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
-        theIconField.setIconMapSet(p -> myMapSet);
+        theIconField.setIconMapSet(() -> myMapSet);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(Boolean.FALSE);
 

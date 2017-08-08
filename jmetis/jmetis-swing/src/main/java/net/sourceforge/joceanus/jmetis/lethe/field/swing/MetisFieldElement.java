@@ -181,8 +181,8 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * Constructor.
      * @param pFieldSet the field set
      * @param pField the field id
-     * @param pClass the data type of the value
-     * @param pTextField the textField
+     * @param pComponent the component
+     * 
      */
     protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                     final MetisField pField,

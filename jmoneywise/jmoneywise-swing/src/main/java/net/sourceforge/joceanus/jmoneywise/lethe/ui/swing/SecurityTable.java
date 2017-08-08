@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -32,12 +32,12 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -54,24 +54,25 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.SecurityPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice.ViewSecurityPriceList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
@@ -82,7 +83,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Security Table.
  */
 public class SecurityTable
-        extends JDataTable<Security, MoneyWiseDataType> {
+        extends PrometheusDataTable<Security, MoneyWiseDataType> {
     /**
      * Name Column Title.
      */
@@ -136,7 +137,7 @@ public class SecurityTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -201,7 +202,7 @@ public class SecurityTable
     /**
      * The List Selection Model.
      */
-    private final JDataTableSelection<Security, MoneyWiseDataType> theSelectionModel;
+    private final PrometheusDataTableSelection<Security, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Securities.
@@ -226,7 +227,7 @@ public class SecurityTable
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = theView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -276,7 +277,7 @@ public class SecurityTable
         thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);
+        theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveAccount);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -451,7 +452,7 @@ public class SecurityTable
      * JTable Data Model.
      */
     private final class SecurityTableModel
-            extends JDataTableModel<Security, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<Security, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -570,7 +571,7 @@ public class SecurityTable
      * Column Model class.
      */
     private final class SecurityColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -617,54 +618,9 @@ public class SecurityTable
         private static final int COLUMN_ACTIVE = 7;
 
         /**
-         * Closed Icon Renderer.
-         */
-        private final IconButtonCellRenderer<Boolean> theClosedIconRenderer;
-
-        /**
-         * Status Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * String editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * Closed Icon editor.
-         */
-        private final IconButtonCellEditor<Boolean> theClosedIconEditor;
-
-        /**
-         * Status Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
-
-        /**
-         * SecurityType ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<SecurityType> theTypeEditor;
-
-        /**
-         * Parent ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<Payee> theParentEditor;
-
-        /**
-         * Currency ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<AssetCurrency> theCurrencyEditor;
-
-        /**
          * Closed column.
          */
-        private final JDataTableColumn theClosedColumn;
+        private final PrometheusDataTableColumn theClosedColumn;
 
         /**
          * Constructor.
@@ -675,38 +631,42 @@ public class SecurityTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(SecurityType.class);
-            theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
-            theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
-            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldScrollButtonCellEditor<SecurityType> myTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(SecurityType.class);
+            MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
+            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            MoneyWiseIcons.buildLockedButton(theClosedIconEditor.getComplexState());
-            MoneyWiseIcons.buildStatusButton(theStatusIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
+            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
+            myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theTypeEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
-            declareColumn(new JDataTableColumn(COLUMN_SYMBOL, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theCurrencyEditor));
-            theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, myStringRenderer, myTypeEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_PARENT, WIDTH_NAME, myStringRenderer, myParentEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_SYMBOL, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CURR, WIDTH_CURR, myStringRenderer, myCurrencyEditor));
+            theClosedColumn = new PrometheusDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, myClosedIconRenderer, myClosedIconEditor);
             declareColumn(theClosedColumn);
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, myStatusIconRenderer, myStatusIconEditor));
 
             /* Initialise the columns */
             setColumns();
 
-            /* Add listeners */
-            theTypeEditor.getEventRegistrar().addEventListener(e -> buildSecurityTypeMenu());
-            theCurrencyEditor.getEventRegistrar().addEventListener(e -> buildCurrencyMenu());
-            theParentEditor.getEventRegistrar().addEventListener(e -> buildParentMenu());
+            /* Add menu configurators */
+            myTypeEditor.setMenuConfigurator(this::buildTypeMenu);
+            myParentEditor.setMenuConfigurator(this::buildParentMenu);
+            myCurrencyEditor.setMenuConfigurator(this::buildCurrencyMenu);
         }
 
         /**
@@ -769,8 +729,8 @@ public class SecurityTable
                     return pSecurity.isClosed();
                 case COLUMN_ACTIVE:
                     return pSecurity.isActive()
-                                                ? ActionType.ACTIVE
-                                                : ActionType.DELETE;
+                                                ? PrometheusAction.ACTIVE
+                                                : PrometheusAction.DELETE;
                 case COLUMN_SYMBOL:
                     return pSecurity.getSymbol();
                 case COLUMN_PARENT:
@@ -882,48 +842,55 @@ public class SecurityTable
         }
 
         /**
-         * Build the popUpMenu for parents.
+         * Determine closed state.
+         * @param pRowIndex the row index
+         * @return the state
          */
-        private void buildParentMenu() {
-            /* Access details */
-            JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
+        private boolean determineClosedState(final int pRowIndex) {
+            Security mySecurity = theSecurities.get(pRowIndex);
+            return mySecurity.isClosed() || !mySecurity.isRelevant();
+        }
 
+        /**
+         * Build the popUpMenu for parents.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
+         */
+        private void buildParentMenu(final Integer pRowIndex,
+                                     final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theParentEditor.getPoint();
-            Security mySecurity = theSecurities.get(myCell.y);
+            Security mySecurity = theSecurities.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildParentMenu(myBuilder, mySecurity);
+            theActiveAccount.buildParentMenu(pMenu, mySecurity);
         }
 
         /**
          * Build the popUpMenu for securityType.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildSecurityTypeMenu() {
-            /* Access details */
-            JScrollMenuBuilder<SecurityType> myBuilder = theTypeEditor.getMenuBuilder();
-
+        private void buildTypeMenu(final Integer pRowIndex,
+                                   final TethysScrollMenu<SecurityType, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theTypeEditor.getPoint();
-            Security mySecurity = theSecurities.get(myCell.y);
+            Security mySecurity = theSecurities.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildSecTypeMenu(myBuilder, mySecurity);
+            theActiveAccount.buildSecTypeMenu(pMenu, mySecurity);
         }
 
         /**
          * Build the popUpMenu for currencies.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildCurrencyMenu() {
-            /* Access details */
-            JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-
+        private void buildCurrencyMenu(final Integer pRowIndex,
+                                       final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theCurrencyEditor.getPoint();
-            Security mySecurity = theSecurities.get(myCell.y);
+            Security mySecurity = theSecurities.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildCurrencyMenu(myBuilder, mySecurity);
+            theActiveAccount.buildCurrencyMenu(pMenu, mySecurity);
         }
     }
 }

@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.util.Iterator;
 
 import javax.swing.Icon;
@@ -34,12 +33,12 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -52,22 +51,21 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanCategoryPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -82,7 +80,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
  * Loan Category Maintenance.
  */
 public class LoanCategoryTable
-        extends JDataTable<LoanCategory, MoneyWiseDataType> {
+        extends PrometheusDataTable<LoanCategory, MoneyWiseDataType> {
     /**
      * Name Column Title.
      */
@@ -126,7 +124,7 @@ public class LoanCategoryTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -181,7 +179,7 @@ public class LoanCategoryTable
     /**
      * The List Selection Model.
      */
-    private final JDataTableSelection<LoanCategory, MoneyWiseDataType> theSelectionModel;
+    private final PrometheusDataTableSelection<LoanCategory, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Category menu builder.
@@ -213,7 +211,7 @@ public class LoanCategoryTable
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = theView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -268,7 +266,7 @@ public class LoanCategoryTable
         theColumns.setColumns();
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<>(this, theActiveCategory);
+        theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveCategory);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -524,7 +522,7 @@ public class LoanCategoryTable
      * JTable Data Model.
      */
     private final class CategoryTableModel
-            extends JDataTableModel<LoanCategory, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<LoanCategory, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -642,7 +640,7 @@ public class LoanCategoryTable
      * Column Model class.
      */
     private final class CategoryColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -674,39 +672,14 @@ public class LoanCategoryTable
         private static final int COLUMN_ACTIVE = 4;
 
         /**
-         * Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theIconRenderer;
-
-        /**
-         * Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theIconEditor;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * String Editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<LoanCategoryType> theScrollEditor;
-
-        /**
          * FullName column.
          */
-        private final JDataTableColumn theFullNameColumn;
+        private final PrometheusDataTableColumn theFullNameColumn;
 
         /**
          * Category column.
          */
-        private final JDataTableColumn theCategoryColumn;
+        private final PrometheusDataTableColumn theCategoryColumn;
 
         /**
          * Constructor.
@@ -717,26 +690,28 @@ public class LoanCategoryTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategoryType.class);
-            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldScrollButtonCellEditor<LoanCategoryType> myScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategoryType.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildStatusButton(theIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            theFullNameColumn = new JDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, theStringRenderer);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, myStringRenderer, myStringEditor));
+            theFullNameColumn = new PrometheusDataTableColumn(COLUMN_FULLNAME, WIDTH_NAME, myStringRenderer);
             declareColumn(theFullNameColumn);
-            theCategoryColumn = new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theScrollEditor);
+            theCategoryColumn = new PrometheusDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, myStringRenderer, myScrollEditor);
             declareColumn(theCategoryColumn);
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, myIconRenderer, myIconEditor));
 
-            /* Add listener */
-            theScrollEditor.getEventRegistrar().addEventListener(e -> buildCategoryTypeMenu());
+            /* Add configurator */
+            myScrollEditor.setMenuConfigurator(this::buildCategoryTypeMenu);
         }
 
         /**
@@ -798,8 +773,8 @@ public class LoanCategoryTable
                     return pCategory.getDesc();
                 case COLUMN_ACTIVE:
                     return pCategory.isActive()
-                                                ? ActionType.ACTIVE
-                                                : ActionType.DELETE;
+                                                ? PrometheusAction.ACTIVE
+                                                : PrometheusAction.DELETE;
                 default:
                     return null;
             }
@@ -879,17 +854,16 @@ public class LoanCategoryTable
 
         /**
          * Build the category type list for the item.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildCategoryTypeMenu() {
-            /* Access details */
-            JScrollMenuBuilder<LoanCategoryType> myBuilder = theScrollEditor.getMenuBuilder();
-
+        private void buildCategoryTypeMenu(final Integer pRowIndex,
+                                           final TethysScrollMenu<LoanCategoryType, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theScrollEditor.getPoint();
-            LoanCategory myCategory = theCategories.get(myCell.y);
+            LoanCategory myCategory = theCategories.get(pRowIndex);
 
             /* Build the menu */
-            theActiveCategory.buildCategoryTypeMenu(myBuilder, myCategory);
+            theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);
         }
     }
 }

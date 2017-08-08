@@ -340,6 +340,24 @@ public class SecurityInfo
         return checkForHistory();
     }
 
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch info class */
+        super.touchUnderlyingItems();
+
+        /* Switch on info class */
+        switch (getInfoClass()) {
+            case UNDERLYINGSTOCK:
+                getSecurity().touchItem(getOwner());
+                break;
+            case REGION:
+                getRegion().touchItem(getOwner());
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * SecurityInfoList.
      */

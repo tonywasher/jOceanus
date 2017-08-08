@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.util.Iterator;
 
 import javax.swing.BoxLayout;
@@ -34,13 +33,13 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.RateCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldRateCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -48,18 +47,19 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateList;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateConfig;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -67,7 +67,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Panel to display a list of DepositRates associated with a Deposit.
  */
 public class DepositRateTable
-        extends JDataTable<DepositRate, MoneyWiseDataType> {
+        extends PrometheusDataTable<DepositRate, MoneyWiseDataType> {
     /**
      * Rate Column Title.
      */
@@ -91,7 +91,7 @@ public class DepositRateTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -117,6 +117,11 @@ public class DepositRateTable
      * The Column Model.
      */
     private final DepositRateColumnModel theColumns;
+
+    /**
+     * Date Range.
+     */
+    private TethysDateRange theRange;
 
     /**
      * Rate Header.
@@ -146,7 +151,7 @@ public class DepositRateTable
      * @param pError the error panel
      */
     protected DepositRateTable(final TethysSwingGuiFactory pFactory,
-                               final MetisFieldManager pFieldMgr,
+                               final MetisEosFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */
@@ -200,7 +205,7 @@ public class DepositRateTable
         /* Access the rates list */
         theRates = theUpdateSet.getDataList(MoneyWiseDataType.DEPOSITRATE, DepositRateList.class);
         theHeader = new RateHeader(theRates);
-        theColumns.setDateRange();
+        theRange = theRates.getDataSet().getDateRange();
         setList(theRates);
     }
 
@@ -238,7 +243,7 @@ public class DepositRateTable
      * JTable Data Model.
      */
     private final class DepositRateTableModel
-            extends JDataTableModel<DepositRate, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<DepositRate, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -390,7 +395,7 @@ public class DepositRateTable
      * Column Model class.
      */
     private final class DepositRateColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -417,44 +422,9 @@ public class DepositRateTable
         private static final int COLUMN_ACTION = 3;
 
         /**
-         * Date Renderer.
-         */
-        private final CalendarCellRenderer theDateRenderer;
-
-        /**
-         * Decimal Renderer.
-         */
-        private final DecimalCellRenderer theDecimalRenderer;
-
-        /**
-         * Action Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
-
-        /**
-         * Rate editor.
-         */
-        private final RateCellEditor theRateEditor;
-
-        /**
-         * Date editor.
-         */
-        private final CalendarCellEditor theDateEditor;
-
-        /**
-         * Date configuration.
-         */
-        private final transient TethysSwingDateConfig theDateConfig;
-
-        /**
-         * Action Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theActionIconEditor;
-
-        /**
          * Action column.
          */
-        private final JDataTableColumn theActionColumn;
+        private final PrometheusDataTableColumn theActionColumn;
 
         /**
          * Constructor.
@@ -465,53 +435,47 @@ public class DepositRateTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theRateEditor = theFieldMgr.allocateRateCellEditor();
-            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            theDateConfig = theDateEditor.getDateConfig();
-            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
+            MetisFieldRateCellEditor myRateEditor = theFieldMgr.allocateRateCellEditor();
+            MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_RATE, WIDTH_RATE, theDecimalRenderer, theRateEditor));
-            declareColumn(new JDataTableColumn(COLUMN_BONUS, WIDTH_RATE, theDecimalRenderer, theRateEditor));
-            declareColumn(new JDataTableColumn(COLUMN_ENDDATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_RATE, WIDTH_RATE, myDecimalRenderer, myRateEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_BONUS, WIDTH_RATE, myDecimalRenderer, myRateEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ENDDATE, WIDTH_DATE, myDateRenderer, myDateEditor));
+            theActionColumn = new PrometheusDataTableColumn(COLUMN_ACTION, WIDTH_ICON, myActionIconRenderer, myActionIconEditor);
             declareColumn(theActionColumn);
 
             /* Initialise the columns */
             setColumns();
 
-            /* Add listener */
-            theDateEditor.getEventRegistrar().addEventListener(e -> handleDateEvent());
+            /* Add configurator */
+            myDateEditor.setDateConfigurator(this::handleDateEvent);
         }
 
         /**
          * handle Date event.
+         * @param pRowIndex the rowIndex
+         * @param pConfig the dateConfig
          */
-        private void handleDateEvent() {
-            /* Access details */
-            Point myCell = theDateEditor.getPoint();
-
+        private void handleDateEvent(final Integer pRowIndex,
+                                     final TethysDateConfig pConfig) {
             /* Determine whether this is the latest entry */
-            int i = getTable().convertRowIndexToView(myCell.y);
+            int i = getTable().convertRowIndexToView(pRowIndex);
             boolean bAllowNull = i == 1;
-            theDateConfig.setAllowNullDateSelection(bAllowNull);
-        }
-
-        /**
-         * Adjust date range.
-         */
-        private void setDateRange() {
-            /* Access date range */
-            TethysDateRange myRange = theRates.getDataSet().getDateRange();
-
-            /* Adjust editor range */
-            theDateConfig.setEarliestDateDay(myRange.getStart());
+            pConfig.setAllowNullDateSelection(bAllowNull);
+            pConfig.setEarliestDate(theRange == null
+                                                     ? null
+                                                     : theRange.getStart());
+            pConfig.setLatestDate(null);
         }
 
         /**
@@ -552,13 +516,9 @@ public class DepositRateTable
          * @return the value
          */
         private Object getHeaderValue(final int pColIndex) {
-            /* Return the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_ACTION:
-                    return ActionType.INSERT;
-                default:
-                    return null;
-            }
+            return pColIndex == COLUMN_ACTION
+                                              ? PrometheusAction.INSERT
+                                              : null;
         }
 
         /**
@@ -578,7 +538,7 @@ public class DepositRateTable
                 case COLUMN_ENDDATE:
                     return pItem.getEndDate();
                 case COLUMN_ACTION:
-                    return ActionType.DELETE;
+                    return PrometheusAction.DELETE;
                 default:
                     return null;
             }

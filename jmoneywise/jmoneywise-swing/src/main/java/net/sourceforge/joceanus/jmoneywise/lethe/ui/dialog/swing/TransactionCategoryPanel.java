@@ -26,16 +26,14 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
@@ -45,40 +43,22 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryType.TransactionCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
  */
 public class TransactionCategoryPanel
-        extends MoneyWiseDataItemPanel<TransactionCategory> {
+        extends MoneyWiseEosItemPanel<TransactionCategory> {
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<TransactionCategory> theFieldSet;
-
-    /**
-     * Category Type Button Field.
-     */
-    private final JScrollButton<TransactionCategoryType> theTypeButton;
-
-    /**
-     * Parent Button Field.
-     */
-    private final JScrollButton<TransactionCategory> theParentButton;
-
-    /**
-     * The CategoryType Menu Builder.
-     */
-    private final JScrollMenuBuilder<TransactionCategoryType> theTypeMenuBuilder;
-
-    /**
-     * The Parent Menu Builder.
-     */
-    private final JScrollMenuBuilder<TransactionCategory> theParentMenuBuilder;
+    private final MetisEosFieldSet<TransactionCategory> theFieldSet;
 
     /**
      * Constructor.
@@ -88,35 +68,35 @@ public class TransactionCategoryPanel
      * @param pError the error panel
      */
     public TransactionCategoryPanel(final TethysSwingGuiFactory pFactory,
-                                    final MetisFieldManager pFieldMgr,
+                                    final MetisEosFieldManager pFieldMgr,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                     final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField mySubName = new JTextField();
-        JTextField myDesc = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField mySubName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        theTypeButton = new JScrollButton<>();
-        theParentButton = new JScrollButton<>();
+        TethysSwingScrollButtonManager<TransactionCategoryType> myTypeButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<TransactionCategory> myParentButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         restrictField(myName, TransactionCategory.NAMELEN);
         restrictField(mySubName, TransactionCategory.NAMELEN);
         restrictField(myDesc, TransactionCategory.NAMELEN);
-        restrictField(theTypeButton, TransactionCategory.NAMELEN);
-        restrictField(theParentButton, TransactionCategory.NAMELEN);
+        restrictField(myTypeButton, TransactionCategory.NAMELEN);
+        restrictField(myParentButton, TransactionCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
         theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
         theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, theTypeButton);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, theParentButton);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, myTypeButton);
+        theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, myParentButton);
 
         /* Layout the main panel */
         JPanel myPanel = getMainPanel();
@@ -132,11 +112,9 @@ public class TransactionCategoryPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listener */
-        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryTypeMenu(theTypeMenuBuilder, getItem()));
-        theParentMenuBuilder = theParentButton.getMenuBuilder();
-        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        /* Configure the menuBuilders */
+        myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
+        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
     }
 
     @Override
@@ -214,18 +192,18 @@ public class TransactionCategoryPanel
 
     /**
      * Build the category type list for an item.
-     * @param pMenuBuilder the menu builder
+     * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final JScrollMenuBuilder<TransactionCategoryType> pMenuBuilder,
+    public void buildCategoryTypeMenu(final TethysScrollMenu<TransactionCategoryType, Icon> pMenu,
                                       final TransactionCategory pCategory) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         TransactionCategoryType myCurr = pCategory.getCategoryType();
         CategoryType myCurrType = CategoryType.determineType(myCurr);
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TransactionCategoryType> myActive = null;
 
         /* Access Transaction Category types */
         TransactionCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
@@ -245,7 +223,7 @@ public class TransactionCategoryPanel
             }
 
             /* Create a new action for the type */
-            JMenuItem myItem = pMenuBuilder.addItem(myType);
+            TethysScrollMenuItem<TransactionCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -255,23 +233,25 @@ public class TransactionCategoryPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the parent list for the item.
-     * @param pMenuBuilder the menu builder
+     * Build the parent menu for the item.
+     * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final JScrollMenuBuilder<TransactionCategory> pMenuBuilder,
+    private void buildParentMenu(final TethysScrollMenu<TransactionCategory, Icon> pMenu,
                                  final TransactionCategory pCategory) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         TransactionCategory myCurr = pCategory.getParentCategory();
         CategoryType myCurrType = CategoryType.determineType(pCategory);
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TransactionCategory> myActive = null;
 
         /* Loop through the TransactionCategories */
         TransactionCategoryList myCategories = getItem().getList();
@@ -288,7 +268,7 @@ public class TransactionCategoryPanel
             /* If we are interested */
             if (myCurrType.isParentMatch(myClass)) {
                 /* Create a new action for the type */
-                JMenuItem myItem = pMenuBuilder.addItem(myCat);
+                TethysScrollMenuItem<TransactionCategory> myItem = pMenu.addItem(myCat);
 
                 /* If this is the active parent */
                 if (myCat.equals(myCurr)) {
@@ -299,7 +279,9 @@ public class TransactionCategoryPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**

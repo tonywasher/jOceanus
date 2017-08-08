@@ -31,11 +31,11 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -45,20 +45,20 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.RegionPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -68,7 +68,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Region Table.
  */
 public class RegionTable
-        extends JDataTable<Region, MoneyWiseDataType> {
+        extends PrometheusDataTable<Region, MoneyWiseDataType> {
     /**
      * Name Column Title.
      */
@@ -92,7 +92,7 @@ public class RegionTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -142,7 +142,7 @@ public class RegionTable
     /**
      * The List Selection Model.
      */
-    private final JDataTableSelection<Region, MoneyWiseDataType> theSelectionModel;
+    private final PrometheusDataTableSelection<Region, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Regions.
@@ -164,7 +164,7 @@ public class RegionTable
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = theView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -208,7 +208,7 @@ public class RegionTable
         theFilterPanel.addNode(theNewButton);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<>(this, theActiveRegion);
+        theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveRegion);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -359,7 +359,7 @@ public class RegionTable
      * JTable Data Model.
      */
     private final class RegionTableModel
-            extends JDataTableModel<Region, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<Region, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -430,12 +430,7 @@ public class RegionTable
         @Override
         public boolean includeRow(final Region pRow) {
             /* Ignore deleted rows */
-            if (pRow.isDeleted()) {
-                return false;
-            }
-
-            /* Handle filter */
-            return true;
+            return !pRow.isDeleted();
         }
 
         /**
@@ -475,7 +470,7 @@ public class RegionTable
      * Column Model class.
      */
     private final class RegionColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -497,26 +492,6 @@ public class RegionTable
         private static final int COLUMN_ACTIVE = 2;
 
         /**
-         * Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theIconRenderer;
-
-        /**
-         * Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theIconEditor;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * String Editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
          * Constructor.
          * @param pTable the table
          */
@@ -525,18 +500,20 @@ public class RegionTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theIconEditor);
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildStatusButton(theIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theIconRenderer, theIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_DESC, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, myIconRenderer, myIconEditor));
         }
 
         /**
@@ -573,8 +550,8 @@ public class RegionTable
                     return pRegion.getDesc();
                 case COLUMN_ACTIVE:
                     return pRegion.isActive()
-                                              ? ActionType.ACTIVE
-                                              : ActionType.DELETE;
+                                              ? PrometheusAction.ACTIVE
+                                              : PrometheusAction.DELETE;
                 default:
                     return null;
             }

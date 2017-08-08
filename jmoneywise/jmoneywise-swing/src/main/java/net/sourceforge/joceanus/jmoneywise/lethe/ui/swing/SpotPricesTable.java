@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
+import java.util.Currency;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -33,18 +33,17 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.PriceCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldPriceCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
@@ -53,16 +52,16 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseSpotPricesSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.SpotSecurityPrice.SpotSecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.YQLDownloader;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
@@ -72,15 +71,15 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * SpotPrices panel.
- * @author Tony Washer
  */
 public class SpotPricesTable
-        extends JDataTable<SpotSecurityPrice, MoneyWiseDataType> {
+        extends PrometheusDataTable<SpotSecurityPrice, MoneyWiseDataType> {
     /**
      * Text for DataEntry Title.
      */
@@ -119,7 +118,7 @@ public class SpotPricesTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -191,7 +190,7 @@ public class SpotPricesTable
 
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = pView.getFieldManager();
+        theFieldMgr = pView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
@@ -285,23 +284,14 @@ public class SpotPricesTable
         MetisProfile myTask = theView.getActiveTask();
         myTask = myTask.startTask("SpotPrices");
 
-        /* Protect against exceptions */
-        try {
-            /* Refresh the data */
-            theSelect.refreshData();
+        /* Refresh the data */
+        theSelect.refreshData();
 
-            /* Access the selection details */
-            setSelection(theSelect.getPortfolio(), theSelect.getDate());
+        /* Access the selection details */
+        setSelection(theSelect.getPortfolio(), theSelect.getDate());
 
-            /* Create SavePoint */
-            theSelect.createSavePoint();
-        } catch (OceanusException e) {
-            /* Show the error */
-            theView.addError(e);
-
-            /* Restore SavePoint */
-            theSelect.restoreSavePoint();
-        }
+        /* Create SavePoint */
+        theSelect.createSavePoint();
 
         /* Complete the task */
         myTask.end();
@@ -331,7 +321,7 @@ public class SpotPricesTable
      * @throws OceanusException on error
      */
     public void setSelection(final Portfolio pPortfolio,
-                             final TethysDate pDate) throws OceanusException {
+                             final TethysDate pDate) {
         /* Record selection */
         theDate = pDate;
         thePortfolio = pPortfolio;
@@ -433,25 +423,11 @@ public class SpotPricesTable
 
         /* If the selection differs */
         if (!MetisDifference.isEqual(theDate, myDate) || !MetisDifference.isEqual(thePortfolio, myPortfolio)) {
-            /* Protect against exceptions */
-            try {
-                /* Set selection */
-                setSelection(myPortfolio, myDate);
+            /* Set selection */
+            setSelection(myPortfolio, myDate);
 
-                /* Create SavePoint */
-                theSelect.createSavePoint();
-
-                /* Catch Exceptions */
-            } catch (OceanusException e) {
-                /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to change selection", e);
-
-                /* Show the error */
-                setError(myError);
-
-                /* Restore SavePoint */
-                theSelect.restoreSavePoint();
-            }
+            /* Create SavePoint */
+            theSelect.createSavePoint();
         }
     }
 
@@ -459,7 +435,7 @@ public class SpotPricesTable
      * SpotView table model.
      */
     public final class SpotViewModel
-            extends JDataTableModel<SpotSecurityPrice, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<SpotSecurityPrice, MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -545,7 +521,7 @@ public class SpotPricesTable
      * Column Model class.
      */
     private final class SpotViewColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -577,36 +553,6 @@ public class SpotPricesTable
         private static final int COLUMN_ACTION = 4;
 
         /**
-         * Date Renderer.
-         */
-        private final CalendarCellRenderer theDateRenderer;
-
-        /**
-         * Decimal Renderer.
-         */
-        private final DecimalCellRenderer theDecimalRenderer;
-
-        /**
-         * Price Editor.
-         */
-        private final PriceCellEditor thePriceEditor;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * Action Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
-
-        /**
-         * Action Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theActionIconEditor;
-
-        /**
          * Constructor.
          */
         private SpotViewColumnModel() {
@@ -614,25 +560,27 @@ public class SpotPricesTable
             super(SpotPricesTable.this);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            thePriceEditor = theFieldMgr.allocatePriceCellEditor();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
+            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            MetisFieldPriceCellEditor myPriceEditor = theFieldMgr.allocatePriceCellEditor();
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButton */
-            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_NAME, theStringRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_PRICE, theDecimalRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_DATE, theDateRenderer));
-            declareColumn(new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON, theActionIconRenderer, theActionIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ASSET, WIDTH_NAME, myStringRenderer));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, myDecimalRenderer, myPriceEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_PREVPRICE, WIDTH_PRICE, myDecimalRenderer));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_PREVDATE, WIDTH_DATE, myDateRenderer));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTION, WIDTH_ICON, myActionIconRenderer, myActionIconEditor));
 
             /* Add listeners */
-            thePriceEditor.getEventRegistrar().addEventListener(e -> handleNewPrice());
+            myPriceEditor.setDeemedCurrency(this::determineCurrency);
         }
 
         /**
@@ -677,8 +625,8 @@ public class SpotPricesTable
                     return pItem.getPrevDate();
                 case COLUMN_ACTION:
                     return pItem.getPrice() != null && !pItem.isDisabled()
-                                                                           ? ActionType.DELETE
-                                                                           : ActionType.DO;
+                                                                           ? PrometheusAction.DELETE
+                                                                           : PrometheusAction.DO;
                 default:
                     return null;
             }
@@ -751,17 +699,16 @@ public class SpotPricesTable
         }
 
         /**
-         * handle new price.
+         * determine currency.
+         * @param pRowIndex the row index
+         * @return the assumed currency
          */
-        private void handleNewPrice() {
-            /* Access details */
-            Point myCell = thePriceEditor.getPoint();
-
+        private Currency determineCurrency(final Integer pRowIndex) {
             /* Update to allow correct currency */
-            SpotSecurityPrice myPrice = thePrices.get(myCell.y);
+            SpotSecurityPrice myPrice = thePrices.get(pRowIndex);
             Security mySecurity = myPrice.getSecurity();
             AssetCurrency myCurrency = mySecurity.getAssetCurrency();
-            thePriceEditor.setAssumedCurrency(myCurrency.getCurrency());
+            return myCurrency.getCurrency();
         }
     }
 }

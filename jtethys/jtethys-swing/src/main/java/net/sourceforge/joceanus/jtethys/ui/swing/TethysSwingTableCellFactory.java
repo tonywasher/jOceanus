@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.Icon;
@@ -1049,7 +1049,7 @@ public class TethysSwingTableCellFactory<C, R> {
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
             super(pColumn, pFactory.newIconField(), pClass);
-            Function<T, TethysIconMapSet<T>> mySupplier = p -> getColumn().getIconMapSet().apply(getActiveRow());
+            Supplier<TethysIconMapSet<T>> mySupplier = () -> getColumn().getIconMapSet().apply(getActiveRow());
             getControl().setIconMapSet(mySupplier);
             getRenderControl().setIconMapSet(mySupplier);
         }

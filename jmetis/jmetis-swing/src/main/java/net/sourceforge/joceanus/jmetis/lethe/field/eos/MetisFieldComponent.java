@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
@@ -161,7 +161,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      */
     protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisEosFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
-                                                                                          final TethysSwingDataTextField<String> pTextField,
+                                                                                          final TethysSwingStringTextField pTextField,
                                                                                           final MetisDataType pClass) {
         /* Allocate component */
         TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
@@ -374,7 +374,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     protected abstract void displayField();
 
     /**
-     * The JTextField implementation.
+     * The TextField implementation.
      * @param <T> the Data Item type
      */
     protected static final class MetisFieldText<T extends MetisFieldSetItem>
@@ -394,13 +394,13 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        private MetisFieldText(final TethysSwingDataTextField<String> pComponent,
+        private MetisFieldText(final TethysSwingStringTextField pComponent,
                                final TethysFieldModelString<T> pModel) {
             /* Call super-constructor */
-            super(pComponent.getNode(), pModel);
+            super(pComponent.getEditControl(), pModel);
 
             /* Store parameters */
-            theComponent = (JTextField) pComponent.getEditControl();
+            theComponent = pComponent.getEditControl();
             theModel = pModel;
             pComponent.setEditable(true);
 
@@ -503,7 +503,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     }
 
     /**
-     * The JTextArea implementation.
+     * The TextArea implementation.
      * @param <T> the Data Item type
      */
     protected static final class MetisFieldArea<T extends MetisFieldSetItem>
@@ -529,8 +529,9 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             super(pComponent.getNode(), pModel);
 
             /* Store parameters */
-            theComponent = (JTextArea) pComponent.getNode();
+            theComponent = getUnderlyingComponent();
             theModel = pModel;
+            theComponent.setEditable(true);
 
             /* Create the listener and attach it */
             StringListener myListener = new StringListener();
@@ -711,7 +712,9 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
 
             /* Display it */
             theComponent.setValue(myValue);
-            getReadOnlyLabel().setText(myValue.toString());
+            getReadOnlyLabel().setText(myValue == null
+                                                       ? null
+                                                       : myValue.toString());
         }
     }
 

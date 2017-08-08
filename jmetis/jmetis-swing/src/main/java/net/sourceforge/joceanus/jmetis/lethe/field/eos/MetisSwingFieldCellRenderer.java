@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmetis.lethe.field.eos;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -213,12 +213,12 @@ public final class MetisSwingFieldCellRenderer {
         /**
          * The iconMap.
          */
-        private final Map<TethysIconId, Icon> theIconMap;
+        private final transient Map<TethysIconId, Icon> theIconMap;
 
         /**
          * The MapSet supplier.
          */
-        private transient BiFunction<Integer, T, TethysIconMapSet<T>> theSupplier;
+        private transient Function<Integer, TethysIconMapSet<T>> theSupplier;
 
         /**
          * Constructor.
@@ -246,7 +246,7 @@ public final class MetisSwingFieldCellRenderer {
             theData = pData;
             theClazz = pClazz;
             setHorizontalAlignment(SwingConstants.CENTER);
-            theSupplier = (i, v) -> null;
+            theSupplier = (i) -> null;
             theIconMap = new HashMap<>();
         }
 
@@ -254,7 +254,7 @@ public final class MetisSwingFieldCellRenderer {
          * Set the IconMapSet supplier.
          * @param pSupplier the supplier
          */
-        public void setIconMapSet(final BiFunction<Integer, T, TethysIconMapSet<T>> pSupplier) {
+        public void setIconMapSet(final Function<Integer, TethysIconMapSet<T>> pSupplier) {
             theSupplier = pSupplier;
         }
 
@@ -281,7 +281,7 @@ public final class MetisSwingFieldCellRenderer {
             /* Determine the IconMapSet */
             TethysIconMapSet<T> myMapSet = theSupplier == null
                                                                ? null
-                                                               : theSupplier.apply(iRow, myValue);
+                                                               : theSupplier.apply(iRow);
 
             /* Determine the icon and toolTip */
             TethysIconId myIconId = myMapSet == null

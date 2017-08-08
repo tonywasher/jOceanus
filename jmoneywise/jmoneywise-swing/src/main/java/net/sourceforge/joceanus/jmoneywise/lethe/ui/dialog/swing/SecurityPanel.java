@@ -25,23 +25,20 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 import java.awt.GridLayout;
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
@@ -59,23 +56,27 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityType.SecurityTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
  * Panel to display/edit/create a Security.
  */
 public class SecurityPanel
-        extends MoneyWiseDataItemPanel<Security> {
+        extends MoneyWiseEosItemPanel<Security> {
     /**
      * Info Tab Title.
      */
@@ -89,37 +90,7 @@ public class SecurityPanel
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<Security> theFieldSet;
-
-    /**
-     * Security Type Button Field.
-     */
-    private final JScrollButton<SecurityType> theTypeButton;
-
-    /**
-     * Security Parent Button Field.
-     */
-    private final JScrollButton<Payee> theParentButton;
-
-    /**
-     * Currency Button Field.
-     */
-    private final JScrollButton<AssetCurrency> theCurrencyButton;
-
-    /**
-     * Closed Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
-
-    /**
-     * Region Button Field.
-     */
-    private final JScrollButton<Region> theRegionButton;
-
-    /**
-     * Stock Button Field.
-     */
-    private final JScrollButton<Security> theStockButton;
+    private final MetisEosFieldSet<Security> theFieldSet;
 
     /**
      * SecurityPrice Table.
@@ -127,29 +98,9 @@ public class SecurityPanel
     private final SecurityPriceTable thePrices;
 
     /**
-     * The SecurityType Menu Builder.
+     * The Closed State.
      */
-    private final JScrollMenuBuilder<SecurityType> theSecTypeMenuBuilder;
-
-    /**
-     * The Parent Menu Builder.
-     */
-    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-    /**
-     * The Region Menu Builder.
-     */
-    private final JScrollMenuBuilder<Region> theRegionMenuBuilder;
-
-    /**
-     * The Currency Menu Builder.
-     */
-    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
-
-    /**
-     * The Stock Menu Builder.
-     */
-    private final JScrollMenuBuilder<Security> theStockMenuBuilder;
+    private Boolean theClosedState = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -161,37 +112,27 @@ public class SecurityPanel
      */
     public SecurityPanel(final TethysSwingGuiFactory pFactory,
                          final SwingView pView,
-                         final MetisFieldManager pFieldMgr,
+                         final MetisEosFieldManager pFieldMgr,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
                          final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Create the buttons */
-        theTypeButton = new JScrollButton<>();
-        theParentButton = new JScrollButton<>();
-        theCurrencyButton = new JScrollButton<>();
-        theRegionButton = new JScrollButton<>();
-        theStockButton = new JScrollButton<>();
-
-        /* Set closed button */
-        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel();
+        JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the info panel */
-        JPanel myPanel = buildInfoPanel();
+        JPanel myPanel = buildInfoPanel(pFactory);
         myTabs.add(TAB_INFO, myPanel);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel();
+        myPanel = buildNotesPanel(pFactory);
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Create the SecurityPrices table */
@@ -208,16 +149,6 @@ public class SecurityPanel
         layoutPanel();
 
         /* Create the listener */
-        theSecTypeMenuBuilder = theTypeButton.getMenuBuilder();
-        theSecTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildSecTypeMenu(theSecTypeMenuBuilder, getItem()));
-        theParentMenuBuilder = theParentButton.getMenuBuilder();
-        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
-        theRegionMenuBuilder = theRegionButton.getMenuBuilder();
-        theRegionMenuBuilder.getEventRegistrar().addEventListener(e -> buildRegionMenu(theRegionMenuBuilder, getItem()));
-        theStockMenuBuilder = theStockButton.getMenuBuilder();
-        theStockMenuBuilder.getEventRegistrar().addEventListener(e -> buildStockMenu(theStockMenuBuilder, getItem()));
-        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
         thePrices.getEventRegistrar().addEventListener(e -> {
             updateActions();
             fireStateChanged();
@@ -226,34 +157,36 @@ public class SecurityPanel
 
     /**
      * Build Main subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel() {
-        /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
-        MoneyWiseIcons.buildLockedButton(theClosedState);
-
+    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField myDesc = new JTextField();
-        JTextField mySymbol = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        TethysSwingStringTextField mySymbol = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Security.NAMELEN);
         restrictField(myDesc, Security.NAMELEN);
         restrictField(mySymbol, Security.NAMELEN);
-        restrictField(theTypeButton, Security.NAMELEN);
-        restrictField(theRegionButton, Security.NAMELEN);
-        restrictField(theCurrencyButton, Security.NAMELEN);
-        restrictField(theParentButton, Security.NAMELEN);
+        restrictField(myTypeButton, Security.NAMELEN);
+        restrictField(myCurrencyButton, Security.NAMELEN);
+        restrictField(myParentButton, Security.NAMELEN);
         restrictField(myClosedButton, Security.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Security.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Security.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, theTypeButton);
-        theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, theParentButton);
-        theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, myTypeButton);
+        theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, myParentButton);
+        theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         theFieldSet.addFieldElement(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -270,32 +203,42 @@ public class SecurityPanel
         theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myTypeButton.setMenuConfigurator(c -> buildSecTypeMenu(c, getItem()));
+        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
+        myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
+        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build info subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildInfoPanel() {
+    private JPanel buildInfoPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField mySymbol = new JTextField();
+        TethysSwingStringTextField mySymbol = pFactory.newStringField();
+        TethysSwingStringTextField myPrice = pFactory.newStringField();
 
-        /* Allocate fields */
-        JTextField myPrice = new JTextField();
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<Security> myStockButton = pFactory.newScrollButton();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
         restrictField(mySymbol, myWidth);
         restrictField(myPrice, myWidth);
-        restrictField(theRegionButton, myWidth);
-        restrictField(theStockButton, myWidth);
+        restrictField(myRegionButton, myWidth);
+        restrictField(myStockButton, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, theRegionButton);
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, theStockButton);
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, myRegionButton);
+        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, myStockButton);
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
 
         /* Create the Info panel */
@@ -310,18 +253,24 @@ public class SecurityPanel
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));
+        myStockButton.setMenuConfigurator(c -> buildStockMenu(c, getItem()));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build Notes subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildNotesPanel() {
+    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextArea myNotes = new JTextArea();
-        JScrollPane myScroll = new JScrollPane(myNotes);
+        TethysSwingTextArea myNotes = pFactory.newTextArea();
+        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
@@ -373,7 +322,7 @@ public class SecurityPanel
                                         ? !mySecurity.getParent().isClosed()
                                         : !bIsRelevant;
         theFieldSet.setEditable(Security.FIELD_CLOSED, isEditable && bEditClosed);
-        theClosedState.setState(bEditClosed);
+        theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || mySecurity.getDesc() != null;
@@ -548,18 +497,18 @@ public class SecurityPanel
     }
 
     /**
-     * Build the securityType list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the securityType menu for an item.
+     * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildSecTypeMenu(final JScrollMenuBuilder<SecurityType> pMenuBuilder,
+    public void buildSecTypeMenu(final TethysScrollMenu<SecurityType, Icon> pMenu,
                                  final Security pSecurity) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         SecurityType myCurr = pSecurity.getSecurityType();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<SecurityType> myActive = null;
 
         /* Access SecurityTypes */
         SecurityTypeList myTypes = getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
@@ -576,7 +525,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the secType */
-            JMenuItem myItem = pMenuBuilder.addItem(myType);
+            TethysScrollMenuItem<SecurityType> myItem = pMenu.addItem(myType);
 
             /* If this is the active secType */
             if (myType.equals(myCurr)) {
@@ -586,23 +535,25 @@ public class SecurityPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the parent list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the parent menu for an item.
+     * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildParentMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+    public void buildParentMenu(final TethysScrollMenu<Payee, Icon> pMenu,
                                 final Security pSecurity) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         SecurityTypeClass myType = pSecurity.getSecurityTypeClass();
         Payee myCurr = pSecurity.getParent();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
         PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -620,7 +571,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the payee */
-            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -630,22 +581,24 @@ public class SecurityPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the region list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the region menu for an item.
+     * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildRegionMenu(final JScrollMenuBuilder<Region> pMenuBuilder,
+    public void buildRegionMenu(final TethysScrollMenu<Region, Icon> pMenu,
                                 final Security pSecurity) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         Region myCurr = pSecurity.getRegion();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<Region> myActive = null;
 
         /* Access regions */
         RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
@@ -662,7 +615,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the region */
-            JMenuItem myItem = pMenuBuilder.addItem(myRegion);
+            TethysScrollMenuItem<Region> myItem = pMenu.addItem(myRegion);
 
             /* If this is the active region */
             if (myRegion.equals(myCurr)) {
@@ -672,22 +625,24 @@ public class SecurityPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the stock list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the stock menu for an item.
+     * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildStockMenu(final JScrollMenuBuilder<Security> pMenuBuilder,
+    public void buildStockMenu(final TethysScrollMenu<Security, Icon> pMenu,
                                final Security pSecurity) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         Security myCurr = pSecurity.getUnderlyingStock();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<Security> myActive = null;
 
         /* Access securities */
         SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
@@ -705,7 +660,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the region */
-            JMenuItem myItem = pMenuBuilder.addItem(mySecurity);
+            TethysScrollMenuItem<Security> myItem = pMenu.addItem(mySecurity);
 
             /* If this is the active stock */
             if (mySecurity.equals(myCurr)) {
@@ -715,22 +670,24 @@ public class SecurityPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the currency list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the currency menu for an item.
+     * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
                                   final Security pSecurity) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         AssetCurrency myCurr = pSecurity.getAssetCurrency();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -747,7 +704,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the currency */
-            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {
@@ -757,6 +714,8 @@ public class SecurityPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

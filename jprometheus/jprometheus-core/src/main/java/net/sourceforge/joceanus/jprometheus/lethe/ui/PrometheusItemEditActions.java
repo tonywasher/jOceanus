@@ -135,6 +135,7 @@ public class PrometheusItemEditActions<N, I>
 
         /* Create the panel */
         thePanel = pFactory.newVBoxPane();
+        thePanel.setBorderPadding(PrometheusItemActions.BORDER_PADDING);
 
         /* Create the layout */
         thePanel.addNode(theCommitButton);

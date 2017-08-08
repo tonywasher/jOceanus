@@ -30,7 +30,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Currency;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import javax.swing.AbstractCellEditor;
@@ -229,7 +228,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The button.
          */
-        private final TethysSwingIconButtonManager<T> theButton;
+        private final transient TethysSwingIconButtonManager<T> theButton;
 
         /**
          * The mouse Listener.
@@ -286,8 +285,8 @@ public final class MetisSwingFieldCellEditor {
          * Set the IconMapSet supplier.
          * @param pSupplier the supplier
          */
-        public void setIconMapSet(final BiFunction<Integer, T, TethysIconMapSet<T>> pSupplier) {
-            theButton.setIconMapSet(v -> pSupplier.apply(thePoint.y, v));
+        public void setIconMapSet(final Function<Integer, TethysIconMapSet<T>> pSupplier) {
+            theButton.setIconMapSet(() -> pSupplier.apply(thePoint.y));
         }
 
         @Override

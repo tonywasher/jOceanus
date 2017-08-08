@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager.Popu
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
@@ -71,7 +71,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
     /**
      * The RowHdrModel.
      */
-    private final RowTableModel<E> theRowHdrModel;
+    private final PrometheusRowTableModel<E> theRowHdrModel;
 
     /**
      * Should we show all items.
@@ -379,7 +379,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
      * Row Table model class.
      * @param <E> the data type enum class
      */
-    protected static class RowTableModel<E extends Enum<E>>
+    protected static class PrometheusRowTableModel<E extends Enum<E>>
             extends AbstractTableModel
             implements PopulateFieldData {
         /**
@@ -401,7 +401,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
          * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected RowTableModel(final PrometheusDataTable<?, E> pTable) {
+        protected PrometheusRowTableModel(final PrometheusDataTable<?, E> pTable) {
             theDataTable = pTable;
             theTable = pTable.getTable();
         }
@@ -447,7 +447,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
                 PrometheusDataTableModel<?, E> myModel = theDataTable.getTableModel();
                 DataItem<E> myRow = myModel.getItemAtIndex(iRow);
                 @SuppressWarnings("unchecked")
-                JDataTableColumnModel<E> myColModel = (JDataTableColumnModel<E>) theTable.getColumnModel();
+                PrometheusDataTableColumnModel<E> myColModel = (PrometheusDataTableColumnModel<E>) theTable.getColumnModel();
                 MetisField[] iFields = myColModel.getColumnFields();
 
                 /* Has the row changed */

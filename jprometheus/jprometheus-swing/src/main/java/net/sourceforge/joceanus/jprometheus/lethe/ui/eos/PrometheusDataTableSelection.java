@@ -173,11 +173,13 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
         /* Access first row */
         int iIndex = theTable.convertRowIndexToModel(0);
         T myFirst = theTableModel.getItemAtIndex(iIndex);
-        return myFirst.isHeader()
-                                  ? iNumRows > 1
-                                                 ? 1
-                                                 : -1
-                                  : 0;
+        if (myFirst.isHeader()) {
+            return iNumRows > 1
+                                ? 1
+                                : -1;
+        } else {
+            return 0;
+        }
     }
 
     /**

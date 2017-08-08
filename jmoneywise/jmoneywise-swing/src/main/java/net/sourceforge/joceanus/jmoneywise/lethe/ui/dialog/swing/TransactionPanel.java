@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ipo * jMoneyWise: Finance Application
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,18 +30,16 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
@@ -73,39 +71,37 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.Transaction
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionValidator;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.TransactionFilters;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateConfig;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton.JScrollListMenuBuilder;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton.ToggleState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollMenu;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a Transaction.
  */
 public class TransactionPanel
-        extends MoneyWiseDataItemPanel<Transaction> {
+        extends MoneyWiseEosItemPanel<Transaction> {
     /**
      * The Field Set.
      */
-    private final transient MetisFieldSet<Transaction> theFieldSet;
+    private final MetisEosFieldSet<Transaction> theFieldSet;
 
     /**
      * Info Tab Title.
@@ -123,54 +119,9 @@ public class TransactionPanel
     private static final String TAB_SECURITIES = MoneyWiseUIResource.TRANSPANEL_TAB_SECURITIES.getValue();
 
     /**
-     * Date Button.
-     */
-    private final TethysSwingDateButton theDateButton;
-
-    /**
-     * Account Button Field.
-     */
-    private final JScrollButton<TransactionAsset> theAccountButton;
-
-    /**
-     * Partner Button Field.
-     */
-    private final JScrollButton<TransactionAsset> thePartnerButton;
-
-    /**
-     * Category Button Field.
-     */
-    private final JScrollButton<TransactionCategory> theCategoryButton;
-
-    /**
-     * ReturnedAccount Button Field.
-     */
-    private final JScrollButton<TransactionAsset> theReturnedAccountButton;
-
-    /**
-     * TransactionTag Button Field.
-     */
-    private final JScrollListButton<TransactionTag> theTagButton;
-
-    /**
      * Analysis selection panel.
      */
     private final MoneyWiseAnalysisSelect<JComponent, Icon> theAnalysisSelect;
-
-    /**
-     * The Tag Menu Builder.
-     */
-    private final JScrollListMenuBuilder<TransactionTag> theTagMenuBuilder;
-
-    /**
-     * Direction Button Field.
-     */
-    private final ComplexIconButtonState<AssetDirection, Boolean> theDirectionState;
-
-    /**
-     * Reconciled Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theReconciledState;
 
     /**
      * TransactionBuilder.
@@ -178,24 +129,19 @@ public class TransactionPanel
     private final TransactionBuilder theBuilder;
 
     /**
-     * The Account Menu Builder.
+     * dateRange.
      */
-    private final JScrollMenuBuilder<TransactionAsset> theAccountMenuBuilder;
+    private TethysDateRange theRange;
 
     /**
-     * The Partner Menu Builder.
+     * reconciledState.
      */
-    private final JScrollMenuBuilder<TransactionAsset> thePartnerMenuBuilder;
+    private Boolean theReconciledState = Boolean.FALSE;
 
     /**
-     * The Category Menu Builder.
+     * directionState.
      */
-    private final JScrollMenuBuilder<TransactionCategory> theCategoryMenuBuilder;
-
-    /**
-     * The ReturnedAccount Menu Builder.
-     */
-    private final JScrollMenuBuilder<TransactionAsset> theReturnedAccountMenuBuilder;
+    private Boolean theDirectionState = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -207,7 +153,7 @@ public class TransactionPanel
      * @param pError the error panel
      */
     public TransactionPanel(final TethysSwingGuiFactory pFactory,
-                            final MetisFieldManager pFieldMgr,
+                            final MetisEosFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
                             final MoneyWiseAnalysisSelect<JComponent, Icon> pAnalysisSelect,
@@ -217,42 +163,25 @@ public class TransactionPanel
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 
-        /* Create the date button */
-        theDateButton = new TethysSwingDateButton();
-
-        /* Create the buttons */
-        theAccountButton = new JScrollButton<>();
-        thePartnerButton = new JScrollButton<>();
-        theCategoryButton = new JScrollButton<>();
-        theTagButton = new JScrollListButton<>();
-        theReturnedAccountButton = new JScrollButton<>();
-
-        /* Access tag menu builder */
-        theTagMenuBuilder = theTagButton.getMenuBuilder();
-
-        /* Create states */
-        theDirectionState = new ComplexIconButtonState<>(Boolean.FALSE);
-        theReconciledState = new ComplexIconButtonState<>(Boolean.FALSE);
-
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel();
+        JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the info panel */
-        JPanel myPanel = buildInfoPanel();
+        JPanel myPanel = buildInfoPanel(pFactory);
         myTabs.add(TAB_INFO, myPanel);
 
         /* Build the tax panel */
-        myPanel = buildTaxPanel();
+        myPanel = buildTaxPanel(pFactory);
         myTabs.add(TAB_TAXES, myPanel);
 
         /* Build the tax panel */
-        myPanel = buildSecuritiesPanel();
+        myPanel = buildSecuritiesPanel(pFactory);
         myTabs.add(TAB_SECURITIES, myPanel);
 
         /* Layout the main panel */
@@ -263,50 +192,40 @@ public class TransactionPanel
 
         /* Layout the panel */
         layoutPanel();
-
-        /* Create the listeners */
-        theAccountMenuBuilder = theAccountButton.getMenuBuilder();
-        theAccountMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildAccountMenu(theAccountMenuBuilder, getItem()));
-        thePartnerMenuBuilder = thePartnerButton.getMenuBuilder();
-        thePartnerMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildPartnerMenu(thePartnerMenuBuilder, getItem()));
-        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
-        theReturnedAccountMenuBuilder = theReturnedAccountButton.getMenuBuilder();
-        theReturnedAccountMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildReturnedAccountMenu(theReturnedAccountMenuBuilder, getItem()));
-        theTagMenuBuilder.getEventRegistrar().addEventListener(TethysUIEvent.PREPAREDIALOG, e -> buildTagMenu(theTagMenuBuilder, getItem()));
     }
 
     /**
      * Build Main subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel() {
-        /* Create direction button */
-        JIconButton<AssetDirection> myDirectionButton = new JIconButton<>(theDirectionState);
-        MoneyWiseIcons.buildDirectionButton(theDirectionState);
-
-        /* Create reconciled button */
-        JIconButton<Boolean> myReconciledButton = new JIconButton<>(theReconciledState);
-        MoneyWiseIcons.buildReconciledButton(theReconciledState);
-
+    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField myAmount = new JTextField();
+        TethysSwingStringTextField myAmount = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingDateButtonManager myDateButton = pFactory.newDateButton();
+        TethysSwingScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton();
+        TethysSwingIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
+        TethysSwingIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
 
         /* restrict the fields */
-        restrictField(theDateButton, Transaction.DESCLEN);
-        restrictField(theAccountButton, Transaction.DESCLEN);
-        restrictField(theCategoryButton, Transaction.DESCLEN);
+        restrictField(myDateButton, Transaction.DESCLEN);
+        restrictField(myAccountButton, Transaction.DESCLEN);
+        restrictField(myCategoryButton, Transaction.DESCLEN);
         restrictField(myDirectionButton, Transaction.DESCLEN);
-        restrictField(thePartnerButton, Transaction.DESCLEN);
+        restrictField(myPartnerButton, Transaction.DESCLEN);
         restrictField(myAmount, Transaction.DESCLEN);
         restrictField(myReconciledButton, Transaction.DESCLEN);
 
         /* Declare fields */
-        theFieldSet.addFieldElement(Transaction.FIELD_DATE, theDateButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, TransactionAsset.class, theAccountButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, theCategoryButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_DATE, myDateButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, TransactionAsset.class, myAccountButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, myCategoryButton);
         theFieldSet.addFieldElement(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, TransactionAsset.class, thePartnerButton);
+        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, TransactionAsset.class, myPartnerButton);
         theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, MetisDataType.MONEY, myAmount);
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
@@ -325,20 +244,34 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(Transaction.FIELD_RECONCILED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myDateButton.setDateConfigurator(this::handleDateConfig);
+        myAccountButton.setMenuConfigurator(c -> buildAccountMenu(c, getItem()));
+        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
+        myPartnerButton.setMenuConfigurator(c -> buildPartnerMenu(c, getItem()));
+        Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
+        myReconciledButton.setIconMapSet(() -> myRecMapSets.get(theReconciledState));
+        Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
+        myDirectionButton.setIconMapSet(() -> myDirMapSets.get(theDirectionState));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build info subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildInfoPanel() {
+    private JPanel buildInfoPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField myAmount = new JTextField();
-        JTextField myRate = new JTextField();
-        JTextField myComments = new JTextField();
-        JTextField myReference = new JTextField();
+        TethysSwingStringTextField myAmount = pFactory.newStringField();
+        TethysSwingStringTextField myRate = pFactory.newStringField();
+        TethysSwingStringTextField myComments = pFactory.newStringField();
+        TethysSwingStringTextField myReference = pFactory.newStringField();
+
+        /* Create the buttons */
+        // TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
@@ -346,14 +279,15 @@ public class TransactionPanel
         restrictField(myRate, myWidth);
         restrictField(myComments, myWidth);
         restrictField(myReference, myWidth);
-        restrictField(theTagButton, myWidth);
+        // restrictField(myTagButton, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), theTagButton);
+        // theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG),
+        // myTagButton);
 
         /* Create the Info panel */
         TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -365,7 +299,8 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myPanel);
+        // theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG),
+        // myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Return the new panel */
@@ -374,16 +309,17 @@ public class TransactionPanel
 
     /**
      * Build tax subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildTaxPanel() {
+    private JPanel buildTaxPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField myTaxCredit = new JTextField();
-        JTextField myForeignTaxCredit = new JTextField();
-        JTextField myNatIns = new JTextField();
-        JTextField myBenefit = new JTextField();
-        JTextField myWithheld = new JTextField();
-        JTextField myYears = new JTextField();
+        TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
+        TethysSwingStringTextField myForeignTaxCredit = pFactory.newStringField();
+        TethysSwingStringTextField myNatIns = pFactory.newStringField();
+        TethysSwingStringTextField myBenefit = pFactory.newStringField();
+        TethysSwingStringTextField myWithheld = pFactory.newStringField();
+        TethysSwingStringTextField myYears = pFactory.newStringField();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
@@ -422,16 +358,20 @@ public class TransactionPanel
 
     /**
      * Build securities subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildSecuritiesPanel() {
+    private JPanel buildSecuritiesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField myAccountUnits = new JTextField();
-        JTextField myPartnerUnits = new JTextField();
-        JTextField myCommission = new JTextField();
-        JTextField myPrice = new JTextField();
-        JTextField myDilution = new JTextField();
-        JTextField myReturnedCash = new JTextField();
+        TethysSwingStringTextField myAccountUnits = pFactory.newStringField();
+        TethysSwingStringTextField myPartnerUnits = pFactory.newStringField();
+        TethysSwingStringTextField myCommission = pFactory.newStringField();
+        TethysSwingStringTextField myPrice = pFactory.newStringField();
+        TethysSwingStringTextField myDilution = pFactory.newStringField();
+        TethysSwingStringTextField myReturnedCash = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
 
         /* Restrict the fields */
         int myWidth = Transaction.DESCLEN >> 1;
@@ -441,7 +381,7 @@ public class TransactionPanel
         restrictField(myCommission, myWidth);
         restrictField(myDilution, myWidth);
         restrictField(myReturnedCash, myWidth);
-        restrictField(theReturnedAccountButton, myWidth);
+        restrictField(myReturnedAccountButton, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
@@ -449,7 +389,7 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE), MetisDataType.PRICE, myPrice);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION), MetisDataType.MONEY, myCommission);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class, theReturnedAccountButton);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class, myReturnedAccountButton);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), MetisDataType.MONEY, myReturnedCash);
 
         /* Create the Tax panel */
@@ -466,6 +406,9 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Configure the menuBuilders */
+        myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem()));
 
         /* Return the new panel */
         return myPanel;
@@ -489,38 +432,22 @@ public class TransactionPanel
      * @param pRange the date range.
      */
     public void updateEditors(final TethysDateRange pRange) {
-        /* Update Date button */
-        theDateButton.setEarliestDateDay(pRange != null
-                                                        ? pRange.getStart()
-                                                        : null);
-        theDateButton.setLatestDateDay(pRange != null
-                                                      ? pRange.getEnd()
-                                                      : null);
-
-        /* update the tagMenuBuilder */
-        updateTagMenuBuilder(theTagMenuBuilder);
+        /* Update the range */
+        theRange = pRange;
     }
 
     /**
-     * Update tag menuBuilder.
-     * @param pBuilder the menu builder
+     * Handle dateConfig.
+     * @param pConfig the dateConfig
      */
-    public void updateTagMenuBuilder(final JScrollListMenuBuilder<TransactionTag> pBuilder) {
-        /* Access TransactionTags */
-        TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
-        pBuilder.clearAvailableItems();
-
-        /* Loop through the tags */
-        Iterator<TransactionTag> myIterator = myTags.iterator();
-        while (myIterator.hasNext()) {
-            TransactionTag myTag = myIterator.next();
-
-            /* If the tag is not deleted */
-            if (!myTag.isDeleted()) {
-                /* Add item to the tag list */
-                pBuilder.setAvailableItem(myTag);
-            }
-        }
+    private void handleDateConfig(final TethysDateConfig pConfig) {
+        /* Update Date button */
+        pConfig.setEarliestDate(theRange != null
+                                                 ? theRange.getStart()
+                                                 : null);
+        pConfig.setLatestDate(theRange != null
+                                               ? theRange.getEnd()
+                                               : null);
     }
 
     @Override
@@ -547,11 +474,6 @@ public class TransactionPanel
         /* Determine whether the tags field should be visible */
         bShowField = isEditable || myTrans.tagIterator() != null;
         theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
-
-        /* Update text for tag button */
-        if (bShowField) {
-            theTagButton.setText(myTrans.getTagNameList());
-        }
 
         /* Determine whether the partnerAmount field should be visible */
         MetisField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
@@ -667,8 +589,8 @@ public class TransactionPanel
 
         /* Determine whether the reconciled field should be visible */
         boolean bShowReconciled = isEditable || bIsReconciled;
-        theReconciledState.setState(!bIsLocked);
-        theDirectionState.setState(!bIsReconciled);
+        theReconciledState = !bIsLocked;
+        theDirectionState = !bIsReconciled;
         theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
 
@@ -685,10 +607,7 @@ public class TransactionPanel
         theFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
 
         /* Set the range for the dateButton */
-        TethysDateRange myRange = theBuilder.getRange();
-        TethysSwingDateConfig myConfig = theDateButton.getDateConfig();
-        myConfig.setEarliestDateDay(myRange.getStart());
-        myConfig.setLatestDateDay(myRange.getEnd());
+        theRange = theBuilder.getRange();
     }
 
     /**
@@ -755,9 +674,9 @@ public class TransactionPanel
                 case REFERENCE:
                     myTrans.setReference(pUpdate.getString());
                     break;
-                case TRANSTAG:
-                    updateTag(myTrans, pUpdate.getEvent());
-                    break;
+                // case TRANSTAG:
+                // updateTag(myTrans, pUpdate.getEvent());
+                // break;
                 case PARTNERAMOUNT:
                     myTrans.setPartnerAmount(pUpdate.getMoney());
                     break;
@@ -879,51 +798,51 @@ public class TransactionPanel
     }
 
     /**
-     * Build the account list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the account menu for an item.
+     * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildAccountMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+    public void buildAccountMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
                                  final Transaction pTrans) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
-        buildHoldingMenu(pMenuBuilder, true, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.CASH, CashList.class), true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.LOAN, LoanList.class), true, pTrans);
+        buildHoldingMenu(pMenu, true, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), true, pTrans);
     }
 
     /**
-     * Build the partner list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the partner menu for an item.
+     * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildPartnerMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+    public void buildPartnerMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
                                  final Transaction pTrans) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Add possible items */
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
-        buildHoldingMenu(pMenuBuilder, false, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
-        buildAssetMenu(pMenuBuilder, getDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.CASH, CashList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.LOAN, LoanList.class), false, pTrans);
+        buildHoldingMenu(pMenu, false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class), false, pTrans);
+        buildAssetMenu(pMenu, getDataList(MoneyWiseDataType.PAYEE, PayeeList.class), false, pTrans);
     }
 
     /**
-     * Build the asset list for an item.
+     * Build the asset menu for an item.
      * @param <T> the Asset type
-     * @param pMenuBuilder the menu builder
+     * @param pMenu the menu
      * @param pIsAccount is this item the account rather than partner
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private static <T extends AssetBase<T>> void buildAssetMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+    private static <T extends AssetBase<T>> void buildAssetMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
                                                                 final AssetBaseList<T> pList,
                                                                 final boolean pIsAccount,
                                                                 final Transaction pTrans) {
@@ -933,8 +852,8 @@ public class TransactionPanel
         TransactionAsset myCurr = pIsAccount
                                              ? myAccount
                                              : pTrans.getPartner();
-        JMenuItem myActive = null;
-        JScrollMenu myMenu = null;
+        TethysScrollMenuItem<TransactionAsset> myActive = null;
+        TethysScrollSubMenu<TransactionAsset, Icon> myMenu = null;
 
         /* Loop through the available values */
         Iterator<T> myIterator = pList.iterator();
@@ -954,12 +873,12 @@ public class TransactionPanel
 
             /* If this the first item */
             if (myMenu == null) {
-                /* Create a new JMenu and add it to the popUp */
-                myMenu = pMenuBuilder.addSubMenu(pList.getItemType().getItemName());
+                /* Create a new subMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(pList.getItemType().getItemName());
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myAsset);
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<TransactionAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
 
             /* If this is the active category */
             if (myAsset.equals(myCurr)) {
@@ -969,26 +888,28 @@ public class TransactionPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the asset list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the holding asset menu for an item.
+     * @param pMenu the menu
      * @param pIsAccount is this item the account rather than partner
      * @param pTrans the transaction to build for
      */
-    private void buildHoldingMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
-                                  final boolean pIsAccount,
-                                  final Transaction pTrans) {
+    private static void buildHoldingMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
+                                         final boolean pIsAccount,
+                                         final Transaction pTrans) {
         /* Record active item */
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCategory = pTrans.getCategory();
         TransactionAsset myCurr = pIsAccount
                                              ? myAccount
                                              : pTrans.getPartner();
-        JMenuItem myActive = null;
-        JScrollMenu myMenu = null;
+        TethysScrollMenuItem<TransactionAsset> myActive = null;
+        TethysScrollSubMenu<TransactionAsset, Icon> myMenu = null;
 
         /* Access Portfolios and Holdings Map */
         MoneyWiseData myData = pTrans.getDataSet();
@@ -999,7 +920,7 @@ public class TransactionPanel
         Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             Portfolio myPortfolio = myPortIterator.next();
-            JScrollMenu myCoreMenu = null;
+            TethysScrollSubMenu<TransactionAsset, Icon> myCoreMenu = null;
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
@@ -1028,15 +949,15 @@ public class TransactionPanel
                         /* Ensure that hierarchy is created */
                         if (myMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
-                            myMenu = pMenuBuilder.addSubMenu(AssetType.SECURITYHOLDING.toString());
+                            myMenu = pMenu.addSubMenu(AssetType.SECURITYHOLDING.toString());
                         }
                         if (myCoreMenu == null) {
                             /* Create a new JMenu and add it to the popUp */
-                            myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
+                            myCoreMenu = myMenu.getSubMenu().addSubMenu(myPortfolio.getName());
                         }
 
                         /* Add the item to the menu */
-                        JMenuItem myItem = pMenuBuilder.addItem(myCoreMenu, myHolding, mySecurity.getName());
+                        TethysScrollMenuItem<TransactionAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
 
                         /* If this is the active holding */
                         if (mySecurity.equals(myCurr)) {
@@ -1049,7 +970,7 @@ public class TransactionPanel
                 /* If there are new elements */
                 if (myNewIterator != null) {
                     /* Loop through them */
-                    JScrollMenu mySubMenu = null;
+                    TethysScrollSubMenu<TransactionAsset, Icon> mySubMenu = null;
                     while (myNewIterator.hasNext()) {
                         SecurityHolding myHolding = myNewIterator.next();
                         Security mySecurity = myHolding.getSecurity();
@@ -1064,47 +985,49 @@ public class TransactionPanel
 
                         /* Ensure that hierarchy is created */
                         if (myMenu == null) {
-                            /* Create a new JMenu and add it to the popUp */
-                            myMenu = pMenuBuilder.addSubMenu(AssetType.SECURITYHOLDING.toString());
+                            /* Create a new subMenu and add it to the popUp */
+                            myMenu = pMenu.addSubMenu(AssetType.SECURITYHOLDING.toString());
                         }
                         if (myCoreMenu == null) {
-                            /* Create a new JMenu and add it to the popUp */
-                            myCoreMenu = pMenuBuilder.addSubMenu(myMenu, myPortfolio.getName());
+                            /* Create a new subMenu and add it to the popUp */
+                            myCoreMenu = myMenu.getSubMenu().addSubMenu(myPortfolio.getName());
                         }
                         if (mySubMenu == null) {
                             /* Create a new subMenu */
-                            mySubMenu = pMenuBuilder.addSubMenu(myCoreMenu, SecurityHolding.SECURITYHOLDING_NEW);
+                            mySubMenu = myCoreMenu.getSubMenu().addSubMenu(SecurityHolding.SECURITYHOLDING_NEW);
                         }
 
                         /* Add the item to the menu */
-                        pMenuBuilder.addItem(mySubMenu, myHolding, mySecurity.getName());
+                        myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
                     }
                 }
             }
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the category list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the category menu for an item.
+     * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildCategoryMenu(final JScrollMenuBuilder<TransactionCategory> pMenuBuilder,
+    public void buildCategoryMenu(final TethysScrollMenu<TransactionCategory, Icon> pMenu,
                                   final Transaction pTrans) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         TransactionAsset myAccount = pTrans.getAccount();
         TransactionCategory myCurr = pTrans.getCategory();
-        JMenuItem myActive = null;
-        JMenuItem myItem;
+        TethysScrollMenuItem<TransactionCategory> myActive = null;
+        TethysScrollMenuItem<TransactionCategory> myItem;
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<>();
+        Map<String, TethysScrollSubMenu<TransactionCategory, Icon>> myMap = new HashMap<>();
 
         /* Access Categories */
         TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
@@ -1130,21 +1053,21 @@ public class TransactionPanel
             /* If we have a parent */
             if (myParent != null) {
                 String myParentName = myParent.getName();
-                JScrollMenu myMenu = myMap.get(myParentName);
+                TethysScrollSubMenu<TransactionCategory, Icon> myMenu = myMap.get(myParentName);
 
-                /* If this is a new menu */
+                /* If this is a new subMenu */
                 if (myMenu == null) {
-                    /* Create a new JMenu and add it to the popUp */
-                    myMenu = pMenuBuilder.addSubMenu(myParentName);
+                    /* Create a new subMenu and add it to the popUp */
+                    myMenu = pMenu.addSubMenu(myParentName);
                     myMap.put(myParentName, myMenu);
                 }
 
-                /* Create a new JMenuItem and add it to the subMenu */
-                myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+                /* Create a new MenuItem and add it to the subMenu */
+                myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             } else {
-                /* Create a new JMenuItem and add it to the popUp */
-                myItem = pMenuBuilder.addItem(myCategory);
+                /* Create a new MenuItem and add it to the popUp */
+                myItem = pMenu.addItem(myCategory);
             }
 
             /* If this is the active category */
@@ -1155,22 +1078,24 @@ public class TransactionPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the ThirdParty list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the ReturnedAccount menu for an item.
+     * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildReturnedAccountMenu(final JScrollMenuBuilder<TransactionAsset> pMenuBuilder,
+    public void buildReturnedAccountMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
                                          final Transaction pTrans) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         TransactionAsset myCurr = pTrans.getReturnedCashAccount();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<TransactionAsset> myActive = null;
 
         /* Access Deposits */
         DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
@@ -1186,10 +1111,10 @@ public class TransactionPanel
                 continue;
             }
 
-            /* Create a new action for the portfolio */
-            JMenuItem myItem = pMenuBuilder.addItem(myDeposit);
+            /* Create a new action for the account */
+            TethysScrollMenuItem<TransactionAsset> myItem = pMenu.addItem(myDeposit);
 
-            /* If this is the active thirdParty */
+            /* If this is the active returned account */
             if (myDeposit.equals(myCurr)) {
                 /* Record it */
                 myActive = myItem;
@@ -1197,18 +1122,34 @@ public class TransactionPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the active Tag list for an item.
-     * @param pMenuBuilder the menu builder
+     * Create TagItemList.
      * @param pTrans the transaction to build for
+     * @return the itemList
      */
-    public void buildTagMenu(final JScrollListMenuBuilder<TransactionTag> pMenuBuilder,
-                             final Transaction pTrans) {
-        /* Clear the menu of selected items */
-        pMenuBuilder.clearAllSelected();
+    public TethysItemList<TransactionTag> buildTagList(final Transaction pTrans) {
+        /* Create a new itemList */
+        TethysItemList<TransactionTag> myList = new TethysItemList<>();
+
+        /* Access TransactionTags */
+        TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+
+        /* Loop through the tags */
+        Iterator<TransactionTag> myTagIterator = myTags.iterator();
+        while (myTagIterator.hasNext()) {
+            TransactionTag myTag = myTagIterator.next();
+
+            /* If the tag is not deleted */
+            if (!myTag.isDeleted()) {
+                /* Add item to the tag list */
+                myList.setSelectableItem(myTag);
+            }
+        }
 
         /* Access tag iterator */
         Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
@@ -1221,33 +1162,12 @@ public class TransactionPanel
                 if (!myInfo.isDeleted()) {
                     /* Access the tag and set as active */
                     TransactionTag myTag = myInfo.getTransactionTag();
-                    pMenuBuilder.setSelectedItem(myTag);
+                    myList.selectItem(myTag);
                 }
             }
         }
-    }
 
-    /**
-     * Update the Tag list for an item.
-     * @param pTrans the transaction to build for
-     * @param pEvent the item event
-     * @throws OceanusException on error
-     */
-    public void updateTag(final Transaction pTrans,
-                          final TethysEvent<TethysUIEvent> pEvent) throws OceanusException {
-        /* Determine whether this is a select or not */
-        @SuppressWarnings("unchecked")
-        ToggleState<TransactionTag> myState = (ToggleState<TransactionTag>) pEvent.getDetails(ToggleState.class);
-        boolean bSelected = myState.isSelected();
-
-        /* Access the TransactionTag */
-        TransactionTag myTag = myState.getItem();
-
-        /* Update transaction tag status */
-        if (bSelected) {
-            pTrans.setTransactionTag(myTag);
-        } else {
-            pTrans.clearTransactionTag(myTag);
-        }
+        /* return the item list */
+        return myList;
     }
 }

@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
@@ -79,7 +79,7 @@ public class MetisEosFieldSet<T extends MetisFieldSetItem>
      */
     public void addFieldElement(final MetisField pField,
                                 final MetisDataType pClass,
-                                final TethysSwingDataTextField<String> pTextField) {
+                                final TethysSwingStringTextField pTextField) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pTextField);
 

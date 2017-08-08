@@ -24,22 +24,19 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.GridLayout;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
@@ -52,61 +49,35 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
  * Panel to display/edit/create a Portfolio.
  */
 public class PortfolioPanel
-        extends MoneyWiseDataItemPanel<Portfolio> {
+        extends MoneyWiseEosItemPanel<Portfolio> {
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<Portfolio> theFieldSet;
+    private final MetisEosFieldSet<Portfolio> theFieldSet;
 
     /**
-     * Type Button Field.
+     * The Closed State.
      */
-    private final JScrollButton<PortfolioType> theTypeButton;
-
-    /**
-     * Parent Button Field.
-     */
-    private final JScrollButton<Payee> theParentButton;
-
-    /**
-     * Currency Button Field.
-     */
-    private final JScrollButton<AssetCurrency> theCurrencyButton;
-
-    /**
-     * Closed Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
-
-    /**
-     * The Type Menu Builder.
-     */
-    private final JScrollMenuBuilder<PortfolioType> theTypeMenuBuilder;
-
-    /**
-     * The Parent Menu Builder.
-     */
-    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-    /**
-     * The Currency Menu Builder.
-     */
-    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+    private Boolean theClosedState = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -116,35 +87,27 @@ public class PortfolioPanel
      * @param pError the error panel
      */
     public PortfolioPanel(final TethysSwingGuiFactory pFactory,
-                          final MetisFieldManager pFieldMgr,
+                          final MetisEosFieldManager pFieldMgr,
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
                           final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Create the buttons */
-        theTypeButton = new JScrollButton<>();
-        theParentButton = new JScrollButton<>();
-        theCurrencyButton = new JScrollButton<>();
-
-        /* Set button states */
-        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel();
+        JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel(pFactory);
         myTabs.add(TAB_DETAILS, myPanel);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel();
+        myPanel = buildNotesPanel(pFactory);
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Layout the main panel */
@@ -155,43 +118,38 @@ public class PortfolioPanel
 
         /* Layout the panel */
         layoutPanel();
-
-        /* Create the listeners */
-        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildTypeMenu(theTypeMenuBuilder, getItem()));
-        theParentMenuBuilder = theParentButton.getMenuBuilder();
-        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
-        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
     }
 
     /**
      * Build Main subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel() {
-        /* Build the button states */
-        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
-        MoneyWiseIcons.buildLockedButton(theClosedState);
-
+    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField myDesc = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<PortfolioType> myTypeButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Portfolio.NAMELEN);
         restrictField(myDesc, Portfolio.NAMELEN);
-        restrictField(theTypeButton, Portfolio.NAMELEN);
-        restrictField(theParentButton, Portfolio.NAMELEN);
-        restrictField(theCurrencyButton, Portfolio.NAMELEN);
+        restrictField(myTypeButton, Portfolio.NAMELEN);
+        restrictField(myParentButton, Portfolio.NAMELEN);
+        restrictField(myCurrencyButton, Portfolio.NAMELEN);
         restrictField(myClosedButton, Portfolio.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Portfolio.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Portfolio.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Portfolio.FIELD_PORTTYPE, PortfolioType.class, theTypeButton);
-        theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, theParentButton);
-        theFieldSet.addFieldElement(Portfolio.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Portfolio.FIELD_PORTTYPE, PortfolioType.class, myTypeButton);
+        theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, myParentButton);
+        theFieldSet.addFieldElement(Portfolio.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -208,23 +166,31 @@ public class PortfolioPanel
         theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myTypeButton.setMenuConfigurator(c -> buildTypeMenu(c, getItem()));
+        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
+        myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
+        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build extras subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildXtrasPanel() {
+    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField mySortCode = new JTextField();
-        JTextField myAccount = new JTextField();
-        JTextField myReference = new JTextField();
-        JTextField myWebSite = new JTextField();
-        JTextField myCustNo = new JTextField();
-        JTextField myUserId = new JTextField();
-        JTextField myPassWord = new JTextField();
+        TethysSwingStringTextField mySortCode = pFactory.newStringField();
+        TethysSwingStringTextField myAccount = pFactory.newStringField();
+        TethysSwingStringTextField myReference = pFactory.newStringField();
+        TethysSwingStringTextField myWebSite = pFactory.newStringField();
+        TethysSwingStringTextField myCustNo = pFactory.newStringField();
+        TethysSwingStringTextField myUserId = pFactory.newStringField();
+        TethysSwingStringTextField myPassWord = pFactory.newStringField();
 
         /* Restrict the fields */
         int myWidth = Portfolio.NAMELEN >> 1;
@@ -266,12 +232,14 @@ public class PortfolioPanel
 
     /**
      * Build Notes subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildNotesPanel() {
+    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextArea myNotes = new JTextArea();
-        JScrollPane myScroll = new JScrollPane(myNotes);
+        TethysSwingTextArea myNotes = pFactory.newTextArea();
+        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
@@ -318,7 +286,7 @@ public class PortfolioPanel
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed || !bIsRelevant;
         theFieldSet.setEditable(Portfolio.FIELD_CLOSED, isEditable && bEditClosed);
-        theClosedState.setState(bEditClosed);
+        theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
@@ -423,18 +391,18 @@ public class PortfolioPanel
     }
 
     /**
-     * Build the portfolioType list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the portfolioType menu for an item.
+     * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildTypeMenu(final JScrollMenuBuilder<PortfolioType> pMenuBuilder,
+    public void buildTypeMenu(final TethysScrollMenu<PortfolioType, Icon> pMenu,
                               final Portfolio pPortfolio) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         PortfolioType myCurr = pPortfolio.getPortfolioType();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<PortfolioType> myActive = null;
 
         /* Access PortfolioTypes */
         PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
@@ -445,7 +413,7 @@ public class PortfolioPanel
             PortfolioType myType = myIterator.next();
 
             /* Create a new action for the type */
-            JMenuItem myItem = pMenuBuilder.addItem(myType);
+            TethysScrollMenuItem<PortfolioType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -455,22 +423,24 @@ public class PortfolioPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the parent list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the parent menu for an item.
+     * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildParentMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+    public void buildParentMenu(final TethysScrollMenu<Payee, Icon> pMenu,
                                 final Portfolio pPortfolio) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         Payee myCurr = pPortfolio.getParent();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
         PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -488,7 +458,7 @@ public class PortfolioPanel
             }
 
             /* Create a new action for the payee */
-            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -498,22 +468,24 @@ public class PortfolioPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the currency list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the currency menu for an item.
+     * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
                                   final Portfolio pPortfolio) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         AssetCurrency myCurr = pPortfolio.getAssetCurrency();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -530,7 +502,7 @@ public class PortfolioPanel
             }
 
             /* Create a new action for the currency */
-            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {
@@ -540,6 +512,8 @@ public class PortfolioPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

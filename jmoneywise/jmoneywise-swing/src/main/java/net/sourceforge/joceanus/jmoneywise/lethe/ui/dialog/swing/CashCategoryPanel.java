@@ -26,16 +26,14 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
@@ -45,40 +43,22 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryType.CashCategoryTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a CashCategory.
  */
 public class CashCategoryPanel
-        extends MoneyWiseDataItemPanel<CashCategory> {
+        extends MoneyWiseEosItemPanel<CashCategory> {
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<CashCategory> theFieldSet;
-
-    /**
-     * Category Type Button Field.
-     */
-    private final JScrollButton<CashCategoryType> theTypeButton;
-
-    /**
-     * Parent Button Field.
-     */
-    private final JScrollButton<CashCategory> theParentButton;
-
-    /**
-     * The CategoryType Menu Builder.
-     */
-    private final JScrollMenuBuilder<CashCategoryType> theTypeMenuBuilder;
-
-    /**
-     * The Parent Menu Builder.
-     */
-    private final JScrollMenuBuilder<CashCategory> theParentMenuBuilder;
+    private final MetisEosFieldSet<CashCategory> theFieldSet;
 
     /**
      * Constructor.
@@ -88,35 +68,35 @@ public class CashCategoryPanel
      * @param pError the error panel
      */
     public CashCategoryPanel(final TethysSwingGuiFactory pFactory,
-                             final MetisFieldManager pFieldMgr,
+                             final MetisEosFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField mySubName = new JTextField();
-        JTextField myDesc = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField mySubName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        theTypeButton = new JScrollButton<>();
-        theParentButton = new JScrollButton<>();
+        TethysSwingScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         restrictField(myName, CashCategory.NAMELEN);
         restrictField(mySubName, CashCategory.NAMELEN);
         restrictField(myDesc, CashCategory.NAMELEN);
-        restrictField(theTypeButton, CashCategory.NAMELEN);
-        restrictField(theParentButton, CashCategory.NAMELEN);
+        restrictField(myTypeButton, CashCategory.NAMELEN);
+        restrictField(myParentButton, CashCategory.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
         theFieldSet.addFieldElement(CashCategory.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
         theFieldSet.addFieldElement(CashCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, theTypeButton);
-        theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, theParentButton);
+        theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, myTypeButton);
+        theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, myParentButton);
 
         /* Layout the main panel */
         JPanel myPanel = getMainPanel();
@@ -132,11 +112,9 @@ public class CashCategoryPanel
         /* Layout the panel */
         layoutPanel();
 
-        /* Create the listeners */
-        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryTypeMenu(theTypeMenuBuilder, getItem()));
-        theParentMenuBuilder = theParentButton.getMenuBuilder();
-        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
+        /* Configure the menuBuilders */
+        myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
+        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
     }
 
     @Override
@@ -216,17 +194,17 @@ public class CashCategoryPanel
 
     /**
      * Build the category type menu for an item.
-     * @param pMenuBuilder the menu builder
+     * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final JScrollMenuBuilder<CashCategoryType> pMenuBuilder,
+    public void buildCategoryTypeMenu(final TethysScrollMenu<CashCategoryType, Icon> pMenu,
                                       final CashCategory pCategory) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         CashCategoryType myCurr = pCategory.getCategoryType();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<CashCategoryType> myActive = null;
 
         /* Access Cash Category types */
         CashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
@@ -246,7 +224,7 @@ public class CashCategoryPanel
             }
 
             /* Create a new action for the type */
-            JMenuItem myItem = pMenuBuilder.addItem(myType);
+            TethysScrollMenuItem<CashCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -256,22 +234,24 @@ public class CashCategoryPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
      * Build the parent menu for an item.
-     * @param pMenuBuilder the menu builder
+     * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private static void buildParentMenu(final JScrollMenuBuilder<CashCategory> pMenuBuilder,
+    private static void buildParentMenu(final TethysScrollMenu<CashCategory, Icon> pMenu,
                                         final CashCategory pCategory) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         CashCategory myCurr = pCategory.getParentCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<CashCategory> myActive = null;
 
         /* Loop through the CashCategories */
         CashCategoryList myCategories = pCategory.getList();
@@ -286,7 +266,7 @@ public class CashCategoryPanel
             }
 
             /* Create a new action for the type */
-            JMenuItem myItem = pMenuBuilder.addItem(myCat);
+            TethysScrollMenuItem<CashCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {
@@ -296,6 +276,8 @@ public class CashCategoryPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

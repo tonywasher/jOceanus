@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -32,13 +32,13 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -54,22 +54,23 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.LoanPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
@@ -80,7 +81,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Loan Table.
  */
 public class LoanTable
-        extends JDataTable<Loan, MoneyWiseDataType> {
+        extends PrometheusDataTable<Loan, MoneyWiseDataType> {
     /**
      * Name Column Title.
      */
@@ -125,6 +126,7 @@ public class LoanTable
      * LastTransaction Column Title.
      */
     private static final String TITLE_LASTTRAN = MoneyWiseUIResource.ASSET_COLUMN_LATEST.getValue();
+
     /**
      * The data view.
      */
@@ -133,7 +135,7 @@ public class LoanTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -193,7 +195,7 @@ public class LoanTable
     /**
      * The List Selection Model.
      */
-    private final JDataTableSelection<Loan, MoneyWiseDataType> theSelectionModel;
+    private final PrometheusDataTableSelection<Loan, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Loans.
@@ -218,7 +220,7 @@ public class LoanTable
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = theView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -267,7 +269,7 @@ public class LoanTable
         thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);
+        theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveAccount);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -438,7 +440,7 @@ public class LoanTable
      * JTable Data Model.
      */
     private final class LoanTableModel
-            extends JDataTableModel<Loan, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<Loan, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -554,7 +556,7 @@ public class LoanTable
      * Column Model class.
      */
     private final class LoanColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -601,59 +603,9 @@ public class LoanTable
         private static final int COLUMN_LASTTRAN = 7;
 
         /**
-         * Closed Icon Renderer.
-         */
-        private final IconButtonCellRenderer<Boolean> theClosedIconRenderer;
-
-        /**
-         * Status Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
-
-        /**
-         * Date Renderer.
-         */
-        private final CalendarCellRenderer theDateRenderer;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * String editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * Closed Icon editor.
-         */
-        private final IconButtonCellEditor<Boolean> theClosedIconEditor;
-
-        /**
-         * Status Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
-
-        /**
-         * Category ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<LoanCategory> theCategoryEditor;
-
-        /**
-         * Parent ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<Payee> theParentEditor;
-
-        /**
-         * Currency ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<AssetCurrency> theCurrencyEditor;
-
-        /**
          * Closed column.
          */
-        private final JDataTableColumn theClosedColumn;
+        private final PrometheusDataTableColumn theClosedColumn;
 
         /**
          * Constructor.
@@ -664,39 +616,43 @@ public class LoanTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategory.class);
-            theParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            theCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
-            theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
-            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
-            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldScrollButtonCellEditor<LoanCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategory.class);
+            MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
+            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            MoneyWiseIcons.buildLockedButton(theClosedIconEditor.getComplexState());
-            MoneyWiseIcons.buildStatusButton(theStatusIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
+            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
+            myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARENT, WIDTH_NAME, theStringRenderer, theParentEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CURR, WIDTH_CURR, theStringRenderer, theCurrencyEditor));
-            theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, myStringRenderer, myCategoryEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_PARENT, WIDTH_NAME, myStringRenderer, myParentEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CURR, WIDTH_CURR, myStringRenderer, myCurrencyEditor));
+            theClosedColumn = new PrometheusDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, myClosedIconRenderer, myClosedIconEditor);
             declareColumn(theClosedColumn);
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
-            declareColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, myStatusIconRenderer, myStatusIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, myDateRenderer));
 
             /* Initialise the columns */
             setColumns();
 
             /* Add listeners */
-            theCategoryEditor.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
-            theCurrencyEditor.getEventRegistrar().addEventListener(e -> buildCurrencyMenu());
-            theParentEditor.getEventRegistrar().addEventListener(e -> buildParentMenu());
+            myCategoryEditor.setMenuConfigurator(this::buildCategoryMenu);
+            myCurrencyEditor.setMenuConfigurator(this::buildCurrencyMenu);
+            myParentEditor.setMenuConfigurator(this::buildParentMenu);
         }
 
         /**
@@ -763,8 +719,8 @@ public class LoanTable
                     return pLoan.isClosed();
                 case COLUMN_ACTIVE:
                     return pLoan.isActive()
-                                            ? ActionType.ACTIVE
-                                            : ActionType.DELETE;
+                                            ? PrometheusAction.ACTIVE
+                                            : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pLoan.getLatest();
                     return (myTran == null)
@@ -870,47 +826,54 @@ public class LoanTable
 
         /**
          * Build the popUpMenu for parents.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildParentMenu() {
-            /* Access details */
-            JScrollMenuBuilder<Payee> myBuilder = theParentEditor.getMenuBuilder();
-
+        private void buildParentMenu(final Integer pRowIndex,
+                                     final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theParentEditor.getPoint();
-            Loan myLoan = theLoans.get(myCell.y);
+            Loan myLoan = theLoans.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildParentMenu(myBuilder, myLoan);
+            theActiveAccount.buildParentMenu(pMenu, myLoan);
         }
 
         /**
          * Obtain the popUpMenu for categories.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildCategoryMenu() {
-            /* Access details */
-            JScrollMenuBuilder<LoanCategory> myBuilder = theCategoryEditor.getMenuBuilder();
-
+        private void buildCategoryMenu(final Integer pRowIndex,
+                                       final TethysScrollMenu<LoanCategory, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theCategoryEditor.getPoint();
-            Loan myLoan = theLoans.get(myCell.y);
+            Loan myLoan = theLoans.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildCategoryMenu(myBuilder, myLoan);
+            theActiveAccount.buildCategoryMenu(pMenu, myLoan);
         }
 
         /**
          * Build the popUpMenu for currencies.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildCurrencyMenu() {
-            /* Access details */
-            JScrollMenuBuilder<AssetCurrency> myBuilder = theCurrencyEditor.getMenuBuilder();
-
+        private void buildCurrencyMenu(final Integer pRowIndex,
+                                       final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theCurrencyEditor.getPoint();
-            Loan myLoan = theLoans.get(myCell.y);
+            Loan myLoan = theLoans.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildCurrencyMenu(myBuilder, myLoan);
+            theActiveAccount.buildCurrencyMenu(pMenu, myLoan);
+        }
+
+        /**
+         * Determine closed state.
+         * @param pRowIndex the row index
+         * @return the state
+         */
+        private boolean determineClosedState(final int pRowIndex) {
+            Loan myLoan = theLoans.get(pRowIndex);
+            return myLoan.isClosed() || !myLoan.isRelevant();
         }
     }
 }

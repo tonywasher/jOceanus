@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -88,9 +88,9 @@ public abstract class TethysIconButtonManager<T, N, I>
     private T theValue;
 
     /**
-     * The function to determine the icon for the value.
+     * The mapSet supplier to determine the icon for the value.
      */
-    private Function<T, TethysIconMapSet<T>> theMapSetForValue = p -> null;
+    private Supplier<TethysIconMapSet<T>> theMapSet = () -> null;
 
     /**
      * Constructor.
@@ -214,16 +214,16 @@ public abstract class TethysIconButtonManager<T, N, I>
      * Set the mapSet selector.
      * @param pSelector the selector
      */
-    public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSelector) {
-        theMapSetForValue = pSelector;
+    public void setIconMapSet(final Supplier<TethysIconMapSet<T>> pSelector) {
+        theMapSet = pSelector;
     }
 
     /**
      * Get the mapSet selector.
      * @return the selector
      */
-    public Function<T, TethysIconMapSet<T>> getIconMapSet() {
-        return theMapSetForValue;
+    public Supplier<TethysIconMapSet<T>> getIconMapSet() {
+        return theMapSet;
     }
 
     @Override
@@ -248,7 +248,7 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     public void applyButtonState() {
         /* Access MapSet and check iconWidth */
-        TethysIconMapSet<T> myMapSet = theMapSetForValue.apply(theValue);
+        TethysIconMapSet<T> myMapSet = theMapSet.get();
         if (myMapSet != null) {
             checkWidth(myMapSet.getWidth());
         }
@@ -291,7 +291,7 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     public void progressToNextState() {
         /* Access next value */
-        TethysIconMapSet<T> myMapSet = theMapSetForValue.apply(theValue);
+        TethysIconMapSet<T> myMapSet = theMapSet.get();
         T myValue = myMapSet == null
                                      ? theValue
                                      : myMapSet.getNextValueForValue(theValue);

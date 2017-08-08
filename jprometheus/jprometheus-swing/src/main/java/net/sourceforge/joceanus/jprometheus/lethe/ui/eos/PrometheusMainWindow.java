@@ -338,9 +338,8 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Make the frame.
-     * @throws OceanusException on error
      */
-    public void makeFrame() throws OceanusException {
+    public void makeFrame() {
         /* Set visibility */
         setVisibility();
     }

@@ -23,7 +23,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -32,21 +32,21 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.CalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.DilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IntegerCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.ScrollListButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.UnitsCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.DecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IntegerCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldListButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldMoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldUnitsCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -63,36 +63,35 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.AnalysisColumnSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateConfig;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton.JScrollListMenuBuilder;
-import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
@@ -102,7 +101,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Analysis Statement.
  */
 public class TransactionTable
-        extends JDataTable<Transaction, MoneyWiseDataType> {
+        extends PrometheusDataTable<Transaction, MoneyWiseDataType> {
     /**
      * Text for DataEntry Title.
      */
@@ -261,7 +260,7 @@ public class TransactionTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The analysis data entry.
@@ -321,7 +320,7 @@ public class TransactionTable
     /**
      * The List Selection Model.
      */
-    private final JDataTableSelection<Transaction, MoneyWiseDataType> theSelectionModel;
+    private final PrometheusDataTableSelection<Transaction, MoneyWiseDataType> theSelectionModel;
 
     /**
      * TransactionBuilder.
@@ -358,7 +357,7 @@ public class TransactionTable
 
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = pView.getFieldManager();
+        theFieldMgr = pView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Access the GUI Factory */
@@ -425,7 +424,7 @@ public class TransactionTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<>(this, theActiveTrans);
+        theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveTrans);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -449,10 +448,7 @@ public class TransactionTable
                                                          : AnalysisColumnSet.BALANCE);
     }
 
-    /**
-     * Obtain the node.
-     * @return the node
-     */
+    @Override
     public JComponent getNode() {
         return thePanel;
     }
@@ -565,7 +561,7 @@ public class TransactionTable
             theHeader = new AnalysisHeader(theTransactions);
 
             /* Update the column editors */
-            theColumns.refreshData();
+            // theColumns.refreshData();
 
             /* Notify panel of refresh */
             theActiveTrans.refreshData();
@@ -702,7 +698,7 @@ public class TransactionTable
      * JTable Data Model.
      */
     private final class AnalysisTableModel
-            extends JDataTableModel<Transaction, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<Transaction, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -815,7 +811,7 @@ public class TransactionTable
      * Column Model class.
      */
     private final class AnalysisColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -947,199 +943,99 @@ public class TransactionTable
         private static final int COLUMN_ACTION = 24;
 
         /**
-         * Date Renderer.
-         */
-        private final CalendarCellRenderer theDateRenderer;
-
-        /**
-         * Decimal Renderer.
-         */
-        private final DecimalCellRenderer theDecimalRenderer;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * Integer Renderer.
-         */
-        private final IntegerCellRenderer theIntegerRenderer;
-
-        /**
-         * Icon Renderer.
-         */
-        private final IconButtonCellRenderer<AssetDirection> theDirectionIconRenderer;
-
-        /**
-         * Icon editor.
-         */
-        private final IconButtonCellEditor<AssetDirection> theDirectionIconEditor;
-
-        /**
-         * Icon Renderer.
-         */
-        private final IconButtonCellRenderer<Boolean> theReconciledIconRenderer;
-
-        /**
-         * Icon editor.
-         */
-        private final IconButtonCellEditor<Boolean> theReconciledIconEditor;
-
-        /**
-         * Date editor.
-         */
-        private final CalendarCellEditor theDateEditor;
-
-        /**
-         * String editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * Integer editor.
-         */
-        private final IntegerCellEditor theIntegerEditor;
-
-        /**
-         * Money editor.
-         */
-        private final MoneyCellEditor theMoneyEditor;
-
-        /**
-         * Units editor.
-         */
-        private final UnitsCellEditor theUnitsEditor;
-
-        /**
-         * Dilution editor.
-         */
-        private final DilutionCellEditor theDilutionEditor;
-
-        /**
-         * Action Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theActionIconRenderer;
-
-        /**
-         * Action Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theActionIconEditor;
-
-        /**
-         * Account ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<TransactionAsset> theAccountEditor;
-
-        /**
-         * Category ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<TransactionCategory> theCategoryEditor;
-
-        /**
-         * Returned ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<TransactionAsset> theReturnedEditor;
-
-        /**
-         * ScrollListButton Menu Editor.
-         */
-        private final ScrollListButtonCellEditor<TransactionTag> theTagEditor;
-
-        /**
          * Comments column.
          */
-        private final JDataTableColumn theDescColumn;
+        private final PrometheusDataTableColumn theDescColumn;
 
         /**
          * Amount column.
          */
-        private final JDataTableColumn thePaidColumn;
+        private final PrometheusDataTableColumn thePaidColumn;
 
         /**
          * Amount column.
          */
-        private final JDataTableColumn theReceivedColumn;
+        private final PrometheusDataTableColumn theReceivedColumn;
 
         /**
          * Amount column.
          */
-        private final JDataTableColumn theBalanceColumn;
+        private final PrometheusDataTableColumn theBalanceColumn;
 
         /**
          * Amount column.
          */
-        private final JDataTableColumn theAmountColumn;
+        private final PrometheusDataTableColumn theAmountColumn;
 
         /**
          * Reference column.
          */
-        private final JDataTableColumn theReferenceColumn;
+        private final PrometheusDataTableColumn theReferenceColumn;
 
         /**
          * Tags column.
          */
-        private final JDataTableColumn theTagsColumn;
+        private final PrometheusDataTableColumn theTagsColumn;
 
         /**
          * AccountUnits column.
          */
-        private final JDataTableColumn theAccountUnitsColumn;
+        private final PrometheusDataTableColumn theAccountUnitsColumn;
 
         /**
          * PartnerUnits column.
          */
-        private final JDataTableColumn thePartnerUnitsColumn;
+        private final PrometheusDataTableColumn thePartnerUnitsColumn;
 
         /**
          * PartnerAmount column.
          */
-        private final JDataTableColumn thePartnerAmountColumn;
+        private final PrometheusDataTableColumn thePartnerAmountColumn;
 
         /**
          * Dilution column.
          */
-        private final JDataTableColumn theDilutionColumn;
+        private final PrometheusDataTableColumn theDilutionColumn;
 
         /**
          * QualifyYears column.
          */
-        private final JDataTableColumn theQualYearsColumn;
+        private final PrometheusDataTableColumn theQualYearsColumn;
 
         /**
          * ReturnedAccount column.
          */
-        private final JDataTableColumn theReturnedAccountColumn;
+        private final PrometheusDataTableColumn theReturnedAccountColumn;
 
         /**
          * ReturnedCash column.
          */
-        private final JDataTableColumn theReturnedCashColumn;
+        private final PrometheusDataTableColumn theReturnedCashColumn;
 
         /**
          * TaxCredit column.
          */
-        private final JDataTableColumn theTaxCreditColumn;
+        private final PrometheusDataTableColumn theTaxCreditColumn;
 
         /**
          * NatIns column.
          */
-        private final JDataTableColumn theNatInsColumn;
+        private final PrometheusDataTableColumn theNatInsColumn;
 
         /**
          * Benefit column.
          */
-        private final JDataTableColumn theBenefitColumn;
+        private final PrometheusDataTableColumn theBenefitColumn;
 
         /**
          * Withheld column.
          */
-        private final JDataTableColumn theWithheldColumn;
+        private final PrometheusDataTableColumn theWithheldColumn;
 
         /**
          * Action column.
          */
-        private final JDataTableColumn theActionColumn;
+        private final PrometheusDataTableColumn theActionColumn;
 
         /**
          * ColumnSet.
@@ -1155,102 +1051,135 @@ public class TransactionTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            theDirectionIconEditor = theFieldMgr.allocateIconButtonCellEditor(AssetDirection.class, true);
-            theReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
-            theActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theTagEditor = theFieldMgr.allocateScrollListButtonCellEditor();
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
-            theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
-            theUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
-            theDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
-            theAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
-            theCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
-            theReturnedEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
-            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
-            theDirectionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theDirectionIconEditor);
-            theReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theReconciledIconEditor);
-            theActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theActionIconEditor);
+            MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            MetisFieldIconButtonCellEditor<AssetDirection> myDirectionIconEditor = theFieldMgr.allocateIconButtonCellEditor(AssetDirection.class);
+            MetisFieldIconButtonCellEditor<Boolean> myReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldListButtonCellEditor<TransactionTag> myTagEditor = theFieldMgr.allocateScrollListButtonCellEditor();
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldIntegerCellEditor myIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
+            MetisFieldMoneyCellEditor myMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
+            MetisFieldUnitsCellEditor myUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
+            MetisFieldDilutionCellEditor myDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
+            MetisFieldScrollButtonCellEditor<TransactionAsset> myAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
+            MetisFieldScrollButtonCellEditor<TransactionAsset> myPartnerEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
+            MetisFieldScrollButtonCellEditor<TransactionAsset> myReturnedEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
+            MetisFieldScrollButtonCellEditor<TransactionCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
+            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIntegerCellRenderer myIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
+            MetisFieldIconButtonCellRenderer<AssetDirection> myDirectionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(AssetDirection.class);
+            MetisFieldIconButtonCellRenderer<Boolean> myReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButtons */
-            MoneyWiseIcons.buildDirectionButton(theDirectionIconEditor.getComplexState());
-            MoneyWiseIcons.buildReconciledButton(theReconciledIconEditor.getComplexState());
-            MoneyWiseIcons.buildStatusButton(theActionIconEditor.getState());
+            Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
+            myReconciledIconEditor.setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)));
+            myReconciledIconRenderer.setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)));
+            Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
+            myDirectionIconEditor.setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)));
+            myDirectionIconRenderer.setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)));
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            declareColumn(new JDataTableColumn(COLUMN_ACCOUNT, WIDTH_NAME, theStringRenderer, theAccountEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theCategoryEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DIRECTION, WIDTH_ICON, theDirectionIconRenderer, theDirectionIconEditor));
-            declareColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_NAME, theStringRenderer, theAccountEditor));
-            declareColumn(new JDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, theReconciledIconRenderer, theReconciledIconEditor));
-            theDescColumn = new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DATE, WIDTH_DATE, myDateRenderer, myDateEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACCOUNT, WIDTH_NAME, myStringRenderer, myAccountEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, myStringRenderer, myCategoryEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DIRECTION, WIDTH_ICON, myDirectionIconRenderer, myDirectionIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_PARTNER, WIDTH_NAME, myStringRenderer, myPartnerEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_RECONCILED, WIDTH_ICON, myReconciledIconRenderer, myReconciledIconEditor));
+            theDescColumn = new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_NAME, myStringRenderer, myStringEditor);
             declareColumn(theDescColumn);
-            thePaidColumn = new JDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, theDecimalRenderer);
+            thePaidColumn = new PrometheusDataTableColumn(COLUMN_DEBITED, WIDTH_MONEY, myDecimalRenderer);
             declareColumn(thePaidColumn);
-            theReceivedColumn = new JDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, theDecimalRenderer);
+            theReceivedColumn = new PrometheusDataTableColumn(COLUMN_CREDITED, WIDTH_MONEY, myDecimalRenderer);
             declareColumn(theReceivedColumn);
-            theBalanceColumn = new JDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, theDecimalRenderer);
+            theBalanceColumn = new PrometheusDataTableColumn(COLUMN_BALANCE, WIDTH_MONEY, myDecimalRenderer);
             declareColumn(theBalanceColumn);
-            theAmountColumn = new JDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            theAmountColumn = new PrometheusDataTableColumn(COLUMN_AMOUNT, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(theAmountColumn);
-            theReferenceColumn = new JDataTableColumn(COLUMN_REF, WIDTH_NAME, theStringRenderer, theStringEditor);
+            theReferenceColumn = new PrometheusDataTableColumn(COLUMN_REF, WIDTH_NAME, myStringRenderer, myStringEditor);
             declareColumn(theReferenceColumn);
-            theTagsColumn = new JDataTableColumn(COLUMN_TAGS, WIDTH_NAME, theStringRenderer, theTagEditor);
+            theTagsColumn = new PrometheusDataTableColumn(COLUMN_TAGS, WIDTH_NAME, myStringRenderer, myTagEditor);
             declareColumn(theTagsColumn);
-            theAccountUnitsColumn = new JDataTableColumn(COLUMN_ACCOUNTUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
+            theAccountUnitsColumn = new PrometheusDataTableColumn(COLUMN_ACCOUNTUNITS, WIDTH_UNITS, myDecimalRenderer, myUnitsEditor);
             declareColumn(theAccountUnitsColumn);
-            thePartnerUnitsColumn = new JDataTableColumn(COLUMN_PARTNERUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor);
+            thePartnerUnitsColumn = new PrometheusDataTableColumn(COLUMN_PARTNERUNITS, WIDTH_UNITS, myDecimalRenderer, myUnitsEditor);
             declareColumn(thePartnerUnitsColumn);
-            thePartnerAmountColumn = new JDataTableColumn(COLUMN_PARTNERAMOUNT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            thePartnerAmountColumn = new PrometheusDataTableColumn(COLUMN_PARTNERAMOUNT, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(thePartnerAmountColumn);
-            theDilutionColumn = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, theDilutionEditor);
+            theDilutionColumn = new PrometheusDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, myDecimalRenderer, myDilutionEditor);
             declareColumn(theDilutionColumn);
-            theQualYearsColumn = new JDataTableColumn(COLUMN_QUALYEARS, WIDTH_INT << 1, theIntegerRenderer, theIntegerEditor);
+            theQualYearsColumn = new PrometheusDataTableColumn(COLUMN_QUALYEARS, WIDTH_INT << 1, myIntegerRenderer, myIntegerEditor);
             declareColumn(theQualYearsColumn);
-            theReturnedAccountColumn = new JDataTableColumn(COLUMN_RETURNEDACCOUNT, WIDTH_NAME, theStringRenderer, theReturnedEditor);
+            theReturnedAccountColumn = new PrometheusDataTableColumn(COLUMN_RETURNEDACCOUNT, WIDTH_NAME, myStringRenderer, myReturnedEditor);
             declareColumn(theReturnedAccountColumn);
-            theReturnedCashColumn = new JDataTableColumn(COLUMN_RETURNEDCASH, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            theReturnedCashColumn = new PrometheusDataTableColumn(COLUMN_RETURNEDCASH, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(theReturnedCashColumn);
-            theTaxCreditColumn = new JDataTableColumn(COLUMN_TAXCREDIT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            theTaxCreditColumn = new PrometheusDataTableColumn(COLUMN_TAXCREDIT, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(theTaxCreditColumn);
-            theNatInsColumn = new JDataTableColumn(COLUMN_NATINS, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            theNatInsColumn = new PrometheusDataTableColumn(COLUMN_NATINS, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(theNatInsColumn);
-            theBenefitColumn = new JDataTableColumn(COLUMN_BENEFIT, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            theBenefitColumn = new PrometheusDataTableColumn(COLUMN_BENEFIT, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(theBenefitColumn);
-            theWithheldColumn = new JDataTableColumn(COLUMN_WITHHELD, WIDTH_MONEY, theDecimalRenderer, theMoneyEditor);
+            theWithheldColumn = new PrometheusDataTableColumn(COLUMN_WITHHELD, WIDTH_MONEY, myDecimalRenderer, myMoneyEditor);
             declareColumn(theWithheldColumn);
-            theActionColumn = new JDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, theActionIconRenderer, theActionIconEditor);
+            theActionColumn = new PrometheusDataTableColumn(COLUMN_ACTION, WIDTH_ICON << 1, myActionIconRenderer, myActionIconEditor);
             declareColumn(theActionColumn);
 
-            /* Add listeners */
-            theCategoryEditor.getEventRegistrar().addEventListener(e -> buildCategoryMenu());
-            theAccountEditor.getEventRegistrar().addEventListener(e -> buildAccountMenu());
-            theReturnedEditor.getEventRegistrar().addEventListener(e -> buildReturnedMenu());
-            theTagEditor.getEventRegistrar().addEventListener(e -> buildTagMenu());
+            /* Configure dates */
+            myDateEditor.setDateConfigurator((r, c) -> handleDateEvent(c));
+
+            /* Add menuBuilders */
+            myAccountEditor.setMenuConfigurator(this::buildAccountMenu);
+            myCategoryEditor.setMenuConfigurator(this::buildCategoryMenu);
+            myPartnerEditor.setMenuConfigurator(this::buildPartnerMenu);
+            myReturnedEditor.setMenuConfigurator(this::buildReturnedMenu);
         }
 
         /**
          * handle Date event.
+         * @param pConfig the dateConfig
          */
-        private void handleDateEvent() {
-            /* Access details */
-            TethysSwingDateConfig myConfig = theDateEditor.getDateConfig();
-            myConfig.setEarliestDateDay(theRange.getStart());
-            myConfig.setLatestDateDay(theRange.getEnd());
+        private void handleDateEvent(final TethysDateConfig pConfig) {
+            pConfig.setEarliestDate(theRange == null
+                                                     ? null
+                                                     : theRange.getStart());
+            pConfig.setLatestDate(theRange == null
+                                                   ? null
+                                                   : theRange.getEnd());
+        }
+
+        /**
+         * Determine reconciled state.
+         * @param pRowIndex the row index
+         * @return the state
+         */
+        private boolean determineReconciledState(final int pRowIndex) {
+            Transaction myTrans = theTransactions.get(pRowIndex);
+            return myTrans.isLocked();
+        }
+
+        /**
+         * Determine direction state.
+         * @param pRowIndex the row index
+         * @return the state
+         */
+        private boolean determineDirectionState(final int pRowIndex) {
+            Transaction myTrans = theTransactions.get(pRowIndex);
+            return !myTrans.isReconciled();
         }
 
         /**
          * RefreshData.
          */
-        private void refreshData() {
-            /* Update details for the tag menu */
-            theActiveTrans.updateTagMenuBuilder(theTagEditor.getMenuBuilder());
-        }
+        // private void refreshData() {
+        // /* Update details for the tag menu */
+        // theActiveTrans.updateTagMenuBuilder(theTagEditor.getMenuBuilder());
+        // }
 
         /**
          * Obtain column name.
@@ -1374,8 +1303,8 @@ public class TransactionTable
                     return theFilter.getBalanceForTransaction(pTrans);
                 case COLUMN_ACTION:
                     return pTrans.isReconciled()
-                                                 ? ActionType.DO
-                                                 : ActionType.DELETE;
+                                                 ? PrometheusAction.DO
+                                                 : PrometheusAction.DELETE;
                 default:
                     return null;
             }
@@ -1396,7 +1325,7 @@ public class TransactionTable
                 case COLUMN_BALANCE:
                     return theFilter.getStartingBalance();
                 case COLUMN_ACTION:
-                    return ActionType.DO;
+                    return PrometheusAction.DO;
                 default:
                     return null;
             }
@@ -1409,7 +1338,6 @@ public class TransactionTable
          * @param pValue the value to set
          * @throws OceanusException on error
          */
-        @SuppressWarnings("unchecked")
         private void setItemValue(final Transaction pItem,
                                   final int pColIndex,
                                   final Object pValue) throws OceanusException {
@@ -1484,9 +1412,9 @@ public class TransactionTable
                 case COLUMN_ACTION:
                     pItem.setDeleted(true);
                     break;
-                case COLUMN_TAGS:
-                    theActiveTrans.updateTag(pItem, (TethysEvent<TethysUIEvent>) pValue);
-                    break;
+                // case COLUMN_TAGS:
+                // theActiveTrans.updateTag(pItem, (TethysEvent<TethysUIEvent>) pValue);
+                // break;
                 default:
                     break;
             }
@@ -1515,7 +1443,7 @@ public class TransactionTable
                     return !pItem.isReconciled() && !pItem.needsNullAmount();
                 case COLUMN_DESC:
                 case COLUMN_REF:
-                case COLUMN_TAGS:
+                    // case COLUMN_TAGS:
                     return true;
                 case COLUMN_TAXCREDIT:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
@@ -1710,71 +1638,75 @@ public class TransactionTable
         }
 
         /**
-         * Build the popUpMenu for accounts.
+         * Obtain the popUpMenu for Accounts.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildAccountMenu() {
-            /* Access details */
-            JScrollMenuBuilder<TransactionAsset> myBuilder = theAccountEditor.getMenuBuilder();
-
+        private void buildAccountMenu(final Integer pRowIndex,
+                                      final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theAccountEditor.getPoint();
-            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
-            switch (myCell.x) {
-                case COLUMN_ACCOUNT:
-                    theActiveTrans.buildAccountMenu(myBuilder, myTrans);
-                    break;
-                default:
-                    theActiveTrans.buildPartnerMenu(myBuilder, myTrans);
-                    break;
-            }
+            theActiveTrans.buildAccountMenu(pMenu, myTrans);
+        }
+
+        /**
+         * Obtain the popUpMenu for Partner Accounts.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
+         */
+        private void buildPartnerMenu(final Integer pRowIndex,
+                                      final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
+            /* Record active item */
+            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
+
+            /* Build the menu */
+            theActiveTrans.buildPartnerMenu(pMenu, myTrans);
         }
 
         /**
          * Build the popUpMenu for categories.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildCategoryMenu() {
-            /* Access details */
-            JScrollMenuBuilder<TransactionCategory> myBuilder = theCategoryEditor.getMenuBuilder();
-
+        private void buildCategoryMenu(final Integer pRowIndex,
+                                       final TethysScrollMenu<TransactionCategory, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theCategoryEditor.getPoint();
-            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
-            theActiveTrans.buildCategoryMenu(myBuilder, myTrans);
+            theActiveTrans.buildCategoryMenu(pMenu, myTrans);
         }
 
         /**
          * Obtain the popUpMenu for returnedCash Accounts.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildReturnedMenu() {
-            /* Access details */
-            JScrollMenuBuilder<TransactionAsset> myBuilder = theReturnedEditor.getMenuBuilder();
-
+        private void buildReturnedMenu(final Integer pRowIndex,
+                                       final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theReturnedEditor.getPoint();
-            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
-            theActiveTrans.buildReturnedAccountMenu(myBuilder, myTrans);
+            theActiveTrans.buildReturnedAccountMenu(pMenu, myTrans);
         }
 
         /**
          * Build the popUpMenu for tags.
          */
-        private void buildTagMenu() {
-            /* Access details */
-            JScrollListMenuBuilder<TransactionTag> myBuilder = theTagEditor.getMenuBuilder();
+        // private void buildTagMenu() {
+        /* Access details */
+        // JScrollListMenuBuilder<TransactionTag> myBuilder = theTagEditor.getMenuBuilder();
 
-            /* Record active item */
-            Point myCell = theTagEditor.getPoint();
-            Transaction myTrans = theModel.getItemAtIndex(myCell.y);
+        /* Record active item */
+        // Point myCell = theTagEditor.getPoint();
+        // Transaction myTrans = theModel.getItemAtIndex(myCell.y);
 
-            /* Build the menu */
-            theActiveTrans.buildTagMenu(myBuilder, myTrans);
-        }
+        /* Build the menu */
+        // theActiveTrans.buildTagMenu(myBuilder, myTrans);
+        // }
     }
 
     /**

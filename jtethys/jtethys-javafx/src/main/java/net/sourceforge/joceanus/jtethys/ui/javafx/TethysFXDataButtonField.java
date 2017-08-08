@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -159,7 +159,7 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSupplier) {
+        public void setIconMapSet(final Supplier<TethysIconMapSet<T>> pSupplier) {
             theManager.setIconMapSet(pSupplier);
         }
     }

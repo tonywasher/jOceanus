@@ -302,7 +302,7 @@ public class TethysSwingScrollUIExample {
         myGrid.allowCellGrowth(theSimpleIconValue);
         myGrid.newRow();
         TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
-        theSimpleIconButtonMgr.setIconMapSet(p -> myMapSet);
+        theSimpleIconButtonMgr.setIconMapSet(() -> myMapSet);
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
         /* Add listener */
@@ -324,7 +324,7 @@ public class TethysSwingScrollUIExample {
 
         theHelper.buildStateButton(theStateButtonMgr);
         Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
-        theStateIconButtonMgr.setIconMapSet(p -> myMap.get(theStateButtonMgr.getValue()));
+        theStateIconButtonMgr.setIconMapSet(() -> myMap.get(theStateButtonMgr.getValue()));
         theStateIconButtonMgr.setNullMargins();
         theStateIconButtonMgr.setValue(Boolean.FALSE);
 

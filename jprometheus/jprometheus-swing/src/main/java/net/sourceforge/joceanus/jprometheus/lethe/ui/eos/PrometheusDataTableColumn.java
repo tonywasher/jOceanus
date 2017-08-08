@@ -116,7 +116,7 @@ public class PrometheusDataTableColumn
      * Column Model class.
      * @param <E> the data type enum class
      */
-    public static class JDataTableColumnModel<E extends Enum<E>>
+    public static class PrometheusDataTableColumnModel<E extends Enum<E>>
             extends DefaultTableColumnModel {
         /**
          * Serial Id.
@@ -197,7 +197,7 @@ public class PrometheusDataTableColumn
          * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected JDataTableColumnModel(final PrometheusDataTable<?, E> pTable) {
+        protected PrometheusDataTableColumnModel(final PrometheusDataTable<?, E> pTable) {
             /* Access TableModel */
             theModel = pTable.getTableModel();
         }
@@ -303,8 +303,8 @@ public class PrometheusDataTableColumn
      * Row Column Model class.
      * @param <E> the data type enum class
      */
-    protected static final class RowColumnModel<E extends Enum<E>>
-            extends JDataTableColumnModel<E> {
+    protected static final class PrometheusRowColumnModel<E extends Enum<E>>
+            extends PrometheusDataTableColumnModel<E> {
         /**
          * Serial Id.
          */
@@ -319,7 +319,7 @@ public class PrometheusDataTableColumn
          * Constructor.
          * @param pTable the table with which this model is associated
          */
-        protected RowColumnModel(final PrometheusDataTable<?, E> pTable) {
+        protected PrometheusRowColumnModel(final PrometheusDataTable<?, E> pTable) {
             /* Call super-constructor */
             super(pTable);
 

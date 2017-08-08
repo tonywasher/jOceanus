@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -32,13 +32,13 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.IconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.ScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.StringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.CalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.IconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -52,22 +52,23 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.PayeePanel;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusIcons.ActionType;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
@@ -78,7 +79,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Payee Table.
  */
 public class PayeeTable
-        extends JDataTable<Payee, MoneyWiseDataType> {
+        extends PrometheusDataTable<Payee, MoneyWiseDataType> {
     /**
      * Name Column Title.
      */
@@ -122,7 +123,7 @@ public class PayeeTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisEosFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -182,7 +183,7 @@ public class PayeeTable
     /**
      * The List Selection Model.
      */
-    private final JDataTableSelection<Payee, MoneyWiseDataType> theSelectionModel;
+    private final PrometheusDataTableSelection<Payee, MoneyWiseDataType> theSelectionModel;
 
     /**
      * Payees.
@@ -207,7 +208,7 @@ public class PayeeTable
         /* Record the passed details */
         theView = pView;
         theError = pError;
-        theFieldMgr = theView.getFieldManager();
+        theFieldMgr = theView.getEosFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
@@ -256,7 +257,7 @@ public class PayeeTable
         thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
 
         /* Create the selection model */
-        theSelectionModel = new JDataTableSelection<>(this, theActiveAccount);
+        theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveAccount);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> handleRewind());
@@ -426,7 +427,7 @@ public class PayeeTable
      * JTable Data Model.
      */
     private final class PayeeTableModel
-            extends JDataTableModel<Payee, MoneyWiseDataType> {
+            extends PrometheusDataTableModel<Payee, MoneyWiseDataType> {
         /**
          * The Serial Id.
          */
@@ -542,7 +543,7 @@ public class PayeeTable
      * Column Model class.
      */
     private final class PayeeColumnModel
-            extends JDataTableColumnModel<MoneyWiseDataType> {
+            extends PrometheusDataTableColumnModel<MoneyWiseDataType> {
         /**
          * Serial Id.
          */
@@ -579,49 +580,9 @@ public class PayeeTable
         private static final int COLUMN_LASTTRAN = 5;
 
         /**
-         * Closed Icon Renderer.
-         */
-        private final IconButtonCellRenderer<Boolean> theClosedIconRenderer;
-
-        /**
-         * Status Icon Renderer.
-         */
-        private final IconButtonCellRenderer<ActionType> theStatusIconRenderer;
-
-        /**
-         * Date Renderer.
-         */
-        private final CalendarCellRenderer theDateRenderer;
-
-        /**
-         * String Renderer.
-         */
-        private final StringCellRenderer theStringRenderer;
-
-        /**
-         * String editor.
-         */
-        private final StringCellEditor theStringEditor;
-
-        /**
-         * Closed Icon editor.
-         */
-        private final IconButtonCellEditor<Boolean> theClosedIconEditor;
-
-        /**
-         * Status Icon editor.
-         */
-        private final IconButtonCellEditor<ActionType> theStatusIconEditor;
-
-        /**
-         * PayeeType ScrollButton Menu Editor.
-         */
-        private final ScrollButtonCellEditor<PayeeType> theTypeEditor;
-
-        /**
          * Closed column.
          */
-        private final JDataTableColumn theClosedColumn;
+        private final PrometheusDataTableColumn theClosedColumn;
 
         /**
          * Constructor.
@@ -632,33 +593,37 @@ public class PayeeTable
             super(pTable);
 
             /* Create the relevant formatters */
-            theClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class, true);
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(ActionType.class, false);
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PayeeType.class);
-            theClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theClosedIconEditor);
-            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(theStatusIconEditor);
-            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldScrollButtonCellEditor<PayeeType> myTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PayeeType.class);
+            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            MoneyWiseIcons.buildLockedButton(theClosedIconEditor.getComplexState());
-            MoneyWiseIcons.buildStatusButton(theStatusIconEditor.getState());
+            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
+            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
+            myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
             /* Create the columns */
-            declareColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, theStringRenderer, theTypeEditor));
-            declareColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_NAME, theStringRenderer, theStringEditor));
-            theClosedColumn = new JDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, theClosedIconRenderer, theClosedIconEditor);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CATEGORY, WIDTH_NAME, myStringRenderer, myTypeEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_NAME, myStringRenderer, myStringEditor));
+            theClosedColumn = new PrometheusDataTableColumn(COLUMN_CLOSED, WIDTH_ICON, myClosedIconRenderer, myClosedIconEditor);
             declareColumn(theClosedColumn);
-            declareColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
-            declareColumn(new JDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, theDateRenderer));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, myStatusIconRenderer, myStatusIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_LASTTRAN, WIDTH_DATE, myDateRenderer));
 
             /* Initialise the columns */
             setColumns();
 
             /* Add listeners */
-            theTypeEditor.getEventRegistrar().addEventListener(e -> buildPayeeTypeMenu());
+            myTypeEditor.setMenuConfigurator(this::buildPayeeTypeMenu);
         }
 
         /**
@@ -717,8 +682,8 @@ public class PayeeTable
                     return pPayee.isClosed();
                 case COLUMN_ACTIVE:
                     return pPayee.isActive()
-                                             ? ActionType.ACTIVE
-                                             : ActionType.DELETE;
+                                             ? PrometheusAction.ACTIVE
+                                             : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
                     Transaction myTran = pPayee.getLatest();
                     return (myTran == null)
@@ -808,17 +773,26 @@ public class PayeeTable
 
         /**
          * Build the popUpMenu for payeeType.
+         * @param pRowIndex the rowIndex for the item
+         * @param pMenu the menu to build
          */
-        private void buildPayeeTypeMenu() {
-            /* Access details */
-            JScrollMenuBuilder<PayeeType> myBuilder = theTypeEditor.getMenuBuilder();
-
+        private void buildPayeeTypeMenu(final Integer pRowIndex,
+                                        final TethysScrollMenu<PayeeType, Icon> pMenu) {
             /* Record active item */
-            Point myCell = theTypeEditor.getPoint();
-            Payee myPayee = thePayees.get(myCell.y);
+            Payee myPayee = thePayees.get(pRowIndex);
 
             /* Build the menu */
-            theActiveAccount.buildPayeeTypeMenu(myBuilder, myPayee);
+            theActiveAccount.buildPayeeTypeMenu(pMenu, myPayee);
+        }
+
+        /**
+         * Determine closed state.
+         * @param pRowIndex the row index
+         * @return the state
+         */
+        private boolean determineClosedState(final int pRowIndex) {
+            Payee myPayee = thePayees.get(pRowIndex);
+            return myPayee.isClosed() || !myPayee.isRelevant();
         }
     }
 }

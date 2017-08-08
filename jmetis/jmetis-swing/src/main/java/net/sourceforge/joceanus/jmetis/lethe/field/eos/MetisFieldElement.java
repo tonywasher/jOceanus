@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelString;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
@@ -98,7 +98,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     protected MetisFieldElement(final MetisEosFieldSet<T> pFieldSet,
                                 final MetisField pField,
                                 final MetisDataType pClass,
-                                final TethysSwingDataTextField<String> pTextField) {
+                                final TethysSwingStringTextField pTextField) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pTextField, pClass));
     }

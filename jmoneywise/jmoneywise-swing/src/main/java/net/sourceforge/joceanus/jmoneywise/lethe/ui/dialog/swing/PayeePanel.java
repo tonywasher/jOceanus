@@ -24,22 +24,19 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.GridLayout;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
@@ -49,41 +46,35 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
  * Panel to display/edit/create a Payee.
  */
 public class PayeePanel
-        extends MoneyWiseDataItemPanel<Payee> {
+        extends MoneyWiseEosItemPanel<Payee> {
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<Payee> theFieldSet;
+    private final MetisEosFieldSet<Payee> theFieldSet;
 
     /**
-     * Payee Type Button Field.
+     * The Closed State.
      */
-    private final JScrollButton<PayeeType> theTypeButton;
-
-    /**
-     * Closed Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
-
-    /**
-     * The PayeeType Menu Builder.
-     */
-    private final JScrollMenuBuilder<PayeeType> theTypeMenuBuilder;
+    private Boolean theClosedState = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -93,33 +84,27 @@ public class PayeePanel
      * @param pError the error panel
      */
     public PayeePanel(final TethysSwingGuiFactory pFactory,
-                      final MetisFieldManager pFieldMgr,
+                      final MetisEosFieldManager pFieldMgr,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
                       final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Create the buttons */
-        theTypeButton = new JScrollButton<>();
-
-        /* Set closed button */
-        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel();
+        JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel(pFactory);
         myTabs.add(TAB_DETAILS, myPanel);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel();
+        myPanel = buildNotesPanel(pFactory);
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Layout the main panel */
@@ -130,35 +115,32 @@ public class PayeePanel
 
         /* Layout the panel */
         layoutPanel();
-
-        /* Create the listeners */
-        theTypeMenuBuilder = theTypeButton.getMenuBuilder();
-        theTypeMenuBuilder.getEventRegistrar().addEventListener(e -> buildPayeeTypeMenu(theTypeMenuBuilder, getItem()));
     }
 
     /**
      * Build Main subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel() {
-        /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
-        MoneyWiseIcons.buildLockedButton(theClosedState);
-
+    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField myDesc = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<PayeeType> myTypeButton = pFactory.newScrollButton();
+        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Payee.NAMELEN);
         restrictField(myDesc, Payee.NAMELEN);
-        restrictField(theTypeButton, Payee.NAMELEN);
+        restrictField(myTypeButton, Payee.NAMELEN);
         restrictField(myClosedButton, Payee.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Payee.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Payee.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Payee.FIELD_PAYEETYPE, PayeeType.class, theTypeButton);
+        theFieldSet.addFieldElement(Payee.FIELD_PAYEETYPE, PayeeType.class, myTypeButton);
         theFieldSet.addFieldElement(Payee.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -173,23 +155,29 @@ public class PayeePanel
         theFieldSet.addFieldToPanel(Payee.FIELD_CLOSED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myTypeButton.setMenuConfigurator(c -> buildPayeeTypeMenu(c, getItem()));
+        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build extras subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildXtrasPanel() {
+    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField mySortCode = new JTextField();
-        JTextField myAccount = new JTextField();
-        JTextField myReference = new JTextField();
-        JTextField myWebSite = new JTextField();
-        JTextField myCustNo = new JTextField();
-        JTextField myUserId = new JTextField();
-        JTextField myPassWord = new JTextField();
+        TethysSwingStringTextField mySortCode = pFactory.newStringField();
+        TethysSwingStringTextField myAccount = pFactory.newStringField();
+        TethysSwingStringTextField myReference = pFactory.newStringField();
+        TethysSwingStringTextField myWebSite = pFactory.newStringField();
+        TethysSwingStringTextField myCustNo = pFactory.newStringField();
+        TethysSwingStringTextField myUserId = pFactory.newStringField();
+        TethysSwingStringTextField myPassWord = pFactory.newStringField();
 
         /* Restrict the fields */
         int myWidth = Payee.NAMELEN >> 1;
@@ -231,12 +219,14 @@ public class PayeePanel
 
     /**
      * Build Notes subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildNotesPanel() {
+    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextArea myNotes = new JTextArea();
-        JScrollPane myScroll = new JScrollPane(myNotes);
+        TethysSwingTextArea myNotes = pFactory.newTextArea();
+        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
@@ -282,7 +272,7 @@ public class PayeePanel
         /* Determine the state of the closed button */
         boolean bEditClosed = bIsClosed || !bIsRelevant;
         theFieldSet.setEditable(Payee.FIELD_CLOSED, isEditable && bEditClosed);
-        theClosedState.setState(bEditClosed);
+        theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myPayee.getDesc() != null;
@@ -374,19 +364,19 @@ public class PayeePanel
     }
 
     /**
-     * Build the payeeType list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the payeeType menu for an item.
+     * @param pMenu the menu
      * @param pPayee the payee to build for
      */
-    public void buildPayeeTypeMenu(final JScrollMenuBuilder<PayeeType> pMenuBuilder,
+    public void buildPayeeTypeMenu(final TethysScrollMenu<PayeeType, Icon> pMenu,
                                    final Payee pPayee) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         PayeeType myCurr = pPayee.getPayeeType();
         PayeeList myList = pPayee.getList();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<PayeeType> myActive = null;
 
         /* Access PayeeTypes */
         PayeeTypeList myTypes = getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
@@ -416,7 +406,7 @@ public class PayeePanel
             }
 
             /* Create a new action for the payeeType */
-            JMenuItem myItem = pMenuBuilder.addItem(myType);
+            TethysScrollMenuItem<PayeeType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -426,6 +416,8 @@ public class PayeePanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

@@ -43,6 +43,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 public class PrometheusItemActions<G extends Enum<G>, N, I>
         implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
     /**
+     * The Border padding.
+     */
+    protected static final int BORDER_PADDING = 5;
+
+    /**
      * The Event Manager.
      */
     private final TethysEventManager<PrometheusUIEvent> theEventManager;
@@ -97,6 +102,7 @@ public class PrometheusItemActions<G extends Enum<G>, N, I>
 
         /* Create the panel */
         thePanel = pFactory.newVBoxPane();
+        thePanel.setBorderPadding(BORDER_PADDING);
 
         /* Create the layout */
         thePanel.addNode(theGoToButton);

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Rectangle;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -167,7 +167,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSupplier) {
+        public void setIconMapSet(final Supplier<TethysIconMapSet<T>> pSupplier) {
             theManager.setIconMapSet(pSupplier);
         }
 

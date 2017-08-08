@@ -940,7 +940,7 @@ public class TethysFXTableCellFactory<C, R> {
                                         final TethysFXGuiFactory pFactory,
                                         final Class<T> pClass) {
             super(pColumn, pFactory.newIconField(), pClass);
-            getControl().setIconMapSet(p -> determineMapSet());
+            getControl().setIconMapSet(this::determineMapSet);
         }
 
         /**

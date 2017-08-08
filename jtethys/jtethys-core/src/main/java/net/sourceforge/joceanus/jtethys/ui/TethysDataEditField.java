@@ -571,7 +571,7 @@ public interface TethysDataEditField<T, N, I>
          * Set the IconMapSet supplier.
          * @param pSupplier the supplier
          */
-        void setIconMapSet(Function<T, TethysIconMapSet<T>> pSupplier);
+        void setIconMapSet(Supplier<TethysIconMapSet<T>> pSupplier);
     }
 
     /**

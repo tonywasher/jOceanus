@@ -29,19 +29,15 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
@@ -55,62 +51,36 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
-import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.swing.MoneyWiseIcons;
+import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
  * Panel to display/edit/create a Loan.
  */
 public class LoanPanel
-        extends MoneyWiseDataItemPanel<Loan> {
+        extends MoneyWiseEosItemPanel<Loan> {
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<Loan> theFieldSet;
+    private final MetisEosFieldSet<Loan> theFieldSet;
 
     /**
-     * LoanCategory Button Field.
+     * The Closed State.
      */
-    private final JScrollButton<LoanCategory> theCategoryButton;
-
-    /**
-     * Loan Parent Button Field.
-     */
-    private final JScrollButton<Payee> theParentButton;
-
-    /**
-     * Currency Button Field.
-     */
-    private final JScrollButton<AssetCurrency> theCurrencyButton;
-
-    /**
-     * Closed Button Field.
-     */
-    private final ComplexIconButtonState<Boolean, Boolean> theClosedState;
-
-    /**
-     * The Category Menu Builder.
-     */
-    private final JScrollMenuBuilder<LoanCategory> theCategoryMenuBuilder;
-
-    /**
-     * The Parent Menu Builder.
-     */
-    private final JScrollMenuBuilder<Payee> theParentMenuBuilder;
-
-    /**
-     * The Currency Menu Builder.
-     */
-    private final JScrollMenuBuilder<AssetCurrency> theCurrencyMenuBuilder;
+    private Boolean theClosedState = Boolean.FALSE;
 
     /**
      * Constructor.
@@ -120,35 +90,27 @@ public class LoanPanel
      * @param pError the error panel
      */
     public LoanPanel(final TethysSwingGuiFactory pFactory,
-                     final MetisFieldManager pFieldMgr,
+                     final MetisEosFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                      final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Create the buttons */
-        theCategoryButton = new JScrollButton<>();
-        theParentButton = new JScrollButton<>();
-        theCurrencyButton = new JScrollButton<>();
-
-        /* Set closed button */
-        theClosedState = new ComplexIconButtonState<>(Boolean.FALSE);
-
         /* Build the FieldSet */
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel();
+        JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
         JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel();
+        JPanel myPanel = buildXtrasPanel(pFactory);
         myTabs.add(TAB_DETAILS, myPanel);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel();
+        myPanel = buildNotesPanel(pFactory);
         myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
 
         /* Layout the main panel */
@@ -159,43 +121,38 @@ public class LoanPanel
 
         /* Layout the panel */
         layoutPanel();
-
-        /* Create the listeners */
-        theCategoryMenuBuilder = theCategoryButton.getMenuBuilder();
-        theCategoryMenuBuilder.getEventRegistrar().addEventListener(e -> buildCategoryMenu(theCategoryMenuBuilder, getItem()));
-        theParentMenuBuilder = theParentButton.getMenuBuilder();
-        theParentMenuBuilder.getEventRegistrar().addEventListener(e -> buildParentMenu(theParentMenuBuilder, getItem()));
-        theCurrencyMenuBuilder = theCurrencyButton.getMenuBuilder();
-        theCurrencyMenuBuilder.getEventRegistrar().addEventListener(e -> buildCurrencyMenu(theCurrencyMenuBuilder, getItem()));
     }
 
     /**
      * Build Main subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel() {
-        /* Build the closed button state */
-        JIconButton<Boolean> myClosedButton = new JIconButton<>(theClosedState);
-        MoneyWiseIcons.buildLockedButton(theClosedState);
-
+    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        JTextField myName = new JTextField();
-        JTextField myDesc = new JTextField();
+        TethysSwingStringTextField myName = pFactory.newStringField();
+        TethysSwingStringTextField myDesc = pFactory.newStringField();
+
+        /* Create the buttons */
+        TethysSwingScrollButtonManager<LoanCategory> myCategoryButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Loan.NAMELEN);
         restrictField(myDesc, Loan.NAMELEN);
-        restrictField(theCategoryButton, Loan.NAMELEN);
-        restrictField(theCurrencyButton, Loan.NAMELEN);
-        restrictField(theParentButton, Loan.NAMELEN);
+        restrictField(myCategoryButton, Loan.NAMELEN);
+        restrictField(myCurrencyButton, Loan.NAMELEN);
+        restrictField(myParentButton, Loan.NAMELEN);
         restrictField(myClosedButton, Loan.NAMELEN);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(Loan.FIELD_NAME, MetisDataType.STRING, myName);
         theFieldSet.addFieldElement(Loan.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, theCategoryButton);
-        theFieldSet.addFieldElement(Loan.FIELD_PARENT, Payee.class, theParentButton);
-        theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AssetCurrency.class, theCurrencyButton);
+        theFieldSet.addFieldElement(Loan.FIELD_CATEGORY, LoanCategory.class, myCategoryButton);
+        theFieldSet.addFieldElement(Loan.FIELD_PARENT, Payee.class, myParentButton);
+        theFieldSet.addFieldElement(Loan.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
         theFieldSet.addFieldElement(Loan.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
@@ -212,20 +169,28 @@ public class LoanPanel
         theFieldSet.addFieldToPanel(Loan.FIELD_CLOSED, myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
 
+        /* Configure the menuBuilders */
+        myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
+        myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
+        myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
+        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
+
         /* Return the new panel */
         return myPanel;
     }
 
     /**
      * Build extras subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildXtrasPanel() {
+    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextField mySortCode = new JTextField();
-        JTextField myAccount = new JTextField();
-        JTextField myReference = new JTextField();
-        JTextField myOpening = new JTextField();
+        TethysSwingStringTextField mySortCode = pFactory.newStringField();
+        TethysSwingStringTextField myAccount = pFactory.newStringField();
+        TethysSwingStringTextField myReference = pFactory.newStringField();
+        TethysSwingStringTextField myOpening = pFactory.newStringField();
 
         /* Restrict the fields */
         int myWidth = Loan.NAMELEN >> 1;
@@ -258,12 +223,14 @@ public class LoanPanel
 
     /**
      * Build Notes subPanel.
+     * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildNotesPanel() {
+    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        JTextArea myNotes = new JTextArea();
-        JScrollPane myScroll = new JScrollPane(myNotes);
+        TethysSwingTextArea myNotes = pFactory.newTextArea();
+        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        myScroll.setContent(myNotes);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
@@ -312,7 +279,7 @@ public class LoanPanel
                                         ? !myLoan.getParent().isClosed()
                                         : !bIsRelevant;
         theFieldSet.setEditable(Loan.FIELD_CLOSED, isEditable && bEditClosed);
-        theClosedState.setState(bEditClosed);
+        theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         boolean bShowDesc = isEditable || myLoan.getDesc() != null;
@@ -408,24 +375,24 @@ public class LoanPanel
     }
 
     /**
-     * Build the category type list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the category menu for an item.
+     * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCategoryMenu(final JScrollMenuBuilder<LoanCategory> pMenuBuilder,
+    public void buildCategoryMenu(final TethysScrollMenu<LoanCategory, Icon> pMenu,
                                   final Loan pLoan) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         LoanCategory myCurr = pLoan.getCategory();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<LoanCategory> myActive = null;
 
         /* Access Loan Categories */
         LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, JScrollMenu> myMap = new HashMap<>();
+        Map<String, TethysScrollSubMenu<LoanCategory, Icon>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         Iterator<LoanCategory> myIterator = myCategories.iterator();
@@ -441,43 +408,44 @@ public class LoanPanel
             /* Determine menu to add to */
             LoanCategory myParent = myCategory.getParentCategory();
             String myParentName = myParent.getName();
-            JScrollMenu myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<LoanCategory, Icon> myMenu = myMap.get(myParentName);
 
-            /* If this is a new menu */
+            /* If this is a new subMenu */
             if (myMenu == null) {
-                /* Create a new JMenu and add it to the popUp */
-                myMenu = pMenuBuilder.addSubMenu(myParentName);
+                /* Create a new subMenu and add it to the popUp */
+                myMenu = pMenu.addSubMenu(myParentName);
                 myMap.put(myParentName, myMenu);
             }
 
-            /* Create a new JMenuItem and add it to the popUp */
-            JMenuItem myItem = pMenuBuilder.addItem(myMenu, myCategory, myCategory.getSubCategory());
+            /* Create a new MenuItem and add it to the popUp */
+            TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
-                myActive = myMenu;
-                myMenu.showItem(myItem);
+                myActive = myItem;
             }
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the parent list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the parent menu for an item.
+     * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildParentMenu(final JScrollMenuBuilder<Payee> pMenuBuilder,
+    public void buildParentMenu(final TethysScrollMenu<Payee, Icon> pMenu,
                                 final Loan pLoan) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         LoanCategoryClass myType = pLoan.getCategoryClass();
         Payee myCurr = pLoan.getParent();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
         PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
@@ -495,7 +463,7 @@ public class LoanPanel
             }
 
             /* Create a new action for the payee */
-            JMenuItem myItem = pMenuBuilder.addItem(myPayee);
+            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -505,22 +473,24 @@ public class LoanPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 
     /**
-     * Build the currency list for an item.
-     * @param pMenuBuilder the menu builder
+     * Build the currency menu for an item.
+     * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCurrencyMenu(final JScrollMenuBuilder<AssetCurrency> pMenuBuilder,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
                                   final Loan pLoan) {
         /* Clear the menu */
-        pMenuBuilder.clearMenu();
+        pMenu.removeAllItems();
 
         /* Record active item */
         AssetCurrency myCurr = pLoan.getAssetCurrency();
-        JMenuItem myActive = null;
+        TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
         AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
@@ -537,7 +507,7 @@ public class LoanPanel
             }
 
             /* Create a new action for the currency */
-            JMenuItem myItem = pMenuBuilder.addItem(myCurrency);
+            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {
@@ -547,6 +517,8 @@ public class LoanPanel
         }
 
         /* Ensure active item is visible */
-        pMenuBuilder.showItem(myActive);
+        if (myActive != null) {
+            myActive.scrollToItem();
+        }
     }
 }

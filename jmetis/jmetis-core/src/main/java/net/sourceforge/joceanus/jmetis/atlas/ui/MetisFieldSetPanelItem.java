@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Currency;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
@@ -666,7 +665,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * Set IconMapSet supplier.
          * @param pSupplier the supplier
          */
-        public void setIconMapSet(final Function<T, TethysIconMapSet<T>> pSupplier) {
+        public void setIconMapSet(final Supplier<TethysIconMapSet<T>> pSupplier) {
             ((TethysIconButtonField<T, N, I>) getEditField()).setIconMapSet(pSupplier);
         }
     }

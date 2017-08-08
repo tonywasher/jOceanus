@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
 import net.sourceforge.joceanus.jprometheus.lethe.swing.JOceanusSwingUtilitySet;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -168,11 +168,11 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      * @param pListClass the list class
      */
     public PrometheusStaticDataTable(final DataControl<?, E, JComponent, Icon> pControl,
-                           final UpdateSet<E> pUpdateSet,
-                           final JOceanusSwingUtilitySet pUtilitySet,
-                           final MetisErrorPanel<JComponent, Icon> pError,
-                           final E pItemType,
-                           final Class<L> pListClass) {
+                                     final UpdateSet<E> pUpdateSet,
+                                     final JOceanusSwingUtilitySet pUtilitySet,
+                                     final MetisErrorPanel<JComponent, Icon> pError,
+                                     final E pItemType,
+                                     final Class<L> pListClass) {
         /* initialise the underlying class */
         super(pUtilitySet.getGuiFactory());
 
@@ -454,7 +454,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      * Column Model class.
      */
     private final class StaticColumnModel
-            extends JDataTableColumnModel<E> {
+            extends PrometheusDataTableColumnModel<E> {
         /**
          * Serial Id.
          */
@@ -491,36 +491,6 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
         private static final int WIDTH_CLASS = 90;
 
         /**
-         * String renderer.
-         */
-        private final MetisFieldStringCellRenderer theStringRenderer;
-
-        /**
-         * String editor.
-         */
-        private final MetisFieldStringCellEditor theStringEditor;
-
-        /**
-         * Icon Status Renderer.
-         */
-        private final MetisFieldIconButtonCellRenderer<PrometheusAction> theStatusIconRenderer;
-
-        /**
-         * Icon Enabled Renderer.
-         */
-        private final MetisFieldIconButtonCellRenderer<Boolean> theEnabledIconRenderer;
-
-        /**
-         * Icon editor.
-         */
-        private final MetisFieldIconButtonCellEditor<PrometheusAction> theStatusIconEditor;
-
-        /**
-         * Icon editor.
-         */
-        private final MetisFieldIconButtonCellEditor<Boolean> theEnabledIconEditor;
-
-        /**
          * Enabled column.
          */
         private final PrometheusDataTableColumn theEnabledColumn;
@@ -533,30 +503,30 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
             super(PrometheusStaticDataTable.this);
 
             /* Create the relevant renderers/editors */
-            theStringEditor = theFieldMgr.allocateStringCellEditor();
-            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            theStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            theStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            theEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            theEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            MetisFieldIconButtonCellEditor<Boolean> myEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            MetisFieldIconButtonCellRenderer<Boolean> myEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
 
             /* Configure the iconButtons */
             TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
-            theStatusIconRenderer.setIconMapSet((s, v) -> myActionMapSet);
-            theStatusIconEditor.setIconMapSet((s, v) -> myActionMapSet);
+            myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
+            myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Configure the enabled iconButtons */
             TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
-            theEnabledIconRenderer.setIconMapSet((s, v) -> myEnabledMapSet);
-            theEnabledIconEditor.setIconMapSet((s, v) -> myEnabledMapSet);
+            myEnabledIconRenderer.setIconMapSet(r -> myEnabledMapSet);
+            myEnabledIconEditor.setIconMapSet(r -> myEnabledMapSet);
 
             /* Create and declare the columns */
-            declareColumn(new PrometheusDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, theStringEditor));
-            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            theEnabledColumn = new PrometheusDataTableColumn(COLUMN_ENABLED, WIDTH_ICON, theEnabledIconRenderer, theEnabledIconEditor);
+            declareColumn(new PrometheusDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_NAME, WIDTH_NAME, myStringRenderer, myStringEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_DESC, WIDTH_DESC, myStringRenderer, myStringEditor));
+            theEnabledColumn = new PrometheusDataTableColumn(COLUMN_ENABLED, WIDTH_ICON, myEnabledIconRenderer, myEnabledIconEditor);
             declareColumn(theEnabledColumn);
-            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, theStatusIconRenderer, theStatusIconEditor));
+            declareColumn(new PrometheusDataTableColumn(COLUMN_ACTIVE, WIDTH_ICON, myStatusIconRenderer, myStatusIconEditor));
 
             /* Initialise the columns display */
             setColumns();
