@@ -247,7 +247,7 @@ public abstract class CoeusLoan
         theLastDate = pTrans.getDate();
         if (theStartDate == null) {
             /* Access the loanBook delta */
-            TethysDecimal myInitLoan = pTrans.getLoanBook();
+            final TethysDecimal myInitLoan = pTrans.getLoanBook();
 
             /* If we have an initialLoan */
             if (myInitLoan.isNonZero()) {
@@ -258,16 +258,16 @@ public abstract class CoeusLoan
         }
 
         /* If the loan has zero Capital outstanding */
-        CoeusTotals myTotals = theHistory.getTotals();
+        final CoeusTotals myTotals = theHistory.getTotals();
         if (theStartDate != null
             && myTotals.getLoanBook().isZero()) {
             /* Determine outstanding badDebt */
-            TethysDecimal myBadDebt = myTotals.getBadDebt();
-            TethysDecimal myRecovered = myTotals.getRecovered();
+            final TethysDecimal myBadDebt = myTotals.getBadDebt();
+            final TethysDecimal myRecovered = myTotals.getRecovered();
 
             /* Check whether this is a rePaid badDebt */
-            boolean isBadDebt = myBadDebt.isNonZero();
-            boolean isRePaid = myBadDebt.equals(myRecovered);
+            final boolean isBadDebt = myBadDebt.isNonZero();
+            final boolean isRePaid = myBadDebt.equals(myRecovered);
 
             /* Must be either badDebt or rePaid */
             theStatus = isBadDebt && !isRePaid

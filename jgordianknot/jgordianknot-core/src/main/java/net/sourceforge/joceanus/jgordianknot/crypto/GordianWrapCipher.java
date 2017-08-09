@@ -127,10 +127,10 @@ public class GordianWrapCipher {
                                           final byte[] pSecuredKey,
                                           final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
-        byte[] myBytes = deriveBytes(pKey, pSecuredKey);
+        final byte[] myBytes = deriveBytes(pKey, pSecuredKey);
 
         /* Generate the key */
-        GordianKeyGenerator<T> myGenerator = theFactory.getKeyGenerator(pKeyType);
+        final GordianKeyGenerator<T> myGenerator = theFactory.getKeyGenerator(pKeyType);
         return myGenerator.buildKeyFromBytes(myBytes);
     }
 
@@ -144,8 +144,8 @@ public class GordianWrapCipher {
     protected byte[] securePrivateKey(final GordianKey<GordianSymKeyType> pKey,
                                       final GordianKeyPair pKeyPairToSecure) throws OceanusException {
         /* Access the KeyPair Generator */
-        GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
-        PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
+        final GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
+        final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
         return secureBytes(pKey, myPKCS8Key.getEncoded());
     }
 
@@ -159,7 +159,7 @@ public class GordianWrapCipher {
     protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeyType> pKey,
                                                 final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Derive the keySpec */
-        byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
+        final byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
     }
 
@@ -176,12 +176,12 @@ public class GordianWrapCipher {
         theCipher.checkValidKey(pKey);
 
         /* Determine number of blocks */
-        int myDataLen = pBytesToSecure.length;
+        final int myDataLen = pBytesToSecure.length;
         int myNumBlocks = myDataLen
                           / theBlockLen;
 
         /* Calculate padding length */
-        int myTrueLen;
+        final int myTrueLen;
         if ((myDataLen % theBlockLen) == 0) {
             myTrueLen = myDataLen;
         } else {
@@ -191,15 +191,15 @@ public class GordianWrapCipher {
         }
 
         /* Allocate buffer for data and encryption */
-        int myBufferLen = theBlockLen << 1;
-        byte[] myData = new byte[myTrueLen
-                                 + theBlockLen];
-        byte[] myBuffer = new byte[myBufferLen];
-        byte[] myResult = new byte[myBufferLen];
+        final int myBufferLen = theBlockLen << 1;
+        final byte[] myData = new byte[myTrueLen
+                                       + theBlockLen];
+        final byte[] myBuffer = new byte[myBufferLen];
+        final byte[] myResult = new byte[myBufferLen];
 
         /* Determine semantics of the initial block */
-        byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
-        int myCheckLen = theBlockLen - Integer.BYTES;
+        final byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
+        final int myCheckLen = theBlockLen - Integer.BYTES;
 
         /* Build the initial block */
         for (int i = 0; i < myCheckLen; i++) {
@@ -251,10 +251,10 @@ public class GordianWrapCipher {
         theCipher.checkValidKey(pKey);
 
         /* Determine number of blocks */
-        int myDataLen = pSecuredBytes.length
-                        - theBlockLen;
-        int myNumBlocks = myDataLen
-                          / theBlockLen;
+        final int myDataLen = pSecuredBytes.length
+                              - theBlockLen;
+        final int myNumBlocks = myDataLen
+                                / theBlockLen;
 
         /* Data must be a multiple of BlockLength */
         if ((myNumBlocks * theBlockLen) != myDataLen) {
@@ -262,10 +262,10 @@ public class GordianWrapCipher {
         }
 
         /* Allocate buffers for data and encryption */
-        int myBufferLen = theBlockLen << 1;
-        byte[] myData = Arrays.copyOf(pSecuredBytes, pSecuredBytes.length);
-        byte[] myBuffer = new byte[myBufferLen];
-        byte[] myResult = new byte[myBufferLen];
+        final int myBufferLen = theBlockLen << 1;
+        final byte[] myData = Arrays.copyOf(pSecuredBytes, pSecuredBytes.length);
+        final byte[] myBuffer = new byte[myBufferLen];
+        final byte[] myResult = new byte[myBufferLen];
 
         /* Initialise the cipher */
         theCipher.initCipher(pKey, null, false);
@@ -295,7 +295,7 @@ public class GordianWrapCipher {
         }
 
         /* Check initialisation value */
-        int myCheckLen = theBlockLen - Integer.BYTES;
+        final int myCheckLen = theBlockLen - Integer.BYTES;
         boolean isCheckOK = true;
         for (int myInit = 0; isCheckOK && myInit < myCheckLen; myInit++) {
             isCheckOK = myData[myInit] == getIntegrityValue(myInit);
@@ -304,11 +304,11 @@ public class GordianWrapCipher {
         /* If we are OK */
         if (isCheckOK) {
             /* Obtain encoded length */
-            byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
-            int myEncodedLen = TethysDataConverter.byteArrayToInteger(myByteLen);
+            final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
+            final int myEncodedLen = TethysDataConverter.byteArrayToInteger(myByteLen);
 
             /* Obtain zeroLen and check that it is valid */
-            int myZeroLen = myDataLen - myEncodedLen;
+            final int myZeroLen = myDataLen - myEncodedLen;
             isCheckOK = myZeroLen >= 0 && myZeroLen < theBlockLen;
 
             /* Check trailing bytes */
@@ -348,15 +348,15 @@ public class GordianWrapCipher {
      */
     protected byte[] getDefaultInitVector(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create the MAC and standard data */
-        GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
-        GordianMac myMac = theFactory.createMac(myMacSpec);
+        final GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
+        final GordianMac myMac = theFactory.createMac(myMacSpec);
         myMac.initMac(pKey.convertToKeyType(myMacSpec));
 
         /* Update using personalisation */
-        byte[] myIV = myMac.finish(theFactory.getPersonalisation());
+        final byte[] myIV = myMac.finish(theFactory.getPersonalisation());
 
         /* Return appropriate length of data */
-        int myLen = getKeyType().getIVLength();
+        final int myLen = getKeyType().getIVLength();
         return myIV.length > myLen
                                    ? Arrays.copyOf(myIV, myLen)
                                    : myIV;

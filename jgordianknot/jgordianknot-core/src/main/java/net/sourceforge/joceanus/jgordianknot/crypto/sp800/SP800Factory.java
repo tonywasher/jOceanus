@@ -171,7 +171,7 @@ public final class SP800Factory {
             /* Protect against exceptions */
             try {
                 /* Handle differently for Windows and *nix */
-                boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+                final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
                 theStrongEntropy = isWindows
                                              ? SecureRandom.getInstanceStrong()
                                              : SecureRandom.getInstance("NativePRNGNonBlocking");
@@ -228,8 +228,8 @@ public final class SP800Factory {
                                        final byte[] pInitVector,
                                        final boolean isPredictionResistant) {
         /* Build DRBG */
-        EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        SP800HashDRBG myProvider = new SP800HashDRBG(pDigest, myEntropy, theSecurityBytes, pInitVector);
+        final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
+        final SP800HashDRBG myProvider = new SP800HashDRBG(pDigest, myEntropy, theSecurityBytes, pInitVector);
         return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 
@@ -257,13 +257,13 @@ public final class SP800Factory {
                                        final byte[] pInitVector,
                                        final boolean isPredictionResistant) {
         /* Create initVector if required */
-        byte[] myInit = pInitVector == null
-                                            ? TethysDataConverter.longToByteArray(System.currentTimeMillis())
-                                            : pInitVector;
+        final byte[] myInit = pInitVector == null
+                                                  ? TethysDataConverter.longToByteArray(System.currentTimeMillis())
+                                                  : pInitVector;
 
         /* Build DRBG */
-        EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        SP800HMacDRBG myProvider = new SP800HMacDRBG(hMac, myEntropy, theSecurityBytes, myInit);
+        final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
+        final SP800HMacDRBG myProvider = new SP800HMacDRBG(hMac, myEntropy, theSecurityBytes, myInit);
         return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 
@@ -351,7 +351,7 @@ public final class SP800Factory {
         @Override
         public byte[] generateSeed(final int numBytes) {
             /* Generate a new seed */
-            byte[] bytes = new byte[numBytes];
+            final byte[] bytes = new byte[numBytes];
             nextBytes(bytes);
             return bytes;
         }

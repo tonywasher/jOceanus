@@ -65,20 +65,20 @@ public abstract class TethysAbout<N, I>
      */
     protected TethysAbout(final TethysGuiFactory<N, I> pFactory) {
         /* Access application details */
-        TethysProgram myApp = pFactory.getProgramDefinitions();
+        final TethysProgram myApp = pFactory.getProgramDefinitions();
 
         /* Create the components */
-        TethysLabel<N, I> myProduct = pFactory.newLabel(myApp.getName());
-        TethysLabel<N, I> myVersion = pFactory.newLabel(PROMPT_VERSION + " "
-                                                        + myApp.getVersion());
-        TethysLabel<N, I> myRevision = pFactory.newLabel(PROMPT_REVISION + " "
-                                                         + myApp.getRevision());
-        TethysLabel<N, I> myBuild = pFactory.newLabel(PROMPT_BUILDDATE + " "
-                                                      + myApp.getBuiltOn());
-        TethysLabel<N, I> myCopyright = pFactory.newLabel(myApp.getCopyright());
+        final TethysLabel<N, I> myProduct = pFactory.newLabel(myApp.getName());
+        final TethysLabel<N, I> myVersion = pFactory.newLabel(PROMPT_VERSION + " "
+                                                              + myApp.getVersion());
+        final TethysLabel<N, I> myRevision = pFactory.newLabel(PROMPT_REVISION + " "
+                                                               + myApp.getRevision());
+        final TethysLabel<N, I> myBuild = pFactory.newLabel(PROMPT_BUILDDATE + " "
+                                                            + myApp.getBuiltOn());
+        final TethysLabel<N, I> myCopyright = pFactory.newLabel(myApp.getCopyright());
 
         /* Build the OK button */
-        TethysButton<N, I> myOKButton = pFactory.newButton();
+        final TethysButton<N, I> myOKButton = pFactory.newButton();
         myOKButton.setText(TEXT_OK);
         myOKButton.getEventRegistrar().addEventListener(e -> closeDialog());
 

@@ -161,7 +161,7 @@ public final class TethysDataConverter {
      */
     public static String bytesToHexString(final byte[] pBytes) {
         /* Allocate the string builder */
-        StringBuilder myValue = new StringBuilder(2 * pBytes.length);
+        final StringBuilder myValue = new StringBuilder(2 * pBytes.length);
 
         /* For each byte in the value */
         for (Byte b : pBytes) {
@@ -201,10 +201,10 @@ public final class TethysDataConverter {
         long myLong = pValue;
 
         /* Allocate the string builder */
-        StringBuilder myValue = new StringBuilder();
+        final StringBuilder myValue = new StringBuilder();
 
         /* handle negative values */
-        boolean isNegative = myLong < 0;
+        final boolean isNegative = myLong < 0;
         if (isNegative) {
             myLong = -myLong;
         }
@@ -218,8 +218,8 @@ public final class TethysDataConverter {
             /* While we have digits to format */
             while (myLong > 0) {
                 /* Access the digit and move to next one */
-                int myDigit = (int) (myLong & NYBBLE_MASK);
-                char myChar = Character.forDigit(myDigit, HEX_RADIX);
+                final int myDigit = (int) (myLong & NYBBLE_MASK);
+                final char myChar = Character.forDigit(myDigit, HEX_RADIX);
                 myValue.insert(0, myChar);
                 myLong >>>= NYBBLE_SHIFT;
             }
@@ -247,7 +247,7 @@ public final class TethysDataConverter {
      */
     public static byte[] hexStringToBytes(final String pHexString) throws OceanusException {
         /* Access the length of the hex string */
-        int myLen = pHexString.length();
+        final int myLen = pHexString.length();
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
@@ -256,7 +256,7 @@ public final class TethysDataConverter {
         }
 
         /* Allocate the new bytes array */
-        byte[] myByteValue = new byte[myLen / 2];
+        final byte[] myByteValue = new byte[myLen / 2];
 
         /* Loop through the string */
         for (int i = 0; i < myLen; i += 2) {
@@ -310,8 +310,8 @@ public final class TethysDataConverter {
         long myValue = 0;
 
         /* handle negative values */
-        boolean isNegative = (myLen > 0)
-                             && (myHexString.charAt(0) == '-');
+        final boolean isNegative = (myLen > 0)
+                                   && (myHexString.charAt(0) == '-');
         if (isNegative) {
             myHexString = myHexString.substring(1);
             myLen--;
@@ -326,8 +326,8 @@ public final class TethysDataConverter {
         /* Loop through the string */
         for (int i = 0; i < myLen; i++) {
             /* Access the next character */
-            char myChar = myHexString.charAt(i);
-            int myDigit = Character.digit(myChar, HEX_RADIX);
+            final char myChar = myHexString.charAt(i);
+            final int myDigit = Character.digit(myChar, HEX_RADIX);
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
@@ -359,8 +359,8 @@ public final class TethysDataConverter {
         /* protect against exceptions */
         try {
             /* Transform the character array to a byte array */
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            OutputStreamWriter out = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final OutputStreamWriter out = new OutputStreamWriter(baos, StandardCharsets.UTF_8);
             out.write(pChars, 0, pChars.length);
             out.flush();
             return baos.toByteArray();
@@ -380,12 +380,11 @@ public final class TethysDataConverter {
         try {
             /* Allocate the character array allowing for one character per byte */
             char[] myArray = new char[pBytes.length];
-            int myLen;
 
             /* Transform the byte array to a character array */
-            ByteArrayInputStream bais = new ByteArrayInputStream(pBytes);
-            InputStreamReader in = new InputStreamReader(bais, StandardCharsets.UTF_8);
-            myLen = in.read(myArray);
+            final ByteArrayInputStream bais = new ByteArrayInputStream(pBytes);
+            final InputStreamReader in = new InputStreamReader(bais, StandardCharsets.UTF_8);
+            final int myLen = in.read(myArray);
 
             /* Cut down the array to the actual length */
             myArray = Arrays.copyOf(myArray, myLen);
@@ -427,10 +426,10 @@ public final class TethysDataConverter {
     public static byte[] longToByteArray(final long pValue) {
         /* Loop through the bytes */
         long myValue = pValue;
-        byte[] myBytes = new byte[BYTES_LONG];
+        final byte[] myBytes = new byte[BYTES_LONG];
         for (int i = BYTES_LONG; i > 0; i--) {
             /* Store the next byte */
-            byte myByte = (byte) (myValue & BYTE_MASK);
+            final byte myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
 
             /* Adjust value */
@@ -470,11 +469,11 @@ public final class TethysDataConverter {
      */
     public static byte[] integerToByteArray(final int pValue) {
         /* Loop through the bytes */
-        byte[] myBytes = new byte[BYTES_INTEGER];
+        final byte[] myBytes = new byte[BYTES_INTEGER];
         int myValue = pValue;
         for (int i = BYTES_INTEGER; i > 0; i--) {
             /* Store the next byte */
-            byte myByte = (byte) (myValue & BYTE_MASK);
+            final byte myByte = (byte) (myValue & BYTE_MASK);
             myBytes[i - 1] = myByte;
 
             /* Adjust value */
@@ -508,10 +507,9 @@ public final class TethysDataConverter {
      * @param pFirst the first Hash
      * @param pSecond the second Hash
      * @return the combined hash
-     * @throws OceanusException on error
      */
     public static byte[] combineHashes(final byte[] pFirst,
-                                       final byte[] pSecond) throws OceanusException {
+                                       final byte[] pSecond) {
         /* Handle nulls */
         if (pFirst == null) {
             return pSecond;
@@ -533,7 +531,7 @@ public final class TethysDataConverter {
         myTarget = Arrays.copyOf(myTarget, myTarget.length);
 
         /* Determine length of operation */
-        int myLen = mySource.length;
+        final int myLen = mySource.length;
 
         /* Loop through the array bytes */
         for (int i = 0; i < myTarget.length; i++) {
@@ -555,7 +553,7 @@ public final class TethysDataConverter {
     public static void buildHashResult(final byte[] pResult,
                                        final byte[] pHash) throws OceanusException {
         /* If the target is smaller than the source */
-        int myLen = pResult.length;
+        final int myLen = pResult.length;
         if (myLen != pHash.length) {
             throw new TethysDataException("Hashes are different lengths");
         }
@@ -573,9 +571,9 @@ public final class TethysDataConverter {
      */
     public static String byteArrayToBase64(final byte[] pBytes) {
         /* Determine input length and allocate output buffer */
-        int myLen = pBytes.length;
-        StringBuilder myBuilder = new StringBuilder(myLen << 1);
-        byte[] myTriplet = new byte[BASE64_TRIPLE];
+        final int myLen = pBytes.length;
+        final StringBuilder myBuilder = new StringBuilder(myLen << 1);
+        final byte[] myTriplet = new byte[BASE64_TRIPLE];
 
         /* Loop through the input bytes */
         int myIn = 0;
@@ -629,8 +627,8 @@ public final class TethysDataConverter {
      */
     public static byte[] base64ToByteArray(final String pBase64) {
         /* Access input as chars */
-        char[] myBase64 = pBase64.toCharArray();
-        int myLen = myBase64.length;
+        final char[] myBase64 = pBase64.toCharArray();
+        final int myLen = myBase64.length;
 
         /* Determine number of padding bytes */
         int myNumPadding = 0;
@@ -642,27 +640,27 @@ public final class TethysDataConverter {
         }
 
         /* Allocate the output buffer and index */
-        int myOutLen = ((myLen * BASE64_TRIPLE) >> 2)
-                       - myNumPadding;
-        byte[] myOutput = new byte[myOutLen];
+        final int myOutLen = ((myLen * BASE64_TRIPLE) >> 2)
+                             - myNumPadding;
+        final byte[] myOutput = new byte[myOutLen];
 
         /* Loop through the base64 input */
         int myIn = 0;
         int myOut = 0;
         while (myOut < myOutLen) {
             /* Build first byte */
-            int c0 = BASE64_DECODE[myBase64[myIn++]];
-            int c1 = BASE64_DECODE[myBase64[myIn++]];
+            final int c0 = BASE64_DECODE[myBase64[myIn++]];
+            final int c1 = BASE64_DECODE[myBase64[myIn++]];
             myOutput[myOut++] = (byte) (((c0 << BASE64_SHIFT1) | (c1 >> BASE64_SHIFT2)) & BYTE_MASK);
 
             /* Build second byte */
             if (myOut < myOutLen) {
-                int c2 = BASE64_DECODE[myBase64[myIn++]];
+                final int c2 = BASE64_DECODE[myBase64[myIn++]];
                 myOutput[myOut++] = (byte) (((c1 << BASE64_SHIFT2) | (c2 >> BASE64_SHIFT1)) & BYTE_MASK);
 
                 /* Build third byte */
                 if (myOut < myOutLen) {
-                    int c3 = BASE64_DECODE[myBase64[myIn++]];
+                    final int c3 = BASE64_DECODE[myBase64[myIn++]];
                     myOutput[myOut++] = (byte) (((c2 << BASE64_SHIFT3) | c3) & BYTE_MASK);
                 }
             }
@@ -694,10 +692,10 @@ public final class TethysDataConverter {
      * @return the output hash
      */
     public static int knuthHash(final int pInput) {
-        long myHash = knuthEncode(pInput);
-        int myBitLength = Integer.SIZE - pInput >= 0
-                                                     ? Integer.numberOfLeadingZeros(pInput)
-                                                     : Integer.numberOfLeadingZeros(-pInput);
+        final long myHash = knuthEncode(pInput);
+        final int myBitLength = Integer.SIZE - pInput >= 0
+                                                           ? Integer.numberOfLeadingZeros(pInput)
+                                                           : Integer.numberOfLeadingZeros(-pInput);
         return (int) (myHash >> myBitLength);
     }
 }

@@ -80,7 +80,7 @@ public final class JcaCipher<T>
     @Override
     public void initCipher(final GordianKey<T> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        int myLen = getIVLength();
+        final int myLen = getIVLength();
         byte[] myIV = null;
 
         /* If we need an IV */
@@ -99,7 +99,7 @@ public final class JcaCipher<T>
      * @return the IV length
      */
     private int getIVLength() {
-        T myType = getKeyType();
+        final T myType = getKeyType();
         if (myType instanceof GordianStreamKeyType) {
             return ((GordianStreamKeyType) myType).getIVLength();
         }
@@ -113,20 +113,20 @@ public final class JcaCipher<T>
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        JcaKey<T> myJcaKey = JcaKey.accessKey(pKey);
+        final JcaKey<T> myJcaKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Access details */
-        int myMode = pEncrypt
-                              ? Cipher.ENCRYPT_MODE
-                              : Cipher.DECRYPT_MODE;
-        SecretKey myKey = myJcaKey.getKey();
+        final int myMode = pEncrypt
+                                    ? Cipher.ENCRYPT_MODE
+                                    : Cipher.DECRYPT_MODE;
+        final SecretKey myKey = myJcaKey.getKey();
 
         /* Protect against exceptions */
         try {
             /* Initialise as required */
             if (pIV != null) {
-                AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
+                final AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
                 theCipher.init(myMode, myKey, myParms);
             } else {
                 theCipher.init(myMode, myKey);

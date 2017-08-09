@@ -129,8 +129,8 @@ public class TethysSwingHelpWindow
             theFrame.setTitle(TethysHelpResource.TITLE.getValue());
 
             /* Create the help panel */
-            JPanel myPanel = new JPanel();
-            JComponent mySplit = getSplitTreeManager().getNode();
+            final JPanel myPanel = new JPanel();
+            final JComponent mySplit = getSplitTreeManager().getNode();
             myPanel.add(mySplit);
             mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 

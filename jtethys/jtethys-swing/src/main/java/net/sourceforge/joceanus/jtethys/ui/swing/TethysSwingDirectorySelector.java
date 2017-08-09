@@ -81,7 +81,7 @@ public class TethysSwingDirectorySelector
         theChooser.setCurrentDirectory(getInitialDirectory());
 
         /* Show the dialog */
-        int myResult = theChooser.showOpenDialog(theParent);
+        final int myResult = theChooser.showOpenDialog(theParent);
 
         /* If we selected a directory */
         if (myResult == JFileChooser.APPROVE_OPTION) {
@@ -99,7 +99,7 @@ public class TethysSwingDirectorySelector
             /* else we must use invokeAndWait */
         } else {
             try {
-                SwingUtilities.invokeAndWait(() -> showDialog());
+                SwingUtilities.invokeAndWait(this::showDialog);
             } catch (InvocationTargetException e) {
                 LOGGER.error("Failed to display dialog", e);
             } catch (InterruptedException e) {

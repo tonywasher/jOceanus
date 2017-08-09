@@ -649,9 +649,8 @@ public class Security
     /**
      * autoCorrect values after change.
      * @param pUpdateSet the update set
-     * @throws OceanusException on error
      */
-    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
+    public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access category class and parent */
         SecurityTypeClass myClass = getSecurityTypeClass();
         Payee myParent = getParent();
@@ -779,9 +778,8 @@ public class Security
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws OceanusException {
+    public void setParent(final Payee pParent) {
         setValueParent(pParent);
     }
 

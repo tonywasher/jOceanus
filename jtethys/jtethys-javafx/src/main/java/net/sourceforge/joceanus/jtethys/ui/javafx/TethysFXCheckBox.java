@@ -97,7 +97,7 @@ public class TethysFXCheckBox
 
     @Override
     public void setChanged(final boolean pChanged) {
-        List<String> myStyles = theCheckBox.getStyleClass();
+        final List<String> myStyles = theCheckBox.getStyleClass();
         myStyles.remove(STYLE_CHANGED);
         if (pChanged) {
             myStyles.add(STYLE_CHANGED);

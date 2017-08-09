@@ -55,7 +55,7 @@ public class TethysSwingDateRangeSelector
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        JComponent myNode = getNode();
+        final JComponent myNode = getNode();
         Dimension myDim = myNode.getPreferredSize();
         myDim = new Dimension(pWidth, myDim.height);
         myNode.setPreferredSize(myDim);
@@ -63,7 +63,7 @@ public class TethysSwingDateRangeSelector
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        JComponent myNode = getNode();
+        final JComponent myNode = getNode();
         Dimension myDim = myNode.getPreferredSize();
         myDim = new Dimension(myDim.width, pHeight);
         myNode.setPreferredSize(myDim);

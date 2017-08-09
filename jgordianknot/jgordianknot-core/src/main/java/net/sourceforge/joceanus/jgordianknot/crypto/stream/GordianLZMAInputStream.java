@@ -66,7 +66,7 @@ public final class GordianLZMAInputStream
         theInput = pInput;
 
         /* Create the piped stream */
-        GordianPipedStream myPipe = new GordianPipedStream();
+        final GordianPipedStream myPipe = new GordianPipedStream();
         theSink = myPipe.getSink();
         theSource = myPipe.getSource();
 
@@ -78,7 +78,7 @@ public final class GordianLZMAInputStream
     @Override
     public int read(final byte[] pBytes) throws IOException {
         /* Read the bytes from the source */
-        int myResult = read(pBytes, 0, pBytes.length);
+        final int myResult = read(pBytes, 0, pBytes.length);
 
         /* Check for error */
         theService.checkForError();
@@ -90,7 +90,7 @@ public final class GordianLZMAInputStream
     @Override
     public int read() throws IOException {
         /* Read the bytes from the source */
-        int myResult = theSource.read();
+        final int myResult = theSource.read();
 
         /* Check for error */
         theService.checkForError();
@@ -105,7 +105,7 @@ public final class GordianLZMAInputStream
                     final int pLength) throws IOException {
 
         /* Read the bytes from the source */
-        int myResult = theSource.read(pBuffer, pOffset, pLength);
+        final int myResult = theSource.read(pBuffer, pOffset, pLength);
 
         /* Check for error */
         theService.checkForError();
@@ -164,10 +164,10 @@ public final class GordianLZMAInputStream
         @Override
         public void run() {
             try {
-                byte[] myProperties = new byte[Encoder.kPropSize];
+                final byte[] myProperties = new byte[Encoder.kPropSize];
 
                 /* Read the decoder properties */
-                int n = theInput.read(myProperties, 0, Encoder.kPropSize);
+                final int n = theInput.read(myProperties, 0, Encoder.kPropSize);
                 if (n != Encoder.kPropSize) {
                     theError = new IOException("input stream too short");
                     return;

@@ -68,9 +68,9 @@ public class CoeusMarketSet
      */
     public void analyseMarkets() throws OceanusException {
         /* Loop through the markets performing analysis */
-        Iterator<CoeusMarket> myIterator = theMarketMap.values().iterator();
+        final Iterator<CoeusMarket> myIterator = theMarketMap.values().iterator();
         while (myIterator.hasNext()) {
-            CoeusMarket myMarket = myIterator.next();
+            final CoeusMarket myMarket = myIterator.next();
             myMarket.analyseMarket();
         }
     }
@@ -92,7 +92,7 @@ public class CoeusMarketSet
      */
     public CoeusMarketSnapShot getSnapshot(final CoeusMarketProvider pProvider,
                                            final TethysDate pDate) {
-        CoeusMarket myMarket = theMarketMap.get(pProvider);
+        final CoeusMarket myMarket = theMarketMap.get(pProvider);
         return myMarket == null
                                 ? null
                                 : myMarket.getSnapshot(pDate);
@@ -108,7 +108,7 @@ public class CoeusMarketSet
     public CoeusMarketAnnual getAnnual(final CoeusMarketProvider pProvider,
                                        final CoeusCalendar pCalendar,
                                        final TethysDate pDate) {
-        CoeusMarket myMarket = theMarketMap.get(pProvider);
+        final CoeusMarket myMarket = theMarketMap.get(pProvider);
         return myMarket == null
                                 ? null
                                 : myMarket.getAnnual(pCalendar, pDate);

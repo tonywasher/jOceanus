@@ -76,7 +76,7 @@ public final class TethysResourceBuilder {
      * @return the builder
      */
     public static TethysResourceBuilder getPackageResourceBuilder(final String pBundleName) {
-        String myName = getPackageBundle(pBundleName);
+        final String myName = getPackageBundle(pBundleName);
         return new TethysResourceBuilder(myName);
     }
 
@@ -119,7 +119,7 @@ public final class TethysResourceBuilder {
         int myIndex = pClass.lastIndexOf('.');
         if (myIndex != -1) {
             /* Strip the final class name off */
-            String myResult = pClass.substring(0, myIndex);
+            final String myResult = pClass.substring(0, myIndex);
 
             /* Locate the package name */
             myIndex = myResult.lastIndexOf('.');
@@ -127,10 +127,10 @@ public final class TethysResourceBuilder {
             /* If we are OK */
             if (myIndex != -1) {
                 /* Access the package name */
-                String myPackage = myResult.substring(myIndex + 1);
+                final String myPackage = myResult.substring(myIndex + 1);
 
                 /* Build a new package name */
-                StringBuilder myBuilder = new StringBuilder();
+                final StringBuilder myBuilder = new StringBuilder();
                 myBuilder.append(myResult);
                 myBuilder.append('.');
                 myBuilder.append(myPackage);
@@ -151,7 +151,7 @@ public final class TethysResourceBuilder {
      */
     public static <E extends Enum<E>> TethysResourceId getKeyForEnum(final Map<E, TethysResourceId> pMap,
                                                                      final E pValue) {
-        TethysResourceId myId = pMap.get(pValue);
+        final TethysResourceId myId = pMap.get(pValue);
         if (myId == null) {
             throw new IllegalArgumentException(getErrorNoResource(pValue));
         }
@@ -164,7 +164,7 @@ public final class TethysResourceBuilder {
      * @return the error message
      */
     public static String getErrorNoResource(final Enum<?> pId) {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("Missing Resource: ");
         myBuilder.append(pId.getClass().getName());
         myBuilder.append(':');
@@ -182,7 +182,7 @@ public final class TethysResourceBuilder {
      */
     public static <E extends Enum<E>, I> I getIconForEnum(final Map<E, I> pMap,
                                                           final E pValue) {
-        I myIcon = pMap.get(pValue);
+        final I myIcon = pMap.get(pValue);
         if (myIcon == null) {
             throw new IllegalArgumentException(getErrorNoResource(pValue));
         }
@@ -199,7 +199,7 @@ public final class TethysResourceBuilder {
     public static String loadResourceToString(final Class<?> pClass,
                                               final String pName) throws OceanusException {
         /* Reset the builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Protect against exceptions */
         try (InputStream myStream = pClass.getResourceAsStream(pName);
@@ -209,7 +209,7 @@ public final class TethysResourceBuilder {
             /* Read the header entry */
             for (;;) {
                 /* Read next line */
-                String myLine = myReader.readLine();
+                final String myLine = myReader.readLine();
                 if (myLine == null) {
                     break;
                 }

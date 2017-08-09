@@ -122,7 +122,7 @@ public class CoeusMarketCache
         theFormatter = pToolkit.getFormatter();
 
         /* Obtain default value for calendar totals and listen to changes */
-        MetisPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
+        final MetisPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
         thePreferences = myPrefMgr.getPreferenceSet(CoeusPreferences.class);
         theCalendar = new CoeusCalendar(theFormatter.getLocale(), thePreferences.getBooleanValue(CoeusPreferenceKey.CALENDARYEAR));
         thePreferences.getEventRegistrar().addEventListener(e -> handlePrefChange());
@@ -226,7 +226,7 @@ public class CoeusMarketCache
      */
     private void handlePrefChange() {
         /* If the Totals preference has changed */
-        Boolean myTotals = thePreferences.getBooleanValue(CoeusPreferenceKey.CALENDARYEAR);
+        final Boolean myTotals = thePreferences.getBooleanValue(CoeusPreferenceKey.CALENDARYEAR);
         if (myTotals != theCalendar.useCalendarTotals()) {
             /* Create new calendar and reset maps */
             theCalendar = new CoeusCalendar(theFormatter.getLocale(), myTotals);
@@ -265,5 +265,4 @@ public class CoeusMarketCache
     public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
-
 }

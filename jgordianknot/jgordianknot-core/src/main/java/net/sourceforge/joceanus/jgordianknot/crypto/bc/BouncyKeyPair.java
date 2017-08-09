@@ -155,7 +155,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyRSAPublicKey myThat = (BouncyRSAPublicKey) pThat;
+            final BouncyRSAPublicKey myThat = (BouncyRSAPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -174,7 +174,7 @@ public class BouncyKeyPair
          * @return true/false
          */
         public boolean validPrivate(final BouncyRSAPrivateKey pPrivate) {
-            RSAPrivateCrtKeyParameters myPrivate = pPrivate.getPrivateKey();
+            final RSAPrivateCrtKeyParameters myPrivate = pPrivate.getPrivateKey();
             return theKey.getExponent().equals(myPrivate.getExponent())
                    && theKey.getModulus().equals(myPrivate.getModulus());
 
@@ -238,7 +238,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyRSAPrivateKey myThat = (BouncyRSAPrivateKey) pThat;
+            final BouncyRSAPrivateKey myThat = (BouncyRSAPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -324,7 +324,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyECPublicKey myThat = (BouncyECPublicKey) pThat;
+            final BouncyECPublicKey myThat = (BouncyECPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -343,7 +343,7 @@ public class BouncyKeyPair
          * @return true/false
          */
         public boolean validPrivate(final BouncyECPrivateKey pPrivate) {
-            ECPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
+            final ECPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
             return theKey.getParameters().equals(myPrivate.getParameters());
         }
 
@@ -405,7 +405,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyECPrivateKey myThat = (BouncyECPrivateKey) pThat;
+            final BouncyECPrivateKey myThat = (BouncyECPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -476,7 +476,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyDSAPublicKey myThat = (BouncyDSAPublicKey) pThat;
+            final BouncyDSAPublicKey myThat = (BouncyDSAPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -495,7 +495,7 @@ public class BouncyKeyPair
          * @return true/false
          */
         public boolean validPrivate(final BouncyDSAPrivateKey pPrivate) {
-            DSAPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
+            final DSAPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
             return theKey.getParameters().equals(myPrivate.getParameters());
         }
 
@@ -557,7 +557,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyDSAPrivateKey myThat = (BouncyDSAPrivateKey) pThat;
+            final BouncyDSAPrivateKey myThat = (BouncyDSAPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -628,7 +628,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyDiffieHellmanPublicKey myThat = (BouncyDiffieHellmanPublicKey) pThat;
+            final BouncyDiffieHellmanPublicKey myThat = (BouncyDiffieHellmanPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -647,7 +647,7 @@ public class BouncyKeyPair
          * @return true/false
          */
         public boolean validPrivate(final BouncyDiffieHellmanPrivateKey pPrivate) {
-            DHPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
+            final DHPrivateKeyParameters myPrivate = pPrivate.getPrivateKey();
             return theKey.getParameters().equals(myPrivate.getParameters());
         }
 
@@ -709,7 +709,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyDiffieHellmanPrivateKey myThat = (BouncyDiffieHellmanPrivateKey) pThat;
+            final BouncyDiffieHellmanPrivateKey myThat = (BouncyDiffieHellmanPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -780,7 +780,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncySPHINCSPublicKey myThat = (BouncySPHINCSPublicKey) pThat;
+            final BouncySPHINCSPublicKey myThat = (BouncySPHINCSPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -850,7 +850,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncySPHINCSPrivateKey myThat = (BouncySPHINCSPrivateKey) pThat;
+            final BouncySPHINCSPrivateKey myThat = (BouncySPHINCSPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -920,7 +920,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyNewHopePublicKey myThat = (BouncyNewHopePublicKey) pThat;
+            final BouncyNewHopePublicKey myThat = (BouncyNewHopePublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -990,7 +990,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyNewHopePrivateKey myThat = (BouncyNewHopePrivateKey) pThat;
+            final BouncyNewHopePrivateKey myThat = (BouncyNewHopePrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -1060,7 +1060,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyRainbowPublicKey myThat = (BouncyRainbowPublicKey) pThat;
+            final BouncyRainbowPublicKey myThat = (BouncyRainbowPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -1132,7 +1132,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyRainbowPrivateKey myThat = (BouncyRainbowPrivateKey) pThat;
+            final BouncyRainbowPrivateKey myThat = (BouncyRainbowPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -1231,7 +1231,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyMcEliecePublicKey myThat = (BouncyMcEliecePublicKey) pThat;
+            final BouncyMcEliecePublicKey myThat = (BouncyMcEliecePublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -1262,10 +1262,10 @@ public class BouncyKeyPair
          */
         public boolean validPrivate(final BouncyMcEliecePrivateKey pPrivate) {
             if (isCCA2()) {
-                McElieceCCA2PrivateKeyParameters myPrivate = pPrivate.getPrivateCCA2Key();
+                final McElieceCCA2PrivateKeyParameters myPrivate = pPrivate.getPrivateCCA2Key();
                 return getPublicCCA2Key().getN() == myPrivate.getN();
             }
-            McEliecePrivateKeyParameters myPrivate = pPrivate.getPrivateStdKey();
+            final McEliecePrivateKeyParameters myPrivate = pPrivate.getPrivateStdKey();
             return getPublicStdKey().getN() == myPrivate.getN();
         }
 
@@ -1366,7 +1366,7 @@ public class BouncyKeyPair
             }
 
             /* Access the target field */
-            BouncyMcEliecePrivateKey myThat = (BouncyMcEliecePrivateKey) pThat;
+            final BouncyMcEliecePrivateKey myThat = (BouncyMcEliecePrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())

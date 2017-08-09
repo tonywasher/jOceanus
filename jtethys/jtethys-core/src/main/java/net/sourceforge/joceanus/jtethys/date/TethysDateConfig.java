@@ -265,7 +265,7 @@ public class TethysDateConfig
         /* If the first UniCode item is lowerCase */
         if (Character.isLowerCase(pValue.codePointAt(0))) {
             /* Locate the length of the first character */
-            int iCharLen = pValue.offsetByCodePoints(0, 1);
+            final int iCharLen = pValue.offsetByCodePoints(0, 1);
 
             /* UpperCase the first iCharLen letters */
             myValue = pValue.substring(0, iCharLen).toUpperCase(theLocale)
@@ -289,7 +289,7 @@ public class TethysDateConfig
      * @return the current month day
      */
     public int getCurrentDay() {
-        TethysDate myDate = currentDate();
+        final TethysDate myDate = currentDate();
         return isSameMonth(myDate, theMonth)
                                              ? myDate.getDay()
                                              : 0;
@@ -300,7 +300,7 @@ public class TethysDateConfig
      * @return the selected month day
      */
     public int getSelectedDay() {
-        TethysDate myDate = getSelectedDate();
+        final TethysDate myDate = getSelectedDate();
         return isSameMonth(myDate, theMonth)
                                              ? myDate.getDay()
                                              : 0;
@@ -378,7 +378,7 @@ public class TethysDateConfig
      * @param pDay the selected day
      */
     public void setSelectedDay(final int pDay) {
-        TethysDate myOld = getSelectedDate();
+        final TethysDate myOld = getSelectedDate();
         TethysDate myNew = null;
 
         /* If we are selecting a proper date */

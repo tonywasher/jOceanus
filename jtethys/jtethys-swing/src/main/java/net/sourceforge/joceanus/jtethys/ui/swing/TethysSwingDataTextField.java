@@ -254,7 +254,7 @@ public abstract class TethysSwingDataTextField<T>
     @Override
     public void setEditable(final boolean pEditable) {
         /* Obtain current setting */
-        boolean isEditable = isEditable();
+        final boolean isEditable = isEditable();
 
         /* If we are changing */
         if (pEditable != isEditable) {
@@ -360,14 +360,14 @@ public abstract class TethysSwingDataTextField<T>
             theControl = new TethysDataEditTextFieldControl<>(this, pConverter);
 
             /* Access the fields */
-            JLabel myLabel = getLabel();
+            final JLabel myLabel = getLabel();
             theTextField = getEditControl();
             theTextField.setBorder(BORDER_STD);
 
             /* Set alignment */
-            int myAlignment = pConverter.rightAlignFields()
-                                                            ? SwingConstants.RIGHT
-                                                            : SwingConstants.LEFT;
+            final int myAlignment = pConverter.rightAlignFields()
+                                                                  ? SwingConstants.RIGHT
+                                                                  : SwingConstants.LEFT;
             myLabel.setHorizontalAlignment(myAlignment);
             theTextField.setHorizontalAlignment(myAlignment);
 

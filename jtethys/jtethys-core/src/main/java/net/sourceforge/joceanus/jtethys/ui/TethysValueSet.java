@@ -269,9 +269,9 @@ public class TethysValueSet
      */
     public void applyColorMapping(final Map<String, String> pMappings) {
         /* Loop through the mappings */
-        Iterator<Map.Entry<String, String>> myIterator = pMappings.entrySet().iterator();
+        final Iterator<Map.Entry<String, String>> myIterator = pMappings.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<String, String> myMapping = myIterator.next();
+            final Map.Entry<String, String> myMapping = myIterator.next();
             theValueMap.put(myMapping.getKey(), myMapping.getValue());
         }
 
@@ -304,29 +304,29 @@ public class TethysValueSet
      */
     public String resolveValues(final String pSource) {
         /* Allocate a string builder */
-        StringBuilder myBuilder = new StringBuilder(pSource);
+        final StringBuilder myBuilder = new StringBuilder(pSource);
 
         /* Note wrapper lengths */
-        int iHdrLen = VAR_HDR.length();
-        int iTrlLen = VAR_TRL.length();
+        final int iHdrLen = VAR_HDR.length();
+        final int iTrlLen = VAR_TRL.length();
 
         /* Loop forever */
         for (;;) {
             /* Search for variable and break loop if none found */
-            int iStart = myBuilder.indexOf(VAR_HDR);
-            int iEnd = iStart == -1
-                                    ? -1
-                                    : myBuilder.indexOf(VAR_TRL, iStart + iHdrLen);
+            final int iStart = myBuilder.indexOf(VAR_HDR);
+            final int iEnd = iStart == -1
+                                          ? -1
+                                          : myBuilder.indexOf(VAR_TRL, iStart + iHdrLen);
             if (iEnd == -1) {
                 break;
             }
 
             /* Obtain the variable name and delete the reference */
-            String myName = myBuilder.substring(iStart + iHdrLen, iEnd);
+            final String myName = myBuilder.substring(iStart + iHdrLen, iEnd);
             myBuilder.delete(iStart, iEnd + iTrlLen);
 
             /* Obtain the value and insert it if found */
-            String myValue = theValueMap.get(myName);
+            final String myValue = theValueMap.get(myName);
             if (myValue != null) {
                 myBuilder.insert(iStart, myValue);
             }

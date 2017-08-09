@@ -65,16 +65,16 @@ public final class TethysSwingSpringUtilities {
             /* Calculate the maximum width for the column */
             for (int r = 0, i = c; r < pRows; r++, i += pCols) {
                 /* Adjust total width as required */
-                Component myComponent = pParent.getComponent(i);
-                Constraints myConstraints = pLayout.getConstraints(myComponent);
+                final Component myComponent = pParent.getComponent(i);
+                final Constraints myConstraints = pLayout.getConstraints(myComponent);
                 myWidth = Spring.max(myWidth, myConstraints.getWidth());
             }
 
             /* Apply x-position and width for column */
             for (int r = 0, i = c; r < pRows; r++, i += pCols) {
                 /* Set x-position and width for each cell */
-                Component myComponent = pParent.getComponent(i);
-                Constraints myConstraints = pLayout.getConstraints(myComponent);
+                final Component myComponent = pParent.getComponent(i);
+                final Constraints myConstraints = pLayout.getConstraints(myComponent);
                 myConstraints.setX(myX);
                 myConstraints.setWidth(myWidth);
             }
@@ -92,18 +92,18 @@ public final class TethysSwingSpringUtilities {
             /* Calculate the maximum height for each row */
             for (int c = 0; c < pCols; c++) {
                 /* Adjust total width as required */
-                Component myComponent = pParent.getComponent(i
-                                                             + c);
-                Constraints myConstraints = pLayout.getConstraints(myComponent);
+                final Component myComponent = pParent.getComponent(i
+                                                                   + c);
+                final Constraints myConstraints = pLayout.getConstraints(myComponent);
                 myHeight = Spring.max(myHeight, myConstraints.getHeight());
             }
 
             /* Apply y-position and height for row */
             for (int c = 0; c < pCols; c++) {
                 /* Set y-position and height for each cell */
-                Component myComponent = pParent.getComponent(i
-                                                             + c);
-                Constraints myConstraints = pLayout.getConstraints(myComponent);
+                final Component myComponent = pParent.getComponent(i
+                                                                   + c);
+                final Constraints myConstraints = pLayout.getConstraints(myComponent);
                 myConstraints.setY(myY);
                 myConstraints.setHeight(myHeight);
             }
@@ -113,7 +113,7 @@ public final class TethysSwingSpringUtilities {
         }
 
         /* Set the parent's size. */
-        Constraints myCons = pLayout.getConstraints(pParent);
+        final Constraints myCons = pLayout.getConstraints(pParent);
         myCons.setConstraint(SpringLayout.SOUTH, myY);
         myCons.setConstraint(SpringLayout.EAST, myX);
     }

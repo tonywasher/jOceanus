@@ -78,7 +78,7 @@ public class TethysRate
      * @return the new Rate
      */
     public static TethysRate getWholePercentage(final long pValue) {
-        TethysRate myRate = new TethysRate();
+        final TethysRate myRate = new TethysRate();
         myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
                                                - TethysDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
         return myRate;
@@ -90,7 +90,7 @@ public class TethysRate
      * @return the new Rate
      */
     public static TethysRate getWholePermille(final long pValue) {
-        TethysRate myRate = new TethysRate();
+        final TethysRate myRate = new TethysRate();
         myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
                                                - TethysDecimalParser.ADJUST_PERMILLE), NUM_DECIMALS);
         return myRate;
@@ -102,7 +102,7 @@ public class TethysRate
      */
     public TethysRate getRemainingRate() {
         /* Create a copy of this rate and reverse it */
-        TethysRate myRate = new TethysRate(this);
+        final TethysRate myRate = new TethysRate(this);
         myRate.reverseRate();
         return myRate;
     }

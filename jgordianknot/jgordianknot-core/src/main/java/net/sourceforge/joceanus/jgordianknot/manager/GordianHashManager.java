@@ -135,7 +135,7 @@ public abstract class GordianHashManager {
         }
 
         /* Prepare to prompt for password */
-        String myTitle;
+        final String myTitle;
         boolean needConfirm = false;
         char[] myPassword;
 
@@ -233,7 +233,7 @@ public abstract class GordianHashManager {
      */
     public GordianKeySetHash similarKeySetHash(final GordianKeySetHash pHash) throws OceanusException {
         /* clone the hash */
-        GordianKeySetHash myHash = pHash.similarHash();
+        final GordianKeySetHash myHash = pHash.similarHash();
 
         /* Add the hash to the list */
         theHashList.add(myHash);
@@ -252,7 +252,7 @@ public abstract class GordianHashManager {
         Iterator<GordianKeySetHash> myIterator = theHashList.listIterator();
         while (myIterator.hasNext()) {
             /* Access hash */
-            GordianKeySetHash myCurr = myIterator.next();
+            final GordianKeySetHash myCurr = myIterator.next();
 
             /* If this is the hash we are looking for, return it */
             if (Arrays.equals(pHashBytes, myCurr.getHash())) {
@@ -264,10 +264,10 @@ public abstract class GordianHashManager {
         myIterator = theHashList.listIterator();
         while (myIterator.hasNext()) {
             /* Access hash */
-            GordianKeySetHash myCurr = myIterator.next();
+            final GordianKeySetHash myCurr = myIterator.next();
 
             /* Attempt to initialise the control from this password */
-            GordianKeySetHash myPassHash = myCurr.attemptPassword(pHashBytes);
+            final GordianKeySetHash myPassHash = myCurr.attemptPassword(pHashBytes);
 
             /* If we succeeded */
             if (myPassHash != null) {
@@ -310,7 +310,7 @@ public abstract class GordianHashManager {
      * @return the maximum keyWrap size
      */
     public static int getMaximumKeyWrapSize() {
-        int myMaxCipherSteps = getMaximumCipherSteps(GordianFactoryType.BC, false);
+        final int myMaxCipherSteps = getMaximumCipherSteps(GordianFactoryType.BC, false);
         return GordianKeySet.getKeyWrapExpansion(myMaxCipherSteps)
                + GordianFactory.getKeyLength(false) / Byte.SIZE;
     }

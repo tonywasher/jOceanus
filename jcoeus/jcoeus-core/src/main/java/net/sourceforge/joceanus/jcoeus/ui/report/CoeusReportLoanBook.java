@@ -118,10 +118,10 @@ public class CoeusReportLoanBook
         theMarket = pMarket;
 
         /* Access the date and totals */
-        TethysDate myDate = theMarket.getDate();
+        final TethysDate myDate = theMarket.getDate();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, "Loan Book for " + theMarket.getMarket().getProvider().toString(), theFormatter.formatObject(myDate));
 
         /* Initialise the active Loan table */
@@ -137,7 +137,7 @@ public class CoeusReportLoanBook
         /* Loop through the loans */
         Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusLoan myLoan = myIterator.next();
+            final CoeusLoan myLoan = myIterator.next();
 
             /* Skip if loan is not active */
             if (!CoeusLoanStatus.ACTIVE.equals(myLoan.getStatus())) {
@@ -145,8 +145,8 @@ public class CoeusReportLoanBook
             }
 
             /* Access details */
-            String myId = myLoan.getLoanId();
-            CoeusTotals myTotals = myLoan.getTotals();
+            final String myId = myLoan.getLoanId();
+            final CoeusTotals myTotals = myLoan.getTotals();
 
             /* Create the row */
             theBuilder.startRow(myTable);
@@ -177,7 +177,7 @@ public class CoeusReportLoanBook
             /* Loop through the loans */
             myIterator = theMarket.loanIterator();
             while (myIterator.hasNext()) {
-                CoeusLoan myLoan = myIterator.next();
+                final CoeusLoan myLoan = myIterator.next();
 
                 /* Skip if loan is not badDebt */
                 if (!CoeusLoanStatus.BADDEBT.equals(myLoan.getStatus())) {
@@ -185,8 +185,8 @@ public class CoeusReportLoanBook
                 }
 
                 /* Access details */
-                String myId = myLoan.getLoanId();
-                CoeusTotals myTotals = myLoan.getTotals();
+                final String myId = myLoan.getLoanId();
+                final CoeusTotals myTotals = myLoan.getTotals();
 
                 /* Create the row */
                 theBuilder.startRow(myTable);
@@ -214,7 +214,7 @@ public class CoeusReportLoanBook
         /* Loop through the loans */
         myIterator = theMarket.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusLoan myLoan = myIterator.next();
+            final CoeusLoan myLoan = myIterator.next();
 
             /* Skip if loan is not rePaid */
             if (!CoeusLoanStatus.REPAID.equals(myLoan.getStatus())) {
@@ -222,7 +222,7 @@ public class CoeusReportLoanBook
             }
 
             /* Access details */
-            String myId = myLoan.getLoanId();
+            final String myId = myLoan.getLoanId();
 
             /* Create the row */
             theBuilder.startRow(myTable);
@@ -243,8 +243,8 @@ public class CoeusReportLoanBook
         /* If this is a Loan */
         if (pSource instanceof CoeusLoan) {
             /* Create the new filter */
-            CoeusLoan myLoan = (CoeusLoan) pSource;
-            CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
+            final CoeusLoan myLoan = (CoeusLoan) pSource;
+            final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
             myFilter.setLoan(myLoan);
             myFilter.setTotalSet(CoeusTotalSet.LOANBOOK);
             return myFilter;

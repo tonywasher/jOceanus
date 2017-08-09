@@ -218,7 +218,7 @@ public class CoeusFundingCircleTotals
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Cast correctly */
-        CoeusFundingCircleTotals myTotals = (CoeusFundingCircleTotals) pTotals;
+        final CoeusFundingCircleTotals myTotals = (CoeusFundingCircleTotals) pTotals;
 
         /* Add values from totals */
         theAssetValue.addAmount(myTotals.getAssetValue());
@@ -242,7 +242,7 @@ public class CoeusFundingCircleTotals
     @Override
     protected void addTransactionToTotals(final CoeusTransaction pTransaction) {
         /* Cast correctly */
-        CoeusFundingCircleTransaction myTransaction = (CoeusFundingCircleTransaction) pTransaction;
+        final CoeusFundingCircleTransaction myTransaction = (CoeusFundingCircleTransaction) pTransaction;
 
         /* Add values from transaction */
         theInvested.addAmount(myTransaction.getInvested());

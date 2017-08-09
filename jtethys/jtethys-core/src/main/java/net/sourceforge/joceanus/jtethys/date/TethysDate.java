@@ -91,37 +91,37 @@ public class TethysDate
     /**
      * The Simple Date format for the locale and format string.
      */
-    private DateTimeFormatter theDateFormat = null;
+    private DateTimeFormatter theDateFormat;
 
     /**
      * The Date format.
      */
-    private String theFormattedDate = null;
+    private String theFormattedDate;
 
     /**
      * The Date object in underlying Java form.
      */
-    private LocalDate theDate = null;
+    private LocalDate theDate;
 
     /**
      * The year of the date.
      */
-    private int theYear = 0;
+    private int theYear;
 
     /**
      * The month of the date.
      */
-    private int theMonth = 0;
+    private int theMonth;
 
     /**
      * The day of the date.
      */
-    private int theDay = 0;
+    private int theDay;
 
     /**
      * The day id.
      */
-    private int theId = 0;
+    private int theId;
 
     /**
      * Construct a new Date and initialise with todays date.
@@ -177,8 +177,8 @@ public class TethysDate
         }
 
         /* Create the Date */
-        Instant myInstant = Instant.ofEpochMilli(pDate.getTime());
-        LocalDateTime myDateTime = LocalDateTime.ofInstant(myInstant, ZoneId.systemDefault());
+        final Instant myInstant = Instant.ofEpochMilli(pDate.getTime());
+        final LocalDateTime myDateTime = LocalDateTime.ofInstant(myInstant, ZoneId.systemDefault());
         buildDateDay(myDateTime.toLocalDate(), pLocale);
     }
 
@@ -287,7 +287,7 @@ public class TethysDate
             theDateFormat = DateTimeFormatter.ofPattern(theFormat, pLocale);
 
             /* Parse and build the date */
-            LocalDate myDate = LocalDate.parse(pValue, theDateFormat);
+            final LocalDate myDate = LocalDate.parse(pValue, theDateFormat);
             buildDateDay(myDate, pLocale);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException(ERROR_BADFORMAT
@@ -548,8 +548,8 @@ public class TethysDate
      */
     public void startCalendarQuarter() {
         /* Determine the month in quarter */
-        int myMiQ = (theMonth - 1)
-                    % MONTHS_IN_QUARTER;
+        final int myMiQ = (theMonth - 1)
+                          % MONTHS_IN_QUARTER;
 
         /* Move to the first of the current month */
         theDate = theDate.withDayOfMonth(1);
@@ -586,9 +586,9 @@ public class TethysDate
      */
     public void startFiscalYear() {
         /* Determine Fiscal year type */
-        TethysFiscalYear myFiscal = TethysFiscalYear.determineFiscalYear(theLocale);
-        int myMonth = myFiscal.getFirstMonth().getValue();
-        int myDay = myFiscal.getFirstDay();
+        final TethysFiscalYear myFiscal = TethysFiscalYear.determineFiscalYear(theLocale);
+        final int myMonth = myFiscal.getFirstMonth().getValue();
+        final int myDay = myFiscal.getFirstDay();
 
         /* Determine which year we are in */
         if ((theMonth < myMonth)
@@ -716,14 +716,14 @@ public class TethysDate
      */
     public int compareTo(final TethysDateRange pRange) {
         /* Check start of range */
-        TethysDate myStart = pRange.getStart();
+        final TethysDate myStart = pRange.getStart();
         if ((myStart != null)
             && (compareTo(myStart) < 0)) {
             return -1;
         }
 
         /* Check end of range */
-        TethysDate myEnd = pRange.getEnd();
+        final TethysDate myEnd = pRange.getEnd();
         if ((myEnd != null)
             && (compareTo(myEnd) > 0)) {
             return 1;
@@ -749,7 +749,7 @@ public class TethysDate
         }
 
         /* Access the object as a TethysDate */
-        TethysDate myThat = (TethysDate) pThat;
+        final TethysDate myThat = (TethysDate) pThat;
 
         /* Check components */
         return theYear == myThat.theYear
@@ -773,7 +773,7 @@ public class TethysDate
      * @return the associated date
      */
     public Date toDate() {
-        Instant myInstant = theDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
+        final Instant myInstant = theDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(myInstant);
     }
 
@@ -782,7 +782,7 @@ public class TethysDate
      * @return the Calendar
      */
     public Calendar toCalendar() {
-        Calendar myCalendar = Calendar.getInstance(theLocale);
+        final Calendar myCalendar = Calendar.getInstance(theLocale);
         myCalendar.setTime(toDate());
         return myCalendar;
     }

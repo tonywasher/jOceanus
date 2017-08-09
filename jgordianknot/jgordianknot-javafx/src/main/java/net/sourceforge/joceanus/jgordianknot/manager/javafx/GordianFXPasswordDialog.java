@@ -82,7 +82,7 @@ public class GordianFXPasswordDialog
         theStage.setTitle(pTitle);
 
         /* Create the scene */
-        Scene myScene = new Scene(getContainer().getNode());
+        final Scene myScene = new Scene(getContainer().getNode());
         theStage.setScene(myScene);
 
         /* Sort out factory */
@@ -114,10 +114,10 @@ public class GordianFXPasswordDialog
      */
     public void showDialog() {
         /* Centre on parent */
-        Window myParent = theStage.getOwner();
+        final Window myParent = theStage.getOwner();
         if (myParent != null) {
-            double myX = (myParent.getWidth() - APPROX_WIDTH) / 2;
-            double myY = (myParent.getHeight() - APPROX_HEIGHT) / 2;
+            final double myX = (myParent.getWidth() - APPROX_WIDTH) / 2;
+            final double myY = (myParent.getHeight() - APPROX_HEIGHT) / 2;
             theStage.setX(myParent.getX() + myX);
             theStage.setY(myParent.getY() + myY);
         }
@@ -144,9 +144,7 @@ public class GordianFXPasswordDialog
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            FutureTask<GordianFXPasswordDialog> myTask = new FutureTask<>(() -> {
-                return new GordianFXPasswordDialog(pFactory, pTitle, pNeedConfirm);
-            });
+            final FutureTask<GordianFXPasswordDialog> myTask = new FutureTask<>(() -> new GordianFXPasswordDialog(pFactory, pTitle, pNeedConfirm));
 
             /* Protect against exceptions */
             try {
@@ -161,6 +159,7 @@ public class GordianFXPasswordDialog
             }
             return null;
         }
+
     }
 
     /**
@@ -177,7 +176,7 @@ public class GordianFXPasswordDialog
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            FutureTask<Void> myTask = new FutureTask<>(() -> {
+            final FutureTask<Void> myTask = new FutureTask<>(() -> {
                 pDialog.showDialog();
                 return null;
             });

@@ -65,7 +65,7 @@ public class BouncyKeyGeneratorCache
      */
     @SuppressWarnings("unchecked")
     protected <T> void cacheKeyGenerator(final BouncyKeyGenerator<T> pGenerator) {
-        T myKeyType = pGenerator.getKeyType();
+        final T myKeyType = pGenerator.getKeyType();
         if (myKeyType instanceof GordianSymKeyType) {
             addToSymKeyCache((BouncyKeyGenerator<GordianSymKeyType>) pGenerator);
         } else if (myKeyType instanceof GordianStreamKeyType) {

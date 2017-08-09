@@ -169,7 +169,7 @@ public class TethysDataFormatter {
         }
 
         /* Access the class */
-        Class<?> myClass = pValue.getClass();
+        final Class<?> myClass = pValue.getClass();
 
         /* Handle Native classes */
         if (String.class.equals(myClass)) {
@@ -396,10 +396,10 @@ public class TethysDataFormatter {
      */
     private static String formatBasicValue(final Object pValue) {
         /* Access the class */
-        Class<?> myClass = pValue.getClass();
+        final Class<?> myClass = pValue.getClass();
 
         /* Create basic result */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myClass.getCanonicalName());
 
         /* Handle list/map instances */

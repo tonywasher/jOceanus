@@ -79,7 +79,7 @@ public class GordianDigestInputStream
      */
     private void checkResult() throws OceanusException {
         /* Calculate digest */
-        byte[] myResult = theDigest.finish();
+        final byte[] myResult = theDigest.finish();
 
         /* Check valid MAC */
         if (!Arrays.areEqual(myResult, theExpected)) {
@@ -115,7 +115,7 @@ public class GordianDigestInputStream
         public int processBytes(final byte[] pBuffer,
                                 final int pLength) throws OceanusException {
             /* Initialise variables */
-            int iLength = pLength;
+            final int iLength = pLength;
 
             /* If we have EOF from the input stream */
             if (iLength == -1) {

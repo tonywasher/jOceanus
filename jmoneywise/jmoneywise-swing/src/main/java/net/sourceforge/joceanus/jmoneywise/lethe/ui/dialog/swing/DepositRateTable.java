@@ -51,8 +51,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -381,7 +381,7 @@ public class DepositRateTable
             theRates.append(myRate);
 
             /* Validate the new item and notify of the changes */
-            myRate.validate();
+            // myRate.validate();
             theModel.fireNewDataEvents();
 
             /* Shift display to line */

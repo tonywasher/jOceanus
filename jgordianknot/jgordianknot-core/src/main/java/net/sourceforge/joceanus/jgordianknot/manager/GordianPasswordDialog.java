@@ -161,10 +161,10 @@ public abstract class GordianPasswordDialog<N, I> {
         needConfirm = pNeedConfirm;
 
         /* Create the Password label */
-        TethysLabel<N, I> myPassLabel = pFactory.newLabel(NLS_PASSWORD);
+        final TethysLabel<N, I> myPassLabel = pFactory.newLabel(NLS_PASSWORD);
 
         /* Create the confirm label */
-        TethysLabel<N, I> myConfLabel = pFactory.newLabel(NLS_CONFIRM);
+        final TethysLabel<N, I> myConfLabel = pFactory.newLabel(NLS_CONFIRM);
 
         /* Create OK button */
         theOKButton = pFactory.newButton();
@@ -197,7 +197,7 @@ public abstract class GordianPasswordDialog<N, I> {
         theErrorField.setErrorText();
 
         /* Create the panel */
-        TethysGridPaneManager<N, I> myForm = pFactory.newGridPane();
+        final TethysGridPaneManager<N, I> myForm = pFactory.newGridPane();
         myForm.setHGap(PADDING_SIZE);
         myForm.setVGap(PADDING_SIZE);
 

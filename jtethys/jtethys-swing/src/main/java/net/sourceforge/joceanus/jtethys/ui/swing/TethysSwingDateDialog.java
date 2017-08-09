@@ -330,7 +330,7 @@ public class TethysSwingDateDialog
      */
     public void showDialogUnderNode(final JComponent pNode) {
         /* Position the dialog just below the node */
-        Point myLoc = pNode.getLocationOnScreen();
+        final Point myLoc = pNode.getLocationOnScreen();
         theDialog.setLocation(myLoc.x, myLoc.y
                                        + pNode.getHeight());
 
@@ -372,8 +372,8 @@ public class TethysSwingDateDialog
      */
     private void handleEscapeKey(final JPanel pPane) {
         /* Access Maps */
-        ActionMap myAction = pPane.getActionMap();
-        InputMap myInput = pPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        final ActionMap myAction = pPane.getActionMap();
+        final InputMap myInput = pPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         /* Build the maps */
         myInput.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), ACTION_ESCAPE);
@@ -414,7 +414,7 @@ public class TethysSwingDateDialog
             extends WindowAdapter {
         @Override
         public void windowLostFocus(final WindowEvent e) {
-            Window myOppo = e.getOppositeWindow();
+            final Window myOppo = e.getOppositeWindow();
             /*
              * Ignore loss of focus to unidentified window. This is to bypass a problem in browser
              * applets where a temporary loss of focus occurs immediately upon display of a dialog.
@@ -497,7 +497,7 @@ public class TethysSwingDateDialog
             thePrevYearButton.setToolTipText(NLS_PREVYEAR);
 
             /* Listen for button events */
-            NavigateListener myListener = new NavigateListener();
+            final NavigateListener myListener = new NavigateListener();
             thePrevMonthButton.addActionListener(myListener);
             theNextMonthButton.addActionListener(myListener);
             thePrevYearButton.addActionListener(myListener);
@@ -527,12 +527,12 @@ public class TethysSwingDateDialog
          */
         private void buildMonth() {
             /* Store the active month */
-            TethysDate myBase = theConfig.getCurrentMonth();
-            Locale myLocale = theConfig.getLocale();
+            final TethysDate myBase = theConfig.getCurrentMonth();
+            final Locale myLocale = theConfig.getLocale();
 
             /* Determine the display for the label */
-            String myMonth = myBase.getMonthValue().getDisplayName(TextStyle.FULL, myLocale);
-            String myYear = Integer.toString(myBase.getYear());
+            final String myMonth = myBase.getMonthValue().getDisplayName(TextStyle.FULL, myLocale);
+            final String myYear = Integer.toString(myBase.getYear());
 
             /* Set the label */
             theDateLabel.setText(myMonth
@@ -540,8 +540,8 @@ public class TethysSwingDateDialog
                                  + myYear);
 
             /* Access boundary dates */
-            TethysDate myEarliest = theConfig.getEarliestDate();
-            TethysDate myLatest = theConfig.getLatestDate();
+            final TethysDate myEarliest = theConfig.getEarliestDate();
+            final TethysDate myLatest = theConfig.getLatestDate();
 
             /* Enable/Disable buttons as required */
             thePrevMonthButton.setEnabled(!TethysDateConfig.isSameMonth(myEarliest, myBase));
@@ -558,7 +558,7 @@ public class TethysSwingDateDialog
             @Override
             public void actionPerformed(final ActionEvent e) {
                 /* Access the event source */
-                Object src = e.getSource();
+                final Object src = e.getSource();
 
                 /* If the button is previous month */
                 if (thePrevMonthButton.equals(src)) {
@@ -644,7 +644,7 @@ public class TethysSwingDateDialog
             theConfig = pDialog.getConfig();
 
             /* Set this as a 7x7 GridLayout */
-            GridLayout myLayout = new GridLayout();
+            final GridLayout myLayout = new GridLayout();
             myLayout.setColumns(DAYS_IN_WEEK);
             myLayout.setRows(0);
             setLayout(myLayout);
@@ -652,7 +652,7 @@ public class TethysSwingDateDialog
             /* Loop through the labels */
             for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
                 /* Access the label */
-                JLabel myLabel = new JLabel();
+                final JLabel myLabel = new JLabel();
                 theHdrs[iCol] = myLabel;
 
                 /* Set colour */
@@ -667,7 +667,7 @@ public class TethysSwingDateDialog
             /* Add the Days to the layout */
             for (int iRow = 0; iRow < MAX_WEEKS_IN_MONTH; iRow++) {
                 for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
-                    PanelDay myDay = new PanelDay(pDialog);
+                    final PanelDay myDay = new PanelDay(pDialog);
                     theDays[iRow][iCol] = myDay;
                     add(myDay);
                 }
@@ -744,18 +744,18 @@ public class TethysSwingDateDialog
             int iCol = 0;
 
             /* Access the current month */
-            TethysDate myCurr = new TethysDate(theConfig.getCurrentMonth());
-            int iMonth = myCurr.getMonth();
+            final TethysDate myCurr = new TethysDate(theConfig.getCurrentMonth());
+            final int iMonth = myCurr.getMonth();
 
             /* Access the Weekday of the 1st of the month */
-            DayOfWeek myWeekDay = myCurr.getDayOfWeek();
-            int iFirstCol = getDayColumn(myWeekDay);
+            final DayOfWeek myWeekDay = myCurr.getDayOfWeek();
+            final int iFirstCol = getDayColumn(myWeekDay);
 
             /* Access the interesting days of the month */
-            int iCurrent = theConfig.getCurrentDay();
-            int iSelected = theConfig.getSelectedDay();
-            int iEarliest = theConfig.getEarliestDay();
-            int iLatest = theConfig.getLatestDay();
+            final int iCurrent = theConfig.getCurrentDay();
+            final int iSelected = theConfig.getSelectedDay();
+            final int iEarliest = theConfig.getEarliestDay();
+            final int iLatest = theConfig.getLatestDay();
 
             /* Adjust the day to beginning of week if required */
             if (iFirstCol > 0) {
@@ -765,7 +765,7 @@ public class TethysSwingDateDialog
             /* Loop through initial columns */
             for (int iDay = myCurr.getDay(); iCol < iFirstCol; iCol++, iDay++, myCurr.adjustDay(1)) {
                 /* Access the label */
-                PanelDay myLabel = theDays[0][iCol];
+                final PanelDay myLabel = theDays[0][iCol];
 
                 /* Reset the day and set no day */
                 myLabel.resetDay(false);
@@ -781,7 +781,7 @@ public class TethysSwingDateDialog
                 }
 
                 /* Access the label */
-                PanelDay myLabel = theDays[iRow][iCol];
+                final PanelDay myLabel = theDays[iRow][iCol];
 
                 /* Set initial parts of the day */
                 myLabel.resetDay(true);
@@ -811,7 +811,7 @@ public class TethysSwingDateDialog
             /* Loop through remaining columns */
             for (int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
                 /* Access the label */
-                PanelDay myLabel = theDays[iRow][iCol];
+                final PanelDay myLabel = theDays[iRow][iCol];
 
                 /* Reset the day and set no day */
                 myLabel.resetDay(false);
@@ -827,8 +827,8 @@ public class TethysSwingDateDialog
          */
         private void buildDayNames() {
             /* Get todays date */
-            Locale myLocale = theConfig.getLocale();
-            Calendar myDate = Calendar.getInstance(myLocale);
+            final Locale myLocale = theConfig.getLocale();
+            final Calendar myDate = Calendar.getInstance(myLocale);
             int myStart = myDate.getFirstDayOfWeek();
             if (myStart == Calendar.SUNDAY) {
                 myStart += DAYS_IN_WEEK;
@@ -844,14 +844,14 @@ public class TethysSwingDateDialog
             /* Loop through the labels */
             for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
                 /* Access the label */
-                JLabel myLabel = theHdrs[iCol];
+                final JLabel myLabel = theHdrs[iCol];
 
                 /* Access the required name */
                 myDoW = theDaysOfWk[iCol];
-                TextStyle myStyle = theConfig.showNarrowDays()
-                                                               ? TextStyle.NARROW
-                                                               : TextStyle.SHORT;
-                String myName = myDoW.getDisplayName(myStyle, myLocale);
+                final TextStyle myStyle = theConfig.showNarrowDays()
+                                                                     ? TextStyle.NARROW
+                                                                     : TextStyle.SHORT;
+                final String myName = myDoW.getDisplayName(myStyle, myLocale);
 
                 /* Set the name */
                 myLabel.setText(myName);

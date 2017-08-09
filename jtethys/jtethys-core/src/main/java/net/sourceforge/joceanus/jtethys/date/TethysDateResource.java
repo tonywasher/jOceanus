@@ -249,7 +249,7 @@ public enum TethysDateResource implements TethysResourceId {
      */
     private static Map<TethysDatePeriod, TethysResourceId> buildPeriodMap() {
         /* Create the map and return it */
-        Map<TethysDatePeriod, TethysResourceId> myMap = new EnumMap<>(TethysDatePeriod.class);
+        final Map<TethysDatePeriod, TethysResourceId> myMap = new EnumMap<>(TethysDatePeriod.class);
         myMap.put(TethysDatePeriod.ONEWEEK, PERIOD_ONEWEEK);
         myMap.put(TethysDatePeriod.FORTNIGHT, PERIOD_FORTNIGHT);
         myMap.put(TethysDatePeriod.ONEMONTH, PERIOD_ONEMONTH);

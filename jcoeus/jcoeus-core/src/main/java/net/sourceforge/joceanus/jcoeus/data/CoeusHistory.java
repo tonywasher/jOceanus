@@ -161,7 +161,7 @@ public abstract class CoeusHistory
      */
     public void addTransactionToHistory(final CoeusTransaction pTrans) {
         /* Create the new entry and add to the list */
-        CoeusTotals myTotals = newTotals(theLastTotals, pTrans);
+        final CoeusTotals myTotals = newTotals(theLastTotals, pTrans);
         myTotals.addTransactionToTotals(pTrans);
         theHistory.add(myTotals);
         theLastTotals = myTotals;
@@ -207,7 +207,7 @@ public abstract class CoeusHistory
             return theMarket;
         }
         if (FIELD_LOAN.equals(pField)) {
-            CoeusLoan myLoan = getLoan();
+            final CoeusLoan myLoan = getLoan();
             return myLoan == null
                                   ? MetisDataFieldValue.SKIP
                                   : myLoan;

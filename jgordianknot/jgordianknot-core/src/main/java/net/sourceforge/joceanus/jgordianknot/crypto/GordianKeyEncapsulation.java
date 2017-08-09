@@ -90,7 +90,7 @@ public abstract class GordianKeyEncapsulation {
      * @throws OceanusException on exception
      */
     public GordianKeySet deriveKeySet() throws OceanusException {
-        GordianKeySet myKeySet = new GordianKeySet(theFactory);
+        final GordianKeySet myKeySet = new GordianKeySet(theFactory);
         myKeySet.buildFromSecret(theSecret, theInitVector);
         return myKeySet;
     }
@@ -103,7 +103,7 @@ public abstract class GordianKeyEncapsulation {
      * @throws OceanusException on exception
      */
     public <T> GordianKey<T> deriveKey(final T pKeyType) throws OceanusException {
-        GordianKeyGenerator<T> myGenerator = theFactory.getKeyGenerator(pKeyType);
+        final GordianKeyGenerator<T> myGenerator = theFactory.getKeyGenerator(pKeyType);
         return myGenerator.generateKeyFromSecret(theSecret, theInitVector);
     }
 

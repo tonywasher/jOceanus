@@ -76,13 +76,13 @@ public class GordianZipFileContents {
         this();
 
         /* Wrap string in a string builder */
-        StringBuilder myString = new StringBuilder(pCodedString);
-        String myFileSep = Character.toString(SEPARATOR_FILE);
+        final StringBuilder myString = new StringBuilder(pCodedString);
+        final String myFileSep = Character.toString(SEPARATOR_FILE);
 
         /* while we have separators in the string */
         for (;;) {
             /* Locate End of entry and break loop if not found */
-            int myLoc = myString.indexOf(myFileSep);
+            final int myLoc = myString.indexOf(myFileSep);
             if (myLoc == -1) {
                 break;
             }
@@ -133,7 +133,7 @@ public class GordianZipFileContents {
      */
     protected final GordianZipFileEntry addZipFileEntry(final String pName) {
         /* Create the new entry */
-        GordianZipFileEntry myEntry = new GordianZipFileEntry(pName);
+        final GordianZipFileEntry myEntry = new GordianZipFileEntry(pName);
 
         /* Add it to the list */
         addZipFileEntry(myEntry);
@@ -148,7 +148,7 @@ public class GordianZipFileContents {
      */
     protected final void addZipFileEntry(final ZipEntry pEntry) {
         /* Create the new entry */
-        GordianZipFileEntry myEntry = addZipFileEntry(pEntry.getName());
+        final GordianZipFileEntry myEntry = addZipFileEntry(pEntry.getName());
 
         /* Record details */
         myEntry.setZipEntry(pEntry);
@@ -160,17 +160,17 @@ public class GordianZipFileContents {
      */
     protected final void addZipFileEntry(final GordianZipFileEntry pEntry) {
         /* Access the name */
-        String myName = pEntry.getFileName();
+        final String myName = pEntry.getFileName();
 
         /* Loop through the files in the list in the list */
         int iIndex = 0;
-        Iterator<GordianZipFileEntry> myIterator = theList.iterator();
+        final Iterator<GordianZipFileEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access next entry */
-            GordianZipFileEntry myEntry = myIterator.next();
+            final GordianZipFileEntry myEntry = myIterator.next();
 
             /* Check the entry name */
-            int iDiff = myName.compareTo(myEntry.getFileName());
+            final int iDiff = myName.compareTo(myEntry.getFileName());
 
             /* If this file is later than us */
             if (iDiff < 0) {
@@ -201,13 +201,13 @@ public class GordianZipFileContents {
      */
     public GordianZipFileEntry findFileEntry(final String pName) {
         /* Loop through the file entries */
-        Iterator<GordianZipFileEntry> myIterator = theList.iterator();
+        final Iterator<GordianZipFileEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access the entry */
-            GordianZipFileEntry myEntry = myIterator.next();
+            final GordianZipFileEntry myEntry = myIterator.next();
 
             /* Check the entry name */
-            int iDiff = pName.compareTo(myEntry.getFileName());
+            final int iDiff = pName.compareTo(myEntry.getFileName());
 
             /* If this is the required entry, return it */
             if (iDiff == 0) {
@@ -230,14 +230,14 @@ public class GordianZipFileContents {
      * @throws OceanusException on error
      */
     protected String encodeContents() throws OceanusException {
-        StringBuilder myString = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myString = new StringBuilder(BUFFER_LEN);
         GordianZipFileProperties myProperties;
 
         /* Loop through the file entries */
-        Iterator<GordianZipFileEntry> myIterator = theList.iterator();
+        final Iterator<GordianZipFileEntry> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access the entry */
-            GordianZipFileEntry myEntry = myIterator.next();
+            final GordianZipFileEntry myEntry = myIterator.next();
 
             /* Access the properties */
             myProperties = myEntry.allocateProperties();
@@ -271,10 +271,10 @@ public class GordianZipFileContents {
      */
     private void parseEncodedEntry(final String pCodedString) throws OceanusException {
         /* Parse the properties */
-        GordianZipFileProperties myProperties = new GordianZipFileProperties(pCodedString);
+        final GordianZipFileProperties myProperties = new GordianZipFileProperties(pCodedString);
 
         /* Add the zip file entry */
-        GordianZipFileEntry myEntry = new GordianZipFileEntry(myProperties);
+        final GordianZipFileEntry myEntry = new GordianZipFileEntry(myProperties);
 
         /* If this is a header */
         if (myEntry.isHeader()) {

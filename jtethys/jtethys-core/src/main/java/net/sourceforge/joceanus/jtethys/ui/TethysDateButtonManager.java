@@ -318,7 +318,7 @@ public abstract class TethysDateButtonManager<N, I>
      * handleNewValue.
      */
     protected void handleNewValue() {
-        TethysDate myNewValue = theConfig.getSelectedDate();
+        final TethysDate myNewValue = theConfig.getSelectedDate();
         if (valueChanged(myNewValue)) {
             theValue = myNewValue;
             theEventManager.fireEvent(TethysUIEvent.NEWVALUE, myNewValue);

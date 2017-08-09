@@ -52,9 +52,9 @@ public class TethysItemList<T> {
         this();
 
         /* Iterate through the source list */
-        Iterator<TethysItem<T>> myIterator = pSource.iterator();
+        final Iterator<TethysItem<T>> myIterator = pSource.iterator();
         while (myIterator.hasNext()) {
-            TethysItem<T> myItem = myIterator.next();
+            final TethysItem<T> myItem = myIterator.next();
 
             /* Copy the item */
             theList.add(new TethysItem<>(myItem));
@@ -97,7 +97,7 @@ public class TethysItemList<T> {
      * @param pItem the item
      */
     public void selectItem(final T pItem) {
-        TethysItem<T> myItem = locateItem(pItem);
+        final TethysItem<T> myItem = locateItem(pItem);
         if (myItem != null) {
             myItem.setSelected(true);
         }
@@ -108,7 +108,7 @@ public class TethysItemList<T> {
      * @param pItem the item
      */
     public void toggleItem(final T pItem) {
-        TethysItem<T> myItem = locateItem(pItem);
+        final TethysItem<T> myItem = locateItem(pItem);
         if (myItem != null) {
             myItem.setSelected(!myItem.isSelected());
         }
@@ -119,7 +119,7 @@ public class TethysItemList<T> {
      * @param pItem the item
      */
     public void clearItem(final T pItem) {
-        TethysItem<T> myItem = locateItem(pItem);
+        final TethysItem<T> myItem = locateItem(pItem);
         if (myItem != null) {
             myItem.setSelected(false);
         }
@@ -139,9 +139,9 @@ public class TethysItemList<T> {
      * @return the list item or null
      */
     private TethysItem<T> locateItem(final T pItem) {
-        Iterator<TethysItem<T>> myIterator = iterator();
+        final Iterator<TethysItem<T>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            TethysItem<T> myItem = myIterator.next();
+            final TethysItem<T> myItem = myIterator.next();
             if (pItem.equals(myItem.getItem())) {
                 return myItem;
             }
@@ -156,15 +156,18 @@ public class TethysItemList<T> {
      */
     public TethysItemList<T> getDifferences(final TethysItemList<T> pNewList) {
         /* Create the new list */
-        TethysItemList<T> myList = new TethysItemList<>();
+        final TethysItemList<T> myList = new TethysItemList<>();
 
         /* Loop through the lists */
-        Iterator<TethysItem<T>> myIterator = iterator();
+        final Iterator<TethysItem<T>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            TethysItem<T> myItem = myIterator.next();
+            final TethysItem<T> myItem = myIterator.next();
 
             /* Look up new value */
-            TethysItem<T> myNew = pNewList.locateItem(myItem.getItem());
+            final TethysItem<T> myNew = pNewList.locateItem(myItem.getItem());
+            if (myNew == null) {
+                throw new IllegalStateException();
+            }
             if (myNew.isSelected() != myItem.isSelected()) {
                 myList.theList.add(myNew);
             }
@@ -176,10 +179,10 @@ public class TethysItemList<T> {
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
-        Iterator<TethysItem<T>> myIterator = iterator();
+        final StringBuilder myBuilder = new StringBuilder();
+        final Iterator<TethysItem<T>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            TethysItem<T> myItem = myIterator.next();
+            final TethysItem<T> myItem = myIterator.next();
             if (myItem.isSelected()) {
                 if (myBuilder.length() > 0) {
                     myBuilder.append(',');
@@ -206,7 +209,7 @@ public class TethysItemList<T> {
         }
 
         /* Check for equality */
-        TethysItemList<?> myThat = (TethysItemList<?>) pThat;
+        final TethysItemList<?> myThat = (TethysItemList<?>) pThat;
         return theList.equals(myThat.theList);
     }
 
@@ -302,7 +305,7 @@ public class TethysItemList<T> {
             }
 
             /* Check for equality */
-            TethysItem<?> myThat = (TethysItem<?>) pThat;
+            final TethysItem<?> myThat = (TethysItem<?>) pThat;
             return theItem.equals(myThat.getItem())
                    && isSelected == myThat.isSelected();
         }

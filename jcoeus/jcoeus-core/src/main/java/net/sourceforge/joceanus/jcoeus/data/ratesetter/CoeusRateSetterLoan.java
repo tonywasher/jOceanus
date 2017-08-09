@@ -107,7 +107,7 @@ public class CoeusRateSetterLoan
 
     @Override
     protected void checkLoan() throws CoeusDataException {
-        TethysMoney myBookBalance = theBookItem.getBalance();
+        final TethysMoney myBookBalance = theBookItem.getBalance();
         if (!myBookBalance.equals(getTotals().getLoanBook())) {
             throw new CoeusDataException(this, "Bad Balance");
         }

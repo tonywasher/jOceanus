@@ -373,9 +373,8 @@ public class SecurityPrice
     /**
      * Set the price.
      * @param pValue the price
-     * @throws OceanusException on error
      */
-    private void setValuePrice(final String pValue) throws OceanusException {
+    private void setValuePrice(final String pValue) {
         getValueSet().setValue(FIELD_PRICE, pValue);
     }
 

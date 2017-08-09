@@ -75,7 +75,7 @@ public class GordianCipherInputStream<T>
          */
         private int checkBufferLength(final int pLength) {
             /* Check how long a buffer we need to handle the data */
-            int iNumBytes = theCipher.getOutputLength(pLength);
+            final int iNumBytes = theCipher.getOutputLength(pLength);
 
             /* Extend the buffer if required */
             if (iNumBytes > theBuffer.length) {
@@ -91,7 +91,7 @@ public class GordianCipherInputStream<T>
                                 final int pLength) throws OceanusException {
             /* Initialise variables */
             int iNumBytes;
-            int iLength = pLength;
+            final int iLength = pLength;
 
             /* If we have EOF from the input stream */
             if (iLength == -1) {

@@ -100,7 +100,7 @@ public class TethysHTMLToFile<N, I> {
     public void writeToFile() {
         try {
             /* Select File */
-            File myFile = theFileSelector.selectFile();
+            final File myFile = theFileSelector.selectFile();
             if (myFile != null) {
                 writeToFile(myFile);
             }
@@ -116,7 +116,7 @@ public class TethysHTMLToFile<N, I> {
      */
     private void writeToFile(final File pFile) throws OceanusException {
         /* Create the document */
-        Document myDoc = createXMLDocument(theHTMLManager.getHTMLString(), theHTMLManager.getProcessedCSS());
+        final Document myDoc = createXMLDocument(theHTMLManager.getHTMLString(), theHTMLManager.getProcessedCSS());
 
         /* Write the document to the file */
         writeDocumentToFile(myDoc, pFile);
@@ -132,24 +132,24 @@ public class TethysHTMLToFile<N, I> {
     private static Document createXMLDocument(final String pXML,
                                               final String pStyleSheet) {
         /* Parse the document */
-        Document myDoc = Jsoup.parse(pXML);
+        final Document myDoc = Jsoup.parse(pXML);
 
         /* Adjust the outputSettings */
-        OutputSettings mySettings = myDoc.outputSettings();
+        final OutputSettings mySettings = myDoc.outputSettings();
         mySettings.charset(StandardCharsets.UTF_8);
         mySettings.escapeMode(EscapeMode.extended);
         mySettings.prettyPrint(true);
 
         /* Create the style element */
-        Element myElement = myDoc.createElement(ELEMENT_STYLE);
+        final Element myElement = myDoc.createElement(ELEMENT_STYLE);
         myElement.text(pStyleSheet);
 
         /* Obtain the head and add a style element */
-        Element myHead = myDoc.head();
+        final Element myHead = myDoc.head();
         myHead.appendChild(myElement);
 
         /* Obtain all link elements */
-        Elements myLinks = myDoc.getElementsByTag(ELEMENT_A);
+        final Elements myLinks = myDoc.getElementsByTag(ELEMENT_A);
         myLinks.forEach(l -> {
             /* Remove reference attribute and rename to division */
             l.attributes().remove(ATTR_HREF);
@@ -171,7 +171,7 @@ public class TethysHTMLToFile<N, I> {
         /* Protect the write */
         try (PrintWriter myWriter = new PrintWriter(pFile, StandardCharsets.UTF_8.name())) {
             /* Format the XML and write to stream */
-            String myHTML = pDoc.outerHtml();
+            final String myHTML = pDoc.outerHtml();
             myWriter.print(myHTML);
 
         } catch (IOException e) {

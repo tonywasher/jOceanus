@@ -64,7 +64,7 @@ public final class BouncyMac
     public void initMac(final GordianKey<GordianMacSpec> pKey,
                         final byte[] pIV) throws OceanusException {
         /* Access and validate the key */
-        BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(pKey);
+        final BouncyKey<GordianMacSpec> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Initialise the cipher */
@@ -108,7 +108,7 @@ public final class BouncyMac
 
     @Override
     public byte[] finish() {
-        byte[] myResult = new byte[getMacSize()];
+        final byte[] myResult = new byte[getMacSize()];
         theMac.doFinal(myResult, 0);
         return myResult;
     }

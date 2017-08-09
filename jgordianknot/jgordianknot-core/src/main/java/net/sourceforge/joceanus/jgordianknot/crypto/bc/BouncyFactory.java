@@ -254,7 +254,7 @@ public final class BouncyFactory
         super(pParameters);
 
         /* Generate the predicates */
-        boolean isRestricted = pParameters.useRestricted();
+        final boolean isRestricted = pParameters.useRestricted();
         theSymPredicate = generateSymKeyPredicate(isRestricted);
         theStdSymPredicate = generateStdSymKeyPredicate(isRestricted);
         theStreamPredicate = generateStreamKeyPredicate(isRestricted);
@@ -267,7 +267,7 @@ public final class BouncyFactory
         theSP800Factory.setSecurityBytes(getPersonalisation());
 
         /* Create the SecureRandom instance */
-        SecureRandom myRandom = createRandom(defaultRandomSpec());
+        final SecureRandom myRandom = createRandom(defaultRandomSpec());
         setSecureRandom(myRandom);
     }
 
@@ -290,7 +290,7 @@ public final class BouncyFactory
         }
 
         /* Create digest */
-        Digest myBCDigest = getBCDigest(pDigestSpec);
+        final Digest myBCDigest = getBCDigest(pDigestSpec);
         return new BouncyDigest(pDigestSpec, myBCDigest);
     }
 
@@ -306,7 +306,7 @@ public final class BouncyFactory
 
     @Override
     public BouncyMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
-        Mac myBCMac = getBCMac(pMacSpec);
+        final Mac myBCMac = getBCMac(pMacSpec);
         return new BouncyMac(this, pMacSpec, myBCMac);
     }
 
@@ -336,7 +336,7 @@ public final class BouncyFactory
         BouncyKeyGenerator<T> myGenerator = theGeneratorCache.getCachedKeyGenerator(pKeyType);
         if (myGenerator == null) {
             /* Create the new generator */
-            CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pKeyType);
+            final CipherKeyGenerator myBCGenerator = getBCKeyGenerator(pKeyType);
             myGenerator = new BouncyKeyGenerator<>(this, pKeyType, myBCGenerator);
 
             /* Add to cache */
@@ -362,7 +362,7 @@ public final class BouncyFactory
     @Override
     public BouncySymKeyCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        final GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
         if (!supportedSymKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
@@ -373,14 +373,14 @@ public final class BouncyFactory
         }
 
         /* Create the cipher */
-        BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
+        final BufferedBlockCipher myBCCipher = getBCBlockCipher(pCipherSpec);
         return new BouncySymKeyCipher(this, pCipherSpec, myBCCipher);
     }
 
     @Override
     public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        final GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
         if (!supportedSymKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
@@ -391,7 +391,7 @@ public final class BouncyFactory
         }
 
         /* Create the cipher */
-        AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
+        final AEADBlockCipher myBCCipher = getBCAADCipher(pCipherSpec);
         return new BouncyAADCipher(this, pCipherSpec, myBCCipher);
     }
 
@@ -408,13 +408,13 @@ public final class BouncyFactory
     @Override
     public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKey */
-        GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
+        final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
         if (!supportedStreamKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(myKeyType));
         }
 
         /* Create the cipher */
-        StreamCipher myBCCipher = getBCStreamCipher(myKeyType);
+        final StreamCipher myBCCipher = getBCStreamCipher(myKeyType);
         return new BouncyStreamKeyCipher(this, pCipherSpec, myBCCipher);
     }
 
@@ -431,8 +431,8 @@ public final class BouncyFactory
         }
 
         /* Create the cipher */
-        GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
-        BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
+        final BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
         return createWrapCipher(myBCCipher);
     }
 
@@ -497,12 +497,12 @@ public final class BouncyFactory
      * @throws OceanusException on error
      */
     private SecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
-        GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
         switch (pRandomSpec.getRandomType()) {
             case HASH:
                 return theSP800Factory.buildHash(createDigest(myDigest), true);
             case HMAC:
-                GordianMacSpec mySpec = GordianMacSpec.hMac(myDigest);
+                final GordianMacSpec mySpec = GordianMacSpec.hMac(myDigest);
                 return theSP800Factory.buildHMAC(createMac(mySpec), true);
             default:
                 throw new GordianDataException(getInvalidText(pRandomSpec));
@@ -517,8 +517,8 @@ public final class BouncyFactory
      */
     protected static Digest getBCDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Access digest details */
-        GordianDigestType myType = pDigestSpec.getDigestType();
-        GordianLength myLen = pDigestSpec.getDigestLength();
+        final GordianDigestType myType = pDigestSpec.getDigestType();
+        final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Switch on digest type */
         switch (myType) {
@@ -585,8 +585,8 @@ public final class BouncyFactory
      * @return the digest
      */
     private static Digest getSHA2Digest(final GordianDigestSpec pSpec) {
-        GordianLength myLen = pSpec.getDigestLength();
-        GordianLength myState = pSpec.getStateLength();
+        final GordianLength myLen = pSpec.getDigestLength();
+        final GordianLength myState = pSpec.getStateLength();
         switch (myLen) {
             case LEN_224:
                 return myState == null
@@ -667,7 +667,7 @@ public final class BouncyFactory
      * @throws OceanusException on error
      */
     private Mac getBCHMac(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        BouncyDigest myDigest = createDigest(pDigestSpec);
+        final BouncyDigest myDigest = createDigest(pDigestSpec);
         return new HMac(myDigest.getDigest());
     }
 
@@ -726,8 +726,8 @@ public final class BouncyFactory
      */
     private static BufferedBlockCipher getBCBlockCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Build the cipher */
-        BlockCipher myEngine = getBCSymEngine(pCipherSpec.getKeyType());
-        BlockCipher myMode = getBCSymModeCipher(myEngine, pCipherSpec.getCipherMode());
+        final BlockCipher myEngine = getBCSymEngine(pCipherSpec.getKeyType());
+        final BlockCipher myMode = getBCSymModeCipher(myEngine, pCipherSpec.getCipherMode());
         return getBCSymBufferedCipher(myMode, pCipherSpec.getPadding());
     }
 
@@ -864,7 +864,7 @@ public final class BouncyFactory
      * @throws OceanusException on error
      */
     private static AEADBlockCipher getBCAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        GordianSymKeyType myType = pCipherSpec.getKeyType();
+        final GordianSymKeyType myType = pCipherSpec.getKeyType();
         switch (pCipherSpec.getCipherMode()) {
             case EAX:
                 return new EAXBlockCipher(getBCSymEngine(myType));
@@ -1104,7 +1104,7 @@ public final class BouncyFactory
      */
     private static int determineMaximumCipherSteps(final boolean pRestricted) {
         /* generate the predicate */
-        Predicate<GordianSymKeyType> myFilter = generateStdSymKeyPredicate(pRestricted);
+        final Predicate<GordianSymKeyType> myFilter = generateStdSymKeyPredicate(pRestricted);
 
         /* Count valid values */
         int myCount = 0;

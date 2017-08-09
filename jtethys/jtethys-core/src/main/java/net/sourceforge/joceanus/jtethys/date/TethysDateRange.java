@@ -47,12 +47,12 @@ public class TethysDateRange
     /**
      * The Start Date for the range.
      */
-    private TethysDate theStart = null;
+    private TethysDate theStart;
 
     /**
      * The End Date for the range.
      */
-    private TethysDate theEnd = null;
+    private TethysDate theEnd;
 
     /**
      * Construct a Range from a Start Date and an End Date.
@@ -134,7 +134,7 @@ public class TethysDateRange
         }
 
         /* Access target start date */
-        TethysDate myStart = pThat.getStart();
+        final TethysDate myStart = pThat.getStart();
 
         /* If our start is null */
         if (theStart == null) {
@@ -151,14 +151,14 @@ public class TethysDateRange
             }
 
             /* Compare the start dates */
-            int result = theStart.compareTo(myStart);
+            final int result = theStart.compareTo(myStart);
             if (result != 0) {
                 return result;
             }
         }
 
         /* Access target end date */
-        TethysDate myEnd = pThat.getEnd();
+        final TethysDate myEnd = pThat.getEnd();
 
         /* If our end is null */
         if (theEnd == null) {
@@ -175,7 +175,7 @@ public class TethysDateRange
             }
 
             /* Compare the end dates */
-            int result = theEnd.compareTo(myEnd);
+            final int result = theEnd.compareTo(myEnd);
             if (result != 0) {
                 return result;
             }
@@ -188,7 +188,7 @@ public class TethysDateRange
     @Override
     public String toString() {
         /* Build range description */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append((theStart == null)
                                             ? DESC_UNBOUNDED
                                             : theStart.toString());
@@ -218,8 +218,8 @@ public class TethysDateRange
             return false;
         }
 
-        /* Access the object as a JDateDayRange */
-        TethysDateRange myThat = (TethysDateRange) pThat;
+        /* Access the object as a DateRange */
+        final TethysDateRange myThat = (TethysDateRange) pThat;
 
         /* Check components */
         if (theStart == null) {

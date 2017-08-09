@@ -71,7 +71,7 @@ public class JcaAADCipher
     @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create a random IV */
-        byte[] myIV = new byte[AADIVLEN];
+        final byte[] myIV = new byte[AADIVLEN];
         getRandom().nextBytes(myIV);
 
         /* initialise with this IV */
@@ -83,19 +83,19 @@ public class JcaAADCipher
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        JcaKey<GordianSymKeyType> myJcaKey = JcaKey.accessKey(pKey);
+        final JcaKey<GordianSymKeyType> myJcaKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Access details */
-        int myMode = pEncrypt
-                              ? Cipher.ENCRYPT_MODE
-                              : Cipher.DECRYPT_MODE;
-        SecretKey myKey = myJcaKey.getKey();
+        final int myMode = pEncrypt
+                                    ? Cipher.ENCRYPT_MODE
+                                    : Cipher.DECRYPT_MODE;
+        final SecretKey myKey = myJcaKey.getKey();
 
         /* Protect against exceptions */
         try {
             /* Initialise as required */
-            AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
+            final AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
             theCipher.init(myMode, myKey, myParms);
         } catch (InvalidKeyException
                 | InvalidAlgorithmParameterException e) {

@@ -109,7 +109,7 @@ public class JcaKeyPair
             }
 
             /* Access the target field */
-            JcaPublicKey myThat = (JcaPublicKey) pThat;
+            final JcaPublicKey myThat = (JcaPublicKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())
@@ -168,7 +168,7 @@ public class JcaKeyPair
             }
 
             /* Access the target field */
-            JcaPrivateKey myThat = (JcaPrivateKey) pThat;
+            final JcaPrivateKey myThat = (JcaPrivateKey) pThat;
 
             /* Check differences */
             return getKeySpec().equals(myThat.getKeySpec())

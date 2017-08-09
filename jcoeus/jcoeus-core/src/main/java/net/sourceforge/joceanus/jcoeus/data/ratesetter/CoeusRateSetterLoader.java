@@ -107,16 +107,15 @@ public class CoeusRateSetterLoader {
      * Constructor.
      * @param pFormatter the formatter
      * @param pPath the path to load from
-     * @throws OceanusException on error
      */
     public CoeusRateSetterLoader(final MetisDataFormatter pFormatter,
-                                 final String pPath) throws OceanusException {
+                                 final String pPath) {
         /* Store the formatter */
         theFormatter = pFormatter;
 
         /* Adjust and store the path */
-        FileSystem mySystem = FileSystems.getDefault();
-        String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.RATESETTER;
+        final FileSystem mySystem = FileSystems.getDefault();
+        final String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.RATESETTER;
         theBasePath = mySystem.getPath(myPath);
     }
 
@@ -127,23 +126,23 @@ public class CoeusRateSetterLoader {
      */
     private List<FileRecord> listStatements() throws OceanusException {
         /* Create list and formatter */
-        List<FileRecord> myList = new ArrayList<>();
-        DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern(STMT_DATEPATTERN);
+        final List<FileRecord> myList = new ArrayList<>();
+        final DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern(STMT_DATEPATTERN);
 
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, STMT_MASK)) {
             for (Path myFile : myStream) {
                 /* Parse the file name */
-                String myName = myFile.getFileName().toString();
+                final String myName = myFile.getFileName().toString();
                 String myBase = myName.substring(0, myName.length() - CSV_SUFFIX.length());
                 myBase = myBase.substring(STMT_PREFIX.length());
-                TemporalAccessor myTA = myFormatter.parse(myBase);
+                final TemporalAccessor myTA = myFormatter.parse(myBase);
                 int myDate = myTA.get(ChronoField.YEAR) * MULTIPLIER * MULTIPLIER;
                 myDate += myTA.get(ChronoField.MONTH_OF_YEAR) * MULTIPLIER;
                 myDate += myTA.get(ChronoField.DAY_OF_MONTH);
 
                 /* Create a statement record */
-                FileRecord myStatement = new FileRecord(myDate, myFile);
+                final FileRecord myStatement = new FileRecord(myDate, myFile);
                 myList.add(myStatement);
             }
 
@@ -164,22 +163,22 @@ public class CoeusRateSetterLoader {
      */
     private List<FileRecord> listClosedLoans() throws OceanusException {
         /* Create list and formatter */
-        List<FileRecord> myList = new ArrayList<>();
-        DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern(LOAN_DATEPATTERN);
+        final List<FileRecord> myList = new ArrayList<>();
+        final DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern(LOAN_DATEPATTERN);
 
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, LOAN_MASK)) {
             for (Path myFile : myStream) {
                 /* Parse the file name */
-                String myName = myFile.getFileName().toString();
+                final String myName = myFile.getFileName().toString();
                 String myBase = myName.substring(0, myName.length() - HTML_SUFFIX.length());
                 myBase = myBase.substring(LOAN_PREFIX.length());
-                TemporalAccessor myTA = myFormatter.parse(myBase);
+                final TemporalAccessor myTA = myFormatter.parse(myBase);
                 int myDate = myTA.get(ChronoField.YEAR) * MULTIPLIER;
                 myDate += myTA.get(ChronoField.MONTH_OF_YEAR);
 
                 /* Create a statement record */
-                FileRecord myStatement = new FileRecord(myDate, myFile);
+                final FileRecord myStatement = new FileRecord(myDate, myFile);
                 myList.add(myStatement);
             }
 
@@ -200,7 +199,7 @@ public class CoeusRateSetterLoader {
      */
     public CoeusRateSetterMarket loadMarket() throws OceanusException {
         /* Create the market */
-        CoeusRateSetterMarket myMarket = new CoeusRateSetterMarket(theFormatter);
+        final CoeusRateSetterMarket myMarket = new CoeusRateSetterMarket(theFormatter);
 
         /* Parse the loanBook file */
         myMarket.parseLoanBook(theBasePath.resolve(LOANBOOK + HTML_SUFFIX));

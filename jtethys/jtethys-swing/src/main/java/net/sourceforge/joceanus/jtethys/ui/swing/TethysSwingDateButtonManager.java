@@ -90,7 +90,7 @@ public class TethysSwingDateButtonManager
             theDialog = new TethysSwingDateDialog(getConfig());
 
             /* Add listeners */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theDialog.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> handleDialogRequest());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewValue());
             myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleNewValue());

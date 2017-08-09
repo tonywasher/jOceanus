@@ -188,7 +188,7 @@ public enum GordianDigestType {
             case SHA2:
                 return pLength.getSha2ExtendedState();
             case SKEIN:
-                GordianLength myState = pLength.getSkeinExtendedState();
+                final GordianLength myState = pLength.getSkeinExtendedState();
                 return myState != pLength
                                           ? myState
                                           : null;

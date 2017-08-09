@@ -120,8 +120,8 @@ public class CoeusFundingCircleLoan
     @Override
     protected void checkLoan() throws CoeusDataException {
         /* Access details */
-        TethysMoney myBookBalance = getBalance();
-        CoeusFundingCircleTotals myTotals = getTotals();
+        final TethysMoney myBookBalance = getBalance();
+        final CoeusFundingCircleTotals myTotals = getTotals();
         TethysMoney myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */

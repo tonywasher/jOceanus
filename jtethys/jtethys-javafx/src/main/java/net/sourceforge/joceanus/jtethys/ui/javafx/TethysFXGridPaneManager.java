@@ -87,7 +87,7 @@ public class TethysFXGridPaneManager
                                   final int pRow,
                                   final int pColumn) {
         /* Access the node */
-        Node myNode = pNode.getNode();
+        final Node myNode = pNode.getNode();
 
         /* add the node */
         theGridPane.add(myNode, pColumn, pRow);
@@ -113,7 +113,7 @@ public class TethysFXGridPaneManager
     @Override
     public void setCellAlignment(final TethysNode<Node> pNode,
                                  final TethysAlignment pAlign) {
-        Node myNode = pNode.getNode();
+        final Node myNode = pNode.getNode();
         GridPane.setFillWidth(myNode, false);
         GridPane.setHalignment(myNode, determineHAlignment(pAlign));
         GridPane.setValignment(myNode, determineVAlignment(pAlign));

@@ -124,7 +124,7 @@ public class GordianZipWriteFile
             theHash = pHash;
 
             /* Create a similar hash and record details */
-            GordianKeySetHash myHash = theHash.similarHash();
+            final GordianKeySetHash myHash = theHash.similarHash();
             theHashBytes = myHash.getHash();
             theKeySet = myHash.getKeySet();
 
@@ -135,8 +135,8 @@ public class GordianZipWriteFile
             theKeySet.getFactory().reSeedRandom();
 
             /* Create the output streams */
-            FileOutputStream myOutFile = new FileOutputStream(pFile);
-            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
+            final FileOutputStream myOutFile = new FileOutputStream(pFile);
+            final BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
 
             /*
@@ -170,8 +170,8 @@ public class GordianZipWriteFile
             theStreamMgr = null;
 
             /* Create the output streams */
-            FileOutputStream myOutFile = new FileOutputStream(pFile);
-            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
+            final FileOutputStream myOutFile = new FileOutputStream(pFile);
+            final BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
             theStream = new ZipOutputStream(myOutBuffer);
 
             /* Create the file contents */
@@ -276,7 +276,7 @@ public class GordianZipWriteFile
                 /* If we have encryption */
                 if (isEncrypted()) {
                     /* Analyse the output stream */
-                    List<GordianStreamDefinition> myStreams = theStreamMgr.analyseStreams(theOutput);
+                    final List<GordianStreamDefinition> myStreams = theStreamMgr.analyseStreams(theOutput);
 
                     /* Analyse the stream */
                     theFileEntry.buildProperties(myStreams);
@@ -310,7 +310,7 @@ public class GordianZipWriteFile
                 if ((theFileNo > 0)
                     && (isEncrypted())) {
                     /* Create a new zipFileEntry */
-                    GordianZipFileEntry myEntry = theContents.addZipFileHeader();
+                    final GordianZipFileEntry myEntry = theContents.addZipFileHeader();
                     myEntry.setHash(theHashBytes);
 
                     /* Create the header entry */
@@ -328,11 +328,11 @@ public class GordianZipWriteFile
                     myEntry.setZipEntry(theEntry);
 
                     /* Access the encoded file string */
-                    String myHeader = theContents.encodeContents();
+                    final String myHeader = theContents.encodeContents();
 
                     /* Write the bytes to the Zip file and close the entry */
-                    byte[] myBytes = TethysDataConverter.stringToByteArray(myHeader);
-                    GordianKeySet myKeySet = theHash.getKeySet();
+                    final byte[] myBytes = TethysDataConverter.stringToByteArray(myHeader);
+                    final GordianKeySet myKeySet = theHash.getKeySet();
                     theStream.write(myKeySet.encryptBytes(myBytes));
                     theStream.closeEntry();
                 }

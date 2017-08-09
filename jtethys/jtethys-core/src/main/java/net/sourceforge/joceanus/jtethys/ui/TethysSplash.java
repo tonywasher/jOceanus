@@ -35,24 +35,24 @@ public final class TethysSplash {
         final SplashScreen mySplash = SplashScreen.getSplashScreen();
         if (mySplash != null) {
             /* Access the graphics */
-            Graphics2D myGraphics = mySplash.createGraphics();
+            final Graphics2D myGraphics = mySplash.createGraphics();
             if (myGraphics != null) {
                 /* Access the splash screen dimensions */
-                Dimension mySize = mySplash.getSize();
+                final Dimension mySize = mySplash.getSize();
 
                 /* Set up for painting */
-                Font myFont = new Font("Courier", Font.BOLD, SPLASH_PITCH);
+                final Font myFont = new Font("Courier", Font.BOLD, SPLASH_PITCH);
                 myGraphics.setComposite(AlphaComposite.Clear);
                 myGraphics.setPaintMode();
                 myGraphics.setFont(myFont);
-                FontMetrics myMetrics = myGraphics.getFontMetrics();
+                final FontMetrics myMetrics = myGraphics.getFontMetrics();
 
                 /* Determine X and Y for name */
                 Rectangle2D myBounds = myMetrics.getStringBounds(pName, myGraphics);
                 double myX = (mySize.width - myBounds.getWidth()) / 2d;
-                double myY = mySize.height - (double) (mySize.height >> 2);
+                final double myY = mySize.height - (double) (mySize.height >> 2);
                 double myHeight = myBounds.getHeight();
-                int myDescent = myMetrics.getDescent();
+                final int myDescent = myMetrics.getDescent();
 
                 /* Write the name */
                 myGraphics.setColor(Color.BLUE);

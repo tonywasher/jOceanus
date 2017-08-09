@@ -162,7 +162,7 @@ public class CoeusRateSetterTotals
     @Override
     protected void addTotalsToTotals(final CoeusTotals pTotals) {
         /* Cast correctly */
-        CoeusRateSetterTotals myTotals = (CoeusRateSetterTotals) pTotals;
+        final CoeusRateSetterTotals myTotals = (CoeusRateSetterTotals) pTotals;
 
         /* Add values from totals */
         theAssetValue.addAmount(myTotals.getAssetValue());
@@ -178,7 +178,7 @@ public class CoeusRateSetterTotals
     @Override
     protected void addTransactionToTotals(final CoeusTransaction pTransaction) {
         /* Cast correctly */
-        CoeusRateSetterTransaction myTransaction = (CoeusRateSetterTransaction) pTransaction;
+        final CoeusRateSetterTransaction myTransaction = (CoeusRateSetterTransaction) pTransaction;
 
         /* Add values from transaction */
         theInvested.addAmount(myTransaction.getInvested());

@@ -83,7 +83,7 @@ public class TethysFXFileSelector
 
         /* Set the extension filter list */
         theChooser.getExtensionFilters().clear();
-        String myExt = getExtension();
+        final String myExt = getExtension();
         if (myExt != null) {
             theChooser.getExtensionFilters().add(new ExtensionFilter("Filter", myExt));
         }
@@ -104,7 +104,7 @@ public class TethysFXFileSelector
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            FutureTask<Void> myTask = new FutureTask<>(() -> {
+            final FutureTask<Void> myTask = new FutureTask<>(() -> {
                 showDialog();
                 return null;
             });

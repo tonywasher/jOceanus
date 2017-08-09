@@ -78,12 +78,12 @@ public class TethysDecimalFormatter {
     /**
      * Do we use accounting format for monetary values?
      */
-    private boolean useAccounting = false;
+    private boolean useAccounting;
 
     /**
      * Width for accounting format.
      */
-    private int theAccountingWidth = 0;
+    private int theAccountingWidth;
 
     /**
      * Constructor.
@@ -137,16 +137,16 @@ public class TethysDecimalFormatter {
     protected static String toString(final TethysDecimal pValue) {
         /* Access the value and scale */
         long myValue = pValue.unscaledValue();
-        int myScale = pValue.scale();
+        final int myScale = pValue.scale();
 
         /* handle negative values */
-        boolean isNegative = myValue < 0;
+        final boolean isNegative = myValue < 0;
         if (isNegative) {
             myValue = -myValue;
         }
 
         /* Format the string */
-        StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
+        final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
         myString.append(Long.toString(myValue));
 
         /* Add leading zeroes */
@@ -178,10 +178,10 @@ public class TethysDecimalFormatter {
      */
     public String toCurrencyString(final TethysMoney pValue) {
         /* Format the basic value */
-        StringBuilder myWork = new StringBuilder(toString(pValue));
+        final StringBuilder myWork = new StringBuilder(toString(pValue));
 
         /* Add the currency symbol */
-        Currency myCurrency = pValue.getCurrency();
+        final Currency myCurrency = pValue.getCurrency();
         myWork.insert(0, STR_CURRSEP);
         myWork.insert(0, myCurrency.getCurrencyCode());
 
@@ -208,13 +208,13 @@ public class TethysDecimalFormatter {
         }
 
         /* handle negative values */
-        boolean isNegative = myValue < 0;
+        final boolean isNegative = myValue < 0;
         if (isNegative) {
             myValue = -myValue;
         }
 
         /* Format the string */
-        StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
+        final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
         myString.append(Long.toString(myValue));
 
         /* Add leading zeroes */
@@ -233,8 +233,8 @@ public class TethysDecimalFormatter {
         }
 
         /* Loop while we need to add grouping */
-        int myGroupingSize = theLocale.getGroupingSize();
-        String myGrouping = theLocale.getGrouping();
+        final int myGroupingSize = theLocale.getGroupingSize();
+        final String myGrouping = theLocale.getGrouping();
         while (myLen > myGroupingSize) {
             /* Insert grouping character and remove grouping size from length */
             myString.insert(myLen
@@ -261,19 +261,19 @@ public class TethysDecimalFormatter {
         long myValue = pValue;
 
         /* handle negative values */
-        boolean isNegative = myValue < 0;
+        final boolean isNegative = myValue < 0;
         if (isNegative) {
             myValue = -myValue;
         }
 
         /* Format the string */
-        StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
+        final StringBuilder myString = new StringBuilder(INITIAL_BUFLEN);
         myString.append(Long.toString(myValue));
 
         /* Loop while we need to add grouping */
         int myLen = myString.length();
-        int myGroupingSize = theLocale.getGroupingSize();
-        String myGrouping = theLocale.getGrouping();
+        final int myGroupingSize = theLocale.getGroupingSize();
+        final String myGrouping = theLocale.getGrouping();
         while (myLen > myGroupingSize) {
             /* Insert grouping character and remove grouping size from length */
             myString.insert(myLen
@@ -307,8 +307,8 @@ public class TethysDecimalFormatter {
         StringBuilder myWork = formatDecimal(pMoney.unscaledValue(), pMoney.scale(), theLocale.getMoneyDecimal());
 
         /* If we have a leading minus sign */
-        char myMinus = theLocale.getMinusSign();
-        boolean isNegative = myWork.charAt(0) == myMinus;
+        final char myMinus = theLocale.getMinusSign();
+        final boolean isNegative = myWork.charAt(0) == myMinus;
         if (isNegative) {
             /* Remove the minus sign */
             myWork = myWork.deleteCharAt(0);
@@ -321,7 +321,7 @@ public class TethysDecimalFormatter {
         }
 
         /* Add the currency symbol */
-        Currency myCurrency = pMoney.getCurrency();
+        final Currency myCurrency = pMoney.getCurrency();
         myWork.insert(0, theLocale.getSymbol(myCurrency));
 
         /* Re-Add the minus sign */
@@ -360,8 +360,8 @@ public class TethysDecimalFormatter {
      */
     public String formatRate(final TethysRate pRate) {
         /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                                                                    - TethysDecimalParser.ADJUST_PERCENT, theLocale.getDecimal());
+        final StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
+                                                                          - TethysDecimalParser.ADJUST_PERCENT, theLocale.getDecimal());
 
         /* Append the perCent sign */
         myWork.append(theLocale.getPerCent());
@@ -377,8 +377,8 @@ public class TethysDecimalFormatter {
      */
     public String formatRatePerMille(final TethysRate pRate) {
         /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                                                                    - TethysDecimalParser.ADJUST_PERMILLE, theLocale.getDecimal());
+        final StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
+                                                                          - TethysDecimalParser.ADJUST_PERMILLE, theLocale.getDecimal());
 
         /* Append the perMille sign */
         myWork.append(theLocale.getPerMille());
@@ -441,7 +441,7 @@ public class TethysDecimalFormatter {
      */
     private String formatBasicDecimal(final TethysDecimal pDecimal) {
         /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pDecimal.unscaledValue(), pDecimal.scale(), theLocale.getDecimal());
+        final StringBuilder myWork = formatDecimal(pDecimal.unscaledValue(), pDecimal.scale(), theLocale.getDecimal());
 
         /* return the formatted value */
         return myWork.toString();
@@ -468,10 +468,10 @@ public class TethysDecimalFormatter {
      */
     private String formatZeroAccounting(final Currency pCurrency) {
         /* Determine the scale */
-        int myScale = pCurrency.getDefaultFractionDigits();
+        final int myScale = pCurrency.getDefaultFractionDigits();
 
         /* Create a buffer build */
-        StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));
+        final StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));
 
         /* If we have decimals */
         for (int i = 0; i < myScale; i++) {
@@ -501,7 +501,7 @@ public class TethysDecimalFormatter {
      */
     public String formatLong(final Long pValue) {
         /* Format the basic value */
-        StringBuilder myWork = formatLong(pValue.longValue());
+        final StringBuilder myWork = formatLong(pValue.longValue());
 
         /* return the formatted value */
         return myWork.toString();
@@ -514,7 +514,7 @@ public class TethysDecimalFormatter {
      */
     public String formatInteger(final Integer pValue) {
         /* Format the basic value */
-        StringBuilder myWork = formatLong(pValue.longValue());
+        final StringBuilder myWork = formatLong(pValue.longValue());
 
         /* return the formatted value */
         return myWork.toString();
@@ -527,7 +527,7 @@ public class TethysDecimalFormatter {
      */
     public String formatShort(final Short pValue) {
         /* Format the basic value */
-        StringBuilder myWork = formatLong(pValue.longValue());
+        final StringBuilder myWork = formatLong(pValue.longValue());
 
         /* return the formatted value */
         return myWork.toString();

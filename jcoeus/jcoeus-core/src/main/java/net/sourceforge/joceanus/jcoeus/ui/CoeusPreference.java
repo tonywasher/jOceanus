@@ -107,13 +107,13 @@ public interface CoeusPreference {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the server is specified */
-            MetisStringPreference<CoeusPreferenceKey> myPref = getStringPreference(CoeusPreferenceKey.BASE);
+            final MetisStringPreference<CoeusPreferenceKey> myPref = getStringPreference(CoeusPreferenceKey.BASE);
             if (!myPref.isAvailable()) {
                 myPref.setValue(BASE_DIR);
             }
 
             /* Make sure that the name is specified */
-            MetisBooleanPreference<CoeusPreferenceKey> myBoolPref = getBooleanPreference(CoeusPreferenceKey.CALENDARYEAR);
+            final MetisBooleanPreference<CoeusPreferenceKey> myBoolPref = getBooleanPreference(CoeusPreferenceKey.CALENDARYEAR);
             if (!myBoolPref.isAvailable()) {
                 myBoolPref.setValue(Boolean.FALSE);
             }

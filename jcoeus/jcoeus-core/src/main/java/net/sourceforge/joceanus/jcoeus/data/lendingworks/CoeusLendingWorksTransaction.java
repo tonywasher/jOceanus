@@ -137,14 +137,14 @@ public class CoeusLendingWorksTransaction
         super(pParser.getMarket());
 
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Parse the date */
         theDate = pParser.parseDate(myIterator.next());
 
         /* Store IDs */
         theDesc = myIterator.next();
-        String myLoanId = myIterator.next();
+        final String myLoanId = myIterator.next();
         theLoanType = myIterator.next();
 
         /* Determine the transaction type */
@@ -175,7 +175,7 @@ public class CoeusLendingWorksTransaction
      */
     private void checkValidity() throws OceanusException {
         /* Obtain the holding */
-        TethysDecimal myMoney = new TethysDecimal(theHolding);
+        final TethysDecimal myMoney = new TethysDecimal(theHolding);
 
         /* Add Capital */
         myMoney.addValue(theLoanBook);
@@ -345,7 +345,7 @@ public class CoeusLendingWorksTransaction
      */
     private CoeusLendingWorksLoan findLoan(final String pId) throws OceanusException {
         /* Look up existing loan */
-        CoeusLendingWorksMarket myMarket = getMarket();
+        final CoeusLendingWorksMarket myMarket = getMarket();
         CoeusLendingWorksLoan myLoan = myMarket.getLoanById(pId);
 
         /* If this is a new loan */
@@ -365,7 +365,7 @@ public class CoeusLendingWorksTransaction
      */
     private TethysDecimal determineLoanBookDelta() {
         /* Obtain change in holding account */
-        TethysDecimal myInvested = new TethysDecimal(theHolding);
+        final TethysDecimal myInvested = new TethysDecimal(theHolding);
 
         /* Capital are increased by any capitalLoan */
         if (CoeusTransactionType.CAPITALLOAN.equals(theTransType)) {
@@ -389,7 +389,7 @@ public class CoeusLendingWorksTransaction
      */
     private TethysDecimal determineInterestDelta() {
         /* Obtain change in holding account */
-        TethysDecimal myInvested = new TethysDecimal(theHolding);
+        final TethysDecimal myInvested = new TethysDecimal(theHolding);
 
         /* Interest are increased by any increase the holding account */
         if (!CoeusTransactionType.INTEREST.equals(theTransType)) {
@@ -406,7 +406,7 @@ public class CoeusLendingWorksTransaction
      */
     private TethysDecimal determineInvestedDelta() {
         /* Obtain change in holding account */
-        TethysDecimal myInvested = new TethysDecimal(theHolding);
+        final TethysDecimal myInvested = new TethysDecimal(theHolding);
 
         /* Invested are increased by any increase the holding account */
         if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {

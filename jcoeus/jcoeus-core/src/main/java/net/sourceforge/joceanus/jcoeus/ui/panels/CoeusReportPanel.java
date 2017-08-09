@@ -127,7 +127,7 @@ public class CoeusReportPanel<N, I>
         theCache = pCache;
 
         /* Access the GUI factory */
-        TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
+        final TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -136,9 +136,9 @@ public class CoeusReportPanel<N, I>
         thePanel = myFactory.newBorderPane();
 
         /* Create the viewer entries */
-        MetisViewerManager myDataMgr = pToolkit.getViewerManager();
-        MetisViewerEntry mySection = myDataMgr.getStandardEntry(MetisViewerStandardEntry.VIEW);
-        MetisViewerEntry myReport = myDataMgr.newEntry(mySection, "Report");
+        final MetisViewerManager myDataMgr = pToolkit.getViewerManager();
+        final MetisViewerEntry mySection = myDataMgr.getStandardEntry(MetisViewerStandardEntry.VIEW);
+        final MetisViewerEntry myReport = myDataMgr.newEntry(mySection, "Report");
         theMarketEntry = myDataMgr.newEntry(myReport, CoeusResource.DATA_MARKET.getValue());
         theMarketEntry.setVisible(false);
 
@@ -158,7 +158,7 @@ public class CoeusReportPanel<N, I>
         theError = theToolkit.newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        TethysScrollPaneManager<N, I> myHTMLScroll = myFactory.newScrollPane();
+        final TethysScrollPaneManager<N, I> myHTMLScroll = myFactory.newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
         /* Now define the panel */
@@ -172,7 +172,7 @@ public class CoeusReportPanel<N, I>
         theCache.getEventRegistrar().addEventListener(e -> refreshData());
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
         theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
-        TethysEventRegistrar<CoeusDataEvent> myRegistrar = theSelect.getEventRegistrar();
+        final TethysEventRegistrar<CoeusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(CoeusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(CoeusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
@@ -215,7 +215,7 @@ public class CoeusReportPanel<N, I>
      * @throws OceanusException on error
      */
     private void loadCSS(final String pName) throws OceanusException {
-        String myCSS = TethysResourceBuilder.loadResourceToString(CoeusReportResource.class, pName);
+        final String myCSS = TethysResourceBuilder.loadResourceToString(CoeusReportResource.class, pName);
         theHTMLPane.setCSSContent(myCSS);
     }
 
@@ -250,10 +250,10 @@ public class CoeusReportPanel<N, I>
      */
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
-        CoeusReportType myReportType = theSelect.getReportType();
-        CoeusMarketProvider myProvider = theSelect.getProvider();
-        TethysDate myDate = theSelect.getDate();
-        Document myDoc;
+        final CoeusReportType myReportType = theSelect.getReportType();
+        final CoeusMarketProvider myProvider = theSelect.getProvider();
+        final TethysDate myDate = theSelect.getDate();
+        final Document myDoc;
 
         /* set lockDown of selection */
         theSelect.setEnabled(true);
@@ -266,14 +266,14 @@ public class CoeusReportPanel<N, I>
         /* Switch on report type */
         switch (myReportType) {
             case ANNUAL:
-                CoeusMarketAnnual myAnnual = theCache.getAnnual(myProvider, myDate);
+                final CoeusMarketAnnual myAnnual = theCache.getAnnual(myProvider, myDate);
                 theMarketEntry.setObject(myAnnual);
                 myDoc = theBuilder.createReport(myReportType, myAnnual);
                 break;
 
             case BALANCESHEET:
             case LOANBOOK:
-                CoeusMarketSnapShot mySnapShot = theCache.getSnapShot(myProvider, myDate);
+                final CoeusMarketSnapShot mySnapShot = theCache.getSnapShot(myProvider, myDate);
                 theMarketEntry.setObject(mySnapShot);
                 myDoc = theBuilder.createReport(myReportType, mySnapShot);
                 break;
@@ -289,7 +289,7 @@ public class CoeusReportPanel<N, I>
         theManager.setDocument(myDoc);
 
         /* Create initial display version */
-        String myText = theManager.formatXML();
+        final String myText = theManager.formatXML();
         theHTMLPane.setHTMLContent(myText, "");
     }
 
@@ -298,7 +298,7 @@ public class CoeusReportPanel<N, I>
      */
     private void handleErrorPane() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelect.setVisible(!isError);
@@ -313,7 +313,7 @@ public class CoeusReportPanel<N, I>
      */
     private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
         /* Create the details of the request */
-        CoeusFilter myFilter = pEvent.getDetails(CoeusFilter.class);
+        final CoeusFilter myFilter = pEvent.getDetails(CoeusFilter.class);
 
         /* Request the action */
         theEventManager.fireEvent(CoeusDataEvent.GOTOSTATEMENT, myFilter);
@@ -334,7 +334,7 @@ public class CoeusReportPanel<N, I>
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            OceanusException myError = new CoeusDataException("Failed to change selection", e);
+            final OceanusException myError = new CoeusDataException("Failed to change selection", e);
 
             /* Show the error */
             theError.addError(myError);

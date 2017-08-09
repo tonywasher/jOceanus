@@ -65,7 +65,7 @@ public class JcaKeyGeneratorCache
      */
     @SuppressWarnings("unchecked")
     protected <T> void cacheKeyGenerator(final JcaKeyGenerator<T> pGenerator) {
-        T myKeyType = pGenerator.getKeyType();
+        final T myKeyType = pGenerator.getKeyType();
         if (myKeyType instanceof GordianSymKeyType) {
             addToSymKeyCache((JcaKeyGenerator<GordianSymKeyType>) pGenerator);
         } else if (myKeyType instanceof GordianStreamKeyType) {

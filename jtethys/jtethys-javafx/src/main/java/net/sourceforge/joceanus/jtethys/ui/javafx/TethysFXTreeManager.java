@@ -68,9 +68,9 @@ public class TethysFXTreeManager<T>
 
         /* Add listener */
         theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
-            TethysFXTreeItem<T> myValue = n == null
-                                                    ? null
-                                                    : n.getValue();
+            final TethysFXTreeItem<T> myValue = n == null
+                                                          ? null
+                                                          : n.getValue();
             fireEvent(TethysUIEvent.NEWVALUE, myValue == null
                                                               ? null
                                                               : myValue.getItem());
@@ -94,10 +94,10 @@ public class TethysFXTreeManager<T>
 
     @Override
     public T getSelectedItem() {
-        TreeItem<TethysFXTreeItem<T>> myItem = theTree.getSelectionModel().getSelectedItem();
-        TethysFXTreeItem<T> myValue = myItem == null
-                                                     ? null
-                                                     : myItem.getValue();
+        final TreeItem<TethysFXTreeItem<T>> myItem = theTree.getSelectionModel().getSelectedItem();
+        final TethysFXTreeItem<T> myValue = myItem == null
+                                                           ? null
+                                                           : myItem.getValue();
         return myValue == null
                                ? null
                                : myValue.getItem();
@@ -116,7 +116,7 @@ public class TethysFXTreeManager<T>
     @Override
     public boolean lookUpAndSelectItem(final String pName) {
         /* Look up the item */
-        TethysFXTreeItem<T> myItem = lookUpItem(pName);
+        final TethysFXTreeItem<T> myItem = lookUpItem(pName);
 
         /* If we found the item */
         if (myItem != null) {
@@ -149,12 +149,12 @@ public class TethysFXTreeManager<T>
         /* If the tree is visible */
         if (isVisible()) {
             /* Access parent and ensure that it is expanded */
-            TethysFXTreeNode<T> myParent = pItem.getParent().getNode();
+            final TethysFXTreeNode<T> myParent = pItem.getParent().getNode();
             myParent.setExpanded(true);
 
             /* Scroll to the item */
-            TethysFXTreeNode<T> myNode = pItem.getNode();
-            int myIndex = theTree.getRow(myNode);
+            final TethysFXTreeNode<T> myNode = pItem.getNode();
+            final int myIndex = theTree.getRow(myNode);
             theTree.scrollTo(myIndex);
 
             /* Select this item */
@@ -234,7 +234,7 @@ public class TethysFXTreeManager<T>
         @Override
         protected void attachToTree() {
             /* Obtain the parent */
-            TethysFXTreeItem<T> myParent = getParent();
+            final TethysFXTreeItem<T> myParent = getParent();
 
             /* If we are not the root */
             if (myParent != null) {
@@ -255,7 +255,7 @@ public class TethysFXTreeManager<T>
             super.detachFromTree();
 
             /* Obtain the parent */
-            TethysFXTreeItem<T> myParent = getParent();
+            final TethysFXTreeItem<T> myParent = getParent();
 
             /* Delete reference if we are not root */
             if (theNode != null
@@ -272,7 +272,7 @@ public class TethysFXTreeManager<T>
             theNode = new TethysFXTreeNode<>(this);
 
             /* Obtain the parent */
-            TethysFXTreeItem<T> myParent = getParent();
+            final TethysFXTreeItem<T> myParent = getParent();
 
             /* Add at index in list */
             myParent.getNode().getChildren().add(pChildNo, theNode);
@@ -303,7 +303,7 @@ public class TethysFXTreeManager<T>
 
         @Override
         public String toString() {
-            TethysFXTreeItem<X> myValue = getValue();
+            final TethysFXTreeItem<X> myValue = getValue();
             return myValue == null
                                    ? null
                                    : myValue.toString();

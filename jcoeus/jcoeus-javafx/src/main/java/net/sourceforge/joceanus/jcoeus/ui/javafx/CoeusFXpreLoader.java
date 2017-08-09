@@ -51,7 +51,7 @@ public class CoeusFXpreLoader
     public void init() {
         try {
             /* Access program info */
-            MetisProgram myInfo = new MetisProgram(CoeusApp.class);
+            final MetisProgram myInfo = new MetisProgram(CoeusApp.class);
 
             /* Create a StackPane */
             theSplash = new MetisFXSplash(myInfo);

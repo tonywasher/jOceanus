@@ -58,11 +58,11 @@ public class TethysFXBoxPaneManager
                                      final boolean pHorizontal) {
         super(pFactory);
         if (pHorizontal) {
-            HBox myBox = new HBox(getGap());
+            final HBox myBox = new HBox(getGap());
             myBox.setAlignment(Pos.CENTER);
             theBoxPane = myBox;
         } else {
-            VBox myBox = new VBox(getGap());
+            final VBox myBox = new VBox(getGap());
             myBox.setAlignment(Pos.CENTER);
             theBoxPane = myBox;
         }
@@ -90,8 +90,8 @@ public class TethysFXBoxPaneManager
     public void setChildVisible(final TethysNode<Node> pChild,
                                 final boolean pVisible) {
         /* Handle nothing to do */
-        Node myChildNode = pChild.getNode();
-        boolean isVisible = myChildNode.isVisible();
+        final Node myChildNode = pChild.getNode();
+        final boolean isVisible = myChildNode.isVisible();
         if (isVisible == pVisible) {
             return;
         }
@@ -99,12 +99,12 @@ public class TethysFXBoxPaneManager
         /* If the node is not visible */
         if (pVisible) {
             /* Count visible prior siblings */
-            int myId = pChild.getId();
+            final int myId = pChild.getId();
             int myIndex = 0;
-            Iterator<TethysNode<Node>> myIterator = iterator();
+            final Iterator<TethysNode<Node>> myIterator = iterator();
             while (myIterator.hasNext()) {
-                TethysNode<Node> myNode = myIterator.next();
-                Integer myNodeId = myNode.getId();
+                final TethysNode<Node> myNode = myIterator.next();
+                final Integer myNodeId = myNode.getId();
 
                 /* If we have found the node */
                 if (myNodeId == myId) {
@@ -169,14 +169,14 @@ public class TethysFXBoxPaneManager
 
     @Override
     public void addSpacer() {
-        TethysFXSpacer mySpacer = new TethysFXSpacer(true);
+        final TethysFXSpacer mySpacer = new TethysFXSpacer(true);
         addSpacerNode(mySpacer);
         theBoxPane.getChildren().add(mySpacer.getNode());
     }
 
     @Override
     public void addStrut() {
-        TethysFXSpacer mySpacer = new TethysFXSpacer(false);
+        final TethysFXSpacer mySpacer = new TethysFXSpacer(false);
         addSpacerNode(mySpacer);
         theBoxPane.getChildren().add(mySpacer.getNode());
     }

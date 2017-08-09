@@ -162,27 +162,27 @@ public class TethysSwingTabPaneManager
 
         @Override
         protected void attachToPane() {
-            int myIndex = countPreviousVisibleSiblings();
+            final int myIndex = countPreviousVisibleSiblings();
             getPane().theTabPane.insertTab(getName(), null, theNode.getNode(), null, myIndex);
         }
 
         @Override
         protected void detachFromPane() {
-            int myIndex = countPreviousVisibleSiblings();
+            final int myIndex = countPreviousVisibleSiblings();
             getPane().theTabPane.remove(myIndex);
         }
 
         @Override
         public void selectItem() {
             if (isVisible()) {
-                int myIndex = countPreviousVisibleSiblings();
+                final int myIndex = countPreviousVisibleSiblings();
                 getPane().theTabPane.setSelectedIndex(myIndex);
             }
         }
 
         @Override
         protected void enableTab(final boolean pEnabled) {
-            int myIndex = countPreviousVisibleSiblings();
+            final int myIndex = countPreviousVisibleSiblings();
             getPane().theTabPane.setEnabledAt(myIndex, pEnabled);
             theNode.setEnabled(pEnabled);
         }

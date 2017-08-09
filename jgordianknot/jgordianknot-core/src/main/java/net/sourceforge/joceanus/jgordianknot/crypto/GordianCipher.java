@@ -185,11 +185,11 @@ public abstract class GordianCipher<T> {
                          final int pOffset,
                          final int pLength) throws OceanusException {
         /* Create output buffer */
-        int myLen = getOutputLength(pLength);
-        byte[] myOutput = new byte[myLen];
+        final int myLen = getOutputLength(pLength);
+        final byte[] myOutput = new byte[myLen];
 
         /* Process the data */
-        int myOut = update(pBytes, pOffset, pLength, myOutput, 0);
+        final int myOut = update(pBytes, pOffset, pLength, myOutput, 0);
 
         /* Return full or partial buffer */
         return (myOut == myLen)
@@ -236,11 +236,11 @@ public abstract class GordianCipher<T> {
      */
     public byte[] finish() throws OceanusException {
         /* Create output buffer */
-        int myLen = getOutputLength(0);
-        byte[] myOutput = new byte[myLen];
+        final int myLen = getOutputLength(0);
+        final byte[] myOutput = new byte[myLen];
 
         /* Process the data */
-        int myOut = finish(myOutput, 0);
+        final int myOut = finish(myOutput, 0);
 
         /* Return full or partial buffer */
         return (myOut == myLen)
@@ -270,11 +270,11 @@ public abstract class GordianCipher<T> {
                          final int pOffset,
                          final int pLength) throws OceanusException {
         /* Create output buffer */
-        int myLen = getOutputLength(pLength);
-        byte[] myOutput = new byte[myLen];
+        final int myLen = getOutputLength(pLength);
+        final byte[] myOutput = new byte[myLen];
 
         /* Process the data */
-        int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);
+        final int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);
 
         /* Return full or partial buffer */
         return (myOut == myLen)
@@ -314,7 +314,7 @@ public abstract class GordianCipher<T> {
                       final byte[] pOutput,
                       final int pOutOffset) throws OceanusException {
         /* Update the data */
-        int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
+        final int myLen = update(pBytes, pOffset, pLength, pOutput, pOutOffset);
 
         /* Complete the operation */
         return myLen + finish(pOutput, myLen);

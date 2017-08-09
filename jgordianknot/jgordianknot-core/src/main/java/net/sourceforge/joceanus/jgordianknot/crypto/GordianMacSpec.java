@@ -154,7 +154,7 @@ public final class GordianMacSpec {
      */
     public static GordianMacSpec skeinMac(final GordianLength pLength,
                                           final boolean useExtended) {
-        GordianDigestSpec mySpec = GordianDigestSpec.skein(pLength, useExtended);
+        final GordianDigestSpec mySpec = GordianDigestSpec.skein(pLength, useExtended);
         return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
     }
 
@@ -166,7 +166,7 @@ public final class GordianMacSpec {
      */
     protected static GordianMacSpec skeinMac(final GordianLength pState,
                                              final GordianLength pLength) {
-        GordianDigestSpec mySpec = GordianDigestSpec.skein(pState, pLength);
+        final GordianDigestSpec mySpec = GordianDigestSpec.skein(pState, pLength);
         return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
     }
 
@@ -238,7 +238,7 @@ public final class GordianMacSpec {
         }
 
         /* Access the target MacSpec */
-        GordianMacSpec myThat = (GordianMacSpec) pThat;
+        final GordianMacSpec myThat = (GordianMacSpec) pThat;
 
         /* Check MacType */
         if (theMacType != myThat.getMacType()) {
@@ -273,7 +273,7 @@ public final class GordianMacSpec {
      */
     public static List<GordianMacSpec> listAll() {
         /* Create the array list */
-        List<GordianMacSpec> myList = new ArrayList<>();
+        final List<GordianMacSpec> myList = new ArrayList<>();
 
         /* For each digestSpec */
         for (GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {

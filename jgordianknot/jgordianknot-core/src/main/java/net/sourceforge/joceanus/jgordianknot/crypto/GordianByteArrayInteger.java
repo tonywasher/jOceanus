@@ -140,7 +140,7 @@ public final class GordianByteArrayInteger {
      */
     public byte[] addTo(final byte[] pAdjust) {
         /* Access length of adjusting array */
-        int myLength = Math.min(pAdjust.length, theLength);
+        final int myLength = Math.min(pAdjust.length, theLength);
 
         /* Loop through the adjustment bytes */
         boolean doCarry = false;

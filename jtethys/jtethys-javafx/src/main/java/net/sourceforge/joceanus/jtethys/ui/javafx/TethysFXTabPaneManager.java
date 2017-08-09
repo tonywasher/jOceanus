@@ -184,20 +184,20 @@ public class TethysFXTabPaneManager
 
         @Override
         protected void attachToPane() {
-            int myIndex = countPreviousVisibleSiblings();
+            final int myIndex = countPreviousVisibleSiblings();
             theTabList.add(myIndex, theTab);
         }
 
         @Override
         protected void detachFromPane() {
-            int myIndex = countPreviousVisibleSiblings();
+            final int myIndex = countPreviousVisibleSiblings();
             theTabList.remove(myIndex);
         }
 
         @Override
         public void selectItem() {
             if (isVisible()) {
-                int myIndex = countPreviousVisibleSiblings();
+                final int myIndex = countPreviousVisibleSiblings();
                 getPane().theModel.select(myIndex);
             }
         }

@@ -48,7 +48,7 @@ public abstract class GordianOutputStream
     /**
      * has this stream been closed.
      */
-    private boolean isClosed = false;
+    private boolean isClosed;
 
     /**
      * Constructor.

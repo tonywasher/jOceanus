@@ -70,48 +70,48 @@ public class TethysSwingDataFieldAdjust {
      */
     protected void adjustField(final TethysSwingDataTextField<?> pDataField) {
         /* Determine the flags */
-        boolean isNumeric = pDataField.isAttributeSet(TethysFieldAttribute.NUMERIC);
-        boolean isSelected = pDataField.isAttributeSet(TethysFieldAttribute.SELECTED);
-        boolean isChanged = pDataField.isAttributeSet(TethysFieldAttribute.CHANGED);
-        boolean isDisabled = pDataField.isAttributeSet(TethysFieldAttribute.DISABLED);
-        boolean isAlternate = pDataField.isAttributeSet(TethysFieldAttribute.ALTERNATE);
+        final boolean isNumeric = pDataField.isAttributeSet(TethysFieldAttribute.NUMERIC);
+        final boolean isSelected = pDataField.isAttributeSet(TethysFieldAttribute.SELECTED);
+        final boolean isChanged = pDataField.isAttributeSet(TethysFieldAttribute.CHANGED);
+        final boolean isDisabled = pDataField.isAttributeSet(TethysFieldAttribute.DISABLED);
+        final boolean isAlternate = pDataField.isAttributeSet(TethysFieldAttribute.ALTERNATE);
 
         /* Obtain the label and the edit control */
-        JLabel myLabel = pDataField.getLabel();
-        JComponent myControl = pDataField.getEditControl();
+        final JLabel myLabel = pDataField.getLabel();
+        final JComponent myControl = pDataField.getEditControl();
 
         /* Determine the font */
-        Font myFont = isNumeric
-                                ? isChanged
-                                            ? isSelected
-                                                         ? theFontSet.theBoldChangedNumeric
-                                                         : theFontSet.theChangedNumeric
-                                            : isSelected
-                                                         ? theFontSet.theBoldNumeric
-                                                         : theFontSet.theNumeric
-                                : isChanged
-                                            ? isSelected
-                                                         ? theFontSet.theBoldChanged
-                                                         : theFontSet.theChanged
-                                            : isSelected
-                                                         ? theFontSet.theBoldStandard
-                                                         : theFontSet.theStandard;
+        final Font myFont = isNumeric
+                                      ? isChanged
+                                                  ? isSelected
+                                                               ? theFontSet.theBoldChangedNumeric
+                                                               : theFontSet.theChangedNumeric
+                                                  : isSelected
+                                                               ? theFontSet.theBoldNumeric
+                                                               : theFontSet.theNumeric
+                                      : isChanged
+                                                  ? isSelected
+                                                               ? theFontSet.theBoldChanged
+                                                               : theFontSet.theChanged
+                                                  : isSelected
+                                                               ? theFontSet.theBoldStandard
+                                                               : theFontSet.theStandard;
         myLabel.setFont(myFont);
         myControl.setFont(myFont);
 
         /* Determine the foreground */
-        Color myForeground = isChanged
-                                       ? theColorSet.theChanged
-                                       : isDisabled
-                                                    ? theColorSet.theDisabled
-                                                    : theColorSet.theStandard;
+        final Color myForeground = isChanged
+                                             ? theColorSet.theChanged
+                                             : isDisabled
+                                                          ? theColorSet.theDisabled
+                                                          : theColorSet.theStandard;
         myLabel.setForeground(myForeground);
         myControl.setForeground(myForeground);
 
         /* Determine the background (don't set the control) */
-        Color myBackground = isAlternate
-                                         ? theColorSet.theZebra
-                                         : theColorSet.theBackground;
+        final Color myBackground = isAlternate
+                                               ? theColorSet.theZebra
+                                               : theColorSet.theBackground;
         myLabel.setBackground(myBackground);
     }
 
@@ -123,18 +123,18 @@ public class TethysSwingDataFieldAdjust {
     protected void adjustCheckBox(final TethysSwingCheckBox pCheckBox,
                                   final boolean pChanged) {
         /* Access the component */
-        JComponent myBox = pCheckBox.getNode();
+        final JComponent myBox = pCheckBox.getNode();
 
         /* Determine the font */
-        Font myFont = pChanged
-                               ? theFontSet.theChanged
-                               : theFontSet.theStandard;
+        final Font myFont = pChanged
+                                     ? theFontSet.theChanged
+                                     : theFontSet.theStandard;
         myBox.setFont(myFont);
 
         /* Determine the foreground */
-        Color myForeground = pChanged
-                                      ? theColorSet.theChanged
-                                      : theColorSet.theStandard;
+        final Color myForeground = pChanged
+                                            ? theColorSet.theChanged
+                                            : theColorSet.theStandard;
         myBox.setForeground(myForeground);
     }
 
@@ -212,13 +212,13 @@ public class TethysSwingDataFieldAdjust {
          */
         private TethysSwingFontSet(final TethysValueSet pValueSet) {
             /* Access values */
-            String myValueFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_STANDARD);
-            String myNumericFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_NUMERIC);
-            String myPitch = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_PITCH);
+            final String myValueFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_STANDARD);
+            final String myNumericFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_NUMERIC);
+            final String myPitch = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_PITCH);
 
             /* Determine pitches */
-            int myBasePitch = Integer.parseInt(myPitch);
-            int myBoldPitch = myBasePitch + 2;
+            final int myBasePitch = Integer.parseInt(myPitch);
+            final int myBoldPitch = myBasePitch + 2;
 
             /* Build fonts */
             theStandard = new Font(myValueFont, Font.PLAIN, myBasePitch);

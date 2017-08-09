@@ -105,7 +105,7 @@ public enum CoeusReportResource
      */
     private static Map<CoeusReportType, TethysResourceId> buildReportMap() {
         /* Create the map and return it */
-        Map<CoeusReportType, TethysResourceId> myMap = new EnumMap<>(CoeusReportType.class);
+        final Map<CoeusReportType, TethysResourceId> myMap = new EnumMap<>(CoeusReportType.class);
         myMap.put(CoeusReportType.BALANCESHEET, REPORTTYPE_BALANCESHEET);
         myMap.put(CoeusReportType.LOANBOOK, REPORTTYPE_LOANBOOK);
         myMap.put(CoeusReportType.ANNUAL, REPORTTYPE_ANNUAL);

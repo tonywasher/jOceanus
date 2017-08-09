@@ -154,7 +154,7 @@ public class TethysFXGuiFactory
      */
     private String buildStandardColors() {
         /* Allocate a string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Create the default colour values */
         addValueToBuffer(myBuilder, TethysValueSet.TETHYS_COLOR_STANDARD);
@@ -188,10 +188,10 @@ public class TethysFXGuiFactory
      */
     private void applyValuesToScenes() {
         /* Loop through the scenes */
-        String myValues = buildStandardColors();
-        Iterator<Scene> myIterator = theScenes.iterator();
+        final String myValues = buildStandardColors();
+        final Iterator<Scene> myIterator = theScenes.iterator();
         while (myIterator.hasNext()) {
-            Scene myScene = myIterator.next();
+            final Scene myScene = myIterator.next();
             myScene.getRoot().setStyle(myValues);
         }
     }
@@ -228,7 +228,7 @@ public class TethysFXGuiFactory
 
     @Override
     public TethysFXLabel newLabel(final String pText) {
-        TethysFXLabel myLabel = newLabel();
+        final TethysFXLabel myLabel = newLabel();
         myLabel.setText(pText);
         return myLabel;
     }
@@ -240,7 +240,7 @@ public class TethysFXGuiFactory
 
     @Override
     public TethysFXCheckBox newCheckBox(final String pText) {
-        TethysFXCheckBox myBox = newCheckBox();
+        final TethysFXCheckBox myBox = newCheckBox();
         myBox.setText(pText);
         return myBox;
     }

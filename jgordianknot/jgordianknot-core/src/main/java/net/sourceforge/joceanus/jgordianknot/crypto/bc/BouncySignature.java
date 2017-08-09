@@ -154,7 +154,7 @@ public final class BouncySignature {
         private static Signer getRSASigner(final BouncyFactory pFactory,
                                            final GordianSignatureSpec pSpec) throws OceanusException {
             /* Create the digest */
-            BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+            final BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
 
             /* Access the signature type */
             switch (pSpec.getSignatureType()) {
@@ -238,9 +238,9 @@ public final class BouncySignature {
             super(pFactory, pSpec);
 
             /* Initialise and set the signer */
-            CipherParameters myParms = GordianSignatureType.PSS.equals(pSpec.getSignatureType())
-                                                                                                 ? new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom)
-                                                                                                 : pPrivateKey.getPrivateKey();
+            final CipherParameters myParms = GordianSignatureType.PSS.equals(pSpec.getSignatureType())
+                                                                                                       ? new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom)
+                                                                                                       : pPrivateKey.getPrivateKey();
             getSigner().init(true, myParms);
         }
 
@@ -315,13 +315,13 @@ public final class BouncySignature {
             theSigner = getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
 
             /* Initialise and set the signer */
-            ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
             theSigner.init(true, myParms);
         }
 
         @Override
         public byte[] sign() throws OceanusException {
-            BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
             return dsaEncode(myValues[0], myValues[1]);
         }
     }
@@ -359,7 +359,7 @@ public final class BouncySignature {
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
-            BigInteger[] myValues = dsaDecode(pSignature);
+            final BigInteger[] myValues = dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }
@@ -374,7 +374,7 @@ public final class BouncySignature {
     private static byte[] dsaEncode(final BigInteger r,
                                     final BigInteger s) throws OceanusException {
         try {
-            ASN1EncodableVector v = new ASN1EncodableVector();
+            final ASN1EncodableVector v = new ASN1EncodableVector();
 
             v.add(new ASN1Integer(r));
             v.add(new ASN1Integer(s));
@@ -393,8 +393,8 @@ public final class BouncySignature {
      */
     private static BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
         try {
-            ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
-            BigInteger[] sig = new BigInteger[2];
+            final ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
+            final BigInteger[] sig = new BigInteger[2];
 
             sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
             sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
@@ -422,13 +422,13 @@ public final class BouncySignature {
         }
 
         /* Note if we are DSA */
-        boolean isDSA = GordianAsymKeyType.DSA.equals(pKeySpec.getKeyType());
+        final boolean isDSA = GordianAsymKeyType.DSA.equals(pKeySpec.getKeyType());
 
         /* Switch on signature type */
         switch (pSpec.getSignatureType()) {
             case DDSA:
-                BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
-                HMacDSAKCalculator myCalc = new HMacDSAKCalculator(myDigest.getDigest());
+                final BouncyDigest myDigest = pFactory.createDigest(pSpec.getDigestSpec());
+                final HMacDSAKCalculator myCalc = new HMacDSAKCalculator(myDigest.getDigest());
                 return isDSA
                              ? new DSASigner(myCalc)
                              : new ECDSASigner(myCalc);
@@ -472,13 +472,13 @@ public final class BouncySignature {
             theSigner = getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
 
             /* Initialise and set the signer */
-            ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
             theSigner.init(true, myParms);
         }
 
         @Override
         public byte[] sign() throws OceanusException {
-            BigInteger[] myValues = theSigner.generateSignature(getDigest());
+            final BigInteger[] myValues = theSigner.generateSignature(getDigest());
             return dsaEncode(myValues[0], myValues[1]);
         }
     }
@@ -516,7 +516,7 @@ public final class BouncySignature {
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
-            BigInteger[] myValues = dsaDecode(pSignature);
+            final BigInteger[] myValues = dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }
@@ -546,8 +546,8 @@ public final class BouncySignature {
             super(pFactory, pSpec);
 
             /* Create the internal digests */
-            BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
-            BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
+            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
+            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
 
             /* Create the signer */
             theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
@@ -588,8 +588,8 @@ public final class BouncySignature {
             super(pFactory, pSpec);
 
             /* Create the internal digests */
-            BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
-            BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
+            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
+            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
 
             /* Create the signer */
             theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
@@ -634,7 +634,7 @@ public final class BouncySignature {
             theSigner = new RainbowSigner();
 
             /* Initialise and set the signer */
-            ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
+            final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
             theSigner.init(true, myParms);
         }
 

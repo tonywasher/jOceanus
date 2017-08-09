@@ -194,8 +194,8 @@ public class TethysFXDateDialog
         theContainer.setTop(theNavigation);
         theContainer.setCenter(theDaysPanel);
         theContainer.getStyleClass().add(STYLE_DIALOG);
-        Scene myScene = new Scene(theContainer);
-        ObservableList<String> mySheets = myScene.getStylesheets();
+        final Scene myScene = new Scene(theContainer);
+        final ObservableList<String> mySheets = myScene.getStylesheets();
         mySheets.add(CSS_STYLE);
         theStage.setScene(myScene);
 
@@ -315,7 +315,7 @@ public class TethysFXDateDialog
         theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG, theConfig);
 
         /* Determine the relevant bounds */
-        Bounds myBounds = pNode.localToScreen(pNode.getLayoutBounds());
+        final Bounds myBounds = pNode.localToScreen(pNode.getLayoutBounds());
 
         /* Position the dialog just below the node */
         theStage.setX(myBounds.getMinX());
@@ -451,13 +451,13 @@ public class TethysFXDateDialog
             theNextYearButton.getStyleClass().add(STYLE_BUTTON);
 
             /* Create the struts */
-            Region myStrut1 = new Region();
-            Region myStrut2 = new Region();
+            final Region myStrut1 = new Region();
+            final Region myStrut2 = new Region();
             setHgrow(myStrut1, Priority.ALWAYS);
             setHgrow(myStrut2, Priority.ALWAYS);
 
             /* Add these elements into the HBox */
-            ObservableList<Node> myChildren = getChildren();
+            final ObservableList<Node> myChildren = getChildren();
             myChildren.add(thePrevYearButton);
             myChildren.add(thePrevMonthButton);
             myChildren.add(myStrut1);
@@ -472,12 +472,12 @@ public class TethysFXDateDialog
          */
         private void buildMonth() {
             /* Obtain the active month */
-            TethysDate myBase = theConfig.getCurrentMonth();
-            Locale myLocale = theConfig.getLocale();
+            final TethysDate myBase = theConfig.getCurrentMonth();
+            final Locale myLocale = theConfig.getLocale();
 
             /* Determine the display for the label */
-            String myMonth = myBase.getMonthValue().getDisplayName(TextStyle.FULL, myLocale);
-            String myYear = Integer.toString(myBase.getYear());
+            final String myMonth = myBase.getMonthValue().getDisplayName(TextStyle.FULL, myLocale);
+            final String myYear = Integer.toString(myBase.getYear());
 
             /* Set the label */
             theDateLabel.setText(myMonth
@@ -485,8 +485,8 @@ public class TethysFXDateDialog
                                  + myYear);
 
             /* Access boundary dates */
-            TethysDate myEarliest = theConfig.getEarliestDate();
-            TethysDate myLatest = theConfig.getLatestDate();
+            final TethysDate myEarliest = theConfig.getEarliestDate();
+            final TethysDate myLatest = theConfig.getLatestDate();
 
             /* Enable/Disable buttons as required */
             thePrevMonthButton.setDisable(TethysDateConfig.isSameMonth(myEarliest, myBase));
@@ -572,7 +572,7 @@ public class TethysFXDateDialog
 
             /* Add the Names to the layout */
             for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
-                Label myDay = new Label();
+                final Label myDay = new Label();
                 myDay.setMaxWidth(Double.MAX_VALUE);
                 theHdrs[iCol] = myDay;
                 add(myDay, iCol, 0);
@@ -581,7 +581,7 @@ public class TethysFXDateDialog
             /* Add the Days to the layout */
             for (int iRow = 0; iRow < MAX_WEEKS_IN_MONTH; iRow++) {
                 for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
-                    PanelDay myDay = new PanelDay(theDialog);
+                    final PanelDay myDay = new PanelDay(theDialog);
                     theDays[iRow][iCol] = myDay;
                     add(myDay, iCol, iRow + 1);
                 }
@@ -625,17 +625,17 @@ public class TethysFXDateDialog
          */
         private void buildMonth() {
             /* Obtain the active month */
-            TethysDate myCurr = new TethysDate(theConfig.getCurrentMonth());
+            final TethysDate myCurr = new TethysDate(theConfig.getCurrentMonth());
 
             /* Access the interesting days of the month */
-            int iCurrent = theConfig.getCurrentDay();
-            int iSelected = theConfig.getSelectedDay();
-            int iEarliest = theConfig.getEarliestDay();
-            int iLatest = theConfig.getLatestDay();
+            final int iCurrent = theConfig.getCurrentDay();
+            final int iSelected = theConfig.getSelectedDay();
+            final int iEarliest = theConfig.getEarliestDay();
+            final int iLatest = theConfig.getLatestDay();
 
             /* Move to the start of the week */
-            DayOfWeek myWeekDay = myCurr.getDayOfWeek();
-            int iStart = getDayColumn(myWeekDay);
+            final DayOfWeek myWeekDay = myCurr.getDayOfWeek();
+            final int iStart = getDayColumn(myWeekDay);
             if (iStart > 0) {
                 myCurr.adjustDay(-iStart);
             }
@@ -644,7 +644,7 @@ public class TethysFXDateDialog
             int iCol = 0;
             for (int iDay = myCurr.getDay(); iCol < iStart; iCol++, iDay++, myCurr.adjustDay(1)) {
                 /* Access the label */
-                PanelDay myLabel = theDays[0][iCol];
+                final PanelDay myLabel = theDays[0][iCol];
 
                 /* Reset the day and set no day */
                 myLabel.resetDay(false);
@@ -653,7 +653,7 @@ public class TethysFXDateDialog
 
             /* Loop through the days of the month */
             int iRow = 0;
-            int iMonth = myCurr.getMonth();
+            final int iMonth = myCurr.getMonth();
             for (int iDay = 1; iMonth == myCurr.getMonth(); iCol++, iDay++, myCurr.adjustDay(1)) {
                 /* Reset column if necessary */
                 if (iCol >= DAYS_IN_WEEK) {
@@ -662,7 +662,7 @@ public class TethysFXDateDialog
                 }
 
                 /* Access the label */
-                PanelDay myLabel = theDays[iRow][iCol];
+                final PanelDay myLabel = theDays[iRow][iCol];
 
                 /* Reset the day */
                 myLabel.resetDay(true);
@@ -693,7 +693,7 @@ public class TethysFXDateDialog
 
                     int iDay = 1; iCol < DAYS_IN_WEEK; iCol++, iDay++) {
                 /* Access the label */
-                PanelDay myLabel = theDays[iRow][iCol];
+                final PanelDay myLabel = theDays[iRow][iCol];
 
                 /* Reset the day and set no day */
                 myLabel.resetDay(false);
@@ -709,8 +709,8 @@ public class TethysFXDateDialog
          */
         private void buildDayNames() {
             /* Get todays date */
-            Locale myLocale = theConfig.getLocale();
-            Calendar myDate = Calendar.getInstance(myLocale);
+            final Locale myLocale = theConfig.getLocale();
+            final Calendar myDate = Calendar.getInstance(myLocale);
             int myStart = myDate.getFirstDayOfWeek();
             if (myStart == Calendar.SUNDAY) {
                 myStart += DAYS_IN_WEEK;
@@ -726,19 +726,19 @@ public class TethysFXDateDialog
             /* Loop through the labels */
             for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
                 /* Access the label */
-                Label myLabel = theHdrs[iCol];
+                final Label myLabel = theHdrs[iCol];
 
                 /* Reset classes */
-                ObservableList<String> myStyles = myLabel.getStyleClass();
+                final ObservableList<String> myStyles = myLabel.getStyleClass();
                 myStyles.clear();
                 myStyles.add(STYLE_HEADER);
 
                 /* Access the required name */
                 myDoW = theDaysOfWk[iCol];
-                TextStyle myStyle = theConfig.showNarrowDays()
-                                                               ? TextStyle.NARROW
-                                                               : TextStyle.SHORT;
-                String myName = myDoW.getDisplayName(myStyle, myLocale);
+                final TextStyle myStyle = theConfig.showNarrowDays()
+                                                                     ? TextStyle.NARROW
+                                                                     : TextStyle.SHORT;
+                final String myName = myDoW.getDisplayName(myStyle, myLocale);
 
                 /* Set the name */
                 myLabel.setText(myName);
@@ -756,7 +756,7 @@ public class TethysFXDateDialog
          */
         private void reSizeRows(final int iNumRows) {
             /* Access the children */
-            ObservableList<Node> myNodes = getChildren();
+            final ObservableList<Node> myNodes = getChildren();
 
             /* Hide any visible rows that should now be hidden */
             while (iNumRows < theNumRows) {

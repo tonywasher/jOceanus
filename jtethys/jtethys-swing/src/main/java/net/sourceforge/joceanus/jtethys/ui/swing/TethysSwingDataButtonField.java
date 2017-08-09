@@ -113,7 +113,7 @@ public final class TethysSwingDataButtonField {
             theButton = getEditControl();
 
             /* Set listener on manager */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = pManager.getEventRegistrar();
             myRegistrar.addEventListener(this::handleEvent);
         }
 
@@ -173,7 +173,7 @@ public final class TethysSwingDataButtonField {
 
         @Override
         protected TethysSwingIconButtonField<T> cloneField(final JLabel pLabel) {
-            TethysSwingIconButtonManager<T> myClone = new TethysSwingIconButtonManager<>(getGuiFactory());
+            final TethysSwingIconButtonManager<T> myClone = new TethysSwingIconButtonManager<>(getGuiFactory());
             return new TethysSwingIconButtonField<>(getGuiFactory(), myClone, pLabel);
         }
     }
@@ -289,7 +289,7 @@ public final class TethysSwingDataButtonField {
         @Override
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
-            TethysSwingScrollContextMenu<T> myMenu = theManager.getMenu();
+            final TethysSwingScrollContextMenu<T> myMenu = theManager.getMenu();
             theConfigurator.accept(myMenu);
             if (!myMenu.isEmpty()) {
                 myMenu.showMenuAtPosition(pCell, SwingConstants.BOTTOM);
@@ -408,7 +408,7 @@ public final class TethysSwingDataButtonField {
         @Override
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
-            TethysSwingDateDialog myDialog = theManager.getDialog();
+            final TethysSwingDateDialog myDialog = theManager.getDialog();
 
             /* Show the dialog */
             myDialog.showDialogUnderRectangle(pCell);
@@ -517,7 +517,7 @@ public final class TethysSwingDataButtonField {
             thePicker.setValue(pValue);
 
             /* Configure the label */
-            JLabel myLabel = getLabel();
+            final JLabel myLabel = getLabel();
             myLabel.setText(pValue);
             myLabel.setIcon(thePicker.getSwatch());
         }
@@ -637,7 +637,7 @@ public final class TethysSwingDataButtonField {
         public void startCellEditing(final Rectangle pCell) {
             isCellEditing = true;
             theManager.buildMenu();
-            TethysSwingScrollContextMenu<T> myMenu = theManager.getMenu();
+            final TethysSwingScrollContextMenu<T> myMenu = theManager.getMenu();
             myMenu.showMenuAtPosition(pCell, SwingConstants.BOTTOM);
         }
 

@@ -199,7 +199,7 @@ public abstract class TethysDateRangeSelector<N, I>
         buildPeriodMenu(thePeriodButton.getMenu());
 
         /* Create the period box */
-        TethysLabel<N, I> myPeriodLabel = pFactory.newLabel(NLS_PERIOD);
+        final TethysLabel<N, I> myPeriodLabel = pFactory.newLabel(NLS_PERIOD);
         thePeriodBox = pFactory.newHBoxPane();
         thePeriodBox.addNode(myPeriodLabel);
         thePeriodBox.addNode(thePeriodButton);
@@ -218,8 +218,8 @@ public abstract class TethysDateRangeSelector<N, I>
 
         /* Create the Custom HBox */
         theCustomBox = pFactory.newHBoxPane();
-        TethysLabel<N, I> myStartLabel = pFactory.newLabel(NLS_START);
-        TethysLabel<N, I> myEndLabel = pFactory.newLabel(NLS_END);
+        final TethysLabel<N, I> myStartLabel = pFactory.newLabel(NLS_START);
+        final TethysLabel<N, I> myEndLabel = pFactory.newLabel(NLS_END);
         theCustomBox.addNode(myStartLabel);
         theCustomBox.addNode(theStartButton);
         theCustomBox.addNode(myEndLabel);
@@ -391,7 +391,7 @@ public abstract class TethysDateRangeSelector<N, I>
      */
     public void setSelection(final TethysDateRangeSelector<N, I> pSource) {
         /* Access the state */
-        TethysDateRangeState myState = pSource.getState();
+        final TethysDateRangeState myState = pSource.getState();
 
         /* Accept this state */
         theState = new TethysDateRangeState(myState);
@@ -480,7 +480,7 @@ public abstract class TethysDateRangeSelector<N, I>
         applyState(theState);
 
         /* Access overall range */
-        TethysDateRange myOverallRange = theState.getOverallRange();
+        final TethysDateRange myOverallRange = theState.getOverallRange();
 
         /* Set the period value */
         thePeriodButton.setValue(theState.getPeriod());
@@ -521,12 +521,12 @@ public abstract class TethysDateRangeSelector<N, I>
      */
     protected void applyState(final TethysDateRangeState pState) {
         /* Determine flags */
-        boolean isUpTo = pState.isUpTo()
-                         && pState.isLocked();
-        boolean isAdjust = pState.isAdjustable();
-        boolean isFull = pState.isFull();
-        boolean isContaining = pState.isContaining();
-        boolean isBaseStartOfPeriod = pState.isBaseStartOfPeriod();
+        final boolean isUpTo = pState.isUpTo()
+                               && pState.isLocked();
+        final boolean isAdjust = pState.isAdjustable();
+        final boolean isFull = pState.isFull();
+        final boolean isContaining = pState.isContaining();
+        final boolean isBaseStartOfPeriod = pState.isBaseStartOfPeriod();
 
         /* Adjust visibility */
         theGuiFactory.setNodeVisible(thePeriodBox, !isUpTo);
@@ -550,11 +550,13 @@ public abstract class TethysDateRangeSelector<N, I>
             theStandardLabel.setVisible(!isUpTo);
 
             /* Set correct text for label */
-            theStandardLabel.setText(isContaining
-                                                  ? NLS_CONTAIN
-                                                  : isBaseStartOfPeriod
-                                                                        ? NLS_START
-                                                                        : NLS_END);
+            String myText = NLS_CONTAIN;
+            if (!isContaining) {
+                myText = isBaseStartOfPeriod
+                                             ? NLS_START
+                                             : NLS_END;
+            }
+            theStandardLabel.setText(myText);
 
             /* Display the standard box */
             theGuiFactory.setNodeVisible(theCustomBox, false);

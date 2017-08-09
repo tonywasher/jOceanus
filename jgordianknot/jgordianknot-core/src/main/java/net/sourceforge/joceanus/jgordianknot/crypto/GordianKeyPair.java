@@ -108,7 +108,7 @@ public class GordianKeyPair {
         }
 
         /* Access the target field */
-        GordianKeyPair myThat = (GordianKeyPair) pThat;
+        final GordianKeyPair myThat = (GordianKeyPair) pThat;
 
         /* Check key Spec */
         if (!theKeySpec.equals(myThat.getKeySpec())) {

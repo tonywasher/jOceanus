@@ -245,7 +245,7 @@ public final class GordianAsymKeySpec {
         }
 
         /* Access the target KeySpec */
-        GordianAsymKeySpec myThat = (GordianAsymKeySpec) pThat;
+        final GordianAsymKeySpec myThat = (GordianAsymKeySpec) pThat;
 
         /* Check KeyType */
         if (theKeyType != myThat.getKeyType()) {

@@ -83,13 +83,13 @@ public class GordianZipFileProperties {
         this();
 
         /* Wrap string in a string builder */
-        StringBuilder myString = new StringBuilder(pCodedString);
-        String myPropSep = Character.toString(SEP_PROPERTY);
+        final StringBuilder myString = new StringBuilder(pCodedString);
+        final String myPropSep = Character.toString(SEP_PROPERTY);
 
         /* while we have separators in the string */
         for (;;) {
             /* Locate next separator and break if not found */
-            int myLoc = myString.indexOf(myPropSep);
+            final int myLoc = myString.indexOf(myPropSep);
             if (myLoc == -1) {
                 break;
             }
@@ -107,10 +107,9 @@ public class GordianZipFileProperties {
      * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
-     * @throws OceanusException on error
      */
     protected void setProperty(final String pName,
-                               final String pValue) throws OceanusException {
+                               final String pValue) {
         /* Set the new value */
         setProperty(pName, TethysDataConverter.stringToByteArray(pValue));
     }
@@ -123,7 +122,7 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final byte[] pValue) {
         /* Determine whether we are setting a null value */
-        boolean isNull = pValue == null;
+        final boolean isNull = pValue == null;
 
         /* Access any existing property */
         Property myProperty = getProperty(pName);
@@ -160,7 +159,7 @@ public class GordianZipFileProperties {
     protected void setProperty(final String pName,
                                final Long pValue) {
         /* Determine whether we are setting a null value */
-        boolean isNull = pValue == null;
+        final boolean isNull = pValue == null;
 
         /* Access any existing property */
         Property myProperty = getProperty(pName);
@@ -193,11 +192,10 @@ public class GordianZipFileProperties {
      * Obtain the string value of the named property.
      * @param pName the name of the property
      * @return the value of the property or <code>null</code> if the property does not exist
-     * @throws OceanusException on error
      */
-    protected String getStringProperty(final String pName) throws OceanusException {
+    protected String getStringProperty(final String pName) {
         /* Access the property */
-        byte[] myValue = getByteProperty(pName);
+        final byte[] myValue = getByteProperty(pName);
 
         /* Return the value */
         return (myValue == null)
@@ -212,7 +210,7 @@ public class GordianZipFileProperties {
      */
     protected byte[] getByteProperty(final String pName) {
         /* Access the property */
-        Property myProperty = getProperty(pName);
+        final Property myProperty = getProperty(pName);
 
         /* Return the value */
         return (myProperty == null)
@@ -227,7 +225,7 @@ public class GordianZipFileProperties {
      */
     protected Long getLongProperty(final String pName) {
         /* Access the property */
-        Property myProperty = getProperty(pName);
+        final Property myProperty = getProperty(pName);
 
         /* Return the value */
         return (myProperty == null)
@@ -242,13 +240,13 @@ public class GordianZipFileProperties {
      */
     private Property getProperty(final String pName) {
         /* Loop through the properties */
-        Iterator<Property> myIterator = theList.iterator();
+        final Iterator<Property> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access next property */
-            Property myProperty = myIterator.next();
+            final Property myProperty = myIterator.next();
 
             /* Check the property name */
-            int iDiff = pName.compareTo(myProperty.getName());
+            final int iDiff = pName.compareTo(myProperty.getName());
 
             /* If this is the required property, return it */
             if (iDiff == 0) {
@@ -270,14 +268,14 @@ public class GordianZipFileProperties {
      * @return the encoded string
      */
     protected String encodeProperties() {
-        StringBuilder myString = new StringBuilder(BUFFER_LEN);
-        StringBuilder myValue = new StringBuilder(BUFFER_VALLEN);
+        final StringBuilder myString = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myValue = new StringBuilder(BUFFER_VALLEN);
 
         /* Loop through the properties */
-        Iterator<Property> myIterator = theList.iterator();
+        final Iterator<Property> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access next property */
-            Property myProperty = myIterator.next();
+            final Property myProperty = myIterator.next();
 
             /* Build the value string */
             myValue.setLength(0);
@@ -326,9 +324,9 @@ public class GordianZipFileProperties {
         }
 
         /* Split the values and name */
-        String myName = pValue.substring(0, myLoc);
+        final String myName = pValue.substring(0, myLoc);
         String myBytes = pValue.substring(myLoc + 1);
-        int myLen = myBytes.length();
+        final int myLen = myBytes.length();
 
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
@@ -346,9 +344,9 @@ public class GordianZipFileProperties {
         }
 
         /* Access the separate byte and long values */
-        String myLong = (myLoc < myLen - 1)
-                                            ? myBytes.substring(myLoc + 1)
-                                            : null;
+        final String myLong = (myLoc < myLen - 1)
+                                                  ? myBytes.substring(myLoc + 1)
+                                                  : null;
         myBytes = (myLoc > 0)
                               ? myBytes.substring(0, myLoc)
                               : null;
@@ -361,7 +359,7 @@ public class GordianZipFileProperties {
         }
 
         /* Create a new property */
-        Property myProperty = new Property(theList, myName);
+        final Property myProperty = new Property(theList, myName);
 
         /* If we have a bytes array */
         if (myBytes != null) {
@@ -388,12 +386,12 @@ public class GordianZipFileProperties {
         /**
          * Value of property.
          */
-        private byte[] theByteValue = null;
+        private byte[] theByteValue;
 
         /**
          * Value of property.
          */
-        private Long theLongValue = null;
+        private Long theLongValue;
 
         /**
          * Standard Constructor.
@@ -413,13 +411,13 @@ public class GordianZipFileProperties {
 
             /* Loop through the properties in the list */
             int iIndex = 0;
-            Iterator<Property> myIterator = pList.iterator();
+            final Iterator<Property> myIterator = pList.iterator();
             while (myIterator.hasNext()) {
                 /* Access next property */
-                Property myProperty = myIterator.next();
+                final Property myProperty = myIterator.next();
 
                 /* Check the property name */
-                int iDiff = pName.compareTo(myProperty.getName());
+                final int iDiff = pName.compareTo(myProperty.getName());
 
                 /* If this property is later than us */
                 if (iDiff < 0) {

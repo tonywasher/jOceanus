@@ -81,7 +81,7 @@ public abstract class JcaKeyPairGenerator
     @Override
     protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
         try {
-            JcaPrivateKey myPrivateKey = JcaPrivateKey.class.cast(getPrivateKey(pKeyPair));
+            final JcaPrivateKey myPrivateKey = JcaPrivateKey.class.cast(getPrivateKey(pKeyPair));
             return theFactory.getKeySpec(myPrivateKey.getPrivateKey(), PKCS8EncodedKeySpec.class);
         } catch (InvalidKeySpecException e) {
             throw new GordianCryptoException("Failed to generate encoding", e);
@@ -91,7 +91,7 @@ public abstract class JcaKeyPairGenerator
     @Override
     public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
         try {
-            JcaPublicKey myPublicKey = JcaPublicKey.class.cast(getPublicKey(pKeyPair));
+            final JcaPublicKey myPublicKey = JcaPublicKey.class.cast(getPublicKey(pKeyPair));
             return theFactory.getKeySpec(myPublicKey.getPublicKey(), X509EncodedKeySpec.class);
         } catch (InvalidKeySpecException e) {
             throw new GordianCryptoException("Failed to generate encoding", e);
@@ -102,8 +102,8 @@ public abstract class JcaKeyPairGenerator
     protected JcaKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
                                        final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
         try {
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), theFactory.generatePrivate(pPrivateKey));
-            JcaPublicKey myPublic = derivePublicKey(pPublicKey);
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), theFactory.generatePrivate(pPrivateKey));
+            final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
             return new JcaKeyPair(myPublic, myPrivate);
         } catch (InvalidKeySpecException e) {
             throw new GordianCryptoException("Failed to parse encoding", e);
@@ -112,7 +112,7 @@ public abstract class JcaKeyPairGenerator
 
     @Override
     public JcaKeyPair derivePublicOnlyKeyPair(final X509EncodedKeySpec pPublicKey) throws OceanusException {
-        JcaPublicKey myPublic = derivePublicKey(pPublicKey);
+        final JcaPublicKey myPublic = derivePublicKey(pPublicKey);
         return new JcaKeyPair(myPublic);
     }
 
@@ -166,9 +166,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -202,11 +202,11 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
-                GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
+                final GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(EC_ALGO, false);
-                ECGenParameterSpec myParms = new ECGenParameterSpec(GordianAsymKeyType.EC.equals(myKeyType)
-                                                                                                            ? pKeySpec.getElliptic().getCurveName()
-                                                                                                            : pKeySpec.getSM2Elliptic().getCurveName());
+                final ECGenParameterSpec myParms = new ECGenParameterSpec(GordianAsymKeyType.EC.equals(myKeyType)
+                                                                                                                  ? pKeySpec.getElliptic().getCurveName()
+                                                                                                                  : pKeySpec.getSM2Elliptic().getCurveName());
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -218,9 +218,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -252,7 +252,7 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            GordianDSAKeyType myKeyType = pKeySpec.getDSAKeyType();
+            final GordianDSAKeyType myKeyType = pKeySpec.getDSAKeyType();
             theGenerator = JcaFactory.getJavaKeyPairGenerator(DSA_ALGO, false);
             theGenerator.initialize(myKeyType.getKeySize(), getRandom());
 
@@ -262,9 +262,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -298,9 +298,9 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create the parameter generator */
-                GordianModulus myModulus = pKeySpec.getModulus();
-                DHParameters myParms = myModulus.getDHParameters();
-                DHParameterSpec mySpec = new DHParameterSpec(myParms.getP(), myParms.getG());
+                final GordianModulus myModulus = pKeySpec.getModulus();
+                final DHParameters myParms = myModulus.getDHParameters();
+                final DHParameterSpec mySpec = new DHParameterSpec(myParms.getP(), myParms.getG());
 
                 /* Create and initialise the generator */
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(DH_ALGO, false);
@@ -315,9 +315,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -351,13 +351,13 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Determine the type */
-                String myType = GordianSPHINCSKeyType.SHA3.equals(pKeySpec.getSPHINCSType())
-                                                                                             ? SPHINCS256KeyGenParameterSpec.SHA3_256
-                                                                                             : SPHINCS256KeyGenParameterSpec.SHA512_256;
+                final String myType = GordianSPHINCSKeyType.SHA3.equals(pKeySpec.getSPHINCSType())
+                                                                                                   ? SPHINCS256KeyGenParameterSpec.SHA3_256
+                                                                                                   : SPHINCS256KeyGenParameterSpec.SHA512_256;
 
                 /* Create and initialise the generator */
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(SPHINCS_ALGO, true);
-                SPHINCS256KeyGenParameterSpec myParms = new SPHINCS256KeyGenParameterSpec(myType);
+                final SPHINCS256KeyGenParameterSpec myParms = new SPHINCS256KeyGenParameterSpec(myType);
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -369,9 +369,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -412,9 +412,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -451,7 +451,7 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            GordianMcElieceKeyType myKeyType = pKeySpec.getMcElieceType();
+            final GordianMcElieceKeyType myKeyType = pKeySpec.getMcElieceType();
             theGenerator = JcaFactory.getJavaKeyPairGenerator(myKeyType.isCCA2()
                                                                                  ? MCELIECECCA2_ALGO
                                                                                  : MCELIECE_ALGO, true);
@@ -470,9 +470,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }
@@ -513,9 +513,9 @@ public abstract class JcaKeyPairGenerator
 
         @Override
         public JcaKeyPair generateKeyPair() {
-            KeyPair myPair = theGenerator.generateKeyPair();
-            JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
-            JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
         }
     }

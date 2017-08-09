@@ -349,7 +349,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
      */
     protected void handleMenuClosed() {
         /* If we selected a value */
-        TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
+        final TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
         if ((mySelected != null)
             && valueChanged(mySelected.getValue())) {
             /* Set the new value */

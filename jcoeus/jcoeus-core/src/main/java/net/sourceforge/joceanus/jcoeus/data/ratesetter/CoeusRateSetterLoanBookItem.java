@@ -130,7 +130,7 @@ public class CoeusRateSetterLoanBookItem
                                           final boolean pRepaid,
                                           final List<Element> pCells) throws OceanusException {
         /* Iterate through the cells */
-        Iterator<Element> myIterator = pCells.iterator();
+        final Iterator<Element> myIterator = pCells.iterator();
 
         /* Obtain the loanId */
         theLoanId = myIterator.next().text();
@@ -139,9 +139,9 @@ public class CoeusRateSetterLoanBookItem
         theStartDate = pParser.parseDate(myIterator.next().text());
 
         /* Obtain the amount */
-        String myAmountText = pParser.childElementText(myIterator.next());
-        TethysMoney myAmount = pParser.parseMoney(myAmountText);
-        TethysMoney myZero = new TethysMoney(myAmount);
+        final String myAmountText = pParser.childElementText(myIterator.next());
+        final TethysMoney myAmount = pParser.parseMoney(myAmountText);
+        final TethysMoney myZero = new TethysMoney(myAmount);
         myZero.setZero();
 
         /* Set balance and loan */
@@ -225,7 +225,7 @@ public class CoeusRateSetterLoanBookItem
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theLoanId);
         myBuilder.append(' ');
         myBuilder.append(theStatus.toString());

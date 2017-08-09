@@ -1143,7 +1143,7 @@ public abstract class DataItem<E extends Enum<E>>
             return MetisFieldState.DELETED;
 
             /* Determine Error state */
-        } else if ((hasErrors()) && (hasErrors(pField))) {
+        } else if (hasErrors() && hasErrors(pField)) {
             return MetisFieldState.ERROR;
 
             /* Determine Changed state */

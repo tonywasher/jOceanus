@@ -84,7 +84,7 @@ public enum TethysFXArrowIcon {
      */
     TethysFXArrowIcon(final Point... pPoints) {
         /* Allocate arrays */
-        int myNumPoints = pPoints.length;
+        final int myNumPoints = pPoints.length;
         thePoints = new Double[myNumPoints << 1];
 
         /* Loop through the points */
@@ -101,7 +101,7 @@ public enum TethysFXArrowIcon {
      */
     public Polygon getArrow() {
         /* Allocate new polygon */
-        Polygon myArrow = new Polygon();
+        final Polygon myArrow = new Polygon();
 
         /* Initialise graphics */
         myArrow.setStroke(Color.GRAY);

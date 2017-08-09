@@ -96,7 +96,7 @@ public class GordianPipedStream {
         /**
          * The currently active element.
          */
-        private byte[] theElement = null;
+        private byte[] theElement;
 
         /**
          * The length of the current element.
@@ -111,12 +111,12 @@ public class GordianPipedStream {
         /**
          * has this stream been closed.
          */
-        private boolean isClosed = false;
+        private boolean isClosed;
 
         /**
          * have we seen EOF.
          */
-        private boolean hasEOFbeenSeen = false;
+        private boolean hasEOFbeenSeen;
 
         /**
          * A buffer for single byte reads.
@@ -227,7 +227,7 @@ public class GordianPipedStream {
         /**
          * has this stream been closed.
          */
-        private boolean isClosed = false;
+        private boolean isClosed;
 
         /**
          * A buffer for single byte writes.
@@ -249,7 +249,7 @@ public class GordianPipedStream {
             }
 
             /* Create a copy of the data */
-            byte[] myBuffer = new byte[pLength];
+            final byte[] myBuffer = new byte[pLength];
             System.arraycopy(pBytes, pOffset, myBuffer, 0, pLength);
 
             /* Write the element to the queue */

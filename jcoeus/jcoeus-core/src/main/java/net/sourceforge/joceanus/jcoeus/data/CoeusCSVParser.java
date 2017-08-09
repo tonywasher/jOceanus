@@ -182,7 +182,7 @@ public abstract class CoeusCSVParser {
      */
     public void parseFile(final Path pInput) throws OceanusException {
         /* Create a StringBuilder for the line */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Reset the fields */
         resetFields();
@@ -192,19 +192,19 @@ public abstract class CoeusCSVParser {
             /* Loop through the file */
             for (;;) {
                 /* Read next line and exit on EOF */
-                String myLine = myReader.readLine();
+                final String myLine = myReader.readLine();
                 if (myLine == null) {
                     break;
                 }
 
                 /* Add to the current buffer */
                 myBuilder.append(myLine);
-                int myCount = countQuotes(myBuilder);
+                final int myCount = countQuotes(myBuilder);
 
                 /* If we have an even number of quotes, then we have a full line */
                 if ((myCount % 2) == 0) {
                     /* Parse the line and clear the buffer */
-                    List<String> myFields = parseLine(myBuilder);
+                    final List<String> myFields = parseLine(myBuilder);
                     myBuilder.setLength(0);
 
                     /* Check the field count */
@@ -241,7 +241,7 @@ public abstract class CoeusCSVParser {
      */
     private List<String> parseLine(final StringBuilder pLine) {
         /* Initialise variables */
-        List<String> myFields = new ArrayList<>();
+        final List<String> myFields = new ArrayList<>();
         boolean inQuotes = false;
         boolean maybeQuote = false;
 
@@ -250,10 +250,10 @@ public abstract class CoeusCSVParser {
 
         /* Loop through the Line */
         int iIndex = 0;
-        int iLength = pLine.length();
+        final int iLength = pLine.length();
         while (iIndex < iLength) {
             /* Obtain the character */
-            char myChar = pLine.charAt(iIndex);
+            final char myChar = pLine.charAt(iIndex);
 
             /* If this is a quote */
             if (myChar == QUOTE_CHAR) {
@@ -337,7 +337,7 @@ public abstract class CoeusCSVParser {
         /* Check names are correct */
         for (int i = 0; i < theHeaders.length; i++) {
             /* Check name */
-            String myHeader = pFields.get(i);
+            final String myHeader = pFields.get(i);
             if (!theHeaders[i].equals(myHeader.trim())) {
                 throw new CoeusDataException(myHeader, "Invalid header");
             }

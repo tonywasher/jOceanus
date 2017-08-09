@@ -107,7 +107,7 @@ public final class JcaKey<T>
         }
 
         /* Access the target field */
-        JcaKey<?> myThat = (JcaKey<?>) pThat;
+        final JcaKey<?> myThat = (JcaKey<?>) pThat;
 
         /* Check differences */
         if (!getKeyType().equals(myThat.getKeyType())) {

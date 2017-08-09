@@ -132,17 +132,17 @@ public class TethysDecimalParser {
         }
 
         /* Create a working copy */
-        StringBuilder myWork = new StringBuilder(pValue.trim());
+        final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* If the value is negative, strip the leading minus sign */
-        boolean isNegative = (myWork.length() > 0)
-                             && (myWork.charAt(0) == pLocale.getMinusSign());
+        final boolean isNegative = (myWork.length() > 0)
+                                   && (myWork.charAt(0) == pLocale.getMinusSign());
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
 
         /* Remove any grouping characters from the value */
-        String myGrouping = pLocale.getGrouping();
+        final String myGrouping = pLocale.getGrouping();
         int myPos;
         for (;;) {
             myPos = myWork.indexOf(myGrouping);
@@ -160,7 +160,7 @@ public class TethysDecimalParser {
         myPos = myWork.indexOf("e");
         if (myPos != -1) {
             /* Obtain the exponent and remove from decimals */
-            String myExp = myWork.substring(myPos + 1);
+            final String myExp = myWork.substring(myPos + 1);
             myWork.setLength(myPos);
 
             /* Parse the integral part */
@@ -200,7 +200,7 @@ public class TethysDecimalParser {
             /* Shift decimals across */
             while (myExponent > 0 && myNumDec > 0) {
                 /* Copy decimal across */
-                char myChar = myDecimals.charAt(0);
+                final char myChar = myDecimals.charAt(0);
                 myDecimals.deleteCharAt(0);
                 myWork.append(myChar);
 
@@ -223,12 +223,12 @@ public class TethysDecimalParser {
         } else if (myExponent < 0) {
             /* Determine the number of integer digits */
             int myNumDigits = myWork.length();
-            StringBuilder myCopy = new StringBuilder();
+            final StringBuilder myCopy = new StringBuilder();
 
             /* Shift decimals across */
             while (myExponent < 0 && myNumDigits > 0) {
                 /* Copy digit across */
-                char myChar = myWork.charAt(myNumDigits - 1);
+                final char myChar = myWork.charAt(myNumDigits - 1);
                 myWork.deleteCharAt(myNumDigits - 1);
                 myCopy.insert(0, myChar);
 
@@ -318,8 +318,8 @@ public class TethysDecimalParser {
             /* else we should honour what we can */
         } else {
             /* Calculate the standard correction */
-            int myAdjust = pDecimals
-                           - pValue.scale();
+            final int myAdjust = pDecimals
+                                 - pValue.scale();
 
             /* If we have too few decimals */
             if (myAdjust > 0) {
@@ -344,17 +344,17 @@ public class TethysDecimalParser {
     private Currency parseCurrency(final StringBuilder pWork,
                                    final Currency pDeemedCurrency) {
         /* Look for a currency separator */
-        int iPos = pWork.indexOf(TethysDecimalFormatter.STR_CURRSEP);
+        final int iPos = pWork.indexOf(TethysDecimalFormatter.STR_CURRSEP);
         if (iPos > -1) {
             /* Extract currency detail and determine currency */
-            String myCurr = pWork.substring(0, iPos);
+            final String myCurr = pWork.substring(0, iPos);
             pWork.delete(0, iPos + 1);
             return Currency.getInstance(myCurr);
         }
 
         /* Set default currency */
         Currency myCurrency = pDeemedCurrency;
-        char myMinus = theLocale.getMinusSign();
+        final char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
         int iNumChars = pWork.length();
@@ -370,7 +370,7 @@ public class TethysDecimalParser {
         /* Look for currency symbol as leading non-digits and non-whitespace */
         int iNumSymbols = 0;
         while (iNumSymbols < iNumChars) {
-            char c = pWork.charAt(iNumSymbols);
+            final char c = pWork.charAt(iNumSymbols);
             if (Character.isDigit(c)
                 || (c == TethysDecimalFormatter.CHAR_MINUS)
                 || Character.isWhitespace(c)) {
@@ -382,7 +382,7 @@ public class TethysDecimalParser {
         /* If we have a symbol */
         if (iNumSymbols > 0) {
             /* Extract Symbol from buffer */
-            String mySymbol = pWork.substring(0, iNumSymbols);
+            final String mySymbol = pWork.substring(0, iNumSymbols);
             pWork.delete(0, iNumSymbols);
 
             /* Parse the currency symbol */
@@ -414,17 +414,17 @@ public class TethysDecimalParser {
         }
 
         /* Create a working copy */
-        StringBuilder myWork = new StringBuilder(pValue.trim());
+        final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* If the value is negative, strip the leading minus sign */
-        boolean isNegative = (myWork.length() > 0)
-                             && (myWork.charAt(0) == pLocale.getMinusSign());
+        final boolean isNegative = (myWork.length() > 0)
+                                   && (myWork.charAt(0) == pLocale.getMinusSign());
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
 
         /* Remove any grouping characters from the value */
-        String myGrouping = pLocale.getGrouping();
+        final String myGrouping = pLocale.getGrouping();
         int myPos;
         for (;;) {
             myPos = myWork.indexOf(myGrouping);
@@ -497,25 +497,25 @@ public class TethysDecimalParser {
         }
 
         /* Create a working trimmed copy */
-        StringBuilder myWork = new StringBuilder(pValue.trim());
+        final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Determine currency */
-        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
-                                                                            ? getDefaultCurrency()
-                                                                            : pDeemedCurrency);
-        char myMinus = theLocale.getMinusSign();
+        final Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
+                                                                                  ? getDefaultCurrency()
+                                                                                  : pDeemedCurrency);
+        final char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
         if ((myWork.length() > 0)
             && (myWork.charAt(0) == myMinus)) {
             /* Ensure there is no whitespace between minus sign and number */
-            myWork = myWork.deleteCharAt(0);
+            myWork.deleteCharAt(0);
             trimBuffer(myWork);
             myWork.insert(0, myMinus);
         }
 
         /* Create the new Money object */
-        TethysMoney myMoney = new TethysMoney(myCurrency);
+        final TethysMoney myMoney = new TethysMoney(myCurrency);
 
         /* Parse the remaining string */
         parseDecimalValue(myWork.toString(), theLocale, true, myMoney);
@@ -569,24 +569,24 @@ public class TethysDecimalParser {
         }
 
         /* Create a working trimmed copy */
-        StringBuilder myWork = new StringBuilder(pValue.trim());
+        final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Look for explicit currency */
-        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
-                                                                            ? getDefaultCurrency()
-                                                                            : pDeemedCurrency);
-        char myMinus = theLocale.getMinusSign();
+        final Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
+                                                                                  ? getDefaultCurrency()
+                                                                                  : pDeemedCurrency);
+        final char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
         if (myWork.charAt(0) == myMinus) {
             /* Ensure there is no whitespace between minus sign and number */
-            myWork = myWork.deleteCharAt(0);
+            myWork.deleteCharAt(0);
             trimBuffer(myWork);
             myWork.insert(0, myMinus);
         }
 
         /* Create the new Price object */
-        TethysPrice myPrice = new TethysPrice(myCurrency);
+        final TethysPrice myPrice = new TethysPrice(myCurrency);
 
         /* Parse the remaining string */
         parseDecimalValue(myWork.toString(), theLocale, true, myPrice);
@@ -624,24 +624,24 @@ public class TethysDecimalParser {
         }
 
         /* Create a working trimmed copy */
-        StringBuilder myWork = new StringBuilder(pValue.trim());
+        final StringBuilder myWork = new StringBuilder(pValue.trim());
 
         /* Determine currency */
-        Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
-                                                                            ? getDefaultCurrency()
-                                                                            : pDeemedCurrency);
-        char myMinus = theLocale.getMinusSign();
+        final Currency myCurrency = parseCurrency(myWork, pDeemedCurrency == null
+                                                                                  ? getDefaultCurrency()
+                                                                                  : pDeemedCurrency);
+        final char myMinus = theLocale.getMinusSign();
 
         /* If we have a leading minus sign */
         if (myWork.charAt(0) == myMinus) {
             /* Ensure there is no whitespace between minus sign and number */
-            myWork = myWork.deleteCharAt(0);
+            myWork.deleteCharAt(0);
             trimBuffer(myWork);
             myWork.insert(0, myMinus);
         }
 
         /* Create the new DilutedPrice object */
-        TethysDilutedPrice myDilutedPrice = new TethysDilutedPrice(myCurrency);
+        final TethysDilutedPrice myDilutedPrice = new TethysDilutedPrice(myCurrency);
 
         /* Parse the remaining string */
         parseDecimalValue(myWork.toString(), theLocale, true, myDilutedPrice);
@@ -667,11 +667,11 @@ public class TethysDecimalParser {
         }
 
         /* Create a working trimmed copy */
-        StringBuilder myWork = new StringBuilder(pValue.trim());
+        final StringBuilder myWork = new StringBuilder(pValue.trim());
         int myXtraDecimals = 0;
 
         /* If there is a trailing perCent, remove any percent sign from the end of the string */
-        int myLast = myWork.length() - 1;
+        final int myLast = myWork.length() - 1;
         if (myWork.charAt(myLast) == theLocale.getPerCent()) {
             myWork.deleteCharAt(myLast);
             myXtraDecimals = ADJUST_PERCENT;
@@ -685,7 +685,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Rate object */
-        TethysRate myRate = new TethysRate();
+        final TethysRate myRate = new TethysRate();
 
         /* Parse the remaining string */
         parseDecimalValue(myWork.toString(), theLocale, false, myRate);
@@ -717,7 +717,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Units object */
-        TethysUnits myUnits = new TethysUnits();
+        final TethysUnits myUnits = new TethysUnits();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theLocale, false, myUnits);
@@ -742,7 +742,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Dilution object */
-        TethysDilution myDilution = new TethysDilution();
+        final TethysDilution myDilution = new TethysDilution();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theLocale, false, myDilution);
@@ -767,7 +767,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Ratio object */
-        TethysRatio myRatio = new TethysRatio();
+        final TethysRatio myRatio = new TethysRatio();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theLocale, false, myRatio);
@@ -794,7 +794,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Decimal object */
-        TethysDecimal myDecimal = new TethysDecimal();
+        final TethysDecimal myDecimal = new TethysDecimal();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theLocale, false, myDecimal);
@@ -817,7 +817,7 @@ public class TethysDecimalParser {
         }
 
         /* Parse the value */
-        long myValue = parseLongValue(pValue, theLocale);
+        final long myValue = parseLongValue(pValue, theLocale);
         return Long.valueOf(myValue);
     }
 
@@ -834,7 +834,7 @@ public class TethysDecimalParser {
         }
 
         /* Parse the value */
-        long myValue = parseLongValue(pValue, theLocale);
+        final long myValue = parseLongValue(pValue, theLocale);
 
         /* Check bounds */
         if ((myValue > Integer.MAX_VALUE) || (myValue < Integer.MIN_VALUE)) {
@@ -859,7 +859,7 @@ public class TethysDecimalParser {
         }
 
         /* Parse the value */
-        long myValue = parseLongValue(pValue, theLocale);
+        final long myValue = parseLongValue(pValue, theLocale);
 
         /* Check bounds */
         if ((myValue > Short.MAX_VALUE) || (myValue < Short.MIN_VALUE)) {
@@ -905,7 +905,7 @@ public class TethysDecimalParser {
         }
 
         /* Use default currency */
-        Currency myCurrency = theLocale.getDefaultCurrency();
+        final Currency myCurrency = theLocale.getDefaultCurrency();
         return createMoneyFromDouble(pValue, myCurrency.getCurrencyCode());
     }
 
@@ -924,10 +924,10 @@ public class TethysDecimalParser {
         }
 
         /* Determine currency */
-        Currency myCurrency = Currency.getInstance(pCurrCode);
+        final Currency myCurrency = Currency.getInstance(pCurrCode);
 
         /* Create the new Money object */
-        TethysMoney myMoney = new TethysMoney(myCurrency);
+        final TethysMoney myMoney = new TethysMoney(myCurrency);
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.toString(), theLocale, true, myMoney);
@@ -952,7 +952,7 @@ public class TethysDecimalParser {
         }
 
         /* Use default currency */
-        Currency myCurrency = theLocale.getDefaultCurrency();
+        final Currency myCurrency = theLocale.getDefaultCurrency();
         return createPriceFromDouble(pValue, myCurrency.getCurrencyCode());
     }
 
@@ -971,10 +971,10 @@ public class TethysDecimalParser {
         }
 
         /* Determine currency */
-        Currency myCurrency = Currency.getInstance(pCurrCode);
+        final Currency myCurrency = Currency.getInstance(pCurrCode);
 
         /* Create the new Price object */
-        TethysPrice myPrice = new TethysPrice(myCurrency);
+        final TethysPrice myPrice = new TethysPrice(myCurrency);
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.toString(), theLocale, false, myPrice);
@@ -1000,7 +1000,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Rate object */
-        TethysRate myRate = new TethysRate();
+        final TethysRate myRate = new TethysRate();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.toString(), theLocale, false, myRate);
@@ -1025,7 +1025,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Units object */
-        TethysUnits myUnits = new TethysUnits();
+        final TethysUnits myUnits = new TethysUnits();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.toString(), theLocale, false, myUnits);
@@ -1050,7 +1050,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Dilution object */
-        TethysDilution myDilution = new TethysDilution();
+        final TethysDilution myDilution = new TethysDilution();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.toString(), theLocale, false, myDilution);
@@ -1063,7 +1063,7 @@ public class TethysDecimalParser {
     }
 
     /**
-     * create Rate from double.
+     * create Ratio from double.
      * @param pValue the double value.
      * @return the parsed ratio
      * @throws IllegalArgumentException on invalid ratio value
@@ -1075,7 +1075,7 @@ public class TethysDecimalParser {
         }
 
         /* Create the new Ratio object */
-        TethysRatio myRatio = new TethysRatio();
+        final TethysRatio myRatio = new TethysRatio();
 
         /* Parse the remaining string */
         parseDecimalValue(pValue.toString(), theLocale, false, myRatio);

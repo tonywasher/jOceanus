@@ -89,7 +89,7 @@ public final class TethysFXGuiUtils {
      */
     public static String colorToHexString(final Color pValue) {
         /* Return the string */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(RGB_HDR);
         appendColorPart(myBuilder, pValue.getRed());
         appendColorPart(myBuilder, pValue.getGreen());
@@ -105,7 +105,7 @@ public final class TethysFXGuiUtils {
     private static void appendColorPart(final StringBuilder pBuilder,
                                         final double pValue) {
         /* Convert to integer */
-        int myMax = TethysDataConverter.BYTE_MASK + 1;
+        final int myMax = TethysDataConverter.BYTE_MASK + 1;
         int myValue = (int) (pValue * myMax);
 
         /* Handle boundary issue */
@@ -136,10 +136,10 @@ public final class TethysFXGuiUtils {
                                           final Integer pPadding,
                                           final Node pNode) {
         /* Access the Node */
-        Pane myPane;
+        final Pane myPane;
         if (!(pNode instanceof Pane)) {
             /* Create an HBox for the content */
-            HBox myBox = new HBox();
+            final HBox myBox = new HBox();
             myBox.getChildren().add(pNode);
             myPane = myBox;
 
@@ -156,11 +156,11 @@ public final class TethysFXGuiUtils {
         }
 
         /* Create the stack pane */
-        StackPane myPanel = new StackPane();
+        final StackPane myPanel = new StackPane();
 
         /* If we have a title */
         if (pTitle != null) {
-            Label myTitle = new Label(pTitle);
+            final Label myTitle = new Label(pTitle);
             StackPane.setAlignment(myTitle, Pos.TOP_LEFT);
             StackPane.setAlignment(myPane, Pos.CENTER);
             myPanel.getChildren().add(myTitle);
@@ -194,10 +194,10 @@ public final class TethysFXGuiUtils {
                                                 final Point2D pLocation,
                                                 final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
-        Screen myScreen = getScreenForNode(pAnchor);
+        final Screen myScreen = getScreenForNode(pAnchor);
 
         /* Next obtain the fully qualified location */
-        Point2D myLocation = getLocationForNode(pAnchor, pLocation);
+        final Point2D myLocation = getLocationForNode(pAnchor, pLocation);
 
         /* determine the display rectangle */
         Rectangle2D myArea = new Rectangle2D(myLocation.getX(), myLocation.getY(),
@@ -219,10 +219,10 @@ public final class TethysFXGuiUtils {
                                                 final Side pSide,
                                                 final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
-        Screen myScreen = getScreenForNode(pAnchor);
+        final Screen myScreen = getScreenForNode(pAnchor);
 
         /* Next obtain the fully qualified location */
-        Point2D myLocation = getOriginForNode(pAnchor);
+        final Point2D myLocation = getOriginForNode(pAnchor);
 
         /* determine the display rectangle */
         Rectangle2D myArea = new Rectangle2D(myLocation.getX(), myLocation.getY(),
@@ -240,14 +240,14 @@ public final class TethysFXGuiUtils {
      */
     private static Screen getScreenForNode(final Node pAnchor) {
         /* Access the list of screens */
-        List<Screen> myScreens = Screen.getScreens();
+        final List<Screen> myScreens = Screen.getScreens();
 
         /* Obtain full-qualified origin of node */
-        Point2D myOrigin = getOriginForNode(pAnchor);
+        final Point2D myOrigin = getOriginForNode(pAnchor);
 
         /* Build fully-qualified bounds */
-        Bounds myLocalBounds = pAnchor.getBoundsInLocal();
-        Rectangle2D myBounds = new Rectangle2D(myOrigin.getX(),
+        final Bounds myLocalBounds = pAnchor.getBoundsInLocal();
+        final Rectangle2D myBounds = new Rectangle2D(myOrigin.getX(),
                 myOrigin.getY(),
                 myLocalBounds.getWidth(),
                 myLocalBounds.getHeight());
@@ -258,10 +258,10 @@ public final class TethysFXGuiUtils {
 
         /* Look for a screen that contains the point */
         for (final Screen myScreen : myScreens) {
-            Rectangle2D myScreenBounds = myScreen.getBounds();
+            final Rectangle2D myScreenBounds = myScreen.getBounds();
 
             /* Calculate intersection and record best */
-            double myIntersection = getIntersection(myBounds, myScreenBounds);
+            final double myIntersection = getIntersection(myBounds, myScreenBounds);
             if (myIntersection > myBest) {
                 myBest = myIntersection;
                 myBestScreen = myScreen;
@@ -281,23 +281,23 @@ public final class TethysFXGuiUtils {
      */
     private static Point2D getOriginForNode(final Node pNode) {
         /* Access scene and window details */
-        Scene myScene = pNode.getScene();
-        Window myWindow = myScene == null
-                                          ? null
-                                          : myScene.getWindow();
-        boolean bVisible = myScene != null && myWindow != null;
+        final Scene myScene = pNode.getScene();
+        final Window myWindow = myScene == null
+                                                ? null
+                                                : myScene.getWindow();
+        final boolean bVisible = myScene != null && myWindow != null;
 
         /* Determine base of scene */
-        double mySceneX = bVisible
-                                   ? myWindow.getX() + myScene.getX()
-                                   : 0;
-        double mySceneY = bVisible
-                                   ? myWindow.getY() + myScene.getY()
-                                   : 0;
+        final double mySceneX = bVisible
+                                         ? myWindow.getX() + myScene.getX()
+                                         : 0;
+        final double mySceneY = bVisible
+                                         ? myWindow.getY() + myScene.getY()
+                                         : 0;
 
         /* Determine node bounds in scene */
-        Bounds myLocalBounds = pNode.getBoundsInLocal();
-        Bounds myNodeBounds = pNode.localToScene(myLocalBounds);
+        final Bounds myLocalBounds = pNode.getBoundsInLocal();
+        final Bounds myNodeBounds = pNode.localToScene(myLocalBounds);
 
         /* Build fully-qualified location */
         return new Point2D(myNodeBounds.getMinX() + mySceneX,
@@ -313,7 +313,7 @@ public final class TethysFXGuiUtils {
     private static Point2D getLocationForNode(final Node pAnchor,
                                               final Point2D pLocation) {
         /* Access node origin */
-        Point2D myOrigin = getOriginForNode(pAnchor);
+        final Point2D myOrigin = getOriginForNode(pAnchor);
 
         /* Calculate fully-qualified location */
         return new Point2D(myOrigin.getX() + pLocation.getX(),
@@ -330,14 +330,14 @@ public final class TethysFXGuiUtils {
                                           final Rectangle2D pScreen) {
 
         /* Calculate intersection coordinates */
-        double myMinX = Math.max(pBounds.getMinX(), pScreen.getMinX());
-        double myMaxX = Math.min(pBounds.getMaxX(), pScreen.getMaxX());
-        double myMinY = Math.max(pBounds.getMinY(), pScreen.getMinY());
-        double myMaxY = Math.min(pBounds.getMaxY(), pScreen.getMaxY());
+        final double myMinX = Math.max(pBounds.getMinX(), pScreen.getMinX());
+        final double myMaxX = Math.min(pBounds.getMaxX(), pScreen.getMaxX());
+        final double myMinY = Math.max(pBounds.getMinY(), pScreen.getMinY());
+        final double myMaxY = Math.min(pBounds.getMaxY(), pScreen.getMaxY());
 
         /* Calculate intersection lengths */
-        double myX = Math.max(myMaxX - myMinX, 0);
-        double myY = Math.max(myMaxY - myMinY, 0);
+        final double myX = Math.max(myMaxX - myMinX, 0);
+        final double myY = Math.max(myMaxY - myMinY, 0);
 
         /* Calculate intersection */
         return myX * myY;
@@ -352,7 +352,7 @@ public final class TethysFXGuiUtils {
     private static Rectangle2D adjustDisplayLocation(final Rectangle2D pSource,
                                                      final Screen pScreen) {
         /* Access Screen bounds */
-        Rectangle2D myScreenBounds = pScreen.getBounds();
+        final Rectangle2D myScreenBounds = pScreen.getBounds();
         double myAdjustX = 0;
         double myAdjustY = 0;
 
@@ -399,8 +399,8 @@ public final class TethysFXGuiUtils {
                                                      final Side pSide,
                                                      final Screen pScreen) {
         /* Access Screen bounds */
-        Rectangle2D myScreenBounds = pScreen.getBounds();
-        Bounds myBounds = pAnchor.getBoundsInLocal();
+        final Rectangle2D myScreenBounds = pScreen.getBounds();
+        final Bounds myBounds = pAnchor.getBoundsInLocal();
         double myAdjustX = 0;
         double myAdjustY = 0;
 
@@ -435,13 +435,13 @@ public final class TethysFXGuiUtils {
         }
 
         /* Calculate new rectangle */
-        Rectangle2D myArea = (Double.doubleToRawLongBits(myAdjustX) != 0)
-                             || (Double.doubleToRawLongBits(myAdjustY) != 0)
-                                                                             ? new Rectangle2D(pSource.getMinX() + myAdjustX,
-                                                                                     pSource.getMinY() + myAdjustY,
-                                                                                     pSource.getWidth(),
-                                                                                     pSource.getHeight())
-                                                                             : pSource;
+        final Rectangle2D myArea = (Double.doubleToRawLongBits(myAdjustX) != 0)
+                                   || (Double.doubleToRawLongBits(myAdjustY) != 0)
+                                                                                   ? new Rectangle2D(pSource.getMinX() + myAdjustX,
+                                                                                           pSource.getMinY() + myAdjustY,
+                                                                                           pSource.getWidth(),
+                                                                                           pSource.getHeight())
+                                                                                   : pSource;
         return adjustDisplayLocation(myArea, pScreen);
     }
 
@@ -451,7 +451,7 @@ public final class TethysFXGuiUtils {
      * @return the icon
      */
     public static ImageView getIcon(final TethysIconId pId) {
-        Image myImage = new Image(TethysIconBuilder.getResourceAsStream(pId));
+        final Image myImage = new Image(TethysIconBuilder.getResourceAsStream(pId));
         return new ImageView(myImage);
     }
 
@@ -461,7 +461,7 @@ public final class TethysFXGuiUtils {
      * @return the icon
      */
     public static Image[] getIcons(final TethysIconId[] pIds) {
-        Image[] myIcons = new Image[pIds.length];
+        final Image[] myIcons = new Image[pIds.length];
         for (int i = 0; i < pIds.length; i++) {
             myIcons[i] = getIcon(pIds[i]).getImage();
         }
@@ -476,7 +476,7 @@ public final class TethysFXGuiUtils {
      */
     public static ImageView getIconAtSize(final TethysIconId pId,
                                           final int pWidth) {
-        ImageView myNewImage = getIcon(pId);
+        final ImageView myNewImage = getIcon(pId);
         myNewImage.setFitWidth(pWidth);
         myNewImage.setPreserveRatio(true);
         myNewImage.setSmooth(true);

@@ -124,7 +124,7 @@ public final class GordianKeySetHash {
      */
     private GordianKeySetHash(final GordianKeySetHash pSource) throws OceanusException {
         /* Build the encryption cipher */
-        GordianKeySet mySet = pSource.theKeySet;
+        final GordianKeySet mySet = pSource.theKeySet;
 
         /* Store the secure random generator */
         theFactory = pSource.theFactory;
@@ -222,7 +222,7 @@ public final class GordianKeySetHash {
      */
     private void attemptPassword(final char[] pPassword) throws OceanusException {
         /* Generate the HashBytes */
-        byte[] myHash = generateHash(pPassword);
+        final byte[] myHash = generateHash(pPassword);
 
         /* Check that the arrays match */
         if (!Arrays.equals(theHash, myHash)) {
@@ -261,42 +261,42 @@ public final class GordianKeySetHash {
         /* Protect against exceptions */
         try {
             /* Obtain configuration details */
-            byte[] mySeed = theFactory.getPersonalisation();
-            int iIterations = theFactory.getNumIterations();
-            int iFinal = theRecipe.getAdjustment()
-                         + iIterations;
+            final byte[] mySeed = theFactory.getPersonalisation();
+            final int iIterations = theFactory.getNumIterations();
+            final int iFinal = theRecipe.getAdjustment()
+                               + iIterations;
 
             /* Convert password to bytes */
             myPassBytes = TethysDataConverter.charsToByteArray(pPassword);
 
             /* Create the primeMac */
             GordianMacSpec mySpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
-            GordianMac myPrimeMac = theFactory.createMac(mySpec);
+            final GordianMac myPrimeMac = theFactory.createMac(mySpec);
             myPrimeMac.initMac(myPassBytes);
 
             /* Create the alternateMac */
             mySpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
-            GordianMac myAlternateMac = theFactory.createMac(mySpec);
+            final GordianMac myAlternateMac = theFactory.createMac(mySpec);
             myAlternateMac.initMac(myPassBytes);
 
             /* Create the secretMac */
             mySpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
-            GordianMac mySecretMac = theFactory.createMac(mySpec);
+            final GordianMac mySecretMac = theFactory.createMac(mySpec);
             mySecretMac.initMac(myPassBytes);
 
             /* Initialise hash bytes and counter */
-            byte[] myPrimeBytes = new byte[myPrimeMac.getMacSize()];
-            byte[] myAlternateBytes = new byte[myAlternateMac.getMacSize()];
-            byte[] mySecretBytes = new byte[mySecretMac.getMacSize()];
-            byte[] myPrimeHash = new byte[myPrimeMac.getMacSize()];
-            byte[] myAlternateHash = new byte[myAlternateMac.getMacSize()];
-            byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
+            final byte[] myPrimeBytes = new byte[myPrimeMac.getMacSize()];
+            final byte[] myAlternateBytes = new byte[myAlternateMac.getMacSize()];
+            final byte[] mySecretBytes = new byte[mySecretMac.getMacSize()];
+            final byte[] myPrimeHash = new byte[myPrimeMac.getMacSize()];
+            final byte[] myAlternateHash = new byte[myAlternateMac.getMacSize()];
+            final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
 
             /* Access final digest */
-            GordianDigest myDigest = theFactory.createDigest(theFactory.getDefaultDigest());
+            final GordianDigest myDigest = theFactory.createDigest(theFactory.getDefaultDigest());
 
             /* Initialise the hash input values as the salt bytes */
-            byte[] mySaltBytes = theRecipe.getInitVector();
+            final byte[] mySaltBytes = theRecipe.getInitVector();
             byte[] myPrimeInput = mySaltBytes;
             byte[] myAlternateInput = mySaltBytes;
             byte[] mySecretInput = mySaltBytes;
@@ -336,13 +336,13 @@ public final class GordianKeySetHash {
             /* Combine the Primary and Alternate hashes */
             myDigest.update(myPrimeBytes);
             myDigest.update(myAlternateBytes);
-            byte[] myExternalHash = myDigest.finish();
+            final byte[] myExternalHash = myDigest.finish();
 
             /* Store the Secret Hash */
             theSecret = mySecretBytes;
 
             /* Create the external hash */
-            byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
+            final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
 
             /* Check whether the HashBytes is too large */
             if (myHashBytes.length > HASHSIZE) {
@@ -409,7 +409,7 @@ public final class GordianKeySetHash {
         }
 
         /* Access the target field */
-        GordianKeySetHash myThat = (GordianKeySetHash) pThat;
+        final GordianKeySetHash myThat = (GordianKeySetHash) pThat;
 
         /* Check differences */
         return theFactory.equals(myThat.getFactory())

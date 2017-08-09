@@ -303,7 +303,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      */
     public void repaintColumn(final C pId) {
-        TethysTableColumn<?, C, R, N, I> myCol = theColumnMap.get(pId);
+        final TethysTableColumn<?, C, R, N, I> myCol = theColumnMap.get(pId);
         if ((myCol != null)
             && (myCol.isVisible())) {
             myCol.setVisible(false);
@@ -331,7 +331,7 @@ public abstract class TethysTableManager<C, R, N, I>
         }
 
         /* Obtain the update id */
-        C myId = pCell.getColumnId();
+        final C myId = pCell.getColumnId();
 
         /* Loop through the columns */
         for (TethysBaseTableColumn<?, C, R, N, I> myColumn : theColumnMap.values()) {
@@ -763,7 +763,7 @@ public abstract class TethysTableManager<C, R, N, I>
             theEventManager = new TethysEventManager<>();
 
             /* If the table already has children */
-            TethysBaseTableColumn<?, C, R, N, I> myChild = theTable.theLastChild;
+            final TethysBaseTableColumn<?, C, R, N, I> myChild = theTable.theLastChild;
             if (myChild != null) {
                 /* Link to last child */
                 thePrevSibling = myChild;

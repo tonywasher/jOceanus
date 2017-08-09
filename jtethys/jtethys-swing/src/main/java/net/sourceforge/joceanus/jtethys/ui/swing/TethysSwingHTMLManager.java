@@ -95,7 +95,7 @@ public class TethysSwingHTMLManager
         theEditor.setEditorKit(theEditorKit);
 
         /* Create the document for the window */
-        HTMLDocument myDoc = (HTMLDocument) theEditorKit.createDefaultDocument();
+        final HTMLDocument myDoc = (HTMLDocument) theEditorKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
         /* Obtain the base styleSheet */
@@ -138,7 +138,7 @@ public class TethysSwingHTMLManager
         }
 
         /* If we have any additional rules */
-        String myCSS = getProcessedCSS();
+        final String myCSS = getProcessedCSS();
         if (myCSS != null) {
             /* Create the styleSheet */
             theModifiedStyleSheet = new StyleSheet();
@@ -182,15 +182,15 @@ public class TethysSwingHTMLManager
             }
             /* If this is a Frame hyper link event */
             if (e instanceof HTMLFrameHyperlinkEvent) {
-                HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
-                HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
+                final HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
+                final HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
                 doc.processHTMLFrameHyperlinkEvent(evt);
 
                 /* else look for a URL */
             } else {
-                URL url = e.getURL();
+                final URL url = e.getURL();
                 try {
-                    String myDesc = e.getDescription();
+                    final String myDesc = e.getDescription();
                     if (url == null) {
                         /* display the new page */
                         processReference(myDesc);

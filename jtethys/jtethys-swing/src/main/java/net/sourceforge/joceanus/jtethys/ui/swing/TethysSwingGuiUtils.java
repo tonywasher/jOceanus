@@ -69,15 +69,15 @@ public final class TethysSwingGuiUtils {
     public static void restrictField(final JComponent pComponent,
                                      final int pWidth) {
         /* Calculate the character width */
-        Font myFont = pComponent.getFont();
-        FontMetrics myMetrics = pComponent.getFontMetrics(myFont);
-        int myCharWidth = myMetrics.stringWidth("w");
-        int myCharHeight = myMetrics.getHeight() + PADDING_HEIGHT;
+        final Font myFont = pComponent.getFont();
+        final FontMetrics myMetrics = pComponent.getFontMetrics(myFont);
+        final int myCharWidth = myMetrics.stringWidth("w");
+        final int myCharHeight = myMetrics.getHeight() + PADDING_HEIGHT;
 
         /* Allocate Dimensions */
-        Dimension myPrefDims = new Dimension(pWidth * myCharWidth, myCharHeight);
-        Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, myCharHeight);
-        Dimension myMinDims = new Dimension(1, myCharHeight);
+        final Dimension myPrefDims = new Dimension(pWidth * myCharWidth, myCharHeight);
+        final Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, myCharHeight);
+        final Dimension myMinDims = new Dimension(1, myCharHeight);
 
         /* Restrict the field */
         pComponent.setPreferredSize(myPrefDims);
@@ -98,7 +98,7 @@ public final class TethysSwingGuiUtils {
         if ((pPadding == null) && (pTitle == null)) {
             return pNode;
         } else {
-            JComponent myNode = new JPanel(new BorderLayout());
+            final JComponent myNode = new JPanel(new BorderLayout());
             myNode.add(pNode, BorderLayout.CENTER);
             setPanelBorder(pTitle, pPadding, myNode);
             return myNode;
@@ -115,25 +115,25 @@ public final class TethysSwingGuiUtils {
                                          final Integer pPadding,
                                          final JComponent pNode) {
         /* Access contents */
-        boolean hasTitle = pTitle != null;
-        boolean hasPadding = pPadding != null;
+        final boolean hasTitle = pTitle != null;
+        final boolean hasPadding = pPadding != null;
 
         /* Create borders */
-        Border myPaddedBorder = hasPadding
-                                           ? BorderFactory.createEmptyBorder(pPadding, pPadding, pPadding, pPadding)
-                                           : null;
-        Border myTitleBorder = hasTitle
-                                        ? BorderFactory.createTitledBorder(pTitle)
-                                        : null;
+        final Border myPaddedBorder = hasPadding
+                                                 ? BorderFactory.createEmptyBorder(pPadding, pPadding, pPadding, pPadding)
+                                                 : null;
+        final Border myTitleBorder = hasTitle
+                                              ? BorderFactory.createTitledBorder(pTitle)
+                                              : null;
 
         /* Create compound border */
-        Border myBorder = hasPadding
-                                     ? hasTitle
-                                                ? BorderFactory.createCompoundBorder(myPaddedBorder, myTitleBorder)
-                                                : myPaddedBorder
-                                     : hasTitle
-                                                ? myTitleBorder
-                                                : BorderFactory.createEmptyBorder();
+        final Border myBorder = hasPadding
+                                           ? hasTitle
+                                                      ? BorderFactory.createCompoundBorder(myPaddedBorder, myTitleBorder)
+                                                      : myPaddedBorder
+                                           : hasTitle
+                                                      ? myTitleBorder
+                                                      : BorderFactory.createEmptyBorder();
 
         /* Set the border */
         pNode.setBorder(myBorder);
@@ -150,10 +150,10 @@ public final class TethysSwingGuiUtils {
                                            final Point pLocation,
                                            final Dimension pSize) {
         /* First of all determine the display screen for the anchor component */
-        GraphicsDevice myScreen = getScreenForComponent(pAnchor);
+        final GraphicsDevice myScreen = getScreenForComponent(pAnchor);
 
         /* Next obtain the fully qualified location */
-        Point myLocation = getLocationForComponent(pAnchor, pLocation);
+        final Point myLocation = getLocationForComponent(pAnchor, pLocation);
 
         /* determine the display rectangle */
         Rectangle myArea = new Rectangle(myLocation.x, myLocation.y,
@@ -175,10 +175,10 @@ public final class TethysSwingGuiUtils {
                                            final int pSide,
                                            final Dimension pSize) {
         /* First of all determine the display screen for the anchor node */
-        GraphicsDevice myScreen = getScreenForComponent(pAnchor);
+        final GraphicsDevice myScreen = getScreenForComponent(pAnchor);
 
         /* Next obtain the fully qualified location */
-        Point myLocation = pAnchor.getLocationOnScreen();
+        final Point myLocation = pAnchor.getLocationOnScreen();
 
         /* determine the display rectangle */
         Rectangle myArea = new Rectangle(myLocation.x, myLocation.y,
@@ -200,7 +200,7 @@ public final class TethysSwingGuiUtils {
                                            final int pSide,
                                            final Dimension pSize) {
         /* First of all determine the display screen for the anchor node */
-        GraphicsDevice myScreen = getScreenForRectangle(pAnchor);
+        final GraphicsDevice myScreen = getScreenForRectangle(pAnchor);
 
         /* determine the display rectangle */
         Rectangle myArea = new Rectangle(pAnchor.x, pAnchor.y,
@@ -218,11 +218,11 @@ public final class TethysSwingGuiUtils {
      */
     private static GraphicsDevice getScreenForComponent(final Component pAnchor) {
         /* Obtain full-qualified origin of node */
-        Point myOrigin = pAnchor.getLocationOnScreen();
+        final Point myOrigin = pAnchor.getLocationOnScreen();
 
         /* Build fully-qualified bounds */
-        Rectangle myLocalBounds = pAnchor.getBounds();
-        Rectangle myBounds = new Rectangle(myOrigin.x,
+        final Rectangle myLocalBounds = pAnchor.getBounds();
+        final Rectangle myBounds = new Rectangle(myOrigin.x,
                 myOrigin.y,
                 myLocalBounds.width,
                 myLocalBounds.height);
@@ -238,8 +238,8 @@ public final class TethysSwingGuiUtils {
      */
     private static GraphicsDevice getScreenForRectangle(final Rectangle pAnchor) {
         /* Access the list of screens */
-        GraphicsEnvironment myEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] myDevices = myEnv.getScreenDevices();
+        final GraphicsEnvironment myEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        final GraphicsDevice[] myDevices = myEnv.getScreenDevices();
 
         /* Set values */
         double myBest = 0;
@@ -250,11 +250,11 @@ public final class TethysSwingGuiUtils {
             /* Only deal with screens */
             if (myDevice.getType() == GraphicsDevice.TYPE_RASTER_SCREEN) {
                 /* Access configuration */
-                GraphicsConfiguration myConfig = myDevice.getDefaultConfiguration();
-                Rectangle myDevBounds = myConfig.getBounds();
+                final GraphicsConfiguration myConfig = myDevice.getDefaultConfiguration();
+                final Rectangle myDevBounds = myConfig.getBounds();
 
                 /* Calculate intersection and record best */
-                double myIntersection = getIntersection(pAnchor, myDevBounds);
+                final double myIntersection = getIntersection(pAnchor, myDevBounds);
                 if (myIntersection > myBest) {
                     myBest = myIntersection;
                     myBestDevice = myDevice;
@@ -278,14 +278,14 @@ public final class TethysSwingGuiUtils {
                                           final Rectangle pScreen) {
 
         /* Calculate intersection coordinates */
-        double myMinX = Math.max(pBounds.getMinX(), pScreen.getMinX());
-        double myMaxX = Math.min(pBounds.getMaxX(), pScreen.getMaxX());
-        double myMinY = Math.max(pBounds.getMinY(), pScreen.getMinY());
-        double myMaxY = Math.min(pBounds.getMaxY(), pScreen.getMaxY());
+        final double myMinX = Math.max(pBounds.getMinX(), pScreen.getMinX());
+        final double myMaxX = Math.min(pBounds.getMaxX(), pScreen.getMaxX());
+        final double myMinY = Math.max(pBounds.getMinY(), pScreen.getMinY());
+        final double myMaxY = Math.min(pBounds.getMaxY(), pScreen.getMaxY());
 
         /* Calculate intersection lengths */
-        double myX = Math.max(myMaxX - myMinX, 0);
-        double myY = Math.max(myMaxY - myMinY, 0);
+        final double myX = Math.max(myMaxX - myMinX, 0);
+        final double myY = Math.max(myMaxY - myMinY, 0);
 
         /* Calculate intersection */
         return myX * myY;
@@ -300,7 +300,7 @@ public final class TethysSwingGuiUtils {
     private static Point getLocationForComponent(final Component pAnchor,
                                                  final Point pLocation) {
         /* Access node origin */
-        Point myOrigin = pAnchor.getLocationOnScreen();
+        final Point myOrigin = pAnchor.getLocationOnScreen();
 
         /* Calculate fully-qualified location */
         return new Point(myOrigin.x + pLocation.x,
@@ -316,7 +316,7 @@ public final class TethysSwingGuiUtils {
     private static Rectangle adjustDisplayLocation(final Rectangle pSource,
                                                    final GraphicsDevice pScreen) {
         /* Access Screen bounds */
-        Rectangle myScreenBounds = pScreen.getDefaultConfiguration().getBounds();
+        final Rectangle myScreenBounds = pScreen.getDefaultConfiguration().getBounds();
         double myAdjustX = 0;
         double myAdjustY = 0;
 
@@ -363,7 +363,7 @@ public final class TethysSwingGuiUtils {
                                                    final int pSide,
                                                    final GraphicsDevice pScreen) {
         /* Access Screen bounds */
-        Rectangle myScreenBounds = pScreen.getDefaultConfiguration().getBounds();
+        final Rectangle myScreenBounds = pScreen.getDefaultConfiguration().getBounds();
         double myAdjustX = 0;
         double myAdjustY = 0;
 
@@ -398,13 +398,13 @@ public final class TethysSwingGuiUtils {
         }
 
         /* Calculate new rectangle */
-        Rectangle myArea = (Double.doubleToRawLongBits(myAdjustX) != 0)
-                           || (Double.doubleToRawLongBits(myAdjustY) != 0)
-                                                                           ? new Rectangle((int) (pSource.getMinX() + myAdjustX),
-                                                                                   (int) (pSource.getMinY() + myAdjustY),
-                                                                                   pSource.width,
-                                                                                   pSource.height)
-                                                                           : pSource;
+        final Rectangle myArea = (Double.doubleToRawLongBits(myAdjustX) != 0)
+                                 || (Double.doubleToRawLongBits(myAdjustY) != 0)
+                                                                                 ? new Rectangle((int) (pSource.getMinX() + myAdjustX),
+                                                                                         (int) (pSource.getMinY() + myAdjustY),
+                                                                                         pSource.width,
+                                                                                         pSource.height)
+                                                                                 : pSource;
         return adjustDisplayLocation(myArea, pScreen);
     }
 
@@ -419,13 +419,13 @@ public final class TethysSwingGuiUtils {
         myValue &= TethysDataConverter.COLOR_MASK;
 
         /* Allocate the string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* While we have digits to format */
         while (myValue > 0) {
             /* Access the digit and move to next one */
-            int myDigit = myValue & TethysDataConverter.NYBBLE_MASK;
-            char myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
+            final int myDigit = myValue & TethysDataConverter.NYBBLE_MASK;
+            final char myChar = Character.forDigit(myDigit, TethysDataConverter.HEX_RADIX);
             myBuilder.insert(0, myChar);
             myValue >>>= TethysDataConverter.NYBBLE_SHIFT;
         }
@@ -457,7 +457,7 @@ public final class TethysSwingGuiUtils {
      * @return the icon
      */
     public static Image[] getIcons(final TethysIconId[] pIds) {
-        Image[] myIcons = new Image[pIds.length];
+        final Image[] myIcons = new Image[pIds.length];
         for (int i = 0; i < pIds.length; i++) {
             myIcons[i] = getIcon(pIds[i]).getImage();
         }
@@ -472,9 +472,9 @@ public final class TethysSwingGuiUtils {
      */
     public static ImageIcon getIconAtSize(final TethysIconId pId,
                                           final int pWidth) {
-        ImageIcon mySource = getIcon(pId);
-        Image myImage = mySource.getImage();
-        Image myNewImage = myImage.getScaledInstance(pWidth,
+        final ImageIcon mySource = getIcon(pId);
+        final Image myImage = mySource.getImage();
+        final Image myNewImage = myImage.getScaledInstance(pWidth,
                 pWidth,
                 Image.SCALE_SMOOTH);
         return new ImageIcon(myNewImage);

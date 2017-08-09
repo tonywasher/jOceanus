@@ -194,36 +194,36 @@ public class TethysFXHTMLManager
         /* If the webPage is fully loaded */
         if (theWebEngine.getLoadWorker().getState().equals(Worker.State.SUCCEEDED)) {
             /* Obtain the key objects */
-            JSObject myWin = (JSObject) theWebEngine.executeScript("window");
-            JSObject myDoc = (JSObject) theWebEngine.executeScript("document");
-            JSObject myEl = (JSObject) myDoc.call("getElementById", pReference);
+            final JSObject myWin = (JSObject) theWebEngine.executeScript("window");
+            final JSObject myDoc = (JSObject) theWebEngine.executeScript("document");
+            final JSObject myEl = (JSObject) myDoc.call("getElementById", pReference);
 
             /* If we found the reference */
             if (myEl != null) {
                 /* Access element rectangle */
-                JSObject myBox = (JSObject) myEl.call("getBoundingClientRect");
+                final JSObject myBox = (JSObject) myEl.call("getBoundingClientRect");
 
                 /* Calculate vertical scroll */
-                Integer myHeight = (Integer) myWin.getMember("innerHeight");
-                Double myTop = getJSDouble(myBox.getMember("top"));
-                Double myBottom = getJSDouble(myBox.getMember("bottom"));
+                final Integer myHeight = (Integer) myWin.getMember("innerHeight");
+                final Double myTop = getJSDouble(myBox.getMember("top"));
+                final Double myBottom = getJSDouble(myBox.getMember("bottom"));
                 Double myAdjustY = myTop;
                 if (myBottom - myTop > myHeight) {
                     myAdjustY = myBottom - myHeight;
                 }
 
                 /* Calculate horizontal scroll */
-                Integer myWidth = (Integer) myWin.getMember("innerWidth");
-                Double myLeft = getJSDouble(myBox.getMember("left"));
-                Double myRight = getJSDouble(myBox.getMember("right"));
+                final Integer myWidth = (Integer) myWin.getMember("innerWidth");
+                final Double myLeft = getJSDouble(myBox.getMember("left"));
+                final Double myRight = getJSDouble(myBox.getMember("right"));
                 Double myAdjustX = myLeft;
                 if (myRight - myLeft > myWidth) {
                     myAdjustX = myRight - myWidth;
                 }
 
                 /* Perform the scroll */
-                Integer myXOffset = getJSInteger(myWin.getMember("pageXOffset"));
-                Integer myYOffset = getJSInteger(myWin.getMember("pageYOffset"));
+                final Integer myXOffset = getJSInteger(myWin.getMember("pageXOffset"));
+                final Integer myYOffset = getJSInteger(myWin.getMember("pageYOffset"));
                 myWin.call("scrollTo", myXOffset + myAdjustX, myYOffset + myAdjustY);
             } else {
                 LOGGER.error("Failed to locate reference <%s>", pReference);
@@ -289,14 +289,14 @@ public class TethysFXHTMLManager
     @Override
     public void printIt() {
         /* Prepare to print the webPage */
-        PrinterJob job = PrinterJob.createPrinterJob();
+        final PrinterJob job = PrinterJob.createPrinterJob();
         if ((job != null)
             && job.showPrintDialog(theFactory.getStage())) {
             /* Access printer and determine orientation */
-            Printer myPrinter = job.getPrinter();
+            final Printer myPrinter = job.getPrinter();
 
             /* Create page layout of correct type */
-            PageLayout myLayout = myPrinter.createPageLayout(Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
+            final PageLayout myLayout = myPrinter.createPageLayout(Paper.A4, PageOrientation.PORTRAIT, Printer.MarginType.DEFAULT);
             job.getJobSettings().setPageLayout(myLayout);
 
             /* Print the WebPage */
@@ -310,29 +310,29 @@ public class TethysFXHTMLManager
      */
     private void attachListenerToDoc() {
         /* LookUp all anchor elements in the HTML */
-        Document myDoc = theWebEngine.getDocument();
+        final Document myDoc = theWebEngine.getDocument();
 
         /* If we have CSS to add */
-        String myCSS = getProcessedCSS();
+        final String myCSS = getProcessedCSS();
         if (myCSS != null) {
             /* Create the style element */
-            Element myElement = myDoc.createElement(ELEMENT_STYLE);
-            Text myContent = myDoc.createTextNode(myCSS);
+            final Element myElement = myDoc.createElement(ELEMENT_STYLE);
+            final Text myContent = myDoc.createTextNode(myCSS);
             myElement.appendChild(myContent);
 
             /* Obtain the head and add a style element */
-            NodeList headList = myDoc.getElementsByTagName(ELEMENT_HEAD);
+            final NodeList headList = myDoc.getElementsByTagName(ELEMENT_HEAD);
             if (headList.getLength() > 0) {
                 headList.item(0).appendChild(myElement);
             }
         }
 
         /* Attach the listener to listen for clicks */
-        NodeList nodeList = myDoc.getElementsByTagName(ELEMENT_ANCHOR);
+        final NodeList nodeList = myDoc.getElementsByTagName(ELEMENT_ANCHOR);
         for (int i = 0; i < nodeList.getLength(); i++) {
             /* Only listen to anchors that contain an HRef */
-            org.w3c.dom.Node myNode = nodeList.item(i);
-            NamedNodeMap myAttrMap = myNode.getAttributes();
+            final org.w3c.dom.Node myNode = nodeList.item(i);
+            final NamedNodeMap myAttrMap = myNode.getAttributes();
             if (myAttrMap.getNamedItem(ATTR_REF) != null) {
                 ((EventTarget) myNode).addEventListener(EVENT_TYPE_CLICK, theListener, false);
             }

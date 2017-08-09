@@ -354,7 +354,7 @@ public enum GordianCryptoResource implements TethysResourceId {
      */
     private static Map<GordianFactoryType, TethysResourceId> buildFactoryMap() {
         /* Create the map and return it */
-        Map<GordianFactoryType, TethysResourceId> myMap = new EnumMap<>(GordianFactoryType.class);
+        final Map<GordianFactoryType, TethysResourceId> myMap = new EnumMap<>(GordianFactoryType.class);
         myMap.put(GordianFactoryType.BC, FACTORY_BC);
         myMap.put(GordianFactoryType.JCA, FACTORY_JCA);
         return myMap;
@@ -375,7 +375,7 @@ public enum GordianCryptoResource implements TethysResourceId {
      */
     private static Map<GordianDigestType, TethysResourceId> buildDigestMap() {
         /* Create the map and return it */
-        Map<GordianDigestType, TethysResourceId> myMap = new EnumMap<>(GordianDigestType.class);
+        final Map<GordianDigestType, TethysResourceId> myMap = new EnumMap<>(GordianDigestType.class);
         myMap.put(GordianDigestType.SHA2, DIGEST_SHA2);
         myMap.put(GordianDigestType.TIGER, DIGEST_TIGER);
         myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
@@ -406,7 +406,7 @@ public enum GordianCryptoResource implements TethysResourceId {
      */
     private static Map<GordianMacType, TethysResourceId> buildMacMap() {
         /* Create the map and return it */
-        Map<GordianMacType, TethysResourceId> myMap = new EnumMap<>(GordianMacType.class);
+        final Map<GordianMacType, TethysResourceId> myMap = new EnumMap<>(GordianMacType.class);
         myMap.put(GordianMacType.HMAC, MAC_HMAC);
         myMap.put(GordianMacType.GMAC, MAC_GMAC);
         myMap.put(GordianMacType.CMAC, MAC_CMAC);
@@ -431,7 +431,7 @@ public enum GordianCryptoResource implements TethysResourceId {
      */
     private static Map<GordianSymKeyType, TethysResourceId> buildSymKeyMap() {
         /* Create the map and return it */
-        Map<GordianSymKeyType, TethysResourceId> myMap = new EnumMap<>(GordianSymKeyType.class);
+        final Map<GordianSymKeyType, TethysResourceId> myMap = new EnumMap<>(GordianSymKeyType.class);
         myMap.put(GordianSymKeyType.AES, SYMKEY_AES);
         myMap.put(GordianSymKeyType.SERPENT, SYMKEY_SERPENT);
         myMap.put(GordianSymKeyType.TWOFISH, SYMKEY_TWOFISH);
@@ -470,7 +470,7 @@ public enum GordianCryptoResource implements TethysResourceId {
      */
     private static Map<GordianStreamKeyType, TethysResourceId> buildStreamKeyMap() {
         /* Create the map and return it */
-        Map<GordianStreamKeyType, TethysResourceId> myMap = new EnumMap<>(GordianStreamKeyType.class);
+        final Map<GordianStreamKeyType, TethysResourceId> myMap = new EnumMap<>(GordianStreamKeyType.class);
         myMap.put(GordianStreamKeyType.XSALSA20, STREAMKEY_XSALSA20);
         myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
         myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);

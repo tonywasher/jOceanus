@@ -450,7 +450,7 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, pType);
 
             /* Determine the model index of the column */
-            int myIndex = pTable.theColumnList.size();
+            final int myIndex = pTable.theColumnList.size();
 
             /* Create the column and add to the table */
             theColumn = new TableColumn(myIndex);
@@ -491,12 +491,12 @@ public class TethysSwingTableManager<C, R>
         @Override
         protected void attachToTable() {
             /* Add the column to the end of the list */
-            TableColumnModel myColumns = getTable().theColumns;
+            final TableColumnModel myColumns = getTable().theColumns;
             myColumns.addColumn(theColumn);
 
             /* Determine the intended new index and current index */
-            int myNewIndex = countPreviousVisibleSiblings();
-            int myCurIndex = myColumns.getColumnCount() - 1;
+            final int myNewIndex = countPreviousVisibleSiblings();
+            final int myCurIndex = myColumns.getColumnCount() - 1;
 
             /* Move column if necessary */
             if (myCurIndex != myNewIndex) {

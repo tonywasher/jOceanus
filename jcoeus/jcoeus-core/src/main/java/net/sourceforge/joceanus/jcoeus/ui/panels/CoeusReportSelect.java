@@ -141,8 +141,8 @@ public class CoeusReportSelect<N, I>
         theState = new ReportState();
 
         /* Create the labels */
-        TethysLabel<N, I> myRepLabel = pFactory.newLabel(NLS_REPORT);
-        TethysLabel<N, I> myMktLabel = pFactory.newLabel(NLS_MARKET);
+        final TethysLabel<N, I> myRepLabel = pFactory.newLabel(NLS_REPORT);
+        final TethysLabel<N, I> myMktLabel = pFactory.newLabel(NLS_MARKET);
 
         /* Create the print button */
         thePrintButton = pFactory.newButton();
@@ -229,7 +229,7 @@ public class CoeusReportSelect<N, I>
      */
     private void buildReportMenu() {
         /* Create builder */
-        TethysScrollMenu<CoeusReportType, ?> myBuilder = theReportButton.getMenu();
+        final TethysScrollMenu<CoeusReportType, ?> myBuilder = theReportButton.getMenu();
 
         /* Loop through the reports */
         for (CoeusReportType myType : CoeusReportType.values()) {
@@ -243,7 +243,7 @@ public class CoeusReportSelect<N, I>
      */
     private void buildMarketMenu() {
         /* Create builder */
-        TethysScrollMenu<CoeusMarketProvider, ?> myBuilder = theMarketButton.getMenu();
+        final TethysScrollMenu<CoeusMarketProvider, ?> myBuilder = theMarketButton.getMenu();
 
         /* Loop through the markets */
         for (CoeusMarketProvider myMarket : CoeusMarketProvider.values()) {
@@ -406,10 +406,10 @@ public class CoeusReportSelect<N, I>
          */
         private boolean setDate(final TethysDateButtonManager<N, I> pSelect) {
             /* Obtain the date and adjust it */
-            TethysDate mySelected = pSelect.getSelectedDate();
-            TethysDate myDate = mySelected == null
-                                                   ? null
-                                                   : new TethysDate(mySelected);
+            final TethysDate mySelected = pSelect.getSelectedDate();
+            final TethysDate myDate = mySelected == null
+                                                         ? null
+                                                         : new TethysDate(mySelected);
 
             /* Record any change and report change */
             if (!MetisDataDifference.isEqual(myDate, theSelectedDate)) {

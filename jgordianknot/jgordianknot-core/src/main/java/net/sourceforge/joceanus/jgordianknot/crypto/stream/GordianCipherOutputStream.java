@@ -84,7 +84,7 @@ public class GordianCipherOutputStream<T>
      */
     private int checkBufferLength(final int pLength) {
         /* Check how long a buffer we need to handle the data */
-        int iNumBytes = theCipher.getOutputLength(pLength);
+        final int iNumBytes = theCipher.getOutputLength(pLength);
 
         /* Extend the buffer if required */
         if (iNumBytes > theBuffer.length) {

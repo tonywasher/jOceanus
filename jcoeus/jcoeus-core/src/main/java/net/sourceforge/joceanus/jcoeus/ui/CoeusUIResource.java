@@ -175,7 +175,7 @@ public enum CoeusUIResource
      */
     private static Map<CoeusMenuItem, TethysResourceId> buildMenuItemMap() {
         /* Create the map and return it */
-        Map<CoeusMenuItem, TethysResourceId> myMap = new EnumMap<>(CoeusMenuItem.class);
+        final Map<CoeusMenuItem, TethysResourceId> myMap = new EnumMap<>(CoeusMenuItem.class);
         myMap.put(CoeusMenuItem.HELP, MENU_HELP);
         myMap.put(CoeusMenuItem.DATAVIEWER, MENU_DATAVIEWER);
         myMap.put(CoeusMenuItem.ABOUT, MENU_ABOUT);

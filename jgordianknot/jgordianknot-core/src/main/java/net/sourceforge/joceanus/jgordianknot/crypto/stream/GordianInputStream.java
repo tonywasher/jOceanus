@@ -71,7 +71,7 @@ public abstract class GordianInputStream
     /**
      * has this stream been closed.
      */
-    private boolean isClosed = false;
+    private boolean isClosed;
 
     /**
      * Constructor.
@@ -111,7 +111,7 @@ public abstract class GordianInputStream
         long myTotalSkipped = 0;
         while (myNumToSkip > 0) {
             /* Skip processed bytes */
-            long myNumSkipped = theProcessed.skipBytes(myNumToSkip);
+            final long myNumSkipped = theProcessed.skipBytes(myNumToSkip);
 
             /* Adjust counts */
             myNumToSkip -= myNumSkipped;
@@ -247,22 +247,22 @@ public abstract class GordianInputStream
         /**
          * The buffer itself.
          */
-        private byte[] theStore = null;
+        private byte[] theStore;
 
         /**
          * The length of data in the buffer.
          */
-        private int theDataLen = 0;
+        private int theDataLen;
 
         /**
          * The read offset of data in the buffer.
          */
-        private int theReadOffset = 0;
+        private int theReadOffset;
 
         /**
          * have we seen EOF.
          */
-        private boolean hasEOFbeenSeen = false;
+        private boolean hasEOFbeenSeen;
 
         /**
          * Determine the amount of data in the buffer.
@@ -308,7 +308,7 @@ public abstract class GordianInputStream
          */
         private long skipBytes(final long pBytesToSkip) {
             /* Determine number of bytes that we can skip */
-            int myAvailable = availableInBuffer();
+            final int myAvailable = availableInBuffer();
 
             /* If we must skip all bytes */
             if (pBytesToSkip >= myAvailable) {

@@ -133,7 +133,7 @@ public class TethysDateFormatter
 
         /* Store the locale */
         theLocale = pLocale;
-        String pFormat = theFormat;
+        final String pFormat = theFormat;
         theFormat = null;
         setFormat(pFormat);
     }
@@ -210,11 +210,11 @@ public class TethysDateFormatter
         }
 
         /* Access components */
-        TethysDate myStart = pRange.getStart();
-        TethysDate myEnd = pRange.getEnd();
+        final TethysDate myStart = pRange.getStart();
+        final TethysDate myEnd = pRange.getEnd();
 
         /* Build range description */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append((myStart == null)
                                            ? TethysDateRange.DESC_UNBOUNDED
                                            : formatDate(myStart));
@@ -268,8 +268,8 @@ public class TethysDateFormatter
      * @throws IllegalArgumentException on error
      */
     public Calendar parseCalendarDay(final String pValue) {
-        Date myDate = parseJavaDate(pValue);
-        Calendar myCalendar = Calendar.getInstance(theLocale);
+        final Date myDate = parseJavaDate(pValue);
+        final Calendar myCalendar = Calendar.getInstance(theLocale);
         myCalendar.setTime(myDate);
         return myCalendar;
     }
@@ -281,7 +281,7 @@ public class TethysDateFormatter
      * @throws IllegalArgumentException on error
      */
     public TethysDate parseDate(final String pValue) {
-        LocalDate myDate = parseLocalDate(pValue);
+        final LocalDate myDate = parseLocalDate(pValue);
         return new TethysDate(myDate);
     }
 

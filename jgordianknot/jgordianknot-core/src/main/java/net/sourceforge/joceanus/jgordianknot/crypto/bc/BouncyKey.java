@@ -105,7 +105,7 @@ public final class BouncyKey<T>
         }
 
         /* Access the target field */
-        BouncyKey<?> myThat = (BouncyKey<?>) pThat;
+        final BouncyKey<?> myThat = (BouncyKey<?>) pThat;
 
         /* Check differences */
         if (!getKeyType().equals(myThat.getKeyType())) {

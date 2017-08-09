@@ -101,9 +101,9 @@ public class CoeusRateSetterMarket
         theBookParser.parseFile(pFile);
 
         /* Loop through the loanBook items */
-        Iterator<CoeusRateSetterLoanBookItem> myIterator = theBookParser.loanIterator();
+        final Iterator<CoeusRateSetterLoanBookItem> myIterator = theBookParser.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusRateSetterLoanBookItem myItem = myIterator.next();
+            final CoeusRateSetterLoanBookItem myItem = myIterator.next();
 
             /* Create the loan and record it */
             recordLoan(new CoeusRateSetterLoan(this, myItem));
@@ -120,9 +120,9 @@ public class CoeusRateSetterMarket
         theXactionParser.parseFile(pFile);
 
         /* Loop through the transactions in reverse order */
-        ListIterator<CoeusRateSetterTransaction> myIterator = theXactionParser.reverseTransactionIterator();
+        final ListIterator<CoeusRateSetterTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
-            CoeusRateSetterTransaction myTrans = myIterator.previous();
+            final CoeusRateSetterTransaction myTrans = myIterator.previous();
 
             /* If we have a loan offer */
             if ((myTrans.getLoan() == null)

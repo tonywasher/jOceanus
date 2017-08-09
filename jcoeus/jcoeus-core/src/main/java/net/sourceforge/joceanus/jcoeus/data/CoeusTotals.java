@@ -409,7 +409,7 @@ public abstract class CoeusTotals
         if (!(myValue instanceof TethysDecimal)) {
             return null;
         }
-        TethysDecimal myDecimal = (TethysDecimal) myValue;
+        final TethysDecimal myDecimal = (TethysDecimal) myValue;
 
         /* Obtain the previous field value */
         myValue = thePrevious == null
@@ -428,7 +428,7 @@ public abstract class CoeusTotals
         }
 
         /* Return null if there is no change */
-        TethysDecimal myPrevious = (TethysDecimal) myValue;
+        final TethysDecimal myPrevious = (TethysDecimal) myValue;
         if (myPrevious.equals(myDecimal)) {
             return null;
         }
@@ -436,13 +436,13 @@ public abstract class CoeusTotals
         /* If this is a money value */
         if ((myPrevious instanceof TethysMoney)
             && (myDecimal instanceof TethysMoney)) {
-            TethysMoney myResult = new TethysMoney((TethysMoney) myDecimal);
+            final TethysMoney myResult = new TethysMoney((TethysMoney) myDecimal);
             myResult.subtractAmount((TethysMoney) myPrevious);
             return myResult;
         }
 
         /* Handle standard result */
-        TethysDecimal myResult = new TethysDecimal(myDecimal);
+        final TethysDecimal myResult = new TethysDecimal(myDecimal);
         myResult.subtractValue(myPrevious);
         return myResult;
     }
@@ -503,7 +503,7 @@ public abstract class CoeusTotals
     @Override
     public String toString() {
         /* Create builder and access formatter */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Add the values */
         CoeusTransaction.formatValue(myBuilder, CoeusTransaction.ID_ASSETVALUE, getAssetValue());
@@ -542,7 +542,7 @@ public abstract class CoeusTotals
     public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_ID.equals(pField)) {
-            Integer myId = getIndexedId();
+            final Integer myId = getIndexedId();
             return myId == -1
                               ? MetisDataFieldValue.SKIP
                               : myId;
@@ -551,7 +551,7 @@ public abstract class CoeusTotals
             return theMarket;
         }
         if (FIELD_LOAN.equals(pField)) {
-            CoeusLoan myLoan = getLoan();
+            final CoeusLoan myLoan = getLoan();
             return myLoan == null
                                   ? MetisDataFieldValue.SKIP
                                   : myLoan;
@@ -575,97 +575,97 @@ public abstract class CoeusTotals
                                           : theTransaction;
         }
         if (FIELD_ASSETVALUE.equals(pField)) {
-            TethysDecimal myValue = getAssetValue();
+            final TethysDecimal myValue = getAssetValue();
             return myValue.isZero()
                                     ? MetisDataFieldValue.SKIP
                                     : myValue;
         }
         if (FIELD_HOLDING.equals(pField)) {
-            TethysDecimal myHolding = getHolding();
+            final TethysDecimal myHolding = getHolding();
             return myHolding.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myHolding;
         }
         if (FIELD_LOANBOOK.equals(pField)) {
-            TethysDecimal myLoanBook = getLoanBook();
+            final TethysDecimal myLoanBook = getLoanBook();
             return myLoanBook.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myLoanBook;
         }
         if (FIELD_SOURCEVALUE.equals(pField)) {
-            TethysDecimal myValue = getSourceValue();
+            final TethysDecimal myValue = getSourceValue();
             return myValue.isZero()
                                     ? MetisDataFieldValue.SKIP
                                     : myValue;
         }
         if (FIELD_INVESTED.equals(pField)) {
-            TethysDecimal myInvested = getInvested();
+            final TethysDecimal myInvested = getInvested();
             return myInvested.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInvested;
         }
         if (FIELD_EARNINGS.equals(pField)) {
-            TethysDecimal myEarnings = getEarnings();
+            final TethysDecimal myEarnings = getEarnings();
             return myEarnings.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myEarnings;
         }
         if (FIELD_TAXEARNINGS.equals(pField)) {
-            TethysDecimal myEarnings = getTaxableEarnings();
+            final TethysDecimal myEarnings = getTaxableEarnings();
             return myEarnings.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myEarnings;
         }
         if (FIELD_INTEREST.equals(pField)) {
-            TethysDecimal myInterest = getInterest();
+            final TethysDecimal myInterest = getInterest();
             return myInterest.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInterest;
         }
         if (FIELD_NETTINTEREST.equals(pField)) {
-            TethysDecimal myInterest = getNettInterest();
+            final TethysDecimal myInterest = getNettInterest();
             return myInterest.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInterest;
         }
         if (FIELD_BADDEBTINTEREST.equals(pField)) {
-            TethysDecimal myInterest = getBadDebtInterest();
+            final TethysDecimal myInterest = getBadDebtInterest();
             return myInterest.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInterest;
         }
         if (FIELD_BADDEBTCAPITAL.equals(pField)) {
-            TethysDecimal myCapital = getBadDebtCapital();
+            final TethysDecimal myCapital = getBadDebtCapital();
             return myCapital.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myCapital;
         }
         if (FIELD_FEES.equals(pField)) {
-            TethysDecimal myFees = getFees();
+            final TethysDecimal myFees = getFees();
             return myFees.isZero()
                                    ? MetisDataFieldValue.SKIP
                                    : myFees;
         }
         if (FIELD_CASHBACK.equals(pField)) {
-            TethysDecimal myCashBack = getCashBack();
+            final TethysDecimal myCashBack = getCashBack();
             return myCashBack.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myCashBack;
         }
         if (FIELD_LOSSES.equals(pField)) {
-            TethysDecimal myLosses = getEarnings();
+            final TethysDecimal myLosses = getEarnings();
             return myLosses.isZero()
                                      ? MetisDataFieldValue.SKIP
                                      : myLosses;
         }
         if (FIELD_BADDEBT.equals(pField)) {
-            TethysDecimal myBadDebt = getBadDebt();
+            final TethysDecimal myBadDebt = getBadDebt();
             return myBadDebt.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myBadDebt;
         }
         if (FIELD_RECOVERED.equals(pField)) {
-            TethysDecimal myRecovered = getRecovered();
+            final TethysDecimal myRecovered = getRecovered();
             return myRecovered.isZero()
                                         ? MetisDataFieldValue.SKIP
                                         : myRecovered;

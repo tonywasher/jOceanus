@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.SecureRandom;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -64,9 +63,8 @@ public final class GordianKeySetRecipe {
     /**
      * Constructor for random choices.
      * @param pFactory the factory
-     * @throws OceanusException on error
      */
-    protected GordianKeySetRecipe(final GordianFactory pFactory) throws OceanusException {
+    protected GordianKeySetRecipe(final GordianFactory pFactory) {
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory);
         theRecipe = theParams.getRecipe();
@@ -77,24 +75,23 @@ public final class GordianKeySetRecipe {
      * Constructor for external form parse.
      * @param pFactory the factory
      * @param pExternal the external form
-     * @throws OceanusException on error
      */
     protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final byte[] pExternal) throws OceanusException {
+                                  final byte[] pExternal) {
         /* Determine data length */
         int myRecipeLen = RECIPELEN;
-        int myLen = pExternal.length;
-        int myDataLen = myLen
-                        - myRecipeLen
-                        - IVSIZE;
+        final int myLen = pExternal.length;
+        final int myDataLen = myLen
+                              - myRecipeLen
+                              - IVSIZE;
 
         /* Allocate buffers */
         theRecipe = new byte[myRecipeLen];
-        byte[] myInitVector = new byte[IVSIZE];
+        final byte[] myInitVector = new byte[IVSIZE];
         theBytes = new byte[myDataLen];
 
         /* Determine offset position */
-        int myOffSet = getCipherIndentation(pFactory, myDataLen);
+        final int myOffSet = getCipherIndentation(pFactory, myDataLen);
 
         /* Copy Data into buffers */
         System.arraycopy(pExternal, 0, theBytes, 0, myOffSet);
@@ -118,7 +115,7 @@ public final class GordianKeySetRecipe {
      */
     private static int getCipherIndentation(final GordianFactory pFactory,
                                             final int pDataLen) {
-        GordianIdManager myManager = pFactory.getIdManager();
+        final GordianIdManager myManager = pFactory.getIdManager();
         int myOffSet = myManager.getCipherIndentation();
         myOffSet += IMBED_MARGIN;
         return Math.min(myOffSet, pDataLen
@@ -151,15 +148,15 @@ public final class GordianKeySetRecipe {
                                    final byte[] pData) {
         /* Determine lengths */
         int myRecipeLen = RECIPELEN;
-        int myDataLen = pData.length;
-        int myLen = myRecipeLen
-                    + myDataLen + IVSIZE;
+        final int myDataLen = pData.length;
+        final int myLen = myRecipeLen
+                          + myDataLen + IVSIZE;
 
         /* Allocate the buffer */
-        byte[] myBuffer = new byte[myLen];
+        final byte[] myBuffer = new byte[myLen];
 
         /* Determine offset position */
-        int myOffSet = getCipherIndentation(pFactory, myDataLen);
+        final int myOffSet = getCipherIndentation(pFactory, myDataLen);
 
         /* Copy Data into buffer */
         System.arraycopy(pData, 0, myBuffer, 0, myOffSet);
@@ -207,12 +204,11 @@ public final class GordianKeySetRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
-         * @throws OceanusException on error
          */
-        private GordianKeySetParameters(final GordianFactory pFactory) throws OceanusException {
+        private GordianKeySetParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
-            GordianIdManager myManager = pFactory.getIdManager();
-            SecureRandom myRandom = pFactory.getRandom();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final SecureRandom myRandom = pFactory.getRandom();
 
             /* Allocate the initVector */
             theInitVector = new byte[IVSIZE];
@@ -236,13 +232,12 @@ public final class GordianKeySetRecipe {
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
          * @param pInitVector the initVector
-         * @throws OceanusException on error
          */
         private GordianKeySetParameters(final GordianFactory pFactory,
                                         final byte[] pRecipe,
-                                        final byte[] pInitVector) throws OceanusException {
+                                        final byte[] pInitVector) {
             /* Obtain Id manager */
-            GordianIdManager myManager = pFactory.getIdManager();
+            final GordianIdManager myManager = pFactory.getIdManager();
 
             /* Store recipe and initVector */
             theRecipe = pRecipe;

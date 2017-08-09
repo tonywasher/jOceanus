@@ -133,7 +133,7 @@ public abstract class TethysGuiFactory<N, I> {
     public void setNodeVisible(final TethysNode<N> pNode,
                                final boolean pVisible) {
         /* Lookup parent */
-        TethysParentNode<N> myParent = theParentMap.get(pNode.getId());
+        final TethysParentNode<N> myParent = theParentMap.get(pNode.getId());
         if (myParent != null) {
             myParent.setChildVisible(pNode, pVisible);
         }

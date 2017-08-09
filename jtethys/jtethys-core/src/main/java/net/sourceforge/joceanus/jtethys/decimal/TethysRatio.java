@@ -100,7 +100,7 @@ public class TethysRatio
      * @return the new ratio
      */
     public TethysRatio multiplyBy(final TethysRatio pRatio) {
-        TethysRatio myRatio = new TethysRatio();
+        final TethysRatio myRatio = new TethysRatio();
         myRatio.recordScale(NUM_DECIMALS);
         myRatio.calculateProduct(this, pRatio);
         return myRatio;
@@ -118,7 +118,7 @@ public class TethysRatio
         }
 
         /* Calculate the annualised value and convert to ratio */
-        double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
+        final double myValue = Math.pow(doubleValue(), ((double) DAYS_IN_YEAR) / pDays);
         return new TethysRatio(Double.toString(myValue));
     }
 

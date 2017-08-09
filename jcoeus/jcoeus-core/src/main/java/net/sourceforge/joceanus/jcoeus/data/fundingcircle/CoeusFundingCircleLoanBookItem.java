@@ -132,7 +132,7 @@ public class CoeusFundingCircleLoanBookItem
     protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookParser pParser,
                                              final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Obtain part ID and description */
         theLoanId = myIterator.next();
@@ -172,12 +172,12 @@ public class CoeusFundingCircleLoanBookItem
     protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleBidBookParser pParser,
                                              final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Obtain IDs */
         theLoanId = null;
-        String myDesc = myIterator.next();
-        int myIndex = myDesc.lastIndexOf(BID_SEP);
+        final String myDesc = myIterator.next();
+        final int myIndex = myDesc.lastIndexOf(BID_SEP);
         theDesc = myDesc.substring(0, myIndex);
         theAuctionId = myDesc.substring(myIndex + BID_SEP.length());
 
@@ -343,7 +343,7 @@ public class CoeusFundingCircleLoanBookItem
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theLoanId);
         myBuilder.append(' ');
         myBuilder.append(theStatus.toString());

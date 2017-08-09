@@ -205,7 +205,7 @@ public class CoeusFundingCircleTransaction
         super(pParser.getMarket());
 
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Parse the date */
         theDate = pParser.parseDate(myIterator.next());
@@ -220,8 +220,8 @@ public class CoeusFundingCircleTransaction
         theLoan = determineLoan();
 
         /* Parse the values */
-        TethysMoney myPaidIn = pParser.parseMoney(myIterator.next());
-        TethysMoney myPaidOut = pParser.parseMoney(myIterator.next());
+        final TethysMoney myPaidIn = pParser.parseMoney(myIterator.next());
+        final TethysMoney myPaidOut = pParser.parseMoney(myIterator.next());
 
         /* Determine the HoldingDelta */
         theHolding = new TethysMoney(myPaidIn);
@@ -252,10 +252,10 @@ public class CoeusFundingCircleTransaction
         super(pParser.getMarket());
 
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Access loan id */
-        String myLoanId = myIterator.next();
+        final String myLoanId = myIterator.next();
 
         /* Skip description/sector/auctionID/risk/Payments left */
         myIterator.next();
@@ -265,7 +265,7 @@ public class CoeusFundingCircleTransaction
         myIterator.next();
 
         /* Parse the outstanding balance */
-        TethysMoney myDebt = pParser.parseMoney(myIterator.next());
+        final TethysMoney myDebt = pParser.parseMoney(myIterator.next());
         myDebt.negate();
 
         /* Ignore the rate/date of next payment/status */
@@ -308,7 +308,7 @@ public class CoeusFundingCircleTransaction
      */
     private void checkValidity() throws OceanusException {
         /* Obtain the holding */
-        TethysMoney myMoney = new TethysMoney(theHolding);
+        final TethysMoney myMoney = new TethysMoney(theHolding);
 
         /* Add LoanBook */
         myMoney.addAmount(theLoanBook);
@@ -532,7 +532,7 @@ public class CoeusFundingCircleTransaction
      */
     private TethysMoney determineInvestedDelta() {
         /* Obtain change in holding account */
-        TethysMoney myInvested = new TethysMoney(theHolding);
+        final TethysMoney myInvested = new TethysMoney(theHolding);
 
         /* Invested are increased by any increase the holding account */
         if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {
@@ -576,7 +576,7 @@ public class CoeusFundingCircleTransaction
             case BUYLOAN:
                 return determineFCBuyLoan(false);
             default:
-                TethysMoney myInterest = new TethysMoney(theHolding);
+                final TethysMoney myInterest = new TethysMoney(theHolding);
                 myInterest.setZero();
                 return myInterest;
         }
@@ -588,7 +588,7 @@ public class CoeusFundingCircleTransaction
      */
     private TethysMoney determineFeesDelta() {
         /* Obtain change in holding account */
-        TethysMoney myFees = new TethysMoney(theHolding);
+        final TethysMoney myFees = new TethysMoney(theHolding);
 
         /* Fees are increased by any decrease the holding account */
         if (!CoeusTransactionType.FEES.equals(theTransType)) {
@@ -605,7 +605,7 @@ public class CoeusFundingCircleTransaction
      */
     private TethysMoney determineCashBackDelta() {
         /* Obtain change in holding account */
-        TethysMoney myCash = new TethysMoney(theHolding);
+        final TethysMoney myCash = new TethysMoney(theHolding);
 
         /* CashBack is increased by any increase in the holding account */
         if (!CoeusTransactionType.CASHBACK.equals(theTransType)) {
@@ -622,7 +622,7 @@ public class CoeusFundingCircleTransaction
      */
     private TethysMoney determineBadDebtDelta() {
         /* Obtain change in holding account */
-        TethysMoney myDebt = new TethysMoney(theHolding);
+        final TethysMoney myDebt = new TethysMoney(theHolding);
         myDebt.setZero();
 
         /* Return the debt */
@@ -635,7 +635,7 @@ public class CoeusFundingCircleTransaction
      */
     private TethysMoney determineRecoveredDelta() {
         /* Obtain change in holding account */
-        TethysMoney myRecovered = new TethysMoney(theHolding);
+        final TethysMoney myRecovered = new TethysMoney(theHolding);
 
         /* Recovery is increased by any increase in the holding account */
         if (!CoeusTransactionType.RECOVERY.equals(theTransType)) {
@@ -653,17 +653,17 @@ public class CoeusFundingCircleTransaction
      */
     private CoeusFundingCircleLoan determineLoan() throws OceanusException {
         /* Obtain the market */
-        CoeusFundingCircleMarket myMarket = getMarket();
+        final CoeusFundingCircleMarket myMarket = getMarket();
 
         /* If this is a CapitalLoan */
         if (CoeusTransactionType.CAPITALLOAN.equals(theTransType)) {
             /* Look up the loan via the auctionId */
-            String myAuctionId = theDesc.substring(thePrefix.length());
-            int myIndex = myAuctionId.lastIndexOf('-');
+            final String myAuctionId = theDesc.substring(thePrefix.length());
+            final int myIndex = myAuctionId.lastIndexOf('-');
             return myMarket.findLoanByAuctionId(myAuctionId.substring(myIndex + 2));
         } else {
             /* Determine the loan id */
-            String myLoanId = determineLoanId();
+            final String myLoanId = determineLoanId();
             return myLoanId == null
                                     ? null
                                     : myMarket.findLoanById(myLoanId);
@@ -722,9 +722,9 @@ public class CoeusFundingCircleTransaction
         myInterest = myInterest.substring(myIndex + 1);
 
         /* Access cash value */
-        TethysMoney myCash = new TethysMoney(theHolding);
+        final TethysMoney myCash = new TethysMoney(theHolding);
         myCash.negate();
-        String myValue = myCash.toString();
+        final String myValue = myCash.toString();
 
         /* If we are looking at the Principal */
         if (pCapital) {

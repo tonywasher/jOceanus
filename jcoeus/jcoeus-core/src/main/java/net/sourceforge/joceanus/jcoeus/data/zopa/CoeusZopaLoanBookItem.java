@@ -178,7 +178,7 @@ public class CoeusZopaLoanBookItem
     protected CoeusZopaLoanBookItem(final CoeusZopaLoanBookParser pParser,
                                     final List<String> pFields) throws OceanusException {
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Obtain IDs */
         theLoanId = myIterator.next();
@@ -219,7 +219,7 @@ public class CoeusZopaLoanBookItem
         theMissing.subtractValue(theBalance);
 
         /* Check that repaid is the total of capital and interest */
-        TethysDecimal myRepaid = new TethysDecimal(theRepaid);
+        final TethysDecimal myRepaid = new TethysDecimal(theRepaid);
         myRepaid.subtractValue(theCapital);
         myRepaid.subtractValue(theInterest);
         if (myRepaid.isNonZero()) {
@@ -262,9 +262,9 @@ public class CoeusZopaLoanBookItem
         theLoanId = pBase.getLoanId();
 
         /* Determine the most recent loan */
-        CoeusZopaLoanBookItem myRecent = pBase.getDate().compareTo(pNew.getDate()) < 0
-                                                                                       ? pNew
-                                                                                       : pBase;
+        final CoeusZopaLoanBookItem myRecent = pBase.getDate().compareTo(pNew.getDate()) < 0
+                                                                                             ? pNew
+                                                                                             : pBase;
         /* Copy main details from the most recent loan */
         theDate = myRecent.getDate();
         theRisk = myRecent.getRisk();
@@ -501,7 +501,7 @@ public class CoeusZopaLoanBookItem
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theLoanId);
         myBuilder.append(' ');
         myBuilder.append(theStatus.toString());

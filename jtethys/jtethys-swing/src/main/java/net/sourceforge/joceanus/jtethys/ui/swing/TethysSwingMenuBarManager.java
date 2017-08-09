@@ -57,7 +57,7 @@ public class TethysSwingMenuBarManager
 
     @Override
     public <I> TethysSwingMenuSubMenu<I> newSubMenu(final I pId) {
-        TethysSwingMenuSubMenu<I> myMenu = new TethysSwingMenuSubMenu<>(this, pId);
+        final TethysSwingMenuSubMenu<I> myMenu = new TethysSwingMenuSubMenu<>(this, pId);
         theMenuBar.add(myMenu.getMenu());
         return myMenu;
     }
@@ -104,7 +104,7 @@ public class TethysSwingMenuBarManager
 
         @Override
         public <I> TethysSwingMenuSubMenu<I> newSubMenu(final I pId) {
-            TethysSwingMenuSubMenu<I> myMenu = new TethysSwingMenuSubMenu<>(getManager(), pId);
+            final TethysSwingMenuSubMenu<I> myMenu = new TethysSwingMenuSubMenu<>(getManager(), pId);
             theMenu.add(myMenu.getMenu());
             incrementItemCount();
             return myMenu;
@@ -113,7 +113,7 @@ public class TethysSwingMenuBarManager
         @Override
         public <I> TethysSwingMenuItem<I> newMenuItem(final I pId,
                                                       final Consumer<I> pAction) {
-            TethysSwingMenuItem<I> myItem = new TethysSwingMenuItem<>(getManager(), pId, pAction);
+            final TethysSwingMenuItem<I> myItem = new TethysSwingMenuItem<>(getManager(), pId, pAction);
             theMenu.add(myItem.getItem());
             incrementItemCount();
             return myItem;

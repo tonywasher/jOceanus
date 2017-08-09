@@ -186,13 +186,13 @@ public class CoeusMarketSnapShot
      */
     private CoeusHistory determineHistory() {
         /* Create the history */
-        CoeusHistory myHistory = theMarket.newHistory();
+        final CoeusHistory myHistory = theMarket.newHistory();
 
         /* Loop through the transactions */
-        Iterator<CoeusTransaction> myIterator = theMarket.transactionIterator();
+        final Iterator<CoeusTransaction> myIterator = theMarket.transactionIterator();
         while (myIterator.hasNext()) {
-            CoeusTransaction myTransaction = myIterator.next();
-            TethysDate myDate = myTransaction.getDate();
+            final CoeusTransaction myTransaction = myIterator.next();
+            final TethysDate myDate = myTransaction.getDate();
 
             /* If we have gone past the date, break the loop */
             if (myDate.compareTo(theDate) > 0) {
@@ -229,7 +229,7 @@ public class CoeusMarketSnapShot
      */
     private CoeusLoan getSnapShotLoan(final CoeusLoan pLoan) {
         /* Look up existing snapShot */
-        String myId = pLoan.getLoanId();
+        final String myId = pLoan.getLoanId();
         CoeusLoan myLoan = theLoanMap.get(myId);
 
         /* If we do not have a snapShot */
@@ -249,7 +249,7 @@ public class CoeusMarketSnapShot
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theMarket.toString());
         myBuilder.append('@');
         myBuilder.append(theDate);

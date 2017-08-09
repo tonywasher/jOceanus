@@ -64,7 +64,7 @@ public final class TethysFXListButtonManager<T>
     @Override
     protected void registerListeners() {
         /* Set context menu listener */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = getMenu().getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleToggleItem());
         myRegistrar.addEventListener(TethysUIEvent.WINDOWCLOSED, e -> handleMenuClosed());
     }

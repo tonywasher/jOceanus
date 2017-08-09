@@ -97,16 +97,15 @@ public class CoeusFundingCircleLoader {
      * Constructor.
      * @param pFormatter the formatter
      * @param pPath the path to load from
-     * @throws OceanusException on error
      */
     public CoeusFundingCircleLoader(final MetisDataFormatter pFormatter,
-                                    final String pPath) throws OceanusException {
+                                    final String pPath) {
         /* Store the formatter */
         theFormatter = pFormatter;
 
         /* Adjust and store the path */
-        FileSystem mySystem = FileSystems.getDefault();
-        String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.FUNDINGCIRCLE;
+        final FileSystem mySystem = FileSystems.getDefault();
+        final String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.FUNDINGCIRCLE;
         theBasePath = mySystem.getPath(myPath);
     }
 
@@ -117,22 +116,22 @@ public class CoeusFundingCircleLoader {
      */
     private List<StatementRecord> listStatements() throws OceanusException {
         /* Create list and formatter */
-        List<StatementRecord> myList = new ArrayList<>();
-        DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern(DATEPATTERN);
+        final List<StatementRecord> myList = new ArrayList<>();
+        final DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern(DATEPATTERN);
 
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, MASK)) {
             for (Path myFile : myStream) {
                 /* Parse the file name */
-                String myName = myFile.getFileName().toString();
+                final String myName = myFile.getFileName().toString();
                 String myBase = myName.substring(0, myName.length() - SUFFIX.length());
                 myBase = myBase.substring(PREFIX.length());
-                TemporalAccessor myTA = myFormatter.parse(myBase);
+                final TemporalAccessor myTA = myFormatter.parse(myBase);
                 int myDate = myTA.get(ChronoField.YEAR) * MULTIPLIER;
                 myDate += myTA.get(ChronoField.MONTH_OF_YEAR);
 
                 /* Create a statement record */
-                StatementRecord myStatement = new StatementRecord(myDate, myFile);
+                final StatementRecord myStatement = new StatementRecord(myDate, myFile);
                 myList.add(myStatement);
             }
 
@@ -153,7 +152,7 @@ public class CoeusFundingCircleLoader {
      */
     public CoeusFundingCircleMarket loadMarket() throws OceanusException {
         /* Create the market */
-        CoeusFundingCircleMarket myMarket = new CoeusFundingCircleMarket(theFormatter);
+        final CoeusFundingCircleMarket myMarket = new CoeusFundingCircleMarket(theFormatter);
 
         /* Parse the loanBook file */
         myMarket.parseLoanBook(theBasePath.resolve(LOANBOOK + SUFFIX));

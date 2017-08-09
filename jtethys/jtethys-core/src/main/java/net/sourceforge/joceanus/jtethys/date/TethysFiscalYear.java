@@ -141,17 +141,17 @@ public enum TethysFiscalYear {
      */
     public TethysDate endOfYear(final TethysDate pDate) {
         /* Access constituent parts */
-        int myDay = pDate.getDay();
-        int myMonth = pDate.getMonth();
-        int myFiscalMonth = theMonth.getValue();
+        final int myDay = pDate.getDay();
+        final int myMonth = pDate.getMonth();
+        final int myFiscalMonth = theMonth.getValue();
 
         /* See whether we are earlier in the year */
-        boolean bEarlier = myFiscalMonth == myMonth
-                                                    ? myDay < theDay
-                                                    : myMonth < myFiscalMonth;
+        final boolean bEarlier = myFiscalMonth == myMonth
+                                                          ? myDay < theDay
+                                                          : myMonth < myFiscalMonth;
 
         /* Build the basic taxYear */
-        TethysDate myDate = new TethysDate(pDate.getYear(), theMonth, theDay, pDate.getLocale());
+        final TethysDate myDate = new TethysDate(pDate.getYear(), theMonth, theDay, pDate.getLocale());
 
         /* Adjust if we are later */
         if (!bEarlier) {
@@ -172,13 +172,13 @@ public enum TethysFiscalYear {
      */
     public TethysDate endOfMonth(final TethysDate pDate) {
         /* Access constituent parts */
-        int myDay = pDate.getDay();
+        final int myDay = pDate.getDay();
 
         /* See whether we are earlier in the month */
-        boolean bEarlier = myDay < theDay;
+        final boolean bEarlier = myDay < theDay;
 
         /* Build the basic taxMonth */
-        TethysDate myDate = new TethysDate(pDate.getYear(), pDate.getMonth(), theDay, pDate.getLocale());
+        final TethysDate myDate = new TethysDate(pDate.getYear(), pDate.getMonth(), theDay, pDate.getLocale());
 
         /* Adjust if we are later */
         if (!bEarlier) {

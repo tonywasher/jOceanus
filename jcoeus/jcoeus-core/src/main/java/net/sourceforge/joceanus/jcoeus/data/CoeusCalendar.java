@@ -92,7 +92,7 @@ public class CoeusCalendar {
      */
     private static TethysDate getEndOfCalendarMonth(final TethysDate pDate) {
         /* Determine the end of the calendar month */
-        TethysDate myDate = new TethysDate(pDate);
+        final TethysDate myDate = new TethysDate(pDate);
         myDate.endCalendarMonth();
         return myDate;
     }
@@ -104,7 +104,7 @@ public class CoeusCalendar {
      */
     private static TethysDate getEndOfCalendarYear(final TethysDate pDate) {
         /* Determine the end of the calendar year */
-        TethysDate myDate = new TethysDate(pDate);
+        final TethysDate myDate = new TethysDate(pDate);
         myDate.endCalendarYear();
         return myDate;
     }

@@ -68,7 +68,7 @@ public class CoeusStatementCalculator
         if (CoeusTotals.FIELD_DELTA.equals(pField)) {
             return pTotals.getDeltaForField(theField);
         } else if (CoeusTotals.FIELD_BALANCE.equals(pField)) {
-            Object myValue = pTotals.getFieldValue(theField);
+            final Object myValue = pTotals.getFieldValue(theField);
             return MetisDataFieldValue.SKIP.equals(myValue)
                                                             ? null
                                                             : myValue;

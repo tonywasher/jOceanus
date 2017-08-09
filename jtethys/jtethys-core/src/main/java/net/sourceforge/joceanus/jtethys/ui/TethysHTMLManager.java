@@ -143,7 +143,7 @@ public abstract class TethysHTMLManager<N, I>
         /* If the name has a # in it */
         if (myRef.contains(REF_SEPARATOR)) {
             /* Split on the # */
-            String[] myTokens = myRef.split(REF_SEPARATOR);
+            final String[] myTokens = myRef.split(REF_SEPARATOR);
 
             /* Allocate the values */
             myRef = myTokens[0];
@@ -156,8 +156,8 @@ public abstract class TethysHTMLManager<N, I>
         }
 
         /* Check whether we need to switch pages */
-        boolean needSwitch = (myRef != null)
-                             && !myRef.equals(theCurrentRef);
+        final boolean needSwitch = (myRef != null)
+                                   && !myRef.equals(theCurrentRef);
 
         /* If we failed to switch pages */
         if (needSwitch

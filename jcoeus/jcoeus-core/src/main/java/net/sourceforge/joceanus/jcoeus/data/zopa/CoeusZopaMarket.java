@@ -150,12 +150,12 @@ public class CoeusZopaMarket
         theBookParser.parseFile(pFile);
 
         /* Loop through the loan book items */
-        Iterator<CoeusZopaLoanBookItem> myIterator = theBookParser.loanIterator();
+        final Iterator<CoeusZopaLoanBookItem> myIterator = theBookParser.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusZopaLoanBookItem myItem = myIterator.next();
+            final CoeusZopaLoanBookItem myItem = myIterator.next();
 
             /* Look for preExisting loan */
-            CoeusZopaLoan myLoan = getLoanById(myItem.getLoanId());
+            final CoeusZopaLoan myLoan = getLoanById(myItem.getLoanId());
             if (myLoan == null) {
                 /* Create the loan and record it */
                 recordLoan(new CoeusZopaLoan(this, myItem));
@@ -176,9 +176,9 @@ public class CoeusZopaMarket
         theDebtParser.parseFile(pFile);
 
         /* Loop through the loan book items */
-        Iterator<CoeusZopaTransaction> myIterator = theDebtParser.badDebtIterator();
+        final Iterator<CoeusZopaTransaction> myIterator = theDebtParser.badDebtIterator();
         while (myIterator.hasNext()) {
-            CoeusZopaTransaction myTrans = myIterator.next();
+            final CoeusZopaTransaction myTrans = myIterator.next();
 
             /* Add to the transactions */
             addTransaction(myTrans);
@@ -195,9 +195,9 @@ public class CoeusZopaMarket
         theXactionParser.parseFile(pFile);
 
         /* Loop through the transactions in reverse order */
-        ListIterator<CoeusZopaTransaction> myIterator = theXactionParser.reverseTransactionIterator();
+        final ListIterator<CoeusZopaTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
-            CoeusZopaTransaction myTrans = myIterator.previous();
+            final CoeusZopaTransaction myTrans = myIterator.previous();
 
             /* Add to the transactions */
             addTransaction(myTrans);

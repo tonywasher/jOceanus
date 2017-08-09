@@ -151,7 +151,7 @@ public class CoeusRateSetterTransaction
         super(pParser.getMarket());
 
         /* Iterate through the fields */
-        Iterator<String> myIterator = pFields.iterator();
+        final Iterator<String> myIterator = pFields.iterator();
 
         /* Parse the date */
         theDate = pParser.parseDate(myIterator.next());
@@ -166,7 +166,7 @@ public class CoeusRateSetterTransaction
 
         /* Parse the monetary values */
         theHolding = pParser.parseMoney(myIterator.next());
-        TethysMoney myCapital = pParser.parseMoney(myIterator.next());
+        final TethysMoney myCapital = pParser.parseMoney(myIterator.next());
         theInterest = pParser.parseMoney(myIterator.next());
 
         /* Handle fees */
@@ -227,7 +227,7 @@ public class CoeusRateSetterTransaction
      */
     private void checkValidity() throws OceanusException {
         /* Obtain the holding */
-        TethysMoney myMoney = new TethysMoney(theHolding);
+        final TethysMoney myMoney = new TethysMoney(theHolding);
 
         /* Add Capital */
         myMoney.addAmount(theLoanBook);
@@ -410,7 +410,7 @@ public class CoeusRateSetterTransaction
      */
     private TethysMoney determineInvestedDelta() {
         /* Obtain change in holding account */
-        TethysMoney myInvested = new TethysMoney(theHolding);
+        final TethysMoney myInvested = new TethysMoney(theHolding);
 
         /* Invested are increased by any increase the holding account */
         if (!CoeusTransactionType.TRANSFER.equals(theTransType)) {

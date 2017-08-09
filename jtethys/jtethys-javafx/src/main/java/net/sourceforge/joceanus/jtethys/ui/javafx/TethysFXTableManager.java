@@ -155,7 +155,7 @@ public class TethysFXTableManager<C, R>
 
     @Override
     public Iterator<R> viewIterator() {
-        List<R> myItems = theTable.getItems();
+        final List<R> myItems = theTable.getItems();
         return myItems == null
                                ? Collections.emptyIterator()
                                : myItems.iterator();
@@ -198,14 +198,14 @@ public class TethysFXTableManager<C, R>
         /* If we have any items */
         if (myItems != null) {
             /* Apply sort if specified */
-            Comparator<R> myComparator = getComparator();
+            final Comparator<R> myComparator = getComparator();
             if (myComparator != null) {
                 myItems = myItems.sorted(myComparator);
                 theSorted = myItems;
             }
 
             /* Apply filter if specified */
-            Predicate<R> myFilter = getFilter();
+            final Predicate<R> myFilter = getFilter();
             if (myFilter != null) {
                 myItems = myItems.filtered(myFilter);
             }

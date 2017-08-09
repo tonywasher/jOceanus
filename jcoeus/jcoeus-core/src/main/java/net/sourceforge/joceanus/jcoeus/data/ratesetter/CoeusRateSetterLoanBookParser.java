@@ -149,18 +149,18 @@ public class CoeusRateSetterLoanBookParser {
             theDateParser.setFormat("dd/MM/yyyy");
 
             /* Read the document from the stream and parse it */
-            Document myDocument = Jsoup.parse(pInput.toFile(), StandardCharsets.UTF_8.name());
+            final Document myDocument = Jsoup.parse(pInput.toFile(), StandardCharsets.UTF_8.name());
 
             /* Obtain the table rows */
-            Elements myTables = myDocument.getElementsByClass("rsTable");
+            final Elements myTables = myDocument.getElementsByClass("rsTable");
 
             /* select the body of the last of the tables */
-            boolean isRepaid = myTables.size() > 1;
-            Element myBody = myTables.last().select("tbody").first();
+            final boolean isRepaid = myTables.size() > 1;
+            final Element myBody = myTables.last().select("tbody").first();
 
             /* Obtain a list of rows */
-            List<Element> myRows = new ArrayList<>();
-            List<Element> myCells = new ArrayList<>();
+            final List<Element> myRows = new ArrayList<>();
+            final List<Element> myCells = new ArrayList<>();
             listChildElements(myBody, "tr", myRows);
 
             /* Loop through the rows */
@@ -204,7 +204,7 @@ public class CoeusRateSetterLoanBookParser {
             /* If this is an element */
             if (myNode instanceof Element) {
                 /* If it is a required child */
-                Element myChild = (Element) myNode;
+                final Element myChild = (Element) myNode;
                 if (pName.equals(myNode.nodeName())) {
                     pList.add(myChild);
                 }
@@ -220,14 +220,14 @@ public class CoeusRateSetterLoanBookParser {
     protected String childElementText(final Element pElement) {
         /* Reset string builder */
         theBuilder.setLength(0);
-        Element myRow = pElement.select("tr").first();
+        final Element myRow = pElement.select("tr").first();
 
         /* Loop through the childNodes */
         for (Node myNode : myRow.childNodes()) {
             /* If this is an element */
             if (myNode instanceof Element) {
                 /* If it is a required child */
-                Element myChild = (Element) myNode;
+                final Element myChild = (Element) myNode;
                 if ("td".equals(myNode.nodeName())) {
                     theBuilder.append(myChild.text());
                 }

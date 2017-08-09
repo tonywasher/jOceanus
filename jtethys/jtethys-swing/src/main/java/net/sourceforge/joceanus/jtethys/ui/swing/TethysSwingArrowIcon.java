@@ -127,7 +127,7 @@ public enum TethysSwingArrowIcon implements Icon {
                           final int x,
                           final int y) {
         /* Allocate new graphics context */
-        Graphics g2 = g.create(x, y, ICON_SIZE, ICON_SIZE);
+        final Graphics g2 = g.create(x, y, ICON_SIZE, ICON_SIZE);
 
         /* Initialise graphics */
         g2.setColor(Color.GRAY);
@@ -160,7 +160,7 @@ public enum TethysSwingArrowIcon implements Icon {
      */
     private static Map<TethysArrowIconId, Icon> buildIconMap() {
         /* Create the map and return it */
-        Map<TethysArrowIconId, Icon> myMap = new EnumMap<>(TethysArrowIconId.class);
+        final Map<TethysArrowIconId, Icon> myMap = new EnumMap<>(TethysArrowIconId.class);
         myMap.put(TethysArrowIconId.UP, UP);
         myMap.put(TethysArrowIconId.DOWN, DOWN);
         myMap.put(TethysArrowIconId.LEFT, LEFT);

@@ -143,7 +143,7 @@ public abstract class GordianMac
         }
 
         /* Create the key and initialise */
-        GordianKey<GordianMacSpec> myKey = theGenerator.buildKeyFromBytes(pKeyBytes);
+        final GordianKey<GordianMacSpec> myKey = theGenerator.buildKeyFromBytes(pKeyBytes);
         initMac(myKey);
     }
 
@@ -154,7 +154,7 @@ public abstract class GordianMac
      */
     public void initMac(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        int myLen = getMacSpec().getMacType().getIVLen();
+        final int myLen = getMacSpec().getMacType().getIVLen();
         byte[] myIV = null;
 
         /* If we need an IV */

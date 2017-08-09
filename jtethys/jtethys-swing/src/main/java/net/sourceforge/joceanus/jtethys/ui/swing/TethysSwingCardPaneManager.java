@@ -85,7 +85,7 @@ public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
     @Override
     public boolean selectCard(final String pName) {
         /* Determine the card to select */
-        boolean isSelected = super.selectCard(pName);
+        final boolean isSelected = super.selectCard(pName);
         if (isSelected) {
             /* Show selected card */
             theLayout.show(thePanel, pName);

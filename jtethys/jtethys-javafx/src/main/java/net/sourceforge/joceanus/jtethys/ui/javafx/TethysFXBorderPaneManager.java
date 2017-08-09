@@ -79,7 +79,7 @@ public class TethysFXBorderPaneManager
         if (pNode == null) {
             theBorderPane.setTop(null);
         } else {
-            Node myNode = pNode.getNode();
+            final Node myNode = pNode.getNode();
             BorderPane.setMargin(myNode, getInsetsForLocation(TethysBorderLocation.NORTH));
             theBorderPane.setTop(myNode);
         }
@@ -91,7 +91,7 @@ public class TethysFXBorderPaneManager
         if (pNode == null) {
             theBorderPane.setBottom(null);
         } else {
-            Node myNode = pNode.getNode();
+            final Node myNode = pNode.getNode();
             BorderPane.setMargin(myNode, getInsetsForLocation(TethysBorderLocation.SOUTH));
             theBorderPane.setBottom(myNode);
         }
@@ -103,7 +103,7 @@ public class TethysFXBorderPaneManager
         if (pNode == null) {
             theBorderPane.setLeft(null);
         } else {
-            Node myNode = pNode.getNode();
+            final Node myNode = pNode.getNode();
             BorderPane.setMargin(myNode, getInsetsForLocation(TethysBorderLocation.WEST));
             theBorderPane.setLeft(myNode);
         }
@@ -115,7 +115,7 @@ public class TethysFXBorderPaneManager
         if (pNode == null) {
             theBorderPane.setRight(null);
         } else {
-            Node myNode = pNode.getNode();
+            final Node myNode = pNode.getNode();
             BorderPane.setMargin(myNode, getInsetsForLocation(TethysBorderLocation.EAST));
             theBorderPane.setRight(myNode);
         }
@@ -125,9 +125,9 @@ public class TethysFXBorderPaneManager
     protected void setLocationVisibility(final TethysBorderLocation pLocation,
                                          final boolean pVisible) {
         /* Determine node */
-        Node myNode = pVisible
-                               ? getNodeForLocation(pLocation).getNode()
-                               : null;
+        final Node myNode = pVisible
+                                     ? getNodeForLocation(pLocation).getNode()
+                                     : null;
 
         /* Switch on location */
         switch (pLocation) {

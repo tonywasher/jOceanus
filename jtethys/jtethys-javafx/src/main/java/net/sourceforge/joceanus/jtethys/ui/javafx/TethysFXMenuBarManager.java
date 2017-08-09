@@ -57,7 +57,7 @@ public class TethysFXMenuBarManager
 
     @Override
     public <I> TethysFXMenuSubMenu<I> newSubMenu(final I pId) {
-        TethysFXMenuSubMenu<I> myMenu = new TethysFXMenuSubMenu<>(this, pId);
+        final TethysFXMenuSubMenu<I> myMenu = new TethysFXMenuSubMenu<>(this, pId);
         theMenuBar.getMenus().add(myMenu.getMenu());
         return myMenu;
     }
@@ -104,7 +104,7 @@ public class TethysFXMenuBarManager
 
         @Override
         public <I> TethysFXMenuSubMenu<I> newSubMenu(final I pId) {
-            TethysFXMenuSubMenu<I> myMenu = new TethysFXMenuSubMenu<>(getManager(), pId);
+            final TethysFXMenuSubMenu<I> myMenu = new TethysFXMenuSubMenu<>(getManager(), pId);
             theMenu.getItems().add(myMenu.getMenu());
             incrementItemCount();
             return myMenu;
@@ -113,7 +113,7 @@ public class TethysFXMenuBarManager
         @Override
         public <I> TethysFXMenuItem<I> newMenuItem(final I pId,
                                                    final Consumer<I> pAction) {
-            TethysFXMenuItem<I> myItem = new TethysFXMenuItem<>(getManager(), pId, pAction);
+            final TethysFXMenuItem<I> myItem = new TethysFXMenuItem<>(getManager(), pId, pAction);
             theMenu.getItems().add(myItem.getItem());
             incrementItemCount();
             return myItem;

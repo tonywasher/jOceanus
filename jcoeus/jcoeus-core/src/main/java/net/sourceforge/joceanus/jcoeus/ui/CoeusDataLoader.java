@@ -58,7 +58,7 @@ public class CoeusDataLoader {
         theFormatter = new MetisDataFormatter();
 
         /* Obtain preferences */
-        MetisPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
+        final MetisPreferenceManager myPrefMgr = pToolkit.getPreferenceManager();
         thePreferences = myPrefMgr.getPreferenceSet(CoeusPreferences.class);
     }
 
@@ -69,16 +69,16 @@ public class CoeusDataLoader {
      */
     public CoeusMarketSet loadData() throws OceanusException {
         /* Create the loan market set */
-        CoeusMarketSet myMarketSet = new CoeusMarketSet();
+        final CoeusMarketSet myMarketSet = new CoeusMarketSet();
 
         /* Obtain the base directory path from preferences */
-        String myBase = thePreferences.getStringValue(CoeusPreferenceKey.BASE);
+        final String myBase = thePreferences.getStringValue(CoeusPreferenceKey.BASE);
 
         /* Create the loaders */
-        CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(theFormatter, myBase);
-        CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(theFormatter, myBase);
-        CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(theFormatter, myBase);
-        CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(theFormatter, myBase);
+        final CoeusFundingCircleLoader myFundingCircleLoader = new CoeusFundingCircleLoader(theFormatter, myBase);
+        final CoeusRateSetterLoader myRateSetterLoader = new CoeusRateSetterLoader(theFormatter, myBase);
+        final CoeusZopaLoader myZopaLoader = new CoeusZopaLoader(theFormatter, myBase);
+        final CoeusLendingWorksLoader myLendingWorksLoader = new CoeusLendingWorksLoader(theFormatter, myBase);
 
         /* Load the markets */
         myMarketSet.declareMarket(CoeusMarketProvider.FUNDINGCIRCLE, myFundingCircleLoader.loadMarket());

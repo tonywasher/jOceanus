@@ -205,13 +205,13 @@ public class CoeusMarketAnnual
      */
     private CoeusHistory determineHistory() {
         /* Create the history */
-        CoeusHistory myHistory = theMarket.newHistory();
+        final CoeusHistory myHistory = theMarket.newHistory();
 
         /* Loop through the transactions */
-        Iterator<CoeusTransaction> myIterator = theMarket.transactionIterator();
+        final Iterator<CoeusTransaction> myIterator = theMarket.transactionIterator();
         while (myIterator.hasNext()) {
-            CoeusTransaction myTransaction = myIterator.next();
-            TethysDate myDate = myTransaction.getDate();
+            final CoeusTransaction myTransaction = myIterator.next();
+            final TethysDate myDate = myTransaction.getDate();
 
             /* If we have gone past the date, break the loop */
             if (myDate.compareTo(theDate) > 0) {
@@ -221,7 +221,7 @@ public class CoeusMarketAnnual
             /* If this is a relevant transaction */
             if (theInitialDate.compareTo(myTransaction.getDate()) <= 0) {
                 /* Obtain the monthly history and adjust */
-                CoeusHistory myMonth = getMonthlyHistory(myDate);
+                final CoeusHistory myMonth = getMonthlyHistory(myDate);
                 myMonth.addTransactionToHistory(myTransaction);
 
                 /* Adjust the history */
@@ -256,8 +256,8 @@ public class CoeusMarketAnnual
      */
     private CoeusHistory getMonthlyHistory(final TethysDate pDate) {
         /* Determine the date of the month */
-        TethysDate myDate = theCalendar.getEndOfMonth(pDate);
-        Month myMonth = myDate.getMonthValue();
+        final TethysDate myDate = theCalendar.getEndOfMonth(pDate);
+        final Month myMonth = myDate.getMonthValue();
 
         /* Look up an existing history */
         CoeusHistory myHistory = theMonthlyHistories.get(myMonth);
@@ -282,7 +282,7 @@ public class CoeusMarketAnnual
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theMarket.toString());
         myBuilder.append('@');
         myBuilder.append(theDate);

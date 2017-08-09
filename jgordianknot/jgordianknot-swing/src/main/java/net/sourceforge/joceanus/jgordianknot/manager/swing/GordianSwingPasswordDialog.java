@@ -68,13 +68,13 @@ public class GordianSwingPasswordDialog
         super(new TethysSwingGuiFactory(), pNeedConfirm);
 
         /* Initialise the dialog */
-        JFrame myParent = pFactory.getFrame();
+        final JFrame myParent = pFactory.getFrame();
         theDialog = new JDialog(myParent, pTitle, true);
 
         /* If we are confirming */
         if (pNeedConfirm) {
             /* Set a focus traversal policy */
-            JComponent myNode = getContainer().getNode();
+            final JComponent myNode = getContainer().getNode();
             myNode.setFocusTraversalPolicy(new TraversalPolicy());
             myNode.setFocusTraversalPolicyProvider(true);
         }
@@ -124,7 +124,7 @@ public class GordianSwingPasswordDialog
             /* else we must use invokeAndWait */
         } else {
             try {
-                SwingUtilities.invokeAndWait(() -> pDialog.showDialog());
+                SwingUtilities.invokeAndWait(pDialog::showDialog);
             } catch (InvocationTargetException e) {
                 LOGGER.error("Failed to display dialog", e);
             } catch (InterruptedException e) {

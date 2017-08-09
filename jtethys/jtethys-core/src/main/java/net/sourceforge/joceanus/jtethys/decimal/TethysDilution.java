@@ -123,7 +123,7 @@ public class TethysDilution
      */
     public TethysRatio getInverseRatio() {
         /* Calculate the new dilution */
-        TethysRatio myRatio = new TethysRatio(this);
+        final TethysRatio myRatio = new TethysRatio(this);
         return myRatio.getInverseRatio();
     }
 }

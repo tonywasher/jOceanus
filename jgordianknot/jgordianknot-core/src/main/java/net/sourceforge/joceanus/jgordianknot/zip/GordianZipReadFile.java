@@ -171,14 +171,14 @@ public class GordianZipReadFile {
         }
 
         /* Access the keySet */
-        GordianKeySet myKeySet = pHash.getKeySet();
+        final GordianKeySet myKeySet = pHash.getKeySet();
 
         /* Parse the decrypted header */
-        byte[] myBytes = myKeySet.decryptBytes(theHeader);
+        final byte[] myBytes = myKeySet.decryptBytes(theHeader);
         theContents = new GordianZipFileContents(TethysDataConverter.byteArrayToString(myBytes));
 
         /* Access the security details */
-        GordianZipFileEntry myHeader = theContents.getHeader();
+        final GordianZipFileEntry myHeader = theContents.getHeader();
 
         /* Reject if the entry is not found */
         if (myHeader == null) {
@@ -186,8 +186,8 @@ public class GordianZipReadFile {
         }
 
         /* Obtain encoded keySet */
-        byte[] myHashBytes = myHeader.getHash();
-        GordianKeySetHash myHash = pHash.attemptPassword(myHashBytes);
+        final byte[] myHashBytes = myHeader.getHash();
+        final GordianKeySetHash myHash = pHash.attemptPassword(myHashBytes);
 
         /* Reject if wrong password */
         if (myHash == null) {
@@ -213,7 +213,7 @@ public class GordianZipReadFile {
         /* Loop */
         for (;;) {
             /* Read the header entry */
-            int myRead = pHdrStream.read(myBuffer, myLen, mySpace);
+            final int myRead = pHdrStream.read(myBuffer, myLen, mySpace);
             if (myRead == -1) {
                 break;
             }
@@ -251,12 +251,12 @@ public class GordianZipReadFile {
             }
 
             /* Open the zip file for reading */
-            FileInputStream myInFile = new FileInputStream(theZipFile);
-            BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            ZipInputStream myZipFile = new ZipInputStream(myInBuffer);
+            final FileInputStream myInFile = new FileInputStream(theZipFile);
+            final BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
+            final ZipInputStream myZipFile = new ZipInputStream(myInBuffer);
 
             /* Access the name of the file entry */
-            String myName = pFile.getZipName();
+            final String myName = pFile.getZipName();
             ZipEntry myEntry;
 
             /* Loop through the Zip file entries */
@@ -284,7 +284,7 @@ public class GordianZipReadFile {
             /* If the file is encrypted */
             if (isEncrypted()) {
                 /* Create a StreamManager */
-                GordianStreamManager myManager = new GordianStreamManager(theKeySet);
+                final GordianStreamManager myManager = new GordianStreamManager(theKeySet);
 
                 /* Build input stream */
                 myCurrent = myManager.buildInputStream(pFile.buildInputList(), myCurrent);

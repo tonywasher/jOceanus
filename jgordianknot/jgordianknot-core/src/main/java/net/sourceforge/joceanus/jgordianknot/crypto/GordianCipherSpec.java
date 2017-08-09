@@ -77,7 +77,7 @@ public abstract class GordianCipherSpec<T> {
         }
 
         /* Access the target cipherSpec */
-        GordianCipherSpec<?> myThat = (GordianCipherSpec<?>) pThat;
+        final GordianCipherSpec<?> myThat = (GordianCipherSpec<?>) pThat;
 
         /* Check KeyType */
         return theKeyType == myThat.getKeyType();
@@ -299,7 +299,7 @@ public abstract class GordianCipherSpec<T> {
             }
 
             /* Access the target cipherSpec */
-            GordianSymCipherSpec myThat = (GordianSymCipherSpec) pThat;
+            final GordianSymCipherSpec myThat = (GordianSymCipherSpec) pThat;
 
             /* Check KeyType */
             if (getKeyType() != myThat.getKeyType()) {

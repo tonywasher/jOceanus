@@ -74,7 +74,7 @@
     <packageMain/>
     <appLibDir/>
     <BouncyCastleVersion>1.57</BouncyCastleVersion>
-    <SvnKitVersion>1.8.15</SvnKitVersion>
+    <SvnKitVersion>1.9.0</SvnKitVersion>
     <JGitVersion>4.8.0.201706111038-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20170516</JSONVersion>
@@ -167,6 +167,23 @@
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
             <version>8.1</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.8</version>
+        <dependencies>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd.core</artifactId>
+            <version>5.8.1</version>
+          </dependency>
+          <dependency>
+            <groupId>net.sourceforge.pmd</groupId>
+            <artifactId>pmd.java</artifactId>
+            <version>5.8.1</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -311,11 +328,6 @@
           <excludePackageNames>SevenZip*</excludePackageNames>
         </configuration>
       </plugin>
-      <!--<plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javancss-maven-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>-->
     </plugins>
   </reporting>
 </project>

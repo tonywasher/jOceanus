@@ -134,12 +134,12 @@ public final class SP800HashDRBG
         theEntropy = pEntropy;
 
         /* Create variable Hash */
-        byte[] myEntropy = theEntropy.getEntropy();
-        byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);
+        final byte[] myEntropy = theEntropy.getEntropy();
+        final byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);
         theV = hashDerive(mySeed, SEED_LENGTH);
 
         /* Create constant hash */
-        byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
+        final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
         theC = hashDerive(myTempH, SEED_LENGTH);
 
         /* Initialise reSeed counter */
@@ -150,12 +150,12 @@ public final class SP800HashDRBG
     @Override
     public void reseed(final byte[] pXtraBytes) {
         /* Create variable Hash */
-        byte[] myEntropy = theEntropy.getEntropy();
-        byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);
+        final byte[] myEntropy = theEntropy.getEntropy();
+        final byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);
         theV = hashDerive(mySeed, SEED_LENGTH);
 
         /* Create constant hash */
-        byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
+        final byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
         theC = hashDerive(myTempH, SEED_LENGTH);
 
         /* re-initialise reSeed counter */
@@ -168,7 +168,7 @@ public final class SP800HashDRBG
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
-        int myNumBits = pOutput.length << BIT_SHIFT;
+        final int myNumBits = pOutput.length << BIT_SHIFT;
         if (myNumBits > SP800Factory.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
                                                + SP800Factory.MAX_BITS_REQUEST);
@@ -187,15 +187,15 @@ public final class SP800HashDRBG
             /* else if we have extra bytes */
         } else if (pXtraBytes != null) {
             /* Hash the new input and add to variable hash */
-            byte[] newInput = Arrays.concatenate(XTRA_ID, theV.getBuffer(), pXtraBytes);
+            final byte[] newInput = Arrays.concatenate(XTRA_ID, theV.getBuffer(), pXtraBytes);
             theV.addTo(theDigest.finish(newInput));
         }
 
         /* Generate the requested bits */
-        byte[] myResult = hashgen(theV.getBuffer(), myNumBits);
+        final byte[] myResult = hashgen(theV.getBuffer(), myNumBits);
 
         /* Adjust the variable hash */
-        byte[] myTempH = Arrays.concatenate(REHASH_ID, theV.getBuffer());
+        final byte[] myTempH = Arrays.concatenate(REHASH_ID, theV.getBuffer());
 
         /* Add the hash and constant */
         theV.addTo(theDigest.finish(myTempH));
@@ -223,18 +223,18 @@ public final class SP800HashDRBG
     private byte[] hashgen(final byte[] pInputBytes,
                            final int pNumBits) {
         /* Determine # of iterations */
-        int mySize = theDigest.getDigestSize();
-        int myLen = pNumBits >> BIT_SHIFT;
+        final int mySize = theDigest.getDigestSize();
+        final int myLen = pNumBits >> BIT_SHIFT;
 
         /* Allocate counters */
-        GordianByteArrayInteger myData = new GordianByteArrayInteger(pInputBytes);
-        byte[] myOutput = new byte[myLen];
+        final GordianByteArrayInteger myData = new GordianByteArrayInteger(pInputBytes);
+        final byte[] myOutput = new byte[myLen];
 
         /* while we need to generate more bytes */
         int myBuilt = 0;
         while (myBuilt < myLen) {
             /* Calculate the digest */
-            byte[] myDigest = theDigest.finish(myData.getBuffer());
+            final byte[] myDigest = theDigest.finish(myData.getBuffer());
 
             /* Determine how many bytes of this hash should be used */
             int myNeeded = myLen
@@ -264,15 +264,15 @@ public final class SP800HashDRBG
     private GordianByteArrayInteger hashDerive(final byte[] pSeedMaterial,
                                                final int pSeedLength) {
         /* Determine sizes */
-        int mySize = theDigest.getDigestSize();
-        int myLen = pSeedLength >> BIT_SHIFT;
+        final int mySize = theDigest.getDigestSize();
+        final int myLen = pSeedLength >> BIT_SHIFT;
         byte myCount = 1;
 
         /* Create output buffer */
-        byte[] myOutput = new byte[myLen];
+        final byte[] myOutput = new byte[myLen];
 
         /* Create seed array */
-        byte[] mySeed = new byte[TethysDataConverter.BYTES_INTEGER];
+        final byte[] mySeed = new byte[TethysDataConverter.BYTES_INTEGER];
         int mySeedLength = pSeedLength;
         for (int i = mySeed.length - 1; i >= 0; i--) {
             mySeed[i] = (byte) mySeedLength;
@@ -289,7 +289,7 @@ public final class SP800HashDRBG
             theDigest.update(mySeed);
 
             /* Create digest with the seed material */
-            byte[] myDigest = theDigest.finish(pSeedMaterial);
+            final byte[] myDigest = theDigest.finish(pSeedMaterial);
 
             /* Determine how many bytes of this hash should be used */
             int myNeeded = myLen

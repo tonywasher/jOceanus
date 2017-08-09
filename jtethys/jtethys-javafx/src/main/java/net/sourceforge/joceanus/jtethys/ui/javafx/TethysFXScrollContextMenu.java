@@ -112,7 +112,7 @@ public class TethysFXScrollContextMenu<T>
     /**
      * First item to show in list.
      */
-    private int theFirstIndex = 0;
+    private int theFirstIndex;
 
     /**
      * Max number of items to display in popUp.
@@ -236,7 +236,7 @@ public class TethysFXScrollContextMenu<T>
 
         /* Allocate the list */
         theMenuItems = new ArrayList<>();
-        VBox myBox = new VBox();
+        final VBox myBox = new VBox();
         myBox.setSpacing(2);
         myBox.setPadding(new Insets(2, 2, 2, 2));
         theActiveItems = myBox.getChildren();
@@ -270,8 +270,8 @@ public class TethysFXScrollContextMenu<T>
         theStage.initModality(Modality.NONE);
 
         /* Create the scene */
-        Scene myScene = new Scene(theContainer);
-        ObservableList<String> mySheets = myScene.getStylesheets();
+        final Scene myScene = new Scene(theContainer);
+        final ObservableList<String> mySheets = myScene.getStylesheets();
         mySheets.add(CSS_STYLE);
         theStage.setScene(myScene);
 
@@ -343,14 +343,14 @@ public class TethysFXScrollContextMenu<T>
         theMaxDisplayItems = pMaxDisplayItems;
 
         /* Loop through the children */
-        Iterator<TethysFXScrollElement> myIterator = theMenuItems.iterator();
+        final Iterator<TethysFXScrollElement> myIterator = theMenuItems.iterator();
         while (myIterator.hasNext()) {
-            TethysFXScrollElement myChild = myIterator.next();
+            final TethysFXScrollElement myChild = myIterator.next();
 
             /* If this is a subMenu */
             if (myChild instanceof TethysFXScrollSubMenu) {
                 /* Pass call on */
-                TethysFXScrollSubMenu<?> mySubMenu = (TethysFXScrollSubMenu<?>) myChild;
+                final TethysFXScrollSubMenu<?> mySubMenu = (TethysFXScrollSubMenu<?>) myChild;
                 mySubMenu.setMaxDisplayItems(pMaxDisplayItems);
             }
         }
@@ -373,7 +373,7 @@ public class TethysFXScrollContextMenu<T>
         determineSize();
 
         /* determine location to display */
-        Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+        final Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
         /* Show menu */
         showMenuAtLocation(myLocation);
@@ -395,8 +395,8 @@ public class TethysFXScrollContextMenu<T>
         determineSize();
 
         /* determine location to display */
-        Point2D myRequest = new Point2D(pX, pY);
-        Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
+        final Point2D myRequest = new Point2D(pX, pY);
+        final Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
 
         /* Show menu */
         showMenuAtLocation(myLocation);
@@ -457,7 +457,7 @@ public class TethysFXScrollContextMenu<T>
             /* record selection */
             theSelectedItem = pItem;
             if (theSelectedItem instanceof TethysScrollMenuToggleItem) {
-                TethysScrollMenuToggleItem<?> myItem = (TethysScrollMenuToggleItem<?>) theSelectedItem;
+                final TethysScrollMenuToggleItem<?> myItem = (TethysScrollMenuToggleItem<?>) theSelectedItem;
                 myItem.toggleSelected();
                 doCloseMenu = closeOnToggle;
             }
@@ -546,7 +546,7 @@ public class TethysFXScrollContextMenu<T>
      */
     private void handleScroll(final ScrollEvent pEvent) {
         /* request the scroll */
-        double myDelta = pEvent.getDeltaY() / pEvent.getMultiplierY();
+        final double myDelta = pEvent.getDeltaY() / pEvent.getMultiplierY();
         requestScroll((int) -myDelta);
 
         /* Consume the event */
@@ -634,7 +634,7 @@ public class TethysFXScrollContextMenu<T>
      */
     private void showIndex(final int pIndex) {
         /* Ignore if index is out of range */
-        int myCount = theMenuItems.size();
+        final int myCount = theMenuItems.size();
         if ((pIndex < 0)
             || (pIndex >= myCount)) {
             return;
@@ -648,9 +648,9 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* If index is beyond last visible index */
-        int myLastIndex = theFirstIndex
-                          + theMaxDisplayItems
-                          - 1;
+        final int myLastIndex = theFirstIndex
+                                + theMaxDisplayItems
+                                - 1;
         if (myLastIndex < pIndex) {
             /* Scroll window downwards */
             requestScroll(pIndex - myLastIndex);
@@ -700,7 +700,7 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysFXScrollMenuItem<T> myItem = new TethysFXScrollMenuItem<>(this, pValue, pName, pGraphic);
+        final TethysFXScrollMenuItem<T> myItem = new TethysFXScrollMenuItem<>(this, pValue, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -723,7 +723,7 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* Create menu */
-        TethysFXScrollSubMenu<T> myMenu = new TethysFXScrollSubMenu<>(this, pName, pGraphic);
+        final TethysFXScrollSubMenu<T> myMenu = new TethysFXScrollSubMenu<>(this, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myMenu);
@@ -746,7 +746,7 @@ public class TethysFXScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysFXScrollToggleItem<T> myItem = new TethysFXScrollToggleItem<>(this, pValue, pName);
+        final TethysFXScrollToggleItem<T> myItem = new TethysFXScrollToggleItem<>(this, pValue, pName);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -773,8 +773,8 @@ public class TethysFXScrollContextMenu<T>
         if (needReBuild
             && !theMenuItems.isEmpty()) {
             /* Access the number of entries and the scroll count */
-            int myCount = theMenuItems.size();
-            int myScroll = Math.min(theMaxDisplayItems, myCount);
+            final int myCount = theMenuItems.size();
+            final int myScroll = Math.min(theMaxDisplayItems, myCount);
 
             /* Remove all items */
             theActiveItems.clear();
@@ -815,7 +815,7 @@ public class TethysFXScrollContextMenu<T>
                 /* Calculate size of menu */
                 theStage.show();
                 theStage.close();
-                double myWidth = theStage.getWidth();
+                final double myWidth = theStage.getWidth();
 
                 /* Remove all items */
                 theActiveItems.clear();
@@ -844,7 +844,7 @@ public class TethysFXScrollContextMenu<T>
                 /* Calculate size of menu */
                 theStage.show();
                 theStage.close();
-                double myHeight = theStage.getHeight();
+                final double myHeight = theStage.getHeight();
 
                 /* Set visibility of scroll items */
                 theUpItem.setVisible(theFirstIndex > 0);
@@ -869,7 +869,7 @@ public class TethysFXScrollContextMenu<T>
         /* If we are already built */
         if (!needReBuild) {
             /* Access the number of entries */
-            int myCount = theMenuItems.size();
+            final int myCount = theMenuItems.size();
 
             /* Reset the children */
             closeChildren();
@@ -881,8 +881,8 @@ public class TethysFXScrollContextMenu<T>
             theActiveItems.remove(0);
 
             /* Add the final item */
-            int myLast = theFirstIndex + theMaxDisplayItems;
-            TethysFXScrollElement myItem = theMenuItems.get(myLast);
+            final int myLast = theFirstIndex + theMaxDisplayItems;
+            final TethysFXScrollElement myItem = theMenuItems.get(myLast);
             theActiveItems.add(myItem);
 
             /* Adjust down item */
@@ -909,7 +909,7 @@ public class TethysFXScrollContextMenu<T>
             theActiveItems.remove(theMaxDisplayItems - 1);
 
             /* Add the initial item */
-            TethysFXScrollElement myItem = theMenuItems.get(theFirstIndex - 1);
+            final TethysFXScrollElement myItem = theMenuItems.get(theFirstIndex - 1);
             theActiveItems.add(0, myItem);
 
             /* Adjust up item */
@@ -928,8 +928,8 @@ public class TethysFXScrollContextMenu<T>
         /* If this is a scroll downwards */
         if (pDelta > 0) {
             /* If we can scroll downwards */
-            int myCount = theMenuItems.size();
-            int mySpace = myCount - theFirstIndex - theMaxDisplayItems;
+            final int myCount = theMenuItems.size();
+            final int mySpace = myCount - theFirstIndex - theMaxDisplayItems;
             int myScroll = Math.min(mySpace, pDelta);
 
             /* While we have space */
@@ -1011,7 +1011,7 @@ public class TethysFXScrollContextMenu<T>
          * Add Menu icon.
          */
         protected void addMenuIcon() {
-            Label myLabel = new Label();
+            final Label myLabel = new Label();
             myLabel.setGraphic(TethysFXArrowIcon.RIGHT.getArrow());
             setRight(myLabel);
         }

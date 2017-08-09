@@ -47,7 +47,7 @@ public class TethysFXSplitTreeManager<T>
         super(pFactory);
 
         /* Store HTML pane in border pane */
-        TethysFXBorderPaneManager myHTMLPane = getHTMLPane();
+        final TethysFXBorderPaneManager myHTMLPane = getHTMLPane();
         myHTMLPane.setCentre(getHTMLManager());
 
         /* Create the split pane */

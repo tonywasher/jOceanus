@@ -122,7 +122,7 @@ public class GordianRandomSpec {
         }
 
         /* Access the targetSpec */
-        GordianRandomSpec myThat = (GordianRandomSpec) pThat;
+        final GordianRandomSpec myThat = (GordianRandomSpec) pThat;
 
         /* Check KeyType */
         if (theRandomType != myThat.getRandomType()) {

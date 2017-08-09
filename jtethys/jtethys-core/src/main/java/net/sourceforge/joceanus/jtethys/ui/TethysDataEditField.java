@@ -300,7 +300,7 @@ public interface TethysDataEditField<T, N, I>
          */
         protected void handleCmdMenuClosed() {
             /* If we selected a value */
-            TethysScrollMenuItem<String> mySelected = theCmdMenu.getSelectedItem();
+            final TethysScrollMenuItem<String> mySelected = theCmdMenu.getSelectedItem();
             if (mySelected != null) {
                 /* fire new command Event */
                 theEventManager.fireEvent(TethysUIEvent.NEWCOMMAND, mySelected.getValue());
@@ -481,9 +481,9 @@ public interface TethysDataEditField<T, N, I>
             /* Protect to catch parsing errors */
             try {
                 /* Parse the value */
-                T myValue = pNewValue == null
-                                              ? null
-                                              : theConverter.parseEditedValue(pNewValue);
+                final T myValue = pNewValue == null
+                                                    ? null
+                                                    : theConverter.parseEditedValue(pNewValue);
 
                 /* Invoke the validator and reject value if necessary */
                 theErrorText = theValidator.apply(myValue);

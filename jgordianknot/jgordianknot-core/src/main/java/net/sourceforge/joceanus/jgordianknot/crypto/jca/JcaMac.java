@@ -50,11 +50,10 @@ public final class JcaMac
      * @param pFactory the Security Factory
      * @param pMacSpec the MacSpec
      * @param pMac the MAC
-     * @throws OceanusException on error
      */
     protected JcaMac(final JcaFactory pFactory,
                      final GordianMacSpec pMacSpec,
-                     final Mac pMac) throws OceanusException {
+                     final Mac pMac) {
         super(pFactory, pMacSpec);
         theMac = pMac;
     }
@@ -68,7 +67,7 @@ public final class JcaMac
     public void initMac(final GordianKey<GordianMacSpec> pKey,
                         final byte[] pIV) throws OceanusException {
         /* Access and validate the key */
-        JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(pKey);
+        final JcaKey<GordianMacSpec> myKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Protect against exceptions */

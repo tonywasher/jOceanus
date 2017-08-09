@@ -360,8 +360,8 @@ public class TethysSwingTableCellFactory<C, R> {
             /* Apply validator to text field */
             if (theEditControl instanceof TethysSwingTextEditField
                 && theColumn instanceof TethysSwingTableValidatedColumn) {
-                TethysSwingTextEditField<T> myField = (TethysSwingTextEditField<T>) theEditControl;
-                TethysSwingTableValidatedColumn<T, C, R> myColumn = (TethysSwingTableValidatedColumn<T, C, R>) theColumn;
+                final TethysSwingTextEditField<T> myField = (TethysSwingTextEditField<T>) theEditControl;
+                final TethysSwingTableValidatedColumn<T, C, R> myColumn = (TethysSwingTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             }
         }
@@ -468,15 +468,15 @@ public class TethysSwingTableCellFactory<C, R> {
         @Override
         public void repaintColumnCell(final C pId) {
             /* Note the the cell has been updated */
-            TethysSwingTableManager<C, R> myTable = theColumn.getTable();
-            TethysSwingTableColumn<?, C, R> myCol = myTable.getColumn(pId);
+            final TethysSwingTableManager<C, R> myTable = theColumn.getTable();
+            final TethysSwingTableColumn<?, C, R> myCol = myTable.getColumn(pId);
             myTable.getTableModel().fireTableCellUpdated(theRowIndex, myCol.getColumnIndex());
         }
 
         @Override
         public void repaintCellRow() {
             /* Note the the cell has been updated */
-            TethysSwingTableManager<C, R> myTable = theColumn.getTable();
+            final TethysSwingTableManager<C, R> myTable = theColumn.getTable();
             myTable.getTableModel().fireTableRowUpdated(theRowIndex);
         }
 
@@ -501,7 +501,7 @@ public class TethysSwingTableCellFactory<C, R> {
              */
             protected TethysSwingTableCellEditor() {
                 /* Add listeners */
-                TethysEventRegistrar<TethysUIEvent> myRegistrar = theEditControl.getEventRegistrar();
+                final TethysEventRegistrar<TethysUIEvent> myRegistrar = theEditControl.getEventRegistrar();
                 myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> stopCellEditing());
                 myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             }
@@ -518,11 +518,11 @@ public class TethysSwingTableCellFactory<C, R> {
                                                          final int pRow,
                                                          final int pCol) {
                 /* Determine the active row */
-                int myRow = pTable.convertRowIndexToModel(pRow);
+                final int myRow = pTable.convertRowIndexToModel(pRow);
                 setActiveRow(myRow);
 
                 /* Determine cell rectangle */
-                Point myTableLoc = pTable.getLocationOnScreen();
+                final Point myTableLoc = pTable.getLocationOnScreen();
                 Rectangle myCellLoc = pTable.getCellRect(pRow, pCol, false);
 
                 /* Calculate rectangle */
@@ -586,14 +586,14 @@ public class TethysSwingTableCellFactory<C, R> {
                                                             final int pRow,
                                                             final int pCol) {
                 /* Store the location */
-                int myRowIndex = pTable.convertRowIndexToModel(pRow);
+                final int myRowIndex = pTable.convertRowIndexToModel(pRow);
                 setActiveRow(myRowIndex);
                 isSelected = pSelected;
 
                 /* Access table details */
-                TethysSwingTableManager<C, R> myTable = getTable();
-                C myId = getColumnId();
-                R myRow = getActiveRow();
+                final TethysSwingTableManager<C, R> myTable = getTable();
+                final C myId = getColumnId();
+                final R myRow = getActiveRow();
 
                 /* Set changed and disabled attributes */
                 theRenderControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
@@ -1049,7 +1049,7 @@ public class TethysSwingTableCellFactory<C, R> {
                                            final TethysSwingGuiFactory pFactory,
                                            final Class<T> pClass) {
             super(pColumn, pFactory.newIconField(), pClass);
-            Supplier<TethysIconMapSet<T>> mySupplier = () -> getColumn().getIconMapSet().apply(getActiveRow());
+            final Supplier<TethysIconMapSet<T>> mySupplier = () -> getColumn().getIconMapSet().apply(getActiveRow());
             getControl().setIconMapSet(mySupplier);
             getRenderControl().setIconMapSet(mySupplier);
         }

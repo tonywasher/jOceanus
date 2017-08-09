@@ -85,7 +85,7 @@ public final class BouncySymKeyCipher
         /* If we need an IV */
         if (needsIV()) {
             /* Create a random IV */
-            int myLen = theCipher.getBlockSize();
+            final int myLen = theCipher.getBlockSize();
             myIV = new byte[myLen];
             getRandom().nextBytes(myIV);
         }
@@ -99,9 +99,9 @@ public final class BouncySymKeyCipher
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
+        final BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
-        boolean useIV = needsIV();
+        final boolean useIV = needsIV();
 
         /* Initialise the cipher */
         CipherParameters myParms = new KeyParameter(myKey.getKey());

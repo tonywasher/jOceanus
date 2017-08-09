@@ -193,11 +193,11 @@ public class CoeusStatementSelect<N, I>
         theState = new FilterState();
 
         /* Create the labels */
-        TethysLabel<N, I> myTotLabel = pFactory.newLabel(NLS_TOTALS);
-        TethysLabel<N, I> myMktLabel = pFactory.newLabel(NLS_MARKET);
-        TethysLabel<N, I> myTypLabel = pFactory.newLabel(NLS_TYPE);
-        TethysLabel<N, I> myMonLabel = pFactory.newLabel(NLS_MONTH);
-        TethysLabel<N, I> myLonLabel = pFactory.newLabel(NLS_LOAN);
+        final TethysLabel<N, I> myTotLabel = pFactory.newLabel(NLS_TOTALS);
+        final TethysLabel<N, I> myMktLabel = pFactory.newLabel(NLS_MARKET);
+        final TethysLabel<N, I> myTypLabel = pFactory.newLabel(NLS_TYPE);
+        final TethysLabel<N, I> myMonLabel = pFactory.newLabel(NLS_MONTH);
+        final TethysLabel<N, I> myLonLabel = pFactory.newLabel(NLS_LOAN);
 
         /* Create Card Pane */
         theCardPane = pFactory.newCardPane();
@@ -285,7 +285,7 @@ public class CoeusStatementSelect<N, I>
         pMenu.removeAllItems();
 
         /* Access the selected market */
-        CoeusMarketProvider myProvider = theState.getProvider();
+        final CoeusMarketProvider myProvider = theState.getProvider();
 
         /* Loop through the totals */
         for (CoeusTotalSet myTotals : CoeusTotalSet.values()) {
@@ -338,7 +338,7 @@ public class CoeusStatementSelect<N, I>
      */
     private void buildMarketMenu() {
         /* Create builder */
-        TethysScrollMenu<CoeusMarketProvider, ?> myBuilder = theMarketButton.getMenu();
+        final TethysScrollMenu<CoeusMarketProvider, ?> myBuilder = theMarketButton.getMenu();
 
         /* Loop through the markets */
         for (CoeusMarketProvider myMarket : CoeusMarketProvider.values()) {
@@ -352,7 +352,7 @@ public class CoeusStatementSelect<N, I>
      */
     private void buildMarketTypeMenu() {
         /* Create builder */
-        TethysScrollMenu<CoeusMarketType, ?> myBuilder = theMarketTypeButton.getMenu();
+        final TethysScrollMenu<CoeusMarketType, ?> myBuilder = theMarketTypeButton.getMenu();
 
         /* Loop through the marketTypes */
         for (CoeusMarketType myType : CoeusMarketType.values()) {
@@ -586,9 +586,9 @@ public class CoeusStatementSelect<N, I>
          */
         private boolean setDate(final TethysDate pDate) {
             /* Obtain the date and adjust it */
-            TethysDate myDate = pDate == null
-                                              ? null
-                                              : new TethysDate(pDate);
+            final TethysDate myDate = pDate == null
+                                                    ? null
+                                                    : new TethysDate(pDate);
 
             /* Record any change and report change */
             if (!MetisDataDifference.isEqual(pDate, theSelectedDate)) {
@@ -733,8 +733,8 @@ public class CoeusStatementSelect<N, I>
          * Allocate new annual filter.
          */
         private void allocateNewAnnualFilter() {
-            TethysDate myAnnualDate = theCalendar.getEndOfYear(theSelectedDate);
-            CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theCache.getAnnual(theProvider, myAnnualDate), theSelectedDate);
+            final TethysDate myAnnualDate = theCalendar.getEndOfYear(theSelectedDate);
+            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theCache.getAnnual(theProvider, myAnnualDate), theSelectedDate);
             if (theMonth != null
                 && !myFilter.availableMonth(theMonth)) {
                 theMonth = null;
@@ -758,7 +758,7 @@ public class CoeusStatementSelect<N, I>
          * Allocate new snapShot filter.
          */
         private void allocateNewSnapShotFilter() {
-            CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theCache.getSnapShot(theProvider, theSelectedDate));
+            final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theCache.getSnapShot(theProvider, theSelectedDate));
             if (theLoan != null
                 && !myFilter.availableLoan(theLoan)) {
                 theLoan = null;
@@ -779,9 +779,9 @@ public class CoeusStatementSelect<N, I>
             }
 
             /* Loop through the loans */
-            Iterator<CoeusLoan> myIterator = ((CoeusSnapShotFilter) theFilter).loanIterator();
+            final Iterator<CoeusLoan> myIterator = ((CoeusSnapShotFilter) theFilter).loanIterator();
             while (myIterator.hasNext()) {
-                CoeusLoan myLoan = myIterator.next();
+                final CoeusLoan myLoan = myIterator.next();
                 /* Create a new MenuItem for the loan */
                 pBuilder.addItem(myLoan);
             }

@@ -141,8 +141,8 @@ public class TethysMoney
     public static TethysMoney getWholeUnits(final long pUnits,
                                             final Currency pCurrency) {
         /* Allocate the money */
-        TethysMoney myResult = new TethysMoney(pCurrency);
-        int myScale = myResult.scale();
+        final TethysMoney myResult = new TethysMoney(pCurrency);
+        final int myScale = myResult.scale();
         myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
         return myResult;
     }
@@ -154,8 +154,8 @@ public class TethysMoney
      */
     public static TethysMoney getWholeUnits(final long pUnits) {
         /* Allocate the money */
-        TethysMoney myResult = new TethysMoney();
-        int myScale = myResult.scale();
+        final TethysMoney myResult = new TethysMoney();
+        final int myScale = myResult.scale();
         myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
         return myResult;
     }
@@ -222,7 +222,7 @@ public class TethysMoney
         }
 
         /* Create the new Money */
-        TethysMoney myResult = new TethysMoney(pCurrency);
+        final TethysMoney myResult = new TethysMoney(pCurrency);
         myResult.calculateProduct(this, pRate);
         return myResult;
     }
@@ -265,7 +265,7 @@ public class TethysMoney
      */
     public TethysMoney grossValueAtRate(final TethysRate pRate) {
         /* Calculate the Gross corresponding to this net value at the rate */
-        TethysRatio myRatio = pRate.getRemainingRate().getInverseRatio();
+        final TethysRatio myRatio = pRate.getRemainingRate().getInverseRatio();
         return new TethysMoney(this, myRatio);
     }
 
@@ -277,7 +277,7 @@ public class TethysMoney
      */
     public TethysMoney taxCreditAtRate(final TethysRate pRate) {
         /* Calculate the Tax Credit corresponding to this net value at the rate */
-        TethysRatio myRatio = new TethysRatio(pRate, pRate.getRemainingRate());
+        final TethysRatio myRatio = new TethysRatio(pRate, pRate.getRemainingRate());
         return new TethysMoney(this, myRatio);
     }
 
@@ -295,7 +295,7 @@ public class TethysMoney
         }
 
         /* Calculate the defined ratio of this value */
-        TethysRatio myRatio = new TethysRatio(pWeight, pTotal);
+        final TethysRatio myRatio = new TethysRatio(pWeight, pTotal);
         return new TethysMoney(this, myRatio);
     }
 
@@ -313,7 +313,7 @@ public class TethysMoney
         }
 
         /* Calculate the defined ratio of this value */
-        TethysRatio myRatio = new TethysRatio(pWeight, pTotal);
+        final TethysRatio myRatio = new TethysRatio(pWeight, pTotal);
         return new TethysMoney(this, myRatio);
     }
 
@@ -333,7 +333,7 @@ public class TethysMoney
         }
 
         /* Cast as money */
-        TethysMoney myThat = (TethysMoney) pThat;
+        final TethysMoney myThat = (TethysMoney) pThat;
 
         /* Check currency */
         if (!theCurrency.equals(myThat.getCurrency())) {

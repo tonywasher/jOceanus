@@ -95,7 +95,7 @@ public final class BouncyDigest
 
     @Override
     public byte[] finish() {
-        byte[] myResult = new byte[getDigestSize()];
+        final byte[] myResult = new byte[getDigestSize()];
         theDigest.doFinal(myResult, 0);
         return myResult;
     }

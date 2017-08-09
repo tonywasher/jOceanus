@@ -83,11 +83,11 @@ public class TethysFXAbout
         theDialog.initModality(Modality.WINDOW_MODAL);
 
         /* Define style of Box */
-        Region myPanel = getNode();
+        final Region myPanel = getNode();
         myPanel.getStyleClass().add("-jtethys-about");
 
         /* Create the scene and attach it */
-        Scene myScene = new Scene(myPanel);
+        final Scene myScene = new Scene(myPanel);
         theGuiFactory.registerScene(myScene);
         theDialog.setScene(myScene);
     }

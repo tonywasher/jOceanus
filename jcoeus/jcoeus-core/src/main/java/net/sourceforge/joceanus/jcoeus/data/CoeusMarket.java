@@ -164,9 +164,9 @@ public abstract class CoeusMarket
      */
     public void checkLoans() throws OceanusException {
         /* Loop through the loans */
-        Iterator<CoeusLoan> myIterator = loanIterator();
+        final Iterator<CoeusLoan> myIterator = loanIterator();
         while (myIterator.hasNext()) {
-            CoeusLoan myLoan = myIterator.next();
+            final CoeusLoan myLoan = myIterator.next();
 
             /* Check the loan */
             myLoan.checkLoan();
@@ -180,7 +180,7 @@ public abstract class CoeusMarket
      * @throws OceanusException on error
      */
     public CoeusLoan findLoanById(final String pId) throws OceanusException {
-        CoeusLoan myLoan = getLoanById(pId);
+        final CoeusLoan myLoan = getLoanById(pId);
         if (myLoan == null) {
             throw new CoeusDataException(pId, "Unrecognised LoanId");
         }
@@ -203,7 +203,7 @@ public abstract class CoeusMarket
      */
     public void recordLoan(final CoeusLoan pLoan) throws OceanusException {
         /* Ensure that the id is unique */
-        String myId = pLoan.getLoanId();
+        final String myId = pLoan.getLoanId();
         if (theLoanMap.get(myId) != null) {
             throw new CoeusDataException(myId, "Duplicate LoanId");
         }
@@ -217,7 +217,7 @@ public abstract class CoeusMarket
      * @return the next transactionId
      */
     public Integer getNextTransactionId() {
-        Integer myNext = theNextId;
+        final Integer myNext = theNextId;
         theNextId = theNextId + 1;
         return myNext;
     }
@@ -235,9 +235,9 @@ public abstract class CoeusMarket
      */
     private void resetLoans() {
         /* Loop through the loans */
-        Iterator<CoeusLoan> myIterator = theLoanMap.values().iterator();
+        final Iterator<CoeusLoan> myIterator = theLoanMap.values().iterator();
         while (myIterator.hasNext()) {
-            CoeusLoan myLoan = myIterator.next();
+            final CoeusLoan myLoan = myIterator.next();
             myLoan.clearHistory();
         }
     }
@@ -260,15 +260,15 @@ public abstract class CoeusMarket
         theTransactions.sort((l, r) -> l.getDate().compareTo(r.getDate()));
 
         /* Loop through the transactions */
-        Iterator<CoeusTransaction> myIterator = transactionIterator();
+        final Iterator<CoeusTransaction> myIterator = transactionIterator();
         while (myIterator.hasNext()) {
-            CoeusTransaction myTransaction = myIterator.next();
+            final CoeusTransaction myTransaction = myIterator.next();
 
             /* Adjust the history */
             theHistory.addTransactionToHistory(myTransaction);
 
             /* If the item has a loan */
-            CoeusLoan myLoan = myTransaction.getLoan();
+            final CoeusLoan myLoan = myTransaction.getLoan();
             if (myLoan != null) {
                 /* Add to the loans history */
                 myLoan.addTransactionToHistory(myTransaction);

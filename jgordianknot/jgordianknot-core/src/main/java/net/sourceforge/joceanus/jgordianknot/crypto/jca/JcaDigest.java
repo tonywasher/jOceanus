@@ -52,10 +52,9 @@ public final class JcaDigest
      * Constructor.
      * @param pDigestSpec the digestSpec
      * @param pDigest the digest
-     * @throws OceanusException on error
      */
     protected JcaDigest(final GordianDigestSpec pDigestSpec,
-                        final MessageDigest pDigest) throws OceanusException {
+                        final MessageDigest pDigest) {
         theDigestSpec = pDigestSpec;
         theDigest = pDigest;
     }
@@ -158,8 +157,8 @@ public final class JcaDigest
      */
     protected static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Access digest details */
-        GordianDigestType myType = pDigestSpec.getDigestType();
-        GordianLength myLen = pDigestSpec.getDigestLength();
+        final GordianDigestType myType = pDigestSpec.getDigestType();
+        final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Switch on digestType */
         switch (myType) {
@@ -233,8 +232,8 @@ public final class JcaDigest
      */
     private static String getSHA2Algorithm(final GordianDigestSpec pSpec) {
         /* Access lengths */
-        GordianLength myState = pSpec.getStateLength();
-        GordianLength myLen = pSpec.getDigestLength();
+        final GordianLength myState = pSpec.getStateLength();
+        final GordianLength myLen = pSpec.getDigestLength();
 
         /* Switch on length */
         switch (myLen) {
@@ -279,9 +278,9 @@ public final class JcaDigest
      * @return the namet
      */
     private static String getSkeinAlgorithm(final GordianDigestSpec pSpec) {
-        String myLen = Integer.toString(pSpec.getDigestLength().getLength());
-        String myState = Integer.toString(pSpec.getStateLength().getLength());
-        StringBuilder myBuilder = new StringBuilder();
+        final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
+        final String myState = Integer.toString(pSpec.getStateLength().getLength());
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("Skein-");
         myBuilder.append(myState);
         myBuilder.append("-");
@@ -295,7 +294,7 @@ public final class JcaDigest
      * @return the name
      */
     private static String getStreebogAlgorithm(final GordianLength pLength) {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("GOST3411-2012-");
         myBuilder.append(pLength.getLength());
         return myBuilder.toString();

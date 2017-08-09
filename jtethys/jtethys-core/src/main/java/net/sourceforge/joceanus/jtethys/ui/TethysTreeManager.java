@@ -191,7 +191,7 @@ public abstract class TethysTreeManager<T, N, I>
      */
     protected void registerItem(final TethysTreeItem<T, N, I> pItem) {
         /* Access unique names */
-        String myName = pItem.getName();
+        final String myName = pItem.getName();
 
         /* If this name already exists */
         if (theItemMap.get(myName) != null) {
@@ -208,7 +208,7 @@ public abstract class TethysTreeManager<T, N, I>
      */
     protected void deRegisterItem(final TethysTreeItem<T, N, I> pItem) {
         /* Access unique names */
-        String myName = pItem.getName();
+        final String myName = pItem.getName();
 
         /* Remove the name if it exists */
         theItemMap.remove(myName);
@@ -324,7 +324,7 @@ public abstract class TethysTreeManager<T, N, I>
             /* If we have a parent */
             if (theParent != null) {
                 /* If we already have children */
-                TethysTreeItem<T, N, I> myChild = theParent.theLastChild;
+                final TethysTreeItem<T, N, I> myChild = theParent.theLastChild;
                 if (myChild != null) {
                     /* Link to last child */
                     myChild.theNextSibling = this;
@@ -423,7 +423,7 @@ public abstract class TethysTreeManager<T, N, I>
                 /* If we are showing the item */
                 if (pVisible) {
                     /* Attach to parent at required position */
-                    int myPos = countPreviousVisibleSiblings();
+                    final int myPos = countPreviousVisibleSiblings();
                     attachAsChildNo(myPos);
 
                     /* else just detach item and children */
@@ -505,7 +505,7 @@ public abstract class TethysTreeManager<T, N, I>
                 theTree.deRegisterItem(theFirstChild);
 
                 /* Unlink the child */
-                TethysTreeItem<T, N, I> myCurr = theFirstChild;
+                final TethysTreeItem<T, N, I> myCurr = theFirstChild;
                 theFirstChild = theFirstChild.theNextSibling;
                 myCurr.theNextSibling = null;
                 if (theFirstChild != null) {

@@ -314,15 +314,15 @@ public class TethysDecimal
             /* If we have more than one decimal to remove */
             if (iAdjust + 1 < 0) {
                 /* Calculate division factor (minus one) */
-                long myFactor = getFactor(-(iAdjust + 1));
+                final long myFactor = getFactor(-(iAdjust + 1));
 
                 /* Reduce to 10 times required value */
                 myValue /= myFactor;
             }
 
             /* Access last digit */
-            long myDigit = myValue
-                           % RADIX_TEN;
+            final long myDigit = myValue
+                                 % RADIX_TEN;
 
             /* Reduce final decimal and round up if required */
             myValue /= RADIX_TEN;
@@ -356,14 +356,14 @@ public class TethysDecimal
     protected void calculateProduct(final TethysDecimal pFirst,
                                     final TethysDecimal pSecond) {
         /* Access information about first factor */
-        long myIntFirst = pFirst.getIntegral();
-        long myFracFirst = pFirst.getFractional();
-        int myScaleFirst = pFirst.scale();
+        final long myIntFirst = pFirst.getIntegral();
+        final long myFracFirst = pFirst.getFractional();
+        final int myScaleFirst = pFirst.scale();
 
         /* Access information about second factor */
-        long myIntSecond = pSecond.getIntegral();
-        long myFracSecond = pSecond.getFractional();
-        int myScaleSecond = pSecond.scale();
+        final long myIntSecond = pSecond.getIntegral();
+        final long myFracSecond = pSecond.getFractional();
+        final int myScaleSecond = pSecond.scale();
 
         /*
          * Calculate (a.c) the integral part of the answer and initialise the fractional part (at
@@ -445,8 +445,8 @@ public class TethysDecimal
     protected void calculateQuotient(final TethysDecimal pDividend,
                                      final TethysDecimal pDivisor) {
         /* Access the two values */
-        long myDividend = pDividend.unscaledValue();
-        long myDivisor = pDivisor.unscaledValue();
+        final long myDividend = pDividend.unscaledValue();
+        final long myDivisor = pDivisor.unscaledValue();
 
         /* Calculate fractions (m,n) */
         long myInteger = myDividend
@@ -509,7 +509,7 @@ public class TethysDecimal
                                              final TethysDecimal pDivisor) {
         /* Access the two values */
         long myDividend = pDividend.unscaledValue();
-        long myDivisor = pDivisor.unscaledValue();
+        final long myDivisor = pDivisor.unscaledValue();
 
         /* Determine how many decimals to factor in to the dividend to get the correct result */
         int myDecimals = scale() + 1;
@@ -538,7 +538,7 @@ public class TethysDecimal
     public void addValue(final TethysDecimal pValue) {
         /* Access the parameter at the correct scale */
         long myDelta = pValue.unscaledValue();
-        int myScale = pValue.scale();
+        final int myScale = pValue.scale();
         if (theScale != myScale) {
             myDelta = adjustDecimals(myDelta, theScale
                                               - myScale);
@@ -556,7 +556,7 @@ public class TethysDecimal
     public void subtractValue(final TethysDecimal pValue) {
         /* Access the parameter at the correct scale */
         long myDelta = pValue.unscaledValue();
-        int myScale = pValue.scale();
+        final int myScale = pValue.scale();
         if (theScale != myScale) {
             myDelta = adjustDecimals(myDelta, theScale
                                               - myScale);
@@ -572,8 +572,8 @@ public class TethysDecimal
      */
     public final void movePointLeft(final int pPlaces) {
         /* Calculate the new scale */
-        int myNewScale = theScale
-                         + pPlaces;
+        final int myNewScale = theScale
+                               + pPlaces;
 
         /* record the scale */
         recordScale(myNewScale);
@@ -632,7 +632,7 @@ public class TethysDecimal
      */
     public TethysDecimal add(final TethysDecimal pValue) {
         /* Create the new decimal */
-        TethysDecimal myResult;
+        final TethysDecimal myResult;
 
         /* If the operand has the higher scale */
         if (theScale < pValue.scale()) {
@@ -658,7 +658,7 @@ public class TethysDecimal
      */
     public TethysDecimal subtract(final TethysDecimal pValue) {
         /* Create the new decimal */
-        TethysDecimal myResult;
+        final TethysDecimal myResult;
 
         /* If the operand has the higher scale */
         if (theScale < pValue.scale()) {
@@ -684,7 +684,7 @@ public class TethysDecimal
      */
     public TethysDecimal multiply(final TethysDecimal pValue) {
         /* Create the new decimal at the correct scale */
-        TethysDecimal myResult = new TethysDecimal();
+        final TethysDecimal myResult = new TethysDecimal();
         myResult.setValue(0, theScale
                              + pValue.scale());
 
@@ -713,7 +713,7 @@ public class TethysDecimal
      */
     public TethysDecimal divide(final TethysDecimal pValue) {
         /* Create the new decimal at the correct scale */
-        TethysDecimal myResult = new TethysDecimal();
+        final TethysDecimal myResult = new TethysDecimal();
         myResult.setValue(0, theScale);
 
         /* Calculate the quotient */
@@ -740,7 +740,7 @@ public class TethysDecimal
      */
     public TethysDecimal divideToIntegralValue(final TethysDecimal pValue) {
         /* Create the new decimal at the correct scale */
-        TethysDecimal myResult = new TethysDecimal();
+        final TethysDecimal myResult = new TethysDecimal();
         myResult.setValue(0, theScale);
 
         /* Calculate the quotient */
@@ -762,7 +762,7 @@ public class TethysDecimal
      */
     public TethysDecimal remainder(final TethysDecimal pValue) {
         /* Create the new decimal at the correct scale */
-        TethysDecimal myQuotient = new TethysDecimal();
+        final TethysDecimal myQuotient = new TethysDecimal();
         myQuotient.setValue(0, theScale);
 
         /* Calculate the quotient */
@@ -772,12 +772,12 @@ public class TethysDecimal
         myQuotient.setValue(getIntegral(), 0);
 
         /* Re-multiply by the divisor and adjust to correct scale */
-        TethysDecimal myWhole = myQuotient.multiply(pValue);
+        final TethysDecimal myWhole = myQuotient.multiply(pValue);
         myWhole.setValue(adjustDecimals(myWhole.unscaledValue(), theScale
                                                                  - pValue.scale()), theScale);
 
         /* Calculate the result */
-        TethysDecimal myResult = new TethysDecimal(this);
+        final TethysDecimal myResult = new TethysDecimal(this);
         myResult.subtractValue(myWhole);
 
         /* return the result */
@@ -800,7 +800,7 @@ public class TethysDecimal
      */
     public double doubleValue() {
         /* Format the string */
-        String myString = toString();
+        final String myString = toString();
 
         /* return the double value */
         return Double.parseDouble(myString);
@@ -813,7 +813,7 @@ public class TethysDecimal
      */
     public float floatValue() {
         /* Format the string */
-        String myString = toString();
+        final String myString = toString();
 
         /* return the float value */
         return Float.parseFloat(myString);
@@ -915,7 +915,7 @@ public class TethysDecimal
         checkFractionalZero();
 
         /* If we have a fractional part */
-        long myValue = getIntegral();
+        final long myValue = getIntegral();
         if ((myValue > Integer.MAX_VALUE)
             || (myValue < Integer.MIN_VALUE)) {
             throw new ArithmeticException(ERROR_RANGE);
@@ -935,7 +935,7 @@ public class TethysDecimal
         checkFractionalZero();
 
         /* If we have a fractional part */
-        long myValue = getIntegral();
+        final long myValue = getIntegral();
         if ((myValue > Short.MAX_VALUE)
             || (myValue < Short.MIN_VALUE)) {
             throw new ArithmeticException(ERROR_RANGE);
@@ -955,7 +955,7 @@ public class TethysDecimal
         checkFractionalZero();
 
         /* If we have a fractional part */
-        long myValue = getIntegral();
+        final long myValue = getIntegral();
         if ((myValue > Byte.MAX_VALUE)
             || (myValue < Byte.MIN_VALUE)) {
             throw new ArithmeticException(ERROR_RANGE);
@@ -981,7 +981,7 @@ public class TethysDecimal
         }
 
         /* Cast as decimal */
-        TethysDecimal myThat = (TethysDecimal) pThat;
+        final TethysDecimal myThat = (TethysDecimal) pThat;
 
         /* Check value and scale */
         return (theValue == myThat.theValue)
@@ -1002,8 +1002,8 @@ public class TethysDecimal
         }
 
         /* If there is no difference in scale */
-        int myScaleDiff = scale()
-                          - pThat.scale();
+        final int myScaleDiff = scale()
+                                - pThat.scale();
         if (myScaleDiff == 0) {
             /* Just compare unscaled value */
             if (theValue == pThat.theValue) {
@@ -1054,7 +1054,7 @@ public class TethysDecimal
      */
     private static long[] getPowersOfTen(final int pMax) {
         /* Allocate the array */
-        long[] myArray = new long[pMax + 1];
+        final long[] myArray = new long[pMax + 1];
 
         /* Initialise array */
         long myValue = 1;

@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
@@ -75,11 +74,10 @@ public final class GordianKeySetHashRecipe {
     /**
      * Constructor for random choices.
      * @param pFactory the factory
-     * @throws OceanusException on error
      */
-    protected GordianKeySetHashRecipe(final GordianFactory pFactory) throws OceanusException {
+    protected GordianKeySetHashRecipe(final GordianFactory pFactory) {
         /* Access the secureRandom */
-        SecureRandom myRandom = pFactory.getRandom();
+        final SecureRandom myRandom = pFactory.getRandom();
 
         /* Create the Initialisation vector */
         theInitVector = new byte[INITVECTORLEN];
@@ -96,16 +94,16 @@ public final class GordianKeySetHashRecipe {
      * @param pFactory the factory
      * @param pPassLength the password length
      * @param pExternal the external form
-     * @throws OceanusException on error
+     * 
      */
     protected GordianKeySetHashRecipe(final GordianFactory pFactory,
                                       final int pPassLength,
-                                      final byte[] pExternal) throws OceanusException {
+                                      final byte[] pExternal) {
         /* Determine hash length */
-        int myLen = pExternal.length;
-        int myHashLen = myLen
-                        - RECIPELEN
-                        - INITVECTORLEN;
+        final int myLen = pExternal.length;
+        final int myHashLen = myLen
+                              - RECIPELEN
+                              - INITVECTORLEN;
 
         /* Create the byte arrays */
         theRecipe = new byte[RECIPELEN];
@@ -192,11 +190,11 @@ public final class GordianKeySetHashRecipe {
     protected byte[] buildExternal(final int pPassLength,
                                    final byte[] pHash) {
         /* Allocate the new buffer */
-        int myHashLen = pHash.length;
-        int myLen = RECIPELEN
-                    + INITVECTORLEN
-                    + myHashLen;
-        byte[] myBuffer = new byte[myLen];
+        final int myHashLen = pHash.length;
+        final int myLen = RECIPELEN
+                          + INITVECTORLEN
+                          + myHashLen;
+        final byte[] myBuffer = new byte[myLen];
 
         /* Determine offset position */
         int myOffSet = Math.max(pPassLength, HASH_MARGIN);
@@ -239,12 +237,11 @@ public final class GordianKeySetHashRecipe {
         /**
          * Construct the parameters from random.
          * @param pFactory the factory
-         * @throws OceanusException on error
          */
-        private HashParameters(final GordianFactory pFactory) throws OceanusException {
+        private HashParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
-            GordianIdManager myManager = pFactory.getIdManager();
-            SecureRandom myRandom = pFactory.getRandom();
+            final GordianIdManager myManager = pFactory.getIdManager();
+            final SecureRandom myRandom = pFactory.getRandom();
 
             /* Generate recipe and derive digestTypes */
             int mySeed = myRandom.nextInt();
@@ -260,12 +257,11 @@ public final class GordianKeySetHashRecipe {
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
-         * @throws OceanusException on error
          */
         private HashParameters(final GordianFactory pFactory,
-                               final byte[] pRecipe) throws OceanusException {
+                               final byte[] pRecipe) {
             /* Obtain Id manager */
-            GordianIdManager myManager = pFactory.getIdManager();
+            final GordianIdManager myManager = pFactory.getIdManager();
 
             /* Store recipe and derive symKeyTypes */
             theRecipe = pRecipe;

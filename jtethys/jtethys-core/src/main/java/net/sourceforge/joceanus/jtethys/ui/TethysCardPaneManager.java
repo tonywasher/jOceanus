@@ -158,7 +158,7 @@ public abstract class TethysCardPaneManager<N, I, P extends TethysNode<N>>
      */
     public boolean selectCard(final String pName) {
         /* If the name is valid */
-        P myCard = theMap.get(pName);
+        final P myCard = theMap.get(pName);
         if (myCard != null) {
             /* Record selection */
             theActiveName = pName;

@@ -225,7 +225,7 @@ public abstract class TethysBorderPaneManager<N, I>
     public void setChildVisible(final TethysNode<N> pChild,
                                 final boolean pVisible) {
         /* Look for location */
-        TethysBorderLocation myLoc = theIdMap.get(pChild.getId());
+        final TethysBorderLocation myLoc = theIdMap.get(pChild.getId());
         if (myLoc != null) {
             setLocationVisibility(myLoc, pVisible);
         }
@@ -247,7 +247,7 @@ public abstract class TethysBorderPaneManager<N, I>
     protected void setNodeLocation(final TethysBorderLocation pLocation,
                                    final TethysNode<N> pNode) {
         /* Look for existing node */
-        TethysNode<N> myNode = theNodeMap.get(pLocation);
+        final TethysNode<N> myNode = theNodeMap.get(pLocation);
         if (myNode != null) {
             /* Remove node details */
             removeNode(myNode);

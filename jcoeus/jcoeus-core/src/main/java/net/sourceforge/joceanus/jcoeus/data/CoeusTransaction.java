@@ -348,7 +348,7 @@ public abstract class CoeusTransaction
     @Override
     public String toString() {
         /* Create builder and access formatter */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Add the values */
         formatValue(myBuilder, ID_INVESTED, getInvested());
@@ -409,7 +409,7 @@ public abstract class CoeusTransaction
             return theMarket;
         }
         if (FIELD_LOAN.equals(pField)) {
-            CoeusLoan myLoan = getLoan();
+            final CoeusLoan myLoan = getLoan();
             return myLoan == null
                                   ? MetisDataFieldValue.SKIP
                                   : myLoan;
@@ -424,61 +424,61 @@ public abstract class CoeusTransaction
             return getTransType();
         }
         if (FIELD_INVESTED.equals(pField)) {
-            TethysDecimal myInvested = getInvested();
+            final TethysDecimal myInvested = getInvested();
             return myInvested.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInvested;
         }
         if (FIELD_HOLDING.equals(pField)) {
-            TethysDecimal myHolding = getHolding();
+            final TethysDecimal myHolding = getHolding();
             return myHolding.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myHolding;
         }
         if (FIELD_LOANBOOK.equals(pField)) {
-            TethysDecimal myCapital = getLoanBook();
+            final TethysDecimal myCapital = getLoanBook();
             return myCapital.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myCapital;
         }
         if (FIELD_INTEREST.equals(pField)) {
-            TethysDecimal myInterest = getInterest();
+            final TethysDecimal myInterest = getInterest();
             return myInterest.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInterest;
         }
         if (FIELD_BADDEBTINTEREST.equals(pField)) {
-            TethysDecimal myInterest = getBadDebtInterest();
+            final TethysDecimal myInterest = getBadDebtInterest();
             return myInterest.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myInterest;
         }
         if (FIELD_BADDEBTCAPITAL.equals(pField)) {
-            TethysDecimal myCapital = getBadDebtCapital();
+            final TethysDecimal myCapital = getBadDebtCapital();
             return myCapital.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myCapital;
         }
         if (FIELD_FEES.equals(pField)) {
-            TethysDecimal myFees = getFees();
+            final TethysDecimal myFees = getFees();
             return myFees.isZero()
                                    ? MetisDataFieldValue.SKIP
                                    : myFees;
         }
         if (FIELD_CASHBACK.equals(pField)) {
-            TethysDecimal myCashBack = getCashBack();
+            final TethysDecimal myCashBack = getCashBack();
             return myCashBack.isZero()
                                        ? MetisDataFieldValue.SKIP
                                        : myCashBack;
         }
         if (FIELD_BADDEBT.equals(pField)) {
-            TethysDecimal myBadDebt = getBadDebt();
+            final TethysDecimal myBadDebt = getBadDebt();
             return myBadDebt.isZero()
                                       ? MetisDataFieldValue.SKIP
                                       : myBadDebt;
         }
         if (FIELD_RECOVERED.equals(pField)) {
-            TethysDecimal myRecovered = getRecovered();
+            final TethysDecimal myRecovered = getRecovered();
             return myRecovered.isZero()
                                         ? MetisDataFieldValue.SKIP
                                         : myRecovered;

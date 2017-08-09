@@ -190,7 +190,7 @@ public final class JcaFactory
         super(pParameters);
 
         /* Generate the predicates */
-        boolean isRestricted = pParameters.useRestricted();
+        final boolean isRestricted = pParameters.useRestricted();
         theSymPredicate = generateSymKeyPredicate(isRestricted);
         theStdSymPredicate = generateStdSymKeyPredicate(isRestricted);
         theStreamPredicate = generateStreamKeyPredicate(isRestricted);
@@ -203,7 +203,7 @@ public final class JcaFactory
         theSP800Factory.setSecurityBytes(getPersonalisation());
 
         /* Create the SecureRandom instance */
-        SecureRandom myRandom = createRandom(defaultRandomSpec());
+        final SecureRandom myRandom = createRandom(defaultRandomSpec());
         setSecureRandom(myRandom);
     }
 
@@ -226,7 +226,7 @@ public final class JcaFactory
         }
 
         /* Create digest */
-        MessageDigest myJavaDigest = getJavaDigest(pDigestSpec);
+        final MessageDigest myJavaDigest = getJavaDigest(pDigestSpec);
         return new JcaDigest(pDigestSpec, myJavaDigest);
     }
 
@@ -242,7 +242,7 @@ public final class JcaFactory
 
     @Override
     public JcaMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
-        Mac myJavaMac = getJavaMac(pMacSpec);
+        final Mac myJavaMac = getJavaMac(pMacSpec);
         return new JcaMac(this, pMacSpec, myJavaMac);
     }
 
@@ -272,8 +272,8 @@ public final class JcaFactory
         JcaKeyGenerator<T> myGenerator = theGeneratorCache.getCachedKeyGenerator(pKeyType);
         if (myGenerator == null) {
             /* Create the new generator */
-            String myAlgorithm = getKeyAlgorithm(pKeyType);
-            KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
+            final String myAlgorithm = getKeyAlgorithm(pKeyType);
+            final KeyGenerator myJavaGenerator = getJavaKeyGenerator(myAlgorithm);
             myGenerator = new JcaKeyGenerator<>(this, pKeyType, myJavaGenerator);
 
             /* Add to cache */
@@ -309,7 +309,7 @@ public final class JcaFactory
     @Override
     public JcaCipher<GordianSymKeyType> createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        final GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
         if (!supportedSymKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
@@ -320,14 +320,14 @@ public final class JcaFactory
         }
 
         /* Create the cipher */
-        Cipher myBCCipher = getJavaCipher(pCipherSpec);
+        final Cipher myBCCipher = getJavaCipher(pCipherSpec);
         return new JcaCipher<>(this, pCipherSpec, myBCCipher);
     }
 
     @Override
     public JcaAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
+        final GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
         if (!supportedSymKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
@@ -338,20 +338,20 @@ public final class JcaFactory
         }
 
         /* Create the cipher */
-        Cipher myBCCipher = getJavaCipher(pCipherSpec);
+        final Cipher myBCCipher = getJavaCipher(pCipherSpec);
         return new JcaAADCipher(this, pCipherSpec, myBCCipher);
     }
 
     @Override
     public JcaCipher<GordianStreamKeyType> createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKey */
-        GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
+        final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
         if (!supportedStreamKeyTypes().test(myKeyType)) {
             throw new GordianDataException(getInvalidText(myKeyType));
         }
 
         /* Create the cipher */
-        Cipher myJavaCipher = getJavaCipher(myKeyType);
+        final Cipher myJavaCipher = getJavaCipher(myKeyType);
         return new JcaCipher<>(this, pCipherSpec, myJavaCipher);
     }
 
@@ -368,8 +368,8 @@ public final class JcaFactory
         }
 
         /* Create the cipher */
-        GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
-        JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(mySpec);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
+        final JcaCipher<GordianSymKeyType> myJcaCipher = createSymKeyCipher(mySpec);
         return createWrapCipher(myJcaCipher);
     }
 
@@ -409,12 +409,12 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private SecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
-        GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
         switch (pRandomSpec.getRandomType()) {
             case HASH:
                 return theSP800Factory.buildHash(createDigest(myDigest), true);
             case HMAC:
-                GordianMacSpec mySpec = GordianMacSpec.hMac(myDigest);
+                final GordianMacSpec mySpec = GordianMacSpec.hMac(myDigest);
                 return theSP800Factory.buildHMAC(createMac(mySpec), true);
             default:
                 throw new GordianDataException(getInvalidText(pRandomSpec));
@@ -501,7 +501,7 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(getSymKeyAlgorithm(pCipherSpec.getKeyType()));
         myBuilder.append(ALGO_SEP);
         myBuilder.append(getCipherModeAlgorithm(pCipherSpec.getCipherMode()));
@@ -717,9 +717,9 @@ public final class JcaFactory
      * @return the algorithm
      */
     private static String getSkeinMacAlgorithm(final GordianDigestSpec pSpec) {
-        String myLen = Integer.toString(pSpec.getDigestLength().getLength());
-        String myState = Integer.toString(pSpec.getStateLength().getLength());
-        StringBuilder myBuilder = new StringBuilder();
+        final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
+        final String myState = Integer.toString(pSpec.getStateLength().getLength());
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("Skein-MAC-");
         myBuilder.append(myState);
         myBuilder.append("-");
@@ -997,7 +997,7 @@ public final class JcaFactory
      */
     private static int determineMaximumCipherSteps(final boolean pRestricted) {
         /* generate the predicate */
-        Predicate<GordianSymKeyType> myFilter = generateStdSymKeyPredicate(pRestricted);
+        final Predicate<GordianSymKeyType> myFilter = generateStdSymKeyPredicate(pRestricted);
 
         /* Count valid values */
         int myCount = 0;
@@ -1040,7 +1040,7 @@ public final class JcaFactory
         }
 
         /* Switch on KeyType */
-        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (pSpec.getAsymKeyType()) {
             case RSA:
                 return validRSASignature(pSpec);
@@ -1069,7 +1069,7 @@ public final class JcaFactory
      */
     private static boolean validRSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA1:
             case SHA2:
@@ -1090,7 +1090,7 @@ public final class JcaFactory
      */
     private static boolean validECSignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA2:
                 return myDigest.getStateLength() == null;
@@ -1108,7 +1108,7 @@ public final class JcaFactory
      */
     private static boolean validDSASignature(final GordianSignatureSpec pSpec) {
         /* Switch on DigestType */
-        GordianDigestSpec myDigest = pSpec.getDigestSpec();
+        final GordianDigestSpec myDigest = pSpec.getDigestSpec();
         switch (myDigest.getDigestType()) {
             case SHA2:
                 return myDigest.getStateLength() == null;
@@ -1134,7 +1134,7 @@ public final class JcaFactory
         }
 
         /* Switch on DigestType */
-        GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
+        final GordianSPHINCSKeyType myType = pKeyPair.getKeySpec().getSPHINCSType();
         switch (pSpec.getDigestType()) {
             case SHA2:
                 return GordianSPHINCSKeyType.SHA2.equals(myType);

@@ -74,9 +74,9 @@ public class CoeusLendingWorksMarket
         theXactionParser.parseFile(pFile);
 
         /* Loop through the transactions in reverse order */
-        ListIterator<CoeusLendingWorksTransaction> myIterator = theXactionParser.reverseTransactionIterator();
+        final ListIterator<CoeusLendingWorksTransaction> myIterator = theXactionParser.reverseTransactionIterator();
         while (myIterator.hasPrevious()) {
-            CoeusLendingWorksTransaction myTrans = myIterator.previous();
+            final CoeusLendingWorksTransaction myTrans = myIterator.previous();
 
             /* Add to the transactions */
             addTransaction(myTrans);

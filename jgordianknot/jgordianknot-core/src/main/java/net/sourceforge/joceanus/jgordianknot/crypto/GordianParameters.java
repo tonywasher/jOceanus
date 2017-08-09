@@ -265,7 +265,7 @@ public class GordianParameters {
         }
 
         /* Access the target field */
-        GordianParameters myThat = (GordianParameters) pThat;
+        final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
         if ((theCipherSteps != myThat.getNumCipherSteps())
@@ -288,7 +288,7 @@ public class GordianParameters {
     @Override
     public int hashCode() {
         /* Access multiplier */
-        int myPrime = GordianFactory.HASH_PRIME;
+        final int myPrime = GordianFactory.HASH_PRIME;
 
         /* Calculate hash from simple values */
         int myCode = theCipherSteps;

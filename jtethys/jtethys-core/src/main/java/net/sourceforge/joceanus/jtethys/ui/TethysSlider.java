@@ -117,7 +117,7 @@ public abstract class TethysSlider<N, I>
             /* else check on spacing */
         } else {
             /* Determine how many major ticks that gives us */
-            int iNumTicks = pMax / iMajor;
+            final int iNumTicks = pMax / iMajor;
 
             /* If we have 5 or more ticks */
             if (iNumTicks >= (TICK_FACTOR >> 1)) {

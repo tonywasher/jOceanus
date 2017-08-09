@@ -90,21 +90,21 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
-            RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, getRandom());
+            final BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
+            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, getRandom());
 
             /* Initialise the encapsulation */
             myKEMS.init(pPublicKey.getPublicKey());
 
             /* Create initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             getRandom().nextBytes(myInitVector);
 
             /* Create cipherText */
-            GordianModulus myModulus = pPublicKey.getKeySpec().getModulus();
-            int myLen = myModulus.getModulus() / Byte.SIZE;
-            byte[] myCipherText = new byte[myLen + INITLEN];
-            KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myCipherText, INITLEN, myKDF.getKeyLen());
+            final GordianModulus myModulus = pPublicKey.getKeySpec().getModulus();
+            final int myLen = myModulus.getModulus() / Byte.SIZE;
+            final byte[] myCipherText = new byte[myLen + INITLEN];
+            final KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myCipherText, INITLEN, myKDF.getKeyLen());
             System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
 
             /* Store secret and cipherText */
@@ -134,18 +134,18 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
-            RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, null);
+            final BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
+            final RSAKeyEncapsulation myKEMS = new RSAKeyEncapsulation(myKDF, null);
 
             /* Initialise the encapsulation */
             myKEMS.init(pPrivateKey.getPrivateKey());
 
             /* Obtain initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             System.arraycopy(pCipherText, 0, myInitVector, 0, INITLEN);
 
             /* Parse cipherText */
-            KeyParameter myParms = (KeyParameter) myKEMS.decrypt(pCipherText, INITLEN, pCipherText.length - INITLEN, myKDF.getKeyLen());
+            final KeyParameter myParms = (KeyParameter) myKEMS.decrypt(pCipherText, INITLEN, pCipherText.length - INITLEN, myKDF.getKeyLen());
 
             /* Store secret */
             storeSecret(myParms.getKey(), myInitVector);
@@ -171,24 +171,24 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
-            ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, getRandom());
+            final BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
+            final ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, getRandom());
 
             /* Initialise the encapsulation */
             myKEMS.init(pPublicKey.getPublicKey());
 
             /* Create initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             getRandom().nextBytes(myInitVector);
 
             /* Determine cipher text length */
             int myFieldSize = pPublicKey.getPublicKey().getParameters().getCurve().getFieldSize();
             myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
-            int myLen = (2 * myFieldSize) + 1;
+            final int myLen = (2 * myFieldSize) + 1;
 
             /* Create cipherText */
-            byte[] myCipherText = new byte[myLen + INITLEN];
-            KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myCipherText, INITLEN, myKDF.getKeyLen());
+            final byte[] myCipherText = new byte[myLen + INITLEN];
+            final KeyParameter myParms = (KeyParameter) myKEMS.encrypt(myCipherText, INITLEN, myKDF.getKeyLen());
             System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
 
             /* Store secret and cipherText */
@@ -218,18 +218,18 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Create Key Encapsulation */
-            BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
-            ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, null);
+            final BouncyKeyDerivation myKDF = new BouncyKeyDerivation(getDigest(pDigestSpec));
+            final ECIESKeyEncapsulation myKEMS = new ECIESKeyEncapsulation(myKDF, null);
 
             /* Initialise the encapsulation */
             myKEMS.init(pPrivateKey.getPrivateKey());
 
             /* Obtain initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             System.arraycopy(pCipherText, 0, myInitVector, 0, INITLEN);
 
             /* Parse cipherText */
-            KeyParameter myParms = (KeyParameter) myKEMS.decrypt(pCipherText, INITLEN, pCipherText.length - INITLEN, myKDF.getKeyLen());
+            final KeyParameter myParms = (KeyParameter) myKEMS.decrypt(pCipherText, INITLEN, pCipherText.length - INITLEN, myKDF.getKeyLen());
 
             /* Store secret */
             storeSecret(myParms.getKey(), myInitVector);
@@ -255,26 +255,26 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Create initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             getRandom().nextBytes(myInitVector);
 
             /* Create an ephemeral New Hope key */
-            BouncyKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pPublicKey.getKeySpec());
-            GordianKeyPair myPair = myGenerator.generateKeyPair();
-            BouncyDiffieHellmanPrivateKey myPrivate = BouncyDiffieHellmanPrivateKey.class.cast(getPrivateKey(myPair));
-            BouncyDiffieHellmanPublicKey myPublic = BouncyDiffieHellmanPublicKey.class.cast(getPublicKey(myPair));
+            final BouncyKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pPublicKey.getKeySpec());
+            final GordianKeyPair myPair = myGenerator.generateKeyPair();
+            final BouncyDiffieHellmanPrivateKey myPrivate = BouncyDiffieHellmanPrivateKey.class.cast(getPrivateKey(myPair));
+            final BouncyDiffieHellmanPublicKey myPublic = BouncyDiffieHellmanPublicKey.class.cast(getPublicKey(myPair));
 
             /* Derive the secret */
-            DHBasicAgreement myAgreement = new DHBasicAgreement();
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
             myAgreement.init(myPrivate.getPrivateKey());
-            BigInteger mySecret = myAgreement.calculateAgreement(pPublicKey.getPublicKey());
+            final BigInteger mySecret = myAgreement.calculateAgreement(pPublicKey.getPublicKey());
 
             /* Obtain the encoded keySpec of the public key */
-            byte[] myY = myPublic.getPublicKey().getY().toByteArray();
+            final byte[] myY = myPublic.getPublicKey().getY().toByteArray();
 
             /* Create cipherText */
-            int myLen = myY.length;
-            byte[] myCipherText = new byte[myLen + INITLEN];
+            final int myLen = myY.length;
+            final byte[] myCipherText = new byte[myLen + INITLEN];
             System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
             System.arraycopy(myY, 0, myCipherText, INITLEN, myLen);
 
@@ -305,21 +305,21 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Obtain initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             System.arraycopy(pCipherText, 0, myInitVector, 0, INITLEN);
 
             /* Obtain ephemeral PublicKeySpec */
-            int myYLen = pCipherText.length - INITLEN;
-            byte[] myYbytes = new byte[myYLen];
+            final int myYLen = pCipherText.length - INITLEN;
+            final byte[] myYbytes = new byte[myYLen];
             System.arraycopy(pCipherText, INITLEN, myYbytes, 0, myYLen);
-            BigInteger myY = new BigInteger(myYbytes);
-            DHParameters myParms = pPrivateKey.getPrivateKey().getParameters();
-            DHPublicKeyParameters myPublicKey = new DHPublicKeyParameters(myY, myParms);
+            final BigInteger myY = new BigInteger(myYbytes);
+            final DHParameters myParms = pPrivateKey.getPrivateKey().getParameters();
+            final DHPublicKeyParameters myPublicKey = new DHPublicKeyParameters(myY, myParms);
 
             /* Derive the secret */
-            DHBasicAgreement myAgreement = new DHBasicAgreement();
+            final DHBasicAgreement myAgreement = new DHBasicAgreement();
             myAgreement.init(pPrivateKey.getPrivateKey());
-            BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
+            final BigInteger mySecret = myAgreement.calculateAgreement(myPublicKey);
 
             /* Store secret */
             storeSecret(hashSecret(mySecret.toByteArray(), getDigest(pDigestSpec)), myInitVector);
@@ -345,24 +345,24 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Create initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             getRandom().nextBytes(myInitVector);
 
             /* Generate an Exchange KeyPair */
-            NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
-            ExchangePair myPair = myGenerator.GenerateExchange(pPublicKey.getPublicKey());
+            final NHExchangePairGenerator myGenerator = new NHExchangePairGenerator(getRandom());
+            final ExchangePair myPair = myGenerator.GenerateExchange(pPublicKey.getPublicKey());
 
             /* Derive the secret */
-            byte[] mySecret = myPair.getSharedValue();
+            final byte[] mySecret = myPair.getSharedValue();
 
             /* Obtain the encoded keySpec of the public key */
-            BCNHPublicKey myPublic = new BCNHPublicKey((NHPublicKeyParameters) myPair.getPublicKey());
-            X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myPublic.getEncoded());
-            byte[] myKeySpecBytes = myKeySpec.getEncoded();
+            final BCNHPublicKey myPublic = new BCNHPublicKey((NHPublicKeyParameters) myPair.getPublicKey());
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myPublic.getEncoded());
+            final byte[] myKeySpecBytes = myKeySpec.getEncoded();
 
             /* Create cipherText */
-            int myLen = myKeySpecBytes.length;
-            byte[] myCipherText = new byte[myLen + INITLEN];
+            final int myLen = myKeySpecBytes.length;
+            final byte[] myCipherText = new byte[myLen + INITLEN];
             System.arraycopy(myInitVector, 0, myCipherText, 0, INITLEN);
             System.arraycopy(myKeySpecBytes, 0, myCipherText, INITLEN, myLen);
 
@@ -393,24 +393,24 @@ public abstract class BouncyKeyEncapsulation {
             super(pFactory);
 
             /* Obtain initVector */
-            byte[] myInitVector = new byte[INITLEN];
+            final byte[] myInitVector = new byte[INITLEN];
             System.arraycopy(pCipherText, 0, myInitVector, 0, INITLEN);
 
             /* Obtain ephemeral PublicKeySpec */
-            int myX509Len = pCipherText.length - INITLEN;
-            byte[] myX509bytes = new byte[myX509Len];
+            final int myX509Len = pCipherText.length - INITLEN;
+            final byte[] myX509bytes = new byte[myX509Len];
             System.arraycopy(pCipherText, INITLEN, myX509bytes, 0, myX509Len);
-            X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
+            final X509EncodedKeySpec myKeySpec = new X509EncodedKeySpec(myX509bytes);
 
             /* Derive ephemeral Public key */
-            BouncyKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pPrivateKey.getKeySpec());
-            GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
-            BouncyNewHopePublicKey myPublic = BouncyNewHopePublicKey.class.cast(getPublicKey(myPair));
+            final BouncyKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pPrivateKey.getKeySpec());
+            final GordianKeyPair myPair = myGenerator.derivePublicOnlyKeyPair(myKeySpec);
+            final BouncyNewHopePublicKey myPublic = BouncyNewHopePublicKey.class.cast(getPublicKey(myPair));
 
             /* Derive the secret */
-            NHAgreement myAgreement = new NHAgreement();
+            final NHAgreement myAgreement = new NHAgreement();
             myAgreement.init(pPrivateKey.getPrivateKey());
-            byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
+            final byte[] mySecret = myAgreement.calculateAgreement(myPublic.getPublicKey());
 
             /* Store secret */
             storeSecret(hashSecret(mySecret, getDigest(pDigestSpec)), myInitVector);

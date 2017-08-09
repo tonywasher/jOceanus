@@ -120,8 +120,8 @@ public class TethysDecimalLocale {
         theSymbolMap = new HashMap<>();
 
         /* Access decimal formats */
-        DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
-        DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(pLocale);
+        final DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
+        final DecimalFormat myFormat = (DecimalFormat) NumberFormat.getInstance(pLocale);
         theGroupingSize = myFormat.getGroupingSize();
 
         /* Access various interesting formats */
@@ -134,7 +134,7 @@ public class TethysDecimalLocale {
 
         /* Access the default currency */
         theCurrency = mySymbols.getCurrency();
-        String myCurrSymbol = theCurrency.getSymbol(theLocale);
+        final String myCurrSymbol = theCurrency.getSymbol(theLocale);
         declareSymbol(myCurrSymbol, theCurrency);
 
         /* Declare simplified USD/GBP if possible */
@@ -256,7 +256,7 @@ public class TethysDecimalLocale {
         theCurrencyMap.put(pSymbol, pCurrency);
 
         /* Store symbol if not already declared */
-        String myCode = pCurrency.getCurrencyCode();
+        final String myCode = pCurrency.getCurrencyCode();
         if (theSymbolMap.get(myCode) == null) {
             theSymbolMap.put(myCode, pSymbol);
         }
@@ -269,7 +269,7 @@ public class TethysDecimalLocale {
      */
     protected String getSymbol(final Currency pCurrency) {
         /* Look for the currency in the map */
-        String mySymbol = theSymbolMap.get(pCurrency.getCurrencyCode());
+        final String mySymbol = theSymbolMap.get(pCurrency.getCurrencyCode());
         return mySymbol == null
                                 ? pCurrency.getSymbol(theLocale)
                                 : mySymbol;

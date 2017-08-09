@@ -66,7 +66,7 @@ public final class GordianStreamManager {
      */
     public List<GordianStreamDefinition> analyseStreams(final OutputStream pStream) throws OceanusException {
         /* Allocate the list */
-        List<GordianStreamDefinition> myStreams = new ArrayList<>();
+        final List<GordianStreamDefinition> myStreams = new ArrayList<>();
 
         /* Loop through the streams */
         OutputStream myStream = pStream;
@@ -74,28 +74,28 @@ public final class GordianStreamManager {
             /* If this is a Digest Output Stream */
             if (myStream instanceof GordianDigestOutputStream) {
                 /* Process stream */
-                GordianDigestOutputStream myDigest = (GordianDigestOutputStream) myStream;
+                final GordianDigestOutputStream myDigest = (GordianDigestOutputStream) myStream;
                 myStreams.add(0, new GordianStreamDefinition(theKeySet, myDigest));
                 myStream = myDigest.getNextStream();
 
                 /* If this is a MAC Output Stream */
             } else if (myStream instanceof GordianMacOutputStream) {
                 /* Process stream */
-                GordianMacOutputStream myMac = (GordianMacOutputStream) myStream;
+                final GordianMacOutputStream myMac = (GordianMacOutputStream) myStream;
                 myStreams.add(0, new GordianStreamDefinition(theKeySet, myMac));
                 myStream = myMac.getNextStream();
 
                 /* If this is a LZMA Output Stream */
             } else if (myStream instanceof GordianLZMAOutputStream) {
                 /* Process stream */
-                GordianLZMAOutputStream myLZMA = (GordianLZMAOutputStream) myStream;
+                final GordianLZMAOutputStream myLZMA = (GordianLZMAOutputStream) myStream;
                 myStreams.add(0, new GordianStreamDefinition(myLZMA));
                 myStream = myLZMA.getNextStream();
 
                 /* If this is a Encryption Output Stream */
             } else if (myStream instanceof GordianCipherOutputStream) {
                 /* Process stream */
-                GordianCipherOutputStream<?> myEnc = (GordianCipherOutputStream<?>) myStream;
+                final GordianCipherOutputStream<?> myEnc = (GordianCipherOutputStream<?>) myStream;
                 myStreams.add(0, new GordianStreamDefinition(theKeySet, myEnc));
                 myStream = myEnc.getNextStream();
 
@@ -120,9 +120,9 @@ public final class GordianStreamManager {
                                         final InputStream pBaseStream) throws OceanusException {
         /* Loop through the stream definitions */
         InputStream myCurrent = pBaseStream;
-        Iterator<GordianStreamDefinition> myIterator = pStreamDefs.iterator();
+        final Iterator<GordianStreamDefinition> myIterator = pStreamDefs.iterator();
         while (myIterator.hasNext()) {
-            GordianStreamDefinition myDef = myIterator.next();
+            final GordianStreamDefinition myDef = myIterator.next();
 
             /* Build the stream */
             myCurrent = myDef.buildInputStream(theKeySet, myCurrent);
@@ -143,21 +143,21 @@ public final class GordianStreamManager {
         OutputStream myCurrent = pBaseStream;
 
         /* Access factory and bump the random engine */
-        GordianFactory myFactory = theKeySet.getFactory();
+        final GordianFactory myFactory = theKeySet.getFactory();
 
         /* Create an initial MAC stream */
-        GordianMac myMac = myFactory.generateRandomMac();
+        final GordianMac myMac = myFactory.generateRandomMac();
         myCurrent = new GordianMacOutputStream(myMac, myCurrent);
 
         /* Generate a list of encryption types */
-        List<GordianKey<GordianSymKeyType>> mySymKeys = myFactory.generateRandomSymKeyList();
+        final List<GordianKey<GordianSymKeyType>> mySymKeys = myFactory.generateRandomSymKeyList();
         boolean bFirst = true;
 
         /* For each encryption key */
-        Iterator<GordianKey<GordianSymKeyType>> myIterator = mySymKeys.iterator();
+        final Iterator<GordianKey<GordianSymKeyType>> myIterator = mySymKeys.iterator();
         while (myIterator.hasNext()) {
-            GordianKey<GordianSymKeyType> myKey = myIterator.next();
-            boolean bLast = !myIterator.hasNext();
+            final GordianKey<GordianSymKeyType> myKey = myIterator.next();
+            final boolean bLast = !myIterator.hasNext();
 
             /* Determine mode and padding */
             GordianPadding myPadding = GordianPadding.NONE;
@@ -168,12 +168,12 @@ public final class GordianStreamManager {
                     myPadding = GordianPadding.CTS;
                 }
             }
-            GordianSymCipherSpec mySpec = bFirst
-                                                 ? GordianSymCipherSpec.sic(myKey.getKeyType())
-                                                 : GordianSymCipherSpec.ecb(myKey.getKeyType(), myPadding);
+            final GordianSymCipherSpec mySpec = bFirst
+                                                       ? GordianSymCipherSpec.sic(myKey.getKeyType())
+                                                       : GordianSymCipherSpec.ecb(myKey.getKeyType(), myPadding);
 
             /* Build the cipher stream */
-            GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(mySpec);
+            final GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(mySpec);
             mySymCipher.initCipher(myKey);
             myCurrent = new GordianCipherOutputStream<GordianSymKeyType>(mySymCipher, myCurrent);
 
@@ -182,8 +182,8 @@ public final class GordianStreamManager {
         }
 
         /* Create the encryption stream for a stream key */
-        GordianKey<GordianStreamKeyType> myStreamKey = myFactory.generateRandomStreamKey();
-        GordianCipher<GordianStreamKeyType> myStreamCipher = myFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
+        final GordianKey<GordianStreamKeyType> myStreamKey = myFactory.generateRandomStreamKey();
+        final GordianCipher<GordianStreamKeyType> myStreamCipher = myFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(myStreamKey.getKeyType()));
         myStreamCipher.initCipher(myStreamKey);
         myCurrent = new GordianCipherOutputStream<GordianStreamKeyType>(myStreamCipher, myCurrent);
 
@@ -191,7 +191,7 @@ public final class GordianStreamManager {
         myCurrent = new GordianLZMAOutputStream(myCurrent);
 
         /* Create a digest stream */
-        GordianDigest myDigest = myFactory.generateRandomDigest();
+        final GordianDigest myDigest = myFactory.generateRandomDigest();
         myCurrent = new GordianDigestOutputStream(myDigest, myCurrent);
 
         /* Return the stream */

@@ -127,7 +127,7 @@ public class TethysEventRegistration<E extends Enum<E>> {
         }
 
         /* Cast as Registration */
-        TethysEventRegistration<?> myReg = (TethysEventRegistration<?>) o;
+        final TethysEventRegistration<?> myReg = (TethysEventRegistration<?>) o;
 
         /* Compare fields */
         return theRegId == myReg.getRegId();

@@ -77,11 +77,11 @@ public class CoeusFXMainPanel
      */
     protected void attachToStage(final Stage pStage) {
         /* Access the GUI factory and program definitions */
-        TethysFXGuiFactory myFactory = theToolkit.getGuiFactory();
-        TethysProgram myApp = theToolkit.getProgramDefinitions();
+        final TethysFXGuiFactory myFactory = theToolkit.getGuiFactory();
+        final TethysProgram myApp = theToolkit.getProgramDefinitions();
 
         /* Create the scene */
-        Scene myScene = new Scene(thePane);
+        final Scene myScene = new Scene(thePane);
         myFactory.registerScene(myScene);
 
         /* Configure the stage */
@@ -90,8 +90,8 @@ public class CoeusFXMainPanel
         pStage.setScene(myScene);
 
         /* Add the icons to the frame */
-        TethysIconId[] myIds = myApp.getIcons();
-        Image[] myIcons = TethysFXGuiUtils.getIcons(myIds);
+        final TethysIconId[] myIds = myApp.getIcons();
+        final Image[] myIcons = TethysFXGuiUtils.getIcons(myIds);
         pStage.getIcons().addAll(Arrays.asList(myIcons));
 
         /* Record startUp completion */

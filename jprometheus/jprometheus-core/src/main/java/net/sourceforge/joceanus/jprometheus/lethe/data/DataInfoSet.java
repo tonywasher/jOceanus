@@ -407,9 +407,13 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         T myInfo = getInfo(pInfoClass);
 
         /* Return change details */
-        return (myInfo != null) && myInfo.hasHistory()
-                                                       ? MetisDifference.DIFFERENT
-                                                       : MetisDifference.IDENTICAL;
+        if (myInfo == null) {
+            return MetisDifference.DIFFERENT;
+        }
+        return myInfo.hasHistory()
+               || MetisDataState.NEW.equals(myInfo.getState())
+                                                               ? MetisDifference.DIFFERENT
+                                                               : MetisDifference.IDENTICAL;
     }
 
     /**

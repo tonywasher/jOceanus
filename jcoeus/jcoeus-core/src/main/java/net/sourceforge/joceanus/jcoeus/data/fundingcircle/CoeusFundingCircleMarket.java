@@ -106,12 +106,12 @@ public class CoeusFundingCircleMarket
         theBookParser.parseFile(pFile);
 
         /* Loop through the loan book items */
-        Iterator<CoeusFundingCircleLoanBookItem> myIterator = theBookParser.loanIterator();
+        final Iterator<CoeusFundingCircleLoanBookItem> myIterator = theBookParser.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusFundingCircleLoanBookItem myItem = myIterator.next();
+            final CoeusFundingCircleLoanBookItem myItem = myIterator.next();
 
             /* Create the loan and record it */
-            CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
+            final CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
             recordLoan(myLoan);
             theAuctionMap.put(myItem.getAuctionId(), myLoan);
         }
@@ -127,9 +127,9 @@ public class CoeusFundingCircleMarket
         theDebtParser.parseFile(pFile);
 
         /* Loop through the loan book items */
-        Iterator<CoeusFundingCircleTransaction> myIterator = theDebtParser.badDebtIterator();
+        final Iterator<CoeusFundingCircleTransaction> myIterator = theDebtParser.badDebtIterator();
         while (myIterator.hasNext()) {
-            CoeusFundingCircleTransaction myTrans = myIterator.next();
+            final CoeusFundingCircleTransaction myTrans = myIterator.next();
 
             /* Add to the transactions */
             addTransaction(myTrans);
@@ -146,14 +146,14 @@ public class CoeusFundingCircleMarket
         theBidsParser.parseFile(pFile);
 
         /* Loop through the loan book items */
-        Iterator<CoeusFundingCircleLoanBookItem> myIterator = theBidsParser.bidIterator();
+        final Iterator<CoeusFundingCircleLoanBookItem> myIterator = theBidsParser.bidIterator();
         while (myIterator.hasNext()) {
-            CoeusFundingCircleLoanBookItem myItem = myIterator.next();
+            final CoeusFundingCircleLoanBookItem myItem = myIterator.next();
 
             /* If the loan is not rejected, add to the list */
             if (myItem.getStatus() != CoeusLoanStatus.REJECTED) {
                 /* Create the loan and record it */
-                CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
+                final CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
                 recordLoan(myLoan);
                 theAuctionMap.put(myItem.getAuctionId(), myLoan);
             }
@@ -170,9 +170,9 @@ public class CoeusFundingCircleMarket
         theXactionParser.parseFile(pFile);
 
         /* Loop through the transactions in normal order */
-        Iterator<CoeusFundingCircleTransaction> myIterator = theXactionParser.transactionIterator();
+        final Iterator<CoeusFundingCircleTransaction> myIterator = theXactionParser.transactionIterator();
         while (myIterator.hasNext()) {
-            CoeusFundingCircleTransaction myTrans = myIterator.next();
+            final CoeusFundingCircleTransaction myTrans = myIterator.next();
 
             /* Add to the transactions */
             addTransaction(myTrans);
@@ -186,7 +186,7 @@ public class CoeusFundingCircleMarket
      * @throws OceanusException on error
      */
     protected CoeusFundingCircleLoan findLoanByAuctionId(final String pId) throws OceanusException {
-        CoeusFundingCircleLoan myLoan = theAuctionMap.get(pId);
+        final CoeusFundingCircleLoan myLoan = theAuctionMap.get(pId);
         if (myLoan == null) {
             throw new CoeusDataException(pId, "Unrecognised AuctionId");
         }

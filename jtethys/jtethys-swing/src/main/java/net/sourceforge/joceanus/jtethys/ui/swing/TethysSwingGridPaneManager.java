@@ -85,14 +85,14 @@ public class TethysSwingGridPaneManager
                                   final int pRow,
                                   final int pColumn) {
         /* Access the node */
-        JComponent myNode = pNode.getNode();
+        final JComponent myNode = pNode.getNode();
 
         /* Obtain the padding size */
-        Integer myHPad = getHGap() >> 1;
-        Integer myVPad = getVGap() >> 1;
+        final Integer myHPad = getHGap() >> 1;
+        final Integer myVPad = getVGap() >> 1;
 
         /* Create constraints */
-        GridBagConstraints myConstraints = new GridBagConstraints();
+        final GridBagConstraints myConstraints = new GridBagConstraints();
         myConstraints.gridx = pColumn;
         myConstraints.gridy = pRow;
         myConstraints.fill = GridBagConstraints.BOTH;
@@ -109,7 +109,7 @@ public class TethysSwingGridPaneManager
     @Override
     public void setCellColumnSpan(final TethysNode<JComponent> pNode,
                                   final int pNumCols) {
-        GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
+        final GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.gridwidth = pNumCols;
             theLayout.setConstraints(pNode.getNode(), myConstraints);
@@ -123,7 +123,7 @@ public class TethysSwingGridPaneManager
 
     @Override
     public void allowCellGrowth(final TethysNode<JComponent> pNode) {
-        GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
+        final GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.weightx = 1.0;
             theLayout.setConstraints(pNode.getNode(), myConstraints);
@@ -133,7 +133,7 @@ public class TethysSwingGridPaneManager
     @Override
     public void setCellAlignment(final TethysNode<JComponent> pNode,
                                  final TethysAlignment pAlign) {
-        GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
+        final GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.anchor = determineAlignment(pAlign);
             myConstraints.fill = GridBagConstraints.VERTICAL;

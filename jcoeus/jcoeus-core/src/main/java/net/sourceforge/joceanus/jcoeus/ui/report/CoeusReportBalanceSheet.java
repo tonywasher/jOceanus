@@ -74,11 +74,11 @@ public class CoeusReportBalanceSheet
         theMarket = pMarket;
 
         /* Access the date and totals */
-        TethysDate myDate = theMarket.getDate();
-        CoeusTotals myTotals = theMarket.getTotals();
+        final TethysDate myDate = theMarket.getDate();
+        final CoeusTotals myTotals = theMarket.getTotals();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, "Balance Sheet for " + theMarket.getMarket().getProvider().toString(), theFormatter.formatObject(myDate));
 
         /* Initialise the source table */
@@ -166,8 +166,8 @@ public class CoeusReportBalanceSheet
         /* If this is a TotalSet */
         if (pSource instanceof CoeusTotalSet) {
             /* Create the new filter */
-            CoeusTotalSet myTotalSet = (CoeusTotalSet) pSource;
-            CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
+            final CoeusTotalSet myTotalSet = (CoeusTotalSet) pSource;
+            final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theMarket);
             myFilter.setTotalSet(myTotalSet);
             return myFilter;
         }

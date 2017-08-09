@@ -59,7 +59,7 @@ public abstract class TethysMenuBarManager {
      */
     public <I> void setVisible(final I pId,
                                final boolean pVisible) {
-        TethysMenuElement<?> myElement = theElementMap.get(pId);
+        final TethysMenuElement<?> myElement = theElementMap.get(pId);
         if (myElement != null) {
             myElement.setVisible(pVisible);
         }
@@ -73,7 +73,7 @@ public abstract class TethysMenuBarManager {
      */
     public <I> void setEnabled(final I pId,
                                final boolean pEnabled) {
-        TethysMenuElement<?> myElement = theElementMap.get(pId);
+        final TethysMenuElement<?> myElement = theElementMap.get(pId);
         if (myElement != null) {
             myElement.setEnabled(pEnabled);
         }
@@ -87,7 +87,7 @@ public abstract class TethysMenuBarManager {
      */
     @SuppressWarnings("unchecked")
     public <I> TethysMenuSubMenu<I> lookUpSubMenu(final I pId) {
-        TethysMenuElement<?> myElement = theElementMap.get(pId);
+        final TethysMenuElement<?> myElement = theElementMap.get(pId);
         return (myElement instanceof TethysMenuSubMenu)
                                                         ? (TethysMenuSubMenu<I>) myElement
                                                         : null;
@@ -126,7 +126,7 @@ public abstract class TethysMenuBarManager {
             isEnabled = true;
 
             /* Access the element map */
-            Map<Object, TethysMenuElement<?>> myElementMap = pManager.theElementMap;
+            final Map<Object, TethysMenuElement<?>> myElementMap = pManager.theElementMap;
 
             /* Check uniqueness of item */
             if (myElementMap.containsKey(pId)) {

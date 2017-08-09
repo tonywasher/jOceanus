@@ -183,7 +183,7 @@ public class GordianSignatureSpec {
         }
 
         /* Access the target SignatureSpec */
-        GordianSignatureSpec myThat = (GordianSignatureSpec) pThat;
+        final GordianSignatureSpec myThat = (GordianSignatureSpec) pThat;
 
         /* Check AsymKeyType and signatureType */
         if (theAsymKeyType != myThat.getAsymKeyType()

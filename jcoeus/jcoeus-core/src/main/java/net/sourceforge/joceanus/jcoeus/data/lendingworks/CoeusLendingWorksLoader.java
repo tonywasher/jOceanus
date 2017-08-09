@@ -58,16 +58,15 @@ public class CoeusLendingWorksLoader {
      * Constructor.
      * @param pFormatter the formatter
      * @param pPath the path to load from
-     * @throws OceanusException on error
      */
     public CoeusLendingWorksLoader(final MetisDataFormatter pFormatter,
-                                   final String pPath) throws OceanusException {
+                                   final String pPath) {
         /* Store the formatter */
         theFormatter = pFormatter;
 
         /* Adjust and store the path */
-        FileSystem mySystem = FileSystems.getDefault();
-        String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.LENDINGWORKS;
+        final FileSystem mySystem = FileSystems.getDefault();
+        final String myPath = pPath + mySystem.getSeparator() + CoeusMarketProvider.LENDINGWORKS;
         theBasePath = mySystem.getPath(myPath);
     }
 
@@ -78,7 +77,7 @@ public class CoeusLendingWorksLoader {
      */
     public CoeusLendingWorksMarket loadMarket() throws OceanusException {
         /* Create the market */
-        CoeusLendingWorksMarket myMarket = new CoeusLendingWorksMarket(theFormatter);
+        final CoeusLendingWorksMarket myMarket = new CoeusLendingWorksMarket(theFormatter);
 
         /* Parse the statement */
         myMarket.parseStatement(theBasePath.resolve(STATEMENT + SUFFIX));

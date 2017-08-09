@@ -93,7 +93,7 @@ public class TethysFXDirectorySelector
             /* else we must use invokeAndWait */
         } else {
             /* Create a FutureTask so that we will wait */
-            FutureTask<Void> myTask = new FutureTask<>(() -> {
+            final FutureTask<Void> myTask = new FutureTask<>(() -> {
                 showDialog();
                 return null;
             });

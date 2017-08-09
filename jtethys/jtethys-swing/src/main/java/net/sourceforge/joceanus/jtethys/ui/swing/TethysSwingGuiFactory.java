@@ -130,7 +130,7 @@ public class TethysSwingGuiFactory
 
     @Override
     public TethysSwingLabel newLabel(final String pText) {
-        TethysSwingLabel myLabel = newLabel();
+        final TethysSwingLabel myLabel = newLabel();
         myLabel.setText(pText);
         return myLabel;
     }
@@ -142,7 +142,7 @@ public class TethysSwingGuiFactory
 
     @Override
     public TethysSwingCheckBox newCheckBox(final String pText) {
-        TethysSwingCheckBox myBox = newCheckBox();
+        final TethysSwingCheckBox myBox = newCheckBox();
         myBox.setText(pText);
         return myBox;
     }

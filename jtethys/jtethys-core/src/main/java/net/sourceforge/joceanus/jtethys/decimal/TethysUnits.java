@@ -67,7 +67,7 @@ public class TethysUnits
      * @return the new Rate
      */
     public static TethysUnits getWholeUnits(final long pValue) {
-        TethysUnits myUnits = new TethysUnits();
+        final TethysUnits myUnits = new TethysUnits();
         myUnits.setValue(adjustDecimals(pValue, NUM_DECIMALS), NUM_DECIMALS);
         return myUnits;
     }

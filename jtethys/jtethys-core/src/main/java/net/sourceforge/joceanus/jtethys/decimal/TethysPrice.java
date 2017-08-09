@@ -96,8 +96,8 @@ public class TethysPrice
     public static TethysPrice getWholeUnits(final long pUnits,
                                             final Currency pCurrency) {
         /* Allocate the money */
-        TethysPrice myResult = new TethysPrice(pCurrency);
-        int myScale = myResult.scale();
+        final TethysPrice myResult = new TethysPrice(pCurrency);
+        final int myScale = myResult.scale();
         myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
         return myResult;
     }
@@ -109,8 +109,8 @@ public class TethysPrice
      */
     public static TethysPrice getWholeUnits(final long pUnits) {
         /* Allocate the price */
-        TethysPrice myResult = new TethysPrice();
-        int myScale = myResult.scale();
+        final TethysPrice myResult = new TethysPrice();
+        final int myScale = myResult.scale();
         myResult.setValue(adjustDecimals(pUnits, myScale), myScale);
         return myResult;
     }

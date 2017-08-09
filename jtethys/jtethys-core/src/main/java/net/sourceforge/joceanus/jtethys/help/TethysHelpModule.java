@@ -209,7 +209,7 @@ public abstract class TethysHelpModule {
             /* If we have a file name */
             if (myEntry.getFileName() != null) {
                 /* Reset the builder */
-                String myPage = TethysResourceBuilder.loadResourceToString(theClass, myEntry.getFileName());
+                final String myPage = TethysResourceBuilder.loadResourceToString(theClass, myEntry.getFileName());
 
                 /* Set the HTML for the entry */
                 myEntry.setHtml(myPage);

@@ -251,7 +251,7 @@ public abstract class TethysFXDataTextField<T>
     @Override
     public void setEditable(final boolean pEditable) {
         /* Obtain current setting */
-        boolean isEditable = isEditable();
+        final boolean isEditable = isEditable();
 
         /* If we are changing */
         if (pEditable != isEditable) {
@@ -365,16 +365,16 @@ public abstract class TethysFXDataTextField<T>
             theControl = new TethysDataEditTextFieldControl<>(this, pConverter);
 
             /* Access the fields */
-            Label myLabel = getLabel();
+            final Label myLabel = getLabel();
             theTextField = getEditControl();
 
             /* Set Padding */
             myLabel.setPadding(new Insets(PADDING, PADDING, PADDING, PADDING));
 
             /* Set alignment */
-            Pos myAlignment = pConverter.rightAlignFields()
-                                                            ? Pos.CENTER_RIGHT
-                                                            : Pos.CENTER_LEFT;
+            final Pos myAlignment = pConverter.rightAlignFields()
+                                                                  ? Pos.CENTER_RIGHT
+                                                                  : Pos.CENTER_LEFT;
             myLabel.setAlignment(myAlignment);
             theTextField.setAlignment(myAlignment);
 
@@ -480,7 +480,7 @@ public abstract class TethysFXDataTextField<T>
          */
         private void processValue() {
             /* If we failed to process the value */
-            String myText = theTextField.getText();
+            final String myText = theTextField.getText();
             if (!theControl.processValue(myText)) {
                 /* Set toolTip, save error text and retain the focus */
                 theTextField.setTooltip(new Tooltip(theControl.getErrorText()));

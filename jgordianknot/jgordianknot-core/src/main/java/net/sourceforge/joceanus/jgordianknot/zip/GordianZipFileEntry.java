@@ -118,7 +118,7 @@ public class GordianZipFileEntry {
     /**
      * Is this the header.
      */
-    private boolean isHeader = false;
+    private boolean isHeader;
 
     /**
      * Standard constructor from filename.
@@ -220,9 +220,8 @@ public class GordianZipFileEntry {
     /**
      * Set the properties of the file.
      * @return the properties
-     * @throws OceanusException on error
      */
-    protected GordianZipFileProperties allocateProperties() throws OceanusException {
+    protected GordianZipFileProperties allocateProperties() {
         /* Set the top-level details */
         theProperties.setProperty(PROP_NAME, theFileName);
         theProperties.setProperty(PROP_NAME, theFileSize);
@@ -246,10 +245,9 @@ public class GordianZipFileEntry {
      * Set User String property.
      * @param pPropertyName the property name
      * @param pPropertyValue the property value
-     * @throws OceanusException on error
      */
     public void setUserStringProperty(final String pPropertyName,
-                                      final String pPropertyValue) throws OceanusException {
+                                      final String pPropertyValue) {
         /* Set the property */
         theProperties.setProperty(PROP_USERPFIX
                                   + pPropertyName, pPropertyValue);
@@ -259,10 +257,9 @@ public class GordianZipFileEntry {
      * Set User Long property.
      * @param pPropertyName the property name
      * @param pPropertyValue the property value
-     * @throws OceanusException on error
      */
     public void setUserLongProperty(final String pPropertyName,
-                                    final Long pPropertyValue) throws OceanusException {
+                                    final Long pPropertyValue) {
         /* Set the property */
         theProperties.setProperty(PROP_USERPFIX
                                   + pPropertyName, pPropertyValue);
@@ -281,12 +278,11 @@ public class GordianZipFileEntry {
     }
 
     /**
-     * Get User String property.
+     * Get User Longproperty.
      * @param pPropertyName the property name
      * @return the property value (or null)
-     * @throws OceanusException on error
      */
-    public Long getUserLongProperty(final String pPropertyName) throws OceanusException {
+    public Long getUserLongProperty(final String pPropertyName) {
         /* Set the property */
         return theProperties.getLongProperty(PROP_USERPFIX
                                              + pPropertyName);
@@ -331,14 +327,13 @@ public class GordianZipFileEntry {
     /**
      * Build the properties.
      * @param pStreams the stream definitions
-     * @throws OceanusException on error
      */
-    public void buildProperties(final List<GordianStreamDefinition> pStreams) throws OceanusException {
+    public void buildProperties(final List<GordianStreamDefinition> pStreams) {
         /* Loop through the streams */
         int iIndex = 0;
-        Iterator<GordianStreamDefinition> myIterator = pStreams.iterator();
+        final Iterator<GordianStreamDefinition> myIterator = pStreams.iterator();
         while (myIterator.hasNext()) {
-            GordianStreamDefinition myStream = myIterator.next();
+            final GordianStreamDefinition myStream = myIterator.next();
             iIndex++;
 
             /* Set the type property */
@@ -376,25 +371,25 @@ public class GordianZipFileEntry {
      */
     public List<GordianStreamDefinition> buildInputList() throws OceanusException {
         /* Create list */
-        List<GordianStreamDefinition> myList = new ArrayList<>();
+        final List<GordianStreamDefinition> myList = new ArrayList<>();
 
         /* Loop through the streamProperties */
         int myIndex = 1;
         for (;;) {
             /* Check for property and break loop if not found */
-            Long myType = theProperties.getLongProperty(PROP_TYPE
-                                                        + myIndex);
+            final Long myType = theProperties.getLongProperty(PROP_TYPE
+                                                              + myIndex);
             if (myType == null) {
                 break;
             }
 
             /* Access remaining properties */
-            byte[] myTypeDef = theProperties.getByteProperty(PROP_TYPE
-                                                             + myIndex);
-            byte[] myVector = theProperties.getByteProperty(PROP_VECTOR
-                                                            + myIndex);
-            byte[] myValue = theProperties.getByteProperty(PROP_VALUE
-                                                           + myIndex);
+            final byte[] myTypeDef = theProperties.getByteProperty(PROP_TYPE
+                                                                   + myIndex);
+            final byte[] myVector = theProperties.getByteProperty(PROP_VECTOR
+                                                                  + myIndex);
+            final byte[] myValue = theProperties.getByteProperty(PROP_VALUE
+                                                                 + myIndex);
 
             /* Define the stream */
             myList.add(new GordianStreamDefinition(myType, myTypeDef, myVector, myValue));

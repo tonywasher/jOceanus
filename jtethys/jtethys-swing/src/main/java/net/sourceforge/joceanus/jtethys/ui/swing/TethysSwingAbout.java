@@ -76,7 +76,7 @@ public class TethysSwingAbout
      */
     private void makeDialog() {
         /* Create the dialog */
-        JFrame myFrame = theGuiFactory.getFrame();
+        final JFrame myFrame = theGuiFactory.getFrame();
         theDialog = new JDialog(myFrame);
         theDialog.setUndecorated(true);
         theDialog.setModalityType(ModalityType.APPLICATION_MODAL);

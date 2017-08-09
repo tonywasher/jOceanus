@@ -80,23 +80,23 @@ public class TethysSwingFileSelector
         /* Set values */
         theChooser.setDialogTitle(getTitle());
         theChooser.setCurrentDirectory(getInitialDirectory());
-        String myName = getInitialFileName();
+        final String myName = getInitialFileName();
         if (myName != null) {
-            File myFile = new File(theChooser.getCurrentDirectory(), myName);
+            final File myFile = new File(theChooser.getCurrentDirectory(), myName);
             theChooser.setSelectedFile(myFile);
         }
 
         /* Set the extension filter list */
         theChooser.resetChoosableFileFilters();
-        String myExt = getExtension();
+        final String myExt = getExtension();
         if (myExt != null) {
             theChooser.setFileFilter(new FileNameExtensionFilter("Filter", myExt));
         }
 
         /* Show the dialog */
-        int myResult = useSave()
-                                 ? theChooser.showSaveDialog(theParent)
-                                 : theChooser.showOpenDialog(theParent);
+        final int myResult = useSave()
+                                       ? theChooser.showSaveDialog(theParent)
+                                       : theChooser.showOpenDialog(theParent);
 
         /* If we selected a file */
         if (myResult == JFileChooser.APPROVE_OPTION) {
@@ -114,7 +114,7 @@ public class TethysSwingFileSelector
             /* else we must use invokeAndWait */
         } else {
             try {
-                SwingUtilities.invokeAndWait(() -> showDialog());
+                SwingUtilities.invokeAndWait(this::showDialog);
             } catch (InvocationTargetException e) {
                 LOGGER.error("Failed to display dialog", e);
             } catch (InterruptedException e) {

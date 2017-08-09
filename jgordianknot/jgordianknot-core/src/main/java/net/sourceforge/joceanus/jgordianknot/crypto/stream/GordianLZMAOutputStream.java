@@ -65,7 +65,7 @@ public final class GordianLZMAOutputStream
         theTarget = pOutput;
 
         /* Create the piped stream */
-        GordianPipedStream myPipe = new GordianPipedStream();
+        final GordianPipedStream myPipe = new GordianPipedStream();
         theSink = myPipe.getSink();
         theSource = myPipe.getSource();
 

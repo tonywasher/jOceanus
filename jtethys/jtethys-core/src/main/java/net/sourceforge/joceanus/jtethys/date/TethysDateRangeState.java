@@ -310,8 +310,8 @@ public class TethysDateRangeState {
         theOverallRange = new TethysDateRange(pRange);
 
         /* Access range parameters */
-        TethysDate myFirst = theOverallRange.getStart();
-        TethysDate myLast = theOverallRange.getEnd();
+        final TethysDate myFirst = theOverallRange.getStart();
+        final TethysDate myLast = theOverallRange.getEnd();
 
         /* Make sure that no dates are before the first date */
         if (myFirst != null) {
@@ -477,12 +477,12 @@ public class TethysDateRangeState {
      */
     private void resetBaseAnomalies() {
         /* Reset anomalies */
-        TethysDate myFirstDate = theOverallRange.getStart();
+        final TethysDate myFirstDate = theOverallRange.getStart();
         if (myFirstDate != null
             && theStartDate.compareTo(myFirstDate) < 0) {
             theStartDate = myFirstDate;
         }
-        TethysDate myLastDate = theOverallRange.getEnd();
+        final TethysDate myLastDate = theOverallRange.getEnd();
         if (myLastDate != null
             && theEndDate.compareTo(myLastDate) > 0) {
             theEndDate = myLastDate;
@@ -550,7 +550,7 @@ public class TethysDateRangeState {
         myDate.adjustForwardByPeriod(thePeriod);
 
         /* Make sure that we do not go beyond the date range */
-        TethysDate myLastDate = theOverallRange.getEnd();
+        final TethysDate myLastDate = theOverallRange.getEnd();
         if (myLastDate != null
             && myDate.compareTo(myLastDate) > 0) {
             myDate = myLastDate;
@@ -571,7 +571,7 @@ public class TethysDateRangeState {
         myDate.adjustBackwardByPeriod(thePeriod);
 
         /* Make sure that we do not go beyond the date range */
-        TethysDate myFirstDate = theOverallRange.getStart();
+        final TethysDate myFirstDate = theOverallRange.getStart();
         if (myFirstDate != null
             && myDate.compareTo(myFirstDate) < 0) {
             myDate = myFirstDate;

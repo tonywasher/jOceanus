@@ -96,7 +96,7 @@ public class CoeusRateSetterRepair {
      */
     protected void repairLoans() throws OceanusException {
         /* Obtain the list of repaired loans */
-        List<CoeusRateSetterLoan> myLoans = getRepairedLoans();
+        final List<CoeusRateSetterLoan> myLoans = getRepairedLoans();
 
         /* Handle Exact Matches first */
         handleExactMatches(myLoans, NO_DELAY);
@@ -128,19 +128,19 @@ public class CoeusRateSetterRepair {
      */
     private List<CoeusRateSetterLoan> getRepairedLoans() {
         /* Create a list of all the loans */
-        List<CoeusRateSetterLoan> myLoans = new ArrayList<>();
+        final List<CoeusRateSetterLoan> myLoans = new ArrayList<>();
 
         /* Loop through all the loans */
-        Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
+        final Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
         while (myIterator.hasNext()) {
-            CoeusRateSetterLoan myLoan = (CoeusRateSetterLoan) myIterator.next();
+            final CoeusRateSetterLoan myLoan = (CoeusRateSetterLoan) myIterator.next();
 
             /* If the loan is active */
-            CoeusRateSetterLoanBookItem myItem = myLoan.getLoanBookItem();
+            final CoeusRateSetterLoanBookItem myItem = myLoan.getLoanBookItem();
             if (CoeusLoanStatus.ACTIVE.equals(myItem.getStatus())) {
                 /* Add repayments to the amount of the loan which is currently the balance */
-                TethysMoney myLent = myItem.getLent();
-                CoeusRateSetterTotals myTotals = myLoan.getTotals();
+                final TethysMoney myLent = myItem.getLent();
+                final CoeusRateSetterTotals myTotals = myLoan.getTotals();
                 myLent.subtractAmount(myTotals.getLoanBook());
             }
 
@@ -163,19 +163,19 @@ public class CoeusRateSetterRepair {
     private void handleExactMatches(final List<CoeusRateSetterLoan> pLoans,
                                     final int pNumDays) {
         /* Loop through all the loans */
-        Iterator<CoeusRateSetterLoan> myLoanIterator = pLoans.iterator();
+        final Iterator<CoeusRateSetterLoan> myLoanIterator = pLoans.iterator();
         while (myLoanIterator.hasNext()) {
-            CoeusRateSetterLoan myLoan = myLoanIterator.next();
-            CoeusRateSetterLoanBookItem myBookItem = myLoan.getLoanBookItem();
-            TethysDate myDate = myBookItem.getStartDate();
-            TethysMoney myLent = myBookItem.getLent();
+            final CoeusRateSetterLoan myLoan = myLoanIterator.next();
+            final CoeusRateSetterLoanBookItem myBookItem = myLoan.getLoanBookItem();
+            final TethysDate myDate = myBookItem.getStartDate();
+            final TethysMoney myLent = myBookItem.getLent();
 
             /* Loop through all the initial loans */
             boolean doLoop = true;
-            Iterator<CoeusRateSetterTransaction> myInitIterator = theInitialLoans.iterator();
+            final Iterator<CoeusRateSetterTransaction> myInitIterator = theInitialLoans.iterator();
             while (doLoop && myInitIterator.hasNext()) {
-                CoeusRateSetterTransaction myTrans = myInitIterator.next();
-                long myDays = myDate.daysUntil(myTrans.getDate());
+                final CoeusRateSetterTransaction myTrans = myInitIterator.next();
+                final long myDays = myDate.daysUntil(myTrans.getDate());
 
                 /* Break loop if we are not going to get a match */
                 if (myDays > 0) {
@@ -203,23 +203,23 @@ public class CoeusRateSetterRepair {
     private void handleSplitMatches(final List<CoeusRateSetterLoan> pLoans,
                                     final int pNumDays) throws OceanusException {
         /* Create loan list */
-        List<CoeusRateSetterLoan> myLoans = new ArrayList<>();
+        final List<CoeusRateSetterLoan> myLoans = new ArrayList<>();
 
         /* Loop through all the initial loans */
-        Iterator<CoeusRateSetterTransaction> myInitIterator = theInitialLoans.iterator();
+        final Iterator<CoeusRateSetterTransaction> myInitIterator = theInitialLoans.iterator();
         while (myInitIterator.hasNext()) {
-            CoeusRateSetterTransaction myTrans = myInitIterator.next();
-            TethysDate myDate = myTrans.getDate();
+            final CoeusRateSetterTransaction myTrans = myInitIterator.next();
+            final TethysDate myDate = myTrans.getDate();
 
             /* Look for loans on the same date */
             myLoans.clear();
-            TethysMoney myLoanAmount = new TethysMoney();
-            Iterator<CoeusRateSetterLoan> myLoanIterator = pLoans.iterator();
+            final TethysMoney myLoanAmount = new TethysMoney();
+            final Iterator<CoeusRateSetterLoan> myLoanIterator = pLoans.iterator();
             while (myLoanIterator.hasNext()) {
-                CoeusRateSetterLoan myLoan = myLoanIterator.next();
-                CoeusRateSetterLoanBookItem myBookItem = myLoan.getLoanBookItem();
-                TethysDate myStartDate = myBookItem.getStartDate();
-                long myDays = myDate.daysUntil(myStartDate);
+                final CoeusRateSetterLoan myLoan = myLoanIterator.next();
+                final CoeusRateSetterLoanBookItem myBookItem = myLoan.getLoanBookItem();
+                final TethysDate myStartDate = myBookItem.getStartDate();
+                final long myDays = myDate.daysUntil(myStartDate);
 
                 /* If there is a possible match */
                 if (myDays >= 0) {
@@ -242,7 +242,7 @@ public class CoeusRateSetterRepair {
                 /* Loop through the loans */
                 for (CoeusRateSetterLoan myLoan : myLoans) {
                     /* Create a new transaction based on the loan */
-                    CoeusRateSetterTransaction myNewTran = new CoeusRateSetterTransaction(myTrans, myLoan);
+                    final CoeusRateSetterTransaction myNewTran = new CoeusRateSetterTransaction(myTrans, myLoan);
                     theMarket.addTheTransaction(myNewTran);
                 }
 

@@ -48,13 +48,13 @@ public class TethysSwingSplitTreeManager<T>
         super(pFactory);
 
         /* Create scroll-panes */
-        TethysSwingScrollPaneManager myTreeScroll = pFactory.newScrollPane();
+        final TethysSwingScrollPaneManager myTreeScroll = pFactory.newScrollPane();
         myTreeScroll.setContent(getTreeManager());
-        TethysSwingScrollPaneManager myHTMLScroll = pFactory.newScrollPane();
+        final TethysSwingScrollPaneManager myHTMLScroll = pFactory.newScrollPane();
         myHTMLScroll.setContent(getHTMLManager());
 
         /* Store HTML pane in border pane */
-        TethysSwingBorderPaneManager myHTMLPane = getHTMLPane();
+        final TethysSwingBorderPaneManager myHTMLPane = getHTMLPane();
         myHTMLPane.setCentre(myHTMLScroll);
 
         /* Create the split pane */

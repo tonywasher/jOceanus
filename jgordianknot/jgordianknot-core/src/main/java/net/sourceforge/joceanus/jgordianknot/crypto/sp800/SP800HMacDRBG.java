@@ -118,11 +118,11 @@ public final class SP800HMacDRBG
         theEntropy = pEntropy;
 
         /* Create Seed Material */
-        byte[] myEntropy = theEntropy.getEntropy();
-        byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);
+        final byte[] myEntropy = theEntropy.getEntropy();
+        final byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);
 
         /* Initialise buffers */
-        int myLen = theHMac.getMacSize();
+        final int myLen = theHMac.getMacSize();
         theKey = new byte[myLen];
         theHash = new byte[myLen];
         Arrays.fill(theHash, (byte) 1);
@@ -183,8 +183,8 @@ public final class SP800HMacDRBG
     @Override
     public void reseed(final byte[] pXtraBytes) {
         /* Create seed material */
-        byte[] myEntropy = theEntropy.getEntropy();
-        byte[] mySeed = Arrays.concatenate(myEntropy, pXtraBytes);
+        final byte[] myEntropy = theEntropy.getEntropy();
+        final byte[] mySeed = Arrays.concatenate(myEntropy, pXtraBytes);
 
         /* Update the state */
         updateState(mySeed);
@@ -199,8 +199,8 @@ public final class SP800HMacDRBG
                         final byte[] pXtraBytes,
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
-        int myLen = pOutput.length;
-        int myNumBits = myLen << BIT_SHIFT;
+        final int myLen = pOutput.length;
+        final int myNumBits = myLen << BIT_SHIFT;
         if (myNumBits > SP800Factory.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
                                                + SP800Factory.MAX_BITS_REQUEST);
@@ -227,13 +227,13 @@ public final class SP800HMacDRBG
         }
 
         /* Allocate output buffer */
-        byte[] myResult = new byte[myLen];
+        final byte[] myResult = new byte[myLen];
 
         /* Protect against exceptions */
         try {
             /* Initialise the hMac */
             theHMac.initMac(theKey);
-            int mySize = theHMac.getMacSize();
+            final int mySize = theHMac.getMacSize();
 
             /* while we need to generate more bytes */
             int myBuilt = 0;

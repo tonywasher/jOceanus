@@ -83,7 +83,7 @@ public class CoeusStatementTable<N, I>
     public CoeusStatementTable(final MetisToolkit<N, I> pToolkit,
                                final CoeusMarketCache pCache) {
         /* Access the GUI factory */
-        TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
+        final TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the list */
         theList = new MetisIndexedList<>();
@@ -154,12 +154,12 @@ public class CoeusStatementTable<N, I>
      */
     private void filterChanged() {
         /* Adjust the calculator */
-        CoeusFilter myFilter = theSelector.getFilter();
+        final CoeusFilter myFilter = theSelector.getFilter();
         theCalculator.setTotalSet(myFilter.getTotalSet());
 
         /* Show or hide the loan column */
-        boolean showLoan = (!(myFilter instanceof CoeusSnapShotFilter))
-                           || ((CoeusSnapShotFilter) myFilter).getLoan() == null;
+        final boolean showLoan = (!(myFilter instanceof CoeusSnapShotFilter))
+                                 || ((CoeusSnapShotFilter) myFilter).getLoan() == null;
 
         theLoanColumn.setVisible(showLoan);
 

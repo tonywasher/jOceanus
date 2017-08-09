@@ -112,7 +112,7 @@ public interface TethysDataEditConverter<T> {
             if (pValue == null) {
                 return null;
             }
-            char[] myArray = new char[pValue.length];
+            final char[] myArray = new char[pValue.length];
             Arrays.fill(myArray, TethysPasswordField.BULLET);
             return new String(myArray);
         }
@@ -288,7 +288,7 @@ public interface TethysDataEditConverter<T> {
 
         @Override
         public TethysDecimal parseEditedValue(final String pValue) {
-            int myNumDecimals = theNumDecimals.getAsInt();
+            final int myNumDecimals = theNumDecimals.getAsInt();
             return getParser().parseDecimalValue(pValue, myNumDecimals);
         }
 

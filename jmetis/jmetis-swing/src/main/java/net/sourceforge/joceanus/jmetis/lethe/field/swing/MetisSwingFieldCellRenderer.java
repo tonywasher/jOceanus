@@ -246,7 +246,7 @@ public final class MetisSwingFieldCellRenderer {
             theData = pData;
             theClazz = pClazz;
             setHorizontalAlignment(SwingConstants.CENTER);
-            theSupplier = (i) -> null;
+            theSupplier = i -> null;
             theIconMap = new HashMap<>();
         }
 

@@ -71,7 +71,7 @@ public class TethysSwingTreeManager<T>
         theRoot = new TethysSwingTreeItem<>(this);
         theTreeModel = new DefaultTreeModel(theRoot.getNode());
         theTree = new JTree(theTreeModel);
-        TreeSelectionModel mySelectionModel = theTree.getSelectionModel();
+        final TreeSelectionModel mySelectionModel = theTree.getSelectionModel();
         setRoot(theRoot);
 
         /* Configure the tree */
@@ -116,9 +116,9 @@ public class TethysSwingTreeManager<T>
      */
     @SuppressWarnings("unchecked")
     private T getSelectedItemFromPath(final TreePath pPath) {
-        TethysSwingTreeNode<T> myNode = pPath == null
-                                                      ? null
-                                                      : (TethysSwingTreeNode<T>) pPath.getLastPathComponent();
+        final TethysSwingTreeNode<T> myNode = pPath == null
+                                                            ? null
+                                                            : (TethysSwingTreeNode<T>) pPath.getLastPathComponent();
         return myNode == null
                               ? null
                               : myNode.getValue().getItem();
@@ -132,7 +132,7 @@ public class TethysSwingTreeManager<T>
     @Override
     public boolean lookUpAndSelectItem(final String pName) {
         /* Look up the item */
-        TethysSwingTreeItem<T> myItem = lookUpItem(pName);
+        final TethysSwingTreeItem<T> myItem = lookUpItem(pName);
 
         /* If we found the item */
         if (myItem != null) {
@@ -178,7 +178,7 @@ public class TethysSwingTreeManager<T>
         /* If the tree is visible */
         if (isVisible()) {
             /* Select this item */
-            TreePath myPath = new TreePath(pItem.getNode().getPath());
+            final TreePath myPath = new TreePath(pItem.getNode().getPath());
             theTree.setSelectionPath(myPath);
             theTree.scrollPathToVisible(myPath);
         }
@@ -243,10 +243,10 @@ public class TethysSwingTreeManager<T>
         @Override
         protected void attachToTree() {
             /* Obtain the parent */
-            TethysSwingTreeItem<T> myParent = getParent();
+            final TethysSwingTreeItem<T> myParent = getParent();
 
             /* Access the model */
-            DefaultTreeModel myModel = getTree().theTreeModel;
+            final DefaultTreeModel myModel = getTree().theTreeModel;
 
             /* If we are not the root */
             if (myParent != null) {
@@ -254,7 +254,7 @@ public class TethysSwingTreeManager<T>
                 theNode = new TethysSwingTreeNode<>(this);
 
                 /* add to list of children */
-                int myNumChildren = myModel.getChildCount(myParent.getNode());
+                final int myNumChildren = myModel.getChildCount(myParent.getNode());
                 myModel.insertNodeInto(theNode, myParent.getNode(), myNumChildren);
             }
 
@@ -264,8 +264,8 @@ public class TethysSwingTreeManager<T>
             /* If we are the root */
             if (myParent == null) {
                 /* Ensure that the node is expanded */
-                TreePath myPath = new TreePath(theNode);
-                JTree myTree = getTree().theTree;
+                final TreePath myPath = new TreePath(theNode);
+                final JTree myTree = getTree().theTree;
                 if (myTree.isCollapsed(myPath)) {
                     myTree.expandPath(myPath);
                 }
@@ -293,8 +293,8 @@ public class TethysSwingTreeManager<T>
             theNode = new TethysSwingTreeNode<>(this);
 
             /* Obtain the parent and model */
-            TethysSwingTreeItem<T> myParent = getParent();
-            DefaultTreeModel myModel = getTree().theTreeModel;
+            final TethysSwingTreeItem<T> myParent = getParent();
+            final DefaultTreeModel myModel = getTree().theTreeModel;
 
             /* Add at index in list */
             myModel.insertNodeInto(theNode, myParent.getNode(), pChildNo);
@@ -342,7 +342,7 @@ public class TethysSwingTreeManager<T>
 
         @Override
         public String toString() {
-            TethysSwingTreeItem<X> myValue = getValue();
+            final TethysSwingTreeItem<X> myValue = getValue();
             return myValue == null
                                    ? null
                                    : myValue.toString();

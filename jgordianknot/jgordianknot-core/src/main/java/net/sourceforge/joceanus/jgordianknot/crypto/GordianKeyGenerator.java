@@ -154,7 +154,7 @@ public abstract class GordianKeyGenerator<T> {
      */
     public byte[] secureKey(final GordianKey<?> pKeyToSecure,
                             final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
+        final GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
         return myCipher.secureKey(pKey, pKeyToSecure);
     }
 
@@ -179,7 +179,7 @@ public abstract class GordianKeyGenerator<T> {
      */
     public GordianKey<T> deriveKey(final byte[] pSecuredKey,
                                    final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
+        final GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
         return myCipher.deriveKey(pKey, pSecuredKey, theKeyType);
     }
 
@@ -193,29 +193,29 @@ public abstract class GordianKeyGenerator<T> {
     public GordianKey<T> generateKeyFromSecret(final byte[] pSecret,
                                                final byte[] pInitVector) throws OceanusException {
         /* Determine the key length in bytes */
-        int myKeyLen = theKeyLength
-                       / Byte.SIZE;
+        final int myKeyLen = theKeyLength
+                             / Byte.SIZE;
 
         /* Create a buffer to hold the resulting key and # of bytes built */
-        byte[] myKeyBytes = new byte[myKeyLen];
+        final byte[] myKeyBytes = new byte[myKeyLen];
         int myBuilt = 0;
 
         /* Determine a digestType to use based on the first four bytes of the initVector */
         int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
         mySeed += theKeyAdjust;
-        GordianDigestType[] myDigestType = new GordianDigestType[1];
+        final GordianDigestType[] myDigestType = new GordianDigestType[1];
         theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
 
         /* Create the MAC and initialise it */
-        GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
-        GordianMac myMac = theFactory.createMac(myMacSpec);
+        final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
+        final GordianMac myMac = theFactory.createMac(myMacSpec);
         myMac.initMac(pSecret);
 
         /* while we need to generate more bytes */
-        GordianByteArrayInteger mySection = new GordianByteArrayInteger();
+        final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
         while (myBuilt < myKeyLen) {
             /* Build the key part */
-            byte[] myKeyPart = buildCipherSection(myMac, mySection.iterate(), pInitVector);
+            final byte[] myKeyPart = buildCipherSection(myMac, mySection.iterate(), pInitVector);
 
             /* Determine how many bytes of this hash should be used */
             int myNeeded = myKeyLen
@@ -245,13 +245,13 @@ public abstract class GordianKeyGenerator<T> {
                                       final byte[] pSection,
                                       final byte[] pInitVector) throws OceanusException {
         /* Declare initial value */
-        byte[] myResult = new byte[pMac.getMacSize()];
-        byte[] myHash = new byte[pMac.getMacSize()];
+        final byte[] myResult = new byte[pMac.getMacSize()];
+        final byte[] myHash = new byte[pMac.getMacSize()];
         byte[] myInput = pInitVector;
 
         /* Create the standard data */
-        byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
-        byte[] myPersonal = theFactory.getPersonalisation();
+        final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
+        final byte[] myPersonal = theFactory.getPersonalisation();
 
         /* Update with personalisation, algorithm and section */
         pMac.update(myPersonal);
@@ -259,7 +259,7 @@ public abstract class GordianKeyGenerator<T> {
         pMac.update(pSection);
 
         /* Loop through the iterations */
-        int myNumIterations = theFactory.getNumIterations();
+        final int myNumIterations = theFactory.getNumIterations();
         for (int i = 0; i < myNumIterations; i++) {
             /* Add the existing result to hash */
             pMac.update(myInput);

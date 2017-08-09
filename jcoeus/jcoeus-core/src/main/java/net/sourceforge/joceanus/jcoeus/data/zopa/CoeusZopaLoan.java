@@ -206,14 +206,14 @@ public class CoeusZopaLoan
     @Override
     protected void checkLoan() throws CoeusDataException {
         /* Obtain the book balance and adjust for missing payments */
-        TethysDecimal myBookBalance = new TethysDecimal(theBookItem.getBalance());
+        final TethysDecimal myBookBalance = new TethysDecimal(theBookItem.getBalance());
 
         /* Access the total capital */
-        CoeusZopaTotals myTotals = getTotals();
+        final CoeusZopaTotals myTotals = getTotals();
         TethysDecimal myLoanBalance = myTotals.getLoanBook();
 
         /* If this is a badDebt */
-        CoeusLoanStatus myStatus = theBookItem.getStatus();
+        final CoeusLoanStatus myStatus = theBookItem.getStatus();
         if (CoeusLoanStatus.BADDEBT.equals(myStatus)) {
             /* Loan Balance is badDebt */
             myLoanBalance = myTotals.getBadDebt();
@@ -230,7 +230,7 @@ public class CoeusZopaLoan
         }
 
         /* Check bookItem interest */
-        TethysDecimal myInterest = new TethysDecimal(myTotals.getInterest());
+        final TethysDecimal myInterest = new TethysDecimal(myTotals.getInterest());
         myInterest.subtractValue(theUpFrontInterest);
         if (!myInterest.equals(theBookItem.getInterestRepaid())) {
             myInterest.subtractValue(theBookItem.getInterestRepaid());

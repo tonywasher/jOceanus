@@ -24,7 +24,6 @@ package net.sourceforge.joceanus.jtethys.help;
 
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -147,14 +146,13 @@ public abstract class TethysHelpWindow<N, I>
     /**
      * Set the help module.
      * @param pModule the helpModule
-     * @throws OceanusException on error
      */
-    public void setModule(final TethysHelpModule pModule) throws OceanusException {
+    public void setModule(final TethysHelpModule pModule) {
         /* Access the Help entries and list */
-        List<TethysHelpEntry> myEntries = pModule.getHelpEntries();
+        final List<TethysHelpEntry> myEntries = pModule.getHelpEntries();
 
         /* Declare CSS */
-        String myCSS = pModule.getCSS();
+        final String myCSS = pModule.getCSS();
         if (myCSS != null) {
             theHtml.setCSSContent(myCSS);
         }
@@ -184,7 +182,7 @@ public abstract class TethysHelpWindow<N, I>
      */
     private void handleNewTreeItem(final TethysHelpEntry pEntry) {
         if (pEntry != null) {
-            String myHtml = pEntry.getHtml();
+            final String myHtml = pEntry.getHtml();
             if (myHtml != null) {
                 theHtml.setHTMLContent(myHtml, pEntry.getName());
             }
@@ -200,7 +198,7 @@ public abstract class TethysHelpWindow<N, I>
     private TethysTreeItem<TethysHelpEntry, N, I> createTree(final String pTitle,
                                                              final List<TethysHelpEntry> pEntries) {
         /* Obtain the root node */
-        TethysTreeItem<TethysHelpEntry, N, I> myRoot = theTree.getRoot();
+        final TethysTreeItem<TethysHelpEntry, N, I> myRoot = theTree.getRoot();
         theTree.setRootName(pTitle);
         theTree.setRootVisible();
 
@@ -224,10 +222,10 @@ public abstract class TethysHelpWindow<N, I>
         /* Loop through the entries */
         for (TethysHelpEntry myEntry : pEntries) {
             /* Create the entry */
-            TethysTreeItem<TethysHelpEntry, N, I> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
+            final TethysTreeItem<TethysHelpEntry, N, I> myItem = theTree.addChildItem(pParent, myEntry.getName(), myEntry);
 
             /* If we have children */
-            List<TethysHelpEntry> myChildren = myEntry.getChildren();
+            final List<TethysHelpEntry> myChildren = myEntry.getChildren();
             if (myChildren != null) {
                 /* Add the children into the tree */
                 addHelpEntries(myItem, myChildren);

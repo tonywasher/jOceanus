@@ -104,8 +104,8 @@ public abstract class GordianFactory {
         isRestricted = theParameters.useRestricted();
 
         /* Calculate personalisation bytes */
-        char[] myPhrase = theParameters.getSecurityPhrase();
-        GordianDigest myDigest = createDigest(getDefaultDigest());
+        final char[] myPhrase = theParameters.getSecurityPhrase();
+        final GordianDigest myDigest = createDigest(getDefaultDigest());
         myDigest.update(TethysDataConverter.stringToByteArray(BASE_PERSONAL));
         if (myPhrase != null) {
             myDigest.update(TethysDataConverter.charsToByteArray(myPhrase));
@@ -202,7 +202,7 @@ public abstract class GordianFactory {
      */
     public void reSeedRandom() {
         /* Generate and apply the new seed */
-        byte[] mySeed = theRandom.generateSeed(SEED_SIZE);
+        final byte[] mySeed = theRandom.generateSeed(SEED_SIZE);
         theRandom.setSeed(mySeed);
     }
 
@@ -231,6 +231,7 @@ public abstract class GordianFactory {
      * @param pKeyType the keyType
      * @return the keyLength
      * @throws OceanusException on error
+     * 
      */
     public <X> String getKeyAlgorithm(final X pKeyType) throws OceanusException {
         return pKeyType.toString();
@@ -289,7 +290,7 @@ public abstract class GordianFactory {
      * @throws OceanusException on error
      */
     public GordianDigest generateRandomDigest() throws OceanusException {
-        GordianDigestType myType = getIdManager().generateRandomDigestType();
+        final GordianDigestType myType = getIdManager().generateRandomDigestType();
         return createDigest(new GordianDigestSpec(myType));
     }
 
@@ -322,14 +323,14 @@ public abstract class GordianFactory {
      */
     public GordianMac generateRandomMac() throws OceanusException {
         /* Determine a random specification */
-        GordianMacSpec mySpec = getIdManager().generateRandomMacSpec();
+        final GordianMacSpec mySpec = getIdManager().generateRandomMacSpec();
 
         /* Determine a random key */
-        GordianKeyGenerator<GordianMacSpec> myGenerator = getKeyGenerator(mySpec);
-        GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+        final GordianKeyGenerator<GordianMacSpec> myGenerator = getKeyGenerator(mySpec);
+        final GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
 
         /* Create and initialise the MAC */
-        GordianMac myMac = createMac(mySpec);
+        final GordianMac myMac = createMac(mySpec);
         myMac.initMac(myKey);
 
         /* Return it */
@@ -430,10 +431,10 @@ public abstract class GordianFactory {
      */
     public GordianKey<GordianSymKeyType> generateRandomSymKey() throws OceanusException {
         /* Determine a random keyType */
-        GordianSymKeyType myType = getIdManager().generateRandomSymKeyType();
+        final GordianSymKeyType myType = getIdManager().generateRandomSymKeyType();
 
         /* Generate a random key */
-        GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
+        final GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
         return myGenerator.generateKey();
     }
 
@@ -444,15 +445,15 @@ public abstract class GordianFactory {
      */
     public List<GordianKey<GordianSymKeyType>> generateRandomSymKeyList() throws OceanusException {
         /* Determine a random set of keyType */
-        int myCount = getNumCipherSteps();
-        GordianSymKeyType[] myTypes = getIdManager().generateRandomSymKeyTypes(myCount);
+        final int myCount = getNumCipherSteps();
+        final GordianSymKeyType[] myTypes = getIdManager().generateRandomSymKeyTypes(myCount);
 
         /* Loop through the keys */
-        List<GordianKey<GordianSymKeyType>> myKeyList = new ArrayList<>();
+        final List<GordianKey<GordianSymKeyType>> myKeyList = new ArrayList<>();
         for (int i = 0; i < myCount; i++) {
             /* Generate a random key */
-            GordianSymKeyType myType = myTypes[i];
-            GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
+            final GordianSymKeyType myType = myTypes[i];
+            final GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
             myKeyList.add(myGenerator.generateKey());
         }
 
@@ -503,10 +504,10 @@ public abstract class GordianFactory {
      */
     public GordianKey<GordianStreamKeyType> generateRandomStreamKey() throws OceanusException {
         /* Determine a random keyType */
-        GordianStreamKeyType myType = generateRandomStreamKeyType();
+        final GordianStreamKeyType myType = generateRandomStreamKeyType();
 
         /* Generate a random key */
-        GordianKeyGenerator<GordianStreamKeyType> myGenerator = getKeyGenerator(myType);
+        final GordianKeyGenerator<GordianStreamKeyType> myGenerator = getKeyGenerator(myType);
         return myGenerator.generateKey();
     }
 
@@ -544,9 +545,8 @@ public abstract class GordianFactory {
      * Create a wrapCipher.
      * @param pBlockCipher the underlying block cipher
      * @return the wrapCipher
-     * @throws OceanusException on error
      */
-    protected GordianWrapCipher createWrapCipher(final GordianCipher<GordianSymKeyType> pBlockCipher) throws OceanusException {
+    protected GordianWrapCipher createWrapCipher(final GordianCipher<GordianSymKeyType> pBlockCipher) {
         return new GordianWrapCipher(this, pBlockCipher);
     }
 
@@ -613,7 +613,7 @@ public abstract class GordianFactory {
      */
     protected static String getInvalidText(final Object pValue) {
         /* Create initial string */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append("Invalid ");
 
         /* Build details */
@@ -645,7 +645,7 @@ public abstract class GordianFactory {
         }
 
         /* Access the target field */
-        GordianFactory myThat = (GordianFactory) pThat;
+        final GordianFactory myThat = (GordianFactory) pThat;
 
         /* Check Differences */
         return theParameters.equals(myThat.theParameters);
@@ -663,8 +663,8 @@ public abstract class GordianFactory {
      */
     private boolean validRandomSpec(final GordianRandomSpec pRandomSpec) {
         /* Access details */
-        GordianSP800Type myType = pRandomSpec.getRandomType();
-        GordianDigestSpec mySpec = pRandomSpec.getDigestSpec();
+        final GordianSP800Type myType = pRandomSpec.getRandomType();
+        final GordianDigestSpec mySpec = pRandomSpec.getDigestSpec();
 
         /* Check that the randomType is supported */
         return GordianSP800Type.HASH.equals(myType)
@@ -679,9 +679,9 @@ public abstract class GordianFactory {
      */
     private boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Access details */
-        GordianDigestType myType = pDigestSpec.getDigestType();
-        GordianLength myStateLen = pDigestSpec.getStateLength();
-        GordianLength myLen = pDigestSpec.getDigestLength();
+        final GordianDigestType myType = pDigestSpec.getDigestType();
+        final GordianLength myStateLen = pDigestSpec.getStateLength();
+        final GordianLength myLen = pDigestSpec.getDigestLength();
 
         /* Check validity */
         return supportedDigestTypes().test(myType)
@@ -696,7 +696,7 @@ public abstract class GordianFactory {
      */
     private boolean validHMacSpec(final GordianDigestSpec pDigestSpec) {
         /* Access details */
-        GordianDigestType myType = pDigestSpec.getDigestType();
+        final GordianDigestType myType = pDigestSpec.getDigestType();
 
         /* Check validity */
         return supportedHMacDigestTypes().test(myType)
@@ -710,9 +710,9 @@ public abstract class GordianFactory {
      */
     private boolean validMacSpec(final GordianMacSpec pMacSpec) {
         /* Access details */
-        GordianMacType myType = pMacSpec.getMacType();
-        GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
-        GordianSymKeyType mySymKey = pMacSpec.getKeyType();
+        final GordianMacType myType = pMacSpec.getMacType();
+        final GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
+        final GordianSymKeyType mySymKey = pMacSpec.getKeyType();
 
         /* Check that the macType is supported */
         if (!supportedMacTypes().test(myType)) {
@@ -748,9 +748,9 @@ public abstract class GordianFactory {
     protected boolean validSignatureSpec(final GordianKeyPair pKeyPair,
                                          final GordianSignatureSpec pSignSpec) {
         /* Access details */
-        GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
-        GordianSignatureType mySignType = pSignSpec.getSignatureType();
-        GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
+        final GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
+        final GordianSignatureType mySignType = pSignSpec.getSignatureType();
+        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
 
         /* Check signature matches keyPair */
         if (pSignSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
@@ -773,7 +773,7 @@ public abstract class GordianFactory {
         }
 
         /* Disallow ECNR if keySize is smaller than digestSize */
-        GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
+        final GordianAsymKeySpec myKeySpec = pKeyPair.getKeySpec();
         return !GordianSignatureType.NR.equals(mySignType)
                || myKeySpec.getElliptic().getKeySize() >= mySpec.getDigestLength().getLength();
     }

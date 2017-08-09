@@ -41,7 +41,7 @@ public final class TethysLogConfig {
      */
     public static void configureLog4j() {
         /* Configure log4j */
-        Properties myLogProp = new Properties();
+        final Properties myLogProp = new Properties();
         myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
         myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
         myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");

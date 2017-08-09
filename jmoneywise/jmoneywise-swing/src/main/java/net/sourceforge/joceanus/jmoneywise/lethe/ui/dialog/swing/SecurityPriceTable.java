@@ -53,8 +53,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -258,8 +258,10 @@ public class SecurityPriceTable
         myPrice.setNewVersion();
         thePrices.append(myPrice);
 
-        /* Validate the price */
-        myPrice.validate();
+        /*
+         * Don't validate the price yet. We need to take care such that we can only add a new price
+         * when there is a slot available, and that we validate the entire list after an update
+         */
     }
 
     /**
@@ -322,7 +324,7 @@ public class SecurityPriceTable
         @Override
         public boolean isCellEditable(final ViewSecurityPrice pItem,
                                       final int pColIndex) {
-            return theColumns.isCellEditable(pColIndex);
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -560,13 +562,10 @@ public class SecurityPriceTable
          * @return the value
          */
         private Object getHeaderValue(final int pColIndex) {
-            /* Return the appropriate value */
-            switch (pColIndex) {
-                case COLUMN_ACTION:
-                    return PrometheusAction.INSERT;
-                default:
-                    return null;
-            }
+            return pColIndex == COLUMN_ACTION
+                                              ? PrometheusAction.INSERT
+                                              : null;
+
         }
 
         /**
@@ -628,10 +627,12 @@ public class SecurityPriceTable
 
         /**
          * Is the cell editable?
+         * @param pItem the item
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final int pColIndex) {
+        private boolean isCellEditable(final ViewSecurityPrice pItem,
+                                       final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_DATE:
                 case COLUMN_PRICE:
@@ -640,9 +641,9 @@ public class SecurityPriceTable
                 case COLUMN_DILUTEDPRICE:
                     return false;
                 case COLUMN_ACTION:
-                    return pColIndex == 0
-                                          ? isEditable
-                                          : isEditable && theModel.getViewRowCount() > 2;
+                    return pItem instanceof PriceHeader
+                                                        ? isEditable
+                                                        : isEditable && theModel.getViewRowCount() > 2;
                 default:
                     return false;
             }

@@ -105,7 +105,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * First item to show in list.
      */
-    private int theFirstIndex = 0;
+    private int theFirstIndex;
 
     /**
      * Max number of items to display in popUp.
@@ -301,14 +301,14 @@ public class TethysSwingScrollContextMenu<T>
         theMaxDisplayItems = pMaxDisplayItems;
 
         /* Loop through the children */
-        Iterator<TethysSwingScrollElement> myIterator = theMenuItems.iterator();
+        final Iterator<TethysSwingScrollElement> myIterator = theMenuItems.iterator();
         while (myIterator.hasNext()) {
-            TethysSwingScrollElement myChild = myIterator.next();
+            final TethysSwingScrollElement myChild = myIterator.next();
 
             /* If this is a subMenu */
             if (myChild instanceof TethysSwingScrollSubMenu) {
                 /* Pass call on */
-                TethysSwingScrollSubMenu<?> mySubMenu = (TethysSwingScrollSubMenu<?>) myChild;
+                final TethysSwingScrollSubMenu<?> mySubMenu = (TethysSwingScrollSubMenu<?>) myChild;
                 mySubMenu.setMaxDisplayItems(pMaxDisplayItems);
             }
         }
@@ -333,7 +333,7 @@ public class TethysSwingScrollContextMenu<T>
         determineSize();
 
         /* determine location to display */
-        Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+        final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
         /* Show menu */
         showMenuAtLocation(myLocation);
@@ -355,7 +355,7 @@ public class TethysSwingScrollContextMenu<T>
         determineSize();
 
         /* determine location to display */
-        Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+        final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
         /* Show menu */
         showMenuAtLocation(myLocation);
@@ -379,8 +379,8 @@ public class TethysSwingScrollContextMenu<T>
         determineSize();
 
         /* determine location to display */
-        Point myRequest = new Point((int) pX, (int) pY);
-        Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
+        final Point myRequest = new Point((int) pX, (int) pY);
+        final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
 
         /* Show menu */
         showMenuAtLocation(myLocation);
@@ -489,7 +489,7 @@ public class TethysSwingScrollContextMenu<T>
         needReBuild = true;
 
         /* Add listeners */
-        ScrollListener myListener = new ScrollListener();
+        final ScrollListener myListener = new ScrollListener();
         theDialog.addFocusListener(myListener);
         theDialog.addKeyListener(myListener);
         theDialog.addMouseWheelListener(myListener);
@@ -572,7 +572,7 @@ public class TethysSwingScrollContextMenu<T>
             /* record selection */
             theSelectedItem = pItem;
             if (theSelectedItem instanceof TethysScrollMenuToggleItem) {
-                TethysScrollMenuToggleItem<?> myItem = (TethysScrollMenuToggleItem<?>) theSelectedItem;
+                final TethysScrollMenuToggleItem<?> myItem = (TethysScrollMenuToggleItem<?>) theSelectedItem;
                 myItem.toggleSelected();
                 doCloseMenu = closeOnToggle;
             }
@@ -724,7 +724,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysSwingScrollMenuItem<T> myItem = new TethysSwingScrollMenuItem<>(this, pValue, pName, pGraphic);
+        final TethysSwingScrollMenuItem<T> myItem = new TethysSwingScrollMenuItem<>(this, pValue, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -748,7 +748,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Create menu */
-        TethysSwingScrollSubMenu<T> myMenu = new TethysSwingScrollSubMenu<>(this, pName, pGraphic);
+        final TethysSwingScrollSubMenu<T> myMenu = new TethysSwingScrollSubMenu<>(this, pName, pGraphic);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myMenu);
@@ -772,7 +772,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Create element */
-        TethysSwingScrollToggleItem<T> myItem = new TethysSwingScrollToggleItem<>(this, pValue, pName);
+        final TethysSwingScrollToggleItem<T> myItem = new TethysSwingScrollToggleItem<>(this, pValue, pName);
 
         /* Add to the list of menuItems */
         theMenuItems.add(myItem);
@@ -811,7 +811,7 @@ public class TethysSwingScrollContextMenu<T>
      */
     private void showIndex(final int pIndex) {
         /* Ignore if index is out of range */
-        int myCount = theMenuItems.size();
+        final int myCount = theMenuItems.size();
         if ((pIndex < 0)
             || (pIndex >= myCount)) {
             return;
@@ -825,9 +825,9 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* If index is beyond last visible index */
-        int myLastIndex = theFirstIndex
-                          + theMaxDisplayItems
-                          - 1;
+        final int myLastIndex = theFirstIndex
+                                + theMaxDisplayItems
+                                - 1;
         if (myLastIndex < pIndex) {
             /* Scroll window downwards */
             requestScroll(pIndex - myLastIndex);
@@ -842,8 +842,8 @@ public class TethysSwingScrollContextMenu<T>
         if (needReBuild
             && !theMenuItems.isEmpty()) {
             /* Access the number of entries and the scroll count */
-            int myCount = theMenuItems.size();
-            int myScroll = Math.min(theMaxDisplayItems, myCount);
+            final int myCount = theMenuItems.size();
+            final int myScroll = Math.min(theMaxDisplayItems, myCount);
 
             /* Remove all items */
             theActiveItems.removeAll();
@@ -880,7 +880,7 @@ public class TethysSwingScrollContextMenu<T>
 
                 /* Calculate size of menu */
                 theDialog.pack();
-                int myWidth = theDialog.getWidth();
+                final int myWidth = theDialog.getWidth();
 
                 /* Remove all items */
                 theActiveItems.removeAll();
@@ -908,7 +908,7 @@ public class TethysSwingScrollContextMenu<T>
 
                 /* Calculate size of menu */
                 theDialog.pack();
-                int myHeight = theDialog.getHeight();
+                final int myHeight = theDialog.getHeight();
 
                 /* Set visibility of scroll items */
                 theUpItem.getPanel().setEnabled(theFirstIndex > 0);
@@ -934,7 +934,7 @@ public class TethysSwingScrollContextMenu<T>
         /* If we are already built */
         if (!needReBuild) {
             /* Access the number of entries */
-            int myCount = theMenuItems.size();
+            final int myCount = theMenuItems.size();
 
             /* Reset the children */
             closeChildren();
@@ -946,8 +946,8 @@ public class TethysSwingScrollContextMenu<T>
             theActiveItems.remove(0);
 
             /* Add the final item */
-            int myLast = theFirstIndex + theMaxDisplayItems;
-            TethysSwingScrollElement myItem = theMenuItems.get(myLast);
+            final int myLast = theFirstIndex + theMaxDisplayItems;
+            final TethysSwingScrollElement myItem = theMenuItems.get(myLast);
             myItem.setActive(false);
             theActiveItems.add(myItem.getPanel());
 
@@ -978,7 +978,7 @@ public class TethysSwingScrollContextMenu<T>
             theActiveItems.remove(theMaxDisplayItems - 1);
 
             /* Add the initial item */
-            TethysSwingScrollElement myItem = theMenuItems.get(theFirstIndex - 1);
+            final TethysSwingScrollElement myItem = theMenuItems.get(theFirstIndex - 1);
             myItem.setActive(false);
             theActiveItems.add(myItem.getPanel(), 0);
 
@@ -1001,8 +1001,8 @@ public class TethysSwingScrollContextMenu<T>
         /* If this is a scroll downwards */
         if (pDelta > 0) {
             /* If we can scroll downwards */
-            int myCount = theMenuItems.size();
-            int mySpace = myCount - theFirstIndex - theMaxDisplayItems;
+            final int myCount = theMenuItems.size();
+            final int mySpace = myCount - theFirstIndex - theMaxDisplayItems;
             int myScroll = Math.min(mySpace, pDelta);
 
             /* While we have space */
@@ -1070,7 +1070,7 @@ public class TethysSwingScrollContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new JLabel();
             theIcon.setIcon(pGraphic);
-            Dimension myDim = new Dimension(TethysIconBuilder.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
+            final Dimension myDim = new Dimension(TethysIconBuilder.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
             theIcon.setMaximumSize(myDim);
@@ -1146,7 +1146,7 @@ public class TethysSwingScrollContextMenu<T>
          * Add Menu icon.
          */
         protected void addMenuIcon() {
-            JLabel myLabel = new JLabel(TethysSwingArrowIcon.RIGHT);
+            final JLabel myLabel = new JLabel(TethysSwingArrowIcon.RIGHT);
             thePanel.add(myLabel, BorderLayout.LINE_END);
         }
     }
@@ -1465,7 +1465,7 @@ public class TethysSwingScrollContextMenu<T>
             theTimerTask = new TimerTask() {
                 @Override
                 public void run() {
-                    SwingUtilities.invokeLater(() -> processScroll());
+                    SwingUtilities.invokeLater(ScrollControl.this::processScroll);
                 }
             };
 

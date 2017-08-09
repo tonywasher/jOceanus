@@ -66,7 +66,7 @@ public final class BouncyStreamKeyCipher
     @Override
     public void initCipher(final GordianKey<GordianStreamKeyType> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        int myLen = getKeyType().getIVLength();
+        final int myLen = getKeyType().getIVLength();
         byte[] myIV = null;
 
         /* If we need an IV */
@@ -85,7 +85,7 @@ public final class BouncyStreamKeyCipher
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        BouncyKey<GordianStreamKeyType> myKey = BouncyKey.accessKey(pKey);
+        final BouncyKey<GordianStreamKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Initialise the cipher */

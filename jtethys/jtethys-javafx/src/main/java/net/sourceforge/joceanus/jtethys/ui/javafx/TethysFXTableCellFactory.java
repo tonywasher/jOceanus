@@ -336,15 +336,15 @@ public class TethysFXTableCellFactory<C, R> {
             setGraphic(theControl.getNode());
 
             /* Add listener to the edit field */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theControl.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theControl.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::handleCommit);
             myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> handleCancel());
 
             /* Apply validator to a text field */
             if (theControl instanceof TethysFXTextEditField
                 && theColumn instanceof TethysFXTableValidatedColumn) {
-                TethysFXTextEditField<T> myField = (TethysFXTextEditField<T>) theControl;
-                TethysFXTableValidatedColumn<T, C, R> myColumn = (TethysFXTableValidatedColumn<T, C, R>) theColumn;
+                final TethysFXTextEditField<T> myField = (TethysFXTextEditField<T>) theControl;
+                final TethysFXTableValidatedColumn<T, C, R> myColumn = (TethysFXTableValidatedColumn<T, C, R>) theColumn;
                 myField.setValidator(t -> myColumn.getValidator().apply(t, getActiveRow()));
             }
         }
@@ -417,16 +417,16 @@ public class TethysFXTableCellFactory<C, R> {
         @Override
         public R getActiveRow() {
             /* Access list and determine size */
-            ObservableList<R> myItems = getTableView().getItems();
-            int mySize = myItems == null
-                                         ? 0
-                                         : myItems.size();
+            final ObservableList<R> myItems = getTableView().getItems();
+            final int mySize = myItems == null
+                                               ? 0
+                                               : myItems.size();
 
             /* Access list and determine size */
-            TableRow<?> myRow = getTableRow();
-            int myIndex = myRow == null
-                                        ? -1
-                                        : myRow.getIndex();
+            final TableRow<?> myRow = getTableRow();
+            final int myIndex = myRow == null
+                                              ? -1
+                                              : myRow.getIndex();
 
             /* Access explicit item */
             return (myIndex < 0) || (myIndex >= mySize)
@@ -443,9 +443,9 @@ public class TethysFXTableCellFactory<C, R> {
             /* Format the cell */
             if (!pEmpty) {
                 /* Access table details */
-                TethysFXTableManager<C, R> myTable = getTable();
-                C myId = getColumnId();
-                R myRow = getActiveRow();
+                final TethysFXTableManager<C, R> myTable = getTable();
+                final C myId = getColumnId();
+                final R myRow = getActiveRow();
 
                 /* Set changed and disabled attributes */
                 theControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
@@ -493,14 +493,14 @@ public class TethysFXTableCellFactory<C, R> {
 
         @Override
         public void repaintColumnCell(final C pId) {
-            TethysFXTableManager<C, R> myTable = theColumn.getTable();
+            final TethysFXTableManager<C, R> myTable = theColumn.getTable();
             myTable.repaintColumn(pId);
         }
 
         @Override
         public void repaintCellRow() {
-            TableRow<?> myRow = getTableRow();
-            List<String> myClasses = myRow.getStyleClass();
+            final TableRow<?> myRow = getTableRow();
+            final List<String> myClasses = myRow.getStyleClass();
             myClasses.add(STYLE_DUMMY);
             myClasses.remove(STYLE_DUMMY);
         }
@@ -948,7 +948,7 @@ public class TethysFXTableCellFactory<C, R> {
          * @return the mapSet
          */
         private TethysIconMapSet<T> determineMapSet() {
-            R myRow = getActiveRow();
+            final R myRow = getActiveRow();
             return myRow == null
                                  ? null
                                  : getColumn().getIconMapSet().apply(myRow);

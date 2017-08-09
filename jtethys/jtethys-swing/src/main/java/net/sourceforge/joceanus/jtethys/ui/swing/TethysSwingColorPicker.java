@@ -180,7 +180,7 @@ public class TethysSwingColorPicker
             /* Create the new dialog */
             theDialog = new JDialog();
             theDialog.setUndecorated(true);
-            JPanel myPanel = new JPanel(new BorderLayout());
+            final JPanel myPanel = new JPanel(new BorderLayout());
             myPanel.setBorder(BorderFactory.createLineBorder(Color.black));
             myPanel.add(theChooser, BorderLayout.CENTER);
             theDialog.setContentPane(myPanel);
@@ -194,7 +194,7 @@ public class TethysSwingColorPicker
         theChooser.setColor(theColour);
 
         /* Position the dialog just below the node */
-        Point myLoc = theButton.getLocationOnScreen();
+        final Point myLoc = theButton.getLocationOnScreen();
         theDialog.setLocation(myLoc.x, myLoc.y
                                        + theButton.getHeight());
 
@@ -267,7 +267,7 @@ public class TethysSwingColorPicker
                               final int pX,
                               final int pY) {
             /* Cache the old colour */
-            Color myOldColor = pGraphics.getColor();
+            final Color myOldColor = pGraphics.getColor();
 
             /* Paint the region */
             pGraphics.setColor(theColor);

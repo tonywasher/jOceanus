@@ -56,14 +56,14 @@ public final class BouncyKeyGenerator<T>
         theGenerator = pGenerator;
 
         /* Initialise the generator */
-        KeyGenerationParameters myParms = new KeyGenerationParameters(getRandom(), getKeyLength());
+        final KeyGenerationParameters myParms = new KeyGenerationParameters(getRandom(), getKeyLength());
         theGenerator.init(myParms);
     }
 
     @Override
     public BouncyKey<T> generateKey() {
         /* Generate the new keyBytes */
-        byte[] myKeyBytes = theGenerator.generateKey();
+        final byte[] myKeyBytes = theGenerator.generateKey();
 
         /* Build the new key */
         return buildKeyFromBytes(myKeyBytes);
@@ -72,7 +72,7 @@ public final class BouncyKeyGenerator<T>
     @Override
     protected BouncyKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException {
         /* Access key correctly */
-        BouncyKey<?> mySource = BouncyKey.accessKey(pSource);
+        final BouncyKey<?> mySource = BouncyKey.accessKey(pSource);
 
         /* Build the new key */
         return buildKeyFromBytes(mySource.getKey());

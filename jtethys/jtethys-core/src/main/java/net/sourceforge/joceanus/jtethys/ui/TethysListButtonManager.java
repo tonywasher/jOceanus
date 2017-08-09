@@ -278,11 +278,11 @@ public abstract class TethysListButtonManager<T, N, I>
             theActiveValue = new TethysItemList<>(theValue);
 
             /* Iterate through the list */
-            Iterator<TethysItem<T>> myIterator = theActiveValue.iterator();
+            final Iterator<TethysItem<T>> myIterator = theActiveValue.iterator();
             while (myIterator.hasNext()) {
                 /* Create the menu item */
-                TethysItem<T> myItem = myIterator.next();
-                TethysScrollMenuToggleItem<T> myMenuItem = theMenu.addToggleItem(myItem.getItem());
+                final TethysItem<T> myItem = myIterator.next();
+                final TethysScrollMenuToggleItem<T> myMenuItem = theMenu.addToggleItem(myItem.getItem());
                 myMenuItem.setSelected(myItem.isSelected());
             }
 
@@ -306,7 +306,7 @@ public abstract class TethysListButtonManager<T, N, I>
      */
     protected void handleToggleItem() {
         /* If we selected a value */
-        TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
+        final TethysScrollMenuItem<T> mySelected = theMenu.getSelectedItem();
         if ((mySelected != null)
             && (mySelected instanceof TethysScrollMenuToggleItem)) {
             /* Toggle the item */

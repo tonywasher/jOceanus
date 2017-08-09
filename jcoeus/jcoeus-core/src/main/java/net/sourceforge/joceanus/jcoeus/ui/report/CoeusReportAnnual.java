@@ -79,17 +79,17 @@ public class CoeusReportAnnual
 
         /* Access the date and totals */
         TethysDate myDate = theMarket.getDate();
-        boolean hasFees = theMarket.hasFees();
-        boolean hasCashBack = theMarket.hasCashBack();
-        boolean hasBadDebt = theMarket.hasBadDebt();
-        boolean needTaxableEarnings = hasFees || hasCashBack || hasBadDebt;
+        final boolean hasFees = theMarket.hasFees();
+        final boolean hasCashBack = theMarket.hasCashBack();
+        final boolean hasBadDebt = theMarket.hasBadDebt();
+        final boolean needTaxableEarnings = hasFees || hasCashBack || hasBadDebt;
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, "TaxBook for " + theMarket.getMarket().getProvider().toString(), theFormatter.formatObject(myDate));
 
         /* Initialise the tax table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, "Date");
         theBuilder.makeTitleCell(myTable, CoeusTotalSet.INTEREST.toString());
@@ -111,12 +111,12 @@ public class CoeusReportAnnual
         }
 
         /* Loop through the months */
-        Iterator<CoeusHistory> myIterator = theMarket.monthlyIterator();
+        final Iterator<CoeusHistory> myIterator = theMarket.monthlyIterator();
         while (myIterator.hasNext()) {
-            CoeusHistory myHistory = myIterator.next();
-            CoeusTotals myTotals = myHistory.getTotals();
+            final CoeusHistory myHistory = myIterator.next();
+            final CoeusTotals myTotals = myHistory.getTotals();
             myDate = myHistory.getDate();
-            Month myMonth = myDate.getMonthValue();
+            final Month myMonth = myDate.getMonthValue();
 
             /* Create the row */
             theBuilder.startRow(myTable);
@@ -141,7 +141,7 @@ public class CoeusReportAnnual
         }
 
         /* Create the row */
-        CoeusTotals myTotals = theMarket.getHistory().getTotals();
+        final CoeusTotals myTotals = theMarket.getHistory().getTotals();
         theBuilder.startRow(myTable);
         theBuilder.makeTotalCell(myTable, "Totals");
         makeTableFilterCell(myTable, CoeusTotalSet.INTEREST, myTotals.getInterest());
@@ -190,8 +190,8 @@ public class CoeusReportAnnual
                                      final Month pMonth,
                                      final TethysDecimal pValue) {
         /* Create the filter definition */
-        CoeusFilterDefinition myDef = new CoeusFilterDefinition(pTotalSet, pMonth);
-        String myId = myDef.getFilterId();
+        final CoeusFilterDefinition myDef = new CoeusFilterDefinition(pTotalSet, pMonth);
+        final String myId = myDef.getFilterId();
 
         /* Create the LinkCell */
         theBuilder.makeFilterLinkCell(pTable, myId, pValue);
@@ -203,8 +203,8 @@ public class CoeusReportAnnual
         /* If this is a Loan */
         if (pSource instanceof CoeusFilterDefinition) {
             /* Create the new filter */
-            CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
-            CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDate());
+            final CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
+            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDate());
             myFilter.setMonth(myDef.theMonth);
             myFilter.setTotalSet(myDef.theTotalSet);
             return myFilter;
@@ -242,7 +242,7 @@ public class CoeusReportAnnual
          * @return the filterId
          */
         private String getFilterId() {
-            StringBuilder myBuilder = new StringBuilder("total");
+            final StringBuilder myBuilder = new StringBuilder("total");
             myBuilder.append(theTotalSet.toString());
             if (theMonth != null) {
                 myBuilder.append(theMonth.toString());

@@ -67,7 +67,7 @@ public class BouncyAADCipher
     @Override
     public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
         /* Create a random IV */
-        byte[] myIV = new byte[AADIVLEN];
+        final byte[] myIV = new byte[AADIVLEN];
         getRandom().nextBytes(myIV);
 
         /* initialise with this IV */
@@ -79,7 +79,7 @@ public class BouncyAADCipher
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
+        final BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Initialise the cipher */

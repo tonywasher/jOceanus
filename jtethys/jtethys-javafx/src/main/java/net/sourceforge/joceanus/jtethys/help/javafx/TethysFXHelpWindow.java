@@ -122,9 +122,9 @@ public class TethysFXHelpWindow
             theStage.initStyle(StageStyle.DECORATED);
 
             /* Create the scene */
-            BorderPane myContainer = new BorderPane();
+            final BorderPane myContainer = new BorderPane();
             myContainer.setCenter(getSplitTreeManager().getNode());
-            Scene myScene = new Scene(myContainer);
+            final Scene myScene = new Scene(myContainer);
             theStage.setScene(myScene);
 
             /* Change visibility of tree when hiding */
@@ -136,10 +136,10 @@ public class TethysFXHelpWindow
          */
         private void showDialog() {
             /* Centre on parent */
-            Window myParent = theStage.getOwner();
+            final Window myParent = theStage.getOwner();
             if (myParent != null) {
-                double myX = (myParent.getWidth() - WINDOW_WIDTH) / 2;
-                double myY = (myParent.getHeight() - WINDOW_HEIGHT) / 2;
+                final double myX = (myParent.getWidth() - WINDOW_WIDTH) / 2;
+                final double myY = (myParent.getHeight() - WINDOW_HEIGHT) / 2;
                 theStage.setX(myParent.getX() + myX);
                 theStage.setY(myParent.getY() + myY);
             }

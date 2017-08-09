@@ -550,7 +550,7 @@ public enum CoeusResource
      */
     private static Map<CoeusMarketProvider, TethysResourceId> buildMarketMap() {
         /* Create the map and return it */
-        Map<CoeusMarketProvider, TethysResourceId> myMap = new EnumMap<>(CoeusMarketProvider.class);
+        final Map<CoeusMarketProvider, TethysResourceId> myMap = new EnumMap<>(CoeusMarketProvider.class);
         myMap.put(CoeusMarketProvider.FUNDINGCIRCLE, MARKET_FUNDINGCIRCLE);
         myMap.put(CoeusMarketProvider.LENDINGWORKS, MARKET_LENDINGWORKS);
         myMap.put(CoeusMarketProvider.RATESETTER, MARKET_RATESETTER);
@@ -573,7 +573,7 @@ public enum CoeusResource
      */
     private static Map<CoeusMarketType, TethysResourceId> buildMarketTypeMap() {
         /* Create the map and return it */
-        Map<CoeusMarketType, TethysResourceId> myMap = new EnumMap<>(CoeusMarketType.class);
+        final Map<CoeusMarketType, TethysResourceId> myMap = new EnumMap<>(CoeusMarketType.class);
         myMap.put(CoeusMarketType.SNAPSHOT, MARKETTYPE_SNAPSHOT);
         myMap.put(CoeusMarketType.ANNUAL, MARKETTYPE_ANNUAL);
         return myMap;
@@ -594,7 +594,7 @@ public enum CoeusResource
      */
     private static Map<CoeusLoanStatus, TethysResourceId> buildStatusMap() {
         /* Create the map and return it */
-        Map<CoeusLoanStatus, TethysResourceId> myMap = new EnumMap<>(CoeusLoanStatus.class);
+        final Map<CoeusLoanStatus, TethysResourceId> myMap = new EnumMap<>(CoeusLoanStatus.class);
         myMap.put(CoeusLoanStatus.OFFERED, LOAN_OFFERED);
         myMap.put(CoeusLoanStatus.ACTIVE, LOAN_ACTIVE);
         myMap.put(CoeusLoanStatus.POORLY, LOAN_POORLY);
@@ -619,7 +619,7 @@ public enum CoeusResource
      */
     private static Map<CoeusTransactionType, TethysResourceId> buildTransMap() {
         /* Create the map and return it */
-        Map<CoeusTransactionType, TethysResourceId> myMap = new EnumMap<>(CoeusTransactionType.class);
+        final Map<CoeusTransactionType, TethysResourceId> myMap = new EnumMap<>(CoeusTransactionType.class);
         myMap.put(CoeusTransactionType.TRANSFER, TRANS_TRANSFER);
         myMap.put(CoeusTransactionType.CAPITALLOAN, TRANS_LOAN);
         myMap.put(CoeusTransactionType.CAPITALREPAYMENT, TRANS_REPAYMENT);
@@ -649,7 +649,7 @@ public enum CoeusResource
      */
     private static Map<CoeusLoanRisk, TethysResourceId> buildRiskMap() {
         /* Create the map and return it */
-        Map<CoeusLoanRisk, TethysResourceId> myMap = new EnumMap<>(CoeusLoanRisk.class);
+        final Map<CoeusLoanRisk, TethysResourceId> myMap = new EnumMap<>(CoeusLoanRisk.class);
         myMap.put(CoeusLoanRisk.APLUS, RISK_APLUS);
         myMap.put(CoeusLoanRisk.A, RISK_A);
         myMap.put(CoeusLoanRisk.B, RISK_B);
@@ -676,7 +676,7 @@ public enum CoeusResource
      */
     private static Map<CoeusTotalSet, TethysResourceId> buildTotalSetMap() {
         /* Create the map and return it */
-        Map<CoeusTotalSet, TethysResourceId> myMap = new EnumMap<>(CoeusTotalSet.class);
+        final Map<CoeusTotalSet, TethysResourceId> myMap = new EnumMap<>(CoeusTotalSet.class);
         myMap.put(CoeusTotalSet.INVESTED, DATA_INVESTED);
         myMap.put(CoeusTotalSet.EARNINGS, DATA_EARNINGS);
         myMap.put(CoeusTotalSet.TAXABLEEARNINGS, DATA_TAXABLEEARNINGS);

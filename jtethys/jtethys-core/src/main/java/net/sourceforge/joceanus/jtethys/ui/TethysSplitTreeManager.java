@@ -129,7 +129,7 @@ public abstract class TethysSplitTreeManager<T, N, I>
      */
     private void handleReferenceLookup(final TethysEvent<TethysUIEvent> pEvent) {
         /* Obtain the reference */
-        String myRef = pEvent.getDetails(String.class);
+        final String myRef = pEvent.getDetails(String.class);
 
         /* Try to lookup as a tree item */
         if (!theTreeManager.lookUpAndSelectItem(myRef)) {

@@ -133,7 +133,7 @@ public final class TethysFXDataButtonField {
         @Override
         public void setEditable(final boolean pEditable) {
             /* Obtain current setting */
-            boolean isEditable = isEditable();
+            final boolean isEditable = isEditable();
 
             /* If we are changing */
             if (pEditable != isEditable) {
@@ -266,7 +266,7 @@ public final class TethysFXDataButtonField {
         @Override
         public void startCellEditing(final Node pCell) {
             isCellEditing = true;
-            TethysFXScrollContextMenu<T> myMenu = theManager.getMenu();
+            final TethysFXScrollContextMenu<T> myMenu = theManager.getMenu();
             theConfigurator.accept(myMenu);
             if (!myMenu.isEmpty()) {
                 myMenu.showMenuAtPosition(pCell, Side.BOTTOM);
@@ -372,7 +372,7 @@ public final class TethysFXDataButtonField {
         public void startCellEditing(final Node pCell) {
             /* Note editing */
             isCellEditing = true;
-            TethysFXDateDialog myDialog = theManager.getDialog();
+            final TethysFXDateDialog myDialog = theManager.getDialog();
 
             /* Show the dialog */
             myDialog.showDialogUnderNode(pCell);
@@ -467,7 +467,7 @@ public final class TethysFXDataButtonField {
             thePicker.setValue(pValue);
 
             /* Configure the label */
-            Label myLabel = getLabel();
+            final Label myLabel = getLabel();
             myLabel.setText(pValue);
             myLabel.setGraphic(thePicker.getSwatch());
         }
@@ -574,7 +574,7 @@ public final class TethysFXDataButtonField {
         public void startCellEditing(final Node pCell) {
             isCellEditing = true;
             theManager.buildMenu();
-            TethysFXScrollContextMenu<T> myMenu = theManager.getMenu();
+            final TethysFXScrollContextMenu<T> myMenu = theManager.getMenu();
             myMenu.showMenuAtPosition(pCell, Side.BOTTOM);
         }
 

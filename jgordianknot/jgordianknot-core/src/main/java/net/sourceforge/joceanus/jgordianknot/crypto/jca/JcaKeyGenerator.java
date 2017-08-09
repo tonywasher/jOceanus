@@ -46,11 +46,10 @@ public final class JcaKeyGenerator<T>
      * @param pFactory the Security Factory
      * @param pKeyType the keyType
      * @param pGenerator the key generator
-     * @throws OceanusException on error
      */
     protected JcaKeyGenerator(final JcaFactory pFactory,
                               final T pKeyType,
-                              final KeyGenerator pGenerator) throws OceanusException {
+                              final KeyGenerator pGenerator) {
         /* Initialise underlying class */
         super(pFactory, pKeyType);
 
@@ -64,7 +63,7 @@ public final class JcaKeyGenerator<T>
     @Override
     public JcaKey<T> generateKey() {
         /* Generate the new key */
-        SecretKey myKey = theGenerator.generateKey();
+        final SecretKey myKey = theGenerator.generateKey();
 
         /* Build the new key */
         return new JcaKey<>(getKeyType(), myKey);
@@ -73,7 +72,7 @@ public final class JcaKeyGenerator<T>
     @Override
     protected JcaKey<T> translateKey(final GordianKey<?> pSource) throws OceanusException {
         /* Access key correctly */
-        JcaKey<?> mySource = JcaKey.accessKey(pSource);
+        final JcaKey<?> mySource = JcaKey.accessKey(pSource);
 
         /* Build the new key */
         return buildKeyFromBytes(mySource.getKey().getEncoded());
@@ -82,7 +81,7 @@ public final class JcaKeyGenerator<T>
     @Override
     protected JcaKey<T> buildKeyFromBytes(final byte[] pBytes) {
         /* Build the new key */
-        SecretKey myKey = new SecretKeySpec(pBytes, theGenerator.getAlgorithm());
+        final SecretKey myKey = new SecretKeySpec(pBytes, theGenerator.getAlgorithm());
         return new JcaKey<>(getKeyType(), myKey);
     }
 

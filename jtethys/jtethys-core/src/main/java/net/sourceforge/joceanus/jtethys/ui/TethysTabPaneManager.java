@@ -201,7 +201,7 @@ public abstract class TethysTabPaneManager<N, I>
     public void enableItemByName(final String pName,
                                  final boolean pEnabled) {
         /* Look up child and adjust */
-        TethysTabItem<N, I> myItem = findItemByName(pName);
+        final TethysTabItem<N, I> myItem = findItemByName(pName);
         if (myItem != null) {
             myItem.setEnabled(pEnabled);
         }
@@ -315,7 +315,7 @@ public abstract class TethysTabPaneManager<N, I>
             theId = pPane.theGuiFactory.getNextId();
 
             /* If the pane already has children */
-            TethysTabItem<N, I> myChild = thePane.theLastChild;
+            final TethysTabItem<N, I> myChild = thePane.theLastChild;
             if (myChild != null) {
                 /* Link to last child */
                 myChild.theNextSibling = this;

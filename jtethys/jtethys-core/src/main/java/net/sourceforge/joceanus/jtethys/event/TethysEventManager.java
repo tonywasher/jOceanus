@@ -104,9 +104,9 @@ public class TethysEventManager<E extends Enum<E>>
         TethysEvent<E> myEvent = null;
 
         /* Loop backwards through the list */
-        ListIterator<TethysEventRegistration<E>> myIterator = theRegistrar.reverseIterator();
+        final ListIterator<TethysEventRegistration<E>> myIterator = theRegistrar.reverseIterator();
         while (myIterator.hasPrevious()) {
-            TethysEventRegistration<E> myReg = myIterator.previous();
+            final TethysEventRegistration<E> myReg = myIterator.previous();
 
             /* Check whether the action is filtered */
             if (myReg.isFiltered(pEventId)) {

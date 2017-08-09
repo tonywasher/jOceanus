@@ -85,7 +85,7 @@ public class TethysSwingBoxPaneManager
     @Override
     public void addNode(final TethysNode<JComponent> pNode) {
         super.addNode(pNode);
-        JPanel myPanel = createContainer(pNode.getNode());
+        final JPanel myPanel = createContainer(pNode.getNode());
         theNodeMap.put(pNode.getId(), myPanel);
         thePanel.add(myPanel);
     }
@@ -96,7 +96,7 @@ public class TethysSwingBoxPaneManager
      * @return the container panel
      */
     private JPanel createContainer(final JComponent pNode) {
-        JPanel myPanel = new JPanel();
+        final JPanel myPanel = new JPanel();
         setLayout(myPanel);
         if (isHorizontal) {
             pNode.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -114,7 +114,7 @@ public class TethysSwingBoxPaneManager
      * @return the strut
      */
     private Component createStrut() {
-        Integer myGap = getGap() >> 1;
+        final Integer myGap = getGap() >> 1;
         return isHorizontal
                             ? Box.createHorizontalStrut(myGap)
                             : Box.createVerticalStrut(myGap);
@@ -134,7 +134,7 @@ public class TethysSwingBoxPaneManager
     public void setChildVisible(final TethysNode<JComponent> pChild,
                                 final boolean pVisible) {
         /* Obtain the required node */
-        JPanel myPanel = theNodeMap.get(pChild.getId());
+        final JPanel myPanel = theNodeMap.get(pChild.getId());
 
         /* Set status */
         if (myPanel != null) {
@@ -184,7 +184,7 @@ public class TethysSwingBoxPaneManager
 
     @Override
     public void addStrut() {
-        JPanel myPanel = new JPanel();
+        final JPanel myPanel = new JPanel();
         setLayout(myPanel);
         myPanel.add(createStrut());
         myPanel.add(createStrut());

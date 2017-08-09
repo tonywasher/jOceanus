@@ -62,7 +62,7 @@ public class TethysFXPasswordField
 
     @Override
     public char[] getPassword() {
-        String myText = theField.getText();
+        final String myText = theField.getText();
         return myText == null
                || myText.length() == 0
                                        ? null

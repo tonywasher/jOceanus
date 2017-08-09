@@ -97,9 +97,9 @@ public class TethysFXButton
 
     @Override
     public void setToolTip(final String pTip) {
-        Tooltip myToolTip = pTip == null
-                                         ? null
-                                         : new Tooltip(pTip);
+        final Tooltip myToolTip = pTip == null
+                                               ? null
+                                               : new Tooltip(pTip);
         theButton.setTooltip(myToolTip);
     }
 

@@ -99,7 +99,7 @@ public abstract class TethysProgram {
         /* Protect against exceptions */
         try {
             /* Load the properties */
-            Properties myProperties = new Properties();
+            final Properties myProperties = new Properties();
             myProperties.load(getClass().getResourceAsStream(pName));
 
             /* Load values */

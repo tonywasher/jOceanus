@@ -248,18 +248,18 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     public void applyButtonState() {
         /* Access MapSet and check iconWidth */
-        TethysIconMapSet<T> myMapSet = theMapSet.get();
+        final TethysIconMapSet<T> myMapSet = theMapSet.get();
         if (myMapSet != null) {
             checkWidth(myMapSet.getWidth());
         }
 
         /* Access Icon and ToolTip */
-        TethysIconId myIcon = myMapSet == null
-                                               ? null
-                                               : myMapSet.getIconForValue(theValue);
-        String myTip = myMapSet == null
-                                        ? null
-                                        : myMapSet.getTooltipForValue(theValue);
+        final TethysIconId myIcon = myMapSet == null
+                                                     ? null
+                                                     : myMapSet.getIconForValue(theValue);
+        final String myTip = myMapSet == null
+                                              ? null
+                                              : myMapSet.getTooltipForValue(theValue);
 
         /* Apply button state */
         theButton.setIcon(resolveIcon(myIcon));
@@ -291,10 +291,10 @@ public abstract class TethysIconButtonManager<T, N, I>
      */
     public void progressToNextState() {
         /* Access next value */
-        TethysIconMapSet<T> myMapSet = theMapSet.get();
-        T myValue = myMapSet == null
-                                     ? theValue
-                                     : myMapSet.getNextValueForValue(theValue);
+        final TethysIconMapSet<T> myMapSet = theMapSet.get();
+        final T myValue = myMapSet == null
+                                           ? theValue
+                                           : myMapSet.getNextValueForValue(theValue);
 
         /* If there has been a change */
         if (valueChanged(myValue)) {

@@ -60,8 +60,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
@@ -318,7 +318,6 @@ public class SpotPricesTable
      * Set Selection to the specified portfolio and date.
      * @param pPortfolio the portfolio
      * @param pDate the Date for the extract
-     * @throws OceanusException on error
      */
     public void setSelection(final Portfolio pPortfolio,
                              final TethysDate pDate) {

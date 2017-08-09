@@ -76,8 +76,8 @@ public class TethysFXFlowPaneManager
     public void setChildVisible(final TethysNode<Node> pChild,
                                 final boolean pVisible) {
         /* Handle nothing to do */
-        Node myChildNode = pChild.getNode();
-        boolean isVisible = myChildNode.isVisible();
+        final Node myChildNode = pChild.getNode();
+        final boolean isVisible = myChildNode.isVisible();
         if (isVisible == pVisible) {
             return;
         }
@@ -85,12 +85,12 @@ public class TethysFXFlowPaneManager
         /* If the node is not visible */
         if (pVisible) {
             /* Count visible prior siblings */
-            int myId = pChild.getId();
+            final int myId = pChild.getId();
             int myIndex = 0;
-            Iterator<TethysNode<Node>> myIterator = iterator();
+            final Iterator<TethysNode<Node>> myIterator = iterator();
             while (myIterator.hasNext()) {
-                TethysNode<Node> myNode = myIterator.next();
-                Integer myNodeId = myNode.getId();
+                final TethysNode<Node> myNode = myIterator.next();
+                final Integer myNodeId = myNode.getId();
 
                 /* If we have found the node */
                 if (myNodeId == myId) {

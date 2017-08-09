@@ -277,7 +277,7 @@ public class GordianDigestSpec {
         }
 
         /* Access the target DigestSpec */
-        GordianDigestSpec myThat = (GordianDigestSpec) pThat;
+        final GordianDigestSpec myThat = (GordianDigestSpec) pThat;
 
         /* Check subFields */
         return theDigestType == myThat.getDigestType()
@@ -302,14 +302,14 @@ public class GordianDigestSpec {
      */
     public static List<GordianDigestSpec> listAll() {
         /* Create the array list */
-        List<GordianDigestSpec> myList = new ArrayList<>();
+        final List<GordianDigestSpec> myList = new ArrayList<>();
 
         /* For each digest type */
         for (GordianDigestType myType : GordianDigestType.values()) {
             /* For each length */
             for (GordianLength myLength : myType.getSupportedLengths()) {
                 myList.add(new GordianDigestSpec(myType, myLength));
-                GordianLength myState = myType.getExtendedStateForLength(myLength);
+                final GordianLength myState = myType.getExtendedStateForLength(myLength);
                 if (myState != null) {
                     myList.add(new GordianDigestSpec(myType, myState, myLength));
                 }
