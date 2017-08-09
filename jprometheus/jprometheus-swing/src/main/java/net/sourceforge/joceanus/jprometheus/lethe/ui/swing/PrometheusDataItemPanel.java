@@ -22,8 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -51,6 +53,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
@@ -60,7 +63,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * @param <G> the goto id type
  * @param <E> the data type enum class
  */
-public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
+public abstract class PrometheusDataItemPanel<T extends DataItem<E> & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent>, PrometheusItemEditParent {
     /**
      * Details Tab Title.
@@ -150,12 +153,12 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
     /**
      * Is this a new item.
      */
-    private boolean isNew = false;
+    private boolean isNew;
 
     /**
      * Is this item on the edge of the list.
      */
-    private boolean isEdgeOfList = false;
+    private boolean isEdgeOfList;
 
     /**
      * Constructor.
@@ -165,10 +168,10 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * @param pError the error panel
      */
     @SuppressWarnings("unchecked")
-    protected DataItemPanel(final TethysSwingGuiFactory pFactory,
-                            final MetisFieldManager pFieldMgr,
-                            final UpdateSet<E> pUpdateSet,
-                            final MetisErrorPanel<JComponent, Icon> pError) {
+    protected PrometheusDataItemPanel(final TethysSwingGuiFactory pFactory,
+                                      final MetisFieldManager pFieldMgr,
+                                      final UpdateSet<E> pUpdateSet,
+                                      final MetisErrorPanel<JComponent, Icon> pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
@@ -188,7 +191,7 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* Create the main panel */
         thePanel = new TethysSwingEnablePanel();
         theMainPanel = new TethysSwingEnablePanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+        thePanel.setLayout(new BorderLayout());
 
         /* create the action panels */
         theItemActions = new PrometheusItemActions<>(pFactory, this);
@@ -323,10 +326,17 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
      * Layout the panel.
      */
     protected void layoutPanel() {
+        /* Wrap the grid */
+        JPanel myBox = new TethysSwingEnablePanel();
+        myBox.setLayout(new BoxLayout(myBox, BoxLayout.Y_AXIS));
+        myBox.add(Box.createVerticalGlue());
+        myBox.add(theMainPanel);
+        myBox.add(Box.createVerticalGlue());
+
         /* Layout the panel */
-        thePanel.add(theItemActions.getNode());
-        thePanel.add(theMainPanel);
-        thePanel.add(theEditActions.getNode());
+        thePanel.add(theItemActions.getNode(), BorderLayout.LINE_START);
+        thePanel.add(myBox, BorderLayout.CENTER);
+        thePanel.add(theEditActions.getNode(), BorderLayout.LINE_END);
 
         /* Set visibility */
         thePanel.setVisible(false);
@@ -340,11 +350,13 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
         /* If we have an item */
         if (theItem != null) {
             /* Determine EditVersion */
-            theEditVersion = isEditable
-                                        ? isEditing()
-                                                      ? theEditVersion
-                                                      : theUpdateSet.getVersion()
-                                        : VERSION_READONLY;
+            if (isEditable) {
+                theEditVersion = isEditing()
+                                             ? theEditVersion
+                                             : theUpdateSet.getVersion();
+            } else {
+                theEditVersion = VERSION_READONLY;
+            }
 
             /* adjust fields */
             thePanel.setVisible(true);
@@ -468,11 +480,31 @@ public abstract class DataItemPanel<T extends DataItem<E> & Comparable<? super T
 
     /**
      * Restrict field.
+     * @param pTextField the stringTextField to restrict
+     * @param pWidth field width in characters
+     */
+    protected void restrictField(final TethysSwingStringTextField pTextField,
+                                 final int pWidth) {
+        restrictField(pTextField.getEditControl(), pWidth);
+    }
+
+    /**
+     * Restrict field.
+     * @param pNode the node to restrict
+     * @param pWidth field width in characters
+     */
+    protected void restrictField(final TethysNode<JComponent> pNode,
+                                 final int pWidth) {
+        restrictField(pNode.getNode(), pWidth);
+    }
+
+    /**
+     * Restrict field.
      * @param pComponent the component to restrict
      * @param pWidth field width in characters
      */
-    protected void restrictField(final JComponent pComponent,
-                                 final int pWidth) {
+    private static void restrictField(final JComponent pComponent,
+                                      final int pWidth) {
         /* Calculate the character width */
         int myCharWidth = pComponent.getFontMetrics(pComponent.getFont()).stringWidth("w");
 

@@ -23,26 +23,19 @@
 package net.sourceforge.joceanus.jmetis.lethe.field.swing;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
@@ -56,11 +49,16 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldMo
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelObjectList;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelString;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
  * Component classes for jFieldSet.
@@ -70,7 +68,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     /**
      * The Scroll Component.
      */
-    private JScrollPane theScroll = null;
+    private JScrollPane theScroll;
 
     /**
      * The Component.
@@ -97,8 +95,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pComponent the component
      * @param pModel the data model.
      */
-    private MetisFieldComponent(final JComponent pComponent,
-                                final MetisFieldModel<T> pModel) {
+    protected MetisFieldComponent(final JComponent pComponent,
+                                  final MetisFieldModel<T> pModel) {
         /* Store the parameters */
         theComponent = pComponent;
         theModel = pModel;
@@ -158,12 +156,12 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pTextField the textField
-     * @param pClass the data type
+     * @param pClass the class of item.
      * @return the field component
      */
     protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
-                                                                                          final JTextField pTextField,
+                                                                                          final TethysSwingStringTextField pTextField,
                                                                                           final MetisDataType pClass) {
         /* Allocate component */
         TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
@@ -181,24 +179,24 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      */
     protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
-                                                                                          final JScrollPane pScrollPane,
+                                                                                          final TethysSwingScrollPaneManager pScrollPane,
                                                                                           final MetisDataType pClass) {
         /* Split into scrollPane and child */
-        JViewport myViewPort = pScrollPane.getViewport();
-        Component myComp = myViewPort.getView();
+        JScrollPane myScroll = (JScrollPane) pScrollPane.getNode();
+        TethysNode<JComponent> myComp = pScrollPane.getContent();
 
         /* Handle invalid child */
         if (myComp == null) {
             throw new IllegalArgumentException("Null ScrollPane view");
         }
-        if (!(myComp instanceof JTextArea)) {
+        if (!(myComp instanceof TethysSwingTextArea)) {
             throw new IllegalArgumentException("Invalid ScrollPane view class: "
                                                + myComp.getClass());
         }
 
         /* Derive component based on child and record scroll pane */
-        MetisFieldComponent<X> myResult = deriveComponent(pFieldSet, pField, (JTextArea) myComp, pClass);
-        myResult.setScroll(pScrollPane);
+        MetisFieldComponent<X> myResult = deriveComponent(pFieldSet, pField, (TethysSwingTextArea) myComp, pClass);
+        myResult.setScroll(myScroll);
 
         /* Return the result */
         return myResult;
@@ -210,12 +208,12 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pTextArea the textArea
-     * @param pClass the data type
+     * @param pClass the class of item.
      * @return the field component
      */
     private static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                         final MetisField pField,
-                                                                                        final JTextArea pTextArea,
+                                                                                        final TethysSwingTextArea pTextArea,
                                                                                         final MetisDataType pClass) {
         /* Allocate component */
         TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
@@ -232,7 +230,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      */
     protected static <X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                           final MetisField pField,
-                                                                                          final TethysSwingDateButton pButton) {
+                                                                                          final TethysSwingDateButtonManager pButton) {
         /* Allocate component */
         TethysFieldModelDate<X> myModel = new TethysFieldModelDate<>(pFieldSet, pField);
         return new MetisFieldDate<>(pButton, myModel);
@@ -245,15 +243,15 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pButton the button
-     * @param pClass the class of the button elements.
+     * @param pClazz the class of the button elements.
      * @return the field component
      */
     protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                              final MetisField pField,
-                                                                                             final JScrollButton<I> pButton,
-                                                                                             final Class<I> pClass) {
+                                                                                             final TethysSwingScrollButtonManager<I> pButton,
+                                                                                             final Class<I> pClazz) {
         /* Allocate component */
-        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClass);
+        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClazz);
         return new MetisFieldScrollButton<>(pButton, myModel);
     }
 
@@ -268,7 +266,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      */
     protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                              final MetisField pField,
-                                                                                             final JScrollListButton<I> pButton) {
+                                                                                             final TethysSwingListButtonManager<I> pButton) {
         /* Allocate component */
         TethysFieldModelObjectList<I, X> myModel = new TethysFieldModelObjectList<>(pFieldSet, pField);
         return new MetisFieldScrollListButton<>(pButton, myModel);
@@ -281,15 +279,15 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pButton the button
-     * @param pClass the class of the button elements.
+     * @param pClazz the class of the button elements.
      * @return the field component
      */
     protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
                                                                                              final MetisField pField,
-                                                                                             final JIconButton<I> pButton,
-                                                                                             final Class<I> pClass) {
+                                                                                             final TethysSwingIconButtonManager<I> pButton,
+                                                                                             final Class<I> pClazz) {
         /* Allocate component */
-        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClass);
+        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClazz);
         return new MetisFieldIconButton<>(pButton, myModel);
     }
 
@@ -376,7 +374,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     protected abstract void displayField();
 
     /**
-     * The JTextField implementation.
+     * The TextField implementation.
      * @param <T> the Data Item type
      */
     protected static final class MetisFieldText<T extends MetisFieldSetItem>
@@ -396,25 +394,26 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        private MetisFieldText(final JTextField pComponent,
+        private MetisFieldText(final TethysSwingStringTextField pComponent,
                                final TethysFieldModelString<T> pModel) {
             /* Call super-constructor */
-            super(pComponent, pModel);
+            super(pComponent.getEditControl(), pModel);
 
             /* Store parameters */
-            theComponent = pComponent;
+            theComponent = pComponent.getEditControl();
             theModel = pModel;
+            pComponent.setEditable(true);
 
             /* Create the listener and attach it */
             StringListener myListener = new StringListener();
-            pComponent.addActionListener(myListener);
-            pComponent.addFocusListener(myListener);
+            theComponent.addActionListener(myListener);
+            theComponent.addFocusListener(myListener);
 
             /* Set correct alignment */
             int iAlignment = pModel.isFixedWidth()
                                                    ? SwingConstants.RIGHT
                                                    : SwingConstants.LEFT;
-            pComponent.setHorizontalAlignment(iAlignment);
+            theComponent.setHorizontalAlignment(iAlignment);
         }
 
         @Override
@@ -504,7 +503,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     }
 
     /**
-     * The JTextArea implementation.
+     * The TextArea implementation.
      * @param <T> the Data Item type
      */
     protected static final class MetisFieldArea<T extends MetisFieldSetItem>
@@ -524,18 +523,19 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        private MetisFieldArea(final JTextArea pComponent,
+        private MetisFieldArea(final TethysSwingTextArea pComponent,
                                final TethysFieldModelString<T> pModel) {
             /* Call super-constructor */
-            super(pComponent, pModel);
+            super(pComponent.getNode(), pModel);
 
             /* Store parameters */
-            theComponent = pComponent;
+            theComponent = getUnderlyingComponent();
             theModel = pModel;
+            theComponent.setEditable(true);
 
             /* Create the listener and attach it */
             StringListener myListener = new StringListener();
-            pComponent.addFocusListener(myListener);
+            theComponent.addFocusListener(myListener);
         }
 
         @Override
@@ -564,7 +564,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         private final class StringListener
                 extends FocusAdapter {
             /**
-             * Cached color.
+             * Cached colour.
              */
             private Color theCacheColor;
 
@@ -625,78 +625,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     }
 
     /**
-     * The JComboBox implementation.
-     * @param <I> ComboBox element type
-     * @param <T> the Data Item type
-     */
-    protected static final class MetisFieldCombo<I, T extends MetisFieldSetItem>
-            extends MetisFieldComponent<T> {
-        /**
-         * The Component.
-         */
-        private final JComboBox<I> theComponent;
-
-        /**
-         * The DataModel.
-         */
-        private final TethysFieldModelObject<I, T> theModel;
-
-        /**
-         * Constructor.
-         * @param pComponent the component.
-         * @param pModel the data model.
-         */
-        private MetisFieldCombo(final JComboBox<I> pComponent,
-                                final TethysFieldModelObject<I, T> pModel) {
-            /* Call super-constructor */
-            super(pComponent, pModel);
-
-            /* Store parameters */
-            theComponent = pComponent;
-            theModel = pModel;
-
-            /* Create the listener and attach it */
-            ComboListener myListener = new ComboListener();
-            pComponent.addItemListener(myListener);
-        }
-
-        @Override
-        protected void displayField() {
-            /* Access value from model */
-            I myValue = theModel.getValue();
-            JLabel myLabel = getReadOnlyLabel();
-
-            /* Display it */
-            if (myValue != null) {
-                theComponent.setSelectedItem(myValue);
-                myLabel.setText(myValue.toString());
-            } else {
-                theComponent.setSelectedIndex(-1);
-                myLabel.setText(null);
-            }
-        }
-
-        /**
-         * ComboListener class.
-         */
-        private final class ComboListener
-                implements ItemListener {
-
-            @Override
-            public void itemStateChanged(final ItemEvent evt) {
-                /* Ignore selection if not selecting item */
-                if (evt.getStateChange() != ItemEvent.SELECTED) {
-                    return;
-                }
-
-                /* Set the new value */
-                theModel.processValue(theComponent.getSelectedItem());
-            }
-        }
-    }
-
-    /**
-     * The JDateDayButton implementation.
+     * The DateButton implementation.
      * @param <T> the Data Item type
      */
     private static class MetisFieldDate<T extends MetisFieldSetItem>
@@ -704,7 +633,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The Component.
          */
-        private final TethysSwingDateButton theComponent;
+        private final TethysSwingDateButtonManager theComponent;
 
         /**
          * The DataModel.
@@ -716,18 +645,17 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        protected MetisFieldDate(final TethysSwingDateButton pComponent,
+        protected MetisFieldDate(final TethysSwingDateButtonManager pComponent,
                                  final TethysFieldModelDate<T> pModel) {
             /* Call super-constructor */
-            super(pComponent, pModel);
+            super(pComponent.getNode(), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
             theModel = pModel;
 
-            /* Create the listener and attach it */
-            DateListener myListener = new DateListener();
-            pComponent.addPropertyChangeListener(TethysSwingDateButton.PROPERTY_DATEDAY, myListener);
+            /* Handle new values */
+            theComponent.getEventRegistrar().addEventListener(e -> theModel.processValue(theComponent.getSelectedDate()));
         }
 
         @Override
@@ -736,25 +664,13 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             TethysDate myValue = theModel.getValue();
 
             /* Display it */
-            theComponent.setSelectedDateDay(myValue);
+            theComponent.setSelectedDate(myValue);
             getReadOnlyLabel().setText(theComponent.getText());
-        }
-
-        /**
-         * DateListener class.
-         */
-        private final class DateListener
-                implements PropertyChangeListener {
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                /* Set the new value */
-                theModel.processValue(theComponent.getSelectedDateDay());
-            }
         }
     }
 
     /**
-     * The JScrollButton implementation.
+     * The ScrollButton implementation.
      * @param <I> Button element type
      * @param <T> the Data Item type
      */
@@ -763,7 +679,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The Component.
          */
-        private final JScrollButton<I> theComponent;
+        private final TethysSwingScrollButtonManager<I> theComponent;
 
         /**
          * The DataModel.
@@ -775,18 +691,18 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        protected MetisFieldScrollButton(final JScrollButton<I> pComponent,
+        protected MetisFieldScrollButton(final TethysSwingScrollButtonManager<I> pComponent,
                                          final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
-            super(pComponent, pModel);
+            super(pComponent.getNode(), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
             theModel = pModel;
 
-            /* Create the listener and attach it */
-            ButtonListener myListener = new ButtonListener();
-            theComponent.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, myListener);
+            /* Handle new Values */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theComponent.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.processValue(theComponent.getValue()));
         }
 
         @Override
@@ -796,25 +712,14 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
 
             /* Display it */
             theComponent.setValue(myValue);
-            getReadOnlyLabel().setText(theComponent.getText());
-        }
-
-        /**
-         * ButtonListener class.
-         */
-        private final class ButtonListener
-                implements PropertyChangeListener {
-
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                /* Record the value */
-                theModel.processValue(theComponent.getValue());
-            }
+            getReadOnlyLabel().setText(myValue == null
+                                                       ? null
+                                                       : myValue.toString());
         }
     }
 
     /**
-     * The JScrollList implementation.
+     * The ListButton implementation.
      * @param <I> Button element type
      * @param <T> the Data Item type
      */
@@ -823,7 +728,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The Component.
          */
-        private final JScrollListButton<I> theComponent;
+        private final TethysSwingListButtonManager<I> theComponent;
 
         /**
          * The DataModel.
@@ -835,17 +740,17 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        protected MetisFieldScrollListButton(final JScrollListButton<I> pComponent,
+        protected MetisFieldScrollListButton(final TethysSwingListButtonManager<I> pComponent,
                                              final TethysFieldModelObjectList<I, T> pModel) {
             /* Call super-constructor */
-            super(pComponent, pModel);
+            super(pComponent.getNode(), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
             theModel = pModel;
 
-            /* Create the listener and attach it */
-            theComponent.getMenuBuilder().getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, theModel::processValue);
+            /* Handle new values */
+            theComponent.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, theModel::processValue);
         }
 
         @Override
@@ -855,7 +760,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     }
 
     /**
-     * The JIconButton implementation.
+     * The IconButton implementation.
      * @param <I> Button element type
      * @param <T> the Data Item type
      */
@@ -864,7 +769,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         /**
          * The Component.
          */
-        private final JIconButton<I> theComponent;
+        private final TethysSwingIconButtonManager<I> theComponent;
 
         /**
          * The DataModel.
@@ -876,18 +781,17 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
          * @param pComponent the component.
          * @param pModel the data model.
          */
-        protected MetisFieldIconButton(final JIconButton<I> pComponent,
+        protected MetisFieldIconButton(final TethysSwingIconButtonManager<I> pComponent,
                                        final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
-            super(pComponent, pModel);
+            super(pComponent.getNode(), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
             theModel = pModel;
 
-            /* Create the listener and attach it */
-            ButtonListener myListener = new ButtonListener();
-            theComponent.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, myListener);
+            /* Handle new values */
+            theComponent.getEventRegistrar().addEventListener(e -> theModel.processValue(theComponent.getValue()));
         }
 
         @Override
@@ -897,22 +801,9 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
 
             /* Display it */
             theComponent.setValue(myValue);
-            Icon myIcon = theComponent.getIcon();
+            Icon myIcon = ((JButton) theComponent.getNode()).getIcon();
             if (myIcon != null) {
-                getReadOnlyLabel().setIcon(theComponent.getIcon());
-            }
-        }
-
-        /**
-         * BooleanListener class.
-         */
-        private final class ButtonListener
-                implements PropertyChangeListener {
-
-            @Override
-            public void propertyChange(final PropertyChangeEvent evt) {
-                /* Record the value */
-                theModel.processValue(theComponent.getValue());
+                getReadOnlyLabel().setIcon(myIcon);
             }
         }
     }

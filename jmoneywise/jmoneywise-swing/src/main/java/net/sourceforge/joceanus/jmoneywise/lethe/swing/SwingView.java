@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.lethe.threads.swing.MetisSwingToolkit;
@@ -60,14 +59,6 @@ public class SwingView
      */
     public MetisFieldManager getFieldManager() {
         return getUtilitySet().getFieldManager();
-    }
-
-    /**
-     * Obtain the Eos field manager.
-     * @return the field manager
-     */
-    public MetisEosFieldManager getEosFieldManager() {
-        return getUtilitySet().getEosFieldManager();
     }
 
     @Override

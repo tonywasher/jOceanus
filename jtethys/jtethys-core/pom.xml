@@ -10,11 +10,6 @@
   <description>Java Core Utilities</description>
   <dependencies>
     <dependency>
-      <groupId>net.sourceforge.jdatebutton</groupId>
-      <artifactId>jdatebutton-core</artifactId>
-      <version>${JDateButtonVersion}</version>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${SLF4JVersion}</version>

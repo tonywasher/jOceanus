@@ -31,7 +31,7 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataItemPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataItemPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
@@ -54,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * MoneyWise Data Item Panel.
  * @param <T> the item type
  */
-public abstract class MoneyWiseEosItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
+public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> & Comparable<? super T>>
         extends PrometheusDataItemPanel<T, MoneyWiseGoToId, MoneyWiseDataType> {
     /**
      * Filter text.
@@ -78,8 +78,8 @@ public abstract class MoneyWiseEosItemPanel<T extends DataItem<MoneyWiseDataType
      * @param pUpdateSet the update set
      * @param pError the error panel
      */
-    protected MoneyWiseEosItemPanel(final TethysSwingGuiFactory pFactory,
-                                    final MetisEosFieldManager pFieldMgr,
+    protected MoneyWiseItemPanel(final TethysSwingGuiFactory pFactory,
+                                    final MetisFieldManager pFieldMgr,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                     final MetisErrorPanel<JComponent, Icon> pError) {
         super(pFactory, pFieldMgr, pUpdateSet, pError);

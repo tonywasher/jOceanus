@@ -32,8 +32,8 @@ import javax.swing.SpringLayout;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
@@ -54,11 +54,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
  * Dialog to display/edit/create a TransactionCategory.
  */
 public class TransactionCategoryPanel
-        extends MoneyWiseEosItemPanel<TransactionCategory> {
+        extends MoneyWiseItemPanel<TransactionCategory> {
     /**
      * The Field Set.
      */
-    private final MetisEosFieldSet<TransactionCategory> theFieldSet;
+    private final MetisFieldSet<TransactionCategory> theFieldSet;
 
     /**
      * Constructor.
@@ -68,7 +68,7 @@ public class TransactionCategoryPanel
      * @param pError the error panel
      */
     public TransactionCategoryPanel(final TethysSwingGuiFactory pFactory,
-                                    final MetisEosFieldManager pFieldMgr,
+                                    final MetisFieldManager pFieldMgr,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                     final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */

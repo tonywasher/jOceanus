@@ -24,4 +24,3 @@
  * Java Swing Field Set.
  */
 package net.sourceforge.joceanus.jmetis.lethe.field.swing;
-

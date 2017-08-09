@@ -174,7 +174,7 @@ public class DepositRate
                 setValueEndDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 TethysDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueEndDate(myParser.parseDateDay((String) myValue));
+                setValueEndDate(myParser.parseDate((String) myValue));
             }
 
             /* Catch Exceptions */

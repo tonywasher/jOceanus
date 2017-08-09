@@ -31,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.jdatebutton.JDateFormatter;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -41,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public class TethysDateFormatter
-        implements JDateFormatter, TethysEventProvider<TethysDateEvent> {
+        implements TethysEventProvider<TethysDateEvent> {
     /**
      * The default format.
      */
@@ -140,7 +139,7 @@ public class TethysDateFormatter
     }
 
     /**
-     * Format a Date.
+     * Format a calendar Date.
      * @param pDate the date to format
      * @return the formatted date
      */
@@ -154,7 +153,11 @@ public class TethysDateFormatter
         return formatJavaDate(pDate.getTime());
     }
 
-    @Override
+    /**
+     * Format a local Date.
+     * @param pDate the date to format
+     * @return the formatted date
+     */
     public String formatLocalDate(final LocalDate pDate) {
         /* Handle null */
         if (pDate == null) {
@@ -196,11 +199,11 @@ public class TethysDateFormatter
     }
 
     /**
-     * Format a DateDayRange.
+     * Format a DateRange.
      * @param pRange the range to format
      * @return the formatted date
      */
-    public String formatDateDayRange(final TethysDateRange pRange) {
+    public String formatDateRange(final TethysDateRange pRange) {
         /* Handle null */
         if (pRange == null) {
             return null;
@@ -227,12 +230,12 @@ public class TethysDateFormatter
     }
 
     /**
-     * Parse Date.
+     * Parse Java Date.
      * @param pValue Formatted Date
      * @return the Date
      * @throws IllegalArgumentException on error
      */
-    public Date parseDate(final String pValue) {
+    public Date parseJavaDate(final String pValue) {
         /* Parse the date */
         try {
             return theDateFormat.parse(pValue);
@@ -265,25 +268,25 @@ public class TethysDateFormatter
      * @throws IllegalArgumentException on error
      */
     public Calendar parseCalendarDay(final String pValue) {
-        Date myDate = parseDate(pValue);
+        Date myDate = parseJavaDate(pValue);
         Calendar myCalendar = Calendar.getInstance(theLocale);
         myCalendar.setTime(myDate);
         return myCalendar;
     }
 
     /**
-     * Parse DateDay.
-     * @param pValue Formatted DateDay
+     * Parse Date.
+     * @param pValue Formatted Date
      * @return the DateDay
      * @throws IllegalArgumentException on error
      */
-    public TethysDate parseDateDay(final String pValue) {
+    public TethysDate parseDate(final String pValue) {
         LocalDate myDate = parseLocalDate(pValue);
         return new TethysDate(myDate);
     }
 
     /**
-     * Parse DateDay using the passed year as base date.
+     * Parse Date using the passed year as base date.
      * <p>
      * This is used when a two digit year is utilised
      * @param pValue Formatted DateDay
@@ -291,8 +294,8 @@ public class TethysDateFormatter
      * @return the DateDay
      * @throws IllegalArgumentException on error
      */
-    public TethysDate parseDateDayBase(final String pValue,
-                                       final int pBaseYear) {
+    public TethysDate parseDateBase(final String pValue,
+                                    final int pBaseYear) {
         LocalDate myDate = parseLocalDate(pValue);
         if (myDate.getYear() >= pBaseYear + YEARS_CENTURY) {
             myDate = myDate.minusYears(YEARS_CENTURY);
@@ -300,7 +303,10 @@ public class TethysDateFormatter
         return new TethysDate(myDate);
     }
 
-    @Override
+    /**
+     * Obtain the locale.
+     * @return the locale
+     */
     public Locale getLocale() {
         return theLocale;
     }

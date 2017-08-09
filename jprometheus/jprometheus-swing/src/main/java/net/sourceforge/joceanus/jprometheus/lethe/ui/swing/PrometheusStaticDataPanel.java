@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.ui.eos;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
 import java.util.ArrayList;
 import java.util.Iterator;

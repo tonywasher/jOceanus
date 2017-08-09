@@ -26,8 +26,6 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldConfig;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceEvent;
@@ -47,12 +45,7 @@ public class JOceanusSwingUtilitySet
     /**
      * Field Manager.
      */
-    private final MetisFieldManager theFieldManager;
-
-    /**
-     * Field Manager.
-     */
-    private final MetisEosFieldManager theEosFieldManager;
+    private final MetisFieldManager theEosFieldManager;
 
     /**
      * Colour Preferences.
@@ -71,11 +64,8 @@ public class JOceanusSwingUtilitySet
         /* Access the Colour Preferences */
         theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);
 
-        /* Allocate the FieldManager */
-        theFieldManager = new MetisFieldManager(new MetisFieldConfig(theColorPreferences));
-
         /* Allocate the EosFieldManager */
-        theEosFieldManager = new MetisEosFieldManager(getGuiFactory(), new MetisEosFieldConfig(theColorPreferences));
+        theEosFieldManager = new MetisFieldManager(getGuiFactory(), new MetisFieldConfig(theColorPreferences));
 
         /* Process the colour preferences */
         processColorPreferences();
@@ -90,7 +80,7 @@ public class JOceanusSwingUtilitySet
      */
     private void processColorPreferences() {
         /* Update the field manager */
-        theFieldManager.setConfig(new MetisFieldConfig(theColorPreferences));
+        theEosFieldManager.setConfig(new MetisFieldConfig(theColorPreferences));
     }
 
     @Override
@@ -113,14 +103,6 @@ public class JOceanusSwingUtilitySet
      * @return the field manager
      */
     public MetisFieldManager getFieldManager() {
-        return theFieldManager;
-    }
-
-    /**
-     * Obtain the Eod field manager.
-     * @return the field manager
-     */
-    public MetisEosFieldManager getEosFieldManager() {
         return theEosFieldManager;
     }
 }

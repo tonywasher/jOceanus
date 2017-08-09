@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
+public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
     /**
      * The data table.
      */
-    private final JDataTable<T, E> theDataTable;
+    private final PrometheusDataTable<T, E> theDataTable;
 
     /**
      * The table.
@@ -49,7 +49,7 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The table model.
      */
-    private final JDataTableModel<T, E> theTableModel;
+    private final PrometheusDataTableModel<T, E> theTableModel;
 
     /**
      * The List Selection Model.
@@ -59,15 +59,15 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * The Item Panel.
      */
-    private final DataItemPanel<T, ?, E> theItemPanel;
+    private final PrometheusDataItemPanel<T, ?, E> theItemPanel;
 
     /**
      * Constructor.
      * @param pTable the table
      * @param pPanel the item panel
      */
-    public JDataTableSelection(final JDataTable<T, E> pTable,
-                               final DataItemPanel<T, ?, E> pPanel) {
+    public PrometheusDataTableSelection(final PrometheusDataTable<T, E> pTable,
+                                        final PrometheusDataItemPanel<T, ?, E> pPanel) {
         /* Store parameters */
         theDataTable = pTable;
         theTable = pTable.getTable();
@@ -173,11 +173,13 @@ public class JDataTableSelection<T extends DataItem<E> & Comparable<? super T>, 
         /* Access first row */
         int iIndex = theTable.convertRowIndexToModel(0);
         T myFirst = theTableModel.getItemAtIndex(iIndex);
-        return myFirst.isHeader()
-                                  ? iNumRows > 1
-                                                 ? 1
-                                                 : -1
-                                  : 0;
+        if (myFirst.isHeader()) {
+            return iNumRows > 1
+                                ? 1
+                                : -1;
+        } else {
+            return 0;
+        }
     }
 
     /**

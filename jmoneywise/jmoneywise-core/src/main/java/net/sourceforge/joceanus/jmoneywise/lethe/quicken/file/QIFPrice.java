@@ -118,7 +118,7 @@ public class QIFPrice
         /* Store the data */
         theFileType = pFile.getFileType();
         theSecurity = pFile.getSecurityBySymbol(myParts[0]);
-        theDate = pFormatter.getDateFormatter().parseDateDayBase(myParts[2], QIFWriter.QIF_BASEYEAR);
+        theDate = pFormatter.getDateFormatter().parseDateBase(myParts[2], QIFWriter.QIF_BASEYEAR);
         thePrice = pFormatter.getDecimalParser().parsePriceValue(myParts[1]);
         thePrices = null;
     }

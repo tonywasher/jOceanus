@@ -170,7 +170,7 @@ public class Schedule
             if (myValue instanceof TethysDate) {
                 setValueStartDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                setValueStartDate(myParser.parseDateDay((String) myValue));
+                setValueStartDate(myParser.parseDate((String) myValue));
             }
 
             /* Store the EndDate */
@@ -178,7 +178,7 @@ public class Schedule
             if (myValue instanceof TethysDate) {
                 setValueEndDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                setValueEndDate(myParser.parseDateDay((String) myValue));
+                setValueEndDate(myParser.parseDate((String) myValue));
             }
 
             /* Store the NextDate */
@@ -186,7 +186,7 @@ public class Schedule
             if (myValue instanceof TethysDate) {
                 setValueNextDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                setValueNextDate(myParser.parseDateDay((String) myValue));
+                setValueNextDate(myParser.parseDate((String) myValue));
             }
 
             /* Catch Exceptions */

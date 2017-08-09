@@ -10,11 +10,6 @@
   <description>Java Swing Utilities</description>
   <dependencies>
     <dependency>
-      <groupId>net.sourceforge.jdatebutton</groupId>
-      <artifactId>jdatebutton-swing</artifactId>
-      <version>${JDateButtonVersion}</version>
-    </dependency>
-    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jtethys-core</artifactId>
       <version>${project.version}</version>

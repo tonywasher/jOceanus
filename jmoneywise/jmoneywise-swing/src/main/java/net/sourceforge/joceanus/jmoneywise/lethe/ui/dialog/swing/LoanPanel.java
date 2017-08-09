@@ -36,8 +36,8 @@ import javax.swing.SpringLayout;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
@@ -71,11 +71,11 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
  * Panel to display/edit/create a Loan.
  */
 public class LoanPanel
-        extends MoneyWiseEosItemPanel<Loan> {
+        extends MoneyWiseItemPanel<Loan> {
     /**
      * The Field Set.
      */
-    private final MetisEosFieldSet<Loan> theFieldSet;
+    private final MetisFieldSet<Loan> theFieldSet;
 
     /**
      * The Closed State.
@@ -90,7 +90,7 @@ public class LoanPanel
      * @param pError the error panel
      */
     public LoanPanel(final TethysSwingGuiFactory pFactory,
-                     final MetisEosFieldManager pFieldMgr,
+                     final MetisFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
                      final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */

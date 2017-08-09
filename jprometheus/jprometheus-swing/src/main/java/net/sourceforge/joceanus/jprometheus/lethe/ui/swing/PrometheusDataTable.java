@@ -38,9 +38,9 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableColumn.RowColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.JDataTableModel.RowTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusRowColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel.PrometheusRowTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -54,11 +54,10 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 
 /**
  * Template class to provide a table to handle a data type.
- * @author Tony Washer
  * @param <T> the data type.
  * @param <E> the data type enum class
  */
-public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Panel height.
@@ -93,12 +92,12 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * Data Table Model.
      */
-    private JDataTableModel<T, E> theModel;
+    private PrometheusDataTableModel<T, E> theModel;
 
     /**
      * The Row Header Model.
      */
-    private RowTableModel<E> theRowHdrModel;
+    private PrometheusRowTableModel<E> theRowHdrModel;
 
     /**
      * The Data List associated with the table.
@@ -128,19 +127,19 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
     /**
      * Is Enabled?
      */
-    private boolean isEnabled = false;
+    private boolean isEnabled;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public JDataTable(final TethysSwingGuiFactory pFactory) {
+    public PrometheusDataTable(final TethysSwingGuiFactory pFactory) {
         /* Create the Id */
         theId = pFactory.getNextId();
 
         /* Store parameters */
         theTable = new JTable();
-        theRowHdrModel = new RowTableModel<>(this);
+        theRowHdrModel = new PrometheusRowTableModel<>(this);
 
         /* Set the selection mode */
         theTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -227,7 +226,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Get the table model.
      * @return the model
      */
-    public JDataTableModel<T, E> getTableModel() {
+    public PrometheusDataTableModel<T, E> getTableModel() {
         return theModel;
     }
 
@@ -304,7 +303,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Get the RowTableModel.
      * @return the model
      */
-    protected RowTableModel<E> getRowTableModel() {
+    protected PrometheusRowTableModel<E> getRowTableModel() {
         return theRowHdrModel;
     }
 
@@ -312,7 +311,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
      * Set the table model.
      * @param pModel the table model
      */
-    public void setModel(final JDataTableModel<T, E> pModel) {
+    public void setModel(final PrometheusDataTableModel<T, E> pModel) {
         /* Declare to the super class */
         theTable.setModel(pModel);
 
@@ -333,7 +332,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
         theTable.setRowHeight(ROW_HEIGHT);
 
         /* Create a row Header table */
-        JTable myRowHdrTable = new JTable(theRowHdrModel, new RowColumnModel<E>(this));
+        JTable myRowHdrTable = new JTable(theRowHdrModel, new PrometheusRowColumnModel<E>(this));
         myRowHdrTable.setBackground(theTable.getTableHeader().getBackground());
         myRowHdrTable.setColumnSelectionAllowed(false);
         myRowHdrTable.setCellSelectionEnabled(false);
@@ -347,7 +346,7 @@ public abstract class JDataTable<T extends DataItem<E> & Comparable<? super T>, 
 
         /* Add as the row header */
         theScroll.setRowHeaderView(myRowHdrTable);
-        theScroll.getRowHeader().setPreferredSize(new Dimension(JDataTableColumnModel.WIDTH_ROWHDR, HEIGHT_PANEL));
+        theScroll.getRowHeader().setPreferredSize(new Dimension(PrometheusDataTableColumnModel.WIDTH_ROWHDR, HEIGHT_PANEL));
         theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, myRowHdrTable.getTableHeader());
     }
 

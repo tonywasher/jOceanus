@@ -33,13 +33,13 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldRateCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldRateCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -49,10 +49,10 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositRate.DepositRateLis
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -91,7 +91,7 @@ public class DepositRateTable
     /**
      * The field manager.
      */
-    private final MetisEosFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -151,7 +151,7 @@ public class DepositRateTable
      * @param pError the error panel
      */
     protected DepositRateTable(final TethysSwingGuiFactory pFactory,
-                               final MetisEosFieldManager pFieldMgr,
+                               final MetisFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */

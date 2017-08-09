@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.ui.eos;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
 import java.util.Enumeration;
 
@@ -31,7 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldRowCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldRowCellRenderer;
 
 /**
  * TableColumn extension class.

@@ -28,8 +28,6 @@ import java.util.Currency;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
@@ -37,10 +35,12 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelString;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 
 /**
  * Field Set. This handles a fields for an item, populating the field, rendering and parsing the
@@ -98,7 +98,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                 final MetisField pField,
                                 final MetisDataType pClass,
-                                final JTextField pTextField) {
+                                final TethysSwingStringTextField pTextField) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pTextField, pClass));
     }
@@ -113,7 +113,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                 final MetisField pField,
                                 final MetisDataType pClass,
-                                final JScrollPane pScrollPane) {
+                                final TethysSwingScrollPaneManager pScrollPane) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pScrollPane, pClass));
     }
@@ -126,7 +126,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      */
     protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                 final MetisField pField,
-                                final TethysSwingDateButton pButton) {
+                                final TethysSwingDateButtonManager pButton) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton));
     }
@@ -142,7 +142,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                     final MetisField pField,
                                     final Class<I> pClass,
-                                    final JScrollButton<I> pButton) {
+                                    final TethysSwingScrollButtonManager<I> pButton) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton, pClass));
     }
@@ -156,7 +156,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      */
     protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                     final MetisField pField,
-                                    final JScrollListButton<I> pButton) {
+                                    final TethysSwingListButtonManager<I> pButton) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton));
     }
@@ -172,7 +172,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
                                     final MetisField pField,
                                     final Class<I> pClass,
-                                    final JIconButton<I> pButton) {
+                                    final TethysSwingIconButtonManager<I> pButton) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton, pClass));
     }
@@ -182,11 +182,10 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pFieldSet the field set
      * @param pField the field id
      * @param pComponent the component
-     * 
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
-                                    final MetisField pField,
-                                    final MetisFieldComponent<T> pComponent) {
+    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+                                final MetisField pField,
+                                final MetisFieldComponent<T> pComponent) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;

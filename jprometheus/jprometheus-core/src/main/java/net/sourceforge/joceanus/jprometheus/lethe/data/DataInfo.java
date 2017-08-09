@@ -651,7 +651,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
                 setValueBytes((byte[]) pValue, TethysDate.class);
                 return true;
             } else if (pValue instanceof String) {
-                setValueValue(pFormatter.parseDateDay((String) pValue));
+                setValueValue(pFormatter.parseDate((String) pValue));
                 return true;
             }
         } catch (IllegalArgumentException e) {

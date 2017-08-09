@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.MainWindow;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusMainWindow;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.Tethy
  * Main Window for jMoneyWise.
  */
 public class MainTab
-        extends MainWindow<MoneyWiseData, MoneyWiseDataType> {
+        extends PrometheusMainWindow<MoneyWiseData, MoneyWiseDataType> {
     /**
      * Report tab title.
      */

@@ -28,37 +28,31 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Currency;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableModel;
 
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
-import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEvent.TethysEventListener;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateCellEditor;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.ComplexIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton.DefaultIconButtonState;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton.JScrollMenuBuilder;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton.JScrollListMenuBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Cell editors.
@@ -79,18 +73,13 @@ public final class MetisSwingFieldCellEditor {
     /**
      * String Cell Editor.
      */
-    public static class StringCellEditor
+    public static class MetisFieldStringCellEditor
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
         private static final long serialVersionUID = 2172483058466364800L;
-
-        /**
-         * The Event Manager.
-         */
-        private final transient TethysEventManager<TethysUIEvent> theEventManager;
 
         /**
          * The text field.
@@ -105,15 +94,9 @@ public final class MetisSwingFieldCellEditor {
         /**
          * Constructor.
          */
-        protected StringCellEditor() {
+        protected MetisFieldStringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
-            theEventManager = new TethysEventManager<>();
-        }
-
-        @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -134,9 +117,6 @@ public final class MetisSwingFieldCellEditor {
             int myRow = pTable.convertRowIndexToModel(pRowIndex);
             int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
-
-            /* Enable updates to cellEditor */
-            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
 
             /* Set the text */
             theField.setText(((pValue == null)
@@ -187,8 +167,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Integer Cell Editor.
      */
-    public static class IntegerCellEditor
-            extends StringCellEditor {
+    public static class MetisFieldIntegerCellEditor
+            extends MetisFieldStringCellEditor {
         /**
          * Serial Id.
          */
@@ -232,7 +212,7 @@ public final class MetisSwingFieldCellEditor {
      * IconButton Cell Editor.
      * @param <T> the object type
      */
-    public static class IconButtonCellEditor<T>
+    public static class MetisFieldIconButtonCellEditor<T>
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -243,27 +223,17 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The class of the object.
          */
-        private final Class<T> theClass;
+        private final Class<T> theClazz;
 
         /**
          * The button.
          */
-        private final JIconButton<T> theButton;
-
-        /**
-         * The state.
-         */
-        private final transient DefaultIconButtonState<T> theState;
-
-        /**
-         * The selection Listener.
-         */
-        private final transient ButtonListener theButtonListener = new ButtonListener();
+        private final transient TethysSwingIconButtonManager<T> theButton;
 
         /**
          * The mouse Listener.
          */
-        private final transient MouseListener theMouseListener = new MouseListener();
+        private final transient MouseListener theMouseListener;
 
         /**
          * The editor table.
@@ -282,39 +252,25 @@ public final class MetisSwingFieldCellEditor {
 
         /**
          * Constructor.
-         * @param pClass the class of the object
+         * @param pButton the button
+         * @param pClazz the class of the object
          */
-        protected IconButtonCellEditor(final Class<T> pClass) {
-            /* Use simple setup */
-            this(pClass, false);
-        }
-
-        /**
-         * Constructor.
-         * @param pClass the class of the object
-         * @param pComplex use complex state true/false
-         */
-        protected IconButtonCellEditor(final Class<T> pClass,
-                                       final boolean pComplex) {
+        protected MetisFieldIconButtonCellEditor(final TethysSwingIconButtonManager<T> pButton,
+                                                 final Class<T> pClazz) {
             /* Store parameters */
-            theClass = pClass;
+            theButton = pButton;
+            theClazz = pClazz;
 
-            /* Build the button */
-            theState = pComplex
-                                ? new ComplexIconButtonState<>(Boolean.FALSE)
-                                : new DefaultIconButtonState<>();
-            theButton = new JIconButton<>(theState);
-            theButton.setFocusPainted(false);
-            theButton.addPropertyChangeListener(JIconButton.PROPERTY_VALUE, theButtonListener);
-        }
+            /* Create the MouseListener */
+            theMouseListener = new MouseListener();
 
-        /**
-         * Set the CellEditor value.
-         * @param pNewValue the new value
-         */
-        public void setNewValue(final T pNewValue) {
-            theValue = pNewValue;
-            theButton.setValue(theValue);
+            /* Set listeners */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+                /* Store value and stop editing */
+                theValue = theButton.getValue();
+                stopCellEditing();
+            });
         }
 
         /**
@@ -323,6 +279,14 @@ public final class MetisSwingFieldCellEditor {
          */
         public Point getPoint() {
             return thePoint;
+        }
+
+        /**
+         * Set the IconMapSet supplier.
+         * @param pSupplier the supplier
+         */
+        public void setIconMapSet(final Function<Integer, TethysIconMapSet<T>> pSupplier) {
+            theButton.setIconMapSet(() -> pSupplier.apply(thePoint.y));
         }
 
         @Override
@@ -338,51 +302,19 @@ public final class MetisSwingFieldCellEditor {
             theTable = pTable;
 
             /* Store current value */
-            theValue = theClass.cast(pValue);
-            theButton.storeValue(theValue);
-
-            /* ensure EditingState */
-            ensureEditingState();
+            theValue = theClazz.cast(pValue);
+            theButton.setValue(theValue);
 
             /* Declare the mouse listener */
             theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
-            return theButton;
+            return theButton.getNode();
         }
 
         @Override
         public Object getCellEditorValue() {
             return theValue;
-        }
-
-        /**
-         * Obtain standard state.
-         * @return the state machine
-         */
-        public DefaultIconButtonState<T> getState() {
-            return theState;
-        }
-
-        /**
-         * Obtain complex state.
-         * @return the state machine
-         */
-        @SuppressWarnings("unchecked")
-        public ComplexIconButtonState<T, Boolean> getComplexState() {
-            return (theState instanceof ComplexIconButtonState)
-                                                                ? (ComplexIconButtonState<T, Boolean>) theState
-                                                                : null;
-        }
-
-        /**
-         * Ensure editing state.
-         */
-        private void ensureEditingState() {
-            ComplexIconButtonState<T, Boolean> myState = getComplexState();
-            if (myState != null) {
-                myState.setState(Boolean.TRUE);
-            }
         }
 
         @Override
@@ -403,21 +335,6 @@ public final class MetisSwingFieldCellEditor {
         }
 
         /**
-         * Button Listener class.
-         */
-        private class ButtonListener
-                implements PropertyChangeListener {
-            @Override
-            public void propertyChange(final PropertyChangeEvent pEvent) {
-                /* Access the new value */
-                theValue = theButton.getValue();
-
-                /* Stop editing */
-                stopCellEditing();
-            }
-        }
-
-        /**
          * Mouse Adapter class.
          * <p>
          * Required to handle button clicked, dragged, and released in different place
@@ -426,7 +343,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                Rectangle myRect = theButton.getBounds();
+                Rectangle myRect = theButton.getNode().getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -438,9 +355,9 @@ public final class MetisSwingFieldCellEditor {
      * ScrollButton Cell Editor.
      * @param <T> the object type
      */
-    public static class ScrollButtonCellEditor<T>
+    public static class MetisFieldScrollButtonCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
@@ -449,42 +366,22 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The class of the object.
          */
-        private final Class<T> theClass;
+        private final Class<T> theClazz;
 
         /**
          * The button.
          */
-        private final JScrollButton<T> theButton;
+        private final transient TethysSwingScrollButtonManager<T> theButton;
 
         /**
-         * The menu Builder.
+         * The mouse Listener.
          */
-        private final transient JScrollMenuBuilder<T> theMenuBuilder;
-
-        /**
-         * The Event Manager.
-         */
-        private final transient TethysEventManager<TethysUIEvent> theEventManager;
+        private final transient MouseListener theMouseListener;
 
         /**
          * The point at which the editor is active.
          */
         private transient Point thePoint;
-
-        /**
-         * The selection Listener.
-         */
-        private final transient ButtonListener theButtonListener = new ButtonListener();
-
-        /**
-         * The popUp Listener.
-         */
-        private final transient PopUpListener thePopUpListener = new PopUpListener();
-
-        /**
-         * The mouse Listener.
-         */
-        private final transient MouseListener theMouseListener = new MouseListener();
 
         /**
          * The editor value.
@@ -498,40 +395,34 @@ public final class MetisSwingFieldCellEditor {
 
         /**
          * Constructor.
-         * @param pClass the class of the object
+         * @param pButton the button
+         * @param pClazz the class of the object
          */
-        protected ScrollButtonCellEditor(final Class<T> pClass) {
+        protected MetisFieldScrollButtonCellEditor(final TethysSwingScrollButtonManager<T> pButton,
+                                                   final Class<T> pClazz) {
             /* Store parameters */
-            theClass = pClass;
+            theClazz = pClazz;
+            theButton = pButton;
 
-            /* Create button and menu builder */
-            theButton = new JScrollButton<>();
-            theMenuBuilder = theButton.getMenuBuilder();
+            /* Create the MouseListener */
+            theMouseListener = new MouseListener();
 
-            /* Add popupListener */
-            theMenuBuilder.addPopupMenuListener(thePopUpListener);
-            theButton.fireOnClose();
-
-            /* sort out listeners */
-            theButton.setFocusPainted(false);
-            theButton.addPropertyChangeListener(JScrollButton.PROPERTY_VALUE, theButtonListener);
-            theMenuBuilder.getEventRegistrar().addEventListener(theButtonListener);
-
-            /* Create event manager */
-            theEventManager = new TethysEventManager<>();
+            /* Set listeners */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+                /* Store value and stop editing */
+                theValue = theButton.getValue();
+                stopCellEditing();
+            });
         }
 
         /**
-         * Obtain the menu Builder.
-         * @return the menuBuilder
+         * Set Menu configurator.
+         * @param pConfigurator the configurator
          */
-        public JScrollMenuBuilder<T> getMenuBuilder() {
-            return theMenuBuilder;
-        }
-
-        @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-            return theEventManager.getEventRegistrar();
+        public void setMenuConfigurator(final BiConsumer<Integer, TethysScrollMenu<T, Icon>> pConfigurator) {
+            theButton.setMenuConfigurator(c -> pConfigurator.accept(thePoint.y, c));
         }
 
         /**
@@ -555,14 +446,14 @@ public final class MetisSwingFieldCellEditor {
             theTable = pTable;
 
             /* Store current value */
-            theValue = theClass.cast(pValue);
-            theButton.storeValue(theValue);
+            theValue = theClazz.cast(pValue);
+            theButton.setValue(theValue);
 
             /* Declare the mouse listener */
             theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
-            return theButton;
+            return theButton.getNode();
         }
 
         @Override
@@ -586,33 +477,6 @@ public final class MetisSwingFieldCellEditor {
         }
 
         /**
-         * Button Listener class.
-         */
-        private class ButtonListener
-                implements PropertyChangeListener, TethysEventListener<TethysUIEvent> {
-            @Override
-            public void propertyChange(final PropertyChangeEvent pEvent) {
-                /* Store value and stop editing */
-                theValue = theButton.getValue();
-
-                /* Access the table model */
-                TableModel myModel = theTable.getModel();
-
-                /* Pass the event as a value to set */
-                myModel.setValueAt(theValue, thePoint.y, thePoint.x);
-            }
-
-            @Override
-            public void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
-                if (theMenuBuilder.buildingMenu()) {
-                    theEventManager.fireEvent(TethysUIEvent.NEWVALUE);
-                } else {
-                    cancelCellEditing();
-                }
-            }
-        }
-
-        /**
          * Mouse Adapter class.
          * <p>
          * Required to handle button clicked, dragged, and released in different place
@@ -621,44 +485,21 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                Rectangle myRect = theButton.getBounds();
+                Rectangle myRect = theButton.getNode().getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
             }
         }
-
-        /**
-         * PopUp listener class.
-         * <p>
-         * Required to handle popUp menu cancelled without selection
-         */
-        private class PopUpListener
-                implements PopupMenuListener {
-            @Override
-            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
-                /* Ignore */
-            }
-
-            @Override
-            public void popupMenuCanceled(final PopupMenuEvent e) {
-                cancelCellEditing();
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
-                cancelCellEditing();
-            }
-        }
     }
 
     /**
-     * ScrollListButton Cell Editor.
+     * ListButton Cell Editor.
      * @param <T> the object type
      */
-    public static class ScrollListButtonCellEditor<T>
+    public static class MetisFieldListButtonCellEditor<T>
             extends AbstractCellEditor
-            implements TableCellEditor, TethysEventProvider<TethysUIEvent> {
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
@@ -667,17 +508,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The button.
          */
-        private final JScrollListButton<T> theButton;
-
-        /**
-         * The menu Builder.
-         */
-        private final transient JScrollListMenuBuilder<T> theMenuBuilder;
-
-        /**
-         * The Event Manager.
-         */
-        private final transient TethysEventManager<TethysUIEvent> theEventManager;
+        private final transient TethysSwingListButtonManager<T> theButton;
 
         /**
          * The point at which the editor is active.
@@ -685,14 +516,14 @@ public final class MetisSwingFieldCellEditor {
         private transient Point thePoint;
 
         /**
-         * The popUp Listener.
-         */
-        private final transient PopUpListener thePopUpListener = new PopUpListener();
-
-        /**
          * The mouse Listener.
          */
-        private final transient MouseListener theMouseListener = new MouseListener();
+        private final transient MouseListener theMouseListener;
+
+        /**
+         * The editor value.
+         */
+        private transient TethysItemList<T> theValue;
 
         /**
          * The active table.
@@ -701,42 +532,23 @@ public final class MetisSwingFieldCellEditor {
 
         /**
          * Constructor.
+         * @param pButton the button
          */
-        protected ScrollListButtonCellEditor() {
-            /* Create button and menu builder */
-            theButton = new JScrollListButton<>();
-            theMenuBuilder = theButton.getMenuBuilder();
+        protected MetisFieldListButtonCellEditor(final TethysSwingListButtonManager<T> pButton) {
+            /* Store parameters */
+            theButton = pButton;
 
-            /* Add popupListener */
-            theMenuBuilder.addPopupMenuListener(thePopUpListener);
+            /* Create the MouseListener */
+            theMouseListener = new MouseListener();
 
-            /* Create event manager */
-            theEventManager = new TethysEventManager<>();
-
-            /* sort out listeners */
-            theButton.setFocusPainted(false);
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theMenuBuilder.getEventRegistrar();
-            myRegistrar.addEventListener(TethysUIEvent.PREPAREDIALOG, e -> theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG));
+            /* Set listeners */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
-                TableModel myModel = theTable.getModel();
-                Object myValue = myModel.getValueAt(thePoint.y, thePoint.x);
-                if (myValue instanceof String) {
-                    theButton.setText((String) myValue);
-                }
+                /* Store value and stop editing */
+                theValue = theButton.getValue();
+                stopCellEditing();
             });
-        }
-
-        /**
-         * Obtain the menu Builder.
-         * @return the menuBuilder
-         */
-        public JScrollListMenuBuilder<T> getMenuBuilder() {
-            return theMenuBuilder;
-        }
-
-        @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-            return theEventManager.getEventRegistrar();
         }
 
         /**
@@ -747,6 +559,7 @@ public final class MetisSwingFieldCellEditor {
             return thePoint;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public JComponent getTableCellEditorComponent(final JTable pTable,
                                                       final Object pValue,
@@ -759,24 +572,20 @@ public final class MetisSwingFieldCellEditor {
             thePoint = new Point(myCol, myRow);
             theTable = pTable;
 
-            /* If we have text */
-            if (pValue instanceof String) {
-                /* Use it for button text */
-                theButton.setText((String) pValue);
-            } else {
-                theButton.setText(null);
-            }
+            /* Store current value */
+            theValue = (TethysItemList<T>) pValue;
+            theButton.setValue(theValue);
 
             /* Declare the mouse listener */
             theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
-            return theButton;
+            return theButton.getNode();
         }
 
         @Override
         public Object getCellEditorValue() {
-            return null;
+            return theValue;
         }
 
         @Override
@@ -803,33 +612,10 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                Rectangle myRect = theButton.getBounds();
+                Rectangle myRect = theButton.getNode().getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
-            }
-        }
-
-        /**
-         * PopUp listener class.
-         * <p>
-         * Required to handle popUp menu cancelled without selection
-         */
-        private class PopUpListener
-                implements PopupMenuListener {
-            @Override
-            public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
-                /* Ignore */
-            }
-
-            @Override
-            public void popupMenuCanceled(final PopupMenuEvent e) {
-                cancelCellEditing();
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(final PopupMenuEvent e) {
-                cancelCellEditing();
             }
         }
     }
@@ -837,18 +623,18 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Calendar Cell Editor.
      */
-    public static class CalendarCellEditor
-            extends TethysSwingDateCellEditor
-            implements TethysEventProvider<TethysUIEvent> {
+    public static class MetisFieldCalendarCellEditor
+            extends AbstractCellEditor
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
         private static final long serialVersionUID = 2421257860258168379L;
 
         /**
-         * The Event Manager.
+         * The button manager.
          */
-        private final transient TethysEventManager<TethysUIEvent> theEventManager;
+        private final transient TethysSwingDateButtonManager theButton;
 
         /**
          * The point at which the editor is active.
@@ -856,20 +642,26 @@ public final class MetisSwingFieldCellEditor {
         private transient Point thePoint;
 
         /**
-         * Constructor.
-         * @param pFormatter the formatter
+         * The value.
          */
-        protected CalendarCellEditor(final TethysDateFormatter pFormatter) {
+        private transient TethysDate theValue;
+
+        /**
+         * Constructor.
+         * @param pButton the button
+         */
+        protected MetisFieldCalendarCellEditor(final TethysSwingDateButtonManager pButton) {
             /* Create a new button */
-            super(pFormatter);
+            theButton = pButton;
 
-            /* Create event manager */
-            theEventManager = new TethysEventManager<>();
-        }
-
-        @Override
-        public TethysEventRegistrar<TethysUIEvent> getEventRegistrar() {
-            return theEventManager.getEventRegistrar();
+            /* Set listeners */
+            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
+            myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
+                /* Store value and stop editing */
+                theValue = theButton.getSelectedDate();
+                stopCellEditing();
+            });
         }
 
         /**
@@ -878,6 +670,14 @@ public final class MetisSwingFieldCellEditor {
          */
         public Point getPoint() {
             return thePoint;
+        }
+
+        /**
+         * Set Date configurator.
+         * @param pConfigurator the configurator
+         */
+        public void setDateConfigurator(final BiConsumer<Integer, TethysDateConfig> pConfigurator) {
+            theButton.setDateConfigurator(c -> pConfigurator.accept(thePoint.y, c));
         }
 
         @Override
@@ -891,19 +691,25 @@ public final class MetisSwingFieldCellEditor {
             int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
 
-            /* Enable updates to cellEditor */
-            theEventManager.fireEvent(TethysUIEvent.PREPAREDIALOG);
+            /* Store current value */
+            theValue = (TethysDate) pValue;
+            theButton.setSelectedDate(theValue);
 
-            /* Pass call on */
-            return super.getTableCellEditorComponent(pTable, pValue, isSelected, pRowIndex, pColIndex);
+            /* Return the button */
+            return theButton.getNode();
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return theValue;
         }
     }
 
     /**
      * Decimal Cell Editor.
      */
-    private abstract static class DecimalCellEditor
-            extends StringCellEditor {
+    private abstract static class MetisFieldDecimalCellEditor
+            extends MetisFieldStringCellEditor {
         /**
          * Serial Id.
          */
@@ -932,8 +738,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Rate Cell Editor.
      */
-    public static class RateCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldRateCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -948,7 +754,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected RateCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldRateCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -970,8 +776,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Money Cell Editor.
      */
-    public static class MoneyCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldMoneyCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -983,24 +789,24 @@ public final class MetisSwingFieldCellEditor {
         private final transient TethysDecimalParser theParser;
 
         /**
-         * The assumed currency.
+         * The currency function.
          */
-        private transient Currency theCurrency;
+        private transient Function<Integer, Currency> theCurrency;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected MoneyCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldMoneyCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
-            theCurrency = theParser.getDefaultCurrency();
+            theCurrency = r -> theParser.getDefaultCurrency();
         }
 
         /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
+         * Set the deemed currency.
+         * @param pCurrency the deemed currency function
          */
-        public void setAssumedCurrency(final Currency pCurrency) {
+        public void setDeemedCurrency(final Function<Integer, Currency> pCurrency) {
             theCurrency = pCurrency;
         }
 
@@ -1010,7 +816,11 @@ public final class MetisSwingFieldCellEditor {
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
-                    return theParser.parseMoneyValue((String) o, theCurrency);
+                    Currency myCurrency = theCurrency.apply((int) getPoint().getY());
+                    if (myCurrency == null) {
+                        myCurrency = theParser.getDefaultCurrency();
+                    }
+                    return theParser.parseMoneyValue((String) o, myCurrency);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -1022,8 +832,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Units Cell Editor.
      */
-    public static class UnitsCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldUnitsCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -1038,7 +848,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected UnitsCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldUnitsCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1060,8 +870,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Ratio Cell Editor.
      */
-    public static class RatioCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldRatioCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -1076,7 +886,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected RatioCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldRatioCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1098,8 +908,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Dilutions Cell Editor.
      */
-    public static class DilutionCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldDilutionCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -1114,7 +924,7 @@ public final class MetisSwingFieldCellEditor {
          * Constructor.
          * @param pParser the parser
          */
-        protected DilutionCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldDilutionCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -1136,8 +946,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * Price Cell Editor.
      */
-    public static class PriceCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldPriceCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -1149,24 +959,24 @@ public final class MetisSwingFieldCellEditor {
         private final transient TethysDecimalParser theParser;
 
         /**
-         * The assumed currency.
+         * The currency function.
          */
-        private transient Currency theCurrency;
+        private transient Function<Integer, Currency> theCurrency;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected PriceCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldPriceCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
-            theCurrency = theParser.getDefaultCurrency();
+            theCurrency = r -> theParser.getDefaultCurrency();
         }
 
         /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
+         * Set the deemed currency.
+         * @param pCurrency the deemed currency function
          */
-        public void setAssumedCurrency(final Currency pCurrency) {
+        public void setDeemedCurrency(final Function<Integer, Currency> pCurrency) {
             theCurrency = pCurrency;
         }
 
@@ -1176,7 +986,11 @@ public final class MetisSwingFieldCellEditor {
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
-                    return theParser.parsePriceValue((String) o, theCurrency);
+                    Currency myCurrency = theCurrency.apply((int) getPoint().getY());
+                    if (myCurrency == null) {
+                        myCurrency = theParser.getDefaultCurrency();
+                    }
+                    return theParser.parsePriceValue((String) o, myCurrency);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -1188,8 +1002,8 @@ public final class MetisSwingFieldCellEditor {
     /**
      * DilutedPrice Cell Editor.
      */
-    public static class DilutedPriceCellEditor
-            extends DecimalCellEditor {
+    public static class MetisFieldDilutedPriceCellEditor
+            extends MetisFieldDecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -1201,24 +1015,24 @@ public final class MetisSwingFieldCellEditor {
         private final transient TethysDecimalParser theParser;
 
         /**
-         * The assumed currency.
+         * The currency function.
          */
-        private transient Currency theCurrency;
+        private transient Function<Integer, Currency> theCurrency;
 
         /**
          * Constructor.
          * @param pParser the parser
          */
-        protected DilutedPriceCellEditor(final TethysDecimalParser pParser) {
+        protected MetisFieldDilutedPriceCellEditor(final TethysDecimalParser pParser) {
             theParser = pParser;
-            theCurrency = theParser.getDefaultCurrency();
+            theCurrency = r -> theParser.getDefaultCurrency();
         }
 
         /**
-         * Set the assumed currency.
-         * @param pCurrency the assumed currency
+         * Set the deemed currency.
+         * @param pCurrency the deemed currency function
          */
-        public void setAssumedCurrency(final Currency pCurrency) {
+        public void setDeemedCurrency(final Function<Integer, Currency> pCurrency) {
             theCurrency = pCurrency;
         }
 
@@ -1228,7 +1042,11 @@ public final class MetisSwingFieldCellEditor {
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
-                    return theParser.parseDilutedPriceValue((String) o, theCurrency);
+                    Currency myCurrency = theCurrency.apply((int) getPoint().getY());
+                    if (myCurrency == null) {
+                        myCurrency = theParser.getDefaultCurrency();
+                    }
+                    return theParser.parseDilutedPriceValue((String) o, myCurrency);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }

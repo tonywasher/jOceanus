@@ -144,7 +144,7 @@ public class QIFEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        TethysDate myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
+                        TethysDate myDateDay = myDateParser.parseDateBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;

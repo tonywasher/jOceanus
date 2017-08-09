@@ -234,7 +234,7 @@ public class TethysDataFormatter {
             return theDateFormatter.formatDate((TethysDate) pValue);
         }
         if (TethysDateRange.class.equals(myClass)) {
-            return theDateFormatter.formatDateDayRange((TethysDateRange) pValue);
+            return theDateFormatter.formatDateRange((TethysDateRange) pValue);
         }
 
         /* Handle decimal classes */
@@ -288,11 +288,11 @@ public class TethysDataFormatter {
         }
         if (Date.class.equals(pClass)) {
             /* Parse the date */
-            return pClass.cast(theDateFormatter.parseDate(pSource));
+            return pClass.cast(theDateFormatter.parseJavaDate(pSource));
         }
         if (TethysDate.class.equals(pClass)) {
             /* Parse the date */
-            return pClass.cast(theDateFormatter.parseDateDay(pSource));
+            return pClass.cast(theDateFormatter.parseDate(pSource));
         }
         if (Calendar.class.equals(pClass)) {
             /* Parse the date */

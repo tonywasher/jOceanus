@@ -44,7 +44,7 @@ public final class MetisFieldData {
     /**
      * The toolTip text.
      */
-    private String theToolTipText = null;
+    private String theToolTipText;
 
     /**
      * The font.
@@ -64,17 +64,17 @@ public final class MetisFieldData {
     /**
      * The row.
      */
-    private int theRow = 0;
+    private int theRow;
 
     /**
      * The column.
      */
-    private int theCol = 0;
+    private int theCol;
 
     /**
      * Is the row selected?
      */
-    private boolean isSelected = false;
+    private boolean isSelected;
 
     /**
      * Is the item fixed width?
@@ -92,7 +92,7 @@ public final class MetisFieldData {
      * @param pFixed is the item fixed width?
      */
     protected MetisFieldData(final MetisFieldManager pManager,
-                         final boolean pFixed) {
+                                final boolean pFixed) {
         /* Record parameters */
         theManager = pManager;
         isFixed = pFixed;
@@ -294,7 +294,7 @@ public final class MetisFieldData {
      * @param pItem the data item
      */
     protected <X extends MetisFieldSetItem> void determineData(final MetisFieldElement<X> pElement,
-                                                           final X pItem) {
+                                                               final X pItem) {
         /* Determine whether we have a null item */
         boolean isNull = pItem == null;
 

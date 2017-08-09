@@ -528,7 +528,7 @@ public class TethysSwingDateExample {
         theRangeSelect.setLocale(theLocale);
 
         /* Set range locale */
-        theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
+        theSelectedRange.setText(theDateFormatter.formatDateRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
         theTable.repaintColumn(DateItem.PROP_DATE);
@@ -542,7 +542,7 @@ public class TethysSwingDateExample {
         theFormatter.setFormat(theFormat);
 
         /* Set range format */
-        theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
+        theSelectedRange.setText(theDateFormatter.formatDateRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
         theTable.repaintColumn(DateItem.PROP_COMMENTS);
@@ -570,7 +570,7 @@ public class TethysSwingDateExample {
     private void handleNewRange() {
         TethysDateRange myRange = theRangeSelect.getRange();
         if (theSelectedRange != null) {
-            theSelectedRange.setText(theDateFormatter.formatDateDayRange(myRange));
+            theSelectedRange.setText(theDateFormatter.formatDateRange(myRange));
         }
     }
 

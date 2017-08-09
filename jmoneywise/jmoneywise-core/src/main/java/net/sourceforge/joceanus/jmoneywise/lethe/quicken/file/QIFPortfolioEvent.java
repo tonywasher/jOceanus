@@ -133,7 +133,7 @@ public class QIFPortfolioEvent
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        TethysDate myDateDay = myDateParser.parseDateDayBase(myData, QIFWriter.QIF_BASEYEAR);
+                        TethysDate myDateDay = myDateParser.parseDateBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFPortfolioDateLine(myDateDay));
                         myDate = myDateDay;
                         break;

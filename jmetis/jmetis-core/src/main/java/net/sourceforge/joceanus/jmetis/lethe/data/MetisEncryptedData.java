@@ -787,7 +787,7 @@ public final class MetisEncryptedData {
             try {
                 /* Convert the byte array to a string and then a date */
                 String myInput = TethysDataConverter.byteArrayToString(pBytes);
-                return getDateFormatter().parseDate(myInput);
+                return getDateFormatter().parseJavaDate(myInput);
 
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {
@@ -856,7 +856,7 @@ public final class MetisEncryptedData {
             try {
                 /* Convert the byte array to a string and then an integer */
                 String myInput = TethysDataConverter.byteArrayToString(pBytes);
-                return getDateFormatter().parseDateDay(myInput);
+                return getDateFormatter().parseDate(myInput);
 
                 /* Catch Exceptions */
             } catch (IllegalArgumentException e) {

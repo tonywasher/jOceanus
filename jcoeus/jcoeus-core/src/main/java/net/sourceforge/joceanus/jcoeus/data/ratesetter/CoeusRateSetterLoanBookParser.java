@@ -100,7 +100,7 @@ public class CoeusRateSetterLoanBookParser {
      */
     protected TethysDate parseDate(final String pInput) throws OceanusException {
         try {
-            return theDateParser.parseDateDay(pInput);
+            return theDateParser.parseDate(pInput);
         } catch (IllegalArgumentException e) {
             throw new CoeusDataException("Bad date", e);
         }

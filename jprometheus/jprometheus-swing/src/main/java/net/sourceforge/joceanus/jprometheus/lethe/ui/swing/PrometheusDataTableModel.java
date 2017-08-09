@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.ui.eos;
+package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
 import java.util.Iterator;
 
@@ -30,12 +30,12 @@ import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldData;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
@@ -332,7 +332,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
     }
 
     @Override
-    public void populateFieldData(final MetisEosFieldData pData) {
+    public void populateFieldData(final MetisFieldData pData) {
 
         /* If we have a header decrement the index */
         int iRow = pData.getRow();
@@ -433,7 +433,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
         }
 
         @Override
-        public void populateFieldData(final MetisEosFieldData pData) {
+        public void populateFieldData(final MetisFieldData pData) {
             /* Convert our row # into that of the table */
             int iRow = pData.getRow();
             iRow = theTable.convertRowIndexToModel(iRow);

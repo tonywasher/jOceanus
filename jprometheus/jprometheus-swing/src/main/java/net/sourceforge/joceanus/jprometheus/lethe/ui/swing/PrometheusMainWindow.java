@@ -69,15 +69,14 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
 
 /**
  * Main window for application.
- * @author Tony Washer
  * @param <T> the data set type
  * @param <E> the data list enum class
  */
-public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
+public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusMainWindow.class);
 
     /**
      * Discard prompt.
@@ -148,7 +147,7 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
      * Constructor.
      * @throws OceanusException on error
      */
-    protected MainWindow() throws OceanusException {
+    protected PrometheusMainWindow() throws OceanusException {
         /* create listener */
         theListener = new MainListener();
     }
@@ -339,9 +338,8 @@ public abstract class MainWindow<T extends DataSet<T, E>, E extends Enum<E>> {
 
     /**
      * Make the frame.
-     * @throws OceanusException on error
      */
-    public void makeFrame() throws OceanusException {
+    public void makeFrame() {
         /* Set visibility */
         setVisibility();
     }

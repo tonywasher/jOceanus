@@ -190,7 +190,7 @@ public class Transaction
                 setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 TethysDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
+                setValueDate(myParser.parseDate((String) myValue));
             }
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {

@@ -140,7 +140,7 @@ public class SecurityPrice
                 setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
                 TethysDateFormatter myParser = myFormatter.getDateFormatter();
-                setValueDate(myParser.parseDateDay((String) myValue));
+                setValueDate(myParser.parseDate((String) myValue));
             }
 
             /* Store the Security */

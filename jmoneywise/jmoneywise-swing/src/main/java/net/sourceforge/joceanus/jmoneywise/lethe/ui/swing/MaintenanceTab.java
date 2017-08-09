@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusStaticDataPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusStaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;

@@ -32,21 +32,21 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisEosFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldIntegerCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldListButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldMoneyCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellEditor.MetisFieldUnitsCellEditor;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldIntegerCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.field.eos.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIntegerCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldListButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldMoneyCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldScrollButtonCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldUnitsCellEditor;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldCalendarCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIntegerCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
@@ -73,11 +73,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTable;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableModel;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.eos.PrometheusDataTableSelection;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
@@ -260,7 +260,7 @@ public class TransactionTable
     /**
      * The field manager.
      */
-    private final MetisEosFieldManager theFieldMgr;
+    private final MetisFieldManager theFieldMgr;
 
     /**
      * The analysis data entry.
@@ -357,7 +357,7 @@ public class TransactionTable
 
         /* Record the passed details */
         theView = pView;
-        theFieldMgr = pView.getEosFieldManager();
+        theFieldMgr = pView.getFieldManager();
         setFieldMgr(theFieldMgr);
 
         /* Access the GUI Factory */

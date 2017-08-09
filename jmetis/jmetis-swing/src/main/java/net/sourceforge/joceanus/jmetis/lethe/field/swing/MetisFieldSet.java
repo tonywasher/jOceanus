@@ -27,17 +27,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase;
-import net.sourceforge.joceanus.jtethys.lethe.date.swing.TethysSwingDateButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JIconButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollButton;
-import net.sourceforge.joceanus.jtethys.lethe.ui.swing.JScrollListButton;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing
@@ -79,7 +79,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      */
     public void addFieldElement(final MetisField pField,
                                 final MetisDataType pClass,
-                                final JTextField pTextField) {
+                                final TethysSwingStringTextField pTextField) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pTextField);
 
@@ -95,7 +95,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      */
     public void addFieldElement(final MetisField pField,
                                 final MetisDataType pClass,
-                                final JScrollPane pScrollPane) {
+                                final TethysSwingScrollPaneManager pScrollPane) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pScrollPane);
 
@@ -104,12 +104,12 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add dateButton Element to field set.
+     * Add Element to field set.
      * @param pField the field id
      * @param pButton the button
      */
     public void addFieldElement(final MetisField pField,
-                                final TethysSwingDateButton pButton) {
+                                final TethysSwingDateButtonManager pButton) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pButton);
 
@@ -118,7 +118,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add scrollButton Element to field set.
+     * Add Element to field set.
      * @param <I> Scroll button element type
      * @param pField the field id
      * @param pClass the class of the value
@@ -126,7 +126,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      */
     public <I> void addFieldElement(final MetisField pField,
                                     final Class<I> pClass,
-                                    final JScrollButton<I> pButton) {
+                                    final TethysSwingScrollButtonManager<I> pButton) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pButton);
 
@@ -135,13 +135,13 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add listButton Element to field set.
+     * Add Element to field set.
      * @param <I> List button element type
      * @param pField the field id
      * @param pButton the button
      */
     public <I> void addFieldElement(final MetisField pField,
-                                    final JScrollListButton<I> pButton) {
+                                    final TethysSwingListButtonManager<I> pButton) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pButton);
 
@@ -150,7 +150,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     }
 
     /**
-     * Add iconButton Element to field set.
+     * Add Element to field set.
      * @param <I> Icon button element type
      * @param pField the field id
      * @param pClass the class of the value
@@ -158,7 +158,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      */
     public <I> void addFieldElement(final MetisField pField,
                                     final Class<I> pClass,
-                                    final JIconButton<I> pButton) {
+                                    final TethysSwingIconButtonManager<I> pButton) {
         /* Create the field */
         MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pButton);
 

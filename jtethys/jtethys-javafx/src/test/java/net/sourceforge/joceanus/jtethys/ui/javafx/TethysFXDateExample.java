@@ -430,7 +430,7 @@ public class TethysFXDateExample
 
         /* Set the range */
         theRangeSelect.setOverallRange(myRange);
-        theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
+        theSelectedRange.setText(theDateFormatter.formatDateRange(theRangeSelect.getRange()));
 
         /* Set the listeners */
         setListeners();
@@ -445,13 +445,13 @@ public class TethysFXDateExample
             /* Set locale for formatter */
             theFormatter.setLocale(n);
             theRangeSelect.setLocale(n);
-            theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
+            theSelectedRange.setText(theDateFormatter.formatDateRange(theRangeSelect.getRange()));
         });
 
         /* Handle changes to format */
         theFormat.addListener((v, o, n) -> {
             theFormatter.setFormat(n);
-            theSelectedRange.setText(theDateFormatter.formatDateDayRange(theRangeSelect.getRange()));
+            theSelectedRange.setText(theDateFormatter.formatDateRange(theRangeSelect.getRange()));
         });
 
         /* Handle changes to allow nullDate */
@@ -483,7 +483,7 @@ public class TethysFXDateExample
         /* Handle changes to range */
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             TethysDateRange myRange = theRangeSelect.getRange();
-            theSelectedRange.setText(theDateFormatter.formatDateDayRange(myRange));
+            theSelectedRange.setText(theDateFormatter.formatDateRange(myRange));
         });
     }
 
