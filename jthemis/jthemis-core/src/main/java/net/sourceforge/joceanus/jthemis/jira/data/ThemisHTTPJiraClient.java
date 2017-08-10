@@ -262,24 +262,24 @@ public class ThemisHTTPJiraClient
      */
     public List<String> getIssueKeysForProject(final String pProjectKey) throws OceanusException {
         /* Create the list to return */
-        List<String> myList = new ArrayList<>();
+        final List<String> myList = new ArrayList<>();
 
         /* Enter loop */
-        int iMaxSearch = MAX_SEARCH;
+        final int iMaxSearch = MAX_SEARCH;
         int iStartAt = 0;
         int myTotalIssues;
         do {
             /* Access the next portion of the search */
-            JSONObject myResponse = queryJSONObjectWithHeaderAndTrailer("search?jql=",
+            final JSONObject myResponse = queryJSONObjectWithHeaderAndTrailer("search?jql=",
                     "project=\"" + pProjectKey + "\"",
                     "&startAt=" + iStartAt + "&maxResults=" + iMaxSearch + "&fields=summary");
 
             /* process the response */
-            JSONArray myArray = myResponse.getJSONArray("issues");
-            int myNumIssues = myArray.length();
+            final JSONArray myArray = myResponse.getJSONArray("issues");
+            final int myNumIssues = myArray.length();
             for (int i = 0; i < myNumIssues; i++) {
                 /* Access issue key */
-                JSONObject myIssue = myArray.getJSONObject(i);
+                final JSONObject myIssue = myArray.getJSONObject(i);
                 myList.add(myIssue.getString("key"));
             }
 

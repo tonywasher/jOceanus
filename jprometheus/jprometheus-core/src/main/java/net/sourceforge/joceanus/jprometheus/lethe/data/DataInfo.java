@@ -224,8 +224,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      */
     private boolean isInfoLink() {
         /* Access Info Class Value */
-        MetisEncryptedValueSet myValues = getValueSet();
-        Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        final MetisEncryptedValueSet myValues = getValueSet();
+        final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
             return false;
         }
@@ -237,14 +237,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     @Override
     public String toString() {
         /* Access Info Type Value */
-        MetisEncryptedValueSet myValues = getValueSet();
-        Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        final MetisEncryptedValueSet myValues = getValueSet();
+        final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
             return super.formatObject();
         }
 
         /* Access InfoType */
-        StaticData<?, ?, ?> myInfoType = (StaticData<?, ?, ?>) myType;
+        final StaticData<?, ?, ?> myInfoType = (StaticData<?, ?, ?>) myType;
 
         /* Access class */
         return myInfoType.getName() + "=" + formatObject();
@@ -253,18 +253,18 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     @Override
     public String formatObject() {
         /* Access Info Type Value */
-        MetisEncryptedValueSet myValues = getValueSet();
-        Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
+        final MetisEncryptedValueSet myValues = getValueSet();
+        final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
             return super.formatObject();
         }
 
         /* Access InfoType */
-        I myInfoType = getInfoType();
+        final I myInfoType = getInfoType();
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
-        S myInfoClass = myInfoType.getStaticClass();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final S myInfoClass = myInfoType.getStaticClass();
 
         /* Switch on type of Data */
         switch (myInfoClass.getDataType()) {
@@ -506,7 +506,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pValue the value
      */
     protected void setValueValue(final MetisEncryptedField<?> pValue) {
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_VALUE, pValue);
     }
@@ -528,7 +528,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pLink the link
      */
     protected void setValueLink(final DataItem<?> pLink) {
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
         myValues.setDeletion(false);
         myValues.setValue(FIELD_LINK, pLink);
     }
@@ -538,7 +538,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pId the linkId
      */
     private void setValueLink(final Integer pId) {
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
         myValues.setValue(FIELD_LINK, pId);
     }
 
@@ -547,7 +547,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pName the linkName
      */
     protected void setValueLink(final String pName) {
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
         myValues.setValue(FIELD_LINK, pName);
     }
 
@@ -575,13 +575,13 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      */
     protected void setValue(final Object pValue) throws OceanusException {
         /* Access the info Type */
-        I myType = getInfoType();
-        S myClass = myType.getStaticClass();
+        final I myType = getInfoType();
+        final S myClass = myType.getStaticClass();
 
         /* Access the DataSet and parser */
-        DataSet<?, ?> myDataSet = getDataSet();
-        MetisDataFormatter myFormatter = myDataSet.getDataFormatter();
-        TethysDecimalParser myParser = myFormatter.getDecimalParser();
+        final DataSet<?, ?> myDataSet = getDataSet();
+        final MetisDataFormatter myFormatter = myDataSet.getDataFormatter();
+        final TethysDecimalParser myParser = myFormatter.getDecimalParser();
 
         /* Switch on Info Class */
         boolean bValueOK = false;
@@ -708,7 +708,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
                 setValueLink((String) pValue);
                 return true;
             } else if (pValue instanceof DataItem<?>) {
-                DataItem<?> myItem = (DataItem<?>) pValue;
+                final DataItem<?> myItem = (DataItem<?>) pValue;
                 setValueValue(myItem.getId());
                 setValueLink(myItem);
                 return true;
@@ -898,9 +898,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
 
     @Override
     public void validate() {
-        I myType = getInfoType();
-        O myOwner = getOwner();
-        Object myValue = getValue(Object.class);
+        final I myType = getInfoType();
+        final O myOwner = getOwner();
+        final Object myValue = getValue(Object.class);
 
         /* InfoType must be non-null */
         if (myType == null) {

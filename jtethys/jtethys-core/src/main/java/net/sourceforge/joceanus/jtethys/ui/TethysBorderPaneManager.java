@@ -216,7 +216,7 @@ public abstract class TethysBorderPaneManager<N, I>
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        for (TethysNode<N> myNode : theNodeMap.values()) {
+        for (final TethysNode<N> myNode : theNodeMap.values()) {
             myNode.setEnabled(pEnabled);
         }
     }

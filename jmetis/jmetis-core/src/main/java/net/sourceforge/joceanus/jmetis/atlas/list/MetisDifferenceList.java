@@ -62,7 +62,7 @@ public final class MetisDifferenceList<T extends MetisDataVersionedItem>
     protected void deriveTheDifferences(final MetisBaseList<T> pNew,
                                         final MetisBaseList<T> pOld) {
         /* Access a copy of the idMap of the old list */
-        Map<Integer, T> myOld = new HashMap<>(pOld.getIdMap());
+        final Map<Integer, T> myOld = new HashMap<>(pOld.getIdMap());
 
         /* Set the sort comparator */
         setComparator(pNew.getComparator());
@@ -71,8 +71,8 @@ public final class MetisDifferenceList<T extends MetisDataVersionedItem>
         Iterator<T> myIterator = pNew.iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
-            T myCurr = myIterator.next();
-            Integer myId = myCurr.getIndexedId();
+            final T myCurr = myIterator.next();
+            final Integer myId = myCurr.getIndexedId();
             T myItem = myOld.get(myId);
 
             /* If the item does not exist in the old list */
@@ -99,8 +99,8 @@ public final class MetisDifferenceList<T extends MetisDataVersionedItem>
         myIterator = myOld.values().iterator();
         while (myIterator.hasNext()) {
             /* Insert a new item */
-            T myCurr = myIterator.next();
-            T myItem = pNew.newDiffDeletedItem(myCurr);
+            final T myCurr = myIterator.next();
+            final T myItem = pNew.newDiffDeletedItem(myCurr);
             addToList(myItem);
         }
 

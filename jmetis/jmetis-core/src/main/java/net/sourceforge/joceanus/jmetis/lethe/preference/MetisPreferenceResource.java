@@ -259,7 +259,7 @@ public enum MetisPreferenceResource implements TethysResourceId {
      */
     private static Map<MetisPreferenceType, TethysResourceId> buildPreferenceMap() {
         /* Create the map and return it */
-        Map<MetisPreferenceType, TethysResourceId> myMap = new EnumMap<>(MetisPreferenceType.class);
+        final Map<MetisPreferenceType, TethysResourceId> myMap = new EnumMap<>(MetisPreferenceType.class);
         myMap.put(MetisPreferenceType.STRING, TYPE_STRING);
         myMap.put(MetisPreferenceType.INTEGER, TYPE_INTEGER);
         myMap.put(MetisPreferenceType.BOOLEAN, TYPE_BOOLEAN);

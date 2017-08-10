@@ -47,7 +47,7 @@ public class MetisOrderedListSpliterator<T extends Comparable<? super T>>
     /**
      * Last node accessed.
      */
-    private MetisOrderedNode<T> theLastNode = null;
+    private MetisOrderedNode<T> theLastNode;
 
     /**
      * The modification count.
@@ -93,17 +93,17 @@ public class MetisOrderedListSpliterator<T extends Comparable<? super T>>
     @Override
     public Spliterator<T> trySplit() {
         /* Check the size and don't split if too small */
-        long myRemaining = estimateSize();
-        int myGranularity = 1 << theIndexMap.getGranularityShift();
+        final long myRemaining = estimateSize();
+        final int myGranularity = 1 << theIndexMap.getGranularityShift();
         if (myRemaining < myGranularity) {
             return null;
         }
 
         /* Determine the split point */
-        int mySplit = (int) (myRemaining >> 1);
+        final int mySplit = (int) (myRemaining >> 1);
 
         /* Create the spliterator */
-        MetisOrderedListSpliterator<T> mySpliterator = new MetisOrderedListSpliterator<>(this, mySplit);
+        final MetisOrderedListSpliterator<T> mySpliterator = new MetisOrderedListSpliterator<>(this, mySplit);
 
         /* Adjust self */
         theLastIndex = theCurrIndex + mySplit;

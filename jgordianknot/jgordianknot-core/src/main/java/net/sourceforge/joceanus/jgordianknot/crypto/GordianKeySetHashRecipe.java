@@ -94,7 +94,6 @@ public final class GordianKeySetHashRecipe {
      * @param pFactory the factory
      * @param pPassLength the password length
      * @param pExternal the external form
-     * 
      */
     protected GordianKeySetHashRecipe(final GordianFactory pFactory,
                                       final int pPassLength,

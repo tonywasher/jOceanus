@@ -195,7 +195,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
         isVisible = true;
 
         /* Create the label */
-        String myName = pField.getName();
+        final String myName = pField.getName();
         theLabel = new JLabel(myName + STR_COLON, SwingConstants.TRAILING);
 
         /* Access the model */
@@ -284,7 +284,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
         /* If the model is a string model */
         if (theModel instanceof TethysFieldModelString) {
             /* Pass call onwards */
-            TethysFieldModelString<?> myModel = (TethysFieldModelString<?>) theModel;
+            final TethysFieldModelString<?> myModel = (TethysFieldModelString<?>) theModel;
             myModel.setAssumedCurrency(pCurrency);
         }
     }
@@ -354,8 +354,8 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
             setLayout(theCardLayout);
 
             /* Access the component and ReadOnly label */
-            JComponent myComponent = theComponent.getComponent();
-            JLabel myLabel = theComponent.getReadOnlyLabel();
+            final JComponent myComponent = theComponent.getComponent();
+            final JLabel myLabel = theComponent.getReadOnlyLabel();
 
             /* Add the component and ReadOnly label */
             add(myComponent, NAME_EDITABLE);

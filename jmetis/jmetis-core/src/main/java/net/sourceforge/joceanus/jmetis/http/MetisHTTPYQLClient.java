@@ -161,7 +161,7 @@ public class MetisHTTPYQLClient
     public TethysPrice obtainSecurityPrice(final String pSymbol,
                                            final Currency pCurrency) throws OceanusException {
         /* Build the query string */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
         myBuilder.append(YQLDB_PRICES);
         myBuilder.append(YQLSEL_SYMBOL);
@@ -184,14 +184,14 @@ public class MetisHTTPYQLClient
             myJSON = myJSON.getJSONObject(YQLRES_RESULTS);
 
             /* Access the single result */
-            JSONArray myArray = myJSON.getJSONArray(YQLRES_QUOTE);
-            JSONObject myEntry = myArray.getJSONObject(0);
-            String myStrPrice = myEntry.optString(YQLFLD_PRICE, null);
+            final JSONArray myArray = myJSON.getJSONArray(YQLRES_QUOTE);
+            final JSONObject myEntry = myArray.getJSONObject(0);
+            final String myStrPrice = myEntry.optString(YQLFLD_PRICE, null);
 
             /* If we found the price */
             if (myStrPrice != null) {
                 /* Parse the price and convert from minor units */
-                TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                final TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
                 myPrice.divide(myDivisor);
                 return myPrice;
             }
@@ -215,7 +215,7 @@ public class MetisHTTPYQLClient
     public Map<String, TethysPrice> obtainSecurityPrices(final List<String> pSymbols,
                                                          final Currency pCurrency) throws OceanusException {
         /* Build the query string */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
         myBuilder.append(YQLDB_PRICES);
         myBuilder.append(YQLSEL_SYMBOL);
@@ -227,10 +227,10 @@ public class MetisHTTPYQLClient
         }
 
         /* Build the symbol set */
-        Iterator<String> myIterator = pSymbols.iterator();
+        final Iterator<String> myIterator = pSymbols.iterator();
         boolean bFirst = true;
         while (myIterator.hasNext()) {
-            String mySymbol = myIterator.next();
+            final String mySymbol = myIterator.next();
             if (!bFirst) {
                 myBuilder.append(YQLSEL_MID);
             }
@@ -240,7 +240,7 @@ public class MetisHTTPYQLClient
         myBuilder.append(YQLSEL_END);
 
         /* Create the result map */
-        Map<String, TethysPrice> myMap = new HashMap<>();
+        final Map<String, TethysPrice> myMap = new HashMap<>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -252,21 +252,21 @@ public class MetisHTTPYQLClient
             myJSON = myJSON.getJSONObject(YQLRES_RESULTS);
 
             /* Access the result array */
-            JSONArray myArray = myJSON.getJSONArray(YQLRES_QUOTE);
-            int myNumPrices = myArray.length();
+            final JSONArray myArray = myJSON.getJSONArray(YQLRES_QUOTE);
+            final int myNumPrices = myArray.length();
             for (int i = 0; i < myNumPrices; i++) {
                 /* Access the details */
-                JSONObject myEntry = myArray.getJSONObject(i);
-                String myStrPrice = myEntry.optString(YQLFLD_PRICE, null);
+                final JSONObject myEntry = myArray.getJSONObject(i);
+                final String myStrPrice = myEntry.optString(YQLFLD_PRICE, null);
 
                 /* If we have a price */
                 if (myStrPrice != null) {
                     /* Parse and convert to proper units */
-                    TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
+                    final TethysPrice myPrice = theParser.parsePriceValue(myStrPrice, pCurrency);
                     myPrice.divide(myDivisor);
 
                     /* Add the the map */
-                    String mySymbol = myEntry.getString(YQLFLD_SYMBOL);
+                    final String mySymbol = myEntry.getString(YQLFLD_SYMBOL);
                     myMap.put(mySymbol, myPrice);
                 }
             }
@@ -290,7 +290,7 @@ public class MetisHTTPYQLClient
     public TethysRatio obtainExchangeRate(final Currency pFrom,
                                           final Currency pTo) throws OceanusException {
         /* Build the query string */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
         myBuilder.append(YQLDB_RATES);
         myBuilder.append(YQLSEL_PAIR);
@@ -308,9 +308,9 @@ public class MetisHTTPYQLClient
             myJSON = myJSON.getJSONObject(YQLRES_RESULTS);
 
             /* Access the single result */
-            JSONArray myArray = myJSON.getJSONArray(YQLRES_RATE);
-            JSONObject myEntry = myArray.getJSONObject(0);
-            String myRate = myEntry.optString(YQLFLD_RATE, null);
+            final JSONArray myArray = myJSON.getJSONArray(YQLRES_RATE);
+            final JSONObject myEntry = myArray.getJSONObject(0);
+            final String myRate = myEntry.optString(YQLFLD_RATE, null);
 
             /* return parsed rate if possible */
             return (myRate != null)
@@ -333,17 +333,17 @@ public class MetisHTTPYQLClient
     public Map<Currency, TethysRatio> obtainExchangeRates(final Currency pFrom,
                                                           final List<Currency> pToList) throws OceanusException {
         /* Build the query string */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(YQL_SELECT);
         myBuilder.append(YQLDB_RATES);
         myBuilder.append(YQLSEL_PAIR);
 
         /* Build the pair set */
-        String myFrom = pFrom.getCurrencyCode();
-        Iterator<Currency> myIterator = pToList.iterator();
+        final String myFrom = pFrom.getCurrencyCode();
+        final Iterator<Currency> myIterator = pToList.iterator();
         boolean bFirst = true;
         while (myIterator.hasNext()) {
-            Currency myCurr = myIterator.next();
+            final Currency myCurr = myIterator.next();
             if (!bFirst) {
                 myBuilder.append(YQLSEL_MID);
             }
@@ -354,7 +354,7 @@ public class MetisHTTPYQLClient
         myBuilder.append(YQLSEL_END);
 
         /* Create the result map */
-        Map<Currency, TethysRatio> myMap = new HashMap<>();
+        final Map<Currency, TethysRatio> myMap = new HashMap<>();
 
         /* Perform the query */
         JSONObject myJSON = queryJSONObjectWithTrailer(myBuilder.toString(), YQL_TAIL);
@@ -366,20 +366,20 @@ public class MetisHTTPYQLClient
             myJSON = myJSON.getJSONObject(YQLRES_RESULTS);
 
             /* Access the results */
-            JSONArray myArray = myJSON.getJSONArray(YQLRES_RATE);
-            int myNumPrices = myArray.length();
+            final JSONArray myArray = myJSON.getJSONArray(YQLRES_RATE);
+            final int myNumPrices = myArray.length();
             for (int i = 0; i < myNumPrices; i++) {
                 /* Access the details */
-                JSONObject myEntry = myArray.getJSONObject(i);
-                String myStrRate = myEntry.optString(YQLFLD_RATE, null);
+                final JSONObject myEntry = myArray.getJSONObject(i);
+                final String myStrRate = myEntry.optString(YQLFLD_RATE, null);
 
                 /* If we have a rate */
                 if (myStrRate != null) {
                     /* Determine currency and rate */
                     String myId = myEntry.getString(YQLFLD_ID);
                     myId = myId.substring(myFrom.length());
-                    Currency myCurr = Currency.getInstance(myId);
-                    TethysRatio myRate = new TethysRatio(myStrRate);
+                    final Currency myCurr = Currency.getInstance(myId);
+                    final TethysRatio myRate = new TethysRatio(myStrRate);
 
                     /* Add the the map */
                     myMap.put(myCurr, myRate);

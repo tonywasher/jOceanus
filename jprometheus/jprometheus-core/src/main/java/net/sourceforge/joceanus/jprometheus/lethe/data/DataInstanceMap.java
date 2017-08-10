@@ -116,7 +116,7 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
     protected void adjustForItem(final T pItem,
                                  final K pKey) {
         /* Adjust key count */
-        Integer myCount = theKeyCountMap.get(pKey);
+        final Integer myCount = theKeyCountMap.get(pKey);
         theKeyCountMap.put(pKey, myCount == null
                                                  ? ONE
                                                  : myCount + 1);
@@ -140,7 +140,7 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
      * @return true/false
      */
     public boolean validKeyCount(final K pKey) {
-        Integer myResult = theKeyCountMap.get(pKey);
+        final Integer myResult = theKeyCountMap.get(pKey);
         return ONE.equals(myResult);
     }
 

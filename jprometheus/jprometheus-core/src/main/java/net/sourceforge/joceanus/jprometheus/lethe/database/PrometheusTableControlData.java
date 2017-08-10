@@ -46,7 +46,7 @@ public class PrometheusTableControlData
      */
     protected PrometheusTableControlData(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
         myTableDef.addIntegerColumn(ControlData.FIELD_DATAVERSION);
@@ -61,10 +61,10 @@ public class PrometheusTableControlData
     @Override
     protected DataValues<CryptographyDataType> loadValues() throws OceanusException {
         /* Access table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
+        final DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(ControlData.FIELD_DATAVERSION, myTableDef.getIntegerValue(ControlData.FIELD_DATAVERSION));
         myValues.addValue(ControlData.FIELD_CONTROLKEY, myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY));
 
@@ -76,7 +76,7 @@ public class PrometheusTableControlData
     protected void setFieldValue(final ControlData pItem,
                                  final MetisField pField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (ControlData.FIELD_DATAVERSION.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getDataVersion());
         } else if (ControlData.FIELD_CONTROLKEY.equals(pField)) {

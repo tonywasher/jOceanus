@@ -157,7 +157,7 @@ public class MetisDataView
      */
     public MetisDataRow getRowByIndex(final int pRowIndex) {
         /* Return the row */
-        int myIndex = convertRowIndex(pRowIndex);
+        final int myIndex = convertRowIndex(pRowIndex);
         return (myIndex < 0)
                              ? null
                              : theSheet.getReadOnlyRowByIndex(myIndex);
@@ -172,7 +172,7 @@ public class MetisDataView
     public MetisDataCell getCellByPosition(final int pColumnIndex,
                                            final int pRowIndex) {
         /* Return the cell */
-        MetisCellPosition myPos = new MetisCellPosition(pColumnIndex, pRowIndex);
+        final MetisCellPosition myPos = new MetisCellPosition(pColumnIndex, pRowIndex);
         return getCellByPosition(myPos);
     }
 
@@ -183,7 +183,7 @@ public class MetisDataView
      */
     public MetisDataCell getCellByPosition(final MetisCellPosition pPosition) {
         /* Return the cell */
-        MetisDataRow myRow = getRowByIndex(pPosition.getRowIndex());
+        final MetisDataRow myRow = getRowByIndex(pPosition.getRowIndex());
         return (myRow == null)
                                ? null
                                : getRowCellByIndex(myRow, pPosition.getColumnIndex());
@@ -198,7 +198,7 @@ public class MetisDataView
     public MetisDataCell getRowCellByIndex(final MetisDataRow pRow,
                                            final int pIndex) {
         /* Return the cell */
-        int myIndex = convertColumnIndex(pIndex);
+        final int myIndex = convertColumnIndex(pIndex);
         return (myIndex < 0)
                              ? null
                              : pRow.getReadOnlyCellByIndex(myIndex);
@@ -211,7 +211,7 @@ public class MetisDataView
 
     @Override
     public void forEach(final Consumer<? super MetisDataRow> pAction) {
-        Iterator<MetisDataRow> myIterator = iterator();
+        final Iterator<MetisDataRow> myIterator = iterator();
         while (myIterator.hasNext()) {
             pAction.accept(myIterator.next());
         }
@@ -385,16 +385,16 @@ public class MetisDataView
         @Override
         public Spliterator<MetisDataRow> trySplit() {
             /* Check the size and don't split if too small */
-            long myRemaining = estimateSize();
+            final long myRemaining = estimateSize();
             if (myRemaining < MIN_SPLIT) {
                 return null;
             }
 
             /* Determine the split point */
-            int mySplit = (int) (myRemaining >> 1);
+            final int mySplit = (int) (myRemaining >> 1);
 
             /* Create the spliterator */
-            RowSpliterator mySpliterator = new RowSpliterator(this, mySplit);
+            final RowSpliterator mySpliterator = new RowSpliterator(this, mySplit);
 
             /* Adjust self */
             theLastIndex = theCurrIndex + mySplit;

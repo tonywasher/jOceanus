@@ -327,7 +327,7 @@ public abstract class PrometheusDataItemPanel<T extends DataItem<E> & Comparable
      */
     protected void layoutPanel() {
         /* Wrap the grid */
-        JPanel myBox = new TethysSwingEnablePanel();
+        final JPanel myBox = new TethysSwingEnablePanel();
         myBox.setLayout(new BoxLayout(myBox, BoxLayout.Y_AXIS));
         myBox.add(Box.createVerticalGlue());
         myBox.add(theMainPanel);
@@ -506,12 +506,12 @@ public abstract class PrometheusDataItemPanel<T extends DataItem<E> & Comparable
     private static void restrictField(final JComponent pComponent,
                                       final int pWidth) {
         /* Calculate the character width */
-        int myCharWidth = pComponent.getFontMetrics(pComponent.getFont()).stringWidth("w");
+        final int myCharWidth = pComponent.getFontMetrics(pComponent.getFont()).stringWidth("w");
 
         /* Allocate Dimensions */
-        Dimension myPrefDims = new Dimension(pWidth * myCharWidth, FIELD_HEIGHT);
-        Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, FIELD_HEIGHT);
-        Dimension myMinDims = new Dimension(1, FIELD_HEIGHT);
+        final Dimension myPrefDims = new Dimension(pWidth * myCharWidth, FIELD_HEIGHT);
+        final Dimension myMaxDims = new Dimension(Integer.MAX_VALUE, FIELD_HEIGHT);
+        final Dimension myMinDims = new Dimension(1, FIELD_HEIGHT);
 
         /* Restrict the field */
         pComponent.setPreferredSize(myPrefDims);
@@ -690,7 +690,7 @@ public abstract class PrometheusDataItemPanel<T extends DataItem<E> & Comparable
             theItem.popHistory();
 
             /* Build the error */
-            OceanusException myError = new PrometheusDataException("Failed to update field", e);
+            final OceanusException myError = new PrometheusDataException("Failed to update field", e);
 
             /* Show the error */
             theError.addError(myError);

@@ -52,24 +52,24 @@ public class ThemisSubversionRestore<N, I>
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access details from toolkit */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
-        GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
+        final GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
 
         /* Access the BackUp preferences */
-        ThemisSvnPreferences myPreferences = myPreferenceMgr.getPreferenceSet(ThemisSvnPreferences.class);
+        final ThemisSvnPreferences myPreferences = myPreferenceMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
         /* Access preferences */
         File myRepo = new File(myPreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
-        File myBackupDir = new File(myPreferences.getStringValue(ThemisSvnPreferenceKey.BACKUP));
-        String myPrefix = myPreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
+        final File myBackupDir = new File(myPreferences.getStringValue(ThemisSvnPreferenceKey.BACKUP));
+        final String myPrefix = myPreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
 
         /* Determine the name of the file to load */
-        TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
+        final TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle("Select Backup to restore");
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
-        File myFile = myDialog.selectFile();
+        final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
         if (myFile == null) {
@@ -86,7 +86,7 @@ public class ThemisSubversionRestore<N, I>
         myRepo = new File(myRepo.getPath(), myName);
 
         /* restore the backup */
-        ThemisBackup myAccess = new ThemisBackup(myManager, myPreferenceMgr);
+        final ThemisBackup myAccess = new ThemisBackup(myManager, myPreferenceMgr);
         myAccess.loadRepository(myRepo, mySecureMgr, myFile);
 
         /* Return nothing */

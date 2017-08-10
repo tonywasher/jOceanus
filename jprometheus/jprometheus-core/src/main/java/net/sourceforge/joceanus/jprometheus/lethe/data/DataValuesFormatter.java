@@ -122,11 +122,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         /* protect against exceptions */
         try {
             /* Create a Document builder */
-            DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
             theBuilder = myFactory.newDocumentBuilder();
 
             /* Create the transformer */
-            TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             theXformer = myXformFactory.newTransformer();
 
         } catch (ParserConfigurationException | TransformerConfigurationException e) {
@@ -143,13 +143,13 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public void createBackup(final T pData,
                              final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("Writing");
+        final MetisProfile myTask = theReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        GordianHashManager mySecure = pData.getSecurity();
-        GordianKeySetHash myBase = pData.getKeySetHash();
-        GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
+        final GordianHashManager mySecure = pData.getSecurity();
+        final GordianKeySetHash myBase = pData.getKeySetHash();
+        final GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -161,9 +161,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         boolean bDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile)) {
             /* Loop through the data lists */
-            Iterator<DataList<?, E>> myIterator = pData.iterator();
+            final Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
-                DataList<?, E> myList = myIterator.next();
+                final DataList<?, E> myList = myIterator.next();
 
                 /* Declare the new stage */
                 theReport.setNewStage(myList.listName());
@@ -200,8 +200,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public void createExtract(final T pData,
                               final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("Writing");
+        final MetisProfile myTask = theReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask("Writing");
 
         /* Access the data version */
         theVersion = pData.getControl().getDataVersion();
@@ -213,9 +213,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         boolean bDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
             /* Loop through the data lists */
-            Iterator<DataList<?, E>> myIterator = pData.iterator();
+            final Iterator<DataList<?, E>> myIterator = pData.iterator();
             while (myIterator.hasNext()) {
-                DataList<?, E> myList = myIterator.next();
+                final DataList<?, E> myList = myIterator.next();
 
                 /* Declare the new stage */
                 theReport.setNewStage(myList.listName());
@@ -254,12 +254,12 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                                     final GordianZipWriteFile pZipFile,
                                     final boolean pStoreIds) throws OceanusException {
         /* Access the list name */
-        String myName = pList.listName() + SUFFIX_ENTRY;
+        final String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Protect the workbook access */
         try (OutputStream myStream = pZipFile.getOutputStream(new File(myName))) {
             /* Create a new document */
-            Document myDocument = theBuilder.newDocument();
+            final Document myDocument = theBuilder.newDocument();
 
             /* Populate the document from the list */
             populateXML(myDocument, pList, pStoreIds);
@@ -283,14 +283,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                              final DataList<?, E> pList,
                              final boolean pStoreIds) throws OceanusException {
         /* Create an element for the item */
-        Element myElement = pDocument.createElement(pList.listName());
+        final Element myElement = pDocument.createElement(pList.listName());
         pDocument.appendChild(myElement);
 
         /* Access the Data formatter */
-        MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
-        int myTotal = pList.size();
+        final int myTotal = pList.size();
         theReport.setNumSteps(myTotal);
 
         /* Set the list type and size */
@@ -299,9 +299,9 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         myElement.setAttribute(DataValues.ATTR_VERS, Integer.toString(theVersion));
 
         /* Iterate through the list */
-        Iterator<?> myIterator = pList.iterator();
+        final Iterator<?> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
-            Object myObject = myIterator.next();
+            final Object myObject = myIterator.next();
 
             /* Ignore if not a DataItem */
             if (!(myObject instanceof DataItem)) {
@@ -310,7 +310,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
             /* Access as DataItem */
             @SuppressWarnings("unchecked")
-            DataItem<E> myItem = (DataItem<E>) myObject;
+            final DataItem<E> myItem = (DataItem<E>) myObject;
 
             /* Skip over child items */
             if ((myItem instanceof GroupedItem)
@@ -319,10 +319,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             }
 
             /* Create DataValues for item */
-            DataValues<E> myValues = new DataValues<>(myItem);
+            final DataValues<E> myValues = new DataValues<>(myItem);
 
             /* Add the child to the list */
-            Element myChild = myValues.createXML(pDocument, myFormatter, pStoreIds);
+            final Element myChild = myValues.createXML(pDocument, myFormatter, pStoreIds);
             myElement.appendChild(myChild);
 
             /* Report the progress */
@@ -339,20 +339,20 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     public void loadZipFile(final T pData,
                             final File pFile) throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask("Loading");
+        final MetisProfile myTask = theReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask("Loading");
         myStage.startTask("Parsing");
 
         /* Access the zip file */
-        GordianZipReadFile myZipFile = new GordianZipReadFile(pFile);
+        final GordianZipReadFile myZipFile = new GordianZipReadFile(pFile);
 
         /* Obtain the hash bytes from the file */
-        byte[] myHashBytes = myZipFile.getHashBytes();
+        final byte[] myHashBytes = myZipFile.getHashBytes();
 
         /* If this is a secure ZipFile */
         if (myHashBytes != null) {
             /* Obtain the initialised password hash */
-            GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
+            final GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
 
             /* Associate this keySetHash with the ZipFile */
             myZipFile.setKeySetHash(myHash);
@@ -376,15 +376,15 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                               final T pData,
                               final GordianZipReadFile pZipFile) throws OceanusException {
         /* Start new stage */
-        MetisProfile myStage = pProfile.startTask("Loading");
+        final MetisProfile myStage = pProfile.startTask("Loading");
 
         /* Declare the number of stages */
         theReport.setNumStages(pData.getListMap().size());
 
         /* Loop through the data lists */
-        Iterator<DataList<?, E>> myIterator = pData.iterator();
+        final Iterator<DataList<?, E>> myIterator = pData.iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Declare the new stage */
             theReport.setNewStage(myList.listName());
@@ -416,11 +416,11 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     private void readXMLListFromFile(final DataList<?, E> pList,
                                      final GordianZipReadFile pZipFile) throws OceanusException {
         /* Access the list name */
-        String myName = pList.listName() + SUFFIX_ENTRY;
+        final String myName = pList.listName() + SUFFIX_ENTRY;
 
         /* Locate the correct entry */
-        GordianZipFileContents myContents = pZipFile.getContents();
-        GordianZipFileEntry myEntry = myContents.findFileEntry(myName);
+        final GordianZipFileContents myContents = pZipFile.getContents();
+        final GordianZipFileEntry myEntry = myContents.findFileEntry(myName);
         if (myEntry == null) {
             throw new PrometheusDataException("List not found " + myName);
         }
@@ -428,7 +428,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         /* Protect the workbook access */
         try (InputStream myStream = pZipFile.getInputStream(myEntry)) {
             /* Read the document from the stream and parse it */
-            Document myDocument = theBuilder.parse(myStream);
+            final Document myDocument = theBuilder.parse(myStream);
 
             /* Populate the list from the document */
             parseXMLDocument(myDocument, pList);
@@ -448,8 +448,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     private void parseXMLDocument(final Document pDocument,
                                   final DataList<?, E> pList) throws OceanusException {
         /* Access the parent element */
-        Element myElement = pDocument.getDocumentElement();
-        E myItemType = pList.getItemType();
+        final Element myElement = pDocument.getDocumentElement();
+        final E myItemType = pList.getItemType();
 
         /* Check that the document name and dataType are correct */
         if ((!MetisDifference.isEqual(myElement.getNodeName(), pList.listName()))
@@ -458,7 +458,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         }
 
         /* If this is the first Data version */
-        Integer myVersion = Integer.valueOf(myElement.getAttribute(DataValues.ATTR_VERS));
+        final Integer myVersion = Integer.valueOf(myElement.getAttribute(DataValues.ATTR_VERS));
         if (theVersion == null) {
             theVersion = myVersion;
         } else if (!theVersion.equals(myVersion)) {
@@ -466,13 +466,13 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         }
 
         /* Access field types for list */
-        MetisFields myFields = pList.getItemFields();
+        final MetisFields myFields = pList.getItemFields();
 
         /* Access the Data formatter */
-        MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = pList.getDataSet().getDataFormatter();
 
         /* Declare the number of steps */
-        int myTotal = getListCount(myFormatter, myElement);
+        final int myTotal = getListCount(myFormatter, myElement);
         theReport.setNumSteps(myTotal);
 
         /* Loop through the children */
@@ -483,10 +483,10 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
             }
 
             /* Access as Element */
-            Element myItem = (Element) myChild;
+            final Element myItem = (Element) myChild;
 
             /* Create DataArguments for item */
-            DataValues<E> myValues = new DataValues<>(myItem, myFields);
+            final DataValues<E> myValues = new DataValues<>(myItem, myFields);
 
             /* Add the child to the list */
             pList.addValuesItem(myValues);
@@ -507,7 +507,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
                                         final Element pElement) throws OceanusException {
         try {
             /* Access the list count */
-            String mySize = pElement.getAttribute(DataValues.ATTR_SIZE);
+            final String mySize = pElement.getAttribute(DataValues.ATTR_SIZE);
             return pFormatter.parseValue(mySize, Integer.class);
         } catch (NumberFormatException e) {
             throw new PrometheusDataException("Invalid list count", e);

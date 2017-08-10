@@ -61,12 +61,12 @@ public class MetisOasisCellMap {
     /**
      * Number of cells.
      */
-    private int theNumCells = 0;
+    private int theNumCells;
 
     /**
      * The last reference.
      */
-    private CellReference theLastReference = null;
+    private CellReference theLastReference;
 
     /**
      * List of of cells.
@@ -112,7 +112,7 @@ public class MetisOasisCellMap {
             /* If this is a column element */
             if (myNode instanceof TableTableCellElement) {
                 /* Add column to list */
-                TableTableCellElement myColumn = (TableTableCellElement) myNode;
+                final TableTableCellElement myColumn = (TableTableCellElement) myNode;
                 processCell(myColumn);
             }
         }
@@ -136,7 +136,7 @@ public class MetisOasisCellMap {
         }
 
         /* Create the new reference and add it */
-        CellReference myRef = new CellReference(pCell, theNumCells, 0);
+        final CellReference myRef = new CellReference(pCell, theNumCells, 0);
         myRef.addToList();
 
         /* Adjust number of cells */
@@ -162,7 +162,7 @@ public class MetisOasisCellMap {
         }
 
         /* Just return the cell */
-        CellReference myRef = theCells.get(pCellIndex);
+        final CellReference myRef = theCells.get(pCellIndex);
         return myRef.isDataEmpty()
                                    ? null
                                    : myRef.getReadOnlyCell();
@@ -187,7 +187,7 @@ public class MetisOasisCellMap {
         }
 
         /* Just return the cell */
-        CellReference myRef = theCells.get(pCellIndex);
+        final CellReference myRef = theCells.get(pCellIndex);
         return myRef.getMutableCell();
     }
 
@@ -199,7 +199,7 @@ public class MetisOasisCellMap {
         /* If we have an existing reference that is empty */
         if (isEmpty(theLastReference.getElement())) {
             /* Obtain the last row */
-            TableTableCellElement myElement = theLastReference.getElement();
+            final TableTableCellElement myElement = theLastReference.getElement();
 
             /* Determine the existing number of repeated cells */
             Integer myRepeat = theLastReference.getRepeat();
@@ -214,7 +214,7 @@ public class MetisOasisCellMap {
             /* else we need to add a completely new element */
         } else {
             /* Create a new cell */
-            TableTableCellElement myElement = theOasisSheet.newCellElement();
+            final TableTableCellElement myElement = theOasisSheet.newCellElement();
             if (pXtraCells > 1) {
                 /* Set repeat count */
                 myElement.setTableNumberColumnsRepeatedAttribute(pXtraCells);
@@ -235,10 +235,10 @@ public class MetisOasisCellMap {
      */
     protected static boolean isEmpty(final TableTableCellElement pElement) {
         /* Access the data attributes */
-        boolean hasChildren = pElement.hasChildNodes();
-        String valType = pElement.getOfficeValueTypeAttribute();
-        String style = pElement.getTableStyleNameAttribute();
-        String valid = pElement.getTableContentValidationNameAttribute();
+        final boolean hasChildren = pElement.hasChildNodes();
+        final String valType = pElement.getOfficeValueTypeAttribute();
+        final String style = pElement.getTableStyleNameAttribute();
+        final String valid = pElement.getTableContentValidationNameAttribute();
 
         /* Empty if none of the data attributes exist */
         return (valType == null)
@@ -287,7 +287,7 @@ public class MetisOasisCellMap {
          */
         private int getRepeat() {
             /* Determine the maximum instance */
-            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
+            final Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
             return (myRepeat == null)
                                       ? 1
                                       : myRepeat;
@@ -316,8 +316,8 @@ public class MetisOasisCellMap {
          */
         private boolean isDataEmpty() {
             /* Access the data attributes */
-            boolean hasChildren = theElement.hasChildNodes();
-            String valType = theElement.getOfficeValueTypeAttribute();
+            final boolean hasChildren = theElement.hasChildNodes();
+            final String valType = theElement.getOfficeValueTypeAttribute();
 
             /* Empty if none of the data attributes exist */
             return (valType == null)
@@ -330,7 +330,7 @@ public class MetisOasisCellMap {
          */
         private void extendReferences(final int pIndex) {
             /* Loop through remaining instances */
-            int myRepeat = getRepeat();
+            final int myRepeat = getRepeat();
             for (int iInstance = theInstance + 1, iIndex = theIndex + 1; iInstance < myRepeat; iInstance++, iIndex++) {
                 /* Break loop if we have extended far enough */
                 if (iIndex > pIndex) {
@@ -338,7 +338,7 @@ public class MetisOasisCellMap {
                 }
 
                 /* Create the new reference and add it */
-                CellReference myRef = new CellReference(theElement, iIndex, iInstance);
+                final CellReference myRef = new CellReference(theElement, iIndex, iInstance);
                 myRef.addToList();
             }
         }
@@ -372,10 +372,10 @@ public class MetisOasisCellMap {
          */
         private void makeIndividual() {
             /* Determine how many trailing elements to hive off */
-            int myRepeatCount = getRepeat();
-            int myNumCells = myRepeatCount
-                             - theInstance
-                             - 1;
+            final int myRepeatCount = getRepeat();
+            final int myNumCells = myRepeatCount
+                                   - theInstance
+                                   - 1;
 
             /* If we have trailing cells */
             if (myNumCells > 0) {
@@ -389,7 +389,7 @@ public class MetisOasisCellMap {
             /* If there are prior elements to hive off */
             if (theInstance > 0) {
                 /* Create a new cell element for this instance, and append after this one */
-                TableTableCellElement myNew = theOasisSheet.newCellElement();
+                final TableTableCellElement myNew = theOasisSheet.newCellElement();
                 MetisOasisWorkBook.addAsNextSibling(myNew, theElement);
 
                 /* If there are multiple cells before the split */
@@ -408,7 +408,7 @@ public class MetisOasisCellMap {
             /* If we have trailing cells */
             if (myNumCells > 0) {
                 /* Create a new cell element and add it before this one */
-                TableTableCellElement myNew = theOasisSheet.newCellElement();
+                final TableTableCellElement myNew = theOasisSheet.newCellElement();
                 MetisOasisWorkBook.addAsNextSibling(myNew, theElement);
 
                 /* Adjust the repeat count for trailing elements */
@@ -418,11 +418,11 @@ public class MetisOasisCellMap {
                 }
 
                 /* Loop through the later columns */
-                ListIterator<CellReference> myIterator = theCells.listIterator(theIndex + 1);
+                final ListIterator<CellReference> myIterator = theCells.listIterator(theIndex + 1);
                 for (int i = 0; myIterator.hasNext()
                                 && (i < myNumCells); i++) {
                     /* Map to new instance */
-                    CellReference myRef = myIterator.next();
+                    final CellReference myRef = myIterator.next();
                     myRef.theElement = myNew;
                     myRef.theInstance = i;
                 }

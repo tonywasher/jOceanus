@@ -137,7 +137,7 @@ public class MetisViewerManager
      */
     public MetisViewerEntry newEntry(final String pName) {
         /* Create the entry and add to root List */
-        MetisViewerEntry myEntry = new MetisViewerEntry(this, null, pName);
+        final MetisViewerEntry myEntry = new MetisViewerEntry(this, null, pName);
         theRootList.add(myEntry);
         fireEvent(MetisViewerEvent.ENTRY, myEntry);
         return myEntry;
@@ -152,7 +152,7 @@ public class MetisViewerManager
     public MetisViewerEntry newEntry(final MetisViewerEntry pParent,
                                      final String pName) {
         /* Create the entry under the parent */
-        MetisViewerEntry myEntry = new MetisViewerEntry(this, pParent, pName);
+        final MetisViewerEntry myEntry = new MetisViewerEntry(this, pParent, pName);
         fireEvent(MetisViewerEvent.ENTRY, myEntry);
         return myEntry;
     }
@@ -164,7 +164,7 @@ public class MetisViewerManager
         /* Loop through the standard entries */
         for (MetisViewerStandardEntry myId : MetisViewerStandardEntry.values()) {
             /* Create invisible root entry and add to the map */
-            MetisViewerEntry myEntry = newEntry(myId.toString());
+            final MetisViewerEntry myEntry = newEntry(myId.toString());
             myEntry.setVisible(false);
             theStdEntries.put(myId, myEntry);
         }
@@ -176,7 +176,7 @@ public class MetisViewerManager
      * @return the viewer entry
      */
     public MetisViewerEntry getStandardEntry(final MetisViewerStandardEntry pEntry) {
-        MetisViewerEntry myEntry = theStdEntries.get(pEntry);
+        final MetisViewerEntry myEntry = theStdEntries.get(pEntry);
         myEntry.setVisible(true);
         return myEntry;
     }

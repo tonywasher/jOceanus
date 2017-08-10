@@ -107,8 +107,8 @@ public class MetisExceptionWrapper
             if (!(theWrapped instanceof OceanusException)) {
                 return MetisFieldValue.SKIP;
             }
-            OceanusException myWrapped = (OceanusException) theWrapped;
-            Object myObject = myWrapped.getObject();
+            final OceanusException myWrapped = (OceanusException) theWrapped;
+            final Object myObject = myWrapped.getObject();
             return (myObject == null)
                                       ? MetisFieldValue.SKIP
                                       : myObject;
@@ -143,7 +143,7 @@ public class MetisExceptionWrapper
      * @return the message
      */
     public String getMessage() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theClass);
         myBuilder.append(": ");
         myBuilder.append(theWrapped.getMessage());

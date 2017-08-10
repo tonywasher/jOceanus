@@ -130,22 +130,22 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         theData = pData;
 
         /* Access the zip file */
-        GordianZipReadFile myFile = new GordianZipReadFile(pFile);
+        final GordianZipReadFile myFile = new GordianZipReadFile(pFile);
 
         /* Obtain the hash bytes from the file */
-        byte[] myHashBytes = myFile.getHashBytes();
+        final byte[] myHashBytes = myFile.getHashBytes();
 
         /* Obtain the initialised keySetHash */
-        GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
+        final GordianKeySetHash myHash = theSecurityMgr.resolveKeySetHash(myHashBytes, pFile.getName());
 
         /* Associate this keySetHash with the ZipFile */
         myFile.setKeySetHash(myHash);
 
         /* Access ZipFile contents */
-        GordianZipFileContents myContents = myFile.getContents();
+        final GordianZipFileContents myContents = myFile.getContents();
 
         /* Loop through the file entries */
-        Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
+        final Iterator<GordianZipFileEntry> myIterator = myContents.iterator();
         GordianZipFileEntry myEntry = null;
         while (myIterator.hasNext()) {
             /* Access the entry */
@@ -175,7 +175,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         /* Protect the workbook retrieval */
         try (InputStream myStream = pFile.getInputStream(pEntry)) {
             /* Obtain the active profile */
-            MetisProfile myTask = theReport.getActiveTask();
+            final MetisProfile myTask = theReport.getActiveTask();
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
@@ -237,16 +237,16 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      */
     private void loadWorkBook() throws OceanusException {
         /* Obtain the active profile */
-        MetisProfile myTask = theReport.getActiveTask();
+        final MetisProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
+        final Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
         while (myIterator.hasNext()) {
             /* Access the next sheet */
-            PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
+            final PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Load data for the sheet */
             myTask.startTask(mySheet.toString());

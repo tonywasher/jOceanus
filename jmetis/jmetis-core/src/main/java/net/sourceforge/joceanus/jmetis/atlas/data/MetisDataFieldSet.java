@@ -121,7 +121,7 @@ public class MetisDataFieldSet {
      */
     protected Integer getNextValue() {
         /* return the new anchor id */
-        Integer myValue = theNextValue;
+        final Integer myValue = theNextValue;
         theNextValue = theNextValue + 1;
         return myValue;
     }
@@ -285,7 +285,7 @@ public class MetisDataFieldSet {
         checkUniqueName(pName);
 
         /* Create the field */
-        MetisDataField myField = new MetisDataField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
+        final MetisDataField myField = new MetisDataField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
 
         /* Register the field */
         registerField(myField);
@@ -321,7 +321,7 @@ public class MetisDataFieldSet {
         }
 
         /* Create the field */
-        MetisDataField myField = new MetisDataField(this, pName);
+        final MetisDataField myField = new MetisDataField(this, pName);
 
         /* Add it to the list */
         theFields.add(myField);
@@ -339,9 +339,9 @@ public class MetisDataFieldSet {
      * @throws IllegalArgumentException if name is present
      */
     protected void checkUniqueName(final String pName) {
-        Iterator<MetisDataField> myIterator = fieldIterator();
+        final Iterator<MetisDataField> myIterator = fieldIterator();
         while (myIterator.hasNext()) {
-            MetisDataField myField = myIterator.next();
+            final MetisDataField myField = myIterator.next();
 
             /* If the name exists, throw an exception */
             if (pName.equals(myField.getName())) {
@@ -366,7 +366,7 @@ public class MetisDataFieldSet {
         }
 
         /* Access as MetisDataFieldSet */
-        MetisDataFieldSet myThat = (MetisDataFieldSet) pThat;
+        final MetisDataFieldSet myThat = (MetisDataFieldSet) pThat;
 
         /* Must have same anchor id */
         return theAnchorId == myThat.getAnchorId();
@@ -480,7 +480,7 @@ public class MetisDataFieldSet {
             theIterator = pFields.theFields.iterator();
 
             /* Allocate preceding iterator */
-            MetisDataFieldSet myParent = pFields.theParent;
+            final MetisDataFieldSet myParent = pFields.theParent;
             thePreceding = (myParent == null)
                                               ? null
                                               : myParent.fieldIterator();

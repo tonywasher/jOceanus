@@ -161,11 +161,11 @@ public final class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            DataSet<?, ?> myData = getDataSet();
-            GordianHashManager mySecure = myData.getSecurity();
+            final DataSet<?, ?> myData = getDataSet();
+            final GordianHashManager mySecure = myData.getSecurity();
 
             /* Create a new keySetHash with new password */
-            GordianKeySetHash myHash = mySecure.newKeySetHash(NAME_DATABASE);
+            final GordianKeySetHash myHash = mySecure.newKeySetHash(NAME_DATABASE);
 
             /* Store the password hash */
             setValueHashPrime(Boolean.TRUE);
@@ -195,15 +195,15 @@ public final class ControlKey
         /* Protect against exceptions */
         try {
             /* Access the Security manager */
-            DataSet<?, ?> myData = getDataSet();
-            GordianHashManager mySecure = myData.getSecurity();
+            final DataSet<?, ?> myData = getDataSet();
+            final GordianHashManager mySecure = myData.getSecurity();
 
             /* ReSeed the security generator */
-            GordianFactory myFactory = mySecure.getSecurityFactory();
+            final GordianFactory myFactory = mySecure.getSecurityFactory();
             myFactory.reSeedRandom();
 
             /* Create a similar keySetHash */
-            GordianKeySetHash myHash = mySecure.similarKeySetHash(myData.getKeySetHash());
+            final GordianKeySetHash myHash = mySecure.similarKeySetHash(myData.getKeySetHash());
 
             /* Store the password Hash */
             setValueHashPrime(Boolean.TRUE);
@@ -262,7 +262,7 @@ public final class ControlKey
      * @throws OceanusException on error
      */
     protected GordianKeySetHash getPrimeKeySetHash() throws OceanusException {
-        GordianKeySetHash myHash = getPrimeKeySetHash(getValueSet());
+        final GordianKeySetHash myHash = getPrimeKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolvePrimeHash()
                                 : myHash;
@@ -274,7 +274,7 @@ public final class ControlKey
      * @throws OceanusException on error
      */
     protected GordianKeySetHash getAltKeySetHash() throws OceanusException {
-        GordianKeySetHash myHash = getAltKeySetHash(getValueSet());
+        final GordianKeySetHash myHash = getAltKeySetHash(getValueSet());
         return (myHash == null)
                                 ? resolveAltHash()
                                 : myHash;
@@ -429,11 +429,11 @@ public final class ControlKey
      */
     private GordianKeySetHash resolvePrimeHash() throws OceanusException {
         /* Access the Security manager */
-        DataSet<?, ?> myData = getDataSet();
-        GordianHashManager mySecure = myData.getSecurity();
+        final DataSet<?, ?> myData = getDataSet();
+        final GordianHashManager mySecure = myData.getSecurity();
 
         /* Resolve the keySetHash */
-        GordianKeySetHash myHash = mySecure.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
+        final GordianKeySetHash myHash = mySecure.resolveKeySetHash(getPrimeHashBytes(), NAME_DATABASE);
 
         /* Store the keySetHash */
         setValuePrimeKeySetHash(myHash);
@@ -447,11 +447,11 @@ public final class ControlKey
      */
     private GordianKeySetHash resolveAltHash() throws OceanusException {
         /* Access the Security manager */
-        DataSet<?, ?> myData = getDataSet();
-        GordianHashManager mySecure = myData.getSecurity();
+        final DataSet<?, ?> myData = getDataSet();
+        final GordianHashManager mySecure = myData.getSecurity();
 
         /* Resolve the keySetHash */
-        GordianKeySetHash myHash = mySecure.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);
+        final GordianKeySetHash myHash = mySecure.resolveKeySetHash(getAltHashBytes(), NAME_DATABASE);
 
         /* Store the keySetHash */
         setValueAltKeySetHash(myHash);
@@ -479,14 +479,14 @@ public final class ControlKey
      */
     private void allocateDataKeySets(final DataSet<?, ?> pData) throws OceanusException {
         /* Access the DataKeySet List */
-        DataKeySetList mySets = pData.getDataKeySets();
+        final DataKeySetList mySets = pData.getDataKeySets();
         setNewVersion();
 
         /* Loop to create sufficient DataKeySets */
-        int myNumKeySets = pData.getNumActiveKeySets();
+        final int myNumKeySets = pData.getNumActiveKeySets();
         for (int i = 0; i < myNumKeySets; i++) {
             /* Allocate the DataKeySet */
-            DataKeySet mySet = new DataKeySet(mySets, this);
+            final DataKeySet mySet = new DataKeySet(mySets, this);
             mySets.add(mySet);
 
             /* Register the DataKeySet */
@@ -541,12 +541,12 @@ public final class ControlKey
      */
     protected void ensureKeySetHash() throws OceanusException {
         /* Access current mode */
-        Boolean isHashPrime = isHashPrime();
-        GordianKeySetHash myHash = getKeySetHash();
+        final Boolean isHashPrime = isHashPrime();
+        final GordianKeySetHash myHash = getKeySetHash();
 
         /* Update the hash for the KeySet */
         if (theDataKeySet.updateKeySetHash(isHashPrime, myHash)) {
-            DataSet<?, ?> myData = getDataSet();
+            final DataSet<?, ?> myData = getDataSet();
             myData.setVersion(myData.getVersion() + 1);
         }
     }
@@ -618,7 +618,7 @@ public final class ControlKey
 
         @Override
         protected ControlKeyList getEmptyList(final ListStyle pStyle) {
-            ControlKeyList myList = new ControlKeyList(this);
+            final ControlKeyList myList = new ControlKeyList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -642,7 +642,7 @@ public final class ControlKey
             }
 
             /* Clone the control key */
-            ControlKey myKey = new ControlKey(this, (ControlKey) pItem);
+            final ControlKey myKey = new ControlKey(this, (ControlKey) pItem);
             add(myKey);
             return myKey;
         }
@@ -655,7 +655,7 @@ public final class ControlKey
         @Override
         public ControlKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the controlKey */
-            ControlKey myKey = new ControlKey(this, pValues);
+            final ControlKey myKey = new ControlKey(this, pValues);
 
             /* Check that this keyId has not been previously added */
             if (!isIdUnique(myKey.getId())) {
@@ -677,7 +677,7 @@ public final class ControlKey
          */
         public ControlKey createNewKeySet() throws OceanusException {
             /* Create the key */
-            ControlKey myKey = new ControlKey(this);
+            final ControlKey myKey = new ControlKey(this);
 
             /* Add to the list */
             add(myKey);
@@ -692,7 +692,7 @@ public final class ControlKey
          */
         public ControlKey cloneItem(final ControlKey pSource) throws OceanusException {
             /* Create the key */
-            ControlKey myKey = new ControlKey(pSource);
+            final ControlKey myKey = new ControlKey(pSource);
 
             /* Add to the list */
             add(myKey);
@@ -706,9 +706,9 @@ public final class ControlKey
          */
         protected void initialiseSecurity(final DataSet<?, ?> pDatabase) throws OceanusException {
             /* Access the active control key from the database */
-            DataSet<?, ?> myData = getDataSet();
-            ControlKey myDatabaseKey = pDatabase.getControlKey();
-            ControlKey myKey;
+            final DataSet<?, ?> myData = getDataSet();
+            final ControlKey myDatabaseKey = pDatabase.getControlKey();
+            final ControlKey myKey;
 
             /* If we have an existing security key */
             if (myDatabaseKey != null) {
@@ -730,13 +730,13 @@ public final class ControlKey
          */
         protected void purgeOldControlKeys() {
             /* Access the current control Key */
-            DataSet<?, ?> myData = getDataSet();
-            ControlKey myKey = myData.getControlKey();
+            final DataSet<?, ?> myData = getDataSet();
+            final ControlKey myKey = myData.getControlKey();
 
             /* Loop through the controlKeys */
-            Iterator<ControlKey> myIterator = iterator();
+            final Iterator<ControlKey> myIterator = iterator();
             while (myIterator.hasNext()) {
-                ControlKey myCurr = myIterator.next();
+                final ControlKey myCurr = myIterator.next();
 
                 /* Delete if this is not the active key */
                 if (!myKey.equals(myCurr)) {
@@ -753,21 +753,21 @@ public final class ControlKey
          */
         private ControlKey cloneControlKey(final ControlKey pControlKey) throws OceanusException {
             /* Build data values */
-            DataValues<CryptographyDataType> myValues = new DataValues<>(ControlKey.OBJECT_NAME);
+            final DataValues<CryptographyDataType> myValues = new DataValues<>(ControlKey.OBJECT_NAME);
             myValues.addValue(ControlKey.FIELD_ID, pControlKey.getId());
             myValues.addValue(ControlKey.FIELD_HASHPRIME, pControlKey.isHashPrime());
             myValues.addValue(ControlKey.FIELD_PRIMEBYTES, pControlKey.getPrimeHashBytes());
             myValues.addValue(ControlKey.FIELD_ALTBYTES, pControlKey.getAltHashBytes());
 
             /* Clone the control key */
-            ControlKey myControl = addValuesItem(myValues);
+            final ControlKey myControl = addValuesItem(myValues);
 
             /* Access the DataKey List */
-            DataSet<?, ?> myData = getDataSet();
-            DataKeySetList myKeySets = myData.getDataKeySets();
+            final DataSet<?, ?> myData = getDataSet();
+            final DataKeySetList myKeySets = myData.getDataKeySets();
 
             /* Create a new DataKeySet for this ControlKey */
-            DataKeySetResource mySource = pControlKey.theDataKeySet;
+            final DataKeySetResource mySource = pControlKey.theDataKeySet;
             myControl.theDataKeySet = mySource.cloneDataKeySetResource(myControl, myKeySets);
 
             /* return the cloned key */
@@ -875,9 +875,9 @@ public final class ControlKey
          */
         private void deleteDataKeySets() {
             /* Loop through the KeySets */
-            Iterator<DataKeySet> myIterator = iterator();
+            final Iterator<DataKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
-                DataKeySet mySet = myIterator.next();
+                final DataKeySet mySet = myIterator.next();
 
                 /* Delete the KeySet */
                 mySet.deleteDataKeySet();
@@ -895,9 +895,9 @@ public final class ControlKey
                                          final GordianKeySetHash pHash) throws OceanusException {
             /* Loop through the KeySets */
             boolean bChanges = false;
-            Iterator<DataKeySet> myIterator = iterator();
+            final Iterator<DataKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
-                DataKeySet mySet = myIterator.next();
+                final DataKeySet mySet = myIterator.next();
 
                 /* Update the KeySet */
                 bChanges |= mySet.updateKeySetHash(pPrimeHash, pHash);
@@ -917,15 +917,15 @@ public final class ControlKey
         private DataKeySetResource cloneDataKeySetResource(final ControlKey pControlKey,
                                                            final DataKeySetList pKeySets) throws OceanusException {
             /* Create a new resource */
-            DataKeySetResource myResource = new DataKeySetResource();
+            final DataKeySetResource myResource = new DataKeySetResource();
 
             /* Loop through the KeySets */
-            Iterator<DataKeySet> myIterator = iterator();
+            final Iterator<DataKeySet> myIterator = iterator();
             while (myIterator.hasNext()) {
-                DataKeySet mySet = myIterator.next();
+                final DataKeySet mySet = myIterator.next();
 
                 /* Create a new DataKeySet for this ControlKey */
-                DataKeySet myNewSet = pKeySets.cloneDataKeySet(pControlKey, mySet);
+                final DataKeySet myNewSet = pKeySets.cloneDataKeySet(pControlKey, mySet);
                 myResource.registerKeySet(myNewSet);
             }
 

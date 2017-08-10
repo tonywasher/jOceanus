@@ -162,7 +162,7 @@ public final class ThemisSvnTag
      */
     public String getURLPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Add the tags directory */
         myBuilder.append(theComponent.getTagsPath());
@@ -195,7 +195,7 @@ public final class ThemisSvnTag
      */
     private void discoverHistory() throws OceanusException {
         /* Access history map */
-        ThemisSvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
+        final ThemisSvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
 
         /* Determine the next major branch */
         theRevisionPath = myHistMap.discoverTag(this);
@@ -251,14 +251,14 @@ public final class ThemisSvnTag
             clear();
 
             /* Access a LogClient */
-            ThemisSvnRepository myRepo = theComponent.getRepository();
-            SVNClientManager myMgr = myRepo.getClientManager();
-            SVNLogClient myClient = myMgr.getLogClient();
+            final ThemisSvnRepository myRepo = theComponent.getRepository();
+            final SVNClientManager myMgr = myRepo.getClientManager();
+            final SVNLogClient myClient = myMgr.getLogClient();
 
             /* Protect against exceptions */
             try {
                 /* Access the tags directory URL */
-                SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getTagsPath());
+                final SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getTagsPath());
 
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
@@ -269,15 +269,15 @@ public final class ThemisSvnTag
             }
 
             /* Loop through the tags */
-            Iterator<ThemisSvnTag> myIterator = iterator();
+            final Iterator<ThemisSvnTag> myIterator = iterator();
             while (myIterator.hasNext()) {
-                ThemisSvnTag myTag = myIterator.next();
+                final ThemisSvnTag myTag = myIterator.next();
 
                 /* Report stage */
                 pReport.setNewStage("Analysing tag " + myTag.getTagName());
 
                 /* Parse project file */
-                ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(myTag.getURLPath());
+                final ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(myTag.getURLPath());
                 myTag.setProjectDefinition(myProject);
 
                 /* Register the tag */
@@ -314,10 +314,10 @@ public final class ThemisSvnTag
                 myName = myName.substring(getPrefix().length());
 
                 /* Determine tag and last revision */
-                int myTagNo = Integer.parseInt(myName);
+                final int myTagNo = Integer.parseInt(myName);
 
                 /* Create the tag and add to the list */
-                ThemisSvnTag myTag = new ThemisSvnTag(getBranch(), myTagNo);
+                final ThemisSvnTag myTag = new ThemisSvnTag(getBranch(), myTagNo);
                 add(myTag);
             }
         }

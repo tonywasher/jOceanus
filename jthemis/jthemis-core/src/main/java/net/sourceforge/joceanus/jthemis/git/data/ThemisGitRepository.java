@@ -86,7 +86,7 @@ public class ThemisGitRepository
         setName(thePreferences.getStringValue(ThemisGitPreferenceKey.NAME));
 
         /* Create component list */
-        GitComponentList myComponents = new GitComponentList(this);
+        final GitComponentList myComponents = new GitComponentList(this);
         setComponents(myComponents);
 
         /* Report start of analysis */
@@ -149,7 +149,7 @@ public class ThemisGitRepository
         }
 
         /* Compare bases */
-        int iResult = theBase.compareTo(pThat.theBase);
+        final int iResult = theBase.compareTo(pThat.theBase);
         if (iResult != 0) {
             return iResult;
         }
@@ -172,7 +172,7 @@ public class ThemisGitRepository
         if (!(pThat instanceof ThemisGitRepository)) {
             return false;
         }
-        ThemisGitRepository myThat = (ThemisGitRepository) pThat;
+        final ThemisGitRepository myThat = (ThemisGitRepository) pThat;
 
         /* Compare fields */
         if (!theBase.equals(myThat.theBase)) {
@@ -228,19 +228,19 @@ public class ThemisGitRepository
     public ThemisGitComponent createComponent(final String pName) throws OceanusException {
         try {
             /* StringBuilder */
-            StringBuilder myPathBuilder = new StringBuilder();
+            final StringBuilder myPathBuilder = new StringBuilder();
             myPathBuilder.append(theBase);
             myPathBuilder.append(File.separatorChar);
             myPathBuilder.append(pName);
-            String myRepoPath = myPathBuilder.toString();
+            final String myRepoPath = myPathBuilder.toString();
 
             /* Make sure that the path is deleted */
             ThemisDirectory.removeDirectory(new File(myRepoPath));
 
             /* Create repository */
-            FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
+            final FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
             myBuilder.setGitDir(new File(myRepoPath, ThemisGitComponent.NAME_GITDIR));
-            Repository myRepo = myBuilder.build();
+            final Repository myRepo = myBuilder.build();
             myRepo.create();
             myRepo.close();
 

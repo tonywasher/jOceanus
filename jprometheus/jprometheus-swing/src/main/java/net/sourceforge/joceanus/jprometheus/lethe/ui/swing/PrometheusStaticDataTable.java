@@ -194,7 +194,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
         setModel(theModel);
 
         /* Create the data column model and declare it */
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         theColumns = new StaticColumnModel();
         myTable.setColumnModel(theColumns);
 
@@ -217,7 +217,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
         thePanel.add(super.getNode());
 
         /* Add listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewClass());
         theNewButton.setMenuConfigurator(e -> buildNewMenu());
         theUpdateSet.getEventRegistrar().addEventListener(e -> theModel.fireNewDataEvents());
@@ -255,7 +255,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      */
     private void handleNewClass() {
         /* Access the new class */
-        S myClass = theNewButton.getValue();
+        final S myClass = theNewButton.getValue();
 
         /* Protect the action */
         try {
@@ -317,10 +317,10 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      */
     protected void refreshData() throws OceanusException {
         /* Access data */
-        DataSet<?, E> myData = theControl.getData();
+        final DataSet<?, E> myData = theControl.getData();
 
         /* Access edit list and map it */
-        StaticList<T, S, E> myStatic = myData.getDataList(theClass);
+        final StaticList<T, S, E> myStatic = myData.getDataList(theClass);
         theStatic = theClass.cast(myStatic.deriveList(ListStyle.EDIT));
         theStatic.mapData();
 
@@ -503,20 +503,20 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
             super(PrometheusStaticDataTable.this);
 
             /* Create the relevant renderers/editors */
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldIconButtonCellEditor<Boolean> myEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldIconButtonCellEditor<Boolean> myEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
 
             /* Configure the iconButtons */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
 
             /* Configure the enabled iconButtons */
-            TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
+            final TethysIconMapSet<Boolean> myEnabledMapSet = PrometheusIcon.configureEnabledIconButton();
             myEnabledIconRenderer.setIconMapSet(r -> myEnabledMapSet);
             myEnabledIconEditor.setIconMapSet(r -> myEnabledMapSet);
 

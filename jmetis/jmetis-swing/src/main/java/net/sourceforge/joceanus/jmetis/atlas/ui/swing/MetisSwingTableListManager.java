@@ -77,7 +77,7 @@ public class MetisSwingTableListManager<R extends MetisDataTableItem> {
         initialiseLists();
 
         /* Listen to events on the editList */
-        TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
+        final TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> handleRefresh());
         myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
 
@@ -111,9 +111,9 @@ public class MetisSwingTableListManager<R extends MetisDataTableItem> {
         theIdList.clear();
 
         /* Loop through the underlying list */
-        Iterator<R> myIterator = theCoreList.iterator();
+        final Iterator<R> myIterator = theCoreList.iterator();
         while (myIterator.hasNext()) {
-            R myItem = myIterator.next();
+            final R myItem = myIterator.next();
 
             /* Add to the lists */
             theTableList.add(myItem);
@@ -128,7 +128,7 @@ public class MetisSwingTableListManager<R extends MetisDataTableItem> {
     private void handleEditChanges(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        MetisListChange<R> myChange = (MetisListChange<R>) pChange.getDetails(MetisListChange.class);
+        final MetisListChange<R> myChange = (MetisListChange<R>) pChange.getDetails(MetisListChange.class);
 
         /* Handle deleted items */
         handleDeletedItems(myChange.deletedIterator());
@@ -147,8 +147,8 @@ public class MetisSwingTableListManager<R extends MetisDataTableItem> {
     private void handleAddedItems(final Iterator<R> pIterator) {
         /* Loop through the added items */
         while (pIterator.hasNext()) {
-            R myCurr = pIterator.next();
-            Integer myId = myCurr.getIndexedId();
+            final R myCurr = pIterator.next();
+            final Integer myId = myCurr.getIndexedId();
 
             /* report the addition */
             theTable.fireTableRowAdded(theTableList.size());
@@ -166,11 +166,11 @@ public class MetisSwingTableListManager<R extends MetisDataTableItem> {
     private void handleChangedItems(final Iterator<R> pIterator) {
         /* Loop through the changed items */
         while (pIterator.hasNext()) {
-            R myCurr = pIterator.next();
-            Integer myId = myCurr.getIndexedId();
+            final R myCurr = pIterator.next();
+            final Integer myId = myCurr.getIndexedId();
 
             /* Locate the item in the idList and report change */
-            int myLoc = theIdList.indexOf(myId);
+            final int myLoc = theIdList.indexOf(myId);
             theTable.fireTableRowChanged(myLoc);
         }
     }
@@ -182,10 +182,10 @@ public class MetisSwingTableListManager<R extends MetisDataTableItem> {
     private void handleDeletedItems(final Iterator<Integer> pIterator) {
         /* Loop through the added items */
         while (pIterator.hasNext()) {
-            Integer myId = pIterator.next();
+            final Integer myId = pIterator.next();
 
             /* Locate the item in the idList and report deletion */
-            int myLoc = theIdList.indexOf(myId);
+            final int myLoc = theIdList.indexOf(myId);
             theTable.fireTableRowDeleted(myLoc);
 
             /* remove the item and id */

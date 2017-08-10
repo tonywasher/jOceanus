@@ -163,7 +163,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * The base list (for extracts).
      */
-    private DataList<? extends DataItem<E>, E> theBase = null;
+    private DataList<? extends DataItem<E>, E> theBase;
 
     /**
      * DataMap.
@@ -173,12 +173,12 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * The generation.
      */
-    private int theGeneration = 0;
+    private int theGeneration;
 
     /**
      * The version.
      */
-    private int theVersion = 0;
+    private int theVersion;
 
     /**
      * Construct a new object.
@@ -495,7 +495,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public DataList<T, E> deriveList(final ListStyle pStyle) throws OceanusException {
         /* Obtain an empty list of the correct style */
-        DataList<T, E> myList = getEmptyList(pStyle);
+        final DataList<T, E> myList = getEmptyList(pStyle);
 
         /* Populate the list */
         populateList(myList);
@@ -511,18 +511,18 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     protected void populateList(final DataList<?, E> pList) throws OceanusException {
         /* Determine special styles */
-        ListStyle myStyle = pList.getStyle();
-        boolean isUpdate = myStyle == ListStyle.UPDATE;
-        boolean isClone = myStyle == ListStyle.CLONE;
+        final ListStyle myStyle = pList.getStyle();
+        final boolean isUpdate = myStyle == ListStyle.UPDATE;
+        final boolean isClone = myStyle == ListStyle.CLONE;
 
         /* Create an iterator for all items in the list */
-        Iterator<? extends DataItem<E>> myIterator = iterator();
+        final Iterator<? extends DataItem<E>> myIterator = iterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
             /* Access the item and its state */
-            DataItem<E> myCurr = myIterator.next();
-            MetisDataState myState = myCurr.getState();
+            final DataItem<E> myCurr = myIterator.next();
+            final MetisDataState myState = myCurr.getState();
 
             /* If this is an UPDATE list, ignore clean elements */
             if ((isUpdate) && (myState == MetisDataState.CLEAN)) {
@@ -546,10 +546,10 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void resolveDataSetLinks() throws OceanusException {
         /* Loop through the list */
-        Iterator<? extends DataItem<E>> myIterator = iterator();
+        final Iterator<? extends DataItem<E>> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
-            DataItem<E> myCurr = myIterator.next();
+            final DataItem<E> myCurr = myIterator.next();
 
             /* Adjust the links */
             myCurr.resolveDataSetLinks();
@@ -568,17 +568,17 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public DataList<T, E> deriveDifferences(final DataSet<?, ?> pDataSet,
                                             final DataList<?, E> pOld) {
         /* Obtain an empty list of the correct style */
-        DataList<T, E> myList = getEmptyList(ListStyle.DIFFER);
+        final DataList<T, E> myList = getEmptyList(ListStyle.DIFFER);
         myList.theDataSet = pDataSet;
 
         /* Access an Id Map of the old list */
-        Map<Integer, ?> myOld = pOld.getIdMap();
+        final Map<Integer, ?> myOld = pOld.getIdMap();
 
         /* Loop through the new list */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
-            DataItem<E> myCurr = myIterator.next();
+            final DataItem<E> myCurr = myIterator.next();
             DataItem<?> myItem = (DataItem<?>) myOld.get(myCurr.getId());
 
             /* If the item does not exist in the old list */
@@ -592,7 +592,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
-                    DataItem<E> myNew = myList.addCopyItem(myCurr);
+                    final DataItem<E> myNew = myList.addCopyItem(myCurr);
                     myNew.setBase(myItem);
 
                     /* Ensure that we record the correct history */
@@ -605,11 +605,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         }
 
         /* Loop through the remaining items in the old list */
-        Iterator<?> myOldIterator = myOld.values().iterator();
+        final Iterator<?> myOldIterator = myOld.values().iterator();
         while (myOldIterator.hasNext()) {
             /* Insert a new item */
-            DataItem<?> myCurr = (DataItem<?>) myOldIterator.next();
-            DataItem<E> myItem = myList.addCopyItem(myCurr);
+            final DataItem<?> myCurr = (DataItem<?>) myOldIterator.next();
+            final DataItem<E> myItem = myList.addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setDeleted(true);
         }
@@ -628,15 +628,15 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public boolean reBase(final DataList<?, E> pBase) {
         /* Access an Id Map of the old list */
-        Map<Integer, ?> myBase = pBase.getIdMap();
+        final Map<Integer, ?> myBase = pBase.getIdMap();
         boolean bChanges = false;
 
         /* Loop through this list */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the base list */
-            T myCurr = myIterator.next();
-            DataItem<?> myItem = (DataItem<?>) myBase.get(myCurr.getId());
+            final T myCurr = myIterator.next();
+            final DataItem<?> myItem = (DataItem<?>) myBase.get(myCurr.getId());
 
             /* If the underlying item does not exist */
             if (myItem == null) {
@@ -667,11 +667,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         }
 
         /* Loop through the remaining items in the base list */
-        Iterator<?> myBaseIterator = myBase.values().iterator();
+        final Iterator<?> myBaseIterator = myBase.values().iterator();
         while (myBaseIterator.hasNext()) {
             /* Insert a new item */
-            DataItem<?> myCurr = (DataItem<?>) myBaseIterator.next();
-            T myItem = addCopyItem(myCurr);
+            final DataItem<?> myCurr = (DataItem<?>) myBaseIterator.next();
+            final T myItem = addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.setHistory(myCurr);
             myItem.getValueSet().setDeletion(true);
@@ -706,9 +706,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void touchUnderlyingItems() {
         /* Loop through items in the list */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* If the item is not deleted */
             if (!myItem.isDeleted()) {
@@ -749,9 +749,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         MetisEditState myState = MetisEditState.CLEAN;
 
         /* Loop through the items */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* Clear errors for the item */
             myCurr.clearErrors();
@@ -793,7 +793,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void validateOnLoad() throws OceanusException {
         /* Validate the list */
-        MetisErrorList<DataItem<E>> myErrors = validate();
+        final MetisErrorList<DataItem<E>> myErrors = validate();
         if (myErrors != null) {
             throw new PrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }
@@ -833,9 +833,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         ensureMap();
 
         /* Loop through the items */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* If the item is not deleted */
             if (!myItem.isDeleted()) {
@@ -870,9 +870,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         ensureMap();
 
         /* Loop through items clearing active flag */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* If the item is not deleted */
             if (!myItem.isDeleted()) {
@@ -887,7 +887,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void postProcessOnUpdate() {
         /* Note whether this is a DataInfoList */
-        boolean isDataInfo = this instanceof DataInfoList;
+        final boolean isDataInfo = this instanceof DataInfoList;
 
         /* Reset the map */
         if (theDataMap != null) {
@@ -895,10 +895,10 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         }
 
         /* Loop through items clearing active flag */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         MetisEditState myState = MetisEditState.CLEAN;
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* Clear errors for the item */
             myCurr.clearErrors();
@@ -962,9 +962,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void rewindToVersion(final int pVersion) {
         /* Loop through the elements */
-        MetisOrderedListIterator<T> myIterator = listIterator();
+        final MetisOrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* If the version is before required version */
             if (myCurr.getValueSet().getVersion() <= pVersion) {
@@ -1001,9 +1001,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void condenseHistory(final int pNewVersion) {
         /* Loop through the elements */
-        MetisOrderedListIterator<T> myIterator = listIterator();
+        final MetisOrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* If the version is before required version */
             if (myCurr.getValueSet().getVersion() < pNewVersion) {

@@ -98,7 +98,7 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      */
     public void reBaseList(final MetisBaseList<T> pBase) {
         /* Access a copy of the idMap of the base list */
-        Map<Integer, T> myOld = new HashMap<>(pBase.getIdMap());
+        final Map<Integer, T> myOld = new HashMap<>(pBase.getIdMap());
         boolean hasChanges = false;
 
         /* List versions must be 0 */
@@ -108,18 +108,18 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
         }
 
         /* Create a new Change Detail */
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REBASE);
+        final MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REBASE);
 
         /* Loop through the list */
         Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
-            T myCurr = myIterator.next();
-            Integer myId = myCurr.getIndexedId();
-            T myItem = myOld.get(myId);
+            final T myCurr = myIterator.next();
+            final Integer myId = myCurr.getIndexedId();
+            final T myItem = myOld.get(myId);
 
             /* Access history */
-            MetisDataVersionControl myControl = myCurr.getVersionControl();
+            final MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* If the item does not exist in the old list */
             if (myItem == null) {
@@ -132,8 +132,8 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* ReBase the history */
-                    MetisDataVersionControl myBaseControl = myItem.getVersionControl();
-                    MetisDataVersionValues myBase = myBaseControl.getValueSet().cloneIt();
+                    final MetisDataVersionControl myBaseControl = myItem.getVersionControl();
+                    final MetisDataVersionValues myBase = myBaseControl.getValueSet().cloneIt();
                     myControl.setHistory(myBase);
                     hasChanges = true;
                 }
@@ -147,8 +147,8 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
         myIterator = myOld.values().iterator();
         while (myIterator.hasNext()) {
             /* Insert a new item */
-            T myCurr = myIterator.next();
-            T myItem = newDiffDeletedItem(myCurr);
+            final T myCurr = myIterator.next();
+            final T myItem = newDiffDeletedItem(myCurr);
             addToList(myItem);
             hasChanges = true;
         }
@@ -175,7 +175,7 @@ public class MetisBaseList<T extends MetisDataVersionedItem>
      */
     public MetisDifferenceList<T> deriveDifferences(final MetisBaseList<T> pCompare) {
         /* Create the difference list */
-        MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClazz());
+        final MetisDifferenceList<T> myDifferences = new MetisDifferenceList<>(getTheClazz());
         myDifferences.deriveTheDifferences(this, pCompare);
         return myDifferences;
     }

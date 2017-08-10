@@ -77,7 +77,7 @@ public class MetisErrorList<T extends MetisDataContents>
      */
     public void addList(final MetisErrorList<T> pValues) {
         /* Loop through the new values */
-        Iterator<T> myIterator = pValues.iterator();
+        final Iterator<T> myIterator = pValues.iterator();
         while (myIterator.hasNext()) {
             /* Add the value */
             add(myIterator.next());

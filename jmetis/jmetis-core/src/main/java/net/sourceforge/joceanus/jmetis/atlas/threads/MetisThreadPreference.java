@@ -109,7 +109,7 @@ public interface MetisThreadPreference {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the value is specified */
-            MetisIntegerPreference<MetisThreadPreferenceKey> myPref = getIntegerPreference(MetisThreadPreferenceKey.REPSTEPS);
+            final MetisIntegerPreference<MetisThreadPreferenceKey> myPref = getIntegerPreference(MetisThreadPreferenceKey.REPSTEPS);
             if (!myPref.isAvailable()) {
                 myPref.setValue(DEFAULT_REPSTEPS);
             }

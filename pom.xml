@@ -177,15 +177,26 @@
         <dependencies>
           <dependency>
             <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd.core</artifactId>
+            <artifactId>pmd-core</artifactId>
             <version>5.8.1</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.pmd</groupId>
-            <artifactId>pmd.java</artifactId>
+            <artifactId>pmd-java</artifactId>
             <version>5.8.1</version>
           </dependency>
         </dependencies>
+        <configuration>
+          <rulesets>
+            <ruleset>src/main/pmd/pmd.xml</ruleset>
+          </rulesets>
+          <linkXref>true</linkXref>
+          <aggregate>true</aggregate>
+          <targetJdk>${JavaVersion}</targetJdk>
+          <excludes>
+            <exclude>**/SevenZip/**/*.java</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -296,7 +307,9 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>3.8</version>
         <configuration>
-          <configLocation>src/main/pmd/pmd.xml</configLocation>
+          <rulesets>
+            <ruleset>src/main/pmd/pmd.xml</ruleset>
+          </rulesets>
           <linkXref>true</linkXref>
           <aggregate>true</aggregate>
           <targetJdk>${JavaVersion}</targetJdk>

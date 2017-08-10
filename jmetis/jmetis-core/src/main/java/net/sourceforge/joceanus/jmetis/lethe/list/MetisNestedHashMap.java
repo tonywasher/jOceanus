@@ -241,7 +241,7 @@ public class MetisNestedHashMap<K, V>
          */
         private ArrayElement(final ArrayElement pParent,
                              final int iIndex) {
-            int iArraySize = pParent.theArray.length;
+            final int iArraySize = pParent.theArray.length;
             theNumElements = 0;
             theParent = pParent;
             theParent.theNumElements += iArraySize;
@@ -260,7 +260,7 @@ public class MetisNestedHashMap<K, V>
 
             /* Locate the remaining element */
             Object myObject = null;
-            int iArraySize = theArray.length;
+            final int iArraySize = theArray.length;
             for (int i = 0; i < iArraySize; i++) {
                 if (theArray[i] != null) {
                     myObject = theArray[i];
@@ -279,7 +279,7 @@ public class MetisNestedHashMap<K, V>
     public V put(final K pKey,
                  final V pValue) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Put the value into the table */
         return putEntry(iHash, pKey, pValue);
@@ -293,10 +293,10 @@ public class MetisNestedHashMap<K, V>
         }
 
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Return the value */
         return (myEntry != null)
@@ -312,10 +312,10 @@ public class MetisNestedHashMap<K, V>
         }
 
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Remove the value if it exists */
-        HashEntry<K, V> myEntry = removeEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = removeEntry(iHash, pKey);
 
         /* Return the old value */
         return (myEntry != null)
@@ -343,15 +343,15 @@ public class MetisNestedHashMap<K, V>
         /* Loop through the array */
         for (int iIndex = 0; iIndex < theArraySize; iIndex++) {
             /* Access current value and remove from array */
-            Object[] myArray = pArray.theArray;
-            Object myEntry = myArray[iIndex];
+            final Object[] myArray = pArray.theArray;
+            final Object myEntry = myArray[iIndex];
             myArray[iIndex] = null;
 
             /* If we have an existing entry */
             if (myEntry instanceof HashEntry) {
                 /* Access the Hash Entry */
                 @SuppressWarnings("unchecked")
-                HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+                final HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
 
                 /* Clear values */
                 myHash.clear();
@@ -385,19 +385,19 @@ public class MetisNestedHashMap<K, V>
     private boolean containsValue(final ArrayElement pArray,
                                   final Object pValue) {
         /* Determine whether we have a null value */
-        boolean isNullValue = pValue == null;
+        final boolean isNullValue = pValue == null;
 
         /* Loop through the array */
         for (int iIndex = 0; iIndex < theArraySize; iIndex++) {
             /* Access current value */
-            Object[] myArray = pArray.theArray;
-            Object myEntry = myArray[iIndex];
+            final Object[] myArray = pArray.theArray;
+            final Object myEntry = myArray[iIndex];
 
             /* If we have an existing entry */
             if (myEntry instanceof HashEntry) {
                 /* Access the Hash Entry */
                 @SuppressWarnings("unchecked")
-                HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+                final HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
 
                 if (isNullValue) {
                     /* Check for null value */
@@ -447,7 +447,7 @@ public class MetisNestedHashMap<K, V>
         }
 
         /* Access as NestedHashMap */
-        MetisNestedHashMap<?, ?> myThat = (MetisNestedHashMap<?, ?>) pThat;
+        final MetisNestedHashMap<?, ?> myThat = (MetisNestedHashMap<?, ?>) pThat;
 
         /* Check size */
         if (theSize != myThat.size()) {
@@ -455,16 +455,16 @@ public class MetisNestedHashMap<K, V>
         }
 
         /* Loop through the elements */
-        EntryIterator myIterator = new EntryIterator();
+        final EntryIterator myIterator = new EntryIterator();
         while (myIterator.hasNext()) {
             /* Access the entry */
-            Entry<K, V> myEntry = myIterator.next();
+            final Entry<K, V> myEntry = myIterator.next();
 
             /* Check that the entry is contained in the other map and has equal value */
-            K myKey = myEntry.getKey();
-            V myValue = myEntry.getValue();
-            int myHash = hashKey(myKey);
-            HashEntry<?, ?> myTest = myThat.getEntry(myHash, myKey);
+            final K myKey = myEntry.getKey();
+            final V myValue = myEntry.getValue();
+            final int myHash = hashKey(myKey);
+            final HashEntry<?, ?> myTest = myThat.getEntry(myHash, myKey);
             if ((myTest == null) || ((myTest.theValue == null)
                                                                ? myValue != null
                                                                : !myTest.theValue.equals(myValue))) {
@@ -482,10 +482,10 @@ public class MetisNestedHashMap<K, V>
         int iHashCode = 0;
 
         /* Loop through the elements */
-        EntryIterator myIterator = new EntryIterator();
+        final EntryIterator myIterator = new EntryIterator();
         while (myIterator.hasNext()) {
             /* Access the entry */
-            Entry<K, V> myEntry = myIterator.next();
+            final Entry<K, V> myEntry = myIterator.next();
 
             /* Add in the hashCode */
             iHashCode += myEntry.hashCode();
@@ -498,16 +498,16 @@ public class MetisNestedHashMap<K, V>
     @Override
     public String toString() {
         /* Handle empty map */
-        EntryIterator myIterator = new EntryIterator();
+        final EntryIterator myIterator = new EntryIterator();
         if (!myIterator.hasNext()) {
             return "{}";
         }
 
         /* Loop through the entries */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         while (myIterator.hasNext()) {
             /* Access the entry */
-            Entry<K, V> myEntry = myIterator.next();
+            final Entry<K, V> myEntry = myIterator.next();
 
             /* Add separator if not first item */
             if (myBuilder.length() > 0) {
@@ -515,8 +515,8 @@ public class MetisNestedHashMap<K, V>
             }
 
             /* Access values */
-            K myKey = myEntry.getKey();
-            V myValue = myEntry.getValue();
+            final K myKey = myEntry.getKey();
+            final V myValue = myEntry.getValue();
 
             /* Add to the buffer (handling self reference) */
             myBuilder.append((myKey == this)
@@ -548,7 +548,7 @@ public class MetisNestedHashMap<K, V>
                        final V pValue) {
         /* Initialise the state */
         int myShift = 0;
-        int myMask = theArraySize - 1;
+        final int myMask = theArraySize - 1;
         int myCurHash = pHash;
         ArrayElement myArray = theArray;
         int myIndex;
@@ -559,7 +559,7 @@ public class MetisNestedHashMap<K, V>
             myIndex = myCurHash & myMask;
 
             /* Access current entry */
-            Object myEntry = myArray.theArray[myIndex];
+            final Object myEntry = myArray.theArray[myIndex];
 
             /* If this is a nested array */
             if (myEntry instanceof ArrayElement) {
@@ -573,7 +573,7 @@ public class MetisNestedHashMap<K, V>
                 /* If this is an empty slot */
             } else if (myEntry == null) {
                 /* Create and store the new entry */
-                HashEntry<K, V> myHashEntry = new HashEntry<>(pHash, pKey);
+                final HashEntry<K, V> myHashEntry = new HashEntry<>(pHash, pKey);
                 myHashEntry.setValue(pValue);
                 myArray.theArray[myIndex] = myHashEntry;
 
@@ -615,11 +615,11 @@ public class MetisNestedHashMap<K, V>
                 }
 
                 /* Hash does not match so we need to extend the map */
-                ArrayElement myNewArray = new ArrayElement(myArray, myIndex);
+                final ArrayElement myNewArray = new ArrayElement(myArray, myIndex);
 
                 /* Calculate index of existing entry */
                 myShift += theShiftBits;
-                int myNewIndex = (myHashEntry.theHash >>> myShift) & myMask;
+                final int myNewIndex = (myHashEntry.theHash >>> myShift) & myMask;
                 myNewArray.theArray[myNewIndex] = myHashEntry;
                 myNewArray.theNumElements++;
                 myArray.theArray[myIndex] = myNewArray;
@@ -642,7 +642,7 @@ public class MetisNestedHashMap<K, V>
     private HashEntry<K, V> getEntry(final int pHash,
                                      final Object pKey) {
         /* Initialise the state */
-        int myMask = theArraySize - 1;
+        final int myMask = theArraySize - 1;
         int myCurHash = pHash;
         ArrayElement myCurArray = theArray;
         int myIndex;
@@ -653,7 +653,7 @@ public class MetisNestedHashMap<K, V>
             myIndex = myCurHash & myMask;
 
             /* Access current entry */
-            Object myEntry = myCurArray.theArray[myIndex];
+            final Object myEntry = myCurArray.theArray[myIndex];
 
             /* If this is an extension array */
             if (myEntry instanceof ArrayElement) {
@@ -699,7 +699,7 @@ public class MetisNestedHashMap<K, V>
     private HashEntry<K, V> removeEntry(final int pHash,
                                         final Object pKey) {
         /* Initialise the state */
-        int myMask = theArraySize - 1;
+        final int myMask = theArraySize - 1;
         int myCurHash = pHash;
         ArrayElement myArray = theArray;
         int myIndex;
@@ -710,7 +710,7 @@ public class MetisNestedHashMap<K, V>
             myIndex = myCurHash & myMask;
 
             /* Access current entry */
-            Object myEntry = myArray.theArray[myIndex];
+            final Object myEntry = myArray.theArray[myIndex];
 
             /* If this is an extension array */
             if (myEntry instanceof ArrayElement) {
@@ -803,7 +803,7 @@ public class MetisNestedHashMap<K, V>
         /**
          * The next entry.
          */
-        private HashEntry<K, V> theNext = null;
+        private HashEntry<K, V> theNext;
 
         /**
          * Constructor.
@@ -839,7 +839,7 @@ public class MetisNestedHashMap<K, V>
         @Override
         public V setValue(final V pNewValue) {
             /* Pick up the old value */
-            V myOld = theValue;
+            final V myOld = theValue;
 
             /* Set the new value */
             theValue = pNewValue;
@@ -926,7 +926,7 @@ public class MetisNestedHashMap<K, V>
             HashEntry<K, V> myHash = this;
             for (;;) {
                 /* Access next item */
-                HashEntry<K, V> myNext = myHash.theNext;
+                final HashEntry<K, V> myNext = myHash.theNext;
 
                 /* If no next entry, return null */
                 if (myNext == null) {
@@ -965,7 +965,7 @@ public class MetisNestedHashMap<K, V>
                 }
 
                 /* Access next item */
-                HashEntry<K, V> myNext = myHash.theNext;
+                final HashEntry<K, V> myNext = myHash.theNext;
 
                 /* If no next entry, allocate new entry */
                 if (myNext == null) {
@@ -986,7 +986,7 @@ public class MetisNestedHashMap<K, V>
             HashEntry<K, V> myHash = this;
             while (myHash != null) {
                 /* Access next item */
-                HashEntry<K, V> myNext = myHash.theNext;
+                final HashEntry<K, V> myNext = myHash.theNext;
 
                 /* Clear entry */
                 myHash.theNext = null;
@@ -1012,7 +1012,7 @@ public class MetisNestedHashMap<K, V>
             }
 
             /* Access as HashEntry */
-            HashEntry<?, ?> myThat = (HashEntry<?, ?>) pThat;
+            final HashEntry<?, ?> myThat = (HashEntry<?, ?>) pThat;
 
             /* Check hashCode */
             if (theHash != myThat.theHash) {
@@ -1063,17 +1063,17 @@ public class MetisNestedHashMap<K, V>
         /**
          * Last Hash entry.
          */
-        private HashEntry<K, V> theLast = null;
+        private HashEntry<K, V> theLast;
 
         /**
          * Next Hash entry to return.
          */
-        private HashEntry<K, V> theNext = null;
+        private HashEntry<K, V> theNext;
 
         /**
          * Nested Array iterator.
          */
-        private ArrayIterator theIterator = null;
+        private ArrayIterator theIterator;
 
         /**
          * Constructor.
@@ -1139,13 +1139,13 @@ public class MetisNestedHashMap<K, V>
             /* Loop through the remaining array looking for elements */
             for (int i = theIndex + 1; i < theArraySize; i++) {
                 /* Access entry */
-                Object myEntry = theArray.theArray[i];
+                final Object myEntry = theArray.theArray[i];
 
                 /* If this is an entry */
                 if (myEntry instanceof HashEntry) {
                     /* Access the Hash Entry */
                     @SuppressWarnings("unchecked")
-                    HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
+                    final HashEntry<K, V> myHash = (HashEntry<K, V>) myEntry;
 
                     /* Record and return it */
                     theIndex = i;
@@ -1314,7 +1314,7 @@ public class MetisNestedHashMap<K, V>
 
         @Override
         public void forEach(final Consumer<? super V> pAction) {
-            Iterator<V> myIterator = iterator();
+            final Iterator<V> myIterator = iterator();
             while (myIterator.hasNext()) {
                 pAction.accept(myIterator.next());
             }
@@ -1322,7 +1322,7 @@ public class MetisNestedHashMap<K, V>
 
         @Override
         public boolean removeIf(final Predicate<? super V> pCheck) {
-            Iterator<V> myIterator = iterator();
+            final Iterator<V> myIterator = iterator();
             while (myIterator.hasNext()) {
                 if (pCheck.test(myIterator.next())) {
                     myIterator.remove();
@@ -1412,7 +1412,7 @@ public class MetisNestedHashMap<K, V>
 
         @Override
         public void forEach(final Consumer<? super K> pAction) {
-            Iterator<K> myIterator = iterator();
+            final Iterator<K> myIterator = iterator();
             while (myIterator.hasNext()) {
                 pAction.accept(myIterator.next());
             }
@@ -1420,7 +1420,7 @@ public class MetisNestedHashMap<K, V>
 
         @Override
         public boolean removeIf(final Predicate<? super K> pCheck) {
-            Iterator<K> myIterator = iterator();
+            final Iterator<K> myIterator = iterator();
             while (myIterator.hasNext()) {
                 if (pCheck.test(myIterator.next())) {
                     myIterator.remove();
@@ -1501,10 +1501,10 @@ public class MetisNestedHashMap<K, V>
 
             /* Access as entry */
             @SuppressWarnings("unchecked")
-            HashEntry<K, V> myEntry = (HashEntry<K, V>) o;
+            final HashEntry<K, V> myEntry = (HashEntry<K, V>) o;
 
             /* Check that this key exists with this value */
-            HashEntry<?, ?> myTest = getEntry(myEntry.theHash, myEntry.theKey);
+            final HashEntry<?, ?> myTest = getEntry(myEntry.theHash, myEntry.theKey);
             return (myTest != null) && ((myEntry.theValue == null)
                                                                    ? myTest.theValue == null
                                                                    : myEntry.theValue.equals(myTest.theValue));
@@ -1519,7 +1519,7 @@ public class MetisNestedHashMap<K, V>
 
             /* Access as entry */
             @SuppressWarnings("unchecked")
-            HashEntry<K, V> myEntry = (HashEntry<K, V>) o;
+            final HashEntry<K, V> myEntry = (HashEntry<K, V>) o;
 
             /* Remove the existing entry */
             theSelf.remove(myEntry.getKey());
@@ -1534,7 +1534,7 @@ public class MetisNestedHashMap<K, V>
 
         @Override
         public void forEach(final Consumer<? super Entry<K, V>> pAction) {
-            Iterator<Entry<K, V>> myIterator = iterator();
+            final Iterator<Entry<K, V>> myIterator = iterator();
             while (myIterator.hasNext()) {
                 pAction.accept(myIterator.next());
             }
@@ -1542,7 +1542,7 @@ public class MetisNestedHashMap<K, V>
 
         @Override
         public boolean removeIf(final Predicate<? super Entry<K, V>> pCheck) {
-            Iterator<Entry<K, V>> myIterator = iterator();
+            final Iterator<Entry<K, V>> myIterator = iterator();
             while (myIterator.hasNext()) {
                 if (pCheck.test(myIterator.next())) {
                     myIterator.remove();
@@ -1574,7 +1574,7 @@ public class MetisNestedHashMap<K, V>
     @SuppressWarnings("unchecked")
     public Object clone() throws CloneNotSupportedException {
         /* Clone the underlying object */
-        MetisNestedHashMap<K, V> myResult = (MetisNestedHashMap<K, V>) super.clone();
+        final MetisNestedHashMap<K, V> myResult = (MetisNestedHashMap<K, V>) super.clone();
 
         /* Re-initialise the fields */
         myResult.theShiftBits = theShiftBits;
@@ -1601,7 +1601,7 @@ public class MetisNestedHashMap<K, V>
      */
     private void writeObject(final ObjectOutputStream pOutput) throws IOException {
         /* Note expected modification count */
-        int myExpectedModCount = theModCount;
+        final int myExpectedModCount = theModCount;
 
         /* Write out the default stuff */
         pOutput.defaultWriteObject();
@@ -1616,10 +1616,10 @@ public class MetisNestedHashMap<K, V>
         }
 
         /* Write out keys and values (alternating) */
-        EntryIterator myIterator = new EntryIterator();
+        final EntryIterator myIterator = new EntryIterator();
         while (myIterator.hasNext()) {
             /* Access next entry */
-            Map.Entry<K, V> myEntry = myIterator.next();
+            final Map.Entry<K, V> myEntry = myIterator.next();
 
             /* Write out key and value */
             pOutput.writeObject(myEntry.getKey());
@@ -1656,12 +1656,12 @@ public class MetisNestedHashMap<K, V>
         theValueCollection = null;
 
         /* Read in size number of Mappings */
-        int mySize = pInput.readInt();
+        final int mySize = pInput.readInt();
 
         /* Read the keys and values, and put the mappings in the HashMap */
         for (int i = 0; i < mySize; i++) {
-            K myKey = (K) pInput.readObject();
-            V myValue = (V) pInput.readObject();
+            final K myKey = (K) pInput.readObject();
+            final V myValue = (V) pInput.readObject();
             put(myKey, myValue);
         }
     }
@@ -1670,18 +1670,18 @@ public class MetisNestedHashMap<K, V>
     public V compute(final K pKey,
                      final BiFunction<? super K, ? super V, ? extends V> pReMap) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Determine old value */
-        V myOldValue = myEntry == null
-                                       ? null
-                                       : myEntry.getValue();
+        final V myOldValue = myEntry == null
+                                             ? null
+                                             : myEntry.getValue();
 
         /* Determine new value */
-        V myNewValue = pReMap.apply(pKey, myOldValue);
+        final V myNewValue = pReMap.apply(pKey, myOldValue);
 
         /* If we had an old value */
         if (myOldValue != null) {
@@ -1708,20 +1708,20 @@ public class MetisNestedHashMap<K, V>
     public V computeIfAbsent(final K pKey,
                              final Function<? super K, ? extends V> pMap) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Determine old value */
-        V myOldValue = myEntry == null
-                                       ? null
-                                       : myEntry.getValue();
+        final V myOldValue = myEntry == null
+                                             ? null
+                                             : myEntry.getValue();
 
         /* If we have no existing value */
         if (myOldValue == null) {
             /* Map the value */
-            V myNewValue = pMap.apply(pKey);
+            final V myNewValue = pMap.apply(pKey);
 
             /* If we have a new value store it */
             if (myNewValue != null) {
@@ -1740,20 +1740,20 @@ public class MetisNestedHashMap<K, V>
     public V computeIfPresent(final K pKey,
                               final BiFunction<? super K, ? super V, ? extends V> pReMap) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Determine old value */
-        V myOldValue = myEntry == null
-                                       ? null
-                                       : myEntry.getValue();
+        final V myOldValue = myEntry == null
+                                             ? null
+                                             : myEntry.getValue();
 
         /* If we had an old value */
         if (myOldValue != null) {
             /* Determine new value */
-            V myNewValue = pReMap.apply(pKey, myOldValue);
+            final V myNewValue = pReMap.apply(pKey, myOldValue);
 
             /* If we have a replacement value */
             if (myNewValue != null) {
@@ -1786,10 +1786,10 @@ public class MetisNestedHashMap<K, V>
     public V getOrDefault(final Object pKey,
                           final V pValue) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Determine old value */
         return myEntry == null
@@ -1802,20 +1802,20 @@ public class MetisNestedHashMap<K, V>
                    final V pValue,
                    final BiFunction<? super V, ? super V, ? extends V> pReMap) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Determine old value */
-        V myOldValue = myEntry == null
-                                       ? null
-                                       : myEntry.getValue();
+        final V myOldValue = myEntry == null
+                                             ? null
+                                             : myEntry.getValue();
 
         /* Calculate new value */
-        V myNewValue = myOldValue != null
-                                          ? pReMap.apply(myOldValue, pValue)
-                                          : pValue;
+        final V myNewValue = myOldValue != null
+                                                ? pReMap.apply(myOldValue, pValue)
+                                                : pValue;
 
         /* If we have a replacement value */
         if (myNewValue != null) {
@@ -1835,15 +1835,15 @@ public class MetisNestedHashMap<K, V>
     public V putIfAbsent(final K pKey,
                          final V pValue) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* Determine old value */
-        V myOldValue = myEntry == null
-                                       ? null
-                                       : myEntry.getValue();
+        final V myOldValue = myEntry == null
+                                             ? null
+                                             : myEntry.getValue();
 
         /* If we have no existing value */
         if (myEntry == null) {
@@ -1859,10 +1859,10 @@ public class MetisNestedHashMap<K, V>
     public boolean remove(final Object pKey,
                           final Object pValue) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* If we have a match */
         if ((myEntry != null) && Objects.equals(pValue, myEntry.getValue())) {
@@ -1878,10 +1878,10 @@ public class MetisNestedHashMap<K, V>
     public V replace(final K pKey,
                      final V pValue) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* If we have an existing value */
         if (myEntry != null) {
@@ -1898,10 +1898,10 @@ public class MetisNestedHashMap<K, V>
                            final V pOldValue,
                            final V pNewValue) {
         /* Calculate the hash */
-        int iHash = hashKey(pKey);
+        final int iHash = hashKey(pKey);
 
         /* Locate the value */
-        HashEntry<K, V> myEntry = getEntry(iHash, pKey);
+        final HashEntry<K, V> myEntry = getEntry(iHash, pKey);
 
         /* If we have a match */
         if ((myEntry != null) && Objects.equals(pOldValue, myEntry.getValue())) {
@@ -1918,7 +1918,7 @@ public class MetisNestedHashMap<K, V>
         /* Loop through the entry set */
         for (Entry<K, V> myEntry : entrySet()) {
             /* reMap the entry */
-            V myNewValue = pReMap.apply(myEntry.getKey(), myEntry.getValue());
+            final V myNewValue = pReMap.apply(myEntry.getKey(), myEntry.getValue());
             myEntry.setValue(myNewValue);
         }
     }

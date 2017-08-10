@@ -60,15 +60,15 @@ public class PrometheusThreadLoadDatabase<T extends DataSet<T, E>, E extends Enu
     @Override
     public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Access database */
-        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
             /* Load database */
-            T myData = theControl.getNewData();
+            final T myData = theControl.getNewData();
             myDatabase.loadDatabase(myManager, myData);
 
             /* Check security on the database */

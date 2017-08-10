@@ -69,7 +69,7 @@ public class Themis4FX
             }
 
             /* Create the Toolkit */
-            MetisFXToolkit myToolkit = new MetisFXToolkit(theInfo, false);
+            final MetisFXToolkit myToolkit = new MetisFXToolkit(theInfo, false);
 
             /* Create the main panel */
             thePanel = new ThemisFXSvnManager(myToolkit);

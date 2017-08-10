@@ -125,13 +125,13 @@ public class DataKey
         super(pList, pValues);
 
         /* Access the Security manager */
-        DataSet<?, ?> myData = getDataSet();
+        final DataSet<?, ?> myData = getDataSet();
 
         /* Store the PrimeHash indicator */
         Object myValue = pValues.getValue(FIELD_HASHPRIME);
-        Boolean isHashPrime = (myValue instanceof Boolean)
-                                                           ? (Boolean) myValue
-                                                           : Boolean.TRUE;
+        final Boolean isHashPrime = (myValue instanceof Boolean)
+                                                                 ? (Boolean) myValue
+                                                                 : Boolean.TRUE;
         setValueHashPrime(isHashPrime);
 
         /* Store the DataKeySet */
@@ -148,9 +148,9 @@ public class DataKey
         }
 
         /* Resolve the DataKeySet */
-        DataKeySet myDataKeySet = getDataKeySet();
-        GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
-        GordianKeySet myKeySet = myHash.getKeySet();
+        final DataKeySet myDataKeySet = getDataKeySet();
+        final GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
+        final GordianKeySet myKeySet = myHash.getKeySet();
 
         /* Store the SymKey Flag */
         myValue = pValues.getValue(FIELD_ISSYMKEY);
@@ -199,7 +199,7 @@ public class DataKey
         myValue = pValues.getValue(FIELD_KEYDEF);
         if (myValue instanceof byte[]) {
             /* Access the value */
-            byte[] myBytes = (byte[]) myValue;
+            final byte[] myBytes = (byte[]) myValue;
             setValueSecuredKeyDef(myBytes);
 
             /* Look for passed key */
@@ -208,10 +208,10 @@ public class DataKey
                 setValueDataKey((GordianKey<?>) myValue);
             } else {
                 /* Create the Key from the wrapped data */
-                GordianFactory myFactory = myKeySet.getFactory();
-                Object myType = getKeyType();
-                GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(myType);
-                GordianKey<?> myKey = myGenerator.deriveKey(myBytes, myKeySet);
+                final GordianFactory myFactory = myKeySet.getFactory();
+                final Object myType = getKeyType();
+                final GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(myType);
+                final GordianKey<?> myKey = myGenerator.deriveKey(myBytes, myKeySet);
                 setValueDataKey(myKey);
             }
 
@@ -236,12 +236,12 @@ public class DataKey
         /* Protect against exceptions */
         try {
             /* Create the new key */
-            Boolean isHashPrime = pKeySet.isHashPrime();
+            final Boolean isHashPrime = pKeySet.isHashPrime();
             setValueHashPrime(isHashPrime);
 
             /* Create the new key */
-            GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
-            GordianKeySet myKeySet = myHash.getKeySet();
+            final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
+            final GordianKeySet myKeySet = myHash.getKeySet();
 
             /* Store the Details */
             setValueDataKeySet(pKeySet);
@@ -250,9 +250,9 @@ public class DataKey
             setValueIsSymKey(Boolean.TRUE);
 
             /* Create the new key */
-            GordianFactory myFactory = myKeySet.getFactory();
-            GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
-            GordianKey<GordianSymKeyType> myKey = myGenerator.generateKey();
+            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
+            final GordianKey<GordianSymKeyType> myKey = myGenerator.generateKey();
             setValueDataKey(myKey);
 
             /* Store its secured keyDef */
@@ -284,12 +284,12 @@ public class DataKey
         /* Protect against exceptions */
         try {
             /* Create the new key */
-            Boolean isHashPrime = pKeySet.isHashPrime();
+            final Boolean isHashPrime = pKeySet.isHashPrime();
             setValueHashPrime(isHashPrime);
 
             /* Create the new key */
-            GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
-            GordianKeySet myKeySet = myHash.getKeySet();
+            final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
+            final GordianKeySet myKeySet = myHash.getKeySet();
 
             /* Store the Details */
             setValueDataKeySet(pKeySet);
@@ -298,9 +298,9 @@ public class DataKey
             setValueIsSymKey(Boolean.FALSE);
 
             /* Create the new key */
-            GordianFactory myFactory = myKeySet.getFactory();
-            GordianKeyGenerator<GordianStreamKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
-            GordianKey<GordianStreamKeyType> myKey = myGenerator.generateKey();
+            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianKeyGenerator<GordianStreamKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
+            final GordianKey<GordianStreamKeyType> myKey = myGenerator.generateKey();
             setValueDataKey(myKey);
 
             /* Store its secured keyDef */
@@ -359,7 +359,7 @@ public class DataKey
      * @return the DataKeySetId
      */
     public Integer getDataKeySetId() {
-        DataKeySet myKey = getDataKeySet();
+        final DataKeySet myKey = getDataKeySet();
         return (myKey == null)
                                ? null
                                : myKey.getId();
@@ -645,9 +645,9 @@ public class DataKey
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        DataSet<?, ?> myData = getDataSet();
+        final DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
-        DataKeySet myKeySet = getDataKeySet();
+        final DataKeySet myKeySet = getDataKeySet();
 
         /* Register the Key */
         myKeySet.registerDataKey(this);
@@ -668,10 +668,10 @@ public class DataKey
             pushHistory();
 
             /* Update the Security Control Key and obtain the new secured KeyDef */
-            GordianKeySet myKeySet = pHash.getKeySet();
+            final GordianKeySet myKeySet = pHash.getKeySet();
             setValueHashPrime(pPrimeHash);
-            GordianFactory myFactory = myKeySet.getFactory();
-            GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(getKeyType());
+            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(getKeyType());
             setValueSecuredKeyDef(myGenerator.secureKey(getDataKey(), myKeySet));
 
             /* Check for changes */
@@ -742,7 +742,7 @@ public class DataKey
 
         @Override
         protected DataKeyList getEmptyList(final ListStyle pStyle) {
-            DataKeyList myList = new DataKeyList(this);
+            final DataKeyList myList = new DataKeyList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -766,7 +766,7 @@ public class DataKey
             }
 
             /* Clone the data key */
-            DataKey myKey = new DataKey(this, (DataKey) pItem);
+            final DataKey myKey = new DataKey(this, (DataKey) pItem);
             add(myKey);
             return myKey;
         }
@@ -779,7 +779,7 @@ public class DataKey
         @Override
         public DataKey addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the dataKey */
-            DataKey myKey = new DataKey(this, pValues);
+            final DataKey myKey = new DataKey(this, pValues);
 
             /* Check that this keyId has not been previously added */
             if (!isIdUnique(myKey.getId())) {
@@ -804,7 +804,7 @@ public class DataKey
         public DataKey createNewKey(final DataKeySet pKeySet,
                                     final GordianSymKeyType pKeyType) throws OceanusException {
             /* Create the key */
-            DataKey myKey = new DataKey(this, pKeySet, pKeyType);
+            final DataKey myKey = new DataKey(this, pKeySet, pKeyType);
 
             /* Add to the list */
             add(myKey);
@@ -821,7 +821,7 @@ public class DataKey
         public DataKey createNewKey(final DataKeySet pKeySet,
                                     final GordianStreamKeyType pKeyType) throws OceanusException {
             /* Create the key */
-            DataKey myKey = new DataKey(this, pKeySet, pKeyType);
+            final DataKey myKey = new DataKey(this, pKeySet, pKeyType);
 
             /* Add to the list */
             add(myKey);
@@ -838,7 +838,7 @@ public class DataKey
         public DataKey cloneDataKey(final DataKeySet pKeySet,
                                     final DataKey pDataKey) throws OceanusException {
             /* Build data values */
-            DataValues<CryptographyDataType> myValues = new DataValues<>(DataKey.OBJECT_NAME);
+            final DataValues<CryptographyDataType> myValues = new DataValues<>(DataKey.OBJECT_NAME);
             myValues.addValue(DataKey.FIELD_ID, pDataKey.getId());
             myValues.addValue(DataKey.FIELD_KEYSET, pKeySet);
             myValues.addValue(DataKey.FIELD_HASHPRIME, pDataKey.isHashPrime());

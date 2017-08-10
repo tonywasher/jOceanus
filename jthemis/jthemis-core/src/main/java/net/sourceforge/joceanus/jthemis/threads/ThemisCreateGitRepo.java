@@ -74,18 +74,18 @@ public class ThemisCreateGitRepo<N, I>
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
         /* Access git repository */
         theGitRepo = new ThemisGitRepository(myPreferences, myManager);
 
         /* Create a new Git repository */
-        ThemisBuildGit myBuild = new ThemisBuildGit(theSource, theGitRepo);
-        Long myStart = System.nanoTime();
+        final ThemisBuildGit myBuild = new ThemisBuildGit(theSource, theGitRepo);
+        final Long myStart = System.nanoTime();
         myBuild.buildRepository(myManager);
-        Long myEnd = System.nanoTime();
-        LocalTime myDuration = LocalTime.ofNanoOfDay(myEnd - myStart);
+        final Long myEnd = System.nanoTime();
+        final LocalTime myDuration = LocalTime.ofNanoOfDay(myEnd - myStart);
         myManager.setNewStage("Elapsed: " + myDuration);
 
         /* Return null */

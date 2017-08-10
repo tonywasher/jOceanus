@@ -111,7 +111,7 @@ public class MetisOasisRow
      * @return true/false
      */
     protected boolean isHidden() {
-        String myString = theOasisRow.getTableVisibilityAttribute();
+        final String myString = theOasisRow.getTableVisibilityAttribute();
         return myString != null
                && myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
     }
@@ -174,7 +174,7 @@ public class MetisOasisRow
      * @return the formatted value
      */
     protected String formatValue(final Object pValue) {
-        MetisDataFormatter myFormatter = theRowMap.getFormatter();
+        final MetisDataFormatter myFormatter = theRowMap.getFormatter();
         return myFormatter.formatObject(pValue);
     }
 
@@ -187,7 +187,7 @@ public class MetisOasisRow
      */
     protected <T> T parseValue(final String pSource,
                                final Class<T> pClass) {
-        MetisDataFormatter myFormatter = theRowMap.getFormatter();
+        final MetisDataFormatter myFormatter = theRowMap.getFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -200,7 +200,7 @@ public class MetisOasisRow
      */
     protected <T> T parseValue(final Double pSource,
                                final Class<T> pClass) {
-        MetisDataFormatter myFormatter = theRowMap.getFormatter();
+        final MetisDataFormatter myFormatter = theRowMap.getFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -215,7 +215,7 @@ public class MetisOasisRow
     protected <T> T parseValue(final Double pSource,
                                final String pCurrCode,
                                final Class<T> pClass) {
-        MetisDataFormatter myFormatter = theRowMap.getFormatter();
+        final MetisDataFormatter myFormatter = theRowMap.getFormatter();
         return myFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 

@@ -83,7 +83,7 @@ public class ThemisJiraSecurity {
         /* If not in the cache */
         if (myUser == null) {
             /* Access the user details */
-            JSONObject myUserDtl = theClient.getUser(pName);
+            final JSONObject myUserDtl = theClient.getUser(pName);
 
             /* Create User object and add to list */
             myUser = new JiraUser(myUserDtl);
@@ -107,7 +107,7 @@ public class ThemisJiraSecurity {
         /* If not in the cache */
         if (myGroup == null) {
             /* Access the group details */
-            JSONObject myGroupDtl = theClient.getGroup(pName);
+            final JSONObject myGroupDtl = theClient.getGroup(pName);
 
             /* Create Group object and add to list */
             myGroup = new JiraGroup(myGroupDtl);
@@ -195,14 +195,14 @@ public class ThemisJiraSecurity {
                 /* Protect against exceptions */
                 try {
                     /* Access the users */
-                    JSONObject mySelf = theClient.getUserGroups(getName());
-                    JSONObject myGroups = mySelf.getJSONObject("groups");
-                    JSONArray myItems = myGroups.getJSONArray("items");
-                    int myNumGroups = myGroups.getInt("size");
+                    final JSONObject mySelf = theClient.getUserGroups(getName());
+                    final JSONObject myGroups = mySelf.getJSONObject("groups");
+                    final JSONArray myItems = myGroups.getJSONArray("items");
+                    final int myNumGroups = myGroups.getInt("size");
                     for (int i = 0; i < myNumGroups; i++) {
                         /* Access the group and record it */
-                        JSONObject myGroupDtl = myItems.getJSONObject(i);
-                        JiraGroup myGroup = getGroup(myGroupDtl.getString("name"));
+                        final JSONObject myGroupDtl = myItems.getJSONObject(i);
+                        final JiraGroup myGroup = getGroup(myGroupDtl.getString("name"));
                         theGroups.add(myGroup);
                     }
 
@@ -260,14 +260,14 @@ public class ThemisJiraSecurity {
                 /* Protect against exceptions */
                 try {
                     /* Access the users */
-                    JSONObject mySelf = theClient.getGroupUsers(getName());
-                    JSONObject myUsers = mySelf.getJSONObject("users");
-                    JSONArray myItems = myUsers.getJSONArray("items");
-                    int myNumUsers = myUsers.getInt("size");
+                    final JSONObject mySelf = theClient.getGroupUsers(getName());
+                    final JSONObject myUsers = mySelf.getJSONObject("users");
+                    final JSONArray myItems = myUsers.getJSONArray("items");
+                    final int myNumUsers = myUsers.getInt("size");
                     for (int i = 0; i < myNumUsers; i++) {
                         /* Access the user and record it */
-                        JSONObject myUserDtl = myItems.getJSONObject(i);
-                        JiraUser myUser = getUser(myUserDtl.getString("name"));
+                        final JSONObject myUserDtl = myItems.getJSONObject(i);
+                        final JiraUser myUser = getUser(myUserDtl.getString("name"));
                         theMembers.add(myUser);
                     }
 

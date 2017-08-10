@@ -35,7 +35,7 @@ public class IdManager<T extends DataItem<E> & Comparable<? super T>, E extends 
     /**
      * The maximum id.
      */
-    private Integer theMaxId = 0;
+    private Integer theMaxId;
 
     /**
      * Constructor.
@@ -83,7 +83,7 @@ public class IdManager<T extends DataItem<E> & Comparable<? super T>, E extends 
      * @param pItem the item
      */
     protected void setNewId(final DataItem<E> pItem) {
-        Integer myId = pItem.getId();
+        final Integer myId = pItem.getId();
 
         /* If we need to generate a new id */
         if ((myId == null) || (myId == 0)) {

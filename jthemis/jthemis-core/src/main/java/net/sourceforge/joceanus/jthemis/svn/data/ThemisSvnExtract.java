@@ -117,7 +117,7 @@ public class ThemisSvnExtract
         theTags = new SvnTagExtractPlanList();
 
         /* Obtain the trunk branch */
-        ThemisSvnBranch myTrunk = theComponent.getTrunk();
+        final ThemisSvnBranch myTrunk = theComponent.getTrunk();
         theTrunk = new SvnBranchExtractPlan(myTrunk);
         theTrunk.buildView();
 
@@ -125,9 +125,9 @@ public class ThemisSvnExtract
         buildTags(myTrunk);
 
         /* Loop through the branches in reverse order */
-        ListIterator<ThemisSvnBranch> myIterator = theComponent.branchListIterator();
+        final ListIterator<ThemisSvnBranch> myIterator = theComponent.branchListIterator();
         while (myIterator.hasPrevious()) {
-            ThemisSvnBranch myBranch = myIterator.previous();
+            final ThemisSvnBranch myBranch = myIterator.previous();
 
             /* Ignore if trunk */
             if (myBranch.isTrunk()) {
@@ -137,18 +137,18 @@ public class ThemisSvnExtract
             /* If non-virtual */
             if (!myBranch.isVirtual()) {
                 /* Build the plan */
-                SvnBranchExtractPlan myPlan = new SvnBranchExtractPlan(myBranch);
+                final SvnBranchExtractPlan myPlan = new SvnBranchExtractPlan(myBranch);
                 theBranches.add(myPlan);
                 myPlan.buildView();
 
                 /* If the plan is not anchored */
                 if (!myPlan.isAnchored()) {
                     /* Obtain the origin view of this and the trunk */
-                    SvnExtractView myView = myPlan.viewIterator().next();
-                    SvnExtractView myTrunkView = theTrunk.viewIterator().next();
+                    final SvnExtractView myView = myPlan.viewIterator().next();
+                    final SvnExtractView myTrunkView = theTrunk.viewIterator().next();
 
                     /* Reject if not possible to repair */
-                    SVNRevision myRev = myView.getRevision();
+                    final SVNRevision myRev = myView.getRevision();
                     if (!myRev.equals(myTrunkView.getRevision())) {
                         throw new ThemisDataException(myPlan, "Branch Plan is not anchored");
                     }
@@ -237,12 +237,12 @@ public class ThemisSvnExtract
      */
     private void buildTags(final ThemisSvnBranch pBranch) throws OceanusException {
         /* Loop through the tags */
-        Iterator<ThemisSvnTag> myIterator = pBranch.tagIterator();
+        final Iterator<ThemisSvnTag> myIterator = pBranch.tagIterator();
         while (myIterator.hasNext()) {
-            ThemisSvnTag myTag = myIterator.next();
+            final ThemisSvnTag myTag = myIterator.next();
 
             /* Build the plan */
-            SvnTagExtractPlan myPlan = new SvnTagExtractPlan(myTag);
+            final SvnTagExtractPlan myPlan = new SvnTagExtractPlan(myTag);
             theTags.add(myPlan);
             myPlan.buildView();
 
@@ -256,7 +256,7 @@ public class ThemisSvnExtract
     @Override
     public String toString() {
         /* Create a stringBuilder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Output the title */
         myBuilder.append("\n\nComponent ");
@@ -267,18 +267,18 @@ public class ThemisSvnExtract
         myBuilder.append(theTrunk.toString());
 
         /* Add Branches */
-        Iterator<SvnBranchExtractPlan> myBrnIterator = theBranches.iterator();
+        final Iterator<SvnBranchExtractPlan> myBrnIterator = theBranches.iterator();
         while (myBrnIterator.hasNext()) {
-            SvnBranchExtractPlan myBranch = myBrnIterator.next();
+            final SvnBranchExtractPlan myBranch = myBrnIterator.next();
 
             /* Add to output */
             myBuilder.append(myBranch.toString());
         }
 
         /* Add Tags */
-        Iterator<SvnTagExtractPlan> myTagIterator = theTags.iterator();
+        final Iterator<SvnTagExtractPlan> myTagIterator = theTags.iterator();
         while (myTagIterator.hasNext()) {
-            SvnTagExtractPlan myTag = myTagIterator.next();
+            final SvnTagExtractPlan myTag = myTagIterator.next();
 
             /* Add to output */
             myBuilder.append(myTag.toString());
@@ -646,7 +646,7 @@ public class ThemisSvnExtract
         @Override
         public String toString() {
             /* Create a stringBuilder */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Output the title */
             myBuilder.append("\n\nOwner ");
@@ -659,9 +659,9 @@ public class ThemisSvnExtract
             }
 
             /* Add Elements */
-            Iterator<SvnExtractView> myIterator = theViews.iterator();
+            final Iterator<SvnExtractView> myIterator = theViews.iterator();
             while (myIterator.hasNext()) {
-                SvnExtractView myView = myIterator.next();
+                final SvnExtractView myView = myIterator.next();
 
                 /* Add to output */
                 myBuilder.append(myView.toString());
@@ -678,7 +678,7 @@ public class ThemisSvnExtract
          */
         protected void buildView(final SvnRevisionPath pPath) throws OceanusException {
             /* Create a sourceDirs list */
-            List<ThemisSvnRevisionHistory> mySourceDirs = new ArrayList<>();
+            final List<ThemisSvnRevisionHistory> mySourceDirs = new ArrayList<>();
 
             /* Access first entry */
             ThemisSvnRevisionHistory myEntry = pPath.getBasedOn();
@@ -686,7 +686,7 @@ public class ThemisSvnExtract
                 /* If the entry is not based on this owner */
                 if (!theOwner.equals(myEntry.getOwner())) {
                     /* Create anchor point */
-                    SvnRevisionKey myKey = myEntry.getRevisionKey();
+                    final SvnRevisionKey myKey = myEntry.getRevisionKey();
                     theAnchor = new SvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
 
                     /* Break the loop */
@@ -700,9 +700,9 @@ public class ThemisSvnExtract
                 }
 
                 /* Declare the view */
-                SvnRevisionKey myKey = myEntry.getRevisionKey();
-                SvnExtractView myView = new SvnExtractView(theRepo, myKey.getRevision(), myEntry);
-                String myBase = myKey.getPath();
+                final SvnRevisionKey myKey = myEntry.getRevisionKey();
+                final SvnExtractView myView = new SvnExtractView(theRepo, myKey.getRevision(), myEntry);
+                final String myBase = myKey.getPath();
                 myView.setBaseDir(theRepo.getURL(myBase));
                 theViews.add(0, myView);
 
@@ -724,17 +724,17 @@ public class ThemisSvnExtract
          */
         private void processSourceDirs(final List<ThemisSvnRevisionHistory> pSourceList) throws OceanusException {
             /* Loop through the copy directories */
-            Iterator<ThemisSvnRevisionHistory> myHistIterator = pSourceList.iterator();
+            final Iterator<ThemisSvnRevisionHistory> myHistIterator = pSourceList.iterator();
             while (myHistIterator.hasNext()) {
-                ThemisSvnRevisionHistory myHist = myHistIterator.next();
+                final ThemisSvnRevisionHistory myHist = myHistIterator.next();
 
                 /* Access the revision */
-                SVNRevision myRev = myHist.getRevision();
+                final SVNRevision myRev = myHist.getRevision();
 
                 /* Loop through the source directories */
-                Iterator<SvnSourceDir> myIterator = myHist.sourceDirIterator();
+                final Iterator<SvnSourceDir> myIterator = myHist.sourceDirIterator();
                 while (myIterator.hasNext()) {
-                    SvnSourceDir myDir = myIterator.next();
+                    final SvnSourceDir myDir = myIterator.next();
 
                     /* Process the source directory */
                     processSourceDir(myRev, myDir, myHist);
@@ -758,7 +758,7 @@ public class ThemisSvnExtract
             adjustView(pStartRev, myComp, mySource, pEntry);
 
             /* Create a sourceDirs list */
-            List<ThemisSvnRevisionHistory> mySourceDirs = new ArrayList<>();
+            final List<ThemisSvnRevisionHistory> mySourceDirs = new ArrayList<>();
 
             /* Obtain the initial revision (which we have already handled) */
             ThemisSvnRevisionHistory myEntry = pDir.getBasedOn();
@@ -781,7 +781,7 @@ public class ThemisSvnExtract
                 /* If the entry is not based on this owner */
                 if (!theOwner.equals(myEntry.getOwner())) {
                     /* Create anchor point */
-                    SvnRevisionKey myKey = myEntry.getRevisionKey();
+                    final SvnRevisionKey myKey = myEntry.getRevisionKey();
                     theAnchor = new SvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
 
                     /* Break the loop */
@@ -795,7 +795,7 @@ public class ThemisSvnExtract
                 }
 
                 /* Access the view */
-                SvnRevisionKey myKey = myEntry.getRevisionKey();
+                final SvnRevisionKey myKey = myEntry.getRevisionKey();
                 adjustView(mySource.getRevision(), myComp, myKey, myEntry);
 
                 /* If we have an origin */
@@ -829,19 +829,19 @@ public class ThemisSvnExtract
                                 final SvnRevisionKey pKey,
                                 final ThemisSvnRevisionHistory pEntry) throws OceanusException {
             /* Determine the required revision */
-            long myStart = pStartRev.getNumber();
-            SVNRevision myRevision = pKey.getRevision();
-            long myRev = myRevision.getNumber();
-            String myBase = pKey.getPath();
+            final long myStart = pStartRev.getNumber();
+            final SVNRevision myRevision = pKey.getRevision();
+            final long myRev = myRevision.getNumber();
+            final String myBase = pKey.getPath();
 
             /* Loop through the views in descending order */
-            int mySize = theViews.size();
-            ListIterator<SvnExtractView> myIterator = theViews.listIterator(mySize);
+            final int mySize = theViews.size();
+            final ListIterator<SvnExtractView> myIterator = theViews.listIterator(mySize);
             while (myIterator.hasPrevious()) {
                 SvnExtractView myView = myIterator.previous();
 
                 /* Obtain revision and skip over if too recent */
-                long myCurr = myView.getRevision().getNumber();
+                final long myCurr = myView.getRevision().getNumber();
                 if (myCurr >= myStart) {
                     continue;
                 }
@@ -867,7 +867,7 @@ public class ThemisSvnExtract
             }
 
             /* None found before end of list, so allocate new view */
-            SvnExtractView myView = new SvnExtractView(theRepo, myRevision, pEntry);
+            final SvnExtractView myView = new SvnExtractView(theRepo, myRevision, pEntry);
             theViews.add(0, myView);
             myView.addDirectory(pComp, theRepo.getURL(myBase));
         }
@@ -887,7 +887,7 @@ public class ThemisSvnExtract
             theAnchor = new SvnExtractAnchor(theOwner, pView.getRevision());
 
             /* Add to target plan */
-            SvnExtractMigratedView myMigrate = new SvnExtractMigratedView(theOwner, pView);
+            final SvnExtractMigratedView myMigrate = new SvnExtractMigratedView(theOwner, pView);
             pTarget.theViews.add(0, myMigrate);
         }
     }
@@ -1090,9 +1090,9 @@ public class ThemisSvnExtract
             this(pView.theRepo, pRevision, pEntry);
 
             /* Loop through the underlying items */
-            Iterator<SvnExtractItem> myIterator = pView.elementIterator();
+            final Iterator<SvnExtractItem> myIterator = pView.elementIterator();
             while (myIterator.hasNext()) {
-                SvnExtractItem myItem = myIterator.next();
+                final SvnExtractItem myItem = myIterator.next();
 
                 /* Add the item */
                 theItems.addItem(myItem);
@@ -1117,9 +1117,9 @@ public class ThemisSvnExtract
             theItems = new SvnExtractItemList();
 
             /* Loop through the underlying items */
-            Iterator<SvnExtractItem> myIterator = pView.elementIterator();
+            final Iterator<SvnExtractItem> myIterator = pView.elementIterator();
             while (myIterator.hasNext()) {
-                SvnExtractItem myItem = myIterator.next();
+                final SvnExtractItem myItem = myIterator.next();
 
                 /* Add the item */
                 theItems.addItem(myItem);
@@ -1174,7 +1174,7 @@ public class ThemisSvnExtract
          * @return the date
          */
         public Date getDate() {
-            Date myDate = new Date();
+            final Date myDate = new Date();
             myDate.setTime(theDate.getTime());
             return myDate;
         }
@@ -1190,16 +1190,16 @@ public class ThemisSvnExtract
         @Override
         public String toString() {
             /* Create a stringBuilder */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Output the title */
             myBuilder.append("\n\nRevision ");
             myBuilder.append(theRevision.toString());
 
             /* Add Elements */
-            Iterator<SvnExtractItem> myIterator = theItems.iterator();
+            final Iterator<SvnExtractItem> myIterator = theItems.iterator();
             while (myIterator.hasNext()) {
-                SvnExtractItem myEl = myIterator.next();
+                final SvnExtractItem myEl = myIterator.next();
 
                 /* Add to output */
                 myBuilder.append("\n");
@@ -1216,7 +1216,7 @@ public class ThemisSvnExtract
          * @throws OceanusException on error
          */
         private void setBaseDir(final SVNURL pBaseDir) throws OceanusException {
-            SvnExtractItem myItem = new SvnExtractItem(pBaseDir);
+            final SvnExtractItem myItem = new SvnExtractItem(pBaseDir);
             theItems.addItem(myItem);
         }
 
@@ -1228,7 +1228,7 @@ public class ThemisSvnExtract
          */
         private void addDirectory(final String pTarget,
                                   final SVNURL pBaseDir) throws OceanusException {
-            SvnExtractItem myItem = new SvnExtractItem(pTarget, pBaseDir);
+            final SvnExtractItem myItem = new SvnExtractItem(pTarget, pBaseDir);
             theItems.addItem(myItem);
         }
 
@@ -1244,19 +1244,19 @@ public class ThemisSvnExtract
             ThemisDirectory.clearDirectory(pTarget, pKeep);
 
             /* Access update client */
-            SVNClientManager myMgr = theRepo.getClientManager();
-            SVNUpdateClient myUpdate = myMgr.getUpdateClient();
+            final SVNClientManager myMgr = theRepo.getClientManager();
+            final SVNUpdateClient myUpdate = myMgr.getUpdateClient();
             myUpdate.setExportExpandsKeywords(false);
 
             /* Protect against exceptions */
             try {
                 /* Loop through the items */
-                Iterator<SvnExtractItem> myIterator = elementIterator();
+                final Iterator<SvnExtractItem> myIterator = elementIterator();
                 while (myIterator.hasNext()) {
-                    SvnExtractItem myItem = myIterator.next();
+                    final SvnExtractItem myItem = myIterator.next();
 
                     /* Determine the target */
-                    File myTarget = myItem.getTarget(pTarget);
+                    final File myTarget = myItem.getTarget(pTarget);
 
                     /* Export the item */
                     myUpdate.doExport(myItem.getSource(), myTarget, theRevision, theRevision, null, true, SVNDepth.INFINITY);
@@ -1366,7 +1366,7 @@ public class ThemisSvnExtract
         @Override
         public String toString() {
             /* Create a stringBuilder */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Output the title */
             if (theTarget != null) {
@@ -1420,12 +1420,12 @@ public class ThemisSvnExtract
         @Override
         public String toString() {
             /* Create a stringBuilder */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Add Branches */
-            Iterator<SvnExtractItem> myIterator = theItemList.iterator();
+            final Iterator<SvnExtractItem> myIterator = theItemList.iterator();
             while (myIterator.hasNext()) {
-                SvnExtractItem myItem = myIterator.next();
+                final SvnExtractItem myItem = myIterator.next();
 
                 /* Add to output */
                 myBuilder.append('\n');
@@ -1456,9 +1456,9 @@ public class ThemisSvnExtract
          */
         private void addItem(final SvnExtractItem pItem) throws OceanusException {
             /* Loop through the existing items */
-            Iterator<SvnExtractItem> myIterator = theItemList.iterator();
+            final Iterator<SvnExtractItem> myIterator = theItemList.iterator();
             while (myIterator.hasNext()) {
-                SvnExtractItem myEntry = myIterator.next();
+                final SvnExtractItem myEntry = myIterator.next();
 
                 /* If we have matching target */
                 if (MetisDataDifference.isEqual(myEntry.getTarget(), pItem.getTarget())) {

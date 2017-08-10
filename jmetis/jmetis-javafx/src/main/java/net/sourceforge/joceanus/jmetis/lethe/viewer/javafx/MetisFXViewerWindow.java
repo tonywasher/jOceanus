@@ -137,9 +137,9 @@ public class MetisFXViewerWindow
             initOwner(theFactory.getStage());
 
             /* Create the scene */
-            BorderPane myContainer = new BorderPane();
+            final BorderPane myContainer = new BorderPane();
             myContainer.setCenter(getSplitTreeManager().getNode());
-            Scene myScene = new Scene(myContainer);
+            final Scene myScene = new Scene(myContainer);
             setScene(myScene);
         }
 
@@ -148,10 +148,10 @@ public class MetisFXViewerWindow
          */
         private void showDialog() {
             /* Centre on parent */
-            Window myParent = getOwner();
+            final Window myParent = getOwner();
             if (myParent != null) {
-                double myX = (myParent.getWidth() - WINDOW_WIDTH) / 2;
-                double myY = (myParent.getHeight() - WINDOW_HEIGHT) / 2;
+                final double myX = (myParent.getWidth() - WINDOW_WIDTH) / 2;
+                final double myY = (myParent.getHeight() - WINDOW_HEIGHT) / 2;
                 setX(myParent.getX() + myX);
                 setY(myParent.getY() + myY);
             }

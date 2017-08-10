@@ -332,8 +332,8 @@ public class MetisDataVersionControl
      * @return the dataState
      */
     private MetisDataState determineState() {
-        MetisDataVersionValues myCurr = getValueSet();
-        MetisDataVersionValues myOriginal = getOriginalValues();
+        final MetisDataVersionValues myCurr = getValueSet();
+        final MetisDataVersionValues myOriginal = getOriginalValues();
 
         /* If we are a new element */
         if (myOriginal.getVersion() > 0) {

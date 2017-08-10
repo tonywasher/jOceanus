@@ -318,7 +318,7 @@ public class MetisViewerPage {
         theBuilder.setLength(0);
         theBuilder.append("Object");
         theBuilder.append(theNextId++);
-        String myId = theBuilder.toString();
+        final String myId = theBuilder.toString();
 
         /* Record the id and return it */
         theLinkMap.put(myId, pData);
@@ -332,7 +332,7 @@ public class MetisViewerPage {
      */
     protected MetisViewerPage newPage(final String pLink) {
         /* Lookup the data */
-        Object myData = theLinkMap.get(pLink);
+        final Object myData = theLinkMap.get(pLink);
         return myData == null
                               ? this
                               : new MetisViewerPage(theEntry, this, myData);
@@ -406,9 +406,9 @@ public class MetisViewerPage {
      */
     private static boolean isCollection(final Object pObject) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDelta
-                                                            ? ((MetisDataDelta) pObject).getObject()
-                                                            : pObject;
+        final Object myObject = pObject instanceof MetisDataDelta
+                                                                  ? ((MetisDataDelta) pObject).getObject()
+                                                                  : pObject;
 
         /* Handle extended Lists/Maps */
         if (myObject instanceof MetisDataList
@@ -454,9 +454,9 @@ public class MetisViewerPage {
         }
 
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDelta
-                                                            ? ((MetisDataDelta) pObject).getObject()
-                                                            : pObject;
+        final Object myObject = pObject instanceof MetisDataDelta
+                                                                  ? ((MetisDataDelta) pObject).getObject()
+                                                                  : pObject;
 
         /* Handle structured object */
         if (myObject instanceof MetisDataFieldItem) {

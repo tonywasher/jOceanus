@@ -347,7 +347,7 @@ public abstract class MetisTableManager<R extends MetisDataTableItem, N, I>
     private static boolean isFieldInError(final MetisDataField pField,
                                           final MetisDataTableItem pItem) {
         if (pItem instanceof MetisDataVersionedItem) {
-            MetisDataVersionControl myControl = ((MetisDataVersionedItem) pItem).getVersionControl();
+            final MetisDataVersionControl myControl = ((MetisDataVersionedItem) pItem).getVersionControl();
             return myControl.getValidation().hasErrors(pField);
         }
         return false;
@@ -362,7 +362,7 @@ public abstract class MetisTableManager<R extends MetisDataTableItem, N, I>
     private static boolean isFieldChanged(final MetisDataField pField,
                                           final MetisDataTableItem pItem) {
         if (pItem instanceof MetisDataVersionedItem) {
-            MetisDataVersionControl myControl = ((MetisDataVersionedItem) pItem).getVersionControl();
+            final MetisDataVersionControl myControl = ((MetisDataVersionedItem) pItem).getVersionControl();
             return myControl.fieldChanged(pField).isDifferent();
         }
         return false;
@@ -375,7 +375,7 @@ public abstract class MetisTableManager<R extends MetisDataTableItem, N, I>
      */
     private static boolean isItemDisabled(final MetisDataTableItem pItem) {
         if (pItem instanceof MetisDisableItem) {
-            MetisDisableItem myItem = (MetisDisableItem) pItem;
+            final MetisDisableItem myItem = (MetisDisableItem) pItem;
             return myItem.isDisabled();
         }
         return false;

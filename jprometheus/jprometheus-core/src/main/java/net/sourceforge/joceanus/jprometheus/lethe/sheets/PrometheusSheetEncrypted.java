@@ -70,7 +70,7 @@ public abstract class PrometheusSheetEncrypted<T extends EncryptedItem<E> & Comp
     @Override
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues<E> myValues = super.getRowValues(pName);
 
         /* Add the control id and return the new values */
         myValues.addValue(EncryptedItem.FIELD_KEYSET, loadInteger(COL_KEYSETID));

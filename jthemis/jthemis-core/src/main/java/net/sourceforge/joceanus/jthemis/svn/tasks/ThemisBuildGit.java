@@ -97,13 +97,13 @@ public class ThemisBuildGit {
     public ThemisBuildGit(final ThemisSvnComponent pSource,
                           final ThemisGitRepository pGitRepo) throws OceanusException {
         /* Create the target component */
-        ThemisGitComponent myTarget = pGitRepo.createComponent(pSource.getName());
+        final ThemisGitComponent myTarget = pGitRepo.createComponent(pSource.getName());
 
         /* Access the work directory */
         theWorkDir = myTarget.getWorkingDir();
 
         /* Access the Git instance */
-        Repository myRepo = myTarget.getGitRepo();
+        final Repository myRepo = myTarget.getGitRepo();
         theGit = new Git(myRepo);
         theCommitter = new PersonIdent(myRepo);
 
@@ -172,9 +172,9 @@ public class ThemisBuildGit {
         boolean isExtracted = false;
 
         /* Build the branches */
-        Iterator<SvnBranchExtractPlan> myBranchIterator = thePlan.branchIterator();
+        final Iterator<SvnBranchExtractPlan> myBranchIterator = thePlan.branchIterator();
         while (myBranchIterator.hasNext()) {
-            SvnBranchExtractPlan myPlan = myBranchIterator.next();
+            final SvnBranchExtractPlan myPlan = myBranchIterator.next();
 
             /* Ignore if we have already extracted this plan */
             if (myPlan.haveExtracted()) {
@@ -182,13 +182,13 @@ public class ThemisBuildGit {
             }
 
             /* Access anchor point */
-            SvnExtractAnchor myAnchor = myPlan.getAnchor();
+            final SvnExtractAnchor myAnchor = myPlan.getAnchor();
             if (myAnchor == null) {
                 throw new ThemisLogicException("Unanchored branch");
             }
 
             /* If we have seen this anchor point */
-            RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
+            final RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
                 pReport.initTask("Building branch " + myPlan.getOwner());
@@ -222,9 +222,9 @@ public class ThemisBuildGit {
         boolean isExtracted = false;
 
         /* Build the tags */
-        Iterator<SvnTagExtractPlan> myTagIterator = thePlan.tagIterator();
+        final Iterator<SvnTagExtractPlan> myTagIterator = thePlan.tagIterator();
         while (myTagIterator.hasNext()) {
-            SvnTagExtractPlan myPlan = myTagIterator.next();
+            final SvnTagExtractPlan myPlan = myTagIterator.next();
 
             /* Ignore if we have already extracted this plan */
             if (myPlan.haveExtracted()) {
@@ -232,13 +232,13 @@ public class ThemisBuildGit {
             }
 
             /* Access anchor point */
-            SvnExtractAnchor myAnchor = myPlan.getAnchor();
+            final SvnExtractAnchor myAnchor = myPlan.getAnchor();
             if (myAnchor == null) {
                 throw new ThemisLogicException("Unanchored tag");
             }
 
             /* If we have seen this anchor point */
-            RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
+            final RevCommit myLastCommit = theCommitMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
                 pReport.initTask("Building tag " + myPlan.getOwner());
@@ -267,8 +267,8 @@ public class ThemisBuildGit {
      */
     private void buildTrunk(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access the plan */
-        SvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
-        Object myOwner = myPlan.getOwner();
+        final SvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
+        final Object myOwner = myPlan.getOwner();
 
         /* Report plan steps */
         pReport.setNumSteps(myPlan.numViews());
@@ -290,17 +290,17 @@ public class ThemisBuildGit {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
-            ThemisSvnBranch myOwner = pBranchPlan.getOwner();
+            final ThemisSvnBranch myOwner = pBranchPlan.getOwner();
 
             /* Check that we are starting with a clean directory */
-            StatusCommand myStatusCmd = theGit.status();
-            Status myStatus = myStatusCmd.call();
+            final StatusCommand myStatusCmd = theGit.status();
+            final Status myStatus = myStatusCmd.call();
             if (!myStatus.isClean()) {
                 throw new ThemisLogicException("Dirty working directory");
             }
 
             /* Create a branch from this commit and check it out */
-            CheckoutCommand myCheckout = theGit.checkout();
+            final CheckoutCommand myCheckout = theGit.checkout();
             myCheckout.setStartPoint(pLastCommit);
             myCheckout.setName(myOwner.getBranchName());
             myCheckout.setCreateBranch(true);
@@ -331,17 +331,17 @@ public class ThemisBuildGit {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
-            ThemisSvnTag myOwner = pTagPlan.getOwner();
+            final ThemisSvnTag myOwner = pTagPlan.getOwner();
 
             /* If there are changes in working directory */
-            StatusCommand myStatusCmd = theGit.status();
-            Status myStatus = myStatusCmd.call();
+            final StatusCommand myStatusCmd = theGit.status();
+            final Status myStatus = myStatusCmd.call();
             if (!myStatus.isClean()) {
                 throw new ThemisLogicException("Dirty working directory");
             }
 
             /* Check the commit out as a head-less checkout */
-            CheckoutCommand myCheckout = theGit.checkout();
+            final CheckoutCommand myCheckout = theGit.checkout();
             myCheckout.setName(pLastCommit.name());
             myCheckout.call();
 
@@ -354,7 +354,7 @@ public class ThemisBuildGit {
             pReport.checkForCancellation();
 
             /* Create the tag */
-            TagCommand myTag = theGit.tag();
+            final TagCommand myTag = theGit.tag();
             myTag.setName(myOwner.getTagName());
             myTag.setAnnotated(true);
             myTag.setTagger(new PersonIdent(theCommitter, new Date()));
@@ -384,14 +384,14 @@ public class ThemisBuildGit {
             RevCommit myLastCommit = pBaseCommit;
 
             /* Access a date formatter */
-            TethysDateFormatter myFormatter = new TethysDateFormatter();
+            final TethysDateFormatter myFormatter = new TethysDateFormatter();
 
             /* Iterate through the elements */
             while (pIterator.hasNext()) {
-                SvnExtractView myView = pIterator.next();
+                final SvnExtractView myView = pIterator.next();
 
                 /* Report plan step */
-                String myFormat = myFormatter.formatJavaDate(myView.getDate());
+                final String myFormat = myFormatter.formatJavaDate(myView.getDate());
                 pReport.setNextStep(myFormat);
 
                 /* Extract the details to the directory, preserving the GitDir */
@@ -402,12 +402,12 @@ public class ThemisBuildGit {
                 Status myStatus = myStatusCmd.call();
                 if (!myStatus.isClean()) {
                     /* Ensure that all items are staged */
-                    AddCommand myAdd = theGit.add();
+                    final AddCommand myAdd = theGit.add();
                     myAdd.addFilepattern(".");
                     myAdd.call();
 
                     /* Commit the changes */
-                    CommitCommand myCommit = theGit.commit();
+                    final CommitCommand myCommit = theGit.commit();
                     myCommit.setAll(true);
                     myCommit.setCommitter(new PersonIdent(theCommitter, myView.getDate()));
                     myCommit.setMessage(myView.getLogMessage());
@@ -424,12 +424,12 @@ public class ThemisBuildGit {
                 /* Determine owner */
                 Object myOwner = pOwner;
                 if (myView instanceof SvnExtractMigratedView) {
-                    SvnExtractMigratedView myMigrate = (SvnExtractMigratedView) myView;
+                    final SvnExtractMigratedView myMigrate = (SvnExtractMigratedView) myView;
                     myOwner = myMigrate.getOwner();
                 }
 
                 /* Store details of the commit */
-                SvnExtractAnchor myAnchor = new SvnExtractAnchor(myOwner, myView.getRevision());
+                final SvnExtractAnchor myAnchor = new SvnExtractAnchor(myOwner, myView.getRevision());
                 theCommitMap.addAnchor(myAnchor, myLastCommit);
             }
 
@@ -447,13 +447,13 @@ public class ThemisBuildGit {
         /* Protect against exceptions */
         try {
             /* Switch back to master */
-            CheckoutCommand myCheckout = theGit.checkout();
+            final CheckoutCommand myCheckout = theGit.checkout();
             myCheckout.setName(ThemisGitBranch.BRN_MASTER);
             myCheckout.setForce(true);
             myCheckout.call();
 
             /* Call garbage collection */
-            GarbageCollectCommand myCmd = theGit.gc();
+            final GarbageCollectCommand myCmd = theGit.gc();
             myCmd.call();
 
             /* Catch git exceptions */
@@ -525,9 +525,9 @@ public class ThemisBuildGit {
             RevCommit myCommit = null;
 
             /* Loop through the revisions */
-            Iterator<SvnRevisionCommit> myIterator = iterator();
+            final Iterator<SvnRevisionCommit> myIterator = iterator();
             while (myIterator.hasNext()) {
-                SvnRevisionCommit myRevision = myIterator.next();
+                final SvnRevisionCommit myRevision = myIterator.next();
 
                 /* If this revision is past the required revision */
                 if (myRevision.getRevision() > pRevision) {
@@ -565,7 +565,7 @@ public class ThemisBuildGit {
         private void addAnchor(final SvnExtractAnchor pAnchor,
                                final RevCommit pCommit) {
             /* Access the list */
-            Object myOwner = pAnchor.getOwner();
+            final Object myOwner = pAnchor.getOwner();
             SvnRevisionCommitList myList = get(myOwner);
             if (myList == null) {
                 /* Create the list and store it */
@@ -585,7 +585,7 @@ public class ThemisBuildGit {
          */
         private RevCommit getCommit(final SvnExtractAnchor pAnchor) throws OceanusException {
             /* Access the list */
-            SvnRevisionCommitList myList = get(pAnchor.getOwner());
+            final SvnRevisionCommitList myList = get(pAnchor.getOwner());
             if (myList != null) {
                 /* Access the commit */
                 return myList.getCommit(pAnchor.getRevision().getNumber());

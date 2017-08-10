@@ -157,10 +157,10 @@ public class MetisEditListSet
         /* If we are currently editing */
         if (isEditing()) {
             /* Loop through the lists */
-            Iterator<MetisListKey> myIterator = keyIterator();
+            final Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
-                MetisListKey myKey = myIterator.next();
-                MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
+                final MetisListKey myKey = myIterator.next();
+                final MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -181,10 +181,10 @@ public class MetisEditListSet
         /* Commit the edit version */
         if (isEditing()) {
             /* Loop through the lists */
-            Iterator<MetisListKey> myIterator = keyIterator();
+            final Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
-                MetisListKey myKey = myIterator.next();
-                MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
+                final MetisListKey myKey = myIterator.next();
+                final MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -206,10 +206,10 @@ public class MetisEditListSet
         /* If we have editing updates */
         if (getVersion() > 0) {
             /* Loop through the lists */
-            Iterator<MetisListKey> myIterator = keyIterator();
+            final Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
-                MetisListKey myKey = myIterator.next();
-                MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
+                final MetisListKey myKey = myIterator.next();
+                final MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
 
                 /* Commit any pending version */
                 myList.commitEditVersion();
@@ -238,7 +238,7 @@ public class MetisEditListSet
         startEditVersion();
 
         /* Obtain the list */
-        MetisEditList<?> myList = getList(pItemType);
+        final MetisEditList<?> myList = getList(pItemType);
         myList.prepareItemForEdit(pItem);
     }
 
@@ -258,7 +258,7 @@ public class MetisEditListSet
         myRegistrar.addEventListener(MetisListEvent.REWIND, this::handleListReWind);
 
         /* Obtain the base list */
-        MetisBaseList<?> myBase = pList.getBaseList();
+        final MetisBaseList<?> myBase = pList.getBaseList();
         myRegistrar = myBase.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.COMMIT, this::handleListCommit);
     }
@@ -278,7 +278,7 @@ public class MetisEditListSet
     private void handleListReWind(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        MetisListChange<MetisDataVersionedItem> myBaseChange = (MetisListChange<MetisDataVersionedItem>) pChange.getDetails(MetisListChange.class);
+        final MetisListChange<MetisDataVersionedItem> myBaseChange = (MetisListChange<MetisDataVersionedItem>) pChange.getDetails(MetisListChange.class);
 
         /* ReLink Changed items */
         reLinkItems(myBaseChange.changedIterator());
@@ -291,7 +291,7 @@ public class MetisEditListSet
     private void handleListCommit(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        MetisListChange<MetisDataVersionedItem> myBaseChange = (MetisListChange<MetisDataVersionedItem>) pChange.getDetails(MetisListChange.class);
+        final MetisListChange<MetisDataVersionedItem> myBaseChange = (MetisListChange<MetisDataVersionedItem>) pChange.getDetails(MetisListChange.class);
 
         /* ReLink Added and Changed items */
         theBaseSet.reLinkItems(myBaseChange.addedIterator());

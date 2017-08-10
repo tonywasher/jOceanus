@@ -130,11 +130,11 @@ public class MetisThreadTextAreaStatus<N, I>
         theCancelButton.setVisible(false);
 
         /* Create a scroll manager */
-        TethysScrollPaneManager<N, I> myScroll = theGuiFactory.newScrollPane();
+        final TethysScrollPaneManager<N, I> myScroll = theGuiFactory.newScrollPane();
         myScroll.setContent(theTextArea);
 
         /* Create a new subPanel for the buttons */
-        TethysBoxPaneManager<N, I> myButtonPanel = theGuiFactory.newHBoxPane();
+        final TethysBoxPaneManager<N, I> myButtonPanel = theGuiFactory.newHBoxPane();
         myButtonPanel.addNode(theClearButton);
         myButtonPanel.addNode(theCancelButton);
 
@@ -174,11 +174,11 @@ public class MetisThreadTextAreaStatus<N, I>
     @Override
     public void setProgress(final MetisThreadStatus pStatus) {
         /* Set new status */
-        MetisThreadStatus myOld = theStatus;
+        final MetisThreadStatus myOld = theStatus;
         theStatus = pStatus;
 
         /* Handle new task */
-        String myNewTask = pStatus.getTask();
+        final String myNewTask = pStatus.getTask();
         if ((myNewTask != null)
             && (!myNewTask.equals(myOld.getTask()))) {
             setNewStage(myNewTask);
@@ -186,16 +186,16 @@ public class MetisThreadTextAreaStatus<N, I>
         }
 
         /* Handle new stage */
-        int myStagesDone = pStatus.getStagesDone();
+        final int myStagesDone = pStatus.getStagesDone();
         if (myStagesDone != myOld.getStagesDone()) {
             setNewStage(pStatus.getStage());
             return;
         }
 
         /* Handle new step */
-        int myStepsDone = pStatus.getStepsDone();
+        final int myStepsDone = pStatus.getStepsDone();
         if (myStepsDone != myOld.getStepsDone()) {
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(myStepsDone + 1);
             myBuilder.append(" of ");
             myBuilder.append(pStatus.getNumSteps());
@@ -254,10 +254,10 @@ public class MetisThreadTextAreaStatus<N, I>
     @Override
     public void setCompletion() {
         /* Obtain the task name */
-        String myTask = theThreadManager.getTaskName();
+        final String myTask = theThreadManager.getTaskName();
 
         /* Initialise the message */
-        String myText = myTask + " " + NLS_SUCCEEDED;
+        final String myText = myTask + " " + NLS_SUCCEEDED;
 
         /* Complete the status */
         completeStatus(myText);
@@ -266,7 +266,7 @@ public class MetisThreadTextAreaStatus<N, I>
     @Override
     public void setFailure(final Throwable pException) {
         /* Obtain the task name */
-        String myTask = theThreadManager.getTaskName();
+        final String myTask = theThreadManager.getTaskName();
 
         /* Initialise the message */
         String myText = myTask + " " + NLS_FAILED;
@@ -281,10 +281,10 @@ public class MetisThreadTextAreaStatus<N, I>
     @Override
     public void setCancelled() {
         /* Obtain the task name */
-        String myTask = theThreadManager.getTaskName();
+        final String myTask = theThreadManager.getTaskName();
 
         /* Initialise the message */
-        String myText = myTask + " " + NLS_CANCELLED;
+        final String myText = myTask + " " + NLS_CANCELLED;
 
         /* Complete the status */
         completeStatus(myText);

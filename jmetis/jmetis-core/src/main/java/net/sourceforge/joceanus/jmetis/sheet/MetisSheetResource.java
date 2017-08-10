@@ -99,7 +99,7 @@ public enum MetisSheetResource implements TethysResourceId {
      */
     private static Map<MetisWorkBookType, TethysResourceId> buildWorkBookMap() {
         /* Create the map and return it */
-        Map<MetisWorkBookType, TethysResourceId> myMap = new EnumMap<>(MetisWorkBookType.class);
+        final Map<MetisWorkBookType, TethysResourceId> myMap = new EnumMap<>(MetisWorkBookType.class);
         myMap.put(MetisWorkBookType.EXCELXLS, WORKBOOK_EXCELXLS);
         myMap.put(MetisWorkBookType.OASISODS, WORKBOOK_OASISODS);
         return myMap;

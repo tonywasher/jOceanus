@@ -189,7 +189,7 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
      */
     private static Map<PrometheusJDBCDriver, TethysResourceId> buildDriverMap() {
         /* Create the map and return it */
-        Map<PrometheusJDBCDriver, TethysResourceId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
+        final Map<PrometheusJDBCDriver, TethysResourceId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
         myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
         myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
         myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);

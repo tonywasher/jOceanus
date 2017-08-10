@@ -63,7 +63,7 @@ public class MetisOasisRowMap {
     /**
      * Number of rows.
      */
-    private int theNumRows = 0;
+    private int theNumRows;
 
     /**
      * Number of columns.
@@ -73,7 +73,7 @@ public class MetisOasisRowMap {
     /**
      * The last reference.
      */
-    private RowReference theLastReference = null;
+    private RowReference theLastReference;
 
     /**
      * List of of rows.
@@ -129,7 +129,7 @@ public class MetisOasisRowMap {
             /* If this is a row element */
             if (myNode instanceof TableTableRowElement) {
                 /* Add column to list */
-                TableTableRowElement myRow = (TableTableRowElement) myNode;
+                final TableTableRowElement myRow = (TableTableRowElement) myNode;
                 processRow(myRow);
 
                 /* If this is a node that contains columns */
@@ -160,7 +160,7 @@ public class MetisOasisRowMap {
         }
 
         /* Create the new reference and add it */
-        RowReference myRef = new RowReference(pRow, theNumRows, 0);
+        final RowReference myRef = new RowReference(pRow, theNumRows, 0);
         myRef.addToList();
 
         /* Adjust number of rows */
@@ -190,7 +190,7 @@ public class MetisOasisRowMap {
         }
 
         /* Just return the row */
-        RowReference myRef = theRows.get(pRowIndex);
+        final RowReference myRef = theRows.get(pRowIndex);
         return myRef.getReadOnlyRow();
     }
 
@@ -208,9 +208,9 @@ public class MetisOasisRowMap {
         /* If we need to extend the table */
         if (pRowIndex >= theNumRows) {
             /* Determine the number of extra rows required */
-            int myXtraRows = pRowIndex
-                             - theNumRows
-                             + 1;
+            final int myXtraRows = pRowIndex
+                                   - theNumRows
+                                   + 1;
 
             /* Add additional rows */
             addAdditionalRows(myXtraRows);
@@ -223,7 +223,7 @@ public class MetisOasisRowMap {
         }
 
         /* Just return the row */
-        RowReference myRef = theRows.get(pRowIndex);
+        final RowReference myRef = theRows.get(pRowIndex);
         return myRef.getMutableRow();
     }
 
@@ -235,7 +235,7 @@ public class MetisOasisRowMap {
         /* If we have an existing reference that is empty */
         if (isEmpty(theLastReference.getElement())) {
             /* Obtain the last row */
-            TableTableRowElement myElement = theLastReference.getElement();
+            final TableTableRowElement myElement = theLastReference.getElement();
 
             /* Determine the existing number of repeated rows */
             Integer myRepeat = theLastReference.getRepeat();
@@ -250,7 +250,7 @@ public class MetisOasisRowMap {
             /* else we need to add a completely new element */
         } else {
             /* Create a new row */
-            TableTableRowElement myElement = theOasisSheet.newRowElement(theNumCols);
+            final TableTableRowElement myElement = theOasisSheet.newRowElement(theNumCols);
             if (pXtraRows > 1) {
                 /* Set repeat count */
                 myElement.setTableNumberRowsRepeatedAttribute(pXtraRows);
@@ -273,15 +273,15 @@ public class MetisOasisRowMap {
         theNumCols += pNumNewCols;
 
         /* Loop through the later rows */
-        ListIterator<RowReference> myIterator = theRows.listIterator();
+        final ListIterator<RowReference> myIterator = theRows.listIterator();
         while (myIterator.hasNext()) {
             /* Map to new instance */
-            RowReference myRef = myIterator.next();
+            final RowReference myRef = myIterator.next();
 
             /* Only deal with primary instances */
             if (myRef.theIndex == 0) {
                 /* Add columns to the row */
-                MetisOasisRow myRow = myRef.getReadOnlyRow();
+                final MetisOasisRow myRow = myRef.getReadOnlyRow();
                 myRow.addColumnsToRow(pNumNewCols);
             }
         }
@@ -294,7 +294,7 @@ public class MetisOasisRowMap {
      */
     private static boolean isEmpty(final TableTableRowElement pElement) {
         /* If we have a child (should be a cell) */
-        Node myChild = pElement.getFirstChild();
+        final Node myChild = pElement.getFirstChild();
         if (myChild != null) {
             /* Must be an only child */
             if (myChild.getNextSibling() != null) {
@@ -309,8 +309,8 @@ public class MetisOasisRowMap {
         }
 
         /* Access the data attributes */
-        String defStyle = pElement.getTableDefaultCellStyleNameAttribute();
-        String visible = pElement.getTableVisibilityAttribute();
+        final String defStyle = pElement.getTableDefaultCellStyleNameAttribute();
+        final String visible = pElement.getTableVisibilityAttribute();
 
         /* Empty if none of the data attributes exist */
         return (defStyle == null)
@@ -357,7 +357,7 @@ public class MetisOasisRowMap {
          */
         private int getRepeat() {
             /* Determine the maximum instance */
-            Integer myRepeat = theElement.getTableNumberRowsRepeatedAttribute();
+            final Integer myRepeat = theElement.getTableNumberRowsRepeatedAttribute();
             return (myRepeat == null)
                                       ? 1
                                       : myRepeat;
@@ -386,7 +386,7 @@ public class MetisOasisRowMap {
          */
         private void extendReferences(final int pIndex) {
             /* Loop through remaining instances */
-            int myRepeat = getRepeat();
+            final int myRepeat = getRepeat();
             for (int iInstance = theInstance + 1, iIndex = theIndex + 1; iInstance < myRepeat; iInstance++, iIndex++) {
                 /* Break loop if we have extended far enough */
                 if (iIndex > pIndex) {
@@ -394,7 +394,7 @@ public class MetisOasisRowMap {
                 }
 
                 /* Create the new reference and add it */
-                RowReference myRef = new RowReference(theElement, iIndex, iInstance);
+                final RowReference myRef = new RowReference(theElement, iIndex, iInstance);
                 myRef.addToList();
             }
         }
@@ -428,10 +428,10 @@ public class MetisOasisRowMap {
          */
         private void makeIndividual() {
             /* Determine how many trailing elements to hive off */
-            int myRepeatCount = getRepeat();
-            int myNumRows = myRepeatCount
-                            - theInstance
-                            - 1;
+            final int myRepeatCount = getRepeat();
+            final int myNumRows = myRepeatCount
+                                  - theInstance
+                                  - 1;
 
             /* If we have trailing rows */
             if (myNumRows > 0) {
@@ -445,7 +445,7 @@ public class MetisOasisRowMap {
             /* If there are prior elements to hive off */
             if (theInstance > 0) {
                 /* Create a new row element for this instance, and append after this one */
-                TableTableRowElement myNew = theOasisSheet.newRowElement(theNumCols);
+                final TableTableRowElement myNew = theOasisSheet.newRowElement(theNumCols);
                 MetisOasisWorkBook.addAsNextSibling(myNew, theElement);
 
                 /* If there are multiple rows before the split */
@@ -464,7 +464,7 @@ public class MetisOasisRowMap {
             /* If we have trailing rows */
             if (myNumRows > 0) {
                 /* Create a new row element and add it before this one */
-                TableTableRowElement myNew = theOasisSheet.newRowElement(theNumCols);
+                final TableTableRowElement myNew = theOasisSheet.newRowElement(theNumCols);
                 MetisOasisWorkBook.addAsNextSibling(myNew, theElement);
 
                 /* Adjust the repeat count for trailing elements */
@@ -474,11 +474,11 @@ public class MetisOasisRowMap {
                 }
 
                 /* Loop through the later rows */
-                ListIterator<RowReference> myIterator = theRows.listIterator(theIndex + 1);
+                final ListIterator<RowReference> myIterator = theRows.listIterator(theIndex + 1);
                 for (int i = 0; myIterator.hasNext()
                                 && (i < myNumRows); i++) {
                     /* Map to new instance */
-                    RowReference myRef = myIterator.next();
+                    final RowReference myRef = myIterator.next();
                     myRef.theElement = myNew;
                     myRef.theInstance = i;
                 }

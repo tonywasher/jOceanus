@@ -95,7 +95,7 @@ public abstract class PrometheusSheetStaticData<T extends StaticData<T, ?, E>, E
     @Override
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues<E> myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
         myValues.addValue(StaticData.FIELD_NAME, loadBytes(COL_NAME));

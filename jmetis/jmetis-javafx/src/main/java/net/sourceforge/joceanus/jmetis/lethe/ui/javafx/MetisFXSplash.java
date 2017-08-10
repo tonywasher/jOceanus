@@ -79,16 +79,16 @@ public class MetisFXSplash {
         thePane = new StackPane();
 
         /* Load the image */
-        TethysProgram myApp = pInfo.getProgramDefinitions();
-        ImageView myImageView = TethysFXGuiUtils.getIcon(myApp.getSplash());
+        final TethysProgram myApp = pInfo.getProgramDefinitions();
+        final ImageView myImageView = TethysFXGuiUtils.getIcon(myApp.getSplash());
         theImage = myImageView.getImage();
 
         /* Create the name and version */
-        HBox myName = getCentredText(myApp.getName());
-        HBox myVers = getCentredText(myApp.getVersion());
-        HBox myXtra = getCentredText("");
-        VBox myBox = new VBox();
-        Region mySpacer = new Region();
+        final HBox myName = getCentredText(myApp.getName());
+        final HBox myVers = getCentredText(myApp.getVersion());
+        final HBox myXtra = getCentredText("");
+        final VBox myBox = new VBox();
+        final Region mySpacer = new Region();
         VBox.setVgrow(mySpacer, Priority.ALWAYS);
         myBox.getChildren().addAll(mySpacer, myName, myVers, myXtra);
         thePane.getChildren().addAll(myImageView, myBox);
@@ -104,7 +104,7 @@ public class MetisFXSplash {
         theStage = pStage;
 
         /* Configure the stage */
-        Scene myScene = new Scene(thePane);
+        final Scene myScene = new Scene(thePane);
         myScene.setFill(Color.TRANSPARENT);
         pStage.setScene(myScene);
         pStage.initStyle(StageStyle.TRANSPARENT);
@@ -131,7 +131,7 @@ public class MetisFXSplash {
             /* else if we are just before application start */
         } else if (pEvent.getType() == StateChangeNotification.Type.BEFORE_INIT) {
             /* Pass on info to application if possible */
-            Application myApp = pEvent.getApplication();
+            final Application myApp = pEvent.getApplication();
             if (myApp instanceof MetisApplication) {
                 ((MetisApplication) myApp).setProgramInfo(theInfo);
             }
@@ -145,16 +145,16 @@ public class MetisFXSplash {
      */
     private HBox getCentredText(final String pText) {
         /* Create the text */
-        Label myText = new Label(pText);
+        final Label myText = new Label(pText);
         myText.setStyle("-fx-text-fill:white; -fx-background-color: blue; -fx-font-size: 16;");
 
-        Region mySpacer1 = new Region();
-        Region mySpacer2 = new Region();
+        final Region mySpacer1 = new Region();
+        final Region mySpacer2 = new Region();
         HBox.setHgrow(mySpacer1, Priority.ALWAYS);
         HBox.setHgrow(mySpacer2, Priority.ALWAYS);
 
         /* Create the box */
-        HBox myBox = new HBox();
+        final HBox myBox = new HBox();
         myBox.getChildren().addAll(mySpacer1, myText, mySpacer2);
         return myBox;
     }

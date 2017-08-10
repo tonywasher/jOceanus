@@ -96,7 +96,7 @@ public final class ThemisSvnBranch
         theRepository = pParent.getRepository();
 
         /* Create tag list */
-        SvnTagList myTags = new SvnTagList(this);
+        final SvnTagList myTags = new SvnTagList(this);
         setTags(myTags);
     }
 
@@ -118,7 +118,7 @@ public final class ThemisSvnBranch
         theRepository = pParent.getRepository();
 
         /* Create tag list */
-        SvnTagList myTags = new SvnTagList(this);
+        final SvnTagList myTags = new SvnTagList(this);
         setTags(myTags);
     }
 
@@ -176,7 +176,7 @@ public final class ThemisSvnBranch
      */
     public String getPath() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* If this is the trunk branch */
         if (isTrunk()) {
@@ -205,7 +205,7 @@ public final class ThemisSvnBranch
      */
     public String getURLPath() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* If this is the trunk branch */
         if (isTrunk()) {
@@ -252,7 +252,7 @@ public final class ThemisSvnBranch
      */
     private void discoverHistory() throws OceanusException {
         /* Access history map */
-        ThemisSvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
+        final ThemisSvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
 
         /* Determine the next major branch */
         theRevisionPath = myHistMap.discoverBranch(this);
@@ -308,9 +308,9 @@ public final class ThemisSvnBranch
             clear();
 
             /* Access a LogClient */
-            ThemisSvnRepository myRepo = theComponent.getRepository();
-            SVNClientManager myMgr = myRepo.getClientManager();
-            SVNLogClient myClient = myMgr.getLogClient();
+            final ThemisSvnRepository myRepo = theComponent.getRepository();
+            final SVNClientManager myMgr = myRepo.getClientManager();
+            final SVNLogClient myClient = myMgr.getLogClient();
 
             /* Trunk branch */
             ThemisSvnBranch myTrunk = null;
@@ -318,7 +318,7 @@ public final class ThemisSvnBranch
             /* Protect against exceptions */
             try {
                 /* Parse project file for trunk */
-                ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(theComponent.getTrunkPath());
+                final ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(theComponent.getTrunkPath());
 
                 /* If we have a project definition */
                 if (myProject != null) {
@@ -375,10 +375,10 @@ public final class ThemisSvnBranch
             getUnderlyingList().sort(null);
 
             /* Loop to the last entry */
-            Iterator<ThemisSvnBranch> myIterator = iterator();
+            final Iterator<ThemisSvnBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
-                ThemisSvnBranch myBranch = myIterator.next();
+                final ThemisSvnBranch myBranch = myIterator.next();
 
                 /* Skip trunk branch */
                 if (myBranch.isTrunk()) {
@@ -391,7 +391,7 @@ public final class ThemisSvnBranch
                 /* If this is not a virtual branch */
                 if (!myBranch.isVirtual()) {
                     /* Parse project file */
-                    ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(myBranch.getURLPath());
+                    final ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(myBranch.getURLPath());
                     myBranch.setProjectDefinition(myProject);
 
                     /* Register the branch */
@@ -414,9 +414,9 @@ public final class ThemisSvnBranch
          */
         protected ThemisSvnBranch getTrunk() {
             /* Loop through the entries */
-            Iterator<ThemisSvnBranch> myIterator = iterator();
+            final Iterator<ThemisSvnBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
-                ThemisSvnBranch myBranch = myIterator.next();
+                final ThemisSvnBranch myBranch = myIterator.next();
 
                 /* If this is the trunk */
                 if (myBranch.isTrunk()) {
@@ -436,12 +436,12 @@ public final class ThemisSvnBranch
          */
         protected ThemisSvnBranch locateBranch(final SVNURL pURL) {
             /* Loop through the entries */
-            Iterator<ThemisSvnBranch> myIterator = iterator();
+            final Iterator<ThemisSvnBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
-                ThemisSvnBranch myBranch = myIterator.next();
+                final ThemisSvnBranch myBranch = myIterator.next();
 
                 /* Access branch URL */
-                SVNURL myBranchURL = myBranch.getURL();
+                final SVNURL myBranchURL = myBranch.getURL();
 
                 /* If this is parent of the passed URL */
                 if ((pURL.getPath().equals(myBranchURL.getPath())) || (pURL.getPath().startsWith(myBranchURL.getPath() + "/"))) {
@@ -504,7 +504,7 @@ public final class ThemisSvnBranch
                 /* If this is tags */
                 if (isTags) {
                     /* Locate the tag separator */
-                    int iIndex = myName.indexOf('-');
+                    final int iIndex = myName.indexOf('-');
                     if (iIndex == -1) {
                         return;
                     }
@@ -522,7 +522,7 @@ public final class ThemisSvnBranch
                 myName = myName.substring(BRANCH_PREFIX.length());
 
                 /* Create the branch and add to the list */
-                ThemisSvnBranch myBranch = new ThemisSvnBranch(theComponent, myName);
+                final ThemisSvnBranch myBranch = new ThemisSvnBranch(theComponent, myName);
                 if (isTags) {
                     myBranch.setVirtual();
                 }

@@ -157,7 +157,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
         /* Handle encrypted values */
         if (myValue instanceof MetisEncryptedField) {
             /* Access unEncrypted value */
-            MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
+            final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
             myValue = myField.getValue();
         }
 
@@ -192,22 +192,22 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
         /**
          * Are we in error mode?
          */
-        private boolean isError = false;
+        private boolean isError;
 
         /**
          * The Display text.
          */
-        private String theDisplay = null;
+        private String theDisplay;
 
         /**
          * The Edit Text.
          */
-        private String theEdit = null;
+        private String theEdit;
 
         /**
          * The Error Text.
          */
-        private String theError = null;
+        private String theError;
 
         /**
          * The Assumed Currency.
@@ -227,7 +227,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
             super(pFieldSet, pField, pClass);
 
             /* Store formatter value */
-            MetisDataFormatter myDataFormatter = pFieldSet.getDataFormatter();
+            final MetisDataFormatter myDataFormatter = pFieldSet.getDataFormatter();
             theParser = myDataFormatter.getDecimalParser();
             theFormatter = myDataFormatter.getDecimalFormatter();
             theCurrency = theParser.getDefaultCurrency();
@@ -317,7 +317,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
             super.loadValue(pItem);
 
             /* Obtain the value */
-            Object myValue = getValue();
+            final Object myValue = getValue();
 
             /* Initialise strings */
             theEdit = "";
@@ -354,37 +354,37 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
                 /* If this is a JMoney */
             } else if (myValue instanceof TethysMoney) {
                 /* Set edit/display values */
-                TethysMoney myMoney = (TethysMoney) myValue;
+                final TethysMoney myMoney = (TethysMoney) myValue;
                 theEdit = myMoney.toString();
                 theDisplay = theFormatter.formatMoney(myMoney);
                 /* If this is a JRate */
             } else if (myValue instanceof TethysRate) {
                 /* Set edit/display values */
-                TethysRate myRate = (TethysRate) myValue;
+                final TethysRate myRate = (TethysRate) myValue;
                 theEdit = myRate.toString();
                 theDisplay = theFormatter.formatRate(myRate);
                 /* If this is a JPrice */
             } else if (myValue instanceof TethysPrice) {
                 /* Set edit/display values */
-                TethysPrice myPrice = (TethysPrice) myValue;
+                final TethysPrice myPrice = (TethysPrice) myValue;
                 theEdit = myPrice.toString();
                 theDisplay = theFormatter.formatPrice(myPrice);
                 /* If this is a JUnits */
             } else if (myValue instanceof TethysUnits) {
                 /* Set edit/display values */
-                TethysUnits myUnits = (TethysUnits) myValue;
+                final TethysUnits myUnits = (TethysUnits) myValue;
                 theEdit = myUnits.toString();
                 theDisplay = theFormatter.formatUnits(myUnits);
                 /* If this is a JDilution */
             } else if (myValue instanceof TethysDilution) {
                 /* Set edit/display values */
-                TethysDilution myDilution = (TethysDilution) myValue;
+                final TethysDilution myDilution = (TethysDilution) myValue;
                 theEdit = myDilution.toString();
                 theDisplay = theFormatter.formatDilution(myDilution);
                 /* If this is a JDilution */
             } else if (myValue instanceof TethysRatio) {
                 /* Set edit/display values */
-                TethysRatio myRatio = (TethysRatio) myValue;
+                final TethysRatio myRatio = (TethysRatio) myValue;
                 theEdit = myRatio.toString();
                 theDisplay = theFormatter.formatRatio(myRatio);
             }
@@ -397,7 +397,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
          */
         public boolean processValue(final String pValue) {
             /* Obtain the text value and trim it */
-            String myText = pValue.trim();
+            final String myText = pValue.trim();
             Object myValue = null;
 
             /* If there is no change in the valid value */

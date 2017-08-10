@@ -154,7 +154,7 @@ public enum MetisDataResource implements TethysResourceId {
      */
     private static Map<MetisDifference, TethysResourceId> buildDifferenceMap() {
         /* Create the map and return it */
-        Map<MetisDifference, TethysResourceId> myMap = new EnumMap<>(MetisDifference.class);
+        final Map<MetisDifference, TethysResourceId> myMap = new EnumMap<>(MetisDifference.class);
         myMap.put(MetisDifference.IDENTICAL, DIFFERENCE_IDENTICAL);
         myMap.put(MetisDifference.SECURITY, DIFFERENCE_SECURITY);
         myMap.put(MetisDifference.DIFFERENT, DIFFERENCE_DIFFERENT);
@@ -176,7 +176,7 @@ public enum MetisDataResource implements TethysResourceId {
      */
     private static Map<MetisFieldValue, TethysResourceId> buildValueMap() {
         /* Create the map and return it */
-        Map<MetisFieldValue, TethysResourceId> myMap = new EnumMap<>(MetisFieldValue.class);
+        final Map<MetisFieldValue, TethysResourceId> myMap = new EnumMap<>(MetisFieldValue.class);
         myMap.put(MetisFieldValue.UNKNOWN, FIELDVALUE_UNKNOWN);
         myMap.put(MetisFieldValue.SKIP, FIELDVALUE_SKIP);
         return myMap;

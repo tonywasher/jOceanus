@@ -146,9 +146,9 @@ public class MetisSwingTableManager<R extends MetisDataTableItem>
     private <T> T getCalculatedFieldValue(final R pItem,
                                           final MetisDataField pId,
                                           final Class<T> pClass) {
-        Object myValue = theCalculator == null
-                                               ? null
-                                               : theCalculator.calculateValue(pItem, pId);
+        final Object myValue = theCalculator == null
+                                                     ? null
+                                                     : theCalculator.calculateValue(pItem, pId);
         return pClass.cast(myValue);
     }
 
@@ -191,98 +191,98 @@ public class MetisSwingTableManager<R extends MetisDataTableItem>
 
     @Override
     public TethysSwingTableStringColumn<MetisDataField, R> declareStringColumn(final MetisDataField pId) {
-        TethysSwingTableStringColumn<MetisDataField, R> myColumn = getTable().declareStringColumn(pId);
+        final TethysSwingTableStringColumn<MetisDataField, R> myColumn = getTable().declareStringColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, String.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableCharArrayColumn<MetisDataField, R> declareCharArrayColumn(final MetisDataField pId) {
-        TethysSwingTableCharArrayColumn<MetisDataField, R> myColumn = getTable().declareCharArrayColumn(pId);
+        final TethysSwingTableCharArrayColumn<MetisDataField, R> myColumn = getTable().declareCharArrayColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, char[].class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableShortColumn<MetisDataField, R> declareShortColumn(final MetisDataField pId) {
-        TethysSwingTableShortColumn<MetisDataField, R> myColumn = getTable().declareShortColumn(pId);
+        final TethysSwingTableShortColumn<MetisDataField, R> myColumn = getTable().declareShortColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, Short.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableIntegerColumn<MetisDataField, R> declareIntegerColumn(final MetisDataField pId) {
-        TethysSwingTableIntegerColumn<MetisDataField, R> myColumn = getTable().declareIntegerColumn(pId);
+        final TethysSwingTableIntegerColumn<MetisDataField, R> myColumn = getTable().declareIntegerColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, Integer.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableLongColumn<MetisDataField, R> declareLongColumn(final MetisDataField pId) {
-        TethysSwingTableLongColumn<MetisDataField, R> myColumn = getTable().declareLongColumn(pId);
+        final TethysSwingTableLongColumn<MetisDataField, R> myColumn = getTable().declareLongColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, Long.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableRawDecimalColumn<MetisDataField, R> declareRawDecimalColumn(final MetisDataField pId) {
-        TethysSwingTableRawDecimalColumn<MetisDataField, R> myColumn = getTable().declareRawDecimalColumn(pId);
+        final TethysSwingTableRawDecimalColumn<MetisDataField, R> myColumn = getTable().declareRawDecimalColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysDecimal.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableMoneyColumn<MetisDataField, R> declareMoneyColumn(final MetisDataField pId) {
-        TethysSwingTableMoneyColumn<MetisDataField, R> myColumn = getTable().declareMoneyColumn(pId);
+        final TethysSwingTableMoneyColumn<MetisDataField, R> myColumn = getTable().declareMoneyColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysMoney.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTablePriceColumn<MetisDataField, R> declarePriceColumn(final MetisDataField pId) {
-        TethysSwingTablePriceColumn<MetisDataField, R> myColumn = getTable().declarePriceColumn(pId);
+        final TethysSwingTablePriceColumn<MetisDataField, R> myColumn = getTable().declarePriceColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysPrice.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableRateColumn<MetisDataField, R> declareRateColumn(final MetisDataField pId) {
-        TethysSwingTableRateColumn<MetisDataField, R> myColumn = getTable().declareRateColumn(pId);
+        final TethysSwingTableRateColumn<MetisDataField, R> myColumn = getTable().declareRateColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysRate.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableUnitsColumn<MetisDataField, R> declareUnitsColumn(final MetisDataField pId) {
-        TethysSwingTableUnitsColumn<MetisDataField, R> myColumn = getTable().declareUnitsColumn(pId);
+        final TethysSwingTableUnitsColumn<MetisDataField, R> myColumn = getTable().declareUnitsColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysUnits.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableDilutionColumn<MetisDataField, R> declareDilutionColumn(final MetisDataField pId) {
-        TethysSwingTableDilutionColumn<MetisDataField, R> myColumn = getTable().declareDilutionColumn(pId);
+        final TethysSwingTableDilutionColumn<MetisDataField, R> myColumn = getTable().declareDilutionColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysDilution.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableRatioColumn<MetisDataField, R> declareRatioColumn(final MetisDataField pId) {
-        TethysSwingTableRatioColumn<MetisDataField, R> myColumn = getTable().declareRatioColumn(pId);
+        final TethysSwingTableRatioColumn<MetisDataField, R> myColumn = getTable().declareRatioColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysRatio.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableDilutedPriceColumn<MetisDataField, R> declareDilutedPriceColumn(final MetisDataField pId) {
-        TethysSwingTableDilutedPriceColumn<MetisDataField, R> myColumn = getTable().declareDilutedPriceColumn(pId);
+        final TethysSwingTableDilutedPriceColumn<MetisDataField, R> myColumn = getTable().declareDilutedPriceColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysDilutedPrice.class));
         return myColumn;
     }
 
     @Override
     public TethysSwingTableDateColumn<MetisDataField, R> declareDateColumn(final MetisDataField pId) {
-        TethysSwingTableDateColumn<MetisDataField, R> myColumn = getTable().declareDateColumn(pId);
+        final TethysSwingTableDateColumn<MetisDataField, R> myColumn = getTable().declareDateColumn(pId);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, TethysDate.class));
         return myColumn;
     }
@@ -290,7 +290,7 @@ public class MetisSwingTableManager<R extends MetisDataTableItem>
     @Override
     public <T> TethysSwingTableScrollColumn<T, MetisDataField, R> declareScrollColumn(final MetisDataField pId,
                                                                                       final Class<T> pClass) {
-        TethysSwingTableScrollColumn<T, MetisDataField, R> myColumn = getTable().declareScrollColumn(pId, pClass);
+        final TethysSwingTableScrollColumn<T, MetisDataField, R> myColumn = getTable().declareScrollColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
         return myColumn;
     }
@@ -299,7 +299,7 @@ public class MetisSwingTableManager<R extends MetisDataTableItem>
     @Override
     public <T> TethysSwingTableListColumn<T, MetisDataField, R> declareListColumn(final MetisDataField pId,
                                                                                   final Class<T> pClass) {
-        TethysSwingTableListColumn<T, MetisDataField, R> myColumn = getTable().declareListColumn(pId, pClass);
+        final TethysSwingTableListColumn<T, MetisDataField, R> myColumn = getTable().declareListColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> (TethysItemList<T>) getItemFieldValue(p, pId, TethysItemList.class));
         return myColumn;
     }
@@ -307,7 +307,7 @@ public class MetisSwingTableManager<R extends MetisDataTableItem>
     @Override
     public <T> TethysSwingTableIconColumn<T, MetisDataField, R> declareIconColumn(final MetisDataField pId,
                                                                                   final Class<T> pClass) {
-        TethysSwingTableIconColumn<T, MetisDataField, R> myColumn = getTable().declareIconColumn(pId, pClass);
+        final TethysSwingTableIconColumn<T, MetisDataField, R> myColumn = getTable().declareIconColumn(pId, pClass);
         myColumn.setCellValueFactory(p -> getItemFieldValue(p, pId, pClass));
         return myColumn;
     }

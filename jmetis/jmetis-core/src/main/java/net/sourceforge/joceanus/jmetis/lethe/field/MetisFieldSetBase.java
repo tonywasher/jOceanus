@@ -58,7 +58,7 @@ public abstract class MetisFieldSetBase
     /**
      * Is the data being refreshed?
      */
-    private boolean isRefreshing = false;
+    private boolean isRefreshing;
 
     /**
      * Constructor.
@@ -104,7 +104,7 @@ public abstract class MetisFieldSetBase
         /* If we are not refreshing data */
         if (!isRefreshing) {
             /* Create the notification */
-            MetisFieldUpdate myUpdate = new MetisFieldUpdate(pField, pNewValue);
+            final MetisFieldUpdate myUpdate = new MetisFieldUpdate(pField, pNewValue);
 
             /* Fire the notification */
             theEventManager.fireEvent(MetisFieldEvent.FIELDUPDATED, myUpdate);

@@ -235,14 +235,14 @@ public class PrometheusDataTableColumn
             }
 
             /* Determine various factors */
-            int myIndex = pColumn.getModelIndex();
-            int myNumCols = getColumnCount();
+            final int myIndex = pColumn.getModelIndex();
+            final int myNumCols = getColumnCount();
 
             /* Determine insert point in table */
             int myInsert = 0;
-            Enumeration<TableColumn> myEnumerator = getColumns();
+            final Enumeration<TableColumn> myEnumerator = getColumns();
             while (myEnumerator.hasMoreElements()) {
-                TableColumn myColumn = myEnumerator.nextElement();
+                final TableColumn myColumn = myEnumerator.nextElement();
 
                 /* If this column is prior to the revealed column */
                 if (myColumn.getModelIndex() < myIndex) {
@@ -282,7 +282,7 @@ public class PrometheusDataTableColumn
          */
         protected MetisField[] getColumnFields() {
             /* Declare the field array */
-            MetisField[] myFields = new MetisField[getColumnCount()];
+            final MetisField[] myFields = new MetisField[getColumnCount()];
             int myCol;
 
             /* Loop through the columns */
@@ -327,7 +327,7 @@ public class PrometheusDataTableColumn
             theRowRenderer = pTable.getFieldMgr().allocateRowRenderer();
 
             /* Create the columns */
-            PrometheusDataTableColumn myCol = new PrometheusDataTableColumn(0, WIDTH_ROWHDR, theRowRenderer, null);
+            final PrometheusDataTableColumn myCol = new PrometheusDataTableColumn(0, WIDTH_ROWHDR, theRowRenderer, null);
             addColumn(myCol);
             myCol.setModel(pTable.getRowTableModel());
         }

@@ -144,7 +144,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
         theComponent = pParent;
 
         /* Parse the version */
-        String[] myParts = pVersion.split("\\" + BRANCH_SEP);
+        final String[] myParts = pVersion.split("\\" + BRANCH_SEP);
 
         /* If we do not have three parts reject it */
         if (myParts.length != NUM_VERS_PARTS) {
@@ -321,7 +321,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
      */
     public String getBranchName() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the version directory */
         myBuilder.append(BRANCH_PREFIX);
@@ -381,7 +381,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
         if (!(pThat instanceof ThemisScmBranch)) {
             return false;
         }
-        ThemisScmBranch<?, ?, ?> myThat = (ThemisScmBranch<?, ?, ?>) pThat;
+        final ThemisScmBranch<?, ?, ?> myThat = (ThemisScmBranch<?, ?, ?>) pThat;
 
         /* Compare fields */
         if (theMajorVersion != myThat.getMajorVersion()) {
@@ -415,7 +415,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
      */
     public B nextMajorBranch() {
         /* Determine the next major branch */
-        ScmBranchList<B, C, R> myBranches = getComponentBranchList();
+        final ScmBranchList<B, C, R> myBranches = getComponentBranchList();
         return myBranches.nextMajorBranch();
     }
 
@@ -425,7 +425,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
      */
     public B nextMinorBranch() {
         /* Determine the next major branch */
-        ScmBranchList<B, C, R> myBranches = getComponentBranchList();
+        final ScmBranchList<B, C, R> myBranches = getComponentBranchList();
         return myBranches.nextMinorBranch(this);
     }
 
@@ -435,7 +435,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
      */
     public B nextDeltaBranch() {
         /* Determine the next major branch */
-        ScmBranchList<B, C, R> myBranches = getComponentBranchList();
+        final ScmBranchList<B, C, R> myBranches = getComponentBranchList();
         return myBranches.nextDeltaBranch(this);
     }
 
@@ -522,12 +522,12 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          */
         public B locateBranch(final B pBranch) {
             /* Loop through the entries */
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myBranch = myIterator.next();
+                final B myBranch = myIterator.next();
 
                 /* If this is the correct branch */
-                int iCompare = myBranch.compareTo(pBranch);
+                final int iCompare = myBranch.compareTo(pBranch);
                 if (iCompare > 0) {
                     break;
                 }
@@ -548,9 +548,9 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          */
         protected B locateBranch(final String pVersion) {
             /* Loop through the entries */
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myBranch = myIterator.next();
+                final B myBranch = myIterator.next();
 
                 /* If this is the correct branch */
                 if (pVersion.equals(myBranch.getBranchName())) {
@@ -569,9 +569,9 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          */
         protected B locateTrunk() {
             /* Loop through the entries */
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myBranch = myIterator.next();
+                final B myBranch = myIterator.next();
 
                 /* If this is the correct branch */
                 if (myBranch.isTrunk()) {
@@ -593,9 +593,9 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
         protected ThemisScmTag<?, B, C, R> locateTag(final String pVersion,
                                                      final int pTag) {
             /* Loop through the entries */
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myBranch = myIterator.next();
+                final B myBranch = myIterator.next();
 
                 /* If this is the correct branch */
                 if (pVersion.equals(myBranch.getBranchName())) {
@@ -635,16 +635,16 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
         private B nextMajorBranch() {
             /* Loop to the last entry */
             B myBranch = null;
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
                 myBranch = myIterator.next();
             }
 
             /* Determine the largest current major version */
-            int myMajor = (myBranch == null)
-                                             ? 0
-                                             : myBranch.getMajorVersion();
+            final int myMajor = (myBranch == null)
+                                                   ? 0
+                                                   : myBranch.getMajorVersion();
 
             /* Create the major revision */
             return createNewBranch(theComponent, myMajor + 1, 0, 0);
@@ -657,15 +657,15 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          */
         private B nextMinorBranch(final ThemisScmBranch<?, C, R> pBase) {
             /* Access major version */
-            int myMajor = pBase.getMajorVersion();
+            final int myMajor = pBase.getMajorVersion();
 
             /* Access list iterator */
             B myBranch = null;
 
             /* Loop to the last entry */
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myTest = myIterator.next();
+                final B myTest = myIterator.next();
 
                 /* Handle wrong major version */
                 if (myTest.getMajorVersion() > myMajor) {
@@ -680,9 +680,9 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
             }
 
             /* Determine the largest current minor version */
-            int myMinor = (myBranch == null)
-                                             ? 0
-                                             : myBranch.getMinorVersion();
+            final int myMinor = (myBranch == null)
+                                                   ? 0
+                                                   : myBranch.getMinorVersion();
 
             /* Create the minor revision */
             return createNewBranch(theComponent, myMajor, myMinor + 1, 0);
@@ -695,14 +695,14 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          */
         private B nextDeltaBranch(final ThemisScmBranch<?, C, R> pBase) {
             /* Access major/minor version */
-            int myMajor = pBase.getMajorVersion();
-            int myMinor = pBase.getMinorVersion();
+            final int myMajor = pBase.getMajorVersion();
+            final int myMinor = pBase.getMinorVersion();
 
             /* Loop to the last entry */
             B myBranch = null;
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myTest = myIterator.next();
+                final B myTest = myIterator.next();
 
                 /* Handle wrong major/minor version */
                 if (myTest.getMajorVersion() > myMajor) {
@@ -723,9 +723,9 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
             }
 
             /* Determine the largest current revision */
-            int myDelta = (myBranch == null)
-                                             ? 0
-                                             : myBranch.getDeltaVersion();
+            final int myDelta = (myBranch == null)
+                                                   ? 0
+                                                   : myBranch.getDeltaVersion();
 
             /* Create the delta revision */
             return createNewBranch(theComponent, myMajor, myMinor, myDelta + 1);

@@ -320,7 +320,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            int myValue = pResults.getInt(pIndex);
+            final int myValue = pResults.getInt(pIndex);
             if (pResults.wasNull()) {
                 setValue(null);
             } else {
@@ -331,7 +331,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            Integer myValue = getValue();
+            final Integer myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.INTEGER);
             } else {
@@ -374,7 +374,7 @@ public abstract class PrometheusColumnDefinition {
         /**
          * The definition of the referenced table.
          */
-        private PrometheusTableDefinition theDefinition = null;
+        private PrometheusTableDefinition theDefinition;
 
         /**
          * Constructor.
@@ -413,13 +413,13 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void locateReference(final List<PrometheusTableDataItem<?, ?>> pTables) {
             /* Access the Iterator */
-            ListIterator<PrometheusTableDataItem<?, ?>> myIterator;
+            final ListIterator<PrometheusTableDataItem<?, ?>> myIterator;
             myIterator = pTables.listIterator();
 
             /* Loop through the Tables */
             while (myIterator.hasNext()) {
                 /* Access Table */
-                PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+                final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
                 /* If this is the referenced table */
                 if (theReference.compareTo(myTable.getTableName()) == 0) {
@@ -442,7 +442,7 @@ public abstract class PrometheusColumnDefinition {
             Integer myOffset = pOffset;
 
             /* Calculate join character */
-            char myChar = (char) ('a' + myOffset);
+            final char myChar = (char) ('a' + myOffset);
 
             /* Build Initial part of string */
             pBuilder.append(" join ");
@@ -480,13 +480,13 @@ public abstract class PrometheusColumnDefinition {
          */
         protected void buildOrderString(final StringBuilder pBuilder,
                                         final Integer pOffset) {
-            Iterator<PrometheusColumnDefinition> myIterator;
+            final Iterator<PrometheusColumnDefinition> myIterator;
             PrometheusColumnDefinition myDef;
             boolean myFirst = true;
             Integer myOffset = pOffset;
 
             /* Calculate join character */
-            char myChar = (char) ('a' + myOffset);
+            final char myChar = (char) ('a' + myOffset);
 
             /* Create the iterator */
             myIterator = theDefinition.getSortList().iterator();
@@ -507,7 +507,7 @@ public abstract class PrometheusColumnDefinition {
                     myOffset++;
 
                     /* Determine new char */
-                    char myNewChar = (char) ('a' + myOffset);
+                    final char myNewChar = (char) ('a' + myOffset);
 
                     /* Add the order string for the underlying table. */
                     /* Note that forced to implement in one line to avoid Sonar false positive. */
@@ -573,7 +573,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            short myValue = pResults.getShort(pIndex);
+            final short myValue = pResults.getShort(pIndex);
             if (pResults.wasNull()) {
                 setValue(null);
             } else {
@@ -584,7 +584,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            Short myValue = getValue();
+            final Short myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.SMALLINT);
             } else {
@@ -634,7 +634,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            long myValue = pResults.getLong(pIndex);
+            final long myValue = pResults.getLong(pIndex);
             if (pResults.wasNull()) {
                 setValue(null);
             } else {
@@ -645,7 +645,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            Long myValue = getValue();
+            final Long myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.BIGINT);
             } else {
@@ -695,7 +695,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            float myValue = pResults.getFloat(pIndex);
+            final float myValue = pResults.getFloat(pIndex);
             if (pResults.wasNull()) {
                 setValue(null);
             } else {
@@ -706,7 +706,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            Float myValue = getValue();
+            final Float myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.REAL);
             } else {
@@ -756,7 +756,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            double myValue = pResults.getDouble(pIndex);
+            final double myValue = pResults.getDouble(pIndex);
             if (pResults.wasNull()) {
                 setValue(null);
             } else {
@@ -767,7 +767,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            Double myValue = getValue();
+            final Double myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.FLOAT);
             } else {
@@ -817,7 +817,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            Date myValue = pResults.getDate(pIndex);
+            final Date myValue = pResults.getDate(pIndex);
             setValue((myValue == null)
                                        ? null
                                        : new TethysDate(myValue));
@@ -826,14 +826,14 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            TethysDate myValue = getValue();
+            final TethysDate myValue = getValue();
 
             /* Build the date as a SQL date */
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.DATE);
             } else {
-                Date myDateValue = myValue.toDate();
-                java.sql.Date myDate = new java.sql.Date(myDateValue.getTime());
+                final Date myDateValue = myValue.toDate();
+                final java.sql.Date myDate = new java.sql.Date(myDateValue.getTime());
                 pStatement.setDate(pIndex, myDate);
             }
         }
@@ -880,7 +880,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            boolean myValue = pResults.getBoolean(pIndex);
+            final boolean myValue = pResults.getBoolean(pIndex);
             if (pResults.wasNull()) {
                 setValue(null);
             } else {
@@ -891,7 +891,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            Boolean myValue = getValue();
+            final Boolean myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.BIT);
             } else {
@@ -952,14 +952,14 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            String myValue = pResults.getString(pIndex);
+            final String myValue = pResults.getString(pIndex);
             setValue(myValue);
         }
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue == null) {
                 pStatement.setNull(pIndex, Types.VARCHAR);
             } else {
@@ -1005,9 +1005,9 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue != null) {
-                BigDecimal myDecimal = new BigDecimal(myValue);
+                final BigDecimal myDecimal = new BigDecimal(myValue);
                 pStatement.setBigDecimal(pIndex, myDecimal);
             } else {
                 pStatement.setNull(pIndex, Types.DECIMAL);
@@ -1071,9 +1071,9 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue != null) {
-                BigDecimal myDecimal = new BigDecimal(myValue);
+                final BigDecimal myDecimal = new BigDecimal(myValue);
                 pStatement.setBigDecimal(pIndex, myDecimal);
             } else {
                 pStatement.setNull(pIndex, Types.DECIMAL);
@@ -1137,9 +1137,9 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue != null) {
-                BigDecimal myDecimal = new BigDecimal(myValue);
+                final BigDecimal myDecimal = new BigDecimal(myValue);
                 pStatement.setBigDecimal(pIndex, myDecimal);
             } else {
                 pStatement.setNull(pIndex, Types.DECIMAL);
@@ -1203,9 +1203,9 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue != null) {
-                BigDecimal myDecimal = new BigDecimal(myValue);
+                final BigDecimal myDecimal = new BigDecimal(myValue);
                 pStatement.setBigDecimal(pIndex, myDecimal);
             } else {
                 pStatement.setNull(pIndex, Types.DECIMAL);
@@ -1269,9 +1269,9 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue != null) {
-                BigDecimal myDecimal = new BigDecimal(myValue);
+                final BigDecimal myDecimal = new BigDecimal(myValue);
                 pStatement.setBigDecimal(pIndex, myDecimal);
             } else {
                 pStatement.setNull(pIndex, Types.DECIMAL);
@@ -1335,9 +1335,9 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
-            String myValue = getValue();
+            final String myValue = getValue();
             if (myValue != null) {
-                BigDecimal myDecimal = new BigDecimal(myValue);
+                final BigDecimal myDecimal = new BigDecimal(myValue);
                 pStatement.setBigDecimal(pIndex, myDecimal);
             } else {
                 pStatement.setNull(pIndex, Types.DECIMAL);
@@ -1386,7 +1386,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
-            PrometheusJDBCDriver myDriver = getDriver();
+            final PrometheusJDBCDriver myDriver = getDriver();
             pBuilder.append(myDriver.getDatabaseType(PrometheusColumnType.BINARY));
             if (myDriver.defineBinaryLength()) {
                 pBuilder.append("(");
@@ -1414,7 +1414,7 @@ public abstract class PrometheusColumnDefinition {
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
-            byte[] myValue = pResults.getBytes(pIndex);
+            final byte[] myValue = pResults.getBytes(pIndex);
             setValue(myValue);
         }
 

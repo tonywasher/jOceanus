@@ -133,7 +133,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
         isVisible = true;
 
         /* Obtain the GuiFactory */
-        TethysGuiFactory<N, I> myGuiFactory = pPanel.getGuiFactory();
+        final TethysGuiFactory<N, I> myGuiFactory = pPanel.getGuiFactory();
 
         /* Create the label */
         theLabel = myGuiFactory.newLabel();
@@ -146,7 +146,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
         theNode.setCentre(pEdit);
 
         /* Add listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theEdit.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theEdit.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, this::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, this::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, this::cascadeEvent);
@@ -258,9 +258,9 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
     protected boolean setValue(final Object pValue,
                                final boolean isChanged) {
         /* Determine whether we should show the field */
-        boolean showField = pValue == null
-                                           ? thePanel.isEditable() && !isReadOnly
-                                           : isInstance(pValue);
+        final boolean showField = pValue == null
+                                                 ? thePanel.isEditable() && !isReadOnly
+                                                 : isInstance(pValue);
         setVisible(showField);
 
         /* If we are showing the field */
@@ -323,7 +323,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
      * @param pEvent the event
      */
     private void cascadeEvent(final TethysEvent<TethysUIEvent> pEvent) {
-        MetisFieldUpdate myUpdate = new MetisFieldUpdate(theField, pEvent.getDetails());
+        final MetisFieldUpdate myUpdate = new MetisFieldUpdate(theField, pEvent.getDetails());
         thePanel.fireEvent(pEvent.getEventId(), myUpdate);
     }
 

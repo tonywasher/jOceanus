@@ -79,7 +79,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         doDeriveUpdates();
 
         /* Listen for updates */
-        TethysEventRegistrar<MetisListEvent> myRegistrar = theBase.getEventRegistrar();
+        final TethysEventRegistrar<MetisListEvent> myRegistrar = theBase.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> doDeriveUpdates());
         myRegistrar.addEventListener(MetisListEvent.REBASE, e -> doDeriveUpdates());
         myRegistrar.addEventListener(MetisListEvent.COMMIT, this::handleChangesInBase);
@@ -117,7 +117,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         }
 
         /* Cast as list */
-        MetisUpdateList<?> myThat = (MetisUpdateList<?>) pThat;
+        final MetisUpdateList<?> myThat = (MetisUpdateList<?>) pThat;
 
         /* Check local fields */
         if (!theBase.equals(myThat.theBase)) {
@@ -143,16 +143,16 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         clear();
 
         /* Loop through the base list */
-        Iterator<T> myIterator = theBase.iterator();
+        final Iterator<T> myIterator = theBase.iterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* process update item */
             processUpdate(myCurr);
         }
 
         /* Make sure that the version is correct */
-        boolean isEmpty = isEmpty();
+        final boolean isEmpty = isEmpty();
         setVersion(isEmpty
                            ? 0
                            : 1);
@@ -169,8 +169,8 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      */
     private void processUpdate(final T pBase) {
         /* Obtain the valueSet history */
-        MetisDataVersionControl myControl = pBase.getVersionControl();
-        MetisDataState myState = myControl.getState();
+        final MetisDataVersionControl myControl = pBase.getVersionControl();
+        final MetisDataState myState = myControl.getState();
 
         /* Switch on the state */
         switch (myState) {
@@ -196,7 +196,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      * @param pItem the item
      */
     private void handleNewUpdate(final T pItem) {
-        T myItem = newDiffAddedItem(pItem);
+        final T myItem = newDiffAddedItem(pItem);
         addToList(myItem);
     }
 
@@ -205,7 +205,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      * @param pItem the item
      */
     private void handleChangedUpdate(final T pItem) {
-        T myItem = newUpdateChangedItem(pItem);
+        final T myItem = newUpdateChangedItem(pItem);
         addToList(myItem);
     }
 
@@ -214,7 +214,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      * @param pItem the item
      */
     private void handleDeletedUpdate(final T pItem) {
-        T myItem = newDiffDeletedItem(pItem);
+        final T myItem = newDiffDeletedItem(pItem);
         addToList(myItem);
     }
 
@@ -223,7 +223,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      * @param pItem the item
      */
     private void handleDelNewUpdate(final T pItem) {
-        T myItem = newUpdateDelNewItem(pItem);
+        final T myItem = newUpdateDelNewItem(pItem);
         addToList(myItem);
     }
 
@@ -239,26 +239,26 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         int myNumItems = pNumItems;
 
         /* Create a new Change Detail */
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.UPDATE);
+        final MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.UPDATE);
 
         /* Loop through the list */
-        Iterator<T> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
-                                                                        ? reverseIterator()
-                                                                        : iterator();
+        final Iterator<T> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
+                                                                              ? reverseIterator()
+                                                                              : iterator();
         while (myIterator.hasNext()
                && myNumItems > 0) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* Obtain the state */
-            MetisDataVersionControl myControl = myCurr.getVersionControl();
-            MetisDataState myState = myControl.getState();
+            final MetisDataVersionControl myControl = myCurr.getVersionControl();
+            final MetisDataState myState = myControl.getState();
 
             /* If this is to be handled in this phase */
             if (pPhase.checkStateInPhase(myState)) {
                 /* Access further details */
-                MetisDataVersionValues myValues = myControl.getValueSet();
-                int myId = myCurr.getIndexedId();
-                T myBase = theBase.getItemById(myId);
+                final MetisDataVersionValues myValues = myControl.getValueSet();
+                final int myId = myCurr.getIndexedId();
+                final T myBase = theBase.getItemById(myId);
 
                 /* Commit the underlying item */
                 if (myValues.isDeletion()) {
@@ -295,13 +295,13 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
     private void handleChangesInBase(final TethysEvent<MetisListEvent> pEvent) {
         /* Access the change details */
         @SuppressWarnings("unchecked")
-        MetisListChange<T> myChange = (MetisListChange<T>) pEvent.getDetails(MetisListChange.class);
+        final MetisListChange<T> myChange = (MetisListChange<T>) pEvent.getDetails(MetisListChange.class);
 
         /* Process added entries (can only happen from a commit) */
         boolean doSort = false;
         Iterator<T> myIterator = myChange.addedIterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
             handleNewUpdate(myCurr);
             doSort = true;
         }
@@ -309,9 +309,9 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         /* Obtain changed entries */
         myIterator = myChange.changedIterator();
         while (myIterator.hasNext()) {
-            T myBase = myIterator.next();
-            int myId = myBase.getIndexedId();
-            T myCurr = getItemById(myId);
+            final T myBase = myIterator.next();
+            final int myId = myBase.getIndexedId();
+            final T myCurr = getItemById(myId);
             doSort = true;
 
             /* If we do not currently have the item */
@@ -325,10 +325,10 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         }
 
         /* Process deleted entries (can only happen from a rewind of DelNew) */
-        Iterator<Integer> myIdIterator = myChange.deletedIterator();
+        final Iterator<Integer> myIdIterator = myChange.deletedIterator();
         while (myIdIterator.hasNext()) {
-            Integer myId = myIdIterator.next();
-            T myCurr = getItemById(myId);
+            final Integer myId = myIdIterator.next();
+            final T myCurr = getItemById(myId);
             removeFromList(myCurr);
         }
 
@@ -352,7 +352,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
                                       final T pBase) {
         /* Obtain the valueSet history */
         MetisDataVersionControl myControl = pBase.getVersionControl();
-        MetisDataState myState = myControl.getState();
+        final MetisDataState myState = myControl.getState();
 
         /* If we are now clean */
         if (MetisDataState.CLEAN.equals(myState)) {
@@ -360,9 +360,9 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
             removeFromList(pCurr);
         } else {
             /* Replace the current values */
-            MetisDataVersionValues myBase = myControl.getValueSet();
+            final MetisDataVersionValues myBase = myControl.getValueSet();
             myControl = pCurr.getVersionControl();
-            MetisDataVersionValues mySet = myControl.getValueSet();
+            final MetisDataVersionValues mySet = myControl.getValueSet();
             mySet.copyFrom(myBase);
         }
     }
@@ -374,7 +374,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      */
     private T newUpdateChangedItem(final T pCurr) {
         /* Obtain a new item */
-        T myNew = newListItem(pCurr.getIndexedId());
+        final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
         MetisDataVersionControl myControl = pCurr.getVersionControl();
@@ -401,12 +401,12 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
      */
     private T newUpdateDelNewItem(final T pBase) {
         /* Obtain a new item */
-        T myNew = newListItem(pBase.getIndexedId());
+        final T myNew = newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
         MetisDataVersionControl myControl = pBase.getVersionControl();
-        MetisDataVersionValues myBaseSet = myControl.getValueSet();
-        MetisDataVersionValues mySet = myBaseSet.cloneIt();
+        final MetisDataVersionValues myBaseSet = myControl.getValueSet();
+        final MetisDataVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
         mySet.setVersion(1);
 
@@ -427,9 +427,9 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
     protected int doCompare(final T pFirst,
                             final T pSecond) {
         /* Compare on update phase */
-        MetisUpdatePhase myFirst = MetisUpdatePhase.getPhaseForItem(pFirst);
-        MetisUpdatePhase mySecond = MetisUpdatePhase.getPhaseForItem(pSecond);
-        int iCompare = myFirst.compareTo(mySecond);
+        final MetisUpdatePhase myFirst = MetisUpdatePhase.getPhaseForItem(pFirst);
+        final MetisUpdatePhase mySecond = MetisUpdatePhase.getPhaseForItem(pSecond);
+        final int iCompare = myFirst.compareTo(mySecond);
         if (iCompare != 0) {
             return iCompare;
         }
@@ -499,7 +499,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
          * @return the corresponding update phase
          */
         private static MetisUpdatePhase getPhaseForItem(final MetisDataVersionedItem pItem) {
-            MetisDataVersionControl myControl = pItem.getVersionControl();
+            final MetisDataVersionControl myControl = pItem.getVersionControl();
             return getPhaseForState(myControl.getState());
         }
     }

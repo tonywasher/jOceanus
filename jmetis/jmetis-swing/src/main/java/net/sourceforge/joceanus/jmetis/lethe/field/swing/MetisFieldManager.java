@@ -157,7 +157,7 @@ public class MetisFieldManager
      * @param pConfig the render configuration
      */
     public MetisFieldManager(final TethysSwingGuiFactory pGuiFactory,
-                                final MetisFieldConfig pConfig) {
+                             final MetisFieldConfig pConfig) {
         /* Store the parameters */
         theFactory = pGuiFactory;
         theConfig = pConfig;
@@ -244,9 +244,9 @@ public class MetisFieldManager
      * @return the render data
      */
     protected <X extends MetisFieldSetItem> MetisFieldData determineRenderData(final MetisFieldElement<X> pElement,
-                                                                                  final X pItem) {
+                                                                               final X pItem) {
         /* Allocate the render data */
-        MetisFieldData myData = new MetisFieldData(this, pElement.isFixedWidth());
+        final MetisFieldData myData = new MetisFieldData(this, pElement.isFixedWidth());
 
         /* Determine the render data */
         myData.determineData(pElement, pItem);

@@ -45,7 +45,7 @@ public class MetisReportReferenceManager<F> {
      */
     protected F processFilterReference(final String pReference) {
         /* Lookup the filter */
-        Object mySource = theFilterMap.get(pReference);
+        final Object mySource = theFilterMap.get(pReference);
         return (mySource != null)
                                   ? theReport.processFilter(mySource)
                                   : null;
@@ -60,7 +60,7 @@ public class MetisReportReferenceManager<F> {
     protected boolean processDelayedReference(final MetisReportHTMLBuilder pBuilder,
                                               final String pReference) {
         /* Lookup the delayed table and ignore if not found */
-        DelayedTable myDelay = theDelayedMap.get(pReference);
+        final DelayedTable myDelay = theDelayedMap.get(pReference);
         if (myDelay == null) {
             return false;
         }
@@ -69,7 +69,7 @@ public class MetisReportReferenceManager<F> {
         theDelayedMap.remove(pReference);
 
         /* Create the delayed table */
-        MetisHTMLTable myTable = theReport.createDelayedTable(myDelay);
+        final MetisHTMLTable myTable = theReport.createDelayedTable(myDelay);
 
         /* Embed the table correctly */
         pBuilder.embedTable(myTable, myDelay.getId());
@@ -109,7 +109,7 @@ public class MetisReportReferenceManager<F> {
                                    final MetisHTMLTable pParent,
                                    final Object pSource) {
         /* Create the delayed table reference */
-        DelayedTable myTable = new DelayedTable(pId, pParent, pSource);
+        final DelayedTable myTable = new DelayedTable(pId, pParent, pSource);
 
         /* Record into selection map */
         theDelayedMap.put(MetisReportHTMLBuilder.REF_DELAY

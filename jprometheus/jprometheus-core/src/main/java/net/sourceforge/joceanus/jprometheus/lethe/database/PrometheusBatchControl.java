@@ -115,7 +115,7 @@ public class PrometheusBatchControl {
         /* If the current table is not active */
         if (!isTableActive) {
             /* Create the batch entry */
-            BatchTable myTable = new BatchTable();
+            final BatchTable myTable = new BatchTable();
 
             /* Add to the batch list */
             theList.add(myTable);
@@ -128,12 +128,12 @@ public class PrometheusBatchControl {
      */
     protected void commitItems() {
         /* Access iterator for the list */
-        Iterator<BatchTable> myIterator = theList.iterator();
+        final Iterator<BatchTable> myIterator = theList.iterator();
 
         /* Loop through the items */
         while (myIterator.hasNext()) {
             /* Access the next entry */
-            BatchTable myTable = myIterator.next();
+            final BatchTable myTable = myIterator.next();
 
             /* Commit batch items in the table */
             switch (myTable.theState) {
@@ -180,11 +180,11 @@ public class PrometheusBatchControl {
          */
         private void commitBatch() {
             /* Access the iterator */
-            ListIterator<?> myIterator = theTable.getList().listIterator();
+            final ListIterator<?> myIterator = theTable.getList().listIterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                DataItem<?> myCurr = (DataItem<?>) myIterator.next();
+                final DataItem<?> myCurr = (DataItem<?>) myIterator.next();
 
                 /* Ignore items that are not this type */
                 if (myCurr.getState() != theState) {
@@ -203,14 +203,14 @@ public class PrometheusBatchControl {
          */
         private void commitDeleteBatch() {
             /* Access the iterator */
-            ListIterator<?> myIterator = theTable.getList().listIterator();
+            final ListIterator<?> myIterator = theTable.getList().listIterator();
 
             /* Loop through the list */
             while (myIterator.hasPrevious()) {
-                DataItem<?> myCurr = (DataItem<?>) myIterator.previous();
+                final DataItem<?> myCurr = (DataItem<?>) myIterator.previous();
 
                 /* Ignore items that are not this type */
-                MetisDataState myState = myCurr.getState();
+                final MetisDataState myState = myCurr.getState();
                 if ((myState != MetisDataState.DELETED)
                     && (myState != MetisDataState.DELNEW)) {
                     continue;
@@ -230,7 +230,7 @@ public class PrometheusBatchControl {
          */
         private boolean commitItem(final DataItem<?> pItem) {
             /* Access the underlying element */
-            DataItem<?> myBase = pItem.getBase();
+            final DataItem<?> myBase = pItem.getBase();
 
             /* If we are handling deletions */
             if (theState == MetisDataState.DELETED) {

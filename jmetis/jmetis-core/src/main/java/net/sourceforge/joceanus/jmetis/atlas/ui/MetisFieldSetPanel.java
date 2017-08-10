@@ -206,23 +206,23 @@ public class MetisFieldSetPanel<N, I>
         boolean hasVisible = false;
 
         /* access version control */
-        MetisDataVersionControl myControl = theItem instanceof MetisDataVersionedItem
-                                                                                      ? ((MetisDataVersionedItem) theItem).getVersionControl()
-                                                                                      : null;
+        final MetisDataVersionControl myControl = theItem instanceof MetisDataVersionedItem
+                                                                                            ? ((MetisDataVersionedItem) theItem).getVersionControl()
+                                                                                            : null;
 
         /* If the item is non-null */
         if (theItem != null) {
             /* Loop through the elements */
-            Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+            final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
             while (myIterator.hasNext()) {
-                MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+                final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
 
                 /* Obtain the field value */
-                Object myValue = theItem.getFieldValue(myChild.getField());
+                final Object myValue = theItem.getFieldValue(myChild.getField());
 
                 /* Determine font and colour */
-                MetisDataField myField = myChild.getField();
-                boolean isChanged = myControl != null && myControl.fieldChanged(myField).isDifferent();
+                final MetisDataField myField = myChild.getField();
+                final boolean isChanged = myControl != null && myControl.fieldChanged(myField).isDifferent();
 
                 /* Set the value */
                 hasVisible |= myChild.setValue(myValue, isChanged);
@@ -244,9 +244,9 @@ public class MetisFieldSetPanel<N, I>
             isEditable = pEditable;
 
             /* Loop through the elements */
-            Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+            final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
             while (myIterator.hasNext()) {
-                MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+                final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
 
                 /* Set the editable state of the field */
                 myChild.setEditable(pEditable && !myChild.isReadOnly());
@@ -267,7 +267,7 @@ public class MetisFieldSetPanel<N, I>
     public void setReadOnlyField(final MetisDataField pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
-        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.setReadOnly(pReadOnly);
@@ -282,7 +282,7 @@ public class MetisFieldSetPanel<N, I>
     public void setDeemedCurrency(final MetisDataField pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
-        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if ((myChild != null)
             && myChild instanceof TethysCurrencyEditField) {
             /* Set the currency */
@@ -298,7 +298,7 @@ public class MetisFieldSetPanel<N, I>
     public void showCmdButton(final MetisDataField pField,
                               final boolean pShow) {
         /* Look up the field */
-        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.showCmdButton(pShow);
@@ -453,9 +453,9 @@ public class MetisFieldSetPanel<N, I>
      */
     protected boolean isVisible() {
         /* Loop through the elements */
-        Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+        final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
         while (myIterator.hasNext()) {
-            MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+            final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
             /* If any child is visible return true */
             if (myChild.isVisible()) {
                 return true;
@@ -483,11 +483,11 @@ public class MetisFieldSetPanel<N, I>
         int myWidth = 0;
 
         /* Loop through the elements */
-        Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+        final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
         while (myIterator.hasNext()) {
-            MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+            final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
             /* Adjust largest width */
-            int myCurrWidth = myChild.getLabelWidth();
+            final int myCurrWidth = myChild.getLabelWidth();
             if (myCurrWidth > myWidth) {
                 myWidth = myCurrWidth;
             }
@@ -503,9 +503,9 @@ public class MetisFieldSetPanel<N, I>
      */
     private void setLabelWidth(final int pWidth) {
         /* Loop through the elements */
-        Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+        final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
         while (myIterator.hasNext()) {
-            MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+            final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
             /* Adjust width */
             myChild.setLabelWidth(pWidth);
         }

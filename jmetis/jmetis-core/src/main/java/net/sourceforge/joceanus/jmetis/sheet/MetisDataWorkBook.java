@@ -333,7 +333,7 @@ public class MetisDataWorkBook {
      */
     protected static MetisDataFormatter createFormatter() {
         /* Allocate the formatter and set date format */
-        MetisDataFormatter myFormatter = new MetisDataFormatter();
+        final MetisDataFormatter myFormatter = new MetisDataFormatter();
         myFormatter.setFormat(MetisDataFormats.OASIS_DATE);
         myFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
 

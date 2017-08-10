@@ -141,12 +141,12 @@ public class DataValues<E extends Enum<E>> {
         theFields.put(DataItem.FIELD_ID, pItem.getId());
 
         /* Access values */
-        MetisValueSet myValues = pItem.getValueSet();
+        final MetisValueSet myValues = pItem.getValueSet();
 
         /* Iterate through the fields */
-        Iterator<MetisField> myIterator = pItem.getDataFields().fieldIterator();
+        final Iterator<MetisField> myIterator = pItem.getDataFields().fieldIterator();
         while (myIterator.hasNext()) {
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
 
             /* Ignore field if it is irrelevant */
             if (!myField.getStorage().isValueSet()
@@ -165,7 +165,7 @@ public class DataValues<E extends Enum<E>> {
         if (pItem instanceof InfoSetItem) {
             /* Access InfoSet */
             @SuppressWarnings("unchecked")
-            DataInfoSet<?, ?, ?, ?, E> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
+            final DataInfoSet<?, ?, ?, ?, E> myInfoSet = ((InfoSetItem<E>) pItem).getInfoSet();
 
             /* If the InfoSet is non-empty */
             if (myInfoSet.isEmpty()) {
@@ -176,18 +176,18 @@ public class DataValues<E extends Enum<E>> {
                 theInfoItems = new ArrayList<>();
 
                 /* Iterator over the values */
-                Iterator<?> myInfoIterator = myInfoSet.iterator();
+                final Iterator<?> myInfoIterator = myInfoSet.iterator();
                 while (myInfoIterator.hasNext()) {
-                    Object myCurr = myInfoIterator.next();
+                    final Object myCurr = myInfoIterator.next();
 
                     /* If this is a DataInfo item */
                     if (myCurr instanceof DataInfo) {
                         /* Access as DataArguments */
                         @SuppressWarnings("unchecked")
-                        DataInfo<?, ?, ?, ?, E> myItem = (DataInfo<?, ?, ?, ?, E>) myCurr;
+                        final DataInfo<?, ?, ?, ?, E> myItem = (DataInfo<?, ?, ?, ?, E>) myCurr;
 
                         /* Add item to the list */
-                        InfoItem<E> myInfo = new InfoItem<>(myItem);
+                        final InfoItem<E> myInfo = new InfoItem<>(myItem);
                         theInfoItems.add(myInfo);
                     }
                 }
@@ -202,7 +202,7 @@ public class DataValues<E extends Enum<E>> {
         if (pItem instanceof GroupedItem) {
             /* Access child iterator */
             @SuppressWarnings("unchecked")
-            Iterator<? extends DataItem<E>> myChildIterator = ((GroupedItem<E>) pItem).childIterator();
+            final Iterator<? extends DataItem<E>> myChildIterator = ((GroupedItem<E>) pItem).childIterator();
 
             /* If there are no children */
             if (myChildIterator == null) {
@@ -213,10 +213,10 @@ public class DataValues<E extends Enum<E>> {
 
                 /* Iterator over the values */
                 while (myChildIterator.hasNext()) {
-                    DataItem<?> myCurr = myChildIterator.next();
+                    final DataItem<?> myCurr = myChildIterator.next();
 
                     /* Add child to the list */
-                    DataValues<E> myChild = new DataValues<>(myCurr, TAG_CHILD);
+                    final DataValues<E> myChild = new DataValues<>(myCurr, TAG_CHILD);
                     theChildren.add(myChild);
                 }
             }
@@ -241,7 +241,7 @@ public class DataValues<E extends Enum<E>> {
         theFields = new LinkedHashMap<>();
 
         /* Store the id if available */
-        Integer myId = pInfo.getId();
+        final Integer myId = pInfo.getId();
         if (myId != null) {
             theFields.put(DataItem.FIELD_ID, myId);
         }
@@ -286,21 +286,21 @@ public class DataValues<E extends Enum<E>> {
         theFields = new LinkedHashMap<>();
 
         /* Declare the id if it exists */
-        Integer myId = getId(pElement);
+        final Integer myId = getId(pElement);
         if (myId != null) {
             theFields.put(DataItem.FIELD_ID, myId);
         }
 
         /* Loop through the children */
-        Iterator<MetisField> myIterator = pFields.fieldIterator();
+        final Iterator<MetisField> myIterator = pFields.fieldIterator();
         while (myIterator.hasNext()) {
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
 
             /* If the field is an equality valueSet item */
             if (myField.getStorage().isValueSet()
                 && myField.getEquality().isEquality()) {
                 /* Access element */
-                Element myChild = getChild(pElement, myField.getName());
+                final Element myChild = getChild(pElement, myField.getName());
                 if (myChild != null) {
                     /* Put value */
                     theFields.put(myField, myChild.getTextContent());
@@ -309,7 +309,7 @@ public class DataValues<E extends Enum<E>> {
         }
 
         /* Look for an InfoSet list */
-        Element myInfoSet = getChild(pElement, TAG_INFOSET);
+        final Element myInfoSet = getChild(pElement, TAG_INFOSET);
         if (myInfoSet != null) {
             /* Allocate infoItems list */
             theInfoItems = new ArrayList<>();
@@ -319,10 +319,10 @@ public class DataValues<E extends Enum<E>> {
                 /* If the child is an element */
                 if (myCurr instanceof Element) {
                     /* Access as element */
-                    Element myChild = (Element) myCurr;
+                    final Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    InfoItem<E> myInfo = new InfoItem<>(myChild);
+                    final InfoItem<E> myInfo = new InfoItem<>(myChild);
                     theInfoItems.add(myInfo);
                 }
             }
@@ -333,7 +333,7 @@ public class DataValues<E extends Enum<E>> {
         }
 
         /* Look for children */
-        Element myChildren = getChild(pElement, TAG_CHILDREN);
+        final Element myChildren = getChild(pElement, TAG_CHILDREN);
         if (myChildren != null) {
             /* Allocate infoItems list */
             theChildren = new ArrayList<>();
@@ -343,10 +343,10 @@ public class DataValues<E extends Enum<E>> {
                 /* If the child is the correct element */
                 if ((myCurr instanceof Element) && TAG_CHILD.equals(myCurr.getNodeName())) {
                     /* Access as element */
-                    Element myChild = (Element) myCurr;
+                    final Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    DataValues<E> myValues = new DataValues<>(myChild, pFields, theItemType);
+                    final DataValues<E> myValues = new DataValues<>(myChild, pFields, theItemType);
                     theChildren.add(myValues);
                 }
             }
@@ -473,7 +473,7 @@ public class DataValues<E extends Enum<E>> {
      */
     private static Integer getId(final Element pElement) {
         /* Access the id */
-        String myId = pElement.getAttribute(DataItem.FIELD_ID.getName());
+        final String myId = pElement.getAttribute(DataItem.FIELD_ID.getName());
         return (myId.length() > 0)
                                    ? Integer.parseInt(myId)
                                    : null;
@@ -511,13 +511,13 @@ public class DataValues<E extends Enum<E>> {
                                 final MetisDataFormatter pFormatter,
                                 final boolean pStoreIds) {
         /* Create an element for the item */
-        Element myElement = pDocument.createElement(theItemType);
+        final Element myElement = pDocument.createElement(theItemType);
 
         /* Loop through the values */
         for (Map.Entry<MetisField, Object> myEntry : theFields.entrySet()) {
             /* Access parts */
-            MetisField myField = myEntry.getKey();
-            Object myValue = myEntry.getValue();
+            final MetisField myField = myEntry.getKey();
+            final Object myValue = myEntry.getValue();
 
             /* If this is the Id */
             if (DataItem.FIELD_ID.equals(myField)) {
@@ -531,7 +531,7 @@ public class DataValues<E extends Enum<E>> {
             }
 
             /* Create the child element */
-            Element myChild = pDocument.createElement(myField.getName());
+            final Element myChild = pDocument.createElement(myField.getName());
             myElement.appendChild(myChild);
 
             /* Store the value */
@@ -541,13 +541,13 @@ public class DataValues<E extends Enum<E>> {
         /* If we have InfoSet items */
         if (theInfoItems != null) {
             /* Add infoSet */
-            Element myInfoSet = pDocument.createElement(TAG_INFOSET);
+            final Element myInfoSet = pDocument.createElement(TAG_INFOSET);
             myElement.appendChild(myInfoSet);
 
             /* Loop through the items */
             for (InfoItem<E> myInfo : theInfoItems) {
                 /* Create the element */
-                Element myItem = pDocument.createElement(myInfo.getName());
+                final Element myItem = pDocument.createElement(myInfo.getName());
                 myInfoSet.appendChild(myItem);
 
                 /* Set the id if required */
@@ -563,16 +563,16 @@ public class DataValues<E extends Enum<E>> {
         /* If we have children */
         if (theChildren != null) {
             /* Add children */
-            Element myChildren = pDocument.createElement(TAG_CHILDREN);
+            final Element myChildren = pDocument.createElement(TAG_CHILDREN);
             myElement.appendChild(myChildren);
 
             /* Loop through the children */
-            Iterator<DataValues<E>> myIterator = theChildren.iterator();
+            final Iterator<DataValues<E>> myIterator = theChildren.iterator();
             while (myIterator.hasNext()) {
-                DataValues<E> myValues = myIterator.next();
+                final DataValues<E> myValues = myIterator.next();
 
                 /* Create the subElement and append */
-                Element myChild = myValues.createXML(pDocument, pFormatter, pStoreIds);
+                final Element myChild = myValues.createXML(pDocument, pFormatter, pStoreIds);
                 myChildren.appendChild(myChild);
             }
         }
@@ -607,7 +607,7 @@ public class DataValues<E extends Enum<E>> {
          */
         private InfoItem(final DataInfo<?, ?, ?, ?, ?> pInfo) {
             /* Access the infoClass */
-            DataInfoClass myClass = pInfo.getInfoClass();
+            final DataInfoClass myClass = pInfo.getInfoClass();
 
             /* Store values */
             theName = myClass.toString();
@@ -668,7 +668,7 @@ public class DataValues<E extends Enum<E>> {
             }
 
             /* Access the object as an InfoItem */
-            InfoItem<?> myItem = (InfoItem<?>) pThat;
+            final InfoItem<?> myItem = (InfoItem<?>) pThat;
 
             if (!theName.equals(myItem.getName())) {
                 return false;

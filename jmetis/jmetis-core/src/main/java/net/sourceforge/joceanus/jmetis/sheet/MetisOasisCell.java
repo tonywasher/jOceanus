@@ -137,7 +137,7 @@ public class MetisOasisCell
      * @return the formatted value
      */
     private String formatValue(final Object pValue) {
-        MetisOasisRow myRow = theCellMap.getRow();
+        final MetisOasisRow myRow = theCellMap.getRow();
         return myRow.formatValue(pValue);
     }
 
@@ -151,11 +151,11 @@ public class MetisOasisCell
      */
     private <T> T parseValue(final String pSource,
                              final Class<T> pClass) throws OceanusException {
-        MetisOasisRow myRow = theCellMap.getRow();
+        final MetisOasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
-            MetisOasisCellAddress myAddress = new MetisOasisCellAddress(myRow.getSheet().getName(), getPosition());
+            final MetisOasisCellAddress myAddress = new MetisOasisCellAddress(myRow.getSheet().getName(), getPosition());
             throw new MetisDataException(pSource, ERROR_VALUE
                                                   + myAddress, e);
         }
@@ -171,11 +171,11 @@ public class MetisOasisCell
      */
     private <T> T parseValue(final Double pSource,
                              final Class<T> pClass) throws OceanusException {
-        MetisOasisRow myRow = theCellMap.getRow();
+        final MetisOasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
-            MetisOasisCellAddress myAddress = new MetisOasisCellAddress(myRow.getSheet().getName(), getPosition());
+            final MetisOasisCellAddress myAddress = new MetisOasisCellAddress(myRow.getSheet().getName(), getPosition());
             throw new MetisDataException(pSource, ERROR_VALUE
                                                   + myAddress, e);
         }
@@ -193,11 +193,11 @@ public class MetisOasisCell
     private <T> T parseValue(final Double pSource,
                              final String pCurrCode,
                              final Class<T> pClass) throws OceanusException {
-        MetisOasisRow myRow = theCellMap.getRow();
+        final MetisOasisRow myRow = theCellMap.getRow();
         try {
             return myRow.parseValue(pSource, pCurrCode, pClass);
         } catch (IllegalArgumentException e) {
-            MetisOasisCellAddress myAddress = new MetisOasisCellAddress(myRow.getSheet().getName(), getPosition());
+            final MetisOasisCellAddress myAddress = new MetisOasisCellAddress(myRow.getSheet().getName(), getPosition());
             throw new MetisDataException(pSource, ERROR_VALUE
                                                   + myAddress, e);
         }
@@ -208,7 +208,7 @@ public class MetisOasisCell
      * @return the value attribute type
      */
     private Value getValueType() {
-        String myType = theOasisCell.getOfficeValueTypeAttribute();
+        final String myType = theOasisCell.getOfficeValueTypeAttribute();
         return (myType != null)
                                 ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
                                 : Value.VOID;
@@ -300,7 +300,7 @@ public class MetisOasisCell
 
     @Override
     public String getStringValue() {
-        Value myType = getValueType();
+        final Value myType = getValueType();
         if (myType != null) {
             switch (myType) {
                 case STRING:
@@ -322,7 +322,7 @@ public class MetisOasisCell
     private String getTextContent() {
         String myRes = theOasisCell.getTextContent();
         if (myRes.length() == 0) {
-            Double myValue = theOasisCell.getOfficeValueAttribute();
+            final Double myValue = theOasisCell.getOfficeValueAttribute();
             if (myValue != null) {
                 myRes = formatValue(myValue);
             }
@@ -356,7 +356,7 @@ public class MetisOasisCell
      * @param pText the text to set
      */
     private void setTextContent(final String pText) {
-        TextPElement myText = theOasisCell.newTextPElement();
+        final TextPElement myText = theOasisCell.newTextPElement();
         myText.setTextContent(pText);
         theOasisCell.appendChild(myText);
     }

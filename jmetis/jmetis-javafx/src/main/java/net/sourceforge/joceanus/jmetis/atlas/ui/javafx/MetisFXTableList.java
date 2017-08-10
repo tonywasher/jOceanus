@@ -70,7 +70,7 @@ public class MetisFXTableList<R extends MetisDataTableItem>
         theList = FXCollections.observableArrayList(theListFields::getObservables);
 
         /* Listen to events on the versionedList */
-        TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
+        final TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> refreshList());
         myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
     }
@@ -107,7 +107,7 @@ public class MetisFXTableList<R extends MetisDataTableItem>
     private void handleEditChanges(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        MetisListChange<R> myChange = (MetisListChange<R>) pChange.getDetails(MetisListChange.class);
+        final MetisListChange<R> myChange = (MetisListChange<R>) pChange.getDetails(MetisListChange.class);
 
         /* Handle deleted items */
         handleDeletedItems(myChange.deletedIterator());
@@ -126,7 +126,7 @@ public class MetisFXTableList<R extends MetisDataTableItem>
     private void handleAddedItems(final Iterator<R> pIterator) {
         /* Loop through the added items */
         while (pIterator.hasNext()) {
-            R myCurr = pIterator.next();
+            final R myCurr = pIterator.next();
 
             /* Add the item to the list */
             theList.add(myCurr);
@@ -140,7 +140,7 @@ public class MetisFXTableList<R extends MetisDataTableItem>
     private void handleChangedItems(final Iterator<R> pIterator) {
         /* Loop through the changed items */
         while (pIterator.hasNext()) {
-            R myCurr = pIterator.next();
+            final R myCurr = pIterator.next();
 
             /* Update properties to reflect changes */
             theListFields.updateProperties(myCurr);
@@ -154,10 +154,10 @@ public class MetisFXTableList<R extends MetisDataTableItem>
     private void handleDeletedItems(final Iterator<Integer> pIterator) {
         /* Loop through the added items */
         while (pIterator.hasNext()) {
-            Integer myId = pIterator.next();
+            final Integer myId = pIterator.next();
 
             /* Remove the item if present */
-            R myItem = theListFields.removeItem(myId);
+            final R myItem = theListFields.removeItem(myId);
             if (myItem != null) {
                 theList.remove(myItem);
             }

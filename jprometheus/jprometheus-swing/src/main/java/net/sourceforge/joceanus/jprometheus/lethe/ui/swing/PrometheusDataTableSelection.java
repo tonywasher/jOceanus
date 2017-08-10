@@ -130,8 +130,8 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
      */
     private void recoverSelectedItem() {
         /* Obtain the model index of the selected item */
-        DataList<T, E> myList = theDataTable.getList();
-        T myCurr = theItemPanel.getSelectedItem();
+        final DataList<T, E> myList = theDataTable.getList();
+        final T myCurr = theItemPanel.getSelectedItem();
         int iIndex = myCurr == null
                                     ? -1
                                     : myList.indexOf(myCurr);
@@ -139,7 +139,7 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
         /* If we have an active item */
         if (iIndex != -1) {
             /* Determine whether we have a header */
-            T myFirst = theTableModel.getItemAtIndex(0);
+            final T myFirst = theTableModel.getItemAtIndex(0);
             if (myFirst.isHeader()) {
                 iIndex++;
             }
@@ -163,7 +163,7 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
      */
     private int defaultSelectIndex() {
         /* Access the number of viewable rows */
-        int iNumRows = theTableModel.getViewRowCount();
+        final int iNumRows = theTableModel.getViewRowCount();
 
         /* If we do not have any rows, say so */
         if (iNumRows == 0) {
@@ -171,8 +171,8 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
         }
 
         /* Access first row */
-        int iIndex = theTable.convertRowIndexToModel(0);
-        T myFirst = theTableModel.getItemAtIndex(iIndex);
+        final int iIndex = theTable.convertRowIndexToModel(0);
+        final T myFirst = theTableModel.getItemAtIndex(iIndex);
         if (myFirst.isHeader()) {
             return iNumRows > 1
                                 ? 1
@@ -188,7 +188,7 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
     public void handleSelectionChange() {
         /* Access selection model */
         int iIndex = -1;
-        int iRowCount = theTableModel.getViewRowCount();
+        final int iRowCount = theTableModel.getViewRowCount();
         if (!theSelectionModel.isSelectionEmpty()) {
             /* Determine the selected item */
             iIndex = theSelectionModel.getMinSelectionIndex();

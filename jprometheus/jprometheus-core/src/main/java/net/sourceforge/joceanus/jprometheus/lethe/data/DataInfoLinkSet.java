@@ -59,7 +59,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * The number of fields.
      */
-    private int theNumFields = 0;
+    private int theNumFields;
 
     /**
      * List of items.
@@ -113,12 +113,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         this(pList, pSet.getOwner(), pSet.getInfoType());
 
         /* Iterator through the links */
-        Iterator<T> myIterator = pSet.iterator();
+        final Iterator<T> myIterator = pSet.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Add a copy item */
-            T myNew = pList.addCopyItem(myLink);
+            final T myNew = pList.addCopyItem(myLink);
             theLinks.append(myNew);
             theLocalFields.declareIndexField(theInfoType.getName());
             theNumFields++;
@@ -135,7 +135,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle out of range */
-        int iIndex = pField.getIndex();
+        final int iIndex = pField.getIndex();
         if ((iIndex < 0)
             || iIndex >= theNumFields) {
             return MetisFieldValue.UNKNOWN;
@@ -206,14 +206,14 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      */
     private void splitItem(final T pItem) throws OceanusException {
         /* Ignore if this is not a load of a string */
-        Object myValue = pItem.getLink();
+        final Object myValue = pItem.getLink();
         if (!(myValue instanceof String)) {
             return;
         }
 
         /* Ignore if this is not a load of a combined list */
-        String myString = (String) myValue;
-        int iIndex = myString.indexOf(ITEM_SEP);
+        final String myString = (String) myValue;
+        final int iIndex = myString.indexOf(ITEM_SEP);
         if (iIndex == -1) {
             return;
         }
@@ -222,7 +222,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         pItem.setValueLink(myString.substring(0, iIndex));
 
         /* Create the new item */
-        T myItem = theInfoList.addNewItem(theOwner, theInfoType);
+        final T myItem = theInfoList.addNewItem(theOwner, theInfoType);
         myItem.setValueLink(myString.substring(iIndex + 1));
 
         /* Link the new item */
@@ -258,9 +258,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     public T getItemForValue(final DataItem<E> pValue) {
         /* Loop through the list */
         T myItem = null;
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* If this item is the correct link */
             if (pValue.equals(myLink.getLink())) {
@@ -287,13 +287,13 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      */
     protected String getNameList() {
         /* Create the string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         boolean isFirst = true;
 
         /* Loop through the list */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Ignore deleted elements */
             if (myLink.isDeleted()) {
@@ -321,9 +321,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      */
     public MetisDifference fieldChanged() {
         /* Loop through the list */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Notify if the item has changed */
             if (myLink.hasHistory()) {
@@ -338,9 +338,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public boolean hasHistory() {
         /* Loop through the list */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Notify if the item has changed */
             if (myLink.hasHistory()) {
@@ -355,9 +355,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public void pushHistory() {
         /* Loop through the list */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Notify if the item has changed */
             myLink.pushHistory();
@@ -367,9 +367,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public void popHistory() {
         /* Iterate through table values */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myValue = myIterator.next();
+            final T myValue = myIterator.next();
 
             /* If the entry should be removed */
             if (myValue.getOriginalValues().getVersion() > theInfoList.getVersion()) {
@@ -388,9 +388,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     public boolean checkForHistory() {
         /* Iterate through table values */
         boolean bChanges = false;
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myValue = myIterator.next();
+            final T myValue = myIterator.next();
 
             /* If this is a newly created item */
             if (!myValue.hasHistory()) {
@@ -414,12 +414,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public MetisDataState getState() {
         /* Default to clean */
-        MetisDataState myState = MetisDataState.CLEAN;
+        final MetisDataState myState = MetisDataState.CLEAN;
 
         /* Loop through each existing value */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myValue = myIterator.next();
+            final T myValue = myIterator.next();
 
             /* If we have changes */
             if (myValue.getState() != MetisDataState.CLEAN) {
@@ -438,9 +438,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      */
     public boolean isExisting() {
         /* Loop through each existing value */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myValue = myIterator.next();
+            final T myValue = myIterator.next();
 
             /* If we have changes */
             if (!myValue.isDeleted()) {
@@ -463,9 +463,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         /* For each existing value */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* If the value is active */
             if (!myLink.isDeleted()) {
@@ -483,21 +483,21 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         int myVersion = theOwner.getValueSetVersion();
 
         /* We are restoring an edit version if delete was in this session */
-        boolean bEditRestore = myVersion > 0;
+        final boolean bEditRestore = myVersion > 0;
         if (!bEditRestore) {
             /* Access underlying version if not editRestore */
             myVersion = theOwner.getBase().getValueSetVersion();
         }
 
         /* For each existing value */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Access version of value */
-            int myValueVersion = bEditRestore
-                                              ? myLink.getValueSetVersion()
-                                              : myLink.getBase().getValueSetVersion();
+            final int myValueVersion = bEditRestore
+                                                    ? myLink.getValueSetVersion()
+                                                    : myLink.getBase().getValueSetVersion();
 
             /* If the value was deleted at same time as owner */
             if (myValueVersion == myVersion) {
@@ -510,9 +510,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public void touchUnderlyingItems() {
         /* Loop through the list */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Touch the underlying items */
             myLink.touchUnderlyingItems();
@@ -522,9 +522,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public void touchOnUpdate() {
         /* Loop through the list */
-        Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinks.iterator();
         while (myIterator.hasNext()) {
-            T myLink = myIterator.next();
+            final T myLink = myIterator.next();
 
             /* Touch the underlying items */
             myLink.touchOnUpdate();

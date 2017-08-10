@@ -169,7 +169,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         super(pList, pValues);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -540,10 +540,10 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     @Override
     public void validate() {
-        StaticList<T, S, E> myList = getList();
-        String myName = getName();
-        String myDesc = getDesc();
-        StaticDataMap<T, S, E> myMap = myList.getDataMap();
+        final StaticList<T, S, E> myList = getList();
+        final String myName = getName();
+        final String myDesc = getDesc();
+        final StaticDataMap<T, S, E> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -595,8 +595,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @throws OceanusException on error
      */
     private void parseEnumValue(final String pValue) throws OceanusException {
-        Class<S> myClass = getEnumClass();
-        S[] myEnums = myClass.getEnumConstants();
+        final Class<S> myClass = getEnumClass();
+        final S[] myEnums = myClass.getEnumConstants();
 
         /* Loop through the enum constants */
         for (S myValue : myEnums) {
@@ -624,8 +624,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      * @throws OceanusException on error
      */
     private void parseEnumValue(final Integer pValue) throws OceanusException {
-        Class<S> myClass = getEnumClass();
-        S[] myEnums = myClass.getEnumConstants();
+        final Class<S> myClass = getEnumClass();
+        final S[] myEnums = myClass.getEnumConstants();
 
         /* Loop through the enum constants */
         for (S myValue : myEnums) {
@@ -692,7 +692,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Access the data */
-        StaticData<?, ?, ?> myData = (StaticData<?, ?, ?>) pData;
+        final StaticData<?, ?, ?> myData = (StaticData<?, ?, ?>) pData;
 
         /* Store the current detail into history */
         pushHistory();
@@ -732,8 +732,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
 
     @Override
     public void adjustMapForItem() {
-        StaticList<T, S, E> myList = getList();
-        StaticDataMap<T, S, E> myMap = myList.getDataMap();
+        final StaticList<T, S, E> myList = getList();
+        final StaticDataMap<T, S, E> myMap = myList.getDataMap();
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
@@ -806,9 +806,9 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             }
 
             /* Loop through all elements */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
+                final T myCurr = myIterator.next();
 
                 /* If the item is deleted */
                 if (myCurr.isDeleted()) {
@@ -827,12 +827,12 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         public List<S> getMissingClasses() {
             /* Allocate the list */
-            List<S> myList = new ArrayList<>();
+            final List<S> myList = new ArrayList<>();
 
             /* Loop through all elements */
             for (S myClass : getEnumClass().getEnumConstants()) {
                 /* Locate the element */
-                T myItem = findItemById(myClass.getClassId());
+                final T myItem = findItemById(myClass.getClassId());
 
                 /* If the item is missing or deleted */
                 if ((myItem == null)
@@ -854,7 +854,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          */
         public T addNewItem(final S pClass) throws OceanusException {
             /* Create the new item */
-            T myItem = newItem(pClass);
+            final T myItem = newItem(pClass);
             add(myItem);
             return myItem;
         }
@@ -875,7 +875,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             /* Loop through all elements */
             for (S myClass : getEnumClass().getEnumConstants()) {
                 /* Create new element */
-                T myItem = newItem(myClass);
+                final T myItem = newItem(myClass);
 
                 /* Add the item to the list */
                 append(myItem);
@@ -965,8 +965,8 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         @Override
         public void adjustForItem(final T pItem) {
             /* Adjust order count */
-            Integer myOrder = pItem.getOrder();
-            Integer myCount = theOrderCountMap.get(myOrder);
+            final Integer myOrder = pItem.getOrder();
+            final Integer myCount = theOrderCountMap.get(myOrder);
             if (myCount == null) {
                 theOrderCountMap.put(myOrder, ONE);
             } else {
@@ -1010,7 +1010,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
          * @return true/false
          */
         public boolean validOrderCount(final Integer pOrder) {
-            Integer myResult = theOrderCountMap.get(pOrder);
+            final Integer myResult = theOrderCountMap.get(pOrder);
             return ONE.equals(myResult);
         }
     }

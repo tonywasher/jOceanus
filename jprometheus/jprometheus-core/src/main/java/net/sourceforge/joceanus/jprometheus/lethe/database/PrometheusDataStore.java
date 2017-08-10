@@ -106,7 +106,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
             Class.forName(theDriver.getDriver());
 
             /* Obtain the connection */
-            String myConnString = theDriver.getConnectionString(pPreferences);
+            final String myConnString = theDriver.getConnectionString(pPreferences);
 
             /* If we are using integrated security */
             if (theDriver.useIntegratedSecurity()) {
@@ -116,9 +116,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
                 /* else we must use userId and password */
             } else {
                 /* Create the properties and record user */
-                Properties myProperties = new Properties();
-                String myUser = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBUSER);
-                char[] myPass = pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS);
+                final Properties myProperties = new Properties();
+                final String myUser = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBUSER);
+                final char[] myPass = pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS);
                 myProperties.setProperty(PROPERTY_USER, myUser);
                 myProperties.setProperty(PROPERTY_PASS, new String(myPass));
 
@@ -183,9 +183,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
             theConn.rollback();
 
             /* Loop through the tables */
-            Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
+            final Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
             while (myIterator.hasNext()) {
-                PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+                final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
                 /* Close the Statement */
                 myTable.closeStmt();
@@ -219,9 +219,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("loadDatabase");
 
         /* Loop through the tables */
-        Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
+        final Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
         while (myIterator.hasNext()) {
-            PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+            final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
             /* Note the new step */
             myTask.startTask(myTable.getTableName());
@@ -242,7 +242,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
      */
     public void updateDatabase(final MetisThreadStatusReport pReport,
                                final T pData) throws OceanusException {
-        PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
+        final PrometheusBatchControl myBatch = new PrometheusBatchControl(theBatchSize);
 
         /* Set the number of stages */
         pReport.setNumStages(NUM_STEPS_PER_TABLE * theTables.size());
@@ -253,9 +253,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
         /* Loop through the tables */
         MetisProfile myStage = myTask.startTask("insertData");
-        Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
+        final Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
         while (myIterator.hasNext()) {
-            PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+            final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
             /* Note the new step */
             myStage.startTask(myTable.getTableName());
@@ -266,9 +266,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
 
         /* Loop through the tables */
         myStage = myTask.startTask("updateData");
-        ListIterator<PrometheusTableDataItem<?, ?>> myListIterator = theTables.listIterator();
+        final ListIterator<PrometheusTableDataItem<?, ?>> myListIterator = theTables.listIterator();
         while (myListIterator.hasNext()) {
-            PrometheusTableDataItem<?, ?> myTable = myListIterator.next();
+            final PrometheusTableDataItem<?, ?> myTable = myListIterator.next();
 
             /* Note the new step */
             myStage.startTask(myTable.getTableName());
@@ -280,7 +280,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         /* Loop through the tables in reverse order */
         myStage = myTask.startTask("deleteData");
         while (myListIterator.hasPrevious()) {
-            PrometheusTableDataItem<?, ?> myTable = myListIterator.previous();
+            final PrometheusTableDataItem<?, ?> myTable = myListIterator.previous();
 
             /* Note the new step */
             myStage.startTask(myTable.getTableName());
@@ -324,9 +324,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("createTables");
 
         /* Loop through the tables */
-        Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
+        final Iterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.iterator();
         while (myIterator.hasNext()) {
-            PrometheusTableDataItem<?, ?> myTable = myIterator.next();
+            final PrometheusTableDataItem<?, ?> myTable = myIterator.next();
 
             /* Check for cancellation */
             pReport.checkForCancellation();
@@ -353,9 +353,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("dropTables");
 
         /* Loop through the tables in reverse order */
-        ListIterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.listIterator(theTables.size());
+        final ListIterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.listIterator(theTables.size());
         while (myIterator.hasPrevious()) {
-            PrometheusTableDataItem<?, ?> myTable = myIterator.previous();
+            final PrometheusTableDataItem<?, ?> myTable = myIterator.previous();
 
             /* Check for cancellation */
             pReport.checkForCancellation();
@@ -385,9 +385,9 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("purgeTables");
 
         /* Loop through the tables in reverse order */
-        ListIterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.listIterator(theTables.size());
+        final ListIterator<PrometheusTableDataItem<?, ?>> myIterator = theTables.listIterator(theTables.size());
         while (myIterator.hasPrevious()) {
-            PrometheusTableDataItem<?, ?> myTable = myIterator.previous();
+            final PrometheusTableDataItem<?, ?> myTable = myIterator.previous();
 
             /* Check for cancellation */
             pReport.checkForCancellation();

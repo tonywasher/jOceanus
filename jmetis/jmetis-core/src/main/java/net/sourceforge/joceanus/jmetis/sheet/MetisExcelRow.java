@@ -88,7 +88,7 @@ public class MetisExcelRow
     @Override
     public MetisExcelRow getNextRow() {
         /* Determine the required index */
-        int myIndex = getRowIndex() + 1;
+        final int myIndex = getRowIndex() + 1;
 
         /* Return the next row */
         return theExcelSheet.getReadOnlyRowByIndex(myIndex);
@@ -97,7 +97,7 @@ public class MetisExcelRow
     @Override
     public MetisExcelRow getPreviousRow() {
         /* Determine the required index */
-        int myIndex = getRowIndex() - 1;
+        final int myIndex = getRowIndex() - 1;
         if (myIndex < 0) {
             return null;
         }
@@ -120,7 +120,7 @@ public class MetisExcelRow
         }
 
         /* Access the cell */
-        HSSFCell myExcelCell = theExcelRow.getCell(pIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
+        final HSSFCell myExcelCell = theExcelRow.getCell(pIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
         return (myExcelCell != null)
                                      ? new MetisExcelCell(this, myExcelCell, pIndex, true)
                                      : null;
@@ -135,7 +135,7 @@ public class MetisExcelRow
         }
 
         /* Create the cell */
-        HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
+        final HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
         return (myExcelCell != null)
                                      ? new MetisExcelCell(this, myExcelCell, pIndex, false)
                                      : null;
@@ -172,7 +172,7 @@ public class MetisExcelRow
      */
     protected <T> T parseValue(final String pSource,
                                final Class<T> pClass) {
-        MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -185,7 +185,7 @@ public class MetisExcelRow
      */
     protected <T> T parseValue(final Double pSource,
                                final Class<T> pClass) {
-        MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -200,7 +200,7 @@ public class MetisExcelRow
     protected <T> T parseValue(final Double pSource,
                                final String pCurrCode,
                                final Class<T> pClass) {
-        MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 }

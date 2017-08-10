@@ -32,7 +32,6 @@ import java.util.Arrays;
 
 /**
  * Data Conversion utility functions.
- * @author Tony Washer
  */
 public final class TethysDataConverter {
     /**
@@ -41,7 +40,7 @@ public final class TethysDataConverter {
     private static final int KNUTH_PRIME = 2123809381;
 
     /**
-     * Knuth Inverse (from Optimus) (KNUTH_PRIME * KNUTH_INVERSE) Mod UnsignedIntegerMax == 1.
+     * Knuth Inverse (from Optimus) (KNUTH_PRIME * KNUTH_INVERSE) Mod (UnsignedIntegerMax + 1) == 1.
      */
     private static final int KNUTH_INVERSE = 1885413229;
 

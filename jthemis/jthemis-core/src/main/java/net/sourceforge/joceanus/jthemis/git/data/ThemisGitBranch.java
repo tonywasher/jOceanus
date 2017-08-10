@@ -95,7 +95,7 @@ public final class ThemisGitBranch
         theCommitId = pCommitId;
 
         /* Create tag list */
-        GitTagList myTags = new GitTagList(this);
+        final GitTagList myTags = new GitTagList(this);
         setTags(myTags);
     }
 
@@ -117,7 +117,7 @@ public final class ThemisGitBranch
         theRepository = pParent.getRepository();
 
         /* Create tag list */
-        GitTagList myTags = new GitTagList(this);
+        final GitTagList myTags = new GitTagList(this);
         setTags(myTags);
 
         /* Set as virtual */
@@ -218,7 +218,7 @@ public final class ThemisGitBranch
             clear();
 
             /* Access a Git instance */
-            Git myGit = new Git(theComponent.getGitRepo());
+            final Git myGit = new Git(theComponent.getGitRepo());
 
             /* Discover branches */
             discoverBranches(myGit);
@@ -241,18 +241,18 @@ public final class ThemisGitBranch
             /* Protect against exceptions */
             try {
                 /* Access list of branches */
-                ListBranchCommand myCommand = pGit.branchList();
+                final ListBranchCommand myCommand = pGit.branchList();
                 myCommand.setListMode(ListMode.ALL);
-                List<Ref> myBranches = myCommand.call();
+                final List<Ref> myBranches = myCommand.call();
 
                 /* Loop through the branches */
-                Iterator<Ref> myIterator = myBranches.iterator();
+                final Iterator<Ref> myIterator = myBranches.iterator();
                 while (myIterator.hasNext()) {
-                    Ref myRef = myIterator.next();
+                    final Ref myRef = myIterator.next();
 
                     /* Access branch details */
                     String myName = myRef.getName();
-                    ObjectId myCommitId = myRef.getObjectId();
+                    final ObjectId myCommitId = myRef.getObjectId();
                     if (myName.startsWith(REF_BRANCHES)) {
                         myName = myName.substring(REF_BRANCHES.length());
                     }
@@ -260,12 +260,12 @@ public final class ThemisGitBranch
                     /* If this is the master branch */
                     if (BRN_MASTER.equals(myName)) {
                         /* Parse project file */
-                        ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myCommitId, "");
+                        final ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myCommitId, "");
 
                         /* If we have a project definition */
                         if (myProject != null) {
                             /* Access the version */
-                            String myVers = myProject.getDefinition().getVersion();
+                            final String myVers = myProject.getDefinition().getVersion();
 
                             /* If we have a valid prefix */
                             if (myVers.startsWith(BRANCH_PREFIX)) {
@@ -273,7 +273,7 @@ public final class ThemisGitBranch
                                 myName = myVers.substring(BRANCH_PREFIX.length());
 
                                 /* Create the new branch and add it */
-                                ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
+                                final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
                                 add(myBranch);
                                 myBranch.setTrunk();
                             }
@@ -285,7 +285,7 @@ public final class ThemisGitBranch
                         myName = myName.substring(BRANCH_PREFIX.length());
 
                         /* Create the new branch and add it */
-                        ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
+                        final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
                         add(myBranch);
                     }
                 }
@@ -303,16 +303,16 @@ public final class ThemisGitBranch
             /* Protect against exceptions */
             try {
                 /* Access list of tags */
-                ListTagCommand myCommand = pGit.tagList();
-                List<Ref> myTags = myCommand.call();
+                final ListTagCommand myCommand = pGit.tagList();
+                final List<Ref> myTags = myCommand.call();
 
                 /* Determine prefix */
-                String myPrefix = ThemisGitTag.REF_TAGS + BRANCH_PREFIX;
+                final String myPrefix = ThemisGitTag.REF_TAGS + BRANCH_PREFIX;
 
                 /* Loop through the tags */
-                Iterator<Ref> myIterator = myTags.iterator();
+                final Iterator<Ref> myIterator = myTags.iterator();
                 while (myIterator.hasNext()) {
-                    Ref myRef = myIterator.next();
+                    final Ref myRef = myIterator.next();
 
                     /* Access tag details */
                     String myName = myRef.getName();
@@ -323,7 +323,7 @@ public final class ThemisGitBranch
                         myName = myName.substring(ThemisGitTag.REF_TAGS.length());
 
                         /* Locate the tag separator */
-                        int iIndex = myName.indexOf(ThemisGitTag.PREFIX_TAG);
+                        final int iIndex = myName.indexOf(ThemisGitTag.PREFIX_TAG);
                         if (iIndex == -1) {
                             continue;
                         }
@@ -337,7 +337,7 @@ public final class ThemisGitBranch
                             myName = myName.substring(BRANCH_PREFIX.length());
 
                             /* Create the new branch and add it */
-                            ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, null);
+                            final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, null);
                             add(myBranch);
 
                             /* Set virtual flag */
@@ -358,16 +358,16 @@ public final class ThemisGitBranch
          */
         private void discoverTags(final MetisThreadStatusReport pReport) throws OceanusException {
             /* Access repository */
-            ThemisGitRepository myRepo = theComponent.getRepository();
+            final ThemisGitRepository myRepo = theComponent.getRepository();
 
             /* Access trunk */
-            ThemisGitBranch myTrunk = locateTrunk();
+            final ThemisGitBranch myTrunk = locateTrunk();
             if (myTrunk != null) {
                 /* Report stage */
                 pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
 
                 /* Parse project file */
-                ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTrunk.getCommitId(), "");
+                final ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTrunk.getCommitId(), "");
                 myTrunk.setProjectDefinition(myProject);
 
                 /* Register the branch */
@@ -380,10 +380,10 @@ public final class ThemisGitBranch
             }
 
             /* Loop through the entries */
-            Iterator<ThemisGitBranch> myIterator = iterator();
+            final Iterator<ThemisGitBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
-                ThemisGitBranch myBranch = myIterator.next();
+                final ThemisGitBranch myBranch = myIterator.next();
 
                 /* Skip trunk branch */
                 if (myBranch.isTrunk()) {
@@ -396,7 +396,7 @@ public final class ThemisGitBranch
                 /* If this is a real branch */
                 if (!myBranch.isVirtual()) {
                     /* Parse project file */
-                    ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myBranch.getCommitId(), "");
+                    final ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myBranch.getCommitId(), "");
                     myBranch.setProjectDefinition(myProject);
 
                     /* Register the branch */

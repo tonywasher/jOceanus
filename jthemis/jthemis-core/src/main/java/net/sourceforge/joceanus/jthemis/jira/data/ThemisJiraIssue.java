@@ -172,7 +172,7 @@ public class ThemisJiraIssue
      * @throws OceanusException on error
      */
     protected ThemisJiraIssue(final ThemisJiraServer pServer,
-                        final JSONObject pIssue) throws OceanusException {
+                              final JSONObject pIssue) throws OceanusException {
         /* Store parameters */
         super(pIssue);
         theServer = pServer;
@@ -180,7 +180,7 @@ public class ThemisJiraIssue
         /* Protect against exceptions */
         try {
             /* Access fields */
-            JSONObject myFields = pIssue.getJSONObject("fields");
+            final JSONObject myFields = pIssue.getJSONObject("fields");
             theSummary = myFields.getString("summary");
             theDesc = myFields.optString(JiraNamedDescIdObject.FIELD_DESC, null);
             theEnvironment = myFields.optString("environment", null);
@@ -227,8 +227,8 @@ public class ThemisJiraIssue
             JSONArray myArray = myFields.getJSONArray("issuelinks");
             int iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
-                JSONObject myLinkDtl = myArray.getJSONObject(i);
-                JiraIssueLink myLink = new JiraIssueLink(myLinkDtl);
+                final JSONObject myLinkDtl = myArray.getJSONObject(i);
+                final JiraIssueLink myLink = new JiraIssueLink(myLinkDtl);
                 theIssueLinks.add(myLink);
             }
 
@@ -236,8 +236,8 @@ public class ThemisJiraIssue
             myArray = myFields.getJSONArray("subtasks");
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
-                JSONObject myTaskDtl = myArray.getJSONObject(i);
-                JiraIssueReference myRef = new JiraIssueReference(myTaskDtl.getString(FIELD_KEY));
+                final JSONObject myTaskDtl = myArray.getJSONObject(i);
+                final JiraIssueReference myRef = new JiraIssueReference(myTaskDtl.getString(FIELD_KEY));
                 theSubTasks.add(myRef);
             }
 
@@ -245,7 +245,7 @@ public class ThemisJiraIssue
             myArray = myFields.getJSONArray("labels");
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
-                String myLabel = myArray.getString(i);
+                final String myLabel = myArray.getString(i);
                 theLabels.add(myLabel);
             }
 
@@ -253,8 +253,8 @@ public class ThemisJiraIssue
             myArray = myFields.getJSONArray("components");
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
-                JSONObject myCompDtl = myArray.getJSONObject(i);
-                JiraComponent myComp = theProject.getComponent(myCompDtl.getString(JiraComponent.FIELD_NAME));
+                final JSONObject myCompDtl = myArray.getJSONObject(i);
+                final JiraComponent myComp = theProject.getComponent(myCompDtl.getString(JiraComponent.FIELD_NAME));
                 theComponents.add(myComp);
             }
 
@@ -262,8 +262,8 @@ public class ThemisJiraIssue
             myArray = myFields.getJSONArray("versions");
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
-                JSONObject myVersDtl = myArray.getJSONObject(i);
-                JiraVersion myVers = theProject.getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
+                final JSONObject myVersDtl = myArray.getJSONObject(i);
+                final JiraVersion myVers = theProject.getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
                 theAffectsVers.add(myVers);
             }
 
@@ -271,14 +271,14 @@ public class ThemisJiraIssue
             myArray = myFields.getJSONArray("fixVersions");
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
-                JSONObject myVersDtl = myArray.getJSONObject(i);
-                JiraVersion myVers = theProject.getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
+                final JSONObject myVersDtl = myArray.getJSONObject(i);
+                final JiraVersion myVers = theProject.getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
                 theFixVers.add(myVers);
             }
 
             /* Resolve parent */
             if (theIssueType.isSubTask()) {
-                JSONObject myParDtl = myFields.getJSONObject("parent");
+                final JSONObject myParDtl = myFields.getJSONObject("parent");
                 theParent = new JiraIssueReference(myParDtl.getString(FIELD_KEY));
             } else {
                 theParent = null;
@@ -535,11 +535,11 @@ public class ThemisJiraIssue
          */
         private JiraIssueLink(final JSONObject pLink) throws OceanusException {
             /* Access the details */
-            JSONObject myLinkDtl = pLink.getJSONObject("issuelinktype");
+            final JSONObject myLinkDtl = pLink.getJSONObject("issuelinktype");
             theType = theServer.getIssueLinkType(myLinkDtl.getString(JiraIssueLinkType.FIELD_NAME));
 
             /* Determine the target issue */
-            JSONObject myIssueDtl = pLink.getJSONObject("issue");
+            final JSONObject myIssueDtl = pLink.getJSONObject("issue");
             theReference = new JiraIssueReference(myIssueDtl.getString(FIELD_KEY));
         }
 

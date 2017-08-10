@@ -134,12 +134,12 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         myTask = myTask.startTask("Writing");
 
         /* Create a similar security control */
-        GordianHashManager mySecure = pData.getSecurity();
-        GordianKeySetHash myBase = pData.getKeySetHash();
-        GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
+        final GordianHashManager mySecure = pData.getSecurity();
+        final GordianKeySetHash myBase = pData.getKeySetHash();
+        final GordianKeySetHash myHash = mySecure.similarKeySetHash(myBase);
 
         /* Assume failure */
-        String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
+        final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
         boolean bDelete = true;
@@ -211,16 +211,16 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      */
     private void writeWorkBook(final OutputStream pStream) throws OceanusException, IOException {
         /* Obtain the active profile */
-        MetisProfile myTask = theReport.getActiveTask();
+        final MetisProfile myTask = theReport.getActiveTask();
 
         /* Declare the number of stages */
         theReport.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
+        final Iterator<PrometheusSheetDataItem<?, ?>> myIterator = theSheets.iterator();
         while (myIterator.hasNext()) {
             /* Access the next sheet */
-            PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
+            final PrometheusSheetDataItem<?, ?> mySheet = myIterator.next();
 
             /* Write data for the sheet */
             myTask.startTask(mySheet.toString());

@@ -117,7 +117,7 @@ public final class ThemisMvnProjectId
         theDependency = null;
 
         /* Access any parent */
-        Parent myParent = theModel.getParent();
+        final Parent myParent = theModel.getParent();
 
         /* Access GroupID */
         theGroupId = theModel.getGroupId();
@@ -322,7 +322,7 @@ public final class ThemisMvnProjectId
         }
 
         /* Access as ProjectId */
-        ThemisMvnProjectId myThat = (ThemisMvnProjectId) pThat;
+        final ThemisMvnProjectId myThat = (ThemisMvnProjectId) pThat;
 
         /* Check the attributes */
         if (!theGroupId.equals(myThat.getGroupId())) {

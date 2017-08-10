@@ -175,12 +175,12 @@ public class MetisOasisWorkBook {
     /**
      * Count of table elements.
      */
-    private int theNumTables = 0;
+    private int theNumTables;
 
     /**
      * Count of validation elements.
      */
-    private int theNumConstraints = 0;
+    private int theNumConstraints;
 
     /**
      * Map of Sheets.
@@ -315,32 +315,32 @@ public class MetisOasisWorkBook {
                                       final int pNumRows,
                                       final int pNumCols) {
         /* Create the new Sheet */
-        TableTableElement myElement = theContents.newTableTableElement();
+        final TableTableElement myElement = theContents.newTableTableElement();
         myElement.setTableNameAttribute(pName);
         myElement.setTableStyleNameAttribute(STYLE_TABLE);
 
         /* Create the columns */
-        TableTableColumnElement myCol = myElement.newTableTableColumnElement();
+        final TableTableColumnElement myCol = myElement.newTableTableColumnElement();
         if (pNumCols > 1) {
             myCol.setTableNumberColumnsRepeatedAttribute(pNumCols);
         }
 
         /* Create the rows */
-        TableTableRowElement myRow = myElement.newTableTableRowElement();
+        final TableTableRowElement myRow = myElement.newTableTableRowElement();
         myRow.setTableStyleNameAttribute(STYLE_ROW);
         if (pNumRows > 1) {
             myRow.setTableNumberRowsRepeatedAttribute(pNumRows);
         }
 
         /* Create the cells */
-        TableTableCellElement myCell = new TableTableCellElement(theContentDom);
+        final TableTableCellElement myCell = new TableTableCellElement(theContentDom);
         myRow.appendChild(myCell);
         if (pNumCols > 1) {
             myCell.setTableNumberColumnsRepeatedAttribute(pNumCols);
         }
 
         /* Create the sheet representation */
-        SheetReference myRef = new SheetReference(myElement);
+        final SheetReference myRef = new SheetReference(myElement);
         myRef.addToMap();
         return myRef.getSheet();
     }
@@ -361,7 +361,7 @@ public class MetisOasisWorkBook {
      */
     protected MetisDataSheet getSheet(final String pName) {
         /* Obtain the existing sheet */
-        SheetReference myRef = theSheetMap.get(pName);
+        final SheetReference myRef = theSheetMap.get(pName);
         return (myRef == null)
                                ? null
                                : myRef.getReadOnlySheet();
@@ -375,19 +375,19 @@ public class MetisOasisWorkBook {
      */
     protected MetisDataView getRangeView(final String pName) throws OceanusException {
         /* Locate the named range in the map */
-        TableNamedRangeElement myRange = theRangeMap.get(pName);
+        final TableNamedRangeElement myRange = theRangeMap.get(pName);
         if (myRange == null) {
             return null;
         }
 
         /* Obtain the address */
-        String myAddress = myRange.getTableCellRangeAddressAttribute();
-        OasisCellRange myCellRange = new OasisCellRange(myAddress);
-        MetisOasisCellAddress myFirstCell = myCellRange.getFirstCell();
-        MetisOasisCellAddress myLastCell = myCellRange.getLastCell();
+        final String myAddress = myRange.getTableCellRangeAddressAttribute();
+        final OasisCellRange myCellRange = new OasisCellRange(myAddress);
+        final MetisOasisCellAddress myFirstCell = myCellRange.getFirstCell();
+        final MetisOasisCellAddress myLastCell = myCellRange.getLastCell();
 
         /* Obtain the sheet and reject if missing */
-        MetisDataSheet mySheet = getSheet(myFirstCell.getSheetName());
+        final MetisDataSheet mySheet = getSheet(myFirstCell.getSheetName());
         if (mySheet == null) {
             throw new MetisLogicException("Sheet for "
                                           + pName
@@ -410,8 +410,8 @@ public class MetisOasisWorkBook {
             }
 
             /* Add sheet to map */
-            TableTableElement myTable = (TableTableElement) myNode;
-            SheetReference myRef = new SheetReference(myTable);
+            final TableTableElement myTable = (TableTableElement) myNode;
+            final SheetReference myRef = new SheetReference(myTable);
             myRef.addToMap();
         }
     }
@@ -428,7 +428,7 @@ public class MetisOasisWorkBook {
             }
 
             /* Add range to map */
-            TableNamedRangeElement myRange = (TableNamedRangeElement) myNode;
+            final TableNamedRangeElement myRange = (TableNamedRangeElement) myNode;
             theRangeMap.put(myRange.getTableNameAttribute(), myRange);
         }
     }
@@ -451,7 +451,7 @@ public class MetisOasisWorkBook {
         /* Protect against exceptions */
         try {
             /* Add the new range */
-            TableNamedRangeElement myRange = theExpressions.newTableNamedRangeElement(pRange.toString(), pName);
+            final TableNamedRangeElement myRange = theExpressions.newTableNamedRangeElement(pRange.toString(), pName);
             myRange.setTableBaseCellAddressAttribute(pRange.getFirstCell().toString());
             theRangeMap.put(pName, myRange);
         } catch (Exception e) {
@@ -501,7 +501,7 @@ public class MetisOasisWorkBook {
         TableContentValidationElement myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
             /* Build the constraint list */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Loop through the values */
             for (String myValue : pValueList) {
@@ -538,18 +538,18 @@ public class MetisOasisWorkBook {
                                             final MetisCellPosition pLastCell,
                                             final TableContentValidationElement pConstraint) throws OceanusException {
         /* Determine size of range */
-        String myName = pConstraint.getTableNameAttribute();
+        final String myName = pConstraint.getTableNameAttribute();
         int iRow = pFirstCell.getRowIndex();
-        int iLastRow = pLastCell.getRowIndex();
-        int iFirstCol = pFirstCell.getColumnIndex();
-        int iLastCol = pLastCell.getColumnIndex();
+        final int iLastRow = pLastCell.getRowIndex();
+        final int iFirstCol = pFirstCell.getColumnIndex();
+        final int iLastCol = pLastCell.getColumnIndex();
 
         /* Loop through the rows */
         for (MetisOasisRow myRow = pSheet.getMutableRowByIndex(iRow); iRow <= iLastRow; iRow++, myRow = pSheet.getMutableRowByIndex(iRow)) {
             /* Loop through the columns */
             for (int iCol = iFirstCol; iCol <= iLastCol; iCol++) {
                 /* Access the cell and set the constraint */
-                MetisOasisCell myCell = myRow.getMutableCellByIndex(iCol);
+                final MetisOasisCell myCell = myRow.getMutableCellByIndex(iCol);
                 myCell.setValidationName(myName);
             }
         }
@@ -563,19 +563,19 @@ public class MetisOasisWorkBook {
      */
     private TableContentValidationElement createDataConstraint(final String pConstraint) throws OceanusException {
         /* Build the name */
-        String myName = "val"
-                        + ++theNumConstraints;
+        final String myName = "val"
+                              + ++theNumConstraints;
 
         /* Create the new constraint */
-        TableContentValidationElement myConstraint = theValidations.newTableContentValidationElement(myName);
+        final TableContentValidationElement myConstraint = theValidations.newTableContentValidationElement(myName);
 
         /* Create the rule */
-        String myRule = "of:cell-content-is-in-list("
-                        + pConstraint
-                        + ")";
+        final String myRule = "of:cell-content-is-in-list("
+                              + pConstraint
+                              + ")";
         myConstraint.setTableConditionAttribute(myRule);
         myConstraint.setTableAllowEmptyCellAttribute(Boolean.TRUE);
-        TableErrorMessageElement myError = myConstraint.newTableErrorMessageElement();
+        final TableErrorMessageElement myError = myConstraint.newTableErrorMessageElement();
         myError.setTableDisplayAttribute(Boolean.TRUE);
         myError.setTableMessageTypeAttribute(TableMessageTypeAttribute.Value.STOP.toString());
 
@@ -590,7 +590,7 @@ public class MetisOasisWorkBook {
      */
     protected void applyDataFilter(final OasisCellRange pRange) throws OceanusException {
         /* Create the new filter */
-        TableDatabaseRangeElement myFilter = theFilters.newTableDatabaseRangeElement("Events.E1:Events.E15");
+        final TableDatabaseRangeElement myFilter = theFilters.newTableDatabaseRangeElement("Events.E1:Events.E15");
         myFilter.setTableNameAttribute("__Anonymous_Sheet_DB__14");
         myFilter.setTableDisplayFilterButtonsAttribute(Boolean.TRUE);
         myFilter.setTableOrientationAttribute(TableOrientationAttribute.Value.COLUMN.toString());
@@ -615,10 +615,10 @@ public class MetisOasisWorkBook {
     protected static void addAsNextSibling(final Node pNew,
                                            final Node pRef) {
         /* Obtain parent of reference node */
-        Node myParent = pRef.getParentNode();
+        final Node myParent = pRef.getParentNode();
 
         /* Obtain the next element */
-        Node myNextElement = pRef.getNextSibling();
+        final Node myNextElement = pRef.getNextSibling();
         if (myNextElement != null) {
             myParent.insertBefore(pNew, myNextElement);
         } else {
@@ -634,7 +634,7 @@ public class MetisOasisWorkBook {
     protected static void addAsPriorSibling(final Node pNew,
                                             final Node pRef) {
         /* Obtain parent of reference node */
-        Node myParent = pRef.getParentNode();
+        final Node myParent = pRef.getParentNode();
 
         /* Insert before reference node */
         myParent.insertBefore(pNew, pRef);
@@ -701,7 +701,7 @@ public class MetisOasisWorkBook {
     private void createStandardNumericStyle(final String pStyleName,
                                             final String pFormat) {
         /* Look for format splits */
-        String[] myParts = pFormat.split(Character.toString(MetisDataFormats.CHAR_SEP));
+        final String[] myParts = pFormat.split(Character.toString(MetisDataFormats.CHAR_SEP));
         switch (myParts.length) {
             case 1:
                 theStyles.appendChild(new OdfNumberStyle(theContentDom, pFormat, pStyleName));
@@ -723,12 +723,12 @@ public class MetisOasisWorkBook {
     private void createDoubleNumericStyle(final String pStyleName,
                                           final String[] pParts) {
         /* Build style */
-        String myNegName = "m"
-                           + pStyleName;
-        OdfNumberStyle myPos = new OdfNumberStyle(theContentDom, pParts[0], pStyleName);
-        OdfNumberStyle myNeg = new OdfNumberStyle(theContentDom, pParts[0], myNegName);
+        final String myNegName = "m"
+                                 + pStyleName;
+        final OdfNumberStyle myPos = new OdfNumberStyle(theContentDom, pParts[0], pStyleName);
+        final OdfNumberStyle myNeg = new OdfNumberStyle(theContentDom, pParts[0], myNegName);
         myPos.setMapNegative(myNegName);
-        StyleTextPropertiesElement myNegStyle = new StyleTextPropertiesElement(theContentDom);
+        final StyleTextPropertiesElement myNegStyle = new StyleTextPropertiesElement(theContentDom);
         myNegStyle.setFoColorAttribute(COLOR_NEG);
         myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
         theStyles.appendChild(myNeg);
@@ -743,19 +743,19 @@ public class MetisOasisWorkBook {
     private void createTripleNumericStyle(final String pStyleName,
                                           final String[] pParts) {
         /* Build style */
-        String myNegName = "n"
-                           + pStyleName;
-        String myPosName = "p"
-                           + pStyleName;
-        OdfNumberStyle myPos = new OdfNumberStyle(theContentDom, pParts[0], myPosName);
-        OdfNumberStyle myNeg = new OdfNumberStyle(theContentDom, pParts[0], myNegName);
-        OdfNumberStyle myZero = new OdfNumberStyle(theContentDom);
+        final String myNegName = "n"
+                                 + pStyleName;
+        final String myPosName = "p"
+                                 + pStyleName;
+        final OdfNumberStyle myPos = new OdfNumberStyle(theContentDom, pParts[0], myPosName);
+        final OdfNumberStyle myNeg = new OdfNumberStyle(theContentDom, pParts[0], myNegName);
+        final OdfNumberStyle myZero = new OdfNumberStyle(theContentDom);
         myZero.setStyleNameAttribute(pStyleName);
-        NumberTextElement myZeroText = myZero.newNumberTextElement();
+        final NumberTextElement myZeroText = myZero.newNumberTextElement();
         myZeroText.setTextContent(pParts[2]);
         myZero.setMapNegative(myNegName);
         myZero.setMapPositive(myPosName);
-        StyleTextPropertiesElement myNegStyle = new StyleTextPropertiesElement(theContentDom);
+        final StyleTextPropertiesElement myNegStyle = new StyleTextPropertiesElement(theContentDom);
         myNegStyle.setFoColorAttribute(COLOR_NEG);
         myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
         theStyles.appendChild(myNeg);
@@ -900,7 +900,7 @@ public class MetisOasisWorkBook {
      */
     protected OdfStyle getCellStyle(final MetisCellStyleType pType) {
         /* Determine the correct format */
-        String myStyleName = MetisDataFormats.getFormatName(pType);
+        final String myStyleName = MetisDataFormats.getFormatName(pType);
 
         /* Look for existing format */
         OdfStyle myStyle = theStyleMap.get(myStyleName);
@@ -919,8 +919,8 @@ public class MetisOasisWorkBook {
         /* If we have a data format */
         if (MetisDataFormats.hasDataFormat(pType)) {
             /* Determine the format */
-            String myFormat = MetisDataFormats.getDataFormatString(pType);
-            String myFormatName = getDataStyleName(myStyleName);
+            final String myFormat = MetisDataFormats.getDataFormatString(pType);
+            final String myFormatName = getDataStyleName(myStyleName);
             createNumericStyle(myFormatName, myFormat, pType);
             myStyle.setStyleDataStyleNameAttribute(myFormatName);
         }
@@ -937,7 +937,7 @@ public class MetisOasisWorkBook {
      */
     protected OdfStyle getCellStyle(final Object pValue) {
         /* Determine the correct format */
-        String myStyleName = MetisDataFormats.getFormatName(pValue);
+        final String myStyleName = MetisDataFormats.getFormatName(pValue);
 
         /* Look for existing format */
         OdfStyle myStyle = theStyleMap.get(myStyleName);
@@ -946,7 +946,7 @@ public class MetisOasisWorkBook {
         }
 
         /* Determine the CellStyleType */
-        MetisCellStyleType myType = MetisDataFormats.getCellStyleType(pValue);
+        final MetisCellStyleType myType = MetisDataFormats.getCellStyleType(pValue);
 
         /* Create the New Cell Style */
         myStyle = theStyles.newStyle(OdfStyleFamily.TableCell);
@@ -959,8 +959,8 @@ public class MetisOasisWorkBook {
         /* If we have a data format */
         if (MetisDataFormats.hasDataFormat(myType)) {
             /* Determine the format */
-            String myFormat = MetisDataFormats.getDataFormatString(pValue);
-            String myFormatName = getDataStyleName(myStyleName);
+            final String myFormat = MetisDataFormats.getDataFormatString(pValue);
+            final String myFormatName = getDataStyleName(myStyleName);
             createNumericStyle(myFormatName, myFormat, myType);
             myStyle.setStyleDataStyleNameAttribute(myFormatName);
         }
@@ -977,7 +977,7 @@ public class MetisOasisWorkBook {
      */
     protected OdfStyle getAlternateCellStyle(final Object pValue) {
         /* Determine the correct format */
-        String myStyleName = MetisDataFormats.getAlternateFormatName(pValue);
+        final String myStyleName = MetisDataFormats.getAlternateFormatName(pValue);
 
         /* Look for existing format */
         OdfStyle myAltStyle = theStyleMap.get(myStyleName);
@@ -1008,8 +1008,8 @@ public class MetisOasisWorkBook {
         /* If we have a data format */
         if (MetisDataFormats.hasDataFormat(myType)) {
             /* Determine the format */
-            String myFormat = MetisDataFormats.getDataFormatString(pValue);
-            String myFormatName = getDataStyleName(myStyleName);
+            final String myFormat = MetisDataFormats.getDataFormatString(pValue);
+            final String myFormatName = getDataStyleName(myStyleName);
             createNumericStyle(myFormatName, myFormat, myType);
             myAltStyle.setStyleDataStyleNameAttribute(myFormatName);
         }

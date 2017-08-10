@@ -57,10 +57,10 @@ public final class Themis4Swing {
     private static void createAndShowGUI(final MetisProgram pInfo) {
         try {
             /* Create the Toolkit */
-            MetisSwingToolkit myToolkit = new MetisSwingToolkit(pInfo, false);
+            final MetisSwingToolkit myToolkit = new MetisSwingToolkit(pInfo, false);
 
             /* Create the frame and declare it */
-            JFrame myFrame = new JFrame();
+            final JFrame myFrame = new JFrame();
             myToolkit.getGuiFactory().setFrame(myFrame);
 
             /* Create the SvnManager program */
@@ -78,10 +78,10 @@ public final class Themis4Swing {
     public static void main(final String[] args) {
         try {
             /* Create a timer */
-            MetisProgram myInfo = new MetisProgram(ThemisApp.class);
+            final MetisProgram myInfo = new MetisProgram(ThemisApp.class);
 
             /* Obtain program details */
-            TethysProgram myApp = myInfo.getProgramDefinitions();
+            final TethysProgram myApp = myInfo.getProgramDefinitions();
 
             /* Sort out splash frame */
             TethysSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());

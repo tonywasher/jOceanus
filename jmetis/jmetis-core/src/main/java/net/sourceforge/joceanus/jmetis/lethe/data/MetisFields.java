@@ -144,7 +144,7 @@ public final class MetisFields {
      */
     private Integer getNextValue() {
         /* return the new anchor id */
-        Integer myValue = theNextValue;
+        final Integer myValue = theNextValue;
         theNextValue = theNextValue + 1;
         return myValue;
     }
@@ -387,7 +387,7 @@ public final class MetisFields {
         checkUniqueName(pName);
 
         /* Create the field */
-        MetisField myField = new MetisField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
+        final MetisField myField = new MetisField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
 
         /* Add it to the list */
         theFields.add(myField);
@@ -419,7 +419,7 @@ public final class MetisFields {
         }
 
         /* Create the field */
-        MetisField myField = new MetisField(this, pName);
+        final MetisField myField = new MetisField(this, pName);
 
         /* Add it to the list */
         theFields.add(myField);
@@ -437,9 +437,9 @@ public final class MetisFields {
      * @throws IllegalArgumentException if name is present
      */
     private void checkUniqueName(final String pName) {
-        Iterator<MetisField> myIterator = fieldIterator();
+        final Iterator<MetisField> myIterator = fieldIterator();
         while (myIterator.hasNext()) {
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
 
             /* If the name exists, throw an exception */
             if (pName.equals(myField.getName())) {
@@ -464,7 +464,7 @@ public final class MetisFields {
         }
 
         /* Access as MetisFields */
-        MetisFields myThat = (MetisFields) pThat;
+        final MetisFields myThat = (MetisFields) pThat;
 
         /* Must have same anchor id */
         return theAnchorId == myThat.getAnchorId();
@@ -499,7 +499,7 @@ public final class MetisFields {
             theIterator = pFields.theFields.iterator();
 
             /* Allocate preceding iterator */
-            MetisFields myParent = pFields.theParent;
+            final MetisFields myParent = pFields.theParent;
             thePreceding = (myParent == null)
                                               ? null
                                               : myParent.fieldIterator();
@@ -748,7 +748,7 @@ public final class MetisFields {
             }
 
             /* Access as MetisField */
-            MetisField myThat = (MetisField) pThat;
+            final MetisField myThat = (MetisField) pThat;
 
             /* Must belong to the same anchor */
             if (!theAnchor.equals(myThat.getAnchor())) {
@@ -782,17 +782,17 @@ public final class MetisFields {
     public static <E extends Enum<E>> Map<MetisField, E> buildFieldMap(final MetisFields pAnchor,
                                                                        final Class<E> pClass) {
         /* Create the map */
-        Map<MetisField, E> myMap = new HashMap<>();
+        final Map<MetisField, E> myMap = new HashMap<>();
 
         /* Loop through the enum values */
         for (E myValue : pClass.getEnumConstants()) {
             /* Determine name */
-            String myName = (myValue instanceof MetisFieldEnum)
-                                                                ? ((MetisFieldEnum) myValue).getFieldName()
-                                                                : myValue.toString();
+            final String myName = (myValue instanceof MetisFieldEnum)
+                                                                      ? ((MetisFieldEnum) myValue).getFieldName()
+                                                                      : myValue.toString();
 
             /* Declare a field for the value */
-            MetisField myField = pAnchor.declareLocalField(myName);
+            final MetisField myField = pAnchor.declareLocalField(myName);
 
             /* Add to the map */
             myMap.put(myField, myValue);
@@ -812,13 +812,13 @@ public final class MetisFields {
     public static <E extends Enum<E>> Map<E, MetisField> reverseFieldMap(final Map<MetisField, E> pSourceMap,
                                                                          final Class<E> pClass) {
         /* Create the map */
-        Map<E, MetisField> myMap = new EnumMap<>(pClass);
+        final Map<E, MetisField> myMap = new EnumMap<>(pClass);
 
         /* Loop through the enum values */
         for (Map.Entry<MetisField, E> myEntry : pSourceMap.entrySet()) {
             /* Access Key and Value */
-            MetisField myField = myEntry.getKey();
-            E myEnum = myEntry.getValue();
+            final MetisField myField = myEntry.getKey();
+            final E myEnum = myEntry.getValue();
 
             /* Add to the map */
             myMap.put(myEnum, myField);

@@ -109,11 +109,11 @@ public class ControlData
         myValue = pValues.getValue(FIELD_CONTROLKEY);
         if (myValue instanceof Integer) {
             /* Store value */
-            Integer myInt = (Integer) myValue;
+            final Integer myInt = (Integer) myValue;
             setValueControlKey(myInt);
 
             /* Resolve the ControlKey */
-            DataSet<?, ?> myData = getDataSet();
+            final DataSet<?, ?> myData = getDataSet();
             resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
         }
     }
@@ -144,7 +144,7 @@ public class ControlData
      * @return the ControlKeyId
      */
     public Integer getControlKeyId() {
-        ControlKey myKey = getControlKey();
+        final ControlKey myKey = getControlKey();
         return (myKey == null)
                                ? null
                                : myKey.getId();
@@ -213,7 +213,7 @@ public class ControlData
         }
 
         /* Compare the Versions */
-        int iDiff = getDataVersion() - pThat.getDataVersion();
+        final int iDiff = getDataVersion() - pThat.getDataVersion();
         if (iDiff != 0) {
             return iDiff;
         }
@@ -225,7 +225,7 @@ public class ControlData
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        DataSet<?, ?> myData = getDataSet();
+        final DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_CONTROLKEY, myData.getControlKeys());
     }
 
@@ -318,7 +318,7 @@ public class ControlData
 
         @Override
         protected ControlDataList getEmptyList(final ListStyle pStyle) {
-            ControlDataList myList = new ControlDataList(this);
+            final ControlDataList myList = new ControlDataList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -342,7 +342,7 @@ public class ControlData
             }
 
             /* Clone the control data */
-            ControlData myControl = new ControlData(this, (ControlData) pItem);
+            final ControlData myControl = new ControlData(this, (ControlData) pItem);
             add(myControl);
             return myControl;
         }
@@ -359,7 +359,7 @@ public class ControlData
          */
         public void addNewControl(final Integer pVersion) throws OceanusException {
             /* Create the ControlData */
-            DataValues<CryptographyDataType> myValues = new DataValues<>(ControlData.OBJECT_NAME);
+            final DataValues<CryptographyDataType> myValues = new DataValues<>(ControlData.OBJECT_NAME);
             myValues.addValue(FIELD_DATAVERSION, pVersion);
 
             /* Add the item */
@@ -369,7 +369,7 @@ public class ControlData
         @Override
         public ControlData addValuesItem(final DataValues<CryptographyDataType> pValues) throws OceanusException {
             /* Create the controlData */
-            ControlData myControl = new ControlData(this, pValues);
+            final ControlData myControl = new ControlData(this, pValues);
 
             /* Check that this controlId has not been previously added */
             if (!isIdUnique(myControl.getId())) {

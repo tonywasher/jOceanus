@@ -599,7 +599,7 @@ public enum PrometheusDataResource implements TethysResourceId {
      */
     private static Map<CryptographyDataType, TethysResourceId> buildNameMap() {
         /* Create the map and return it */
-        Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
+        final Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
         myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
         myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
         myMap.put(CryptographyDataType.DATAKEY, DATAKEY_NAME);
@@ -622,7 +622,7 @@ public enum PrometheusDataResource implements TethysResourceId {
      */
     private static Map<CryptographyDataType, TethysResourceId> buildListMap() {
         /* Create the map and return it */
-        Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
+        final Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
         myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
         myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
         myMap.put(CryptographyDataType.DATAKEY, DATAKEY_LIST);

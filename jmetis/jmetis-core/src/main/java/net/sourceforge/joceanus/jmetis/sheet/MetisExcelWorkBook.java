@@ -214,7 +214,7 @@ public class MetisExcelWorkBook {
      */
     protected MetisDataSheet newSheet(final String pName) {
         /* Create the new Sheet */
-        HSSFSheet mySheet = theBook.createSheet(pName);
+        final HSSFSheet mySheet = theBook.createSheet(pName);
         return new MetisExcelSheet(this, mySheet, theBook.getSheetIndex(pName), false);
     }
 
@@ -225,7 +225,7 @@ public class MetisExcelWorkBook {
      */
     protected MetisDataSheet getSheet(final String pName) {
         /* Create the new Sheet */
-        HSSFSheet mySheet = theBook.getSheet(pName);
+        final HSSFSheet mySheet = theBook.getSheet(pName);
         return new MetisExcelSheet(this, mySheet, theBook.getSheetIndex(mySheet), true);
     }
 
@@ -256,22 +256,22 @@ public class MetisExcelWorkBook {
      */
     protected MetisDataView getRangeView(final String pName) throws OceanusException {
         /* Find the range of cells */
-        Name myName = theBook.getName(pName);
+        final Name myName = theBook.getName(pName);
         if (myName == null) {
             return null;
         }
 
         /* Parse the name reference */
-        AreaReference myArea = new AreaReference(myName.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
+        final AreaReference myArea = new AreaReference(myName.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
 
         /* Determine extent of Range */
         CellReference myRef = myArea.getLastCell();
-        MetisCellPosition myLastCell = new MetisCellPosition(myRef.getCol(), myRef.getRow());
+        final MetisCellPosition myLastCell = new MetisCellPosition(myRef.getCol(), myRef.getRow());
         myRef = myArea.getFirstCell();
-        MetisCellPosition myFirstCell = new MetisCellPosition(myRef.getCol(), myRef.getRow());
+        final MetisCellPosition myFirstCell = new MetisCellPosition(myRef.getCol(), myRef.getRow());
 
         /* Obtain the sheet */
-        MetisDataSheet mySheet = getSheet(myRef.getSheetName());
+        final MetisDataSheet mySheet = getSheet(myRef.getSheetName());
 
         /* Return the view */
         return new MetisDataView(mySheet, myFirstCell, myLastCell);
@@ -298,7 +298,7 @@ public class MetisExcelWorkBook {
         myName.setNameName(pName);
 
         /* Set into Name */
-        String myRef = pRange.formatAsString();
+        final String myRef = pRange.formatAsString();
         myName.setRefersToFormula(myRef);
     }
 
@@ -321,7 +321,7 @@ public class MetisExcelWorkBook {
         }
 
         /* Link the two and use drop down arrow */
-        DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        final DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
         myValidation.setSuppressDropDownArrow(false);
 
         /* Apply to the sheet */
@@ -347,7 +347,7 @@ public class MetisExcelWorkBook {
         }
 
         /* Link the two and use drop down arrow */
-        DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        final DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
         myValidation.setSuppressDropDownArrow(false);
 
         /* Apply to the sheet */
@@ -408,7 +408,7 @@ public class MetisExcelWorkBook {
      */
     protected HSSFCellStyle getCellStyle(final MetisCellStyleType pType) {
         /* Determine the correct format */
-        String myStyleName = MetisDataFormats.getFormatName(pType);
+        final String myStyleName = MetisDataFormats.getFormatName(pType);
 
         /* Look for existing format */
         HSSFCellStyle myStyle = theStyleMap.get(myStyleName);
@@ -424,7 +424,7 @@ public class MetisExcelWorkBook {
         /* If we have a data format */
         if (MetisDataFormats.hasDataFormat(pType)) {
             /* Determine the format */
-            String myFormat = MetisDataFormats.getDataFormatString(pType);
+            final String myFormat = MetisDataFormats.getDataFormatString(pType);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
         }
 
@@ -440,7 +440,7 @@ public class MetisExcelWorkBook {
      */
     protected HSSFCellStyle getCellStyle(final Object pValue) {
         /* Determine the correct format */
-        String myStyleName = MetisDataFormats.getFormatName(pValue);
+        final String myStyleName = MetisDataFormats.getFormatName(pValue);
 
         /* Look for existing format */
         HSSFCellStyle myStyle = theStyleMap.get(myStyleName);
@@ -449,7 +449,7 @@ public class MetisExcelWorkBook {
         }
 
         /* Determine the CellStyleType */
-        MetisCellStyleType myType = MetisDataFormats.getCellStyleType(pValue);
+        final MetisCellStyleType myType = MetisDataFormats.getCellStyleType(pValue);
 
         /* Create the New Cell Style */
         myStyle = theBook.createCellStyle();
@@ -460,7 +460,7 @@ public class MetisExcelWorkBook {
         if ((myType != MetisCellStyleType.BOOLEAN)
             && (MetisDataFormats.hasDataFormat(myType))) {
             /* Determine the format */
-            String myFormat = MetisDataFormats.getDataFormatString(pValue);
+            final String myFormat = MetisDataFormats.getDataFormatString(pValue);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
         }
 
@@ -476,7 +476,7 @@ public class MetisExcelWorkBook {
      */
     protected HSSFCellStyle getAlternateCellStyle(final Object pValue) {
         /* Determine the correct format */
-        String myStyleName = MetisDataFormats.getAlternateFormatName(pValue);
+        final String myStyleName = MetisDataFormats.getAlternateFormatName(pValue);
 
         /* Look for existing format */
         HSSFCellStyle myStyle = theStyleMap.get(myStyleName);
@@ -504,7 +504,7 @@ public class MetisExcelWorkBook {
         if ((myType != MetisCellStyleType.BOOLEAN)
             && (MetisDataFormats.hasDataFormat(myType))) {
             /* Determine the format */
-            String myFormat = MetisDataFormats.getAlternateFormatString(pValue);
+            final String myFormat = MetisDataFormats.getAlternateFormatString(pValue);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
         }
 

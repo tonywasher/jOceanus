@@ -190,7 +190,7 @@ public class PrometheusItemEditActions<N, I>
             theResetButton.setEnabled(hasUpdates);
 
             /* Check for no errors */
-            boolean hasErrors = theParent.hasErrors();
+            final boolean hasErrors = theParent.hasErrors();
             hasUpdates |= theParent.isNew();
             theCommitButton.setEnabled(hasUpdates && !hasErrors);
 

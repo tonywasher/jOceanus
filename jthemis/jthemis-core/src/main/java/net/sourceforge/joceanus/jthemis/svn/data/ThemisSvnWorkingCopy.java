@@ -139,7 +139,7 @@ public final class ThemisSvnWorkingCopy
         theUpdates = new UpdateStatusList();
 
         /* Determine the location of the project definition */
-        File myPom = ThemisMvnProjectDefinition.getProjectDefFile(theLocation);
+        final File myPom = ThemisMvnProjectDefinition.getProjectDefFile(theLocation);
         if (myPom != null) {
             theProject = ThemisMvnProjectDefinition.parseProjectFile(myPom);
         }
@@ -248,9 +248,9 @@ public final class ThemisSvnWorkingCopy
      */
     public void discoverUpdates(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access client */
-        ThemisSvnRepository myRepository = theBranch.getRepository();
-        SVNClientManager myMgr = myRepository.getClientManager();
-        SVNStatusClient myClient = myMgr.getStatusClient();
+        final ThemisSvnRepository myRepository = theBranch.getRepository();
+        final SVNClientManager myMgr = myRepository.getClientManager();
+        final SVNStatusClient myClient = myMgr.getStatusClient();
 
         /* Protect against exceptions */
         try {
@@ -284,7 +284,7 @@ public final class ThemisSvnWorkingCopy
         @Override
         public void handleStatus(final SVNStatus pStatus) throws SVNException {
             /* Create the new updateStatus and add to the list */
-            ThemisSvnUpdateStatus myStatus = new ThemisSvnUpdateStatus(theCopy, pStatus);
+            final ThemisSvnUpdateStatus myStatus = new ThemisSvnUpdateStatus(theCopy, pStatus);
             theUpdates.add(myStatus);
         }
     }
@@ -317,7 +317,7 @@ public final class ThemisSvnWorkingCopy
         if (pThat instanceof ThemisSvnWorkingCopy) {
             return false;
         }
-        ThemisSvnWorkingCopy myThat = (ThemisSvnWorkingCopy) pThat;
+        final ThemisSvnWorkingCopy myThat = (ThemisSvnWorkingCopy) pThat;
 
         /* Compare fields */
         return theBranch.equals(myThat.theBranch);
@@ -343,8 +343,8 @@ public final class ThemisSvnWorkingCopy
         }
 
         /* Access client */
-        SVNClientManager myMgr = pRepo.getClientManager();
-        SVNStatusClient myClient = myMgr.getStatusClient();
+        final SVNClientManager myMgr = pRepo.getClientManager();
+        final SVNStatusClient myClient = myMgr.getStatusClient();
 
         /* Initialise the status */
         SVNStatus myStatus;
@@ -355,7 +355,7 @@ public final class ThemisSvnWorkingCopy
             myStatus = myClient.doStatus(pFile, false);
         } catch (SVNException e) {
             /* Access the error code */
-            SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
+            final SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file/directory exists but is not WC */
             if (!myCode.equals(SVNErrorCode.WC_NOT_FILE)
@@ -445,8 +445,8 @@ public final class ThemisSvnWorkingCopy
             theRepository = pRepository;
 
             /* Access preferences */
-            ThemisSvnPreferences myPrefs = theRepository.getPreferences();
-            String myLocation = myPrefs.getStringValue(ThemisSvnPreferenceKey.WORK);
+            final ThemisSvnPreferences myPrefs = theRepository.getPreferences();
+            final String myLocation = myPrefs.getStringValue(ThemisSvnPreferenceKey.WORK);
             theLocation = new File(myLocation);
             theCopyList = new ArrayList<>();
 
@@ -518,12 +518,12 @@ public final class ThemisSvnWorkingCopy
             pReport.setNumStages(size() + 2);
 
             /* Access list iterator */
-            Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
+            final Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
                 /* Access the Component */
-                ThemisSvnWorkingCopy myCopy = myIterator.next();
+                final ThemisSvnWorkingCopy myCopy = myIterator.next();
 
                 /* Report stage of analysis */
                 pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName());
@@ -574,20 +574,20 @@ public final class ThemisSvnWorkingCopy
             }
 
             /* Access status for the directory */
-            SVNStatus myStatus = getFileStatus(theRepository, pFile);
+            final SVNStatus myStatus = getFileStatus(theRepository, pFile);
 
             /* If this is a working copy */
             if ((myStatus != null) && myStatus.isVersioned()) {
                 /* Obtain the repository URL */
-                SVNURL myURL = myStatus.getRemoteURL();
+                final SVNURL myURL = myStatus.getRemoteURL();
 
                 /* Obtain the relevant branch in the repository */
-                ThemisSvnBranch myBranch = theRepository.locateBranch(myURL);
+                final ThemisSvnBranch myBranch = theRepository.locateBranch(myURL);
 
                 /* If we found the branch */
                 if (myBranch != null) {
                     /* Create the working copy */
-                    ThemisSvnWorkingCopy myCopy = new ThemisSvnWorkingCopy(pFile, myBranch, myStatus.getRevision());
+                    final ThemisSvnWorkingCopy myCopy = new ThemisSvnWorkingCopy(pFile, myBranch, myStatus.getRevision());
 
                     /* If the element is not already in the list */
                     if (theCopyList.indexOf(myCopy) == -1) {
@@ -604,16 +604,16 @@ public final class ThemisSvnWorkingCopy
          */
         public File[] getLocationsArray() {
             /* Allocate array */
-            File[] myFiles = new File[size()];
+            final File[] myFiles = new File[size()];
             int myFile = 0;
 
             /* Allocate the iterator */
-            Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
+            final Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
 
             /* While there are entries */
             while (myIterator.hasNext()) {
                 /* Access copy and add to files */
-                ThemisSvnWorkingCopy myCopy = myIterator.next();
+                final ThemisSvnWorkingCopy myCopy = myIterator.next();
                 myFiles[myFile++] = myCopy.getLocation();
             }
 
@@ -628,14 +628,14 @@ public final class ThemisSvnWorkingCopy
          */
         public ThemisSvnBranch getActiveBranch(final String pComponent) {
             /* Allocate the iterator */
-            Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
+            final Iterator<ThemisSvnWorkingCopy> myIterator = iterator();
 
             /* While there are entries */
             while (myIterator.hasNext()) {
                 /* Access copy and obtain branch/component */
-                ThemisSvnWorkingCopy myCopy = myIterator.next();
-                ThemisSvnBranch myBranch = myCopy.getBranch();
-                ThemisSvnComponent myComp = myBranch.getComponent();
+                final ThemisSvnWorkingCopy myCopy = myIterator.next();
+                final ThemisSvnBranch myBranch = myCopy.getBranch();
+                final ThemisSvnComponent myComp = myBranch.getComponent();
 
                 /* If this is the right component */
                 if (myComp.getName().equals(pComponent)) {

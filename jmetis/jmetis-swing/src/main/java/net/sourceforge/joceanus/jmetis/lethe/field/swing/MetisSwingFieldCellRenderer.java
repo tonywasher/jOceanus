@@ -64,13 +64,13 @@ public final class MetisSwingFieldCellRenderer {
                                         final JComponent pComponent,
                                         final MetisFieldData pData) {
         /* Ignore if the model is not applicable */
-        TableModel myTableModel = pTable.getModel();
+        final TableModel myTableModel = pTable.getModel();
         if (!(myTableModel instanceof PopulateFieldData)) {
             return;
         }
 
         /* Access the table model. */
-        PopulateFieldData myModel = (PopulateFieldData) myTableModel;
+        final PopulateFieldData myModel = (PopulateFieldData) myTableModel;
 
         /* Determine the field data */
         myModel.populateFieldData(pData);
@@ -175,7 +175,7 @@ public final class MetisSwingFieldCellRenderer {
             /* If the value is an integer */
             if (o instanceof Integer) {
                 /* Convert to a string */
-                Integer i = (Integer) o;
+                final Integer i = (Integer) o;
                 o = i.toString();
             }
 
@@ -275,24 +275,24 @@ public final class MetisSwingFieldCellRenderer {
             renderComponent(pTable, this, theData);
 
             /* Determine the row and value */
-            int iRow = pTable.convertRowIndexToModel(pRowIndex);
-            T myValue = theClazz.cast(pValue);
+            final int iRow = pTable.convertRowIndexToModel(pRowIndex);
+            final T myValue = theClazz.cast(pValue);
 
             /* Determine the IconMapSet */
-            TethysIconMapSet<T> myMapSet = theSupplier == null
-                                                               ? null
-                                                               : theSupplier.apply(iRow);
+            final TethysIconMapSet<T> myMapSet = theSupplier == null
+                                                                     ? null
+                                                                     : theSupplier.apply(iRow);
 
             /* Determine the icon and toolTip */
-            TethysIconId myIconId = myMapSet == null
-                                                     ? null
-                                                     : myMapSet.getIconForValue(myValue);
-            String myTooltip = myMapSet == null
-                                                ? null
-                                                : myMapSet.getTooltipForValue(myValue);
+            final TethysIconId myIconId = myMapSet == null
+                                                           ? null
+                                                           : myMapSet.getIconForValue(myValue);
+            final String myTooltip = myMapSet == null
+                                                      ? null
+                                                      : myMapSet.getTooltipForValue(myValue);
 
             /* Store details */
-            Icon myIcon = resolveIcon(myIconId);
+            final Icon myIcon = resolveIcon(myIconId);
             setIcon(myIcon);
             setText(null);
             if (theData.getToolTip() == null) {
@@ -431,7 +431,7 @@ public final class MetisSwingFieldCellRenderer {
             /* If the value is an integer */
             if (o instanceof Integer) {
                 /* Convert to a string */
-                Integer i = (Integer) o;
+                final Integer i = (Integer) o;
                 if (i == 0) {
                     o = "";
                 } else {

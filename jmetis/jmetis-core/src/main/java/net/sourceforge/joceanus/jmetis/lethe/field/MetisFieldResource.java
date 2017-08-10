@@ -151,11 +151,9 @@ public enum MetisFieldResource implements TethysResourceId {
      * @return the resource key
      */
     protected static TethysResourceId getKeyForFieldValue(final MetisFieldValue pValue) {
-        switch (pValue) {
-            case ERROR:
-                return FIELDVALUE_ERROR;
-            default:
-                throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
+        if (MetisFieldValue.ERROR.equals(pValue)) {
+            return FIELDVALUE_ERROR;
         }
+        throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));
     }
 }

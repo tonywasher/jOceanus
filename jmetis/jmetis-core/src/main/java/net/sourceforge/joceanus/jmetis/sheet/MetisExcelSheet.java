@@ -117,7 +117,7 @@ public class MetisExcelSheet
 
     @Override
     public int getRowCount() {
-        int iLastRowNum = theExcelSheet.getLastRowNum();
+        final int iLastRowNum = theExcelSheet.getLastRowNum();
         return (iLastRowNum == 0)
                                   ? theExcelSheet.getPhysicalNumberOfRows()
                                   : iLastRowNum + 1;
@@ -125,7 +125,7 @@ public class MetisExcelSheet
 
     @Override
     public MetisExcelRow getReadOnlyRowByIndex(final int pRowIndex) {
-        HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
+        final HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
         return (myExcelRow == null)
                                     ? null
                                     : new MetisExcelRow(this, myExcelRow, pRowIndex, true);
@@ -174,10 +174,10 @@ public class MetisExcelSheet
                              final MetisCellPosition pLastCell) throws OceanusException {
         if (!isReadOnly) {
             /* Build the area reference */
-            String myName = getName();
-            CellReference myFirst = new CellReference(myName, pFirstCell.getRowIndex(), pFirstCell.getColumnIndex(), true, true);
-            CellReference myLast = new CellReference(myName, pLastCell.getRowIndex(), pLastCell.getColumnIndex(), true, true);
-            AreaReference myArea = new AreaReference(myFirst, myLast);
+            final String myName = getName();
+            final CellReference myFirst = new CellReference(myName, pFirstCell.getRowIndex(), pFirstCell.getColumnIndex(), true, true);
+            final CellReference myLast = new CellReference(myName, pLastCell.getRowIndex(), pLastCell.getColumnIndex(), true, true);
+            final AreaReference myArea = new AreaReference(myFirst, myLast);
 
             /* Declare to workBook */
             theExcelBook.declareRange(pName, myArea);
@@ -190,7 +190,7 @@ public class MetisExcelSheet
                                     final String pName) throws OceanusException {
         if (!isReadOnly) {
             /* Create the CellAddressList */
-            CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
+            final CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
                     pLastCell.getColumnIndex());
 
             /* Declare to workBook */
@@ -203,11 +203,11 @@ public class MetisExcelSheet
                                 final int pNumRows) throws OceanusException {
         if (!isReadOnly) {
             /* Create the CellAddressList */
-            int myRow = pBaseCell.getRowIndex();
-            int myCol = pBaseCell.getColumnIndex();
-            CellRangeAddressList myCells = new CellRangeAddressList(myRow, myRow
-                                                                           + pNumRows
-                                                                           - 1, myCol, myCol);
+            final int myRow = pBaseCell.getRowIndex();
+            final int myCol = pBaseCell.getColumnIndex();
+            final CellRangeAddressList myCells = new CellRangeAddressList(myRow, myRow
+                                                                                 + pNumRows
+                                                                                 - 1, myCol, myCol);
 
             /* Declare to workBook */
             theExcelBook.applyDataFilter(theExcelSheet, myCells);

@@ -76,7 +76,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
     /**
      * Should we show all items.
      */
-    private boolean showAll = false;
+    private boolean showAll;
 
     /**
      * The table sorter.
@@ -149,7 +149,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
     public boolean isCellEditable(final int pRowIndex,
                                   final int pColIndex) {
         /* Access the item */
-        T myItem = getItemAtIndex(pRowIndex);
+        final T myItem = getItemAtIndex(pRowIndex);
 
         /* Determine whether the cell is editable */
         return isCellEditable(myItem, pColIndex);
@@ -177,7 +177,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
     public Object getValueAt(final int pRowIndex,
                              final int pColIndex) {
         /* Access the item */
-        T myItem = getItemAtIndex(pRowIndex);
+        final T myItem = getItemAtIndex(pRowIndex);
 
         /* Obtain the value for the item */
         Object o = getItemValue(myItem, pColIndex);
@@ -211,7 +211,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
                            final int pRowIndex,
                            final int pColIndex) {
         /* Access the item */
-        T myItem = getItemAtIndex(pRowIndex);
+        final T myItem = getItemAtIndex(pRowIndex);
 
         /* Push history */
         myItem.pushHistory();
@@ -227,7 +227,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
             myItem.popHistory();
 
             /* Build the error */
-            OceanusException myError = new PrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
+            final OceanusException myError = new PrometheusDataException("Failed to update field at (" + pRowIndex + "," + pColIndex + ")", e);
 
             /* Show the error */
             theDataTable.setError(myError);
@@ -309,13 +309,13 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
      */
     public void fireUpdateColEvent(final int pColIndex) {
         /* Access the size of the table */
-        int mySize = getRowCount();
+        final int mySize = getRowCount();
         if (mySize == 0) {
             return;
         }
 
         /* Create the table event */
-        TableModelEvent myEvent = new TableModelEvent(this, 0, mySize - 1, pColIndex);
+        final TableModelEvent myEvent = new TableModelEvent(this, 0, mySize - 1, pColIndex);
 
         /* Note that the data for this row and header has changed */
         fireTableChanged(myEvent);
@@ -337,14 +337,14 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
         /* If we have a header decrement the index */
         int iRow = pData.getRow();
         iRow = theTable.convertRowIndexToModel(iRow);
-        T myRow = getItemAtIndex(iRow);
+        final T myRow = getItemAtIndex(iRow);
 
         /* If this is a data row */
         if (!myRow.isHeader()) {
             /* Access the field */
             int iCol = pData.getCol();
             iCol = theTable.convertColumnIndexToModel(iCol);
-            MetisField iField = getFieldForCell(myRow, iCol);
+            final MetisField iField = getFieldForCell(myRow, iCol);
 
             /* Has the field changed */
             pData.processTableRow(myRow, iField);
@@ -444,11 +444,11 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
             /* If this is a data row */
             if (iRow >= 0) {
                 /* Access the row */
-                PrometheusDataTableModel<?, E> myModel = theDataTable.getTableModel();
-                DataItem<E> myRow = myModel.getItemAtIndex(iRow);
+                final PrometheusDataTableModel<?, E> myModel = theDataTable.getTableModel();
+                final DataItem<E> myRow = myModel.getItemAtIndex(iRow);
                 @SuppressWarnings("unchecked")
-                PrometheusDataTableColumnModel<E> myColModel = (PrometheusDataTableColumnModel<E>) theTable.getColumnModel();
-                MetisField[] iFields = myColModel.getColumnFields();
+                final PrometheusDataTableColumnModel<E> myColModel = (PrometheusDataTableColumnModel<E>) theTable.getColumnModel();
+                final MetisField[] iFields = myColModel.getColumnFields();
 
                 /* Has the row changed */
                 pData.processRowHeader(myRow, iFields);

@@ -131,7 +131,7 @@ public interface ThemisJiraPreference {
             }
 
             /* Make sure that the password is specified */
-            MetisCharArrayPreference<ThemisJiraPreferenceKey> myPassPref = getCharArrayPreference(ThemisJiraPreferenceKey.PASS);
+            final MetisCharArrayPreference<ThemisJiraPreferenceKey> myPassPref = getCharArrayPreference(ThemisJiraPreferenceKey.PASS);
             if (!myPassPref.isAvailable()) {
                 myPassPref.setValue("Secret".toCharArray());
             }

@@ -68,8 +68,8 @@ public enum MetisDataState {
      */
     public static MetisDataState determineState(final MetisValueSetHistory pHistory) {
         /* Access the current values and base values */
-        MetisValueSet myCurr = pHistory.getValueSet();
-        MetisValueSet myBase = pHistory.getOriginalValues();
+        final MetisValueSet myCurr = pHistory.getValueSet();
+        final MetisValueSet myBase = pHistory.getOriginalValues();
 
         /* If we are a new element */
         if (myBase.getVersion() > 0) {

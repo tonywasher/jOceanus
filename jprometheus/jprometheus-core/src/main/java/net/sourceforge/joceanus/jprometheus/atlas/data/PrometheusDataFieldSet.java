@@ -95,7 +95,7 @@ public class PrometheusDataFieldSet
         checkUniqueName(pName);
 
         /* Create the field */
-        PrometheusDataField myField = new PrometheusDataField(this, pName, pDataType, pMaxLength, pEquality, MetisFieldStorage.VERSIONED);
+        final PrometheusDataField myField = new PrometheusDataField(this, pName, pDataType, pMaxLength, pEquality, MetisFieldStorage.VERSIONED);
 
         /* Register the field */
         registerField(myField);

@@ -120,7 +120,7 @@ public enum PrometheusViewResource implements TethysResourceId {
      */
     private static Map<PrometheusViewerEntryId, TethysResourceId> buildEntryMap() {
         /* Create the map and return it */
-        Map<PrometheusViewerEntryId, TethysResourceId> myMap = new EnumMap<>(PrometheusViewerEntryId.class);
+        final Map<PrometheusViewerEntryId, TethysResourceId> myMap = new EnumMap<>(PrometheusViewerEntryId.class);
         myMap.put(PrometheusViewerEntryId.ERROR, MetisViewerResource.VIEWER_ENTRY_ERROR);
         myMap.put(PrometheusViewerEntryId.PROFILE, MetisViewerResource.VIEWER_ENTRY_PROFILE);
         myMap.put(PrometheusViewerEntryId.DATA, MetisViewerResource.VIEWER_ENTRY_DATA);

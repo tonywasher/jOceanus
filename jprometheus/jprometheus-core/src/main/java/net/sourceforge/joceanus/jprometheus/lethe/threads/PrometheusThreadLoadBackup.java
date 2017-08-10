@@ -78,25 +78,25 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
     @Override
     public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
         /* Access the Sheet preferences */
-        MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-        PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
+        final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
+        final PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
         /* Determine the archive name */
-        File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
+        final File myBackupDir = new File(myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR));
 
         /* Determine the name of the file to load */
-        TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
+        final TethysFileSelector myDialog = pToolkit.getGuiFactory().newFileSelector();
         myDialog.setTitle(TASK_SELECTFILE);
         myDialog.setInitialDirectory(myBackupDir);
         myDialog.setExtension(GordianZipReadFile.ZIPFILE_EXT);
-        File myFile = myDialog.selectFile();
+        final File myFile = myDialog.selectFile();
 
         /* If we did not select a file */
         if (myFile == null) {
@@ -105,15 +105,15 @@ public class PrometheusThreadLoadBackup<T extends DataSet<T, E>, E extends Enum<
         }
 
         /* Load workbook */
-        PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
-        T myData = theControl.getNewData();
+        final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
+        final T myData = theControl.getNewData();
         mySheet.loadBackup(myManager, mySecurityMgr, myData, myFile);
 
         /* Create interface */
-        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Load underlying database */
-        T myStore = theControl.getNewData();
+        final T myStore = theControl.getNewData();
         myDatabase.loadDatabase(myManager, myStore);
 
         /* Check security on the database */

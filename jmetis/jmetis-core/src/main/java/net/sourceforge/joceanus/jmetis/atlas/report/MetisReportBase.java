@@ -80,18 +80,14 @@ public abstract class MetisReportBase<D, F> {
      * @param pSource the filter source
      * @return the Filter or null
      */
-    public F processFilter(final Object pSource) {
-        return null;
-    }
+    public abstract F processFilter(Object pSource);
 
     /**
      * Create the delayed table.
      * @param pTable the delayed table definition
      * @return the newly created table
      */
-    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
-        return null;
-    }
+    public abstract MetisHTMLTable createDelayedTable(DelayedTable pTable);
 
     /**
      * Create the web document.

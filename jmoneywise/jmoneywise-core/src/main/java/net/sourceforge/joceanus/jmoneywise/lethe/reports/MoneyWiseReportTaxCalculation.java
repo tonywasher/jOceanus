@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
@@ -174,5 +175,15 @@ public class MoneyWiseReportTaxCalculation
 
         /* Embed the table correctly */
         theBuilder.embedTable(myTable, pSummary.getTaxBasis().toString());
+    }
+
+    @Override
+    public AnalysisFilter<?, ?> processFilter(final Object pSource) {
+        return null;
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
+        return null;
     }
 }

@@ -151,7 +151,7 @@ public class MetisValueSet {
      */
     public MetisValueSet cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        MetisValueSet mySet = new MetisValueSet(theItem);
+        final MetisValueSet mySet = new MetisValueSet(theItem);
         mySet.copyFrom(this);
         return mySet;
     }
@@ -165,7 +165,7 @@ public class MetisValueSet {
         isDeletion = pPrevious.isDeletion();
 
         /* Create the values array */
-        Object[] mySrc = pPrevious.theValues;
+        final Object[] mySrc = pPrevious.theValues;
         int myCopyLen = pPrevious.theNumValues;
         if (myCopyLen > theNumValues) {
             myCopyLen = theNumValues;
@@ -255,8 +255,8 @@ public class MetisValueSet {
         }
 
         /* Access the object as a ValueSet */
-        MetisValueSet mySet = (MetisValueSet) pThat;
-        Object[] myObj = mySet.theValues;
+        final MetisValueSet mySet = (MetisValueSet) pThat;
+        final Object[] myObj = mySet.theValues;
 
         /* Check for deletion flag and # of values */
         if ((isDeletion != mySet.isDeletion)
@@ -265,17 +265,17 @@ public class MetisValueSet {
         }
 
         /* Loop through the values */
-        Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
             if ((!myField.getEquality().isEquality())
                 || (!myField.getStorage().isValueSet())) {
                 continue;
             }
 
             /* Not equal if the value is different */
-            int iIndex = myField.getIndex();
+            final int iIndex = myField.getIndex();
             if (MetisDifference.getDifference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
                 return false;
             }
@@ -293,10 +293,10 @@ public class MetisValueSet {
                                    : 1;
 
         /* Loop through the values */
-        Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
             if ((!myField.getEquality().isEquality())
                 || (!myField.getStorage().isValueSet())) {
                 continue;
@@ -306,7 +306,7 @@ public class MetisValueSet {
             iHashCode *= MetisFields.HASH_PRIME;
 
             /* Access value and add hash if non-null */
-            Object o = theValues[myField.getIndex()];
+            final Object o = theValues[myField.getIndex()];
             if (o != null) {
                 iHashCode += o.hashCode();
             }
@@ -325,7 +325,7 @@ public class MetisValueSet {
         boolean isSecureDiff = false;
 
         /* Access the test values */
-        Object[] myObj = pOriginal.theValues;
+        final Object[] myObj = pOriginal.theValues;
 
         /* Check for deletion flag and # of values */
         if ((isDeletion != pOriginal.isDeletion)
@@ -334,18 +334,18 @@ public class MetisValueSet {
         }
 
         /* Loop through the values */
-        Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-valueSet fields */
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
             if ((!myField.getEquality().isEquality())
                 || (!myField.getStorage().isValueSet())) {
                 continue;
             }
 
             /* Check the field */
-            int iIndex = myField.getIndex();
-            MetisDifference myDiff = MetisDifference.getDifference(theValues[iIndex], myObj[iIndex]);
+            final int iIndex = myField.getIndex();
+            final MetisDifference myDiff = MetisDifference.getDifference(theValues[iIndex], myObj[iIndex]);
             if (myDiff == MetisDifference.DIFFERENT) {
                 return myDiff;
             }
@@ -378,7 +378,7 @@ public class MetisValueSet {
         }
 
         /* Determine the difference */
-        int iIndex = pField.getIndex();
+        final int iIndex = pField.getIndex();
         return MetisDifference.getDifference(theValues[iIndex], pOriginal.theValues[iIndex]);
     }
 
@@ -402,7 +402,7 @@ public class MetisValueSet {
         }
 
         /* Integer is allowed for Link type */
-        MetisDataType myDataType = pField.getDataType();
+        final MetisDataType myDataType = pField.getDataType();
         if (MetisDataType.LINK.equals(myDataType)
             && pValue instanceof Integer) {
             return;

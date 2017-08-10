@@ -49,7 +49,7 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?, E>,
         super(pDatabase, pTabName);
 
         /* Define the columns */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         myTableDef.addReferenceColumn(DataInfo.FIELD_INFOTYPE, pInfoTable);
         myTableDef.addReferenceColumn(DataInfo.FIELD_OWNER, pOwnerTable);
         myTableDef.addEncryptedColumn(DataInfo.FIELD_VALUE, DataInfo.DATALEN);
@@ -59,7 +59,7 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?, E>,
     protected void setFieldValue(final T pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (DataInfo.FIELD_INFOTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getInfoTypeId());
         } else if (DataInfo.FIELD_OWNER.equals(iField)) {
@@ -74,8 +74,8 @@ public abstract class PrometheusTableDataInfo<T extends DataInfo<T, ?, ?, ?, E>,
     @Override
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getRowValues(pName);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final DataValues<E> myValues = super.getRowValues(pName);
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */
         myValues.addValue(DataInfo.FIELD_INFOTYPE, myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE));

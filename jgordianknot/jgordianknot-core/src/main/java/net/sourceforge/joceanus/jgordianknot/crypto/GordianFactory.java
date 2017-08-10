@@ -231,7 +231,6 @@ public abstract class GordianFactory {
      * @param pKeyType the keyType
      * @return the keyLength
      * @throws OceanusException on error
-     * 
      */
     public <X> String getKeyAlgorithm(final X pKeyType) throws OceanusException {
         return pKeyType.toString();

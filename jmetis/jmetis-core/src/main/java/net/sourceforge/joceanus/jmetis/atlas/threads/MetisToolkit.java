@@ -138,7 +138,7 @@ public abstract class MetisToolkit<N, I> {
         theGuiFactory = newGuiFactory();
 
         /* Create the hashManager */
-        MetisSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(MetisSecurityPreferences.class);
+        final MetisSecurityPreferences myPreferences = thePreferenceManager.getPreferenceSet(MetisSecurityPreferences.class);
         theHashManager = newSecurityManager(myPreferences.getParameters());
 
         /* create the thread manager */
@@ -151,7 +151,7 @@ public abstract class MetisToolkit<N, I> {
         processColorPreferences();
 
         /* Create listener */
-        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
+        final TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
         myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
@@ -299,8 +299,8 @@ public abstract class MetisToolkit<N, I> {
      */
     private void processColorPreferences() {
         /* Update the value Set with the preferences */
-        TethysGuiFactory<?, ?> myFactory = getGuiFactory();
-        TethysValueSet myValueSet = myFactory.getValueSet();
+        final TethysGuiFactory<?, ?> myFactory = getGuiFactory();
+        final TethysValueSet myValueSet = myFactory.getValueSet();
         theColorPreferences.updateValueSet(myValueSet);
     }
 

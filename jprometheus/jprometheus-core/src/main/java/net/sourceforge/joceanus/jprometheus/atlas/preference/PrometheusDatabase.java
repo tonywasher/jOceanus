@@ -135,7 +135,7 @@ public interface PrometheusDatabase {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the enum is specified */
-            MetisEnumPreference<PrometheusDatabasePreferenceKey, PrometheusJDBCDriver> myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
+            final MetisEnumPreference<PrometheusDatabasePreferenceKey, PrometheusJDBCDriver> myTypePref = getEnumPreference(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(PrometheusJDBCDriver.POSTGRESQL);
             }
@@ -168,13 +168,13 @@ public interface PrometheusDatabase {
             }
 
             /* Make sure that the passWord is specified */
-            MetisCharArrayPreference<PrometheusDatabasePreferenceKey> myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
+            final MetisCharArrayPreference<PrometheusDatabasePreferenceKey> myPassPref = getCharArrayPreference(PrometheusDatabasePreferenceKey.DBPASS);
             if (!myPassPref.isAvailable()) {
                 myPassPref.setValue("secret".toCharArray());
             }
 
             /* Make sure that the value is specified */
-            MetisIntegerPreference<PrometheusDatabasePreferenceKey> myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
+            final MetisIntegerPreference<PrometheusDatabasePreferenceKey> myBatchPref = getIntegerPreference(PrometheusDatabasePreferenceKey.DBBATCH);
             if (!myBatchPref.isAvailable()) {
                 myBatchPref.setValue(DEFAULT_DBBATCH);
             }

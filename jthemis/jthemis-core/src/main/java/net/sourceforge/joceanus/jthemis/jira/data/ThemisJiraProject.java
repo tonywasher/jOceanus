@@ -111,7 +111,7 @@ public class ThemisJiraProject
      * @throws OceanusException on error
      */
     protected ThemisJiraProject(final ThemisJiraServer pServer,
-                          final JSONObject pProject) throws OceanusException {
+                                final JSONObject pProject) throws OceanusException {
         /* Store parameters */
         super(pProject);
         theServer = pServer;
@@ -123,7 +123,7 @@ public class ThemisJiraProject
             theDesc = pProject.getString(JiraNamedDescIdObject.FIELD_DESC);
 
             /* Determine the project lead */
-            JSONObject myLeadDtl = pProject.getJSONObject("lead");
+            final JSONObject myLeadDtl = pProject.getJSONObject("lead");
             theLead = theServer.getUser(myLeadDtl.getString(JiraUser.FIELD_NAME));
 
             /* Allocate the maps */
@@ -211,7 +211,7 @@ public class ThemisJiraProject
      */
     protected JiraComponent getComponent(final String pName) throws OceanusException {
         /* Look up component in the cache */
-        JiraComponent myComp = theComponents.get(pName);
+        final JiraComponent myComp = theComponents.get(pName);
 
         /* If not in the cache */
         if (myComp == null) {
@@ -231,7 +231,7 @@ public class ThemisJiraProject
      */
     protected JiraVersion getVersion(final String pName) throws OceanusException {
         /* Look up version in the cache */
-        JiraVersion myVers = theVersions.get(pName);
+        final JiraVersion myVers = theVersions.get(pName);
 
         /* If not in the cache */
         if (myVers == null) {
@@ -262,7 +262,7 @@ public class ThemisJiraProject
             }
 
             /* Obtain the issue and register it */
-            JSONObject myIssueDtl = theClient.getIssue(pKey);
+            final JSONObject myIssueDtl = theClient.getIssue(pKey);
             myIssue = new ThemisJiraIssue(theServer, myIssueDtl);
             theIssues.put(pKey, myIssue);
         }
@@ -280,13 +280,13 @@ public class ThemisJiraProject
         /* Protect against exceptions */
         try {
             /* Access the issue types */
-            JSONArray myTypes = pProject.getJSONArray("issueTypes");
-            int myNumTypes = myTypes.length();
+            final JSONArray myTypes = pProject.getJSONArray("issueTypes");
+            final int myNumTypes = myTypes.length();
             for (int i = 0; i < myNumTypes; i++) {
                 /* Access the type and register it */
-                JSONObject myTypeDtl = myTypes.getJSONObject(i);
-                String myName = myTypeDtl.getString("name");
-                JiraIssueType myType = theServer.getIssueType(myName);
+                final JSONObject myTypeDtl = myTypes.getJSONObject(i);
+                final String myName = myTypeDtl.getString("name");
+                final JiraIssueType myType = theServer.getIssueType(myName);
                 theIssueTypes.add(myType);
             }
         } catch (JSONException e) {
@@ -303,12 +303,12 @@ public class ThemisJiraProject
         /* Protect against exceptions */
         try {
             /* Access the components */
-            JSONArray myComps = theClient.getComponentsForProject(getKey());
-            int myNumComps = myComps.length();
+            final JSONArray myComps = theClient.getComponentsForProject(getKey());
+            final int myNumComps = myComps.length();
             for (int i = 0; i < myNumComps; i++) {
                 /* Access the component and register it */
-                JSONObject myCompDtl = myComps.getJSONObject(i);
-                JiraComponent myComp = new JiraComponent(myCompDtl);
+                final JSONObject myCompDtl = myComps.getJSONObject(i);
+                final JiraComponent myComp = new JiraComponent(myCompDtl);
                 theComponents.put(myComp.getName(), myComp);
             }
         } catch (JSONException e) {
@@ -325,12 +325,12 @@ public class ThemisJiraProject
         /* Protect against exceptions */
         try {
             /* Access the versions */
-            JSONArray myVers = theClient.getVersionsForProject(getKey());
-            int myNumVers = myVers.length();
+            final JSONArray myVers = theClient.getVersionsForProject(getKey());
+            final int myNumVers = myVers.length();
             for (int i = 0; i < myNumVers; i++) {
                 /* Access the version and register it */
-                JSONObject myVersDtl = myVers.getJSONObject(i);
-                JiraVersion myVersion = new JiraVersion(myVersDtl);
+                final JSONObject myVersDtl = myVers.getJSONObject(i);
+                final JiraVersion myVersion = new JiraVersion(myVersDtl);
                 theVersions.put(myVersion.getName(), myVersion);
             }
         } catch (JSONException e) {
@@ -348,14 +348,14 @@ public class ThemisJiraProject
         /* Protect against exceptions */
         try {
             /* Access the roles */
-            JSONObject myRoles = pProject.getJSONObject("roles");
-            Iterator<String> myIterator = myRoles.keys();
+            final JSONObject myRoles = pProject.getJSONObject("roles");
+            final Iterator<String> myIterator = myRoles.keys();
             while (myIterator.hasNext()) {
                 /* Access the role */
-                String myKey = myIterator.next();
-                String myURL = myRoles.getString(myKey);
-                JSONObject myRoleDtl = theClient.getProjectRoleFromURL(myURL);
-                JiraProjectRole myRole = new JiraProjectRole(myRoleDtl);
+                final String myKey = myIterator.next();
+                final String myURL = myRoles.getString(myKey);
+                final JSONObject myRoleDtl = theClient.getProjectRoleFromURL(myURL);
+                final JiraProjectRole myRole = new JiraProjectRole(myRoleDtl);
                 theRoles.put(myKey, myRole);
             }
         } catch (JSONException e) {
@@ -493,12 +493,12 @@ public class ThemisJiraProject
             try {
                 /* Access the details */
                 theActors = new ArrayList<>();
-                JSONArray myActors = pRole.getJSONArray("actors");
-                int myNumActors = myActors.length();
+                final JSONArray myActors = pRole.getJSONArray("actors");
+                final int myNumActors = myActors.length();
                 for (int i = 0; i < myNumActors; i++) {
                     /* Access the actor and register it */
-                    JSONObject myActorDtl = myActors.getJSONObject(i);
-                    JiraRoleActor myActor = new JiraRoleActor(myActorDtl);
+                    final JSONObject myActorDtl = myActors.getJSONObject(i);
+                    final JiraRoleActor myActor = new JiraRoleActor(myActorDtl);
                     theActors.add(myActor);
                 }
 
@@ -549,7 +549,7 @@ public class ThemisJiraProject
                 theFullName = pActor.getString("displayName");
 
                 /* Resolve the actor */
-                String myType = pActor.getString("type");
+                final String myType = pActor.getString("type");
                 theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
                                                                     ? theServer.getGroup(theName)
                                                                     : theServer.getUser(theName);

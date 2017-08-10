@@ -94,8 +94,8 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        GordianHashManager mySecurity = pToolkit.getSecurityManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final GordianHashManager mySecurity = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -105,16 +105,16 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             myManager.initTask(getTaskName());
 
             /* Access the Backup preferences */
-            MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-            PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
+            final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
+            final PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
             /* Determine the archive name */
-            String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
-            String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
-            Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
+            final String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
+            final String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            final Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
 
             /* Create the name of the file */
-            StringBuilder myName = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myName = new StringBuilder(BUFFER_LEN);
             myName.append(myBackupDir);
             myName.append(File.separator);
             myName.append(myPrefix);
@@ -123,7 +123,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             /* If we are doing time-stamps */
             if (doTimeStamp) {
                 /* Obtain the current date/time */
-                TethysDate myNow = new TethysDate();
+                final TethysDate myNow = new TethysDate();
 
                 myName.append(myNow.getYear());
                 if (myNow.getMonth() < TEN) {
@@ -140,10 +140,10 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
             myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
 
             /* Access the data */
-            T myOldData = theControl.getData();
+            final T myOldData = theControl.getData();
 
             /* Create a new formatter */
-            DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
+            final DataValuesFormatter<T, E> myFormatter = new DataValuesFormatter<>(myManager, mySecurity);
 
             /* Create backup */
             if (isSecure) {
@@ -174,7 +174,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
                 myManager.initTask("Verifying Backup");
 
                 /* Create a difference set between the two data copies */
-                DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
+                final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
 
                 /* If the difference set is non-empty */
                 if (!myDiff.isEmpty()) {

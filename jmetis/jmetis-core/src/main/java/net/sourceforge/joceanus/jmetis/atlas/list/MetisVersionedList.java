@@ -219,7 +219,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         }
 
         /* Cast as list */
-        MetisVersionedList<?> myThat = (MetisVersionedList<?>) pThat;
+        final MetisVersionedList<?> myThat = (MetisVersionedList<?>) pThat;
 
         /* Check local fields */
         if (theVersion != myThat.getVersion()
@@ -258,16 +258,16 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
      */
     protected void doReWindToVersion(final int pVersion) {
         /* Create a new Change Detail */
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REWIND);
+        final MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REWIND);
 
         /* Note maximum version */
         int myMaxVersion = 0;
 
         /* Loop through the list */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            MetisDataVersionControl myControl = myCurr.getVersionControl();
+            final T myCurr = myIterator.next();
+            final MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* If the version is later than the required version */
             int myVersion = myControl.getVersion();
@@ -312,12 +312,12 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
      */
     protected T newDiffDeletedItem(final T pBase) {
         /* Obtain a new item */
-        T myNew = newListItem(pBase.getIndexedId());
+        final T myNew = newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
         MetisDataVersionControl myControl = pBase.getVersionControl();
         MetisDataVersionValues myBaseSet = myControl.getValueSet();
-        MetisDataVersionValues mySet = myBaseSet.cloneIt();
+        final MetisDataVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
         /* Obtain an undeleted set as the base value */
@@ -342,7 +342,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     protected T newDiffChangedItem(final T pCurr,
                                    final T pBase) {
         /* Obtain a new item */
-        T myNew = newListItem(pCurr.getIndexedId());
+        final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
         MetisDataVersionControl myControl = pCurr.getVersionControl();
@@ -370,7 +370,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
      */
     protected T newDiffAddedItem(final T pCurr) {
         /* Obtain a new item */
-        T myNew = newListItem(pCurr.getIndexedId());
+        final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
         MetisDataVersionControl myControl = pCurr.getVersionControl();
@@ -394,7 +394,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     protected T newListItem(final Integer pId) {
         /* Protect against exceptions */
         try {
-            T myItem = theConstructor.newInstance();
+            final T myItem = theConstructor.newInstance();
             myItem.getVersionControl().setIndexedId(pId);
             return myItem;
         } catch (InstantiationException

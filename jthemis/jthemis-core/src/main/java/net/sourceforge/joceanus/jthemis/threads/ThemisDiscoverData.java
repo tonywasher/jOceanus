@@ -94,11 +94,11 @@ public class ThemisDiscoverData<N, I>
      */
     private void deriveExtractPlans() throws OceanusException {
         /* Loop through the components */
-        Iterator<ThemisSvnComponent> myIterator = theRepository.getComponents().iterator();
+        final Iterator<ThemisSvnComponent> myIterator = theRepository.getComponents().iterator();
         while (myIterator.hasNext()) {
             /* Create an extract plan for the component */
-            ThemisSvnComponent myComp = myIterator.next();
-            ThemisSvnExtract myPlan = new ThemisSvnExtract(myComp);
+            final ThemisSvnComponent myComp = myIterator.next();
+            final ThemisSvnExtract myPlan = new ThemisSvnExtract(myComp);
             theExtractPlanMap.put(myComp.getName(), myPlan);
         }
     }
@@ -111,12 +111,12 @@ public class ThemisDiscoverData<N, I>
     public void declareExtractPlans(final MetisViewerManager pDataMgr,
                                     final MetisViewerEntry pParent) {
         /* Loop through the plans */
-        Iterator<ThemisSvnExtract> myIterator = theExtractPlanMap.values().iterator();
+        final Iterator<ThemisSvnExtract> myIterator = theExtractPlanMap.values().iterator();
         while (myIterator.hasNext()) {
-            ThemisSvnExtract myPlan = myIterator.next();
+            final ThemisSvnExtract myPlan = myIterator.next();
 
             /* Create the data entry */
-            MetisViewerEntry myEntry = pDataMgr.newEntry(pParent, myPlan.getName());
+            final MetisViewerEntry myEntry = pDataMgr.newEntry(pParent, myPlan.getName());
             myEntry.setObject(myPlan);
         }
     }
@@ -126,8 +126,8 @@ public class ThemisDiscoverData<N, I>
         /* Protect against exceptions */
         try {
             /* Access the thread manager */
-            MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-            MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+            final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+            final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
             /* Discover repository details */
             theRepository = new ThemisSvnRepository(myPreferences, myManager);

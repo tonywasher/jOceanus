@@ -84,7 +84,7 @@ public class MetisOasisColumn
 
     @Override
     public boolean isHidden() {
-        String myString = theOasisColumn.getTableVisibilityAttribute();
+        final String myString = theOasisColumn.getTableVisibilityAttribute();
         return myString != null
                && myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
     }
@@ -94,7 +94,7 @@ public class MetisOasisColumn
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Set the default cell style and the column style */
-            MetisOasisSheet mySheet = theColumnMap.getSheet();
+            final MetisOasisSheet mySheet = theColumnMap.getSheet();
             mySheet.setColumnStyle(theOasisColumn, pStyle);
             mySheet.setDefaultCellStyle(theOasisColumn, pStyle);
         }

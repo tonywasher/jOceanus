@@ -99,10 +99,10 @@ public class MetisDataFormatter
     private String formatValue(final Object pValue,
                                final int pSize) {
         /* Format value normally */
-        String myValue = formatValue(pValue);
+        final String myValue = formatValue(pValue);
 
         /* Build modified format */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myValue);
         myBuilder.append('(');
         myBuilder.append(pSize);

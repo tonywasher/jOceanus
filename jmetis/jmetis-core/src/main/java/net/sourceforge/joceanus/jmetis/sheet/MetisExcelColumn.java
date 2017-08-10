@@ -56,7 +56,7 @@ public class MetisExcelColumn
     @Override
     public MetisExcelColumn getNextColumn() {
         /* Determine the required index */
-        int myIndex = getColumnIndex() + 1;
+        final int myIndex = getColumnIndex() + 1;
 
         /* Return the next row */
         return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
@@ -65,7 +65,7 @@ public class MetisExcelColumn
     @Override
     public MetisExcelColumn getPreviousColumn() {
         /* Determine the required index */
-        int myIndex = getColumnIndex() - 1;
+        final int myIndex = getColumnIndex() - 1;
         if (myIndex < 0) {
             return null;
         }

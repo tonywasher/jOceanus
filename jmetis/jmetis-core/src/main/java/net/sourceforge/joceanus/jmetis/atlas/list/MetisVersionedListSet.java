@@ -99,12 +99,12 @@ public class MetisVersionedListSet
         }
 
         /* Look for a key of this type */
-        String myName = pField.getName();
-        for (MetisListKey myKey : theListMap.keySet()) {
+        final String myName = pField.getName();
+        for (Map.Entry<MetisListKey, MetisVersionedList<MetisDataVersionedItem>> myEntry : theListMap.entrySet()) {
             /* If this is the correct value */
-            if (myName.equals(myKey.getListName())) {
+            if (myName.equals(myEntry.getKey().getListName())) {
                 /* Return the list */
-                MetisVersionedList<?> myList = theListMap.get(myKey);
+                final MetisVersionedList<?> myList = myEntry.getValue();
                 return myList == null || myList.isEmpty()
                                                           ? MetisDataFieldValue.SKIP
                                                           : myList;
@@ -162,7 +162,7 @@ public class MetisVersionedListSet
      * @return the iterator
      */
     public Iterator<MetisListKey> reverseKeyIterator() {
-        List<MetisListKey> myList = new ArrayList<>(theListMap.keySet());
+        final List<MetisListKey> myList = new ArrayList<>(theListMap.keySet());
         return new MetisReverseIterator<>(myList.listIterator(myList.size()));
     }
 
@@ -232,9 +232,9 @@ public class MetisVersionedListSet
      */
     protected void doReWindToVersion(final int pVersion) {
         /* Loop through the lists */
-        Iterator<MetisVersionedList<MetisDataVersionedItem>> myIterator = listIterator();
+        final Iterator<MetisVersionedList<MetisDataVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            MetisVersionedList<MetisDataVersionedItem> myList = myIterator.next();
+            final MetisVersionedList<MetisDataVersionedItem> myList = myIterator.next();
 
             /* If the list needs reWinding */
             if (myList.getVersion() > pVersion) {
@@ -254,7 +254,7 @@ public class MetisVersionedListSet
     protected void reLinkItems(final Iterator<MetisDataVersionedItem> pIterator) {
         /* Iterate through the items, reLinking */
         while (pIterator.hasNext()) {
-            MetisDataVersionedItem myItem = pIterator.next();
+            final MetisDataVersionedItem myItem = pIterator.next();
             reLinkItem(myItem);
         }
     }
@@ -265,15 +265,15 @@ public class MetisVersionedListSet
      */
     private void reLinkItem(final MetisDataVersionedItem pItem) {
         /* Access details */
-        MetisDataVersionControl myControl = pItem.getVersionControl();
-        MetisDataVersionValues myValues = myControl.getValueSet();
-        MetisDataFieldSet myFields = pItem.getDataFieldSet();
+        final MetisDataVersionControl myControl = pItem.getVersionControl();
+        final MetisDataVersionValues myValues = myControl.getValueSet();
+        final MetisDataFieldSet myFields = pItem.getDataFieldSet();
 
         /* Loop through the fields */
-        Iterator<MetisDataField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field and value */
-            MetisDataField myField = myIterator.next();
+            final MetisDataField myField = myIterator.next();
             Object myValue = myField.getStorage().isVersioned()
                                                                 ? myValues.getValue(myField)
                                                                 : null;
@@ -294,12 +294,12 @@ public class MetisVersionedListSet
      */
     private MetisIndexedItem reLinkValue(final MetisIndexedItem pValue) {
         /* Determine the list for the item */
-        MetisVersionedList<MetisDataVersionedItem> myList = determineListForItem(pValue);
+        final MetisVersionedList<MetisDataVersionedItem> myList = determineListForItem(pValue);
 
         /* If we found the list */
-        MetisIndexedItem myNew = myList != null
-                                                ? myList.getItemById(pValue.getIndexedId())
-                                                : null;
+        final MetisIndexedItem myNew = myList != null
+                                                      ? myList.getItemById(pValue.getIndexedId())
+                                                      : null;
 
         /* Return the item */
         return myNew != null
@@ -314,9 +314,9 @@ public class MetisVersionedListSet
      */
     private MetisVersionedList<MetisDataVersionedItem> determineListForItem(final MetisIndexedItem pItem) {
         /* Loop through the lists */
-        Iterator<MetisVersionedList<MetisDataVersionedItem>> myIterator = listIterator();
+        final Iterator<MetisVersionedList<MetisDataVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            MetisVersionedList<MetisDataVersionedItem> myList = myIterator.next();
+            final MetisVersionedList<MetisDataVersionedItem> myList = myIterator.next();
 
             /* If this is the correct class */
             if (myList.getTheClazz().isInstance(pItem)) {

@@ -63,7 +63,7 @@ public class PrometheusThreadRenewSecurity<T extends DataSet<T, E>, E extends En
     @Override
     public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());

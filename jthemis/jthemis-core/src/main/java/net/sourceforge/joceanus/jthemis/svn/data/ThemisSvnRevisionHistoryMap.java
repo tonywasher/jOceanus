@@ -117,7 +117,7 @@ public class ThemisSvnRevisionHistoryMap
         theOwner = pBranch;
 
         /* Discover the path */
-        SvnRevisionPath myPath = new SvnRevisionPath(this, pBranch.getURLPath());
+        final SvnRevisionPath myPath = new SvnRevisionPath(this, pBranch.getURLPath());
 
         /* Expand SourceDirectories */
         myPath.expandSourceDirs();
@@ -137,7 +137,7 @@ public class ThemisSvnRevisionHistoryMap
         theOwner = pTag;
 
         /* Discover the path */
-        SvnRevisionPath myPath = new SvnRevisionPath(this, pTag.getURLPath());
+        final SvnRevisionPath myPath = new SvnRevisionPath(this, pTag.getURLPath());
 
         /* Expand SourceDirectories */
         myPath.expandSourceDirs();
@@ -246,8 +246,8 @@ public class ThemisSvnRevisionHistoryMap
                                final String pPath,
                                final SVNRevision pRevision) throws OceanusException {
             /* Determine the prefix */
-            ThemisSvnRepository myRepo = pHistoryMap.getRepository();
-            String myPrefix = myRepo.getPath();
+            final ThemisSvnRepository myRepo = pHistoryMap.getRepository();
+            final String myPrefix = myRepo.getPath();
 
             /* Store the path */
             theOwner = pHistoryMap.getOwner();
@@ -314,14 +314,14 @@ public class ThemisSvnRevisionHistoryMap
          */
         private void discoverRevisions() throws OceanusException {
             /* Access the log client */
-            ThemisSvnRepository myRepo = theHistoryMap.getRepository();
-            SVNClientManager myClientMgr = myRepo.getClientManager();
-            SVNLogClient myLogClient = myClientMgr.getLogClient();
+            final ThemisSvnRepository myRepo = theHistoryMap.getRepository();
+            final SVNClientManager myClientMgr = myRepo.getClientManager();
+            final SVNLogClient myLogClient = myClientMgr.getLogClient();
 
             /* Protect against exceptions */
             try {
                 /* Build the location details */
-                SVNURL myURL = SVNURL.parseURIEncoded(myRepo.getPath() + thePath);
+                final SVNURL myURL = SVNURL.parseURIEncoded(myRepo.getPath() + thePath);
 
                 /* Obtain information about the revision */
                 myLogClient.doLog(myURL, null, theBaseRevision, theBaseRevision,
@@ -350,15 +350,15 @@ public class ThemisSvnRevisionHistoryMap
                 }
 
                 /* Loop through any SourceDirectories */
-                Iterator<SvnSourceDir> myIterator = myRevision.sourceDirIterator();
+                final Iterator<SvnSourceDir> myIterator = myRevision.sourceDirIterator();
                 while (myIterator.hasNext()) {
-                    SvnSourceDir mySourceDir = myIterator.next();
+                    final SvnSourceDir mySourceDir = myIterator.next();
 
                     /* If the directory has not been expanded */
                     if (mySourceDir.getBasedOn() == null) {
                         /* Analyse the source */
-                        SvnRevisionKey mySource = mySourceDir.getSource();
-                        SvnRevisionPath myPath = new SvnRevisionPath(theHistoryMap, mySource);
+                        final SvnRevisionKey mySource = mySourceDir.getSource();
+                        final SvnRevisionPath myPath = new SvnRevisionPath(theHistoryMap, mySource);
 
                         /* Store the details */
                         mySourceDir.setBasedOn(myPath.getBasedOn());
@@ -373,7 +373,7 @@ public class ThemisSvnRevisionHistoryMap
         @Override
         public String toString() {
             /* Create a stringBuilder */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Output the title */
             myBuilder.append("Revisions for ");
@@ -399,7 +399,7 @@ public class ThemisSvnRevisionHistoryMap
             @Override
             public void handleLogEntry(final SVNLogEntry pEntry) throws SVNException {
                 /* Create the revisionKey */
-                SvnRevisionKey myKey = new SvnRevisionKey(thePath, SVNRevision.create(pEntry.getRevision()));
+                final SvnRevisionKey myKey = new SvnRevisionKey(thePath, SVNRevision.create(pEntry.getRevision()));
 
                 /* Check whether we have analysed this already */
                 ThemisSvnRevisionHistory myHistory = theHistoryMap.get(myKey);
@@ -413,7 +413,7 @@ public class ThemisSvnRevisionHistoryMap
                 try {
                     myHistory = new ThemisSvnRevisionHistory(theOwner, thePath, pEntry);
                 } catch (OceanusException e) {
-                    SVNErrorMessage myMessage = SVNErrorMessage.create(SVNErrorCode.EXTERNAL_PROGRAM, e);
+                    final SVNErrorMessage myMessage = SVNErrorMessage.create(SVNErrorCode.EXTERNAL_PROGRAM, e);
                     throw new SVNException(myMessage);
                 }
 

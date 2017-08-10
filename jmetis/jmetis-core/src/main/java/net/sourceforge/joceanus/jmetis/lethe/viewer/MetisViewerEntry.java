@@ -98,7 +98,7 @@ public class MetisViewerEntry {
         theId = pManager.getNextId();
 
         /* Determine unique name */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(ENTRY_PREFIX);
         myBuilder.append(theId);
         theUniqueName = myBuilder.toString();
@@ -221,9 +221,9 @@ public class MetisViewerEntry {
      */
     public void setFocus(final String pName) {
         /* Loop through the children */
-        Iterator<MetisViewerEntry> myIterator = theChildList.iterator();
+        final Iterator<MetisViewerEntry> myIterator = theChildList.iterator();
         while (myIterator.hasNext()) {
-            MetisViewerEntry myEntry = myIterator.next();
+            final MetisViewerEntry myEntry = myIterator.next();
 
             /* If we match the object */
             if (pName.equals(myEntry.getDisplayName())) {
@@ -283,12 +283,12 @@ public class MetisViewerEntry {
      */
     private void createChildElements(final MetisDataContents pContents) {
         /* Loop through the fields */
-        Iterator<MetisField> myIterator = pContents.getDataFields().fieldIterator();
+        final Iterator<MetisField> myIterator = pContents.getDataFields().fieldIterator();
         while (myIterator.hasNext()) {
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
 
             /* Obtain the value */
-            Object myValue = pContents.getFieldValue(myField);
+            final Object myValue = pContents.getFieldValue(myField);
             boolean addChild = false;
 
             /* Determine whether to add the child */
@@ -301,7 +301,7 @@ public class MetisViewerEntry {
             /* If we should add the child */
             if (addChild) {
                 /* Create it */
-                MetisViewerEntry myChild = theManager.newEntry(this, myField.getName());
+                final MetisViewerEntry myChild = theManager.newEntry(this, myField.getName());
                 myChild.setObject(myValue);
             }
         }
@@ -323,7 +323,7 @@ public class MetisViewerEntry {
         }
 
         /* Access as MetisViewerEntry */
-        MetisViewerEntry myThat = (MetisViewerEntry) pThat;
+        final MetisViewerEntry myThat = (MetisViewerEntry) pThat;
 
         /* Must have same id */
         return theId == myThat.theId;

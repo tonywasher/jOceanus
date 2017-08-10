@@ -92,7 +92,7 @@ public final class MetisFieldData {
      * @param pFixed is the item fixed width?
      */
     protected MetisFieldData(final MetisFieldManager pManager,
-                                final boolean pFixed) {
+                             final boolean pFixed) {
         /* Record parameters */
         theManager = pManager;
         isFixed = pFixed;
@@ -217,25 +217,25 @@ public final class MetisFieldData {
                                 final MetisField pField) {
         /* Obtain the field state */
         theState = pRow.getFieldState(pField);
-        boolean isDisabled = pRow.isDisabled();
+        final boolean isDisabled = pRow.isDisabled();
 
         /* Obtain the foreground for the state */
-        Color myFore = isDisabled
-                                  ? theManager.getDisabledColor()
-                                  : theManager.getForeground(theState);
-        Color myBack = (theRow & 1) == 0
-                                         ? theManager.getStandardBackground()
-                                         : theManager.getZebraColor();
+        final Color myFore = isDisabled
+                                        ? theManager.getDisabledColor()
+                                        : theManager.getForeground(theState);
+        final Color myBack = (theRow & 1) == 0
+                                               ? theManager.getStandardBackground()
+                                               : theManager.getZebraColor();
 
         /* Determine toolTip */
-        String myTip = theState.isError()
-                                          ? pRow.getFieldErrors(pField)
-                                          : null;
+        final String myTip = theState.isError()
+                                                ? pRow.getFieldErrors(pField)
+                                                : null;
 
         /* Select the font */
-        Font myFont = isSelected()
-                                   ? theManager.determineHiFont(theState, isFixed)
-                                   : theManager.determineFont(theState, isFixed);
+        final Font myFont = isSelected()
+                                         ? theManager.determineHiFont(theState, isFixed)
+                                         : theManager.determineFont(theState, isFixed);
 
         /* Set the data */
         theForeGround = myFore;
@@ -274,7 +274,7 @@ public final class MetisFieldData {
         /* If the item is an error */
         if (theState.isError()) {
             /* Flip foreground and background */
-            Color myTemp = myFore;
+            final Color myTemp = myFore;
             myFore = myBack;
             myBack = myTemp;
 
@@ -296,10 +296,10 @@ public final class MetisFieldData {
     protected <X extends MetisFieldSetItem> void determineData(final MetisFieldElement<X> pElement,
                                                                final X pItem) {
         /* Determine whether we have a null item */
-        boolean isNull = pItem == null;
+        final boolean isNull = pItem == null;
 
         /* Obtain the state */
-        MetisField myField = pElement.getField();
+        final MetisField myField = pElement.getField();
         theState = isNull
                           ? MetisFieldState.NORMAL
                           : pItem.getFieldState(myField);

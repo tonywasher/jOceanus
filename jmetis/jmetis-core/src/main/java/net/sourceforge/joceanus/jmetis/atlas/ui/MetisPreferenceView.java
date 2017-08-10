@@ -193,12 +193,12 @@ public class MetisPreferenceView<N, I>
         pPreferenceMgr.getEventRegistrar().addEventListener(this::handleNewPropertySet);
 
         /* Create selection button and label */
-        TethysLabel<N, I> myLabel = theGuiFactory.newLabel(NLS_SET);
+        final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(NLS_SET);
         theSelectButton = pFactory.newScrollButton();
         thePrefMenu = theSelectButton.getMenu();
 
         /* Create the selection panel */
-        TethysBoxPaneManager<N, I> mySelection = theGuiFactory.newHBoxPane();
+        final TethysBoxPaneManager<N, I> mySelection = theGuiFactory.newHBoxPane();
         mySelection.setBorderTitle(NLS_SELECT);
 
         /* Create the layout for the selection panel */
@@ -207,12 +207,12 @@ public class MetisPreferenceView<N, I>
         mySelection.addSpacer();
 
         /* Set listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePropertySetSelect());
         theSelectButton.setMenuConfigurator(c -> buildPreferenceMenu());
 
         /* Create a new Scroll Pane and add the card to it */
-        TethysScrollPaneManager<N, I> myScrollPane = theGuiFactory.newScrollPane();
+        final TethysScrollPaneManager<N, I> myScrollPane = theGuiFactory.newScrollPane();
         myScrollPane.setContent(theProperties);
 
         /* Create the border pane */
@@ -255,7 +255,7 @@ public class MetisPreferenceView<N, I>
      * handle propertySetSelect event.
      */
     private void handlePropertySetSelect() {
-        MetisPreferenceSetView<?, N, I> myView = theSelectButton.getValue();
+        final MetisPreferenceSetView<?, N, I> myView = theSelectButton.getValue();
         theProperties.selectCard(myView.toString());
     }
 
@@ -265,7 +265,7 @@ public class MetisPreferenceView<N, I>
      */
     private void handleNewPropertySet(final TethysEvent<MetisPreferenceEvent> pEvent) {
         /* Details is the property set that has been added */
-        MetisPreferenceSet<?> mySet = pEvent.getDetails(MetisPreferenceSet.class);
+        final MetisPreferenceSet<?> mySet = pEvent.getDetails(MetisPreferenceSet.class);
 
         /* Register the set */
         registerSet(mySet);
@@ -282,7 +282,7 @@ public class MetisPreferenceView<N, I>
         /* Ignore hidden sets */
         if (!pSet.isHidden()) {
             /* Create the underlying view */
-            MetisPreferenceSetView<?, N, I> myView = new MetisPreferenceSetView<>(theGuiFactory, pSet);
+            final MetisPreferenceSetView<?, N, I> myView = new MetisPreferenceSetView<>(theGuiFactory, pSet);
 
             /* Add the view */
             theProperties.addCard(myView.toString(), myView);
@@ -301,7 +301,7 @@ public class MetisPreferenceView<N, I>
      */
     public void determineFocus() {
         /* Request the focus */
-        MetisPreferenceSetView<?, N, I> myPanel = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?, N, I> myPanel = theProperties.getActiveCard();
         if (myPanel != null) {
             myPanel.determineFocus();
         }
@@ -312,7 +312,7 @@ public class MetisPreferenceView<N, I>
      * @return true/false
      */
     public boolean hasUpdates() {
-        MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
         return (myView != null)
                && myView.hasChanges();
     }
@@ -330,7 +330,7 @@ public class MetisPreferenceView<N, I>
      */
     private void saveUpdates() {
         try {
-            MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+            final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
             myView.storeChanges();
         } catch (OceanusException e) {
             LOGGER.error(ERROR_STORE, e);
@@ -348,7 +348,7 @@ public class MetisPreferenceView<N, I>
      */
     private void resetUpdates() {
         /* Reset all changes */
-        MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
         myView.resetChanges();
 
         /* Set correct visibility */
@@ -363,7 +363,7 @@ public class MetisPreferenceView<N, I>
      */
     private void setVisibility() {
         /* Enable selection */
-        MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
         theSelectButton.setEnabled((myView != null)
                                    && !myView.hasChanges());
 
@@ -389,15 +389,15 @@ public class MetisPreferenceView<N, I>
 
         /* Record active item */
         TethysScrollMenuItem<?> myActive = null;
-        String myActiveName = theProperties.getActiveName();
+        final String myActiveName = theProperties.getActiveName();
 
         /* Loop through the views */
-        Iterator<MetisPreferenceSetView<?, N, I>> myIterator = theViews.iterator();
+        final Iterator<MetisPreferenceSetView<?, N, I>> myIterator = theViews.iterator();
         while (myIterator.hasNext()) {
-            MetisPreferenceSetView<?, N, I> myView = myIterator.next();
+            final MetisPreferenceSetView<?, N, I> myView = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(myView);
+            final TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(myView);
 
             /* If this is the active panel */
             if (myView.toString().equals(myActiveName)) {

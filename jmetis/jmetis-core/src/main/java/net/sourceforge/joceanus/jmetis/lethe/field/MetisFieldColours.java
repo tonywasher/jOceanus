@@ -156,7 +156,7 @@ public final class MetisFieldColours {
          */
         public void updateValueSet(final TethysValueSet pValueSet) {
             /* Create the Colour Map */
-            HashMap<String, String> myMap = new HashMap<>();
+            final HashMap<String, String> myMap = new HashMap<>();
 
             /* Populate the map */
             myMap.put(TethysValueSet.TETHYS_COLOR_STANDARD, getStringValue(MetisColorPreferenceKey.STANDARD));
@@ -215,7 +215,7 @@ public final class MetisFieldColours {
          */
         private void defaultColour(final MetisColorPreferenceKey pKey,
                                    final String pDefault) {
-            MetisStringPreference<MetisColorPreferenceKey> myPref = getStringPreference(pKey);
+            final MetisStringPreference<MetisColorPreferenceKey> myPref = getStringPreference(pKey);
             if (!myPref.isAvailable()) {
                 myPref.setValue(pDefault);
             }

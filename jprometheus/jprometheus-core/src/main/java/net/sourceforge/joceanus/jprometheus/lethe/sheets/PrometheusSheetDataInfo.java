@@ -89,7 +89,7 @@ public abstract class PrometheusSheetDataInfo<T extends DataInfo<T, ?, ?, ?, E>,
     @Override
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getRowValues(pName);
+        final DataValues<E> myValues = super.getRowValues(pName);
 
         /* Add the info and return the new values */
         myValues.addValue(DataInfo.FIELD_INFOTYPE, loadInteger(COL_INFOTYPE));

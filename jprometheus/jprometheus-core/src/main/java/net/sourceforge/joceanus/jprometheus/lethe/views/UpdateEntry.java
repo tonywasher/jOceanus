@@ -98,13 +98,13 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
         }
 
         /* Create an iterator for the changes list */
-        Iterator<T> myIterator = theDataList.iterator();
-        DataList<?, E> myBaseList = theDataList.getBaseList();
+        final Iterator<T> myIterator = theDataList.iterator();
+        final DataList<?, E> myBaseList = theDataList.getBaseList();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
-            DataItem<E> myCurr = myIterator.next();
-            DataItem<?> myBase;
+            final DataItem<E> myCurr = myIterator.next();
+            final DataItem<?> myBase;
 
             /* Switch on the state */
             switch (myCurr.getState()) {
@@ -165,14 +165,14 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
         }
 
         /* Create an iterator for this list */
-        Iterator<T> myIterator = theDataList.iterator();
-        DataList<?, E> myBaseList = theDataList.getBaseList();
-        int myVersion = theDataList.getVersion();
+        final Iterator<T> myIterator = theDataList.iterator();
+        final DataList<?, E> myBaseList = theDataList.getBaseList();
+        final int myVersion = theDataList.getVersion();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            DataItem<?> myBase;
+            final T myCurr = myIterator.next();
+            final DataItem<?> myBase;
 
             /* Switch on the state */
             switch (myCurr.getState()) {
@@ -217,11 +217,11 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
         }
 
         /* Create an iterator for this list */
-        Iterator<T> myIterator = theDataList.iterator();
+        final Iterator<T> myIterator = theDataList.iterator();
 
         /* Loop through the elements */
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* Switch on the state */
             switch (myCurr.getState()) {

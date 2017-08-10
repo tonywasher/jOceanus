@@ -61,13 +61,13 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends En
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
         /* Create interface */
-        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
@@ -75,8 +75,8 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends En
             myDatabase.purgeTables(myManager);
 
             /* Re-base this set on a null set */
-            T myNull = theControl.getNewData();
-            T myData = theControl.getData();
+            final T myNull = theControl.getNewData();
+            final T myData = theControl.getData();
             myData.reBase(myManager, myNull);
 
             /* Derive the new set of updates */

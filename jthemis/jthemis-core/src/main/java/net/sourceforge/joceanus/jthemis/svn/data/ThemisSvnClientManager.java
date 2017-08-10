@@ -66,8 +66,8 @@ public class ThemisSvnClientManager {
         thePool = new ArrayList<>();
 
         /* Access UserId and password */
-        String myUser = pPreferences.getStringValue(ThemisSvnPreferenceKey.USER);
-        char[] myPass = pPreferences.getCharArrayValue(ThemisSvnPreferenceKey.PASS);
+        final String myUser = pPreferences.getStringValue(ThemisSvnPreferenceKey.USER);
+        final char[] myPass = pPreferences.getCharArrayValue(ThemisSvnPreferenceKey.PASS);
         theAuth = SVNWCUtil.createDefaultAuthenticationManager(myUser, myPass);
     }
 
@@ -79,7 +79,7 @@ public class ThemisSvnClientManager {
         /* If we have an already allocated client manager in the pool */
         if (!thePool.isEmpty()) {
             /* Access the most recent item and remove it from the pool */
-            SVNClientManager myMgr = thePool.get(thePool.size() - 1);
+            final SVNClientManager myMgr = thePool.get(thePool.size() - 1);
             thePool.remove(myMgr);
 
             /* return it */
@@ -108,7 +108,7 @@ public class ThemisSvnClientManager {
      */
     private SVNClientManager allocateClientMgr() {
         /* Access a default client manager */
-        SVNClientManager myMgr = SVNClientManager.newInstance();
+        final SVNClientManager myMgr = SVNClientManager.newInstance();
         myMgr.setAuthenticationManager(theAuth);
 
         /* Initialise handler */
@@ -123,11 +123,11 @@ public class ThemisSvnClientManager {
      */
     public void dispose() {
         /* Allocate an iterator */
-        Iterator<SVNClientManager> myIterator = thePool.iterator();
+        final Iterator<SVNClientManager> myIterator = thePool.iterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
-            SVNClientManager myMgr = myIterator.next();
+            final SVNClientManager myMgr = myIterator.next();
 
             /* Dispose of the manager */
             myMgr.dispose();

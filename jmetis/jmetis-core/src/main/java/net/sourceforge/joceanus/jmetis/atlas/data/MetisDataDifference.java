@@ -178,7 +178,7 @@ public enum MetisDataDifference {
         }
 
         /* Handle class differences */
-        Class<?> myClass = pCurr.getClass();
+        final Class<?> myClass = pCurr.getClass();
         if (!myClass.equals(pNew.getClass())) {
             return false;
         }

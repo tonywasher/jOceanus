@@ -61,11 +61,6 @@ public class MetisFXThreadManager
         theToolkit = pToolkit;
     }
 
-    // @Override
-    // public MetisFXThreadProgressStatus getStatusManager() {
-    // return (MetisFXThreadProgressStatus) super.getStatusManager();
-    // }
-
     @Override
     public String getTaskName() {
         return theWorker == null
@@ -190,7 +185,7 @@ public class MetisFXThreadManager
     @Override
     public void cancelWorker() {
         /* cancel the thread */
-        MetisFXThread<?> myWorker = theWorker;
+        final MetisFXThread<?> myWorker = theWorker;
         if (myWorker != null) {
             myWorker.cancel(true);
             myWorker.interruptForCancel();

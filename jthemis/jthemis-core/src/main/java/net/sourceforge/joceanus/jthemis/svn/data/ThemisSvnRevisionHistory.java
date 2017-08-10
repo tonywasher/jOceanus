@@ -181,14 +181,14 @@ public class ThemisSvnRevisionHistory
         /* Iterate through the file changes */
         for (Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
             /* Access the key */
-            String myPath = myEntry.getKey();
-            SVNLogEntryPath myDetail = myEntry.getValue();
-            String myCopyPath = myDetail.getCopyPath();
+            final String myPath = myEntry.getKey();
+            final SVNLogEntryPath myDetail = myEntry.getValue();
+            final String myCopyPath = myDetail.getCopyPath();
 
             /* If the entry starts with our path */
             if (myPath.startsWith(pPath)) {
                 /* Access the detail */
-                SVNNodeKind myKind = myDetail.getKind();
+                final SVNNodeKind myKind = myDetail.getKind();
 
                 /* If this is a file */
                 if (myKind.equals(SVNNodeKind.FILE)) {
@@ -198,7 +198,7 @@ public class ThemisSvnRevisionHistory
                     /* else if this is a directory */
                 } else if (myKind.equals(SVNNodeKind.DIR)) {
                     /* Access the copy path */
-                    String myDir = myDetail.getPath();
+                    final String myDir = myDetail.getPath();
 
                     /* If this a copy of a directory */
                     if (myCopyPath != null) {
@@ -231,12 +231,12 @@ public class ThemisSvnRevisionHistory
                 }
 
                 /* Determine the new name for the directory */
-                StringBuilder myBuilder = new StringBuilder(pPath);
+                final StringBuilder myBuilder = new StringBuilder(pPath);
                 myBuilder.delete(0, myPath.length());
                 myBuilder.insert(0, myCopyPath);
 
                 /* Record the origin */
-                String myNewPath = myBuilder.toString();
+                final String myNewPath = myBuilder.toString();
                 theOrigin = new SvnRevisionKey(myNewPath, SVNRevision.create(myDetail.getCopyRevision()));
                 theOriginDef = new SvnSourceDefinition(myNewPath);
                 isOrigin = true;
@@ -265,7 +265,7 @@ public class ThemisSvnRevisionHistory
      * @return the date
      */
     public Date getDate() {
-        Date myDate = new Date();
+        final Date myDate = new Date();
         myDate.setTime(theDate.getTime());
         return myDate;
     }
@@ -369,7 +369,7 @@ public class ThemisSvnRevisionHistory
     @Override
     public String toString() {
         /* Create a stringBuilder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Output the title */
         myBuilder.append("\n\nRevision ");
@@ -378,9 +378,9 @@ public class ThemisSvnRevisionHistory
         myBuilder.append(theLogMessage);
 
         /* Add SourceDirs */
-        Iterator<SvnSourceDir> myIterator = theSourceDirs.iterator();
+        final Iterator<SvnSourceDir> myIterator = theSourceDirs.iterator();
         while (myIterator.hasNext()) {
-            SvnSourceDir myDir = myIterator.next();
+            final SvnSourceDir myDir = myIterator.next();
 
             /* Add to output */
             myBuilder.append(myDir.toString());
@@ -511,7 +511,7 @@ public class ThemisSvnRevisionHistory
             }
 
             /* Access correctly */
-            SvnRevisionKey myThat = (SvnRevisionKey) pThat;
+            final SvnRevisionKey myThat = (SvnRevisionKey) pThat;
 
             /* Check values */
             return theRevision.equals(myThat.getRevision())
@@ -574,7 +574,7 @@ public class ThemisSvnRevisionHistory
         private SvnSourceDir(final String pSource,
                              final long pRevision) throws OceanusException {
             /* Split according to directory parts */
-            SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
+            final SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
 
             /* Store details */
             theComponent = mySource.getComponent();
@@ -616,7 +616,7 @@ public class ThemisSvnRevisionHistory
         @Override
         public String toString() {
             /* Create a stringBuilder */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Add to output */
             myBuilder.append("\nSource ");
@@ -712,9 +712,9 @@ public class ThemisSvnRevisionHistory
          */
         private void addItem(final SvnSourceDir pDir) throws OceanusException {
             /* Loop through the existing items */
-            Iterator<SvnSourceDir> myIterator = iterator();
+            final Iterator<SvnSourceDir> myIterator = iterator();
             while (myIterator.hasNext()) {
-                SvnSourceDir myEntry = myIterator.next();
+                final SvnSourceDir myEntry = myIterator.next();
 
                 /* If we have matching component */
                 if (MetisDataDifference.isEqual(myEntry.getComponent(), pDir.getComponent())) {
@@ -829,7 +829,7 @@ public class ThemisSvnRevisionHistory
             }
 
             /* Split according to directory parts */
-            String[] mySplit = pSource.substring(1).split(Character.toString(ThemisSvnRepository.SEP_URL));
+            final String[] mySplit = pSource.substring(1).split(Character.toString(ThemisSvnRepository.SEP_URL));
 
             /* Must have at least two parts (first null) */
             if (mySplit.length > 1) {

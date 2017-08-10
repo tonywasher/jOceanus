@@ -130,7 +130,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theData = pData;
 
         /* Update the Data entry */
-        MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATASET);
+        final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATASET);
         myData.setTreeObject(pData);
 
         /* Analyse the data */
@@ -145,7 +145,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      */
     public void incrementVersion() {
         /* Increment data versions */
-        int myVersion = theData.getVersion();
+        final int myVersion = theData.getVersion();
         theData.setVersion(myVersion + 1);
     }
 
@@ -166,7 +166,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theUpdates = theData.deriveUpdateSet();
 
         /* Update the Data entry */
-        MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.UPDATES);
+        final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.UPDATES);
         myData.setTreeObject(theUpdates);
     }
 
@@ -262,7 +262,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      */
     private void initViewerMap() {
         /* Access the viewer manager */
-        MetisViewerManager myViewer = getViewerManager();
+        final MetisViewerManager myViewer = getViewerManager();
 
         /* Access standard entries */
         theViewerMap.put(PrometheusViewerEntryId.ERROR, myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR));
@@ -271,19 +271,19 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theViewerMap.put(PrometheusViewerEntryId.VIEW, myViewer.getStandardEntry(MetisViewerStandardEntry.VIEW));
 
         /* Create Data entries */
-        MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATA);
+        final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATA);
         theViewerMap.put(PrometheusViewerEntryId.DATASET, myViewer.newEntry(myData, PrometheusViewerEntryId.DATASET.toString()));
         theViewerMap.put(PrometheusViewerEntryId.UPDATES, myViewer.newEntry(myData, PrometheusViewerEntryId.UPDATES.toString()));
         theViewerMap.put(PrometheusViewerEntryId.ANALYSIS, myViewer.newEntry(myData, PrometheusViewerEntryId.ANALYSIS.toString()));
 
         /* Create View entries */
-        MetisViewerEntry myView = getViewerEntry(PrometheusViewerEntryId.VIEW);
-        MetisViewerEntry myMaint = myViewer.newEntry(myView, PrometheusViewerEntryId.MAINTENANCE.toString());
+        final MetisViewerEntry myView = getViewerEntry(PrometheusViewerEntryId.VIEW);
+        final MetisViewerEntry myMaint = myViewer.newEntry(myView, PrometheusViewerEntryId.MAINTENANCE.toString());
         theViewerMap.put(PrometheusViewerEntryId.MAINTENANCE, myMaint);
         theViewerMap.put(PrometheusViewerEntryId.STATIC, myViewer.newEntry(myMaint, PrometheusViewerEntryId.STATIC.toString()));
 
         /* Hide the error entry */
-        MetisViewerEntry myError = theViewerMap.get(PrometheusViewerEntryId.ERROR);
+        final MetisViewerEntry myError = theViewerMap.get(PrometheusViewerEntryId.ERROR);
         myError.setVisible(myError.getObject() != null);
     }
 

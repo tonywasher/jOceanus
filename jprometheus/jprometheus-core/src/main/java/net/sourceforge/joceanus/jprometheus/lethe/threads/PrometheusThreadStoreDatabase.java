@@ -61,13 +61,13 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
         /* Create interface */
-        PrometheusDataStore<T> myDatabase = theControl.getDatabase();
+        final PrometheusDataStore<T> myDatabase = theControl.getDatabase();
 
         /* Protect against failures */
         try {
@@ -75,12 +75,12 @@ public class PrometheusThreadStoreDatabase<T extends DataSet<T, E>, E extends En
             myDatabase.updateDatabase(myManager, theControl.getUpdates());
 
             /* Load database */
-            T myStore = theControl.getNewData();
+            final T myStore = theControl.getNewData();
             myDatabase.loadDatabase(myManager, myStore);
 
             /* Create a difference set between the two data copies */
-            T myData = theControl.getData();
-            DataSet<T, ?> myDiff = myData.getDifferenceSet(myManager, myStore);
+            final T myData = theControl.getData();
+            final DataSet<T, ?> myDiff = myData.getDifferenceSet(myManager, myStore);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

@@ -125,7 +125,7 @@ public class MetisSwingThread<T>
     @Override
     protected void process(final List<MetisThreadStatus> pList) {
         /* Obtain the most recent status */
-        MetisThreadStatus myStatus = pList.get(pList.size() - 1);
+        final MetisThreadStatus myStatus = pList.get(pList.size() - 1);
 
         /* Pass to the status bar */
         theStatusMgr.setProgress(myStatus);

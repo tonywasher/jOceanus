@@ -90,17 +90,17 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     /**
      * The first node in the list.
      */
-    private MetisOrderedNode<T> theFirst = null;
+    private MetisOrderedNode<T> theFirst;
 
     /**
      * The last node in the list.
      */
-    private MetisOrderedNode<T> theLast = null;
+    private MetisOrderedNode<T> theLast;
 
     /**
      * The modification count.
      */
-    private volatile int theModCount = 0;
+    private volatile int theModCount;
 
     /**
      * Index map for list.
@@ -151,9 +151,9 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         this(pClass);
 
         /* Loop through the source members */
-        Iterator<T> myIterator = pSource.iterator();
+        final Iterator<T> myIterator = pSource.iterator();
         while (myIterator.hasNext()) {
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* Add the item */
             addItem(myItem);
@@ -220,7 +220,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         theModCount++;
 
         /* Allocate the new node */
-        MetisOrderedNode<T> myNode = new MetisOrderedNode<>(this, pItem);
+        final MetisOrderedNode<T> myNode = new MetisOrderedNode<>(this, pItem);
 
         /* Register link between object and node */
         theIndexMap.registerLink(myNode);
@@ -248,7 +248,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         theModCount++;
 
         /* Allocate the new node */
-        MetisOrderedNode<T> myNode = new MetisOrderedNode<>(this, pItem);
+        final MetisOrderedNode<T> myNode = new MetisOrderedNode<>(this, pItem);
 
         /* Register link between object and node */
         theIndexMap.registerLink(myNode);
@@ -274,7 +274,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
             /* If we are adding normally */
         } else {
             /* Search for insert point */
-            MetisOrderedNode<T> myPoint = theIndexMap.findNodeAfter(pNode);
+            final MetisOrderedNode<T> myPoint = theIndexMap.findNodeAfter(pNode);
 
             /* If we have an insert point, insert there */
             if (myPoint != null) {
@@ -310,7 +310,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         /* Remove the items in reverse order */
         while (theLast != null) {
             /* Access and unlink the node */
-            MetisOrderedNode<T> myNode = theLast;
+            final MetisOrderedNode<T> myNode = theLast;
             theLast = myNode.getNext();
 
             /* Remove links from node and list */
@@ -342,7 +342,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
 
     @Override
     public void forEach(final Consumer<? super T> pAction) {
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             pAction.accept(myIterator.next());
         }
@@ -355,7 +355,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
 
     @Override
     public boolean removeIf(final Predicate<? super T> pCheck) {
-        MetisOrderedListIterator<T> myIterator = listIterator();
+        final MetisOrderedListIterator<T> myIterator = listIterator();
         while (myIterator.hasNext()) {
             if (pCheck.test(myIterator.next())) {
                 myIterator.remove();
@@ -388,7 +388,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access the node of the item */
-        MetisOrderedNode<T> myNode = theIndexMap.findNodeForObject(pItem);
+        final MetisOrderedNode<T> myNode = theIndexMap.findNodeForObject(pItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {
@@ -412,7 +412,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access the node */
-        MetisOrderedNode<T> myNode = theIndexMap.getNodeAtIndex(iIndex);
+        final MetisOrderedNode<T> myNode = theIndexMap.getNodeAtIndex(iIndex);
 
         /* Note if we did not find the item */
         if (myNode == null) {
@@ -427,7 +427,6 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     public boolean equals(final Object pThat) {
         MetisOrderedNode<?> myCurr;
         MetisOrderedNode<?> myOther;
-        MetisOrderedList<?> myThat;
 
         /* Handle the trivial cases */
         if (this == pThat) {
@@ -443,7 +442,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access the target list */
-        myThat = (MetisOrderedList<?>) pThat;
+        final MetisOrderedList<?> myThat = (MetisOrderedList<?>) pThat;
 
         /* Make sure that the object is the same data class */
         if (myThat.theClass != this.theClass) {
@@ -509,7 +508,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access the node */
-        MetisOrderedNode<T> myNode = theIndexMap.getNodeAtIndex(iIndex);
+        final MetisOrderedNode<T> myNode = theIndexMap.getNodeAtIndex(iIndex);
 
         /* Note if we did not find the item */
         if (myNode == null) {
@@ -533,7 +532,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access the node */
-        MetisOrderedNode<T> myNode = theIndexMap.getNodeAtIndex(iIndex);
+        final MetisOrderedNode<T> myNode = theIndexMap.getNodeAtIndex(iIndex);
 
         /* Note if we did not find the item */
         if (myNode == null) {
@@ -563,10 +562,10 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access as link object */
-        T myItem = theClass.cast(o);
+        final T myItem = theClass.cast(o);
 
         /* Access the node of the item */
-        MetisOrderedNode<T> myNode = theIndexMap.findUnsortedNodeForObject(myItem);
+        final MetisOrderedNode<T> myNode = theIndexMap.findUnsortedNodeForObject(myItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {
@@ -649,7 +648,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access as link object */
-        T myItem = theClass.cast(o);
+        final T myItem = theClass.cast(o);
 
         /* Access the node of the item */
         return theIndexMap.findNodeForObject(myItem);
@@ -668,18 +667,13 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access as link object */
-        T myItem = theClass.cast(o);
+        final T myItem = theClass.cast(o);
 
         /* Access the node of the item */
-        MetisOrderedNode<T> myNode = theIndexMap.findNodeForObject(myItem);
+        final MetisOrderedNode<T> myNode = theIndexMap.findNodeForObject(myItem);
 
         /* If the node does not belong to the list then ignore */
-        if (myNode == null) {
-            return false;
-        }
-
-        /* Return that the object belongs */
-        return true;
+        return myNode != null;
     }
 
     /**
@@ -688,7 +682,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
      */
     public T peekFirst() {
         /* Access the first item */
-        MetisOrderedNode<T> myNode = getFirst();
+        final MetisOrderedNode<T> myNode = getFirst();
 
         /* Return the next object */
         return (myNode == null)
@@ -702,7 +696,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
      */
     public T peekLast() {
         /* Access the last item */
-        MetisOrderedNode<T> myNode = getLast();
+        final MetisOrderedNode<T> myNode = getLast();
 
         /* Return the next object */
         return (myNode == null)
@@ -732,13 +726,13 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @Override
     public Object[] toArray() {
         /* Determine the size of the array */
-        int iSize = size();
+        final int iSize = size();
 
         /* Allocate an array list of the estimated size */
-        Object[] myArray = new Object[iSize];
+        final Object[] myArray = new Object[iSize];
 
         /* Loop through the list */
-        MetisOrderedListIterator<?> myIterator = listIterator();
+        final MetisOrderedListIterator<?> myIterator = listIterator();
         for (int i = 0; i < iSize; i++) {
             /* Store the next item */
             myArray[i] = myIterator.next();
@@ -751,7 +745,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @Override
     public <X> X[] toArray(final X[] a) {
         /* Determine the size of the array */
-        int iSize = size();
+        final int iSize = size();
 
         /* Reject if the sample array is null or wrong type */
         if (a == null) {
@@ -759,7 +753,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Get the component type and check we can assign to it */
-        Class<?> myClass = a.getClass().getComponentType();
+        final Class<?> myClass = a.getClass().getComponentType();
         if (!myClass.isAssignableFrom(theClass)) {
             throw new ArrayStoreException();
         }
@@ -771,10 +765,10 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         }
 
         /* Access the array as an object array */
-        Object[] myArray = myRows;
+        final Object[] myArray = myRows;
 
         /* Loop through the list */
-        MetisOrderedListIterator<?> myIterator = listIterator();
+        final MetisOrderedListIterator<?> myIterator = listIterator();
         for (int i = 0; i < iSize; i++) {
             /* Store the next item */
             myArray[i] = myIterator.next();
@@ -836,20 +830,20 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @Override
     public boolean addAll(final Collection<? extends T> pCollection) {
         /* Obtain the current modification count */
-        int myModCount = theModCount;
+        final int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        Iterator<? extends T> myIterator = pCollection.iterator();
+        final Iterator<? extends T> myIterator = pCollection.iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* Add it to the list */
             append(myItem);
         }
 
         /* Did we make a change */
-        boolean bChanged = theModCount != myModCount;
+        final boolean bChanged = theModCount != myModCount;
         if (bChanged) {
             /* Sort the list */
             reSort();
@@ -866,20 +860,20 @@ public class MetisOrderedList<T extends Comparable<? super T>>
      */
     public boolean addAll(final MetisOrderedList<? extends T> pList) {
         /* Obtain the current modification count */
-        int myModCount = theModCount;
+        final int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        Iterator<? extends T> myIterator = pList.iterator();
+        final Iterator<? extends T> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* Add it to the list */
             append(myItem);
         }
 
         /* Did we make a change */
-        boolean bChanged = theModCount != myModCount;
+        final boolean bChanged = theModCount != myModCount;
         if (bChanged) {
             /* Sort the list */
             reSort();
@@ -910,13 +904,13 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @Override
     public boolean retainAll(final Collection<?> pCollection) {
         /* Obtain the current modification count */
-        int myModCount = theModCount;
+        final int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* If item is in collection then ignore */
             if (pCollection.contains(myItem)) {
@@ -939,13 +933,13 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @Override
     public boolean removeAll(final Collection<?> pCollection) {
         /* Obtain the current modification count */
-        int myModCount = theModCount;
+        final int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* If item is not in collection then ignore */
             if (!pCollection.contains(myItem)) {
@@ -996,7 +990,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
     @SuppressWarnings("unchecked")
     public Object clone() throws CloneNotSupportedException {
         /* Clone the underlying object */
-        MetisOrderedList<T> myResult = (MetisOrderedList<T>) super.clone();
+        final MetisOrderedList<T> myResult = (MetisOrderedList<T>) super.clone();
 
         /* Re-initialise the fields */
         myResult.theClass = theClass;
@@ -1017,23 +1011,23 @@ public class MetisOrderedList<T extends Comparable<? super T>>
      */
     private void writeObject(final ObjectOutputStream pOutput) throws IOException {
         /* Note expected modification count */
-        int myExpectedModCount = theModCount;
+        final int myExpectedModCount = theModCount;
 
         /* Write out the default stuff */
         pOutput.defaultWriteObject();
 
         /* Write out number of Mappings */
-        int mySize = size();
+        final int mySize = size();
         pOutput.writeInt(mySize);
         if (mySize == 0) {
             return;
         }
 
         /* Write out elements */
-        Iterator<T> myIterator = iterator();
+        final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             /* Access and write out element */
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
             pOutput.writeObject(myItem);
         }
 
@@ -1054,12 +1048,12 @@ public class MetisOrderedList<T extends Comparable<? super T>>
         pInput.defaultReadObject();
 
         /* Read in size number of elements */
-        int mySize = pInput.readInt();
+        final int mySize = pInput.readInt();
 
         /* Read the keys and values, and put the mappings in the HashMap */
         for (int i = 0; i < mySize; i++) {
             /* Read the values in */
-            T myItem = theClass.cast(pInput.readObject());
+            final T myItem = theClass.cast(pInput.readObject());
 
             /* Add to list */
             append(myItem);

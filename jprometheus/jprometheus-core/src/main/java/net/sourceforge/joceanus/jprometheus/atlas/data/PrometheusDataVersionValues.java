@@ -48,7 +48,7 @@ public class PrometheusDataVersionValues
     @Override
     public PrometheusDataVersionValues cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        PrometheusDataVersionValues mySet = new PrometheusDataVersionValues(getItem());
+        final PrometheusDataVersionValues mySet = new PrometheusDataVersionValues(getItem());
         mySet.copyFrom(this);
         return mySet;
     }
@@ -60,7 +60,7 @@ public class PrometheusDataVersionValues
 
         /* Copy the keySet */
         if (pPrevious instanceof PrometheusDataVersionValues) {
-            PrometheusDataVersionValues myPrevious = (PrometheusDataVersionValues) pPrevious;
+            final PrometheusDataVersionValues myPrevious = (PrometheusDataVersionValues) pPrevious;
             theKeySet = myPrevious.theKeySet;
         }
     }

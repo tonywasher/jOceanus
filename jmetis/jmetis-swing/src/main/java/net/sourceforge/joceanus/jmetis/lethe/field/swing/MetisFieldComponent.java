@@ -164,7 +164,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                           final TethysSwingStringTextField pTextField,
                                                                                           final MetisDataType pClass) {
         /* Allocate component */
-        TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
+        final TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
         return new MetisFieldText<>(pTextField, myModel);
     }
 
@@ -182,8 +182,8 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                           final TethysSwingScrollPaneManager pScrollPane,
                                                                                           final MetisDataType pClass) {
         /* Split into scrollPane and child */
-        JScrollPane myScroll = (JScrollPane) pScrollPane.getNode();
-        TethysNode<JComponent> myComp = pScrollPane.getContent();
+        final JScrollPane myScroll = (JScrollPane) pScrollPane.getNode();
+        final TethysNode<JComponent> myComp = pScrollPane.getContent();
 
         /* Handle invalid child */
         if (myComp == null) {
@@ -195,7 +195,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         }
 
         /* Derive component based on child and record scroll pane */
-        MetisFieldComponent<X> myResult = deriveComponent(pFieldSet, pField, (TethysSwingTextArea) myComp, pClass);
+        final MetisFieldComponent<X> myResult = deriveComponent(pFieldSet, pField, (TethysSwingTextArea) myComp, pClass);
         myResult.setScroll(myScroll);
 
         /* Return the result */
@@ -216,7 +216,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                         final TethysSwingTextArea pTextArea,
                                                                                         final MetisDataType pClass) {
         /* Allocate component */
-        TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
+        final TethysFieldModelString<X> myModel = new TethysFieldModelString<>(pFieldSet, pField, pClass);
         return new MetisFieldArea<>(pTextArea, myModel);
     }
 
@@ -232,7 +232,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                           final MetisField pField,
                                                                                           final TethysSwingDateButtonManager pButton) {
         /* Allocate component */
-        TethysFieldModelDate<X> myModel = new TethysFieldModelDate<>(pFieldSet, pField);
+        final TethysFieldModelDate<X> myModel = new TethysFieldModelDate<>(pFieldSet, pField);
         return new MetisFieldDate<>(pButton, myModel);
     }
 
@@ -251,7 +251,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                              final TethysSwingScrollButtonManager<I> pButton,
                                                                                              final Class<I> pClazz) {
         /* Allocate component */
-        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClazz);
+        final TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClazz);
         return new MetisFieldScrollButton<>(pButton, myModel);
     }
 
@@ -268,7 +268,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                              final MetisField pField,
                                                                                              final TethysSwingListButtonManager<I> pButton) {
         /* Allocate component */
-        TethysFieldModelObjectList<I, X> myModel = new TethysFieldModelObjectList<>(pFieldSet, pField);
+        final TethysFieldModelObjectList<I, X> myModel = new TethysFieldModelObjectList<>(pFieldSet, pField);
         return new MetisFieldScrollListButton<>(pButton, myModel);
     }
 
@@ -287,7 +287,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                                                                                              final TethysSwingIconButtonManager<I> pButton,
                                                                                              final Class<I> pClazz) {
         /* Allocate component */
-        TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClazz);
+        final TethysFieldModelObject<I, X> myModel = new TethysFieldModelObject<>(pFieldSet, pField, pClazz);
         return new MetisFieldIconButton<>(pButton, myModel);
     }
 
@@ -299,11 +299,11 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
     protected void renderData(final MetisFieldData pRender,
                               final T pItem) {
         /* Obtain details from render data */
-        Color myFore = pRender.getForeGround();
-        Color myBack = pRender.getBackGround();
-        String myTip = pRender.getToolTip();
-        Font myFont = pRender.getFont();
-        MetisFieldState myState = pRender.getState();
+        final Color myFore = pRender.getForeGround();
+        final Color myBack = pRender.getBackGround();
+        final String myTip = pRender.getToolTip();
+        final Font myFont = pRender.getFont();
+        final MetisFieldState myState = pRender.getState();
 
         /* Set colours */
         theComponent.setForeground(myFore);
@@ -314,9 +314,9 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         theComponent.setFont(myFont);
 
         /* Set the appropriate border */
-        JComponent myComp = (theScroll != null)
-                                                ? theScroll
-                                                : theComponent;
+        final JComponent myComp = (theScroll != null)
+                                                      ? theScroll
+                                                      : theComponent;
         myComp.setBorder(myState.isError()
                                            ? pRender.getErrorBorder()
                                            : theBorder);
@@ -339,9 +339,9 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         theComponent.setToolTipText(null);
 
         /* Set the appropriate border */
-        JComponent myComp = (theScroll != null)
-                                                ? theScroll
-                                                : theComponent;
+        final JComponent myComp = (theScroll != null)
+                                                      ? theScroll
+                                                      : theComponent;
         myComp.setBorder(theBorder);
 
         /* Display the data */
@@ -405,21 +405,21 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             pComponent.setEditable(true);
 
             /* Create the listener and attach it */
-            StringListener myListener = new StringListener();
+            final StringListener myListener = new StringListener();
             theComponent.addActionListener(myListener);
             theComponent.addFocusListener(myListener);
 
             /* Set correct alignment */
-            int iAlignment = pModel.isFixedWidth()
-                                                   ? SwingConstants.RIGHT
-                                                   : SwingConstants.LEFT;
+            final int iAlignment = pModel.isFixedWidth()
+                                                         ? SwingConstants.RIGHT
+                                                         : SwingConstants.LEFT;
             theComponent.setHorizontalAlignment(iAlignment);
         }
 
         @Override
         protected void displayField() {
             /* Access display Text from model */
-            String myDisplay = theModel.getDisplayString();
+            final String myDisplay = theModel.getDisplayString();
 
             /* Display it */
             theComponent.setText(myDisplay);
@@ -479,7 +479,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                 }
 
                 /* Process the new value */
-                boolean bChange = theModel.processValue(theComponent.getText());
+                final boolean bChange = theModel.processValue(theComponent.getText());
 
                 /* If we have an invalid value */
                 if (theModel.isError()) {
@@ -534,7 +534,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             theComponent.setEditable(true);
 
             /* Create the listener and attach it */
-            StringListener myListener = new StringListener();
+            final StringListener myListener = new StringListener();
             theComponent.addFocusListener(myListener);
         }
 
@@ -551,7 +551,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         @Override
         protected void displayField() {
             /* Access display Text from model */
-            String myDisplay = getModel().getDisplayString();
+            final String myDisplay = getModel().getDisplayString();
 
             /* Display it */
             getUnderlyingComponent().setText(myDisplay);
@@ -601,7 +601,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
                 }
 
                 /* Process the new value */
-                boolean bChange = theModel.processValue(theComponent.getText());
+                final boolean bChange = theModel.processValue(theComponent.getText());
 
                 /* If we have an invalid value */
                 if (theModel.isError()) {
@@ -661,7 +661,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         @Override
         protected void displayField() {
             /* Access value from model */
-            TethysDate myValue = theModel.getValue();
+            final TethysDate myValue = theModel.getValue();
 
             /* Display it */
             theComponent.setSelectedDate(myValue);
@@ -701,14 +701,14 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
             theModel = pModel;
 
             /* Handle new Values */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theComponent.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theComponent.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> theModel.processValue(theComponent.getValue()));
         }
 
         @Override
         protected void displayField() {
             /* Access value from model */
-            I myValue = theModel.getValue();
+            final I myValue = theModel.getValue();
 
             /* Display it */
             theComponent.setValue(myValue);
@@ -797,11 +797,11 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
         @Override
         protected void displayField() {
             /* Access value from model */
-            I myValue = theModel.getValue();
+            final I myValue = theModel.getValue();
 
             /* Display it */
             theComponent.setValue(myValue);
-            Icon myIcon = ((JButton) theComponent.getNode()).getIcon();
+            final Icon myIcon = ((JButton) theComponent.getNode()).getIcon();
             if (myIcon != null) {
                 getReadOnlyLabel().setIcon(myIcon);
             }

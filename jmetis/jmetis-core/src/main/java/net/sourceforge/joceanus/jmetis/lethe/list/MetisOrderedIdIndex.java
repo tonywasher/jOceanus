@@ -61,7 +61,7 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
 
     @Override
     protected MetisOrderedIndex<T> newIndex(final MetisOrderedList<T> pList) {
-        MetisOrderedIndex<T> myIndex = new MetisOrderedIdIndex<>(getGranularityShift());
+        final MetisOrderedIndex<T> myIndex = new MetisOrderedIdIndex<>(getGranularityShift());
         myIndex.declareList(pList);
         return myIndex;
     }
@@ -72,13 +72,13 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
      */
     protected Map<I, T> getElementMap() {
         /* Create the new map */
-        Map<I, T> myMap = new MetisNestedHashMap<>();
+        final Map<I, T> myMap = new MetisNestedHashMap<>();
 
         /* Loop through the elements */
-        Iterator<Entry<I, MetisOrderedNode<T>>> myIterator = theHashMap.entrySet().iterator();
+        final Iterator<Entry<I, MetisOrderedNode<T>>> myIterator = theHashMap.entrySet().iterator();
         while (myIterator.hasNext()) {
             /* Access entry and place details into map */
-            Entry<I, MetisOrderedNode<T>> myEntry = myIterator.next();
+            final Entry<I, MetisOrderedNode<T>> myEntry = myIterator.next();
             myMap.put(myEntry.getKey(), myEntry.getValue().getObject());
         }
 
@@ -103,7 +103,7 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
      */
     protected T findItemById(final I pId) {
         /* Look up the node */
-        MetisOrderedNode<T> myNode = theHashMap.get(pId);
+        final MetisOrderedNode<T> myNode = theHashMap.get(pId);
 
         /* Return results */
         return (myNode == null)
@@ -114,7 +114,7 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
     @Override
     protected MetisOrderedNode<T> findNodeForObject(final T pItem) {
         /* Lookup the node in the map */
-        I myId = pItem.getOrderedId();
+        final I myId = pItem.getOrderedId();
         return theHashMap.get(myId);
     }
 
@@ -127,7 +127,7 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
     @Override
     protected void registerLink(final MetisOrderedNode<T> pNode) {
         /* Access object */
-        T myItem = pNode.getObject();
+        final T myItem = pNode.getObject();
 
         /* Insert the link into the map */
         theHashMap.put(myItem.getOrderedId(), pNode);
@@ -136,7 +136,7 @@ public class MetisOrderedIdIndex<I, T extends Comparable<? super T> & MetisOrder
     @Override
     protected void deRegisterLink(final MetisOrderedNode<T> pNode) {
         /* Access object */
-        T myItem = pNode.getObject();
+        final T myItem = pNode.getObject();
 
         /* Remove the link from the map */
         theHashMap.remove(myItem.getOrderedId());

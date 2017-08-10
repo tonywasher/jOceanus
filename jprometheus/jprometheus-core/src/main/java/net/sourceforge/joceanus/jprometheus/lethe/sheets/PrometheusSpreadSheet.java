@@ -70,7 +70,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
                            final T pData,
                            final File pFile) throws OceanusException {
         /* Create a sheet reader object */
-        PrometheusSheetReader<T> myReader = getSheetReader(pReport, pSecureMgr);
+        final PrometheusSheetReader<T> myReader = getSheetReader(pReport, pSecureMgr);
 
         /* Load the backup */
         myReader.loadBackup(pFile, pData);
@@ -89,7 +89,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
                              final File pFile,
                              final MetisWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
-        PrometheusSheetWriter<T> myWriter = getSheetWriter(pReport);
+        final PrometheusSheetWriter<T> myWriter = getSheetWriter(pReport);
 
         /* Create the backup */
         myWriter.createBackup(pData, pFile, pType);

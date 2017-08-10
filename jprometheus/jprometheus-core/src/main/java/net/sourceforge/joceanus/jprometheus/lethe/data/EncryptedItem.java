@@ -60,7 +60,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     /**
      * Generator field.
      */
-    private MetisEncryptionGenerator theGenerator = null;
+    private MetisEncryptionGenerator theGenerator;
 
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when
@@ -97,7 +97,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         super(pList, pValues);
 
         /* Access dataKeySet id */
-        Integer myId = pValues.getValue(FIELD_KEYSET, Integer.class);
+        final Integer myId = pValues.getValue(FIELD_KEYSET, Integer.class);
         if (myId != null) {
             setDataKeySet(myId);
         } else {
@@ -128,7 +128,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
      * @return the DataKeySetId
      */
     public final Integer getDataKeySetId() {
-        DataKeySet mySet = getDataKeySet();
+        final DataKeySet mySet = getDataKeySet();
         return (mySet == null)
                                ? null
                                : mySet.getId();
@@ -192,7 +192,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         setValueDataKeySet(pKeySetId);
 
         /* Resolve the ControlKey */
-        DataSet<?, ?> myData = getDataSet();
+        final DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
         theGenerator = getDataKeySet().getFieldGenerator();
     }
@@ -206,7 +206,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     protected final void setEncryptedValue(final MetisField pField,
                                            final Object pValue) throws OceanusException {
         /* Obtain the existing value */
-        MetisEncryptedValueSet myValueSet = getValueSet();
+        final MetisEncryptedValueSet myValueSet = getValueSet();
         Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle switched usage */
@@ -215,8 +215,8 @@ public abstract class EncryptedItem<E extends Enum<E>>
         }
 
         /* Create the new encrypted value */
-        MetisEncryptedField<?> myCurr = (MetisEncryptedField<?>) myCurrent;
-        MetisEncryptedField<?> myField = theGenerator.encryptValue(myCurr, pValue);
+        final MetisEncryptedField<?> myCurr = (MetisEncryptedField<?>) myCurrent;
+        final MetisEncryptedField<?> myField = theGenerator.encryptValue(myCurr, pValue);
 
         /* Store the new value */
         myValueSet.setValue(pField, myField);
@@ -233,7 +233,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
                                            final byte[] pEncrypted,
                                            final Class<?> pClass) throws OceanusException {
         /* Create the new encrypted value */
-        MetisEncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
+        final MetisEncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 
         /* Store the new value */
         getValueSet().setValue(pField, myField);
@@ -266,7 +266,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
     @Override
     public void resolveDataSetLinks() throws OceanusException {
         /* Resolve the ControlKey */
-        DataSet<?, ?> myData = getDataSet();
+        final DataSet<?, ?> myData = getDataSet();
         resolveDataLink(FIELD_KEYSET, myData.getDataKeySets());
     }
 
@@ -282,7 +282,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
         setValueDataKeySet(pKeySet);
 
         /* Access underlying values if they exist */
-        MetisEncryptedValueSet myBaseValues = pBase.getValueSet();
+        final MetisEncryptedValueSet myBaseValues = pBase.getValueSet();
 
         /* Try to adopt the underlying */
         getValueSet().adoptSecurity(theGenerator, myBaseValues);
@@ -368,7 +368,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @return the active controlKey
          */
         private ControlKey getControlKey() {
-            ControlData myControl = getDataSet().getControl();
+            final ControlData myControl = getDataSet().getControl();
             return (myControl == null)
                                        ? null
                                        : myControl.getControlKey();
@@ -379,7 +379,7 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * @return the DataKeySet
          */
         private DataKeySet getNextDataKeySet() {
-            ControlKey myKey = getControlKey();
+            final ControlKey myKey = getControlKey();
             return (myKey == null)
                                    ? null
                                    : myKey.getNextDataKeySet();
@@ -400,9 +400,9 @@ public abstract class EncryptedItem<E extends Enum<E>>
             pReport.setNumSteps(size());
 
             /* Loop through the items */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
+                final T myCurr = myIterator.next();
 
                 /* Only update if we are using the wrong controlKey */
                 if (!pControl.equals(myCurr.getDataKeySet().getControlKey())) {
@@ -433,26 +433,26 @@ public abstract class EncryptedItem<E extends Enum<E>>
             pReport.setNumSteps(size());
 
             /* Obtain DataKeySet list */
-            DataSet<?, ?> myData = getDataSet();
-            DataKeySetList mySets = myData.getDataKeySets();
+            final DataSet<?, ?> myData = getDataSet();
+            final DataKeySetList mySets = myData.getDataKeySets();
 
             /* Create an iterator for our new list */
-            Iterator<T> myIterator = iterator();
-            Class<T> myClass = getBaseClass();
+            final Iterator<T> myIterator = iterator();
+            final Class<T> myClass = getBaseClass();
 
             /* Loop through this list */
             while (myIterator.hasNext()) {
                 /* Locate the item in the base list */
-                EncryptedItem<E> myCurr = myIterator.next();
-                EncryptedItem<E> myBase = pBase.findItemById(myCurr.getId());
+                final EncryptedItem<E> myCurr = myIterator.next();
+                final EncryptedItem<E> myBase = pBase.findItemById(myCurr.getId());
 
                 /* Access target correctly */
-                T myTarget = myClass.cast(myCurr);
+                final T myTarget = myClass.cast(myCurr);
 
                 /* If we have a base */
                 if (myBase != null) {
                     /* Access base correctly */
-                    T mySource = myClass.cast(myBase);
+                    final T mySource = myClass.cast(myBase);
 
                     /* Obtain required KeySet */
                     DataKeySet mySet = myBase.getDataKeySet();

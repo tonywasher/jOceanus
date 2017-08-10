@@ -208,7 +208,7 @@ public class PrometheusTableDefinition {
     public ReferenceColumn addReferenceColumn(final MetisField pId,
                                               final String pRef) {
         /* Create the new reference column */
-        ReferenceColumn myColumn = new ReferenceColumn(this, pId, pRef);
+        final ReferenceColumn myColumn = new ReferenceColumn(this, pId, pRef);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -223,7 +223,7 @@ public class PrometheusTableDefinition {
      */
     public ReferenceColumn addNullReferenceColumn(final MetisField pId,
                                                   final String pRef) {
-        ReferenceColumn myColumn = addReferenceColumn(pId, pRef);
+        final ReferenceColumn myColumn = addReferenceColumn(pId, pRef);
         myColumn.setNullable();
         return myColumn;
     }
@@ -235,7 +235,7 @@ public class PrometheusTableDefinition {
      */
     public IntegerColumn addIntegerColumn(final MetisField pId) {
         /* Create the new integer column */
-        IntegerColumn myColumn = new IntegerColumn(this, pId);
+        final IntegerColumn myColumn = new IntegerColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -248,7 +248,7 @@ public class PrometheusTableDefinition {
      * @return the integer column
      */
     public IntegerColumn addNullIntegerColumn(final MetisField pId) {
-        IntegerColumn myColumn = addIntegerColumn(pId);
+        final IntegerColumn myColumn = addIntegerColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -260,7 +260,7 @@ public class PrometheusTableDefinition {
      */
     public LongColumn addLongColumn(final MetisField pId) {
         /* Create the new long column */
-        LongColumn myColumn = new LongColumn(this, pId);
+        final LongColumn myColumn = new LongColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -273,7 +273,7 @@ public class PrometheusTableDefinition {
      * @return the long column
      */
     public LongColumn addNullLongColumn(final MetisField pId) {
-        LongColumn myColumn = addLongColumn(pId);
+        final LongColumn myColumn = addLongColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -285,7 +285,7 @@ public class PrometheusTableDefinition {
      */
     public BooleanColumn addBooleanColumn(final MetisField pId) {
         /* Create the new boolean column */
-        BooleanColumn myColumn = new BooleanColumn(this, pId);
+        final BooleanColumn myColumn = new BooleanColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -298,7 +298,7 @@ public class PrometheusTableDefinition {
      * @return the boolean column
      */
     public BooleanColumn addNullBooleanColumn(final MetisField pId) {
-        BooleanColumn myColumn = addBooleanColumn(pId);
+        final BooleanColumn myColumn = addBooleanColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -310,7 +310,7 @@ public class PrometheusTableDefinition {
      */
     public DateColumn addDateColumn(final MetisField pId) {
         /* Create the new date column */
-        DateColumn myColumn = new DateColumn(this, pId);
+        final DateColumn myColumn = new DateColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -323,7 +323,7 @@ public class PrometheusTableDefinition {
      * @return the date column
      */
     public DateColumn addNullDateColumn(final MetisField pId) {
-        DateColumn myColumn = addDateColumn(pId);
+        final DateColumn myColumn = addDateColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -335,7 +335,7 @@ public class PrometheusTableDefinition {
      */
     public MoneyColumn addMoneyColumn(final MetisField pId) {
         /* Create the new money column */
-        MoneyColumn myColumn = new MoneyColumn(this, pId);
+        final MoneyColumn myColumn = new MoneyColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -348,7 +348,7 @@ public class PrometheusTableDefinition {
      * @return the money column
      */
     public MoneyColumn addNullMoneyColumn(final MetisField pId) {
-        MoneyColumn myColumn = addMoneyColumn(pId);
+        final MoneyColumn myColumn = addMoneyColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -360,7 +360,7 @@ public class PrometheusTableDefinition {
      */
     public RateColumn addRateColumn(final MetisField pId) {
         /* Create the new rate column */
-        RateColumn myColumn = new RateColumn(this, pId);
+        final RateColumn myColumn = new RateColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -373,7 +373,7 @@ public class PrometheusTableDefinition {
      * @return the rate column
      */
     public RateColumn addNullRateColumn(final MetisField pId) {
-        RateColumn myColumn = addRateColumn(pId);
+        final RateColumn myColumn = addRateColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -385,7 +385,7 @@ public class PrometheusTableDefinition {
      */
     public RatioColumn addRatioColumn(final MetisField pId) {
         /* Create the new rate column */
-        RatioColumn myColumn = new RatioColumn(this, pId);
+        final RatioColumn myColumn = new RatioColumn(this, pId);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -398,7 +398,7 @@ public class PrometheusTableDefinition {
      * @return the rate column
      */
     public RatioColumn addNullRatioColumn(final MetisField pId) {
-        RatioColumn myColumn = addRatioColumn(pId);
+        final RatioColumn myColumn = addRatioColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -412,7 +412,7 @@ public class PrometheusTableDefinition {
     public BinaryColumn addBinaryColumn(final MetisField pId,
                                         final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(this, pId, pLength);
+        final BinaryColumn myColumn = new BinaryColumn(this, pId, pLength);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -427,7 +427,7 @@ public class PrometheusTableDefinition {
      */
     public BinaryColumn addNullBinaryColumn(final MetisField pId,
                                             final int pLength) {
-        BinaryColumn myColumn = addBinaryColumn(pId, pLength);
+        final BinaryColumn myColumn = addBinaryColumn(pId, pLength);
         myColumn.setNullable();
         return myColumn;
     }
@@ -441,8 +441,8 @@ public class PrometheusTableDefinition {
     public BinaryColumn addEncryptedColumn(final MetisField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(this, pId, GordianKeySet.getEncryptionOverhead()
-                                                            + GordianKeySet.getEncryptionLength(pLength));
+        final BinaryColumn myColumn = new BinaryColumn(this, pId, GordianKeySet.getEncryptionOverhead()
+                                                                  + GordianKeySet.getEncryptionLength(pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -457,7 +457,7 @@ public class PrometheusTableDefinition {
      */
     public BinaryColumn addNullEncryptedColumn(final MetisField pId,
                                                final int pLength) {
-        BinaryColumn myColumn = addEncryptedColumn(pId, pLength);
+        final BinaryColumn myColumn = addEncryptedColumn(pId, pLength);
         myColumn.setNullable();
         return myColumn;
     }
@@ -471,7 +471,7 @@ public class PrometheusTableDefinition {
     public StringColumn addStringColumn(final MetisField pId,
                                         final int pLength) {
         /* Create the new string column */
-        StringColumn myColumn = new StringColumn(this, pId, pLength);
+        final StringColumn myColumn = new StringColumn(this, pId, pLength);
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -486,7 +486,7 @@ public class PrometheusTableDefinition {
      */
     public StringColumn addNullStringColumn(final MetisField pId,
                                             final int pLength) {
-        StringColumn myColumn = addStringColumn(pId, pLength);
+        final StringColumn myColumn = addStringColumn(pId, pLength);
         myColumn.setNullable();
         return myColumn;
     }
@@ -497,11 +497,11 @@ public class PrometheusTableDefinition {
      */
     protected void resolveReferences(final List<PrometheusTableDataItem<?, ?>> pTables) {
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             myDef.locateReference(pTables);
         }
     }
@@ -516,12 +516,12 @@ public class PrometheusTableDefinition {
         clearValues();
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         int myIndex = 1;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             myDef.loadValue(pResults, myIndex++);
         }
     }
@@ -546,12 +546,12 @@ public class PrometheusTableDefinition {
         theStatement = pStmt;
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         int myIndex = 1;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
 
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
@@ -575,12 +575,12 @@ public class PrometheusTableDefinition {
         theStatement = pStmt;
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         int myIndex = 1;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
 
             /* If this is the Id record */
             if (myDef instanceof IdColumn) {
@@ -618,7 +618,7 @@ public class PrometheusTableDefinition {
      */
     public Integer getIntegerValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
@@ -626,7 +626,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Return the value */
-        IntegerColumn myIntCol = (IntegerColumn) myCol;
+        final IntegerColumn myIntCol = (IntegerColumn) myCol;
         return myIntCol.getValue();
     }
 
@@ -638,7 +638,7 @@ public class PrometheusTableDefinition {
      */
     public Long getLongValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
@@ -646,7 +646,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Return the value */
-        LongColumn myLongCol = (LongColumn) myCol;
+        final LongColumn myLongCol = (LongColumn) myCol;
         return myLongCol.getValue();
     }
 
@@ -658,7 +658,7 @@ public class PrometheusTableDefinition {
      */
     public TethysDate getDateValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
@@ -666,7 +666,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Return the value */
-        DateColumn myDateCol = (DateColumn) myCol;
+        final DateColumn myDateCol = (DateColumn) myCol;
         return myDateCol.getValue();
     }
 
@@ -678,7 +678,7 @@ public class PrometheusTableDefinition {
      */
     public Boolean getBooleanValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
@@ -686,7 +686,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Return the value */
-        BooleanColumn myBoolCol = (BooleanColumn) myCol;
+        final BooleanColumn myBoolCol = (BooleanColumn) myCol;
         return myBoolCol.getValue();
     }
 
@@ -698,7 +698,7 @@ public class PrometheusTableDefinition {
      */
     public String getStringValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
@@ -706,7 +706,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Return the value */
-        StringColumn myStringCol = (StringColumn) myCol;
+        final StringColumn myStringCol = (StringColumn) myCol;
         return myStringCol.getValue();
     }
 
@@ -720,7 +720,7 @@ public class PrometheusTableDefinition {
     public TethysMoney getMoneyValue(final MetisField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
@@ -728,7 +728,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Access the value */
-        MoneyColumn myMoneyCol = (MoneyColumn) myCol;
+        final MoneyColumn myMoneyCol = (MoneyColumn) myCol;
         return myMoneyCol.getValue(pFormatter);
     }
 
@@ -742,7 +742,7 @@ public class PrometheusTableDefinition {
     public TethysPrice getPriceValue(final MetisField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a price column */
         if (!(myCol instanceof PriceColumn)) {
@@ -750,7 +750,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Access the value */
-        PriceColumn myPriceCol = (PriceColumn) myCol;
+        final PriceColumn myPriceCol = (PriceColumn) myCol;
         return myPriceCol.getValue(pFormatter);
     }
 
@@ -764,7 +764,7 @@ public class PrometheusTableDefinition {
     public TethysRate getRateValue(final MetisField pId,
                                    final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
@@ -772,7 +772,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Access the value */
-        RateColumn myRateCol = (RateColumn) myCol;
+        final RateColumn myRateCol = (RateColumn) myCol;
         return myRateCol.getValue(pFormatter);
     }
 
@@ -786,7 +786,7 @@ public class PrometheusTableDefinition {
     public TethysUnits getUnitsValue(final MetisField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a units column */
         if (!(myCol instanceof UnitsColumn)) {
@@ -794,7 +794,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Access the value */
-        UnitsColumn myUnitsCol = (UnitsColumn) myCol;
+        final UnitsColumn myUnitsCol = (UnitsColumn) myCol;
         return myUnitsCol.getValue(pFormatter);
     }
 
@@ -808,7 +808,7 @@ public class PrometheusTableDefinition {
     public TethysDilution getDilutionValue(final MetisField pId,
                                            final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a dilution column */
         if (!(myCol instanceof DilutionColumn)) {
@@ -816,7 +816,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Access the value */
-        DilutionColumn myDilutionCol = (DilutionColumn) myCol;
+        final DilutionColumn myDilutionCol = (DilutionColumn) myCol;
         return myDilutionCol.getValue(pFormatter);
     }
 
@@ -830,7 +830,7 @@ public class PrometheusTableDefinition {
     public TethysRatio getRatioValue(final MetisField pId,
                                      final MetisDataFormatter pFormatter) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
@@ -838,7 +838,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Access the value */
-        RatioColumn myRatioCol = (RatioColumn) myCol;
+        final RatioColumn myRatioCol = (RatioColumn) myCol;
         return myRatioCol.getValue(pFormatter);
     }
 
@@ -850,7 +850,7 @@ public class PrometheusTableDefinition {
      */
     public byte[] getBinaryValue(final MetisField pId) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
@@ -858,7 +858,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Return the value */
-        BinaryColumn myBinaryCol = (BinaryColumn) myCol;
+        final BinaryColumn myBinaryCol = (BinaryColumn) myCol;
         return myBinaryCol.getValue();
     }
 
@@ -871,7 +871,7 @@ public class PrometheusTableDefinition {
     public void setIntegerValue(final MetisField pId,
                                 final Integer pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
@@ -879,7 +879,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        IntegerColumn myIntCol = (IntegerColumn) myCol;
+        final IntegerColumn myIntCol = (IntegerColumn) myCol;
         myIntCol.setValue(pValue);
     }
 
@@ -892,7 +892,7 @@ public class PrometheusTableDefinition {
     public void setLongValue(final MetisField pId,
                              final Long pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
@@ -900,7 +900,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        LongColumn myLongCol = (LongColumn) myCol;
+        final LongColumn myLongCol = (LongColumn) myCol;
         myLongCol.setValue(pValue);
     }
 
@@ -913,7 +913,7 @@ public class PrometheusTableDefinition {
     public void setBooleanValue(final MetisField pId,
                                 final Boolean pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
@@ -921,7 +921,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        BooleanColumn myBoolCol = (BooleanColumn) myCol;
+        final BooleanColumn myBoolCol = (BooleanColumn) myCol;
         myBoolCol.setValue(pValue);
     }
 
@@ -934,7 +934,7 @@ public class PrometheusTableDefinition {
     public void setDateValue(final MetisField pId,
                              final TethysDate pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
@@ -942,7 +942,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        DateColumn myDateCol = (DateColumn) myCol;
+        final DateColumn myDateCol = (DateColumn) myCol;
         myDateCol.setValue(pValue);
     }
 
@@ -955,7 +955,7 @@ public class PrometheusTableDefinition {
     public void setStringValue(final MetisField pId,
                                final String pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
@@ -963,7 +963,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        StringColumn myStringCol = (StringColumn) myCol;
+        final StringColumn myStringCol = (StringColumn) myCol;
         myStringCol.setValue(pValue);
     }
 
@@ -976,7 +976,7 @@ public class PrometheusTableDefinition {
     public void setBinaryValue(final MetisField pId,
                                final byte[] pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
@@ -984,7 +984,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        BinaryColumn myBinaryCol = (BinaryColumn) myCol;
+        final BinaryColumn myBinaryCol = (BinaryColumn) myCol;
         myBinaryCol.setValue(pValue);
     }
 
@@ -997,7 +997,7 @@ public class PrometheusTableDefinition {
     public void setMoneyValue(final MetisField pId,
                               final TethysMoney pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
@@ -1005,7 +1005,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        MoneyColumn myMoneyCol = (MoneyColumn) myCol;
+        final MoneyColumn myMoneyCol = (MoneyColumn) myCol;
         myMoneyCol.setValue(pValue);
     }
 
@@ -1018,7 +1018,7 @@ public class PrometheusTableDefinition {
     public void setRateValue(final MetisField pId,
                              final TethysRate pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
@@ -1026,7 +1026,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        RateColumn myRateCol = (RateColumn) myCol;
+        final RateColumn myRateCol = (RateColumn) myCol;
         myRateCol.setValue(pValue);
     }
 
@@ -1039,7 +1039,7 @@ public class PrometheusTableDefinition {
     public void setRatioValue(final MetisField pId,
                               final TethysRatio pValue) throws OceanusException {
         /* Obtain the correct id */
-        PrometheusColumnDefinition myCol = getColumnForId(pId);
+        final PrometheusColumnDefinition myCol = getColumnForId(pId);
 
         /* Reject if this is not a ratio column */
         if (!(myCol instanceof RatioColumn)) {
@@ -1047,7 +1047,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Set the value */
-        RatioColumn myRatioCol = (RatioColumn) myCol;
+        final RatioColumn myRatioCol = (RatioColumn) myCol;
         myRatioCol.setValue(pValue);
     }
 
@@ -1059,7 +1059,7 @@ public class PrometheusTableDefinition {
      */
     private PrometheusColumnDefinition getColumnForId(final MetisField pId) throws OceanusException {
         /* Access the definition */
-        PrometheusColumnDefinition myDef = theMap.get(pId);
+        final PrometheusColumnDefinition myDef = theMap.get(pId);
 
         /* Check that the id is in range and present */
         if (myDef == null) {
@@ -1075,7 +1075,7 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getCreateTableString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial create */
         myBuilder.append("create table ");
@@ -1085,12 +1085,12 @@ public class PrometheusTableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -1108,7 +1108,7 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getCreateIndexString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Return null if we are not indexed */
         if (!isIndexed()) {
@@ -1128,12 +1128,12 @@ public class PrometheusTableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -1156,7 +1156,7 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getDropTableString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         switch (theDriver) {
             case SQLSERVER:
                 myBuilder.append("if exists (select * from sys.tables where name = '");
@@ -1191,7 +1191,7 @@ public class PrometheusTableDefinition {
         }
 
         /* Build the drop command */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         switch (theDriver) {
             case SQLSERVER:
                 myBuilder.append("if exists (select * from sys.indexes where name = '");
@@ -1225,18 +1225,18 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getLoadString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial select */
         myBuilder.append("select ");
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -1283,21 +1283,21 @@ public class PrometheusTableDefinition {
      */
     protected String getJoinString(final char pChar,
                                    final Integer pOffset) {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             /* Access next column and skip if not reference column */
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             if (!(myDef instanceof ReferenceColumn)) {
                 continue;
             }
 
             /* Add the join */
-            ReferenceColumn myCol = (ReferenceColumn) myDef;
+            final ReferenceColumn myCol = (ReferenceColumn) myDef;
             myCol.buildJoinString(myBuilder, pChar, pOffset);
         }
 
@@ -1312,15 +1312,15 @@ public class PrometheusTableDefinition {
      */
     protected String getOrderString(final char pChar,
                                     final Integer pOffset) {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theSortList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             /* Handle secondary columns */
             if (!myFirst) {
                 myBuilder.append(", ");
@@ -1331,7 +1331,7 @@ public class PrometheusTableDefinition {
                 /* If this is a reference column */
                 if (myDef instanceof ReferenceColumn) {
                     /* Handle Reference column */
-                    ReferenceColumn myCol = (ReferenceColumn) myDef;
+                    final ReferenceColumn myCol = (ReferenceColumn) myDef;
                     myCol.buildOrderString(myBuilder, pOffset + 1);
                 } else {
                     /* Handle standard column with prefix */
@@ -1366,8 +1366,8 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getInsertString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        StringBuilder myValues = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myValues = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial insert */
         myBuilder.append("insert into ");
@@ -1377,12 +1377,12 @@ public class PrometheusTableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
                 myValues.append(", ");
@@ -1407,7 +1407,7 @@ public class PrometheusTableDefinition {
      * @throws OceanusException on error
      */
     protected String getUpdateString() throws OceanusException {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial update */
         myBuilder.append("update ");
@@ -1417,13 +1417,13 @@ public class PrometheusTableDefinition {
         myBuilder.append(" set ");
 
         /* Create the iterator */
-        Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
+        final Iterator<PrometheusColumnDefinition> myIterator = theList.iterator();
         PrometheusColumnDefinition myId = null;
         boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            PrometheusColumnDefinition myDef = myIterator.next();
+            final PrometheusColumnDefinition myDef = myIterator.next();
 
             /* If this is the Id record */
             if (myDef instanceof IdColumn) {
@@ -1468,7 +1468,7 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getDeleteString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
@@ -1478,7 +1478,7 @@ public class PrometheusTableDefinition {
         myBuilder.append(" where ");
 
         /* Access the id definition */
-        PrometheusColumnDefinition myId = theList.get(0);
+        final PrometheusColumnDefinition myId = theList.get(0);
 
         /* Build the rest of the command */
         myBuilder.append(QUOTE_STRING);
@@ -1493,7 +1493,7 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getPurgeString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
@@ -1508,7 +1508,7 @@ public class PrometheusTableDefinition {
      * @return the SQL string
      */
     protected String getCountString() {
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the initial delete */
         myBuilder.append("select count(*) from ");

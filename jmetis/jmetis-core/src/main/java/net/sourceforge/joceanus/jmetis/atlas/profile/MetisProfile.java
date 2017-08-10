@@ -123,7 +123,7 @@ public class MetisProfile
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
         /* Format the profile */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theName);
         myBuilder.append(": ");
         myBuilder.append(theStatus.isRunning()
@@ -164,7 +164,7 @@ public class MetisProfile
         }
 
         /* return the value */
-        int iIndex = pField.getIndex();
+        final int iIndex = pField.getIndex();
         return ((iIndex < 0) || (iIndex >= theSubTasks.size()))
                                                                 ? MetisDataFieldValue.UNKNOWN
                                                                 : theSubTasks.get(iIndex);
@@ -190,7 +190,7 @@ public class MetisProfile
             prepareForTask();
 
             /* Create the new task */
-            MetisProfile myTask = new MetisProfile(pName);
+            final MetisProfile myTask = new MetisProfile(pName);
             theSubTasks.add(myTask);
             theFields.declareIndexField(pName);
             theCurrentTask = myTask;
@@ -236,7 +236,7 @@ public class MetisProfile
             endSubTask();
 
             /* Stop the task and calculate the elapsed time */
-            long myEnd = System.nanoTime();
+            final long myEnd = System.nanoTime();
             theElapsed = new TethysDecimal(myEnd - theStart, NUM_DECIMALS);
             theHidden = theSubTasks == null
                                             ? null
@@ -253,12 +253,12 @@ public class MetisProfile
      */
     private TethysDecimal calculateHidden() {
         /* Initialise hidden value */
-        TethysDecimal myHidden = new TethysDecimal(theElapsed);
+        final TethysDecimal myHidden = new TethysDecimal(theElapsed);
 
         /* Loop through the subTasks */
-        Iterator<MetisProfile> myIterator = theSubTasks.iterator();
+        final Iterator<MetisProfile> myIterator = theSubTasks.iterator();
         while (myIterator.hasNext()) {
-            MetisProfile myProfile = myIterator.next();
+            final MetisProfile myProfile = myIterator.next();
 
             /* Subtract child time */
             myHidden.subtractValue(myProfile.theElapsed);

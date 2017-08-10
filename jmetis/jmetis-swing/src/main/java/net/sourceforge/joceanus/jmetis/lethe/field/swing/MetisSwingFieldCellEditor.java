@@ -114,8 +114,8 @@ public final class MetisSwingFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Store location of box */
-            int myRow = pTable.convertRowIndexToModel(pRowIndex);
-            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            final int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            final int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
 
             /* Set the text */
@@ -128,7 +128,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            String s = theField.getText();
+            final String s = theField.getText();
             if (!STR_EMPTY.equals(s)) {
                 return s;
             }
@@ -137,7 +137,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public boolean stopCellEditing() {
-            Object s = getCellEditorValue();
+            final Object s = getCellEditorValue();
             if (s == null) {
                 fireEditingCanceled();
                 return false;
@@ -195,7 +195,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -265,7 +265,7 @@ public final class MetisSwingFieldCellEditor {
             theMouseListener = new MouseListener();
 
             /* Set listeners */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
                 theValue = theButton.getValue();
@@ -296,8 +296,8 @@ public final class MetisSwingFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Store location of button */
-            int myRow = pTable.convertRowIndexToModel(pRowIndex);
-            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            final int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            final int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
             theTable = pTable;
 
@@ -343,7 +343,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                Rectangle myRect = theButton.getNode().getBounds();
+                final Rectangle myRect = theButton.getNode().getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -408,7 +408,7 @@ public final class MetisSwingFieldCellEditor {
             theMouseListener = new MouseListener();
 
             /* Set listeners */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
@@ -440,8 +440,8 @@ public final class MetisSwingFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Store location of button */
-            int myRow = pTable.convertRowIndexToModel(pRowIndex);
-            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            final int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            final int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
             theTable = pTable;
 
@@ -485,7 +485,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                Rectangle myRect = theButton.getNode().getBounds();
+                final Rectangle myRect = theButton.getNode().getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -542,7 +542,7 @@ public final class MetisSwingFieldCellEditor {
             theMouseListener = new MouseListener();
 
             /* Set listeners */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
@@ -567,8 +567,8 @@ public final class MetisSwingFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Store location of button */
-            int myRow = pTable.convertRowIndexToModel(pRowIndex);
-            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            final int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            final int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
             theTable = pTable;
 
@@ -612,7 +612,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                Rectangle myRect = theButton.getNode().getBounds();
+                final Rectangle myRect = theButton.getNode().getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -655,7 +655,7 @@ public final class MetisSwingFieldCellEditor {
             theButton = pButton;
 
             /* Set listeners */
-            TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+            final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
             myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> {
                 /* Store value and stop editing */
@@ -687,8 +687,8 @@ public final class MetisSwingFieldCellEditor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Store location of box */
-            int myRow = pTable.convertRowIndexToModel(pRowIndex);
-            int myCol = pTable.convertColumnIndexToModel(pColIndex);
+            final int myRow = pTable.convertRowIndexToModel(pRowIndex);
+            final int myCol = pTable.convertColumnIndexToModel(pColIndex);
             thePoint = new Point(myCol, myRow);
 
             /* Store current value */
@@ -760,7 +760,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -812,7 +812,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -854,7 +854,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -892,7 +892,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -930,7 +930,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -982,7 +982,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {
@@ -1038,7 +1038,7 @@ public final class MetisSwingFieldCellEditor {
 
         @Override
         public Object getCellEditorValue() {
-            Object o = super.getCellEditorValue();
+            final Object o = super.getCellEditorValue();
             if ((o instanceof String)
                 && (!STR_EMPTY.equals(o))) {
                 try {

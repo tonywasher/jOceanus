@@ -166,8 +166,6 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
 
     @Override
     public int compareTo(final T pThat) {
-        int iCompare;
-
         /* Handle trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -177,7 +175,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         }
 
         /* Compare the branches */
-        iCompare = theBranch.compareTo(pThat.getBranch());
+        final int iCompare = theBranch.compareTo(pThat.getBranch());
         if (iCompare != 0) {
             return iCompare;
         }
@@ -206,7 +204,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         if (!(pThat instanceof ThemisScmTag)) {
             return false;
         }
-        ThemisScmTag<?, ?, ?, ?> myThat = (ThemisScmTag<?, ?, ?, ?>) pThat;
+        final ThemisScmTag<?, ?, ?, ?> myThat = (ThemisScmTag<?, ?, ?, ?>) pThat;
 
         /* Compare fields */
         if (!theBranch.equals(myThat.getBranch())) {
@@ -326,12 +324,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          */
         public T locateTag(final T pTag) {
             /* Loop through the entries */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myTag = myIterator.next();
+                final T myTag = myIterator.next();
 
                 /* If this is the correct tag */
-                int iCompare = myTag.compareTo(pTag);
+                final int iCompare = myTag.compareTo(pTag);
                 if (iCompare > 0) {
                     break;
                 }
@@ -352,9 +350,9 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          */
         protected T locateTag(final int pTag) {
             /* Loop through the entries */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myTag = myIterator.next();
+                final T myTag = myIterator.next();
 
                 /* If this is the correct tag */
                 if (pTag == myTag.getTagNo()) {
@@ -376,7 +374,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
             T myTag = null;
 
             /* Loop to the last entry */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next tag */
                 myTag = myIterator.next();
@@ -392,12 +390,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          */
         public T nextTag() {
             /* Access latest tag */
-            T myTag = latestTag();
+            final T myTag = latestTag();
 
             /* Determine the largest current tag */
-            int myTagNo = (myTag == null)
-                                          ? 0
-                                          : myTag.getTagNo();
+            final int myTagNo = (myTag == null)
+                                                ? 0
+                                                : myTag.getTagNo();
 
             /* Create the tag */
             return createNewTag(theBranch, myTagNo + 1);

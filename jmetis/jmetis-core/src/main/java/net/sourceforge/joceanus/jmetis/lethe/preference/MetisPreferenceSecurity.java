@@ -60,22 +60,22 @@ public class MetisPreferenceSecurity {
      */
     protected MetisPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
         /* Create the Bouncy Parameters */
-        GordianParameters myParms = new GordianParameters();
+        final GordianParameters myParms = new GordianParameters();
         myParms.useRestricted();
         myParms.setSecurityPhrase(getHostName());
 
         /* Create a Bouncy Factory */
-        BouncyFactory myFactory = new BouncyFactory(myParms);
+        final BouncyFactory myFactory = new BouncyFactory(myParms);
 
         /* Obtain the hash as a preference */
-        MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);
-        byte[] myHash = myPrefs.getByteArrayValue(MetisSecurityPreferenceKey.HASH);
+        final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);
+        final byte[] myHash = myPrefs.getByteArrayValue(MetisSecurityPreferenceKey.HASH);
 
         /* Derive or create the hash */
-        char[] myPassword = System.getProperty("user.name").toCharArray();
-        GordianKeySetHash myKeySetHash = myHash == null
-                                                        ? myFactory.generateKeySetHash(myPassword)
-                                                        : myFactory.deriveKeySetHash(myHash, myPassword);
+        final char[] myPassword = System.getProperty("user.name").toCharArray();
+        final GordianKeySetHash myKeySetHash = myHash == null
+                                                              ? myFactory.generateKeySetHash(myPassword)
+                                                              : myFactory.deriveKeySetHash(myHash, myPassword);
 
         /* record the KeySet */
         theKeySet = myKeySetHash.getKeySet();
@@ -95,7 +95,7 @@ public class MetisPreferenceSecurity {
      * @throws OceanusException on error
      */
     protected byte[] encryptValue(final char[] pValue) throws OceanusException {
-        byte[] myBytes = TethysDataConverter.charsToByteArray(pValue);
+        final byte[] myBytes = TethysDataConverter.charsToByteArray(pValue);
         return theKeySet.encryptBytes(myBytes);
     }
 
@@ -106,7 +106,7 @@ public class MetisPreferenceSecurity {
      * @throws OceanusException on error
      */
     protected char[] decryptValue(final byte[] pValue) throws OceanusException {
-        byte[] myBytes = theKeySet.decryptBytes(pValue);
+        final byte[] myBytes = theKeySet.decryptBytes(pValue);
         return TethysDataConverter.bytesToCharArray(myBytes);
     }
 
@@ -117,7 +117,7 @@ public class MetisPreferenceSecurity {
     private static char[] getHostName() {
         /* Protect against exceptions */
         try {
-            InetAddress myAddr = InetAddress.getLocalHost();
+            final InetAddress myAddr = InetAddress.getLocalHost();
             return myAddr.getHostName().toCharArray();
 
         } catch (UnknownHostException e) {
@@ -278,7 +278,7 @@ public class MetisPreferenceSecurity {
          */
         public GordianParameters getParameters() {
             /* Create default preferences */
-            GordianParameters myParms = new GordianParameters(getBooleanValue(MetisSecurityPreferenceKey.RESTRICTED));
+            final GordianParameters myParms = new GordianParameters(getBooleanValue(MetisSecurityPreferenceKey.RESTRICTED));
 
             /* Set other parameters */
             myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
@@ -307,25 +307,25 @@ public class MetisPreferenceSecurity {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the factory is specified */
-            MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
+            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianFactoryType> myFactPref = getEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
             if (!myFactPref.isAvailable()) {
                 myFactPref.setValue(GordianParameters.DEFAULT_FACTORY);
             }
 
             /* Make sure that the restricted state is specified */
-            MetisBooleanPreference<MetisSecurityPreferenceKey> myRestrictPref = getBooleanPreference(MetisSecurityPreferenceKey.RESTRICTED);
+            final MetisBooleanPreference<MetisSecurityPreferenceKey> myRestrictPref = getBooleanPreference(MetisSecurityPreferenceKey.RESTRICTED);
             if (!myRestrictPref.isAvailable()) {
                 myRestrictPref.setValue(GordianParameters.DEFAULT_RESTRICTED);
             }
 
             /* Make sure that the sp800 is specified */
-            MetisEnumPreference<MetisSecurityPreferenceKey, GordianSP800Type> mySP800Pref = getEnumPreference(MetisSecurityPreferenceKey.SP800, GordianSP800Type.class);
+            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianSP800Type> mySP800Pref = getEnumPreference(MetisSecurityPreferenceKey.SP800, GordianSP800Type.class);
             if (!mySP800Pref.isAvailable()) {
                 mySP800Pref.setValue(GordianParameters.DEFAULT_SP800);
             }
 
             /* Make sure that the hash is specified */
-            MetisEnumPreference<MetisSecurityPreferenceKey, GordianDigestType> myHashPref = getEnumPreference(MetisSecurityPreferenceKey.HASHTYPE, GordianDigestType.class);
+            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianDigestType> myHashPref = getEnumPreference(MetisSecurityPreferenceKey.HASHTYPE, GordianDigestType.class);
             if (!myHashPref.isAvailable()) {
                 myHashPref.setValue(GordianParameters.DEFAULT_HASHALGO);
             }
@@ -334,7 +334,7 @@ public class MetisPreferenceSecurity {
             myHashPref.setFilter(GordianHashManager.getDigestPredicate(myFactPref.getValue()).and(GordianDigestType::isExternalHashDigest));
 
             /* Make sure that the security phrase is specified */
-            MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
+            final MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
             if (!myPhrasePref.isAvailable()) {
                 myPhrasePref.setValue(GordianParameters.getDefaultSecurityPhrase());
             }
@@ -346,7 +346,7 @@ public class MetisPreferenceSecurity {
             }
 
             /* Define the range */
-            Integer maxSteps = GordianHashManager.getMaximumCipherSteps(myFactPref.getValue(), myRestrictPref.getValue());
+            final Integer maxSteps = GordianHashManager.getMaximumCipherSteps(myFactPref.getValue(), myRestrictPref.getValue());
             myPref.setRange(GordianParameters.MINIMUM_CIPHER_STEPS, maxSteps);
             if (!myPref.validate()) {
                 myPref.setValue(GordianParameters.DEFAULT_CIPHER_STEPS);

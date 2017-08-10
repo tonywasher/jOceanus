@@ -91,7 +91,7 @@ public class DataTouch<E extends Enum<E>>
      */
     public void touchItem(final E pItemType) {
         /* Access the record for the item type */
-        TouchCounter<E> myCounter = getCounter(pItemType);
+        final TouchCounter<E> myCounter = getCounter(pItemType);
 
         /* If this is a new dataType */
         if (myCounter == null) {
@@ -111,7 +111,7 @@ public class DataTouch<E extends Enum<E>>
      */
     public boolean touchedBy(final E pItemType) {
         /* Access the record for the item type */
-        TouchCounter<E> myCounter = getCounter(pItemType);
+        final TouchCounter<E> myCounter = getCounter(pItemType);
 
         /* If this is a new dataType */
         return myCounter != null;

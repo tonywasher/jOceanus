@@ -131,9 +131,9 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLObject(final Object pObject) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDelta
-                                                            ? ((MetisDataDelta) pObject).getObject()
-                                                            : pObject;
+        final Object myObject = pObject instanceof MetisDataDelta
+                                                                  ? ((MetisDataDelta) pObject).getObject()
+                                                                  : pObject;
 
         /* If we are DataContents */
         if (myObject instanceof MetisDataVersionedItem) {
@@ -215,7 +215,7 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLFieldItem(final MetisDataFieldItem pItem) {
         /* Access details */
-        MetisDataFieldSet myFields = pItem.getDataFieldSet();
+        final MetisDataFieldSet myFields = pItem.getDataFieldSet();
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -224,16 +224,16 @@ public class MetisViewerFormatter {
         theBuilder.newTitleCell(COLUMN_VALUE);
 
         /* Loop through the fields */
-        Iterator<MetisDataField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            MetisDataField myField = myIterator.next();
-            MetisFieldStorage myStorage = myField.getStorage();
+            final MetisDataField myField = myIterator.next();
+            final MetisFieldStorage myStorage = myField.getStorage();
 
             /* Access the value */
-            Object myValue = myStorage.isCalculated()
-                                                      ? MetisDataFieldValue.SKIP
-                                                      : pItem.getFieldValue(myField);
+            final Object myValue = myStorage.isCalculated()
+                                                            ? MetisDataFieldValue.SKIP
+                                                            : pItem.getFieldValue(myField);
 
             /* Skip value if required */
             if (MetisDataFieldValue.SKIP.equals(myValue)) {
@@ -253,9 +253,9 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLVersionedItem(final MetisDataVersionedItem pItem) {
         /* Access details */
-        MetisDataFieldSet myFields = pItem.getDataFieldSet();
-        MetisDataVersionControl myControl = pItem.getVersionControl();
-        MetisDataVersionValues myValues = myControl.getValueSet();
+        final MetisDataFieldSet myFields = pItem.getDataFieldSet();
+        final MetisDataVersionControl myControl = pItem.getVersionControl();
+        final MetisDataVersionValues myValues = myControl.getValueSet();
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -264,11 +264,11 @@ public class MetisViewerFormatter {
         theBuilder.newTitleCell(COLUMN_VALUE);
 
         /* Loop through the fields */
-        Iterator<MetisDataField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            MetisDataField myField = myIterator.next();
-            MetisFieldStorage myStorage = myField.getStorage();
+            final MetisDataField myField = myIterator.next();
+            final MetisFieldStorage myStorage = myField.getStorage();
             Object myValue = MetisDataFieldValue.SKIP;
 
             /* Access the value */
@@ -302,7 +302,7 @@ public class MetisViewerFormatter {
     private void formatHTMLListItem(final List<?> pList,
                                     final int pIndex) {
         /* Obtain the object */
-        Object myObject = pList.get(pIndex - 1);
+        final Object myObject = pList.get(pIndex - 1);
 
         /* Format the object */
         formatHTMLObject(myObject);
@@ -324,10 +324,10 @@ public class MetisViewerFormatter {
         /* If there are items in the list */
         if (!pList.isEmpty()) {
             /* Calculate start point */
-            int myStart = (pStart - 1) * ITEMS_PER_PAGE;
+            final int myStart = (pStart - 1) * ITEMS_PER_PAGE;
 
             /* Create iterator at start */
-            Iterator<?> myIterator = pList.listIterator(myStart);
+            final Iterator<?> myIterator = pList.listIterator(myStart);
 
             /* Loop up to the limit */
             int myCount = ITEMS_PER_PAGE;
@@ -335,7 +335,7 @@ public class MetisViewerFormatter {
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
-                Object myObject = myIterator.next();
+                final Object myObject = myIterator.next();
 
                 /* Format the row */
                 theBuilder.newTableRow();
@@ -367,7 +367,7 @@ public class MetisViewerFormatter {
             int myIndex = myCount + 1;
 
             /* Create iterator and shift to start */
-            Iterator<?> myIterator = pMap.entrySet().iterator();
+            final Iterator<?> myIterator = pMap.entrySet().iterator();
             if (myCount > 0) {
                 /* Skip leading entries */
                 while (myIterator.hasNext()
@@ -381,7 +381,7 @@ public class MetisViewerFormatter {
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
-                Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+                final Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
 
                 /* Format the row */
                 theBuilder.newTableRow();

@@ -46,12 +46,12 @@ public class MetisOrderedNode<T extends Comparable<? super T>> {
     /**
      * The next node in the sequence.
      */
-    private MetisOrderedNode<T> theNext = null;
+    private MetisOrderedNode<T> theNext;
 
     /**
      * The previous node in the sequence.
      */
-    private MetisOrderedNode<T> thePrev = null;
+    private MetisOrderedNode<T> thePrev;
 
     /**
      * Initialiser.
@@ -313,7 +313,7 @@ public class MetisOrderedNode<T extends Comparable<? super T>> {
         }
 
         /* Access as ordered node */
-        MetisOrderedNode<?> myThat = (MetisOrderedNode<?>) pThat;
+        final MetisOrderedNode<?> myThat = (MetisOrderedNode<?>) pThat;
 
         /* Compare the objects */
         return theObject.equals(myThat.theObject);
@@ -367,8 +367,8 @@ public class MetisOrderedNode<T extends Comparable<? super T>> {
      */
     protected void swapWithPrevious() {
         /* Access previous node and following node */
-        MetisOrderedNode<T> myPrev = thePrev;
-        MetisOrderedNode<T> myNext = theNext;
+        final MetisOrderedNode<T> myPrev = thePrev;
+        final MetisOrderedNode<T> myNext = theNext;
 
         /* Swap linkages */
         thePrev = myPrev.thePrev;

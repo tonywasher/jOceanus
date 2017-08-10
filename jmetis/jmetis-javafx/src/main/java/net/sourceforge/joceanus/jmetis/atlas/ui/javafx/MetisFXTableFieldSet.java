@@ -110,17 +110,17 @@ public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
      */
     private Observable[] initialiseMap(final List<MetisDataField> pFields) {
         /* Create the observable array */
-        int myMax = pFields.size();
-        Observable[] myObservables = new Observable[myMax];
+        final int myMax = pFields.size();
+        final Observable[] myObservables = new Observable[myMax];
         int myNumFields = 0;
 
         /* Iterate through the fields */
-        Iterator<MetisDataField> myIterator = pFields.iterator();
+        final Iterator<MetisDataField> myIterator = pFields.iterator();
         while (myIterator.hasNext()) {
-            MetisDataField myField = myIterator.next();
+            final MetisDataField myField = myIterator.next();
 
             /* Create the property */
-            ObjectProperty<Object> myProperty = new SimpleObjectProperty<>();
+            final ObjectProperty<Object> myProperty = new SimpleObjectProperty<>();
             thePropertyMap.put(myField, myProperty);
 
             /* Initialise the value */
@@ -139,13 +139,13 @@ public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
      */
     protected void updateValues() {
         /* Iterate through the entries */
-        Iterator<Map.Entry<MetisDataField, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        final Iterator<Map.Entry<MetisDataField, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<MetisDataField, ObjectProperty<Object>> myEntry = myIterator.next();
-            MetisDataField myField = myEntry.getKey();
+            final Map.Entry<MetisDataField, ObjectProperty<Object>> myEntry = myIterator.next();
+            final MetisDataField myField = myEntry.getKey();
 
             /* If the field is changeable */
-            MetisFieldStorage myStorage = myField.getStorage();
+            final MetisFieldStorage myStorage = myField.getStorage();
             if (myStorage.isVersioned()
                 || myStorage.isCalculated()) {
                 /* Set the value */
@@ -159,13 +159,13 @@ public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
      */
     protected void recalculateValues() {
         /* Iterate through the entries */
-        Iterator<Map.Entry<MetisDataField, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        final Iterator<Map.Entry<MetisDataField, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<MetisDataField, ObjectProperty<Object>> myEntry = myIterator.next();
-            MetisDataField myField = myEntry.getKey();
+            final Map.Entry<MetisDataField, ObjectProperty<Object>> myEntry = myIterator.next();
+            final MetisDataField myField = myEntry.getKey();
 
             /* If the field is calculated */
-            MetisFieldStorage myStorage = myField.getStorage();
+            final MetisFieldStorage myStorage = myField.getStorage();
             if (myStorage.isCalculated()) {
                 /* Set the value */
                 setCalculatedValue(myField, myEntry.getValue());
@@ -215,10 +215,10 @@ public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
     private void setCalculatedValue(final MetisDataField pField,
                                     final ObjectProperty<Object> pProperty) {
         /* Obtain the value */
-        MetisTableCalculator<R> myCalculator = theFields.getCalculator();
-        Object myValue = myCalculator == null
-                                              ? null
-                                              : myCalculator.calculateValue(theItem, pField);
+        final MetisTableCalculator<R> myCalculator = theFields.getCalculator();
+        final Object myValue = myCalculator == null
+                                                    ? null
+                                                    : myCalculator.calculateValue(theItem, pField);
 
         /* Store into the property */
         pProperty.setValue(myValue);

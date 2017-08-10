@@ -104,7 +104,7 @@ public final class ThemisSvnComponent
         super(pParent, pName);
 
         /* Create branch list */
-        SvnBranchList myBranches = new SvnBranchList(this);
+        final SvnBranchList myBranches = new SvnBranchList(this);
         setBranches(myBranches);
     }
 
@@ -131,7 +131,7 @@ public final class ThemisSvnComponent
      * @return the iterator
      */
     public ListIterator<ThemisSvnBranch> branchListIterator() {
-        SvnBranchList myBranches = getBranches();
+        final SvnBranchList myBranches = getBranches();
         return myBranches.listIterator(myBranches.size());
     }
 
@@ -149,7 +149,7 @@ public final class ThemisSvnComponent
      */
     protected String getTrunkPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the base path */
         myBuilder.append(getURLPath());
@@ -168,7 +168,7 @@ public final class ThemisSvnComponent
      */
     public String getBranchesPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the base path */
         myBuilder.append(getURLPath());
@@ -187,7 +187,7 @@ public final class ThemisSvnComponent
      */
     public String getTagsPath() {
         /* Allocate a builder */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the branch path */
         myBuilder.append(getURLPath());
@@ -206,7 +206,7 @@ public final class ThemisSvnComponent
      */
     public String getURLPath() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
         myBuilder.append(getRepository().getPath());
@@ -244,7 +244,7 @@ public final class ThemisSvnComponent
         /* Build the URL */
         try {
             /* Build the underlying string */
-            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Build the initial path */
             myBuilder.append(pPath);
@@ -254,7 +254,7 @@ public final class ThemisSvnComponent
             myBuilder.append(ThemisMvnProjectDefinition.POM_NAME);
 
             /* Create the repository path */
-            SVNURL myURL = SVNURL.parseURIEncoded(myBuilder.toString());
+            final SVNURL myURL = SVNURL.parseURIEncoded(myBuilder.toString());
 
             /* Access URL as input stream */
             myInput = getFileURLasInputStream(myURL);
@@ -263,12 +263,12 @@ public final class ThemisSvnComponent
             }
 
             /* Parse the project definition and return it */
-            ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
+            final ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
 
             /* Loop through the subModules */
-            Iterator<MvnSubModule> myIterator = myProject.subIterator();
+            final Iterator<MvnSubModule> myIterator = myProject.subIterator();
             while (myIterator.hasNext()) {
-                MvnSubModule myModule = myIterator.next();
+                final MvnSubModule myModule = myIterator.next();
 
                 /* Reset the string buffer */
                 myBuilder.setLength(0);
@@ -279,7 +279,7 @@ public final class ThemisSvnComponent
                 myBuilder.append(myModule.getName());
 
                 /* Parse the project URL */
-                ThemisMvnProjectDefinition mySubDef = parseProjectURL(myBuilder.toString());
+                final ThemisMvnProjectDefinition mySubDef = parseProjectURL(myBuilder.toString());
                 myModule.setProjectDefinition(mySubDef);
             }
 
@@ -307,12 +307,12 @@ public final class ThemisSvnComponent
      */
     public InputStream getFileURLasInputStream(final SVNURL pURL) throws OceanusException {
         /* Access client */
-        ThemisSvnRepository myRepo = getRepository();
-        SVNClientManager myMgr = myRepo.getClientManager();
-        SVNWCClient myClient = myMgr.getWCClient();
+        final ThemisSvnRepository myRepo = getRepository();
+        final SVNClientManager myMgr = myRepo.getClientManager();
+        final SVNWCClient myClient = myMgr.getWCClient();
 
         /* Create the byte array stream */
-        ByteArrayOutputStream myBaos = new ByteArrayOutputStream(BUFFER_STREAM);
+        final ByteArrayOutputStream myBaos = new ByteArrayOutputStream(BUFFER_STREAM);
 
         /* Protect against exceptions */
         try {
@@ -321,7 +321,7 @@ public final class ThemisSvnComponent
             return new ByteArrayInputStream(myBaos.toByteArray());
         } catch (SVNException e) {
             /* Access the error code */
-            SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
+            final SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file not existing */
             if (!myCode.equals(SVNErrorCode.FS_NOT_FOUND)) {
@@ -375,13 +375,13 @@ public final class ThemisSvnComponent
             clear();
 
             /* Access a LogClient */
-            SVNClientManager myMgr = theRepository.getClientManager();
-            SVNLogClient myClient = myMgr.getLogClient();
+            final SVNClientManager myMgr = theRepository.getClientManager();
+            final SVNLogClient myClient = myMgr.getLogClient();
 
             /* Protect against exceptions */
             try {
                 /* Access the component directory URL */
-                SVNURL myURL = SVNURL.parseURIEncoded(theRepository.getPath());
+                final SVNURL myURL = SVNURL.parseURIEncoded(theRepository.getPath());
 
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
@@ -398,11 +398,11 @@ public final class ThemisSvnComponent
             getUnderlyingList().sort(null);
 
             /* Loop through the components */
-            Iterator<ThemisSvnComponent> myIterator = iterator();
+            final Iterator<ThemisSvnComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the Component */
-                ThemisSvnComponent myComponent = myIterator.next();
-                SvnBranchList myBranches = myComponent.getBranches();
+                final ThemisSvnComponent myComponent = myIterator.next();
+                final SvnBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
                 pReport.setNewStage("Analysing component " + myComponent.getName());
@@ -419,12 +419,12 @@ public final class ThemisSvnComponent
          */
         protected ThemisSvnBranch locateBranch(final SVNURL pURL) {
             /* Loop through the components */
-            Iterator<ThemisSvnComponent> myIterator = iterator();
+            final Iterator<ThemisSvnComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                ThemisSvnComponent myComponent = myIterator.next();
+                final ThemisSvnComponent myComponent = myIterator.next();
 
                 /* Access branch URL */
-                SVNURL myCompURL = myComponent.getURL();
+                final SVNURL myCompURL = myComponent.getURL();
 
                 /* Skip if the repositories are different */
                 if (!pURL.getHost().equals(myCompURL.getHost())) {
@@ -473,10 +473,10 @@ public final class ThemisSvnComponent
                 }
 
                 /* Access the name */
-                String myName = pEntry.getName();
+                final String myName = pEntry.getName();
 
                 /* Create the component and add to the list */
-                ThemisSvnComponent myComp = new ThemisSvnComponent(theRepository, myName);
+                final ThemisSvnComponent myComp = new ThemisSvnComponent(theRepository, myName);
                 add(myComp);
             }
         }

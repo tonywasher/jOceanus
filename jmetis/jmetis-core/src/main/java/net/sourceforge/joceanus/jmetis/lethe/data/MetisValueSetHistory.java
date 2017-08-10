@@ -69,13 +69,13 @@ public class MetisValueSetHistory
     @Override
     public MetisFields getDataFields() {
         /* Allocate new local fields */
-        MetisFields myFields = new MetisFields(MetisValueSetHistory.class.getSimpleName());
+        final MetisFields myFields = new MetisFields(MetisValueSetHistory.class.getSimpleName());
 
         /* Loop through the fields */
-        Iterator<MetisValueSetDelta> myIterator = theDeltas.descendingIterator();
+        final Iterator<MetisValueSetDelta> myIterator = theDeltas.descendingIterator();
         while (myIterator.hasNext()) {
             /* Access the Delta */
-            MetisValueSetDelta myDelta = myIterator.next();
+            final MetisValueSetDelta myDelta = myIterator.next();
 
             /* Declare the field */
             myFields.declareIndexField(MetisValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
@@ -87,13 +87,13 @@ public class MetisValueSetHistory
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Access the index */
-        int myIndex = pField.getIndex();
+        final int myIndex = pField.getIndex();
 
         /* Loop through the fields */
-        Iterator<MetisValueSetDelta> myIterator = theDeltas.descendingIterator();
+        final Iterator<MetisValueSetDelta> myIterator = theDeltas.descendingIterator();
         int i = 0;
         while (myIterator.hasNext()) {
-            MetisValueSetDelta myDelta = myIterator.next();
+            final MetisValueSetDelta myDelta = myIterator.next();
 
             /* Return field if we found it */
             if (i == myIndex) {
@@ -147,7 +147,7 @@ public class MetisValueSetHistory
      */
     public void pushHistory(final int pVersion) {
         /* Create a new ValueSet */
-        MetisValueSet mySet = theCurr.cloneIt();
+        final MetisValueSet mySet = theCurr.cloneIt();
         mySet.setVersion(pVersion);
 
         /* Add the delta to the stack */

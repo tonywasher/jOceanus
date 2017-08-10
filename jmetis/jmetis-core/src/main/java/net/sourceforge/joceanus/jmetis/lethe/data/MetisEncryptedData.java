@@ -173,7 +173,7 @@ public final class MetisEncryptedData {
             }
 
             /* Decrypt the Bytes */
-            byte[] myBytes = theKeySet.decryptBytes(theEncrypted);
+            final byte[] myBytes = theKeySet.decryptBytes(theEncrypted);
 
             /* Set the decrypted value */
             theDecrypted = parseBytes(myBytes);
@@ -224,7 +224,7 @@ public final class MetisEncryptedData {
             }
 
             /* Obtain the bytes representation of the value */
-            byte[] myBytes = getBytesForEncryption();
+            final byte[] myBytes = getBytesForEncryption();
 
             /* Encrypt the Bytes */
             theEncrypted = theKeySet.encryptBytes(myBytes);
@@ -339,7 +339,7 @@ public final class MetisEncryptedData {
             }
 
             /* Access the target field */
-            MetisEncryptedField<?> myThat = (MetisEncryptedField<?>) pThat;
+            final MetisEncryptedField<?> myThat = (MetisEncryptedField<?>) pThat;
 
             /* Check differences */
             if (MetisDifference.getDifference(getValue(), myThat.getValue()).isDifferent()) {
@@ -374,7 +374,7 @@ public final class MetisEncryptedData {
             }
 
             /* Access as correct class */
-            MetisEncryptedField<?> myField = (MetisEncryptedField<?>) pThat;
+            final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) pThat;
 
             /* Compare Unencrypted value */
             if (MetisDifference.getDifference(getValue(), myField.getValue()).isDifferent()) {
@@ -786,7 +786,7 @@ public final class MetisEncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a date */
-                String myInput = TethysDataConverter.byteArrayToString(pBytes);
+                final String myInput = TethysDataConverter.byteArrayToString(pBytes);
                 return getDateFormatter().parseJavaDate(myInput);
 
                 /* Catch Exceptions */
@@ -798,7 +798,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Convert the date to a string and then a byte array */
-            String myInput = getDateFormatter().formatJavaDate(getValue());
+            final String myInput = getDateFormatter().formatJavaDate(getValue());
             return TethysDataConverter.stringToByteArray(myInput);
         }
     }
@@ -855,7 +855,7 @@ public final class MetisEncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                String myInput = TethysDataConverter.byteArrayToString(pBytes);
+                final String myInput = TethysDataConverter.byteArrayToString(pBytes);
                 return getDateFormatter().parseDate(myInput);
 
                 /* Catch Exceptions */
@@ -867,7 +867,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Convert the date to a string and then a byte array */
-            String myInput = getDateFormatter().formatDate(getValue());
+            final String myInput = getDateFormatter().formatDate(getValue());
             return TethysDataConverter.stringToByteArray(myInput);
         }
     }
@@ -1077,7 +1077,7 @@ public final class MetisEncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and parse it */
-                String myInput = TethysDataConverter.byteArrayToString(pBytes);
+                final String myInput = TethysDataConverter.byteArrayToString(pBytes);
                 return parseValue(myInput);
 
                 /* Catch Exceptions */
@@ -1097,7 +1097,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Format the value */
-            String myValue = getValue().toString();
+            final String myValue = getValue().toString();
 
             /* Convert the string to a byte array */
             return TethysDataConverter.stringToByteArray(myValue);
@@ -1138,7 +1138,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Format the value */
-            String myValue = getDecimalFormatter().toCurrencyString(getValue());
+            final String myValue = getDecimalFormatter().toCurrencyString(getValue());
 
             /* Convert the string to a byte array */
             return TethysDataConverter.stringToByteArray(myValue);
@@ -1271,7 +1271,7 @@ public final class MetisEncryptedData {
         @Override
         protected byte[] getBytesForEncryption() {
             /* Format the value */
-            String myValue = getDecimalFormatter().toCurrencyString(getValue());
+            final String myValue = getDecimalFormatter().toCurrencyString(getValue());
 
             /* Convert the string to a byte array */
             return TethysDataConverter.stringToByteArray(myValue);

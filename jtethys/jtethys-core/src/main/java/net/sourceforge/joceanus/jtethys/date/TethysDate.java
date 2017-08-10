@@ -591,8 +591,8 @@ public class TethysDate
         final int myDay = myFiscal.getFirstDay();
 
         /* Determine which year we are in */
-        if ((theMonth < myMonth)
-            || ((theMonth == myMonth) && (theDay < myDay))) {
+        if (theMonth < myMonth
+            || (theMonth == myMonth && theDay < myDay)) {
             theDate = theDate.minusYears(1);
         }
 
@@ -717,15 +717,15 @@ public class TethysDate
     public int compareTo(final TethysDateRange pRange) {
         /* Check start of range */
         final TethysDate myStart = pRange.getStart();
-        if ((myStart != null)
-            && (compareTo(myStart) < 0)) {
+        if (myStart != null
+            && compareTo(myStart) < 0) {
             return -1;
         }
 
         /* Check end of range */
         final TethysDate myEnd = pRange.getEnd();
-        if ((myEnd != null)
-            && (compareTo(myEnd) > 0)) {
+        if (myEnd != null
+            && compareTo(myEnd) > 0) {
             return 1;
         }
 

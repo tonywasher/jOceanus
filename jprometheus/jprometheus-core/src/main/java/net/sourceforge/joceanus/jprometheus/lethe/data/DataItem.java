@@ -273,9 +273,9 @@ public abstract class DataItem<E extends Enum<E>>
         theHistory = new MetisValueSetHistory();
 
         /* Allocate initial value set and declare it */
-        MetisValueSet myValues = (this instanceof EncryptedItem)
-                                                                 ? new MetisEncryptedValueSet(this)
-                                                                 : new MetisValueSet(this);
+        final MetisValueSet myValues = (this instanceof EncryptedItem)
+                                                                       ? new MetisEncryptedValueSet(this)
+                                                                       : new MetisValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 
@@ -284,8 +284,8 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Create the touch status */
         @SuppressWarnings("unchecked")
-        DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
-        Class<E> myClass = myData.getEnumClass();
+        final DataSet<?, E> myData = (DataSet<?, E>) getTheDataSet();
+        final Class<E> myClass = myData.getEnumClass();
         theTouchStatus = new DataTouch<>(myClass);
     }
 
@@ -314,9 +314,9 @@ public abstract class DataItem<E extends Enum<E>>
         theValueSet.copyFrom(pBase.getValueSet());
 
         /* Access the varying styles and the source state */
-        ListStyle myStyle = pList.getStyle();
-        ListStyle myBaseStyle = pBase.getList().getStyle();
-        MetisDataState myState = pBase.getState();
+        final ListStyle myStyle = pList.getStyle();
+        final ListStyle myBaseStyle = pBase.getList().getStyle();
+        final MetisDataState myState = pBase.getState();
 
         /* Switch on the styles */
         switch (myStyle) {
@@ -915,7 +915,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Note that this item has been validated.
      */
     public void setValidEdit() {
-        MetisDataState myState = getState();
+        final MetisDataState myState = getState();
         if (myState == MetisDataState.CLEAN) {
             theEdit = MetisEditState.CLEAN;
         } else if (theList.getStyle() == ListStyle.CORE) {
@@ -994,7 +994,7 @@ public abstract class DataItem<E extends Enum<E>>
     protected void resolveDataLink(final MetisField pField,
                                    final DataList<?, ?> pList) throws OceanusException {
         /* Access the values */
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
 
         /* Access value for field */
         Object myValue = myValues.getValue(pField);
@@ -1006,7 +1006,7 @@ public abstract class DataItem<E extends Enum<E>>
 
         /* Lookup Id reference */
         if (myValue instanceof Integer) {
-            DataItem<?> myItem = pList.findItemById((Integer) myValue);
+            final DataItem<?> myItem = pList.findItemById((Integer) myValue);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pField);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -1015,7 +1015,7 @@ public abstract class DataItem<E extends Enum<E>>
 
             /* Lookup Name reference */
         } else if (myValue instanceof String) {
-            DataItem<?> myItem = pList.findItemByName((String) myValue);
+            final DataItem<?> myItem = pList.findItemByName((String) myValue);
             if (myItem == null) {
                 addError(ERROR_UNKNOWN, pField);
                 throw new PrometheusDataException(this, ERROR_RESOLUTION);
@@ -1049,7 +1049,7 @@ public abstract class DataItem<E extends Enum<E>>
         }
 
         /* Access the object as a DataItem */
-        DataItem<?> myItem = (DataItem<?>) pThat;
+        final DataItem<?> myItem = (DataItem<?>) pThat;
 
         /* Check the id */
         if (compareId(myItem) != 0) {
@@ -1057,10 +1057,10 @@ public abstract class DataItem<E extends Enum<E>>
         }
 
         /* Loop through the fields */
-        Iterator<MetisField> myIterator = theFields.fieldIterator();
+        final Iterator<MetisField> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            MetisField myField = myIterator.next();
+            final MetisField myField = myIterator.next();
 
             /* Skip if not used in equality */
             if (!myField.getEquality().isEquality()) {
@@ -1068,8 +1068,8 @@ public abstract class DataItem<E extends Enum<E>>
             }
 
             /* Access the values */
-            Object myValue = getFieldValue(myField);
-            Object myNew = myItem.getFieldValue(myField);
+            final Object myValue = getFieldValue(myField);
+            final Object myNew = myItem.getFieldValue(myField);
 
             /* Check the field */
             if (!MetisDifference.isEqual(myValue, myNew)) {
@@ -1101,7 +1101,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return the underlying state
      */
     protected MetisDataState getBaseState() {
-        DataItem<?> myBase = getBase();
+        final DataItem<?> myBase = getBase();
         return (myBase == null)
                                 ? MetisDataState.NOSTATE
                                 : myBase.getState();

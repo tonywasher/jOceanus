@@ -205,7 +205,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         theThreadMgr = pUtilitySet.getThreadManager();
 
         /* Obtain the active profile */
-        MetisProfile myTask = theView.getActiveTask();
+        final MetisProfile myTask = theView.getActiveTask();
         myTask.startTask("buildGUI");
 
         /* Create the panel */
@@ -215,7 +215,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         theFrame = theGuiFactory.getFrame();
 
         /* Build the Main Panel */
-        JComponent myMainPanel = buildMainPanel();
+        final JComponent myMainPanel = buildMainPanel();
 
         /* Access the status bar and set to invisible */
         theStatusBar = theThreadMgr.getStatusManager().getNode();
@@ -349,12 +349,12 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     public void setVisibility() {
         /* Determine whether we have any updates */
-        boolean hasUpdates = hasUpdates();
-        boolean hasChanges = hasChanges();
-        boolean hasControl = getView().getData().getControl() != null;
+        final boolean hasUpdates = hasUpdates();
+        final boolean hasChanges = hasChanges();
+        final boolean hasControl = getView().getData().getControl() != null;
 
         /* Note whether we have a worker thread */
-        boolean hasWorker = hasWorker();
+        final boolean hasWorker = hasWorker();
 
         /* Disable menus if we have a worker thread */
         theMenuBar.setEnabled(PrometheusMenuId.DATA, !hasWorker);
@@ -369,13 +369,13 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         }
 
         /* If we have changes disable the create backup options */
-        boolean allowBackups = !hasChanges && !hasUpdates && hasControl;
+        final boolean allowBackups = !hasChanges && !hasUpdates && hasControl;
         theMenuBar.setEnabled(PrometheusThreadId.CREATEBACKUP, allowBackups);
         theMenuBar.setEnabled(PrometheusThreadId.CREATEXML, allowBackups);
         theMenuBar.setEnabled(PrometheusThreadId.CREATEXTRACT, allowBackups);
 
         /* If we have changes disable the security options */
-        boolean allowSecurity = !hasChanges && !hasUpdates;
+        final boolean allowSecurity = !hasChanges && !hasUpdates;
         theMenuBar.setEnabled(PrometheusThreadId.CHANGEPASS, allowSecurity);
         theMenuBar.setEnabled(PrometheusThreadId.RENEWSECURITY, allowSecurity);
 
@@ -428,7 +428,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void loadDatabase() {
         /* Create the worker thread */
-        PrometheusThreadLoadDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadDatabase<>(theView);
+        final PrometheusThreadLoadDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -437,7 +437,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void storeDatabase() {
         /* Create the worker thread */
-        PrometheusThreadStoreDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadStoreDatabase<>(theView);
+        final PrometheusThreadStoreDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadStoreDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -446,7 +446,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createDatabase() {
         /* Create the worker thread */
-        PrometheusThreadCreateDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateDatabase<>(theView);
+        final PrometheusThreadCreateDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -455,7 +455,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void purgeDatabase() {
         /* Create the worker thread */
-        PrometheusThreadPurgeDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadPurgeDatabase<>(theView);
+        final PrometheusThreadPurgeDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadPurgeDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -464,7 +464,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void undoLastEdit() {
         /* Create a new profile */
-        MetisProfile myTask = theView.getNewProfile("unDoLastEdit");
+        final MetisProfile myTask = theView.getNewProfile("unDoLastEdit");
 
         /* Undo the last edit */
         theView.undoLastChange();
@@ -481,7 +481,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void resetEdit() {
         /* Create a new profile */
-        MetisProfile myTask = theView.getNewProfile("resetEdit");
+        final MetisProfile myTask = theView.getNewProfile("resetEdit");
 
         /* Reset the edit View */
         theView.resetChanges();
@@ -498,7 +498,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void writeBackup() {
         /* Create the worker thread */
-        PrometheusThreadCreateBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateBackup<>(theView);
+        final PrometheusThreadCreateBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateBackup<>(theView);
         startThread(myThread);
     }
 
@@ -507,7 +507,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void restoreBackup() {
         /* Create the worker thread */
-        PrometheusThreadLoadBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadBackup<>(theView);
+        final PrometheusThreadLoadBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadBackup<>(theView);
         startThread(myThread);
     }
 
@@ -516,7 +516,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createXmlBackup() {
         /* Create the worker thread */
-        PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
+        final PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
         startThread(myThread);
     }
 
@@ -525,7 +525,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createXmlXtract() {
         /* Create the worker thread */
-        PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
+        final PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
         startThread(myThread);
     }
 
@@ -534,7 +534,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void loadXmlFile() {
         /* Create the worker thread */
-        PrometheusThreadLoadXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadXmlFile<>(theView);
+        final PrometheusThreadLoadXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadXmlFile<>(theView);
         startThread(myThread);
     }
 
@@ -543,7 +543,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void updatePassword() {
         /* Create the worker thread */
-        PrometheusThreadUpdatePassword<T, E, JComponent, Icon> myThread = new PrometheusThreadUpdatePassword<>(theView);
+        final PrometheusThreadUpdatePassword<T, E, JComponent, Icon> myThread = new PrometheusThreadUpdatePassword<>(theView);
         startThread(myThread);
     }
 
@@ -552,7 +552,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void reNewSecurity() {
         /* Create the worker thread */
-        PrometheusThreadRenewSecurity<T, E, JComponent, Icon> myThread = new PrometheusThreadRenewSecurity<>(theView);
+        final PrometheusThreadRenewSecurity<T, E, JComponent, Icon> myThread = new PrometheusThreadRenewSecurity<>(theView);
         startThread(myThread);
     }
 
@@ -606,14 +606,14 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
             extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
-            Object o = evt.getSource();
+            final Object o = evt.getSource();
 
             /* If this is the frame that is closing down */
             if (theFrame.equals(o)) {
                 /* If we have updates or changes */
                 if ((hasUpdates()) || (hasChanges())) {
                     /* Ask whether to continue */
-                    int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
+                    final int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
 
                     /* Ignore if no was responded */
                     if (myOption != JOptionPane.YES_OPTION) {

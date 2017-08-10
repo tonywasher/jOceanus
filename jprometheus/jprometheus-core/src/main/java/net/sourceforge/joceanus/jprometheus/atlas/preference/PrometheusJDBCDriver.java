@@ -120,7 +120,7 @@ public enum PrometheusJDBCDriver {
      */
     public String getConnectionString(final PrometheusDatabasePreferences pPreferences) {
         /* Create the buffer */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         switch (this) {
             case SQLSERVER:
@@ -154,8 +154,8 @@ public enum PrometheusJDBCDriver {
      * @return the database column type
      */
     public String getDatabaseType(final PrometheusColumnType pType) {
-        boolean isSQLServer = this.equals(SQLSERVER);
-        boolean isPostgreSQL = this.equals(POSTGRESQL);
+        final boolean isSQLServer = this.equals(SQLSERVER);
+        final boolean isPostgreSQL = this.equals(POSTGRESQL);
         switch (pType) {
             case BOOLEAN:
                 return isPostgreSQL

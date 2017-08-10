@@ -151,19 +151,19 @@ public interface PrometheusBackup {
             }
 
             /* Make sure that the enum is specified */
-            MetisEnumPreference<PrometheusBackupPreferenceKey, MetisWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
+            final MetisEnumPreference<PrometheusBackupPreferenceKey, MetisWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(MetisWorkBookType.OASISODS);
             }
 
             /* Make sure that the date is specified */
-            MetisDatePreference<PrometheusBackupPreferenceKey> myDatePref = getDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
+            final MetisDatePreference<PrometheusBackupPreferenceKey> myDatePref = getDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
             if (!myDatePref.isAvailable()) {
                 myDatePref.setValue(new TethysDate());
             }
 
             /* Make sure that the option is specified */
-            MetisBooleanPreference<PrometheusBackupPreferenceKey> myOption = getBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
+            final MetisBooleanPreference<PrometheusBackupPreferenceKey> myOption = getBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
             if (!myOption.isAvailable()) {
                 myOption.setValue(Boolean.FALSE);
             }

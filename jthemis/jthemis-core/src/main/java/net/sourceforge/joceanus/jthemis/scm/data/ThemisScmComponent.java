@@ -152,8 +152,6 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
 
     @Override
     public int compareTo(final C pThat) {
-        int iCompare;
-
         /* Handle trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -163,7 +161,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         }
 
         /* Compare the repositories */
-        iCompare = theRepository.compareTo(pThat.getRepository());
+        final int iCompare = theRepository.compareTo(pThat.getRepository());
         if (iCompare != 0) {
             return iCompare;
         }
@@ -186,7 +184,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         if (!(pThat instanceof ThemisScmComponent)) {
             return false;
         }
-        ThemisScmComponent<?, ?> myThat = (ThemisScmComponent<?, ?>) pThat;
+        final ThemisScmComponent<?, ?> myThat = (ThemisScmComponent<?, ?>) pThat;
 
         /* Compare fields */
         if (!theRepository.equals(myThat.getRepository())) {
@@ -265,9 +263,9 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
          */
         protected C locateComponent(final String pName) {
             /* Loop through the entries */
-            Iterator<C> myIterator = iterator();
+            final Iterator<C> myIterator = iterator();
             while (myIterator.hasNext()) {
-                C myComponent = myIterator.next();
+                final C myComponent = myIterator.next();
 
                 /* If this is the correct component */
                 if (pName.equals(myComponent.getName())) {
@@ -289,9 +287,9 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         protected ThemisScmBranch<?, C, R> locateBranch(final String pComponent,
                                                         final String pVersion) {
             /* While we have entries */
-            Iterator<C> myIterator = iterator();
+            final Iterator<C> myIterator = iterator();
             while (myIterator.hasNext()) {
-                C myComponent = myIterator.next();
+                final C myComponent = myIterator.next();
 
                 /* If this is the correct component */
                 if (pComponent.equals(myComponent.getName())) {
@@ -315,9 +313,9 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
                                                      final String pVersion,
                                                      final int pTag) {
             /* While we have entries */
-            Iterator<C> myIterator = iterator();
+            final Iterator<C> myIterator = iterator();
             while (myIterator.hasNext()) {
-                C myComponent = myIterator.next();
+                final C myComponent = myIterator.next();
 
                 /* If this is the correct component */
                 if (pComponent.equals(myComponent.getName())) {

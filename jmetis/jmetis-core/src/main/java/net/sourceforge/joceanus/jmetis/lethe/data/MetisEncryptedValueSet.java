@@ -48,7 +48,7 @@ public class MetisEncryptedValueSet
     @Override
     public MetisEncryptedValueSet cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        MetisEncryptedValueSet mySet = new MetisEncryptedValueSet(getItem());
+        final MetisEncryptedValueSet mySet = new MetisEncryptedValueSet(getItem());
         mySet.copyFrom(this);
         return mySet;
     }
@@ -65,7 +65,7 @@ public class MetisEncryptedValueSet
      */
     public byte[] getEncryptedFieldBytes(final MetisField pField) {
         /* Access the field and return null if required */
-        Object myObject = getValue(pField);
+        final Object myObject = getValue(pField);
         if (myObject == null) {
             return null;
         }
@@ -77,7 +77,7 @@ public class MetisEncryptedValueSet
         }
 
         /* Return the bytes */
-        MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myObject;
+        final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myObject;
         return myField.getBytes();
     }
 
@@ -91,7 +91,7 @@ public class MetisEncryptedValueSet
     public <X> X getEncryptedFieldValue(final MetisField pField,
                                         final Class<X> pClass) {
         /* Access the field and return null if required */
-        Object myObject = getValue(pField);
+        final Object myObject = getValue(pField);
         if (myObject == null) {
             return null;
         }
@@ -103,8 +103,8 @@ public class MetisEncryptedValueSet
         }
 
         /* Return the value */
-        MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myObject;
-        Object myValue = myField.getValue();
+        final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myObject;
+        final Object myValue = myField.getValue();
         return pClass.cast(myValue);
     }
 
@@ -115,20 +115,20 @@ public class MetisEncryptedValueSet
      */
     public void updateSecurity(final MetisEncryptionGenerator pGenerator) throws OceanusException {
         /* Access the values */
-        Object[] myValues = getValues();
-        int iLen = myValues.length;
+        final Object[] myValues = getValues();
+        final int iLen = myValues.length;
 
         /* Loop through the values */
         for (int i = 0; i < iLen; i++) {
             /* Skip null and non-encrypted fields */
-            Object myValue = myValues[i];
+            final Object myValue = myValues[i];
             if ((myValue == null)
                 || (!MetisEncryptedField.class.isInstance(myValue))) {
                 continue;
             }
 
             /* Update Security */
-            MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
+            final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
             myValues[i] = pGenerator.encryptValue(myField, myField.getValue());
         }
     }
@@ -142,27 +142,27 @@ public class MetisEncryptedValueSet
     public void adoptSecurity(final MetisEncryptionGenerator pGenerator,
                               final MetisEncryptedValueSet pBaseValues) throws OceanusException {
         /* Access the values */
-        Object[] myValues = getValues();
-        int iLen = myValues.length;
-        Object[] myBaseValues = (pBaseValues == null)
-                                                     ? null
-                                                     : pBaseValues.getValues();
+        final Object[] myValues = getValues();
+        final int iLen = myValues.length;
+        final Object[] myBaseValues = (pBaseValues == null)
+                                                            ? null
+                                                            : pBaseValues.getValues();
 
         /* Loop through the values */
         for (int i = 0; i < iLen; i++) {
             /* Skip null and non-encrypted fields */
-            Object myValue = myValues[i];
+            final Object myValue = myValues[i];
             if ((myValue == null)
                 || (!MetisEncryptedField.class.isInstance(myValue))) {
                 continue;
             }
 
             /* Access relevant fields */
-            MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
+            final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) myValue;
             MetisEncryptedField<?> myBaseField = null;
-            Object myBaseObj = (myBaseValues == null)
-                                                     ? null
-                                                     : myBaseValues[i];
+            final Object myBaseObj = (myBaseValues == null)
+                                                            ? null
+                                                            : myBaseValues[i];
             if (MetisEncryptedField.class.isInstance(myBaseObj)) {
                 myBaseField = (MetisEncryptedField<?>) myBaseObj;
             }

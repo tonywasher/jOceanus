@@ -68,26 +68,26 @@ public class MetisItemValidation
 
     @Override
     public String formatObject() {
-        int mySize = theErrors.size();
+        final int mySize = theErrors.size();
         if (mySize != 1) {
             return mySize
                    + " Errors";
         }
-        MetisErrorElement myError = theErrors.get(0);
+        final MetisErrorElement myError = theErrors.get(0);
         return myError.formatError();
     }
 
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle out of range */
-        int iIndex = pField.getIndex();
+        final int iIndex = pField.getIndex();
         if ((iIndex < 0)
             || iIndex >= theErrors.size()) {
             return MetisFieldValue.UNKNOWN;
         }
 
         /* Access the element */
-        MetisErrorElement myError = theErrors.get(iIndex);
+        final MetisErrorElement myError = theErrors.get(iIndex);
         return myError.getError();
     }
 
@@ -109,7 +109,7 @@ public class MetisItemValidation
     public void addError(final String pText,
                          final MetisField pField) {
         /* Create a new error element */
-        MetisErrorElement myEl = new MetisErrorElement(pText, pField);
+        final MetisErrorElement myEl = new MetisErrorElement(pText, pField);
 
         /* Declare error field */
         theLocalFields.declareIndexField(pField.getName());
@@ -125,10 +125,10 @@ public class MetisItemValidation
      */
     public boolean hasErrors(final MetisField pField) {
         /* Loop through the elements */
-        Iterator<MetisErrorElement> myIterator = theErrors.iterator();
+        final Iterator<MetisErrorElement> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element and return if related to required field */
-            MetisErrorElement myCurr = myIterator.next();
+            final MetisErrorElement myCurr = myIterator.next();
             if (myCurr.getField().equals(pField)) {
                 return true;
             }
@@ -142,13 +142,13 @@ public class MetisItemValidation
      * @return the error text
      */
     public String getFieldErrors(final MetisField pField) {
-        StringBuilder myErrors = new StringBuilder();
+        final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
-        Iterator<MetisErrorElement> myIterator = theErrors.iterator();
+        final Iterator<MetisErrorElement> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element */
-            MetisErrorElement myCurr = myIterator.next();
+            final MetisErrorElement myCurr = myIterator.next();
 
             /* If the field matches */
             if (myCurr.getField().equals(pField)) {
@@ -174,14 +174,14 @@ public class MetisItemValidation
      * @return the error text
      */
     public String getFieldErrors(final MetisField[] aFields) {
-        StringBuilder myErrors = new StringBuilder();
+        final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
-        Iterator<MetisErrorElement> myIterator = theErrors.iterator();
+        final Iterator<MetisErrorElement> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element and field */
-            MetisErrorElement myCurr = myIterator.next();
-            MetisField myField = myCurr.getField();
+            final MetisErrorElement myCurr = myIterator.next();
+            final MetisField myField = myCurr.getField();
 
             /* Search the field set */
             boolean bFound = false;

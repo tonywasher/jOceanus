@@ -210,10 +210,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theEnumClass = pEnumClass;
 
         /* Access the DataListPreferences */
-        MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
-        PrometheusDataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(PrometheusDataListPreferences.class);
+        final MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
+        final PrometheusDataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(PrometheusDataListPreferences.class);
         theGranularity = myDataPreferences.getIntegerValue(PrometheusDataListPreferenceKey.GRANULARITY);
-        MetisSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
+        final MetisSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
         theNumActiveKeySets = mySecPreferences.getIntegerValue(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
 
         /* Create the empty security lists */
@@ -413,13 +413,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = pSource.getControlData().getEmptyList(ListStyle.CLONE);
 
         /* Loop through the source lists */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            E myType = myEntry.getKey();
-            DataList<?, E> myList = myEntry.getValue();
+            final E myType = myEntry.getKey();
+            final DataList<?, E> myList = myEntry.getValue();
 
             /* Create the empty cloned list */
             addList(myType, myList.getEmptyList(ListStyle.CLONE));
@@ -439,17 +439,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.cloneList(this, pSource.getControlData());
 
         /* Obtain listMaps */
-        Map<E, DataList<?, E>> myOldMap = pSource.getListMap();
+        final Map<E, DataList<?, E>> myOldMap = pSource.getListMap();
 
         /* Loop through the new lists */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            E myType = myEntry.getKey();
-            DataList<?, E> myNew = myEntry.getValue();
-            DataList<?, E> myOld = myOldMap.get(myType);
+            final E myType = myEntry.getKey();
+            final DataList<?, E> myNew = myEntry.getValue();
+            final DataList<?, E> myOld = myOldMap.get(myType);
 
             /* Clone the list */
             myNew.cloneList(this, myOld);
@@ -476,13 +476,13 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = pSource.getControlData().deriveList(ListStyle.UPDATE);
 
         /* Loop through the source lists */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = pSource.entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            E myType = myEntry.getKey();
-            DataList<?, E> myList = myEntry.getValue();
+            final E myType = myEntry.getKey();
+            final DataList<?, E> myList = myEntry.getValue();
 
             /* Create the update list */
             addList(myType, myList.deriveList(ListStyle.UPDATE));
@@ -522,8 +522,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                                      final T pNew,
                                      final T pOld) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask(TASK_DATADIFF);
+        final MetisProfile myTask = pReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask(TASK_DATADIFF);
 
         /* Build the security differences */
         theControlKeys = pNew.getControlKeys().deriveDifferences(this, pOld.getControlKeys());
@@ -532,17 +532,17 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData = pNew.getControlData().deriveDifferences(this, pOld.getControlData());
 
         /* Obtain listMaps */
-        Map<E, DataList<?, E>> myOldMap = pOld.getListMap();
+        final Map<E, DataList<?, E>> myOldMap = pOld.getListMap();
 
         /* Loop through the new lists */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = pNew.entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = pNew.entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            E myType = myEntry.getKey();
-            DataList<?, E> myNew = myEntry.getValue();
-            DataList<?, E> myOld = myOldMap.get(myType);
+            final E myType = myEntry.getKey();
+            final DataList<?, E> myNew = myEntry.getValue();
+            final DataList<?, E> myOld = myOldMap.get(myType);
 
             /* Derive Differences */
             myStage.startTask(myNew.listName());
@@ -562,8 +562,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void reBase(final MetisThreadStatusReport pReport,
                        final T pOld) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask(TASK_DATAREBASE);
+        final MetisProfile myTask = pReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask(TASK_DATAREBASE);
 
         /* ReBase the security items */
         boolean bUpdates = theControlKeys.reBase(pOld.getControlKeys());
@@ -572,16 +572,16 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         bUpdates |= theControlData.reBase(pOld.getControlData());
 
         /* Obtain old listMap */
-        Map<E, DataList<?, E>> myMap = pOld.getListMap();
+        final Map<E, DataList<?, E>> myMap = pOld.getListMap();
 
         /* Loop through the lists */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            E myType = myEntry.getKey();
-            DataList<?, E> myList = myEntry.getValue();
+            final E myType = myEntry.getKey();
+            final DataList<?, E> myList = myEntry.getValue();
 
             /* ReBase on Old dataList */
             myStage.startTask(myList.listName());
@@ -618,7 +618,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public <L extends DataList<?, E>> L getDataList(final E pListType,
                                                     final Class<L> pListClass) {
         /* Access the list */
-        DataList<?, E> myList = theListMap.get(pListType);
+        final DataList<?, E> myList = theListMap.get(pListType);
 
         /* Cast correctly */
         return (myList == null)
@@ -633,7 +633,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     protected Object getFieldListValue(final E pListType) {
         /* Access the class */
-        DataList<?, E> myList = theListMap.get(pListType);
+        final DataList<?, E> myList = theListMap.get(pListType);
 
         /* Cast correctly */
         return ((myList == null) || (myList.isEmpty()))
@@ -649,12 +649,12 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public <L extends DataList<?, E>> L getDataList(final Class<L> pListClass) {
         /* Loop through the lists */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access components */
-            DataList<?, E> myList = myEntry.getValue();
+            final DataList<?, E> myList = myEntry.getValue();
             if (pListClass.equals(myList.getClass())) {
                 return pListClass.cast(myList);
             }
@@ -679,9 +679,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.setGeneration(pGeneration);
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Set the Generation */
             myList.setGeneration(pGeneration);
@@ -703,9 +703,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.setVersion(pVersion);
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Set the Version */
             myList.setVersion(pVersion);
@@ -727,9 +727,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlData.rewindToVersion(pVersion);
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Rewind the list */
             myList.rewindToVersion(pVersion);
@@ -752,7 +752,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Access the object as a DataSet */
-        DataSet<?, ?> myThat = (DataSet<?, ?>) pThat;
+        final DataSet<?, ?> myThat = (DataSet<?, ?>) pThat;
 
         /* Check enum class */
         if (!theEnumClass.equals(myThat.getEnumClass())) {
@@ -802,9 +802,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         myHashCode += theControlData.hashCode();
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Access equivalent list */
             myHashCode *= HASH_PRIME;
@@ -829,9 +829,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Determine whether the list is empty */
             if (!myList.isEmpty()) {
@@ -857,9 +857,9 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* Determine whether the list has updates */
             if (myList.hasUpdates()) {
@@ -886,7 +886,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public ControlKey getControlKey() {
         /* Access the control element from the database */
-        ControlData myControl = getControl();
+        final ControlData myControl = getControl();
         ControlKey myKey = null;
 
         /* Access control key from control data */
@@ -907,8 +907,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void initialiseSecurity(final MetisThreadStatusReport pReport,
                                    final T pBase) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask(TASK_SECINIT);
+        final MetisProfile myTask = pReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask(TASK_SECINIT);
 
         /* Set the number of stages */
         pReport.initTask(TASK_SECINIT);
@@ -918,25 +918,25 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theControlKeys.initialiseSecurity(pBase);
 
         /* Access the control key */
-        ControlKey myControl = getControlKey();
+        final ControlKey myControl = getControlKey();
 
         /* Obtain base listMap */
-        Map<E, DataList<?, E>> myMap = pBase.getListMap();
+        final Map<E, DataList<?, E>> myMap = pBase.getListMap();
 
         /* Loop through the List values */
-        Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
+        final Iterator<Entry<E, DataList<?, E>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<E, DataList<?, E>> myEntry = myIterator.next();
+            final Entry<E, DataList<?, E>> myEntry = myIterator.next();
 
             /* Access the two lists */
-            DataList<?, E> myList = myEntry.getValue();
-            DataList<?, E> myBase = myMap.get(myEntry.getKey());
+            final DataList<?, E> myList = myEntry.getValue();
+            final DataList<?, E> myBase = myMap.get(myEntry.getKey());
 
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Adopt the security */
                 myStage.startTask(myList.listName());
-                EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
+                final EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
                 myEncrypted.adoptSecurity(pReport, myControl, (EncryptedList<?, E>) myBase);
             }
         }
@@ -952,14 +952,14 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void renewSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask(TASK_SECRENEW);
+        final MetisProfile myTask = pReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask(TASK_SECRENEW);
 
         /* Access ControlData */
-        ControlData myControl = getControl();
+        final ControlData myControl = getControl();
 
         /* Clone the control key */
-        ControlKey myKey = theControlKeys.cloneItem(myControl.getControlKey());
+        final ControlKey myKey = theControlKeys.cloneItem(myControl.getControlKey());
 
         /* Declare the New Control Key */
         myControl.setControlKey(myKey);
@@ -978,8 +978,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void checkSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access current profile */
-        MetisProfile myTask = pReport.getActiveTask();
-        MetisProfile myStage = myTask.startTask(TASK_SECCHECK);
+        final MetisProfile myTask = pReport.getActiveTask();
+        final MetisProfile myStage = myTask.startTask(TASK_SECCHECK);
 
         /* If there is more than one controlKey */
         if (theControlKeys.size() > 1) {
@@ -987,7 +987,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
             updateSecurity(pReport);
         } else {
             /* Make sure that password changes are OK */
-            ControlKey myKey = getControlKey();
+            final ControlKey myKey = getControlKey();
             if (myKey != null) {
                 myKey.ensureKeySetHash();
             }
@@ -1004,21 +1004,21 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public void updateSecurity(final MetisThreadStatusReport pReport) throws OceanusException {
         /* Access the control key */
-        ControlKey myControl = getControlKey();
+        final ControlKey myControl = getControlKey();
 
         /* Set the number of stages */
         pReport.initTask(TASK_SECUPDATE);
         pReport.setNumStages(theNumEncrypted);
 
         /* Loop through the List values */
-        Iterator<DataList<?, E>> myIterator = iterator();
+        final Iterator<DataList<?, E>> myIterator = iterator();
         while (myIterator.hasNext()) {
-            DataList<?, E> myList = myIterator.next();
+            final DataList<?, E> myList = myIterator.next();
 
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Update the security */
-                EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
+                final EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
                 myEncrypted.updateSecurity(pReport, myControl);
             }
         }
@@ -1035,7 +1035,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public GordianKeySetHash getKeySetHash() throws OceanusException {
         /* Access the active control key */
-        ControlKey myKey = getControlKey();
+        final ControlKey myKey = getControlKey();
 
         /* Set the control */
         return (myKey == null)
@@ -1052,7 +1052,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     public void updatePasswordHash(final MetisThreadStatusReport pReport,
                                    final String pSource) throws OceanusException {
         /* Obtain a new keySet hash */
-        GordianKeySetHash myHash = theSecurity.newKeySetHash(pSource);
+        final GordianKeySetHash myHash = theSecurity.newKeySetHash(pSource);
 
         /* Update the control details */
         getControlKey().updatePasswordHash(myHash);

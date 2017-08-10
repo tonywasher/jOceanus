@@ -103,7 +103,7 @@ public class ThemisMvnProjectDefinition
         /* Protect against exceptions */
         try {
             /* Parse the Project definition */
-            MavenXpp3Reader myReader = new MavenXpp3Reader();
+            final MavenXpp3Reader myReader = new MavenXpp3Reader();
             theModel = myReader.read(pInput);
 
             /* Obtain the major definition */
@@ -201,15 +201,15 @@ public class ThemisMvnProjectDefinition
      */
     private void parseDependencies() throws OceanusException {
         /* Obtain the dependency list */
-        List<Dependency> myDependencies = theModel.getDependencies();
+        final List<Dependency> myDependencies = theModel.getDependencies();
 
         /* Iterate through the dependencies */
-        Iterator<Dependency> myIterator = myDependencies.iterator();
+        final Iterator<Dependency> myIterator = myDependencies.iterator();
         while (myIterator.hasNext()) {
-            Dependency myDependency = myIterator.next();
+            final Dependency myDependency = myIterator.next();
 
             /* Build new project Id */
-            ThemisMvnProjectId myDep = new ThemisMvnProjectId(myDependency, theDefinition);
+            final ThemisMvnProjectId myDep = new ThemisMvnProjectId(myDependency, theDefinition);
             theDependencies.add(myDep);
         }
     }
@@ -219,15 +219,15 @@ public class ThemisMvnProjectDefinition
      */
     private void parseSubModules() {
         /* Obtain the module list */
-        List<String> myModules = theModel.getModules();
+        final List<String> myModules = theModel.getModules();
 
         /* Iterate through the modules */
-        Iterator<String> myIterator = myModules.iterator();
+        final Iterator<String> myIterator = myModules.iterator();
         while (myIterator.hasNext()) {
-            String myModule = myIterator.next();
+            final String myModule = myIterator.next();
 
             /* Build new SubModule */
-            MvnSubModule mySub = new MvnSubModule(myModule);
+            final MvnSubModule mySub = new MvnSubModule(myModule);
             theSubModules.add(mySub);
         }
     }
@@ -239,7 +239,7 @@ public class ThemisMvnProjectDefinition
      */
     public static File getProjectDefFile(final File pLocation) {
         /* Build the file */
-        File myFile = new File(pLocation, POM_NAME);
+        final File myFile = new File(pLocation, POM_NAME);
 
         /* Return the file */
         return myFile.exists()
@@ -263,7 +263,7 @@ public class ThemisMvnProjectDefinition
              BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile)) {
 
             /* Parse the Project definition */
-            MavenXpp3Writer myWriter = new MavenXpp3Writer();
+            final MavenXpp3Writer myWriter = new MavenXpp3Writer();
             myWriter.write(myOutBuffer, theModel);
 
             /* Close the output file */
@@ -298,10 +298,10 @@ public class ThemisMvnProjectDefinition
      */
     public void setNewVersion(final ThemisMvnProjectId pProjectId) {
         /* Loop through dependencies */
-        Iterator<ThemisMvnProjectId> myIterator = theDependencies.iterator();
+        final Iterator<ThemisMvnProjectId> myIterator = theDependencies.iterator();
         while (myIterator.hasNext()) {
             /* Access dependency and set version */
-            ThemisMvnProjectId myRef = myIterator.next();
+            final ThemisMvnProjectId myRef = myIterator.next();
             myRef.setNewVersion(pProjectId);
         }
     }

@@ -45,12 +45,12 @@ public class ThemisSubversionBackup<N, I>
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access details from toolkit */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
-        GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        final GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
 
         /* Create backup */
-        ThemisBackup myAccess = new ThemisBackup(myManager, myPreferences);
+        final ThemisBackup myAccess = new ThemisBackup(myManager, myPreferences);
         myAccess.backUpRepositories(mySecureMgr);
 
         /* Return nothing */

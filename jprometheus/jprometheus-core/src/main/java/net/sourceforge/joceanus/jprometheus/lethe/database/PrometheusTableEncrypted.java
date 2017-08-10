@@ -43,7 +43,7 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem<E> & Comp
     protected PrometheusTableEncrypted(final PrometheusDataStore<?> pDatabase,
                                        final String pTabName) {
         super(pDatabase, pTabName);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         myTableDef.addReferenceColumn(EncryptedItem.FIELD_KEYSET, PrometheusTableDataKeySet.TABLE_NAME);
     }
 
@@ -51,7 +51,7 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem<E> & Comp
     protected void setFieldValue(final T pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (EncryptedItem.FIELD_KEYSET.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getDataKeySetId());
         } else {
@@ -62,8 +62,8 @@ public abstract class PrometheusTableEncrypted<T extends EncryptedItem<E> & Comp
     @Override
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getRowValues(pName);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final DataValues<E> myValues = super.getRowValues(pName);
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the control id and return the new values */
         myValues.addValue(EncryptedItem.FIELD_KEYSET, myTableDef.getIntegerValue(EncryptedItem.FIELD_KEYSET));

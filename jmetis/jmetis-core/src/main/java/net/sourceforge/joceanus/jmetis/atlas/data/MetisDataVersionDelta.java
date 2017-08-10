@@ -64,8 +64,8 @@ public class MetisDataVersionDelta
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
         /* Access the values */
-        Object[] myNewValues = theNewSet.getValues();
-        Object[] myOldValues = theOldSet.getValues();
+        final Object[] myNewValues = theNewSet.getValues();
+        final Object[] myOldValues = theOldSet.getValues();
 
         /* Initialise number of differences */
         int myNumDiffs = (theOldSet.isDeletion() == theNewSet.isDeletion())
@@ -90,11 +90,11 @@ public class MetisDataVersionDelta
     @Override
     public MetisDataFieldSet getDataFieldSet() {
         /* Access the owning item fields */
-        MetisDataFieldItem myItem = theOldSet.getItem();
-        MetisDataFieldSet myFields = myItem.getDataFieldSet();
+        final MetisDataFieldItem myItem = theOldSet.getItem();
+        final MetisDataFieldSet myFields = myItem.getDataFieldSet();
 
         /* Allocate new local fields */
-        MetisDataFieldSet myLocal = new MetisDataFieldSet(MetisDataVersionDelta.class);
+        final MetisDataFieldSet myLocal = new MetisDataFieldSet(MetisDataVersionDelta.class);
 
         /* Declare the version field */
         myLocal.declareIndexField(MetisDataResource.DATA_VERSION.getValue());
@@ -103,10 +103,10 @@ public class MetisDataVersionDelta
         myLocal.declareIndexField(MetisDataResource.DATA_DELETED.getValue());
 
         /* Loop through the fields */
-        Iterator<MetisDataField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            MetisDataField myField = myIterator.next();
+            final MetisDataField myField = myIterator.next();
 
             /* Skip if the field is not versioned */
             if (!myField.getStorage().isVersioned()) {
@@ -141,8 +141,8 @@ public class MetisDataVersionDelta
         myIndex -= 2;
 
         /* Obtain the difference */
-        Object myObject = theOldSet.getValue(myIndex);
-        MetisDataDifference myDifference = MetisDataDifference.difference(myObject, theNewSet.getValue(myIndex));
+        final Object myObject = theOldSet.getValue(myIndex);
+        final MetisDataDifference myDifference = MetisDataDifference.difference(myObject, theNewSet.getValue(myIndex));
 
         /* Return the value */
         return new MetisDataDelta(myObject, myDifference);

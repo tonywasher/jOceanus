@@ -186,7 +186,7 @@ public abstract class MetisDataCell {
      * @throws OceanusException on error
      */
     public byte[] getBytesValue() throws OceanusException {
-        String myValue = getStringValue();
+        final String myValue = getStringValue();
         return (myValue == null)
                                  ? null
                                  : TethysDataConverter.base64ToByteArray(myValue);
@@ -198,7 +198,7 @@ public abstract class MetisDataCell {
      * @throws OceanusException on error
      */
     public char[] getCharArrayValue() throws OceanusException {
-        byte[] myValue = getBytesValue();
+        final byte[] myValue = getBytesValue();
         return (myValue == null)
                                  ? null
                                  : TethysDataConverter.bytesToCharArray(myValue);

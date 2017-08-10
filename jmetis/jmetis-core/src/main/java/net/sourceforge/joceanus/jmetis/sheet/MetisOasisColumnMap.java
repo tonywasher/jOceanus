@@ -61,12 +61,12 @@ public class MetisOasisColumnMap {
     /**
      * Number of columns.
      */
-    private int theNumColumns = 0;
+    private int theNumColumns;
 
     /**
      * The last reference.
      */
-    private ColumnReference theLastReference = null;
+    private ColumnReference theLastReference;
 
     /**
      * List of of columns.
@@ -111,7 +111,7 @@ public class MetisOasisColumnMap {
             /* If this is a column element */
             if (myNode instanceof TableTableColumnElement) {
                 /* Add column to list */
-                TableTableColumnElement myColumn = (TableTableColumnElement) myNode;
+                final TableTableColumnElement myColumn = (TableTableColumnElement) myNode;
                 processColumn(myColumn);
 
                 /* If this is a node that contains columns */
@@ -142,7 +142,7 @@ public class MetisOasisColumnMap {
         }
 
         /* Create the new reference and add it */
-        ColumnReference myRef = new ColumnReference(pColumn, theNumColumns, 0);
+        final ColumnReference myRef = new ColumnReference(pColumn, theNumColumns, 0);
         myRef.addToList();
 
         /* Adjust number of columns */
@@ -172,7 +172,7 @@ public class MetisOasisColumnMap {
         }
 
         /* Just return the column */
-        ColumnReference myRef = theColumns.get(pColIndex);
+        final ColumnReference myRef = theColumns.get(pColIndex);
         return myRef.getReadOnlyColumn();
     }
 
@@ -190,9 +190,9 @@ public class MetisOasisColumnMap {
         /* If we need to extend the table */
         if (pColIndex >= theNumColumns) {
             /* Determine the number of extra columns required */
-            int myXtraCols = pColIndex
-                             - theNumColumns
-                             + 1;
+            final int myXtraCols = pColIndex
+                                   - theNumColumns
+                                   + 1;
 
             /* Add additional columns */
             addAdditionalColumns(myXtraCols);
@@ -205,7 +205,7 @@ public class MetisOasisColumnMap {
         }
 
         /* Return the required column */
-        ColumnReference myRef = theColumns.get(pColIndex);
+        final ColumnReference myRef = theColumns.get(pColIndex);
         return myRef.getMutableColumn();
     }
 
@@ -217,7 +217,7 @@ public class MetisOasisColumnMap {
         /* If we have an existing reference that is empty */
         if (isEmpty(theLastReference.getElement())) {
             /* Obtain the last column */
-            TableTableColumnElement myElement = theLastReference.getElement();
+            final TableTableColumnElement myElement = theLastReference.getElement();
 
             /* Determine the existing number of repeated columns */
             Integer myRepeat = theLastReference.getRepeat();
@@ -232,7 +232,7 @@ public class MetisOasisColumnMap {
             /* else we need to add a completely new element */
         } else {
             /* Create a new column */
-            TableTableColumnElement myElement = theOasisSheet.newColumnElement();
+            final TableTableColumnElement myElement = theOasisSheet.newColumnElement();
             if (pXtraCols > 1) {
                 /* Set repeat count */
                 myElement.setTableNumberColumnsRepeatedAttribute(pXtraCols);
@@ -256,9 +256,9 @@ public class MetisOasisColumnMap {
      */
     private static boolean isEmpty(final TableTableColumnElement pElement) {
         /* Access the data attributes */
-        String defStyle = pElement.getTableDefaultCellStyleNameAttribute();
-        String style = pElement.getTableStyleNameAttribute();
-        String visible = pElement.getTableVisibilityAttribute();
+        final String defStyle = pElement.getTableDefaultCellStyleNameAttribute();
+        final String style = pElement.getTableStyleNameAttribute();
+        final String visible = pElement.getTableVisibilityAttribute();
 
         /* Empty if none of the data attributes exist */
         return (defStyle == null)
@@ -306,7 +306,7 @@ public class MetisOasisColumnMap {
          */
         private int getRepeat() {
             /* Determine the maximum instance */
-            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
+            final Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
             return (myRepeat == null)
                                       ? 1
                                       : myRepeat;
@@ -335,7 +335,7 @@ public class MetisOasisColumnMap {
          */
         private void extendReferences(final int pIndex) {
             /* Loop through remaining instances */
-            int myRepeat = getRepeat();
+            final int myRepeat = getRepeat();
             for (int iInstance = theInstance + 1, iIndex = theIndex + 1; iInstance < myRepeat; iInstance++, iIndex++) {
                 /* Break loop if we have extended far enough */
                 if (iIndex > pIndex) {
@@ -343,7 +343,7 @@ public class MetisOasisColumnMap {
                 }
 
                 /* Create the new reference and add it */
-                ColumnReference myRef = new ColumnReference(theElement, iIndex, iInstance);
+                final ColumnReference myRef = new ColumnReference(theElement, iIndex, iInstance);
                 myRef.addToList();
             }
         }
@@ -377,10 +377,10 @@ public class MetisOasisColumnMap {
          */
         private void makeIndividual() {
             /* Determine how many trailing elements to hive off */
-            int myRepeatCount = getRepeat();
-            int myNumCols = myRepeatCount
-                            - theInstance
-                            - 1;
+            final int myRepeatCount = getRepeat();
+            final int myNumCols = myRepeatCount
+                                  - theInstance
+                                  - 1;
 
             /* If we have trailing columns */
             if (myNumCols > 0) {
@@ -394,7 +394,7 @@ public class MetisOasisColumnMap {
             /* If there are prior elements to hive off */
             if (theInstance > 0) {
                 /* Create a new column element for this instance, and append after this one */
-                TableTableColumnElement myNew = theOasisSheet.newColumnElement();
+                final TableTableColumnElement myNew = theOasisSheet.newColumnElement();
                 MetisOasisWorkBook.addAsNextSibling(myNew, theElement);
 
                 /* If there are multiple columns before the split */
@@ -416,7 +416,7 @@ public class MetisOasisColumnMap {
                 extendReferences(theIndex + 1);
 
                 /* Create a new column element and add it after this one */
-                TableTableColumnElement myNew = theOasisSheet.newColumnElement();
+                final TableTableColumnElement myNew = theOasisSheet.newColumnElement();
                 MetisOasisWorkBook.addAsNextSibling(myNew, theElement);
 
                 /* Adjust the repeat count for trailing elements */
@@ -426,11 +426,11 @@ public class MetisOasisColumnMap {
                 }
 
                 /* Loop through the later columns */
-                ListIterator<ColumnReference> myIterator = theColumns.listIterator(theIndex + 1);
+                final ListIterator<ColumnReference> myIterator = theColumns.listIterator(theIndex + 1);
                 for (int i = 0; myIterator.hasNext()
                                 && (i < myNumCols); i++) {
                     /* Map to new instance */
-                    ColumnReference myRef = myIterator.next();
+                    final ColumnReference myRef = myIterator.next();
                     myRef.theElement = myNew;
                     myRef.theInstance = i;
                 }

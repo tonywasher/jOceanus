@@ -103,7 +103,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      * @return the fieldSet
      */
     private MetisFXTableFieldSet<R> getFieldSet(final R pItem) {
-        Integer myId = pItem.getIndexedId();
+        final Integer myId = pItem.getIndexedId();
         MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(myId);
         if (myFieldSet == null) {
             myFieldSet = new MetisFXTableFieldSet<>(pItem, this);
@@ -118,7 +118,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      * @return the array
      */
     protected Observable[] getObservables(final R pItem) {
-        MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
+        final MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
         return myFieldSet.getObservables();
     }
 
@@ -132,7 +132,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
     @SuppressWarnings("unchecked")
     protected <T> ObjectProperty<T> getObjectProperty(final R pItem,
                                                       final MetisDataField pId) {
-        MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
+        final MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
         return (ObjectProperty<T>) myFieldSet.getPropertyForField(pId);
     }
 
@@ -141,7 +141,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      * @param pItem the item
      */
     protected void updateProperties(final R pItem) {
-        MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
+        final MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
         myFieldSet.updateValues();
     }
 
@@ -159,7 +159,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      */
     protected R removeItem(final Integer pId) {
         /* Obtain the field set */
-        MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(pId);
+        final MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(pId);
         if (myFieldSet != null) {
             /* Remove from the map and return the item */
             theIdMap.remove(pId);
@@ -175,9 +175,9 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      */
     private void recalculateValues() {
         /* Iterate through the fieldSets */
-        Iterator<MetisFXTableFieldSet<R>> myIterator = theIdMap.values().iterator();
+        final Iterator<MetisFXTableFieldSet<R>> myIterator = theIdMap.values().iterator();
         while (myIterator.hasNext()) {
-            MetisFXTableFieldSet<R> myFieldSet = myIterator.next();
+            final MetisFXTableFieldSet<R> myFieldSet = myIterator.next();
 
             /* Recalculate values */
             myFieldSet.recalculateValues();

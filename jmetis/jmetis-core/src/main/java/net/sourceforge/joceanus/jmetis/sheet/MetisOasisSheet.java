@@ -184,7 +184,7 @@ public class MetisOasisSheet
      */
     protected void setDefaultCellStyle(final TableTableColumnElement pColumn,
                                        final MetisCellStyleType pStyle) {
-        OdfStyle myStyle = theOasisBook.getCellStyle(pStyle);
+        final OdfStyle myStyle = theOasisBook.getCellStyle(pStyle);
         pColumn.setTableDefaultCellStyleNameAttribute(myStyle.getStyleNameAttribute());
     }
 
@@ -195,7 +195,7 @@ public class MetisOasisSheet
      */
     protected void setCellStyle(final TableTableCellElement pCell,
                                 final Object pValue) {
-        OdfStyle myStyle = theOasisBook.getCellStyle(pValue);
+        final OdfStyle myStyle = theOasisBook.getCellStyle(pValue);
         pCell.setTableStyleNameAttribute(myStyle.getStyleNameAttribute());
     }
 
@@ -206,7 +206,7 @@ public class MetisOasisSheet
      */
     protected void setAlternateCellStyle(final TableTableCellElement pCell,
                                          final Object pValue) {
-        OdfStyle myStyle = theOasisBook.getAlternateCellStyle(pValue);
+        final OdfStyle myStyle = theOasisBook.getAlternateCellStyle(pValue);
         pCell.setTableStyleNameAttribute(myStyle.getStyleNameAttribute());
     }
 
@@ -216,7 +216,7 @@ public class MetisOasisSheet
                              final MetisCellPosition pLastCell) throws OceanusException {
         if (!isReadOnly) {
             /* Build the range */
-            OasisCellRange myRange = new OasisCellRange(getName(), pFirstCell, pLastCell);
+            final OasisCellRange myRange = new OasisCellRange(getName(), pFirstCell, pLastCell);
 
             /* Declare to workBook */
             theOasisBook.declareRange(pName, myRange);
@@ -238,8 +238,8 @@ public class MetisOasisSheet
                                 final int pNumRows) throws OceanusException {
         if (!isReadOnly) {
             /* Build the range */
-            MetisCellPosition myEnd = new MetisCellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);
-            OasisCellRange myRange = new OasisCellRange(getName(), pBaseCell, myEnd);
+            final MetisCellPosition myEnd = new MetisCellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);
+            final OasisCellRange myRange = new OasisCellRange(getName(), pBaseCell, myEnd);
 
             /* Declare to workbook */
             theOasisBook.applyDataFilter(myRange);
@@ -275,11 +275,11 @@ public class MetisOasisSheet
      */
     protected TableTableRowElement newRowElement(final int pNumCols) {
         /* Allocate the row */
-        TableTableRowElement myRow = new TableTableRowElement(theContentDom);
+        final TableTableRowElement myRow = new TableTableRowElement(theContentDom);
         myRow.setTableStyleNameAttribute(MetisOasisWorkBook.STYLE_ROW);
 
         /* Allocate a cell for the row */
-        TableTableCellElement myCell = new TableTableCellElement(theContentDom);
+        final TableTableCellElement myCell = new TableTableCellElement(theContentDom);
         myRow.appendChild(myCell);
 
         /* Handle repeat count */

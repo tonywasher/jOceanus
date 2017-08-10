@@ -81,8 +81,8 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;
 
@@ -91,17 +91,17 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             myManager.initTask(getTaskName());
 
             /* Access the Backup preferences */
-            MetisPreferenceManager myMgr = theControl.getPreferenceManager();
-            PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
+            final MetisPreferenceManager myMgr = theControl.getPreferenceManager();
+            final PrometheusBackupPreferences myProperties = myMgr.getPreferenceSet(PrometheusBackupPreferences.class);
 
             /* Determine the archive name */
-            String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
-            String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
-            Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
-            MetisWorkBookType myType = myProperties.getEnumValue(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
+            final String myBackupDir = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPDIR);
+            final String myPrefix = myProperties.getStringValue(PrometheusBackupPreferenceKey.BACKUPPFIX);
+            final Boolean doTimeStamp = myProperties.getBooleanValue(PrometheusBackupPreferenceKey.BACKUPTIME);
+            final MetisWorkBookType myType = myProperties.getEnumValue(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
 
             /* Create the name of the file */
-            StringBuilder myName = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myName = new StringBuilder(BUFFER_LEN);
             myName.append(myBackupDir);
             myName.append(File.separator);
             myName.append(myPrefix);
@@ -109,7 +109,7 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             /* If we are doing time-stamps */
             if (doTimeStamp) {
                 /* Obtain the current date/time */
-                TethysDate myNow = new TethysDate();
+                final TethysDate myNow = new TethysDate();
 
                 myName.append(myNow.getYear());
                 if (myNow.getMonth() < TEN) {
@@ -126,8 +126,8 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             myFile = new File(myName.toString() + GordianZipReadFile.ZIPFILE_EXT);
 
             /* Create backup */
-            PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
-            T myOldData = theControl.getData();
+            final PrometheusSpreadSheet<T> mySheet = theControl.getSpreadSheet();
+            final T myOldData = theControl.getData();
             mySheet.createBackup(myManager, myOldData, myFile, myType);
 
             /* File created, so delete on error */
@@ -137,11 +137,11 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
             myManager.initTask("Verifying Backup");
 
             /* Load workbook */
-            T myNewData = theControl.getNewData();
+            final T myNewData = theControl.getNewData();
             mySheet.loadBackup(myManager, mySecurityMgr, myNewData, myFile);
 
             /* Create a difference set between the two data copies */
-            DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
+            final DataSet<T, ?> myDiff = myNewData.getDifferenceSet(myManager, myOldData);
 
             /* If the difference set is non-empty */
             if (!myDiff.isEmpty()) {

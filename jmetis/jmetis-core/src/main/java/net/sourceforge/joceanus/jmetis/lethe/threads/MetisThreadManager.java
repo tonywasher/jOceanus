@@ -121,7 +121,7 @@ public abstract class MetisThreadManager<N, I>
         theStatus = new MetisThreadStatus();
 
         /* Create the viewer entries */
-        MetisViewerManager myViewer = theToolkit.getViewerManager();
+        final MetisViewerManager myViewer = theToolkit.getViewerManager();
         theProfileEntry = myViewer.getStandardEntry(MetisViewerStandardEntry.PROFILE);
         theErrorEntry = myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR);
 
@@ -134,8 +134,8 @@ public abstract class MetisThreadManager<N, I>
                                    : theToolkit.newThreadTextAreaStatus(this);
 
         /* Access the threadStatus properties */
-        MetisPreferenceManager myMgr = theToolkit.getPreferenceManager();
-        MetisThreadPreferences myPreferences = myMgr.getPreferenceSet(MetisThreadPreferences.class);
+        final MetisPreferenceManager myMgr = theToolkit.getPreferenceManager();
+        final MetisThreadPreferences myPreferences = myMgr.getPreferenceSet(MetisThreadPreferences.class);
         theReportingSteps = myPreferences.getIntegerValue(MetisThreadPreferenceKey.REPSTEPS);
     }
 
@@ -181,12 +181,12 @@ public abstract class MetisThreadManager<N, I>
      */
     public <T> void startThread(final MetisThread<T, N, I> pThread) {
         /* Set new profile */
-        String myName = pThread.getTaskName();
+        final String myName = pThread.getTaskName();
         setNewProfile(myName);
         theThread = pThread;
 
         /* Create the wrapped thread */
-        Runnable myRunnable = wrapThread(pThread);
+        final Runnable myRunnable = wrapThread(pThread);
 
         /* If we prepared the thread OK */
         if (prepareThread()) {
@@ -237,7 +237,7 @@ public abstract class MetisThreadManager<N, I>
      */
     protected void threadCompleted() {
         /* Remove reference */
-        MetisThread<?, N, I> myThread = theThread;
+        final MetisThread<?, N, I> myThread = theThread;
         theThread = null;
 
         /* Note that thread has completed */
@@ -325,7 +325,7 @@ public abstract class MetisThreadManager<N, I>
         theStatus.setNextStep();
 
         /* Determine step */
-        int myStep = theStatus.getStepsDone() + 1;
+        final int myStep = theStatus.getStepsDone() + 1;
 
         /* If we need to report the step */
         if ((myStep % theReportingSteps) == 0) {

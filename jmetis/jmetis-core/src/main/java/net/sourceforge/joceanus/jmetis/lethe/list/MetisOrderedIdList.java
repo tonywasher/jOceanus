@@ -86,9 +86,9 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
         this(pClass);
 
         /* Loop through the source members */
-        Iterator<T> myIterator = pSource.iterator();
+        final Iterator<T> myIterator = pSource.iterator();
         while (myIterator.hasNext()) {
-            T myItem = myIterator.next();
+            final T myItem = myIterator.next();
 
             /* Add the item */
             addTheItem(myItem);

@@ -67,14 +67,14 @@ public final class MetisUpdateListSet
         int myNumItems = pNumItems;
 
         /* Loop through the lists */
-        Iterator<MetisListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
-                                                                                   ? reverseKeyIterator()
-                                                                                   : keyIterator();
+        final Iterator<MetisListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
+                                                                                         ? reverseKeyIterator()
+                                                                                         : keyIterator();
         while (myIterator.hasNext()) {
-            MetisListKey myKey = myIterator.next();
+            final MetisListKey myKey = myIterator.next();
 
             /* If the list is non-empty */
-            MetisUpdateList<MetisDataVersionedItem> myList = getList(myKey);
+            final MetisUpdateList<MetisDataVersionedItem> myList = getList(myKey);
             if (!myList.isEmpty()) {
                 /* Commit the items */
                 myNumItems = myList.commitUpdateBatch(pPhase, pNumItems);

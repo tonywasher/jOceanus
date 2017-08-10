@@ -71,14 +71,14 @@ public class MetisDataVersionHistory
     @Override
     public MetisDataFieldSet getDataFieldSet() {
         /* Allocate new local fields */
-        MetisDataFieldSet myFields = new MetisDataFieldSet(MetisDataVersionHistory.class);
-        String myVersion = MetisDataResource.DATA_VERSION.getValue();
+        final MetisDataFieldSet myFields = new MetisDataFieldSet(MetisDataVersionHistory.class);
+        final String myVersion = MetisDataResource.DATA_VERSION.getValue();
 
         /* Loop through the fields */
-        Iterator<MetisDataVersionDelta> myIterator = theDeltas.descendingIterator();
+        final Iterator<MetisDataVersionDelta> myIterator = theDeltas.descendingIterator();
         while (myIterator.hasNext()) {
             /* Access the Delta */
-            MetisDataVersionDelta myDelta = myIterator.next();
+            final MetisDataVersionDelta myDelta = myIterator.next();
 
             /* Declare the field */
             myFields.declareIndexField(myVersion + "(" + myDelta.getVersion() + ")");
@@ -90,13 +90,13 @@ public class MetisDataVersionHistory
     @Override
     public Object getFieldValue(final MetisDataField pField) {
         /* Access the index */
-        int myIndex = pField.getIndex();
+        final int myIndex = pField.getIndex();
 
         /* Loop through the fields */
-        Iterator<MetisDataVersionDelta> myIterator = theDeltas.descendingIterator();
+        final Iterator<MetisDataVersionDelta> myIterator = theDeltas.descendingIterator();
         int i = 0;
         while (myIterator.hasNext()) {
-            MetisDataVersionDelta myDelta = myIterator.next();
+            final MetisDataVersionDelta myDelta = myIterator.next();
 
             /* Return field if we found it */
             if (i == myIndex) {
@@ -150,7 +150,7 @@ public class MetisDataVersionHistory
      */
     protected void pushHistory(final int pVersion) {
         /* Create a new ValueSet */
-        MetisDataVersionValues mySet = theCurr.cloneIt();
+        final MetisDataVersionValues mySet = theCurr.cloneIt();
         mySet.setVersion(pVersion);
 
         /* Add the delta to the stack */

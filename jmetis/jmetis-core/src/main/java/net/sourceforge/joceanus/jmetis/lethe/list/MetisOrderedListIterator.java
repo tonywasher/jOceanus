@@ -42,17 +42,17 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
     /**
      * Last node accessed.
      */
-    private MetisOrderedNode<T> theNodeBefore = null;
+    private MetisOrderedNode<T> theNodeBefore;
 
     /**
      * Last node accessed.
      */
-    private MetisOrderedNode<T> theNodeAfter = null;
+    private MetisOrderedNode<T> theNodeAfter;
 
     /**
      * Can we remove the last item.
      */
-    private boolean canRemove = false;
+    private boolean canRemove;
 
     /**
      * Which direction was the last scan.
@@ -113,7 +113,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
     @Override
     public boolean hasNext() {
         /* Access the next node */
-        MetisOrderedNode<T> myNext = nextNode();
+        final MetisOrderedNode<T> myNext = nextNode();
 
         /* Return whether we have a next node */
         return myNext != null;
@@ -122,7 +122,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
     @Override
     public boolean hasPrevious() {
         /* Access the previous node */
-        MetisOrderedNode<T> myPrev = previousNode();
+        final MetisOrderedNode<T> myPrev = previousNode();
 
         /* Return whether we have a previous node */
         return myPrev != null;
@@ -134,7 +134,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
      */
     public T peekNext() {
         /* Access the next node */
-        MetisOrderedNode<T> myNext = nextNode();
+        final MetisOrderedNode<T> myNext = nextNode();
 
         /* Return the next object */
         return (myNext != null)
@@ -148,7 +148,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
      */
     public T peekPrevious() {
         /* Access the next node */
-        MetisOrderedNode<T> myPrev = previousNode();
+        final MetisOrderedNode<T> myPrev = previousNode();
 
         /* Return the previous object */
         return (myPrev != null)
@@ -162,7 +162,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
      */
     public T peekFirst() {
         /* Access the first node */
-        MetisOrderedNode<T> myFirst = theList.getFirst();
+        final MetisOrderedNode<T> myFirst = theList.getFirst();
 
         /* Return the next object */
         return (myFirst != null)
@@ -176,7 +176,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
      */
     public T peekLast() {
         /* Access the last node */
-        MetisOrderedNode<T> myLast = theList.getLast();
+        final MetisOrderedNode<T> myLast = theList.getLast();
 
         /* Return the previous object */
         return (myLast != null)
@@ -192,7 +192,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
         }
 
         /* Access the next node */
-        MetisOrderedNode<T> myNext = nextNode();
+        final MetisOrderedNode<T> myNext = nextNode();
         if (myNext == null) {
             throw new NoSuchElementException();
         }
@@ -215,7 +215,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
         }
 
         /* Access the previous node */
-        MetisOrderedNode<T> myPrev = previousNode();
+        final MetisOrderedNode<T> myPrev = previousNode();
         if (myPrev == null) {
             throw new NoSuchElementException();
         }
@@ -233,7 +233,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
     @Override
     public int nextIndex() {
         /* Access the next node */
-        MetisOrderedNode<T> myNext = nextNode();
+        final MetisOrderedNode<T> myNext = nextNode();
 
         /* Return the index */
         return (myNext != null)
@@ -244,7 +244,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
     @Override
     public int previousIndex() {
         /* Access the previous node */
-        MetisOrderedNode<T> myPrev = previousNode();
+        final MetisOrderedNode<T> myPrev = previousNode();
 
         /* Return the index */
         return (myPrev != null)
@@ -295,12 +295,12 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
         canRemove = false;
 
         /* Access the list map */
-        MetisOrderedIndex<T> myIndex = theList.getIndex();
+        final MetisOrderedIndex<T> myIndex = theList.getIndex();
 
         /* If the last operation was forward */
         if (wasForward) {
             /* Determine next value */
-            MetisOrderedNode<T> myNext = theNodeBefore.getPrev();
+            final MetisOrderedNode<T> myNext = theNodeBefore.getPrev();
 
             /* Remove the item */
             theList.removeNode(theNodeBefore);
@@ -312,7 +312,7 @@ public class MetisOrderedListIterator<T extends Comparable<? super T>>
             /* else the last operation was backwards */
         } else {
             /* Determine next value */
-            MetisOrderedNode<T> myNext = theNodeAfter.getNext();
+            final MetisOrderedNode<T> myNext = theNodeAfter.getNext();
 
             /* Remove the item */
             theList.removeNode(theNodeAfter);

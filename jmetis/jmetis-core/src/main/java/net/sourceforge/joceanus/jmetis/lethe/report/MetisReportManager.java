@@ -113,7 +113,7 @@ public class MetisReportManager<F>
         /* Protect against exceptions */
         try {
             /* Create the transformer */
-            TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             theXformer = myXformFactory.newTransformer();
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
@@ -194,10 +194,10 @@ public class MetisReportManager<F>
         }
 
         /* Locate the section */
-        Element mySection = getElementById(pId);
+        final Element mySection = getElementById(pId);
         if (mySection != null) {
             /* Hide the element */
-            HiddenElement myElement = new HiddenElement(mySection);
+            final HiddenElement myElement = new HiddenElement(mySection);
             myElement.hide();
 
             /* Put the old element into the map */
@@ -218,7 +218,7 @@ public class MetisReportManager<F>
      */
     private Element getElementById(final String pId) {
         /* Access root element */
-        Element myElement = theDocument.getDocumentElement();
+        final Element myElement = theDocument.getDocumentElement();
 
         /* Loop through the nodes */
         for (Node myNode = myElement.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
@@ -228,8 +228,8 @@ public class MetisReportManager<F>
             }
 
             /* Access node as element */
-            Element myChild = (Element) myNode;
-            Element myResult = checkElementForId(myChild, pId);
+            final Element myChild = (Element) myNode;
+            final Element myResult = checkElementForId(myChild, pId);
             if (myResult != null) {
                 return myResult;
             }
@@ -260,10 +260,10 @@ public class MetisReportManager<F>
             }
 
             /* Access node as element */
-            Element myChild = (Element) myNode;
+            final Element myChild = (Element) myNode;
 
             /* Pass check on to child */
-            Element myResult = checkElementForId(myChild, pId);
+            final Element myResult = checkElementForId(myChild, pId);
             if (myResult != null) {
                 return myResult;
             }
@@ -288,7 +288,7 @@ public class MetisReportManager<F>
         }
 
         /* Obtain the hidden element */
-        HiddenElement myHidden = theHiddenMap.get(pId);
+        final HiddenElement myHidden = theHiddenMap.get(pId);
 
         /* If we have hidden an element */
         if (myHidden != null) {
@@ -313,7 +313,7 @@ public class MetisReportManager<F>
         /* Protect against exceptions */
         try {
             /* Transform the new document */
-            StringWriter myWriter = new StringWriter();
+            final StringWriter myWriter = new StringWriter();
             theXformer.transform(new DOMSource(theDocument), new StreamResult(myWriter));
             theText = myWriter.getBuffer().toString().replaceAll("\n|\r", "");
 
@@ -332,14 +332,14 @@ public class MetisReportManager<F>
     public void processReference(final String pId,
                                  final TethysHTMLManager<?, ?> pHTMLPane) {
         /* Process the reference */
-        String myText = processReference(pId);
+        final String myText = processReference(pId);
 
         /* If we have new text */
         if (myText != null) {
             /* Set it into the window and adjust the scroll */
             pHTMLPane.setHTMLContent(myText, "");
-            String myId = MetisReportHTMLBuilder.REF_ID
-                          + pId.substring(MetisReportHTMLBuilder.REF_TAB.length());
+            final String myId = MetisReportHTMLBuilder.REF_ID
+                                + pId.substring(MetisReportHTMLBuilder.REF_TAB.length());
             pHTMLPane.scrollToReference(myId);
         }
     }
@@ -378,7 +378,7 @@ public class MetisReportManager<F>
                 /* else if this is a filter reference */
             } else if (pId.startsWith(MetisReportHTMLBuilder.REF_FILTER)) {
                 /* Process the filter reference */
-                F myFilter = theReferenceMgr.processFilterReference(pId);
+                final F myFilter = theReferenceMgr.processFilterReference(pId);
 
                 /* Fire Action event if necessary */
                 if (myFilter != null) {
@@ -437,7 +437,7 @@ public class MetisReportManager<F>
          */
         private void restore() {
             /* Determine next sibling */
-            Node myNextSibling = thePrevious.getNextSibling();
+            final Node myNextSibling = thePrevious.getNextSibling();
 
             /* Restore the element */
             if (myNextSibling == null) {

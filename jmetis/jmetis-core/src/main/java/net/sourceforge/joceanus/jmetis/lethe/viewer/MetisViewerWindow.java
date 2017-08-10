@@ -181,7 +181,7 @@ public abstract class MetisViewerWindow<N, I>
      * @throws OceanusException on error
      */
     private void loadCSS(final String pName) throws OceanusException {
-        String myCSS = TethysResourceBuilder.loadResourceToString(MetisViewerWindow.class, pName);
+        final String myCSS = TethysResourceBuilder.loadResourceToString(MetisViewerWindow.class, pName);
         theHtml.setCSSContent(myCSS);
     }
 
@@ -190,12 +190,12 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void initialiseTree() {
         /* Loop through the root children */
-        Iterator<MetisViewerEntry> myIterator = theDataManager.rootIterator();
+        final Iterator<MetisViewerEntry> myIterator = theDataManager.rootIterator();
         while (myIterator.hasNext()) {
-            MetisViewerEntry myEntry = myIterator.next();
+            final MetisViewerEntry myEntry = myIterator.next();
 
             /* Create a new root entry */
-            TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
+            final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */
@@ -203,14 +203,14 @@ public abstract class MetisViewerWindow<N, I>
         }
 
         /* Listen to the data manager */
-        TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
+        final TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.FOCUS, this::handleFocusEvent));
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.VISIBILITY, this::handleVisibilityEvent));
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.VALUE, this::handleValueEvent));
         theRegistrations.add(myRegistrar.addEventListener(MetisViewerEvent.ENTRY, this::handleEntryEvent));
 
         /* Select the focused item */
-        MetisViewerEntry myEntry = theDataManager.getFocus();
+        final MetisViewerEntry myEntry = theDataManager.getFocus();
         if (myEntry != null) {
             theTree.lookUpAndSelectItem(myEntry.getUniqueName());
         }
@@ -221,10 +221,10 @@ public abstract class MetisViewerWindow<N, I>
      */
     protected void terminateTree() {
         /* Loop through registrations */
-        TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
-        Iterator<TethysEventRegistration<MetisViewerEvent>> myIterator = theRegistrations.iterator();
+        final TethysEventRegistrar<MetisViewerEvent> myRegistrar = theDataManager.getEventRegistrar();
+        final Iterator<TethysEventRegistration<MetisViewerEvent>> myIterator = theRegistrations.iterator();
         while (myIterator.hasNext()) {
-            TethysEventRegistration<MetisViewerEvent> myRegistration = myIterator.next();
+            final TethysEventRegistration<MetisViewerEvent> myRegistration = myIterator.next();
 
             /* Remove the registration */
             myRegistrar.removeEventListener(myRegistration);
@@ -241,15 +241,15 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void createChildEntries(final TethysTreeItem<MetisViewerEntry, N, I> pItem) {
         /* Access the item */
-        MetisViewerEntry myItem = pItem.getItem();
+        final MetisViewerEntry myItem = pItem.getItem();
 
         /* Loop through the children */
-        Iterator<MetisViewerEntry> myIterator = myItem.childIterator();
+        final Iterator<MetisViewerEntry> myIterator = myItem.childIterator();
         while (myIterator.hasNext()) {
-            MetisViewerEntry myEntry = myIterator.next();
+            final MetisViewerEntry myEntry = myIterator.next();
 
             /* Create a new child entry */
-            TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addChildItem(pItem, myEntry.getUniqueName(), myEntry);
+            final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addChildItem(pItem, myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */
@@ -263,8 +263,8 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void handleFocusEvent(final TethysEvent<MetisViewerEvent> pEvent) {
         /* Access item and check whether it is the currently selected item */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        boolean isSelected = myEntry.equals(theTree.getSelectedItem());
+        final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
+        final boolean isSelected = myEntry.equals(theTree.getSelectedItem());
 
         /* If it is not the selected item */
         if (!isSelected) {
@@ -279,8 +279,8 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void handleVisibilityEvent(final TethysEvent<MetisViewerEvent> pEvent) {
         /* Look up item and set visibility */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
+        final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
+        final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
         if (myTreeItem != null) {
             myTreeItem.setVisible(myEntry.isVisible());
         }
@@ -292,9 +292,9 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void handleValueEvent(final TethysEvent<MetisViewerEvent> pEvent) {
         /* Look up item and rebuild */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        boolean isSelected = myEntry.equals(theTree.getSelectedItem());
-        TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
+        final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
+        final boolean isSelected = myEntry.equals(theTree.getSelectedItem());
+        final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
 
         /* Remove the children of the item and rebuild them */
         myTreeItem.removeChildren();
@@ -313,8 +313,8 @@ public abstract class MetisViewerWindow<N, I>
      */
     private void handleEntryEvent(final TethysEvent<MetisViewerEvent> pEvent) {
         /* Look up parent item */
-        MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        MetisViewerEntry myParent = myEntry.getParent();
+        final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
+        final MetisViewerEntry myParent = myEntry.getParent();
 
         /* If there is no parent */
         if (myParent == null) {
@@ -324,7 +324,7 @@ public abstract class MetisViewerWindow<N, I>
             /* else we are a child */
         } else {
             /* Look up the parent and add child */
-            TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myParent.getUniqueName());
+            final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myParent.getUniqueName());
             theTree.addChildItem(myTreeItem, myEntry.getUniqueName(), myEntry);
         }
     }

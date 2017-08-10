@@ -26,18 +26,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -132,9 +132,9 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLObject(final Object pObject) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDifference
-                                                                 ? ((MetisDataDifference) pObject).getObject()
-                                                                 : pObject;
+        final Object myObject = pObject instanceof MetisDataDifference
+                                                                       ? ((MetisDataDifference) pObject).getObject()
+                                                                       : pObject;
 
         /* If we are DataContents */
         if (myObject instanceof MetisDataContents) {
@@ -212,7 +212,7 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLContents(final MetisDataContents pContents) {
         /* Access details */
-        MetisFields myFields = pContents.getDataFields();
+        final MetisFields myFields = pContents.getDataFields();
         MetisValueSet myValues = null;
         MetisDataValues myValueCtl = null;
         MetisFieldSetItem myItem = null;
@@ -231,11 +231,11 @@ public class MetisViewerFormatter {
         theBuilder.newTitleCell(COLUMN_VALUE);
 
         /* Loop through the fields */
-        Iterator<MetisField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisField> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            MetisField myField = myIterator.next();
-            MetisFieldStorage myStorage = myField.getStorage();
+            final MetisField myField = myIterator.next();
+            final MetisFieldStorage myStorage = myField.getStorage();
             Object myValue = MetisFieldValue.SKIP;
 
             /* Access the value */
@@ -273,7 +273,7 @@ public class MetisViewerFormatter {
     private void formatHTMLListItem(final List<?> pList,
                                     final int pIndex) {
         /* Obtain the object */
-        Object myObject = pList.get(pIndex - 1);
+        final Object myObject = pList.get(pIndex - 1);
 
         /* Format the object */
         formatHTMLObject(myObject);
@@ -295,10 +295,10 @@ public class MetisViewerFormatter {
         /* If there are items in the list */
         if (!pList.isEmpty()) {
             /* Calculate start point */
-            int myStart = (pStart - 1) * ITEMS_PER_PAGE;
+            final int myStart = (pStart - 1) * ITEMS_PER_PAGE;
 
             /* Create iterator at start */
-            Iterator<?> myIterator = pList.listIterator(myStart);
+            final Iterator<?> myIterator = pList.listIterator(myStart);
 
             /* Loop up to the limit */
             int myCount = ITEMS_PER_PAGE;
@@ -306,7 +306,7 @@ public class MetisViewerFormatter {
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
-                Object myObject = myIterator.next();
+                final Object myObject = myIterator.next();
 
                 /* Format the row */
                 theBuilder.newTableRow();
@@ -338,7 +338,7 @@ public class MetisViewerFormatter {
             int myIndex = myCount + 1;
 
             /* Create iterator and shift to start */
-            Iterator<?> myIterator = pMap.entrySet().iterator();
+            final Iterator<?> myIterator = pMap.entrySet().iterator();
             if (myCount > 0) {
                 /* Skip leading entries */
                 while (myIterator.hasNext()
@@ -352,7 +352,7 @@ public class MetisViewerFormatter {
             while (myIterator.hasNext()
                    && (myCount-- > 0)) {
                 /* Access the key and value */
-                Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
+                final Map.Entry<?, ?> myEntry = Map.Entry.class.cast(myIterator.next());
 
                 /* Format the row */
                 theBuilder.newTableRow();

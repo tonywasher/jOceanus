@@ -151,7 +151,7 @@ public abstract class ThemisSvnManager<N, I> {
         theTabs = theGuiFactory.newTabPane();
 
         /* Create the Preferences Tab */
-        MetisPreferenceView<N, I> myPrefPanel = new MetisPreferenceView<>(theGuiFactory, thePrefMgr);
+        final MetisPreferenceView<N, I> myPrefPanel = new MetisPreferenceView<>(theGuiFactory, thePrefMgr);
         theTabs.addTabItem("Status", theThreadMgr.getStatusManager());
         theTabs.addTabItem("Preferences", myPrefPanel);
 
@@ -164,10 +164,10 @@ public abstract class ThemisSvnManager<N, I> {
         theMenuBar = theGuiFactory.newMenuBar();
 
         /* Create the Tasks menu */
-        TethysMenuSubMenu<ThemisSvnMenuItem> myTasks = theMenuBar.newSubMenu(ThemisSvnMenuItem.TASKS);
+        final TethysMenuSubMenu<ThemisSvnMenuItem> myTasks = theMenuBar.newSubMenu(ThemisSvnMenuItem.TASKS);
 
         /* Create the Help menu */
-        TethysMenuSubMenu<ThemisSvnMenuItem> myHelp = theMenuBar.newSubMenu(ThemisSvnMenuItem.HELP);
+        final TethysMenuSubMenu<ThemisSvnMenuItem> myHelp = theMenuBar.newSubMenu(ThemisSvnMenuItem.HELP);
 
         /* Create the Viewer menuItem */
         myHelp.newMenuItem(ThemisSvnMenuItem.DATAVIEWER, e -> handleDataViewer());
@@ -190,7 +190,7 @@ public abstract class ThemisSvnManager<N, I> {
         theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> completeTask(e.getDetails()));
 
         /* Create and run discoverData thread */
-        ThemisDiscoverData<N, I> myThread = new ThemisDiscoverData<>();
+        final ThemisDiscoverData<N, I> myThread = new ThemisDiscoverData<>();
         runThread(myThread);
     }
 
@@ -232,30 +232,30 @@ public abstract class ThemisSvnManager<N, I> {
      */
     protected void setSubversionData(final ThemisDiscoverData<?, ?> pData) {
         /* Declare repository to data manager */
-        MetisViewerEntry myRepEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
-        ThemisSvnRepository myRepository = pData.getRepository();
+        final MetisViewerEntry myRepEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
+        final ThemisSvnRepository myRepository = pData.getRepository();
         myRepEntry.setObject(myRepository);
         myRepEntry.setFocus();
 
         /* Declare WorkingCopySet to data manager */
-        MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
-        SvnWorkingCopySet myWorkingSet = pData.getWorkingCopySet();
+        final MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
+        final SvnWorkingCopySet myWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(myWorkingSet);
 
         /* Declare Extract Plans to data manager */
-        MetisViewerEntry myPlanEntry = theViewerMgr.newEntry(theDataEntry, "ExtractPlans");
+        final MetisViewerEntry myPlanEntry = theViewerMgr.newEntry(theDataEntry, "ExtractPlans");
         pData.declareExtractPlans(theViewerMgr, myPlanEntry);
 
         /* Access the git menu */
-        TethysMenuSubMenu<?> myMenu = theMenuBar.lookUpSubMenu(ThemisThreadId.CREATEGITREPO);
+        final TethysMenuSubMenu<?> myMenu = theMenuBar.lookUpSubMenu(ThemisThreadId.CREATEGITREPO);
         myMenu.clearItems();
 
         /* If we have a repository */
         if (myRepository != null) {
             /* Loop through the components */
-            Iterator<ThemisSvnComponent> myIterator = myRepository.getComponents().iterator();
+            final Iterator<ThemisSvnComponent> myIterator = myRepository.getComponents().iterator();
             while (myIterator.hasNext()) {
-                ThemisSvnComponent myComp = myIterator.next();
+                final ThemisSvnComponent myComp = myIterator.next();
 
                 /* Create a new menu item for the component */
                 myMenu.newMenuItem(myComp, e -> createGitRepo(myComp));
@@ -272,7 +272,7 @@ public abstract class ThemisSvnManager<N, I> {
      */
     protected void setGitData(final ThemisCreateGitRepo<?, ?> pGit) {
         /* Declare repository to data manager */
-        ThemisGitRepository myRepo = pGit.getGitRepo();
+        final ThemisGitRepository myRepo = pGit.getGitRepo();
         theGitEntry.setObject(myRepo);
         theGitEntry.setVisible(true);
         theGitEntry.setFocus();
@@ -286,7 +286,7 @@ public abstract class ThemisSvnManager<N, I> {
         /* If this is the discoverData thread */
         if (pTask instanceof ThemisDiscoverData) {
             /* Access correctly */
-            ThemisDiscoverData<?, ?> myThread = (ThemisDiscoverData<?, ?>) pTask;
+            final ThemisDiscoverData<?, ?> myThread = (ThemisDiscoverData<?, ?>) pTask;
 
             /* Report data to manager */
             setSubversionData(myThread);
@@ -295,7 +295,7 @@ public abstract class ThemisSvnManager<N, I> {
         /* If this is the discoverData thread */
         if (pTask instanceof ThemisCreateGitRepo) {
             /* Access correctly */
-            ThemisCreateGitRepo<?, ?> myThread = (ThemisCreateGitRepo<?, ?>) pTask;
+            final ThemisCreateGitRepo<?, ?> myThread = (ThemisCreateGitRepo<?, ?>) pTask;
 
             /* Report data to manager */
             setGitData(myThread);
@@ -310,7 +310,7 @@ public abstract class ThemisSvnManager<N, I> {
      */
     private void backupSubversion() {
         /* Create the worker thread */
-        ThemisSubversionBackup<N, I> myThread = new ThemisSubversionBackup<>();
+        final ThemisSubversionBackup<N, I> myThread = new ThemisSubversionBackup<>();
         runThread(myThread);
     }
 
@@ -319,7 +319,7 @@ public abstract class ThemisSvnManager<N, I> {
      */
     private void restoreSubversion() {
         /* Create the worker thread */
-        ThemisSubversionRestore<N, I> myThread = new ThemisSubversionRestore<>();
+        final ThemisSubversionRestore<N, I> myThread = new ThemisSubversionRestore<>();
         runThread(myThread);
     }
 
@@ -329,7 +329,7 @@ public abstract class ThemisSvnManager<N, I> {
      */
     private void createGitRepo(final ThemisSvnComponent pSource) {
         /* Create the worker thread */
-        ThemisCreateGitRepo<N, I> myThread = new ThemisCreateGitRepo<>(pSource);
+        final ThemisCreateGitRepo<N, I> myThread = new ThemisCreateGitRepo<>(pSource);
         runThread(myThread);
     }
 

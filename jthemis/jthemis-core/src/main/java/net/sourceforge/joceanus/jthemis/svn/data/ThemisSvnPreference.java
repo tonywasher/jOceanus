@@ -174,7 +174,7 @@ public interface ThemisSvnPreference {
             }
 
             /* Make sure that the password is specified */
-            MetisCharArrayPreference<ThemisSvnPreferenceKey> myPassPref = getCharArrayPreference(ThemisSvnPreferenceKey.PASS);
+            final MetisCharArrayPreference<ThemisSvnPreferenceKey> myPassPref = getCharArrayPreference(ThemisSvnPreferenceKey.PASS);
             if (!myPassPref.isAvailable()) {
                 myPassPref.setValue("Secret".toCharArray());
             }

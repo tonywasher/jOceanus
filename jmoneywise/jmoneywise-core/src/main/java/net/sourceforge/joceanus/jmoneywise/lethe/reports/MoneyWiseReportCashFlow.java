@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeAttribute;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
@@ -135,6 +136,11 @@ public class MoneyWiseReportCashFlow
             /* Create the new filter */
             return new PayeeFilter((PayeeBucket) pSource);
         }
+        return null;
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         return null;
     }
 }

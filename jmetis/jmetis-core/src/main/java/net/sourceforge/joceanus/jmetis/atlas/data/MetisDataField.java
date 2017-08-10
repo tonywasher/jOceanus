@@ -241,7 +241,7 @@ public class MetisDataField {
         }
 
         /* Access as MetisDataField */
-        MetisDataField myThat = (MetisDataField) pThat;
+        final MetisDataField myThat = (MetisDataField) pThat;
 
         /* Must belong to the same anchor */
         if (!theAnchor.equals(myThat.getAnchor())) {

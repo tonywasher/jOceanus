@@ -127,7 +127,7 @@ public class ThemisBackup {
                 thePreferences.getCharArrayValue(ThemisSvnPreferenceKey.PASS));
 
         /* Access a default client manager */
-        SVNClientManager myManager = SVNClientManager.newInstance();
+        final SVNClientManager myManager = SVNClientManager.newInstance();
         myManager.setAuthenticationManager(theAuth);
 
         /* Access Administration and Look clients */
@@ -147,23 +147,23 @@ public class ThemisBackup {
         /* Protect against exceptions */
         try {
             /* Open file */
-            GordianZipReadFile myFile = new GordianZipReadFile(pZipFile);
+            final GordianZipReadFile myFile = new GordianZipReadFile(pZipFile);
 
             /* Install an event handler */
             theAdminClient.setEventHandler(new SubversionHandler());
 
             /* Obtain the hash bytes from the file */
-            byte[] myHashBytes = myFile.getHashBytes();
+            final byte[] myHashBytes = myFile.getHashBytes();
 
             /* Obtain the initialised password hash */
-            GordianKeySetHash myHash = pSecurity.resolveKeySetHash(myHashBytes, pZipFile.getName());
+            final GordianKeySetHash myHash = pSecurity.resolveKeySetHash(myHashBytes, pZipFile.getName());
 
             /* Associate this keySetHash with the ZipFile */
             myFile.setKeySetHash(myHash);
 
             /* Access the relevant entry and obtain the number of revisions */
-            GordianZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
-            Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
+            final GordianZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
+            final Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
 
             /* Declare the stage */
             theStatus.setNewStage("Repository");
@@ -172,7 +172,7 @@ public class ThemisBackup {
             theStatus.setNumSteps(myNumRevs.intValue());
 
             /* Access the input stream for the relevant file */
-            InputStream myStream = myFile.getInputStream(myEntry);
+            final InputStream myStream = myFile.getInputStream(myEntry);
 
             /* Re-create the repository */
             theAdminClient.doCreateRepository(pRepository, null, true, true);
@@ -191,7 +191,7 @@ public class ThemisBackup {
      */
     private String buildURL(final String pName) {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
         myBuilder.append(thePreferences.getStringValue(ThemisSvnPreferenceKey.BASE));
@@ -219,22 +219,22 @@ public class ThemisBackup {
                                   final File pRepository,
                                   final File pBackupDir) throws OceanusException {
         /* Access the name of the repository */
-        String myName = pRepository.getName();
-        File myEntryName = new File(DATA_NAME);
+        final String myName = pRepository.getName();
+        final File myEntryName = new File(DATA_NAME);
 
         /* Determine the prefix for backups */
-        String myPrefix = thePreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
+        final String myPrefix = thePreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
         File myZipName = null;
-        long revLast;
+        final long revLast;
 
         /* Protect against exceptions */
         try {
             /* Determine the repository name */
-            String myRepoName = buildURL(myName);
-            SVNURL myURL = SVNURL.parseURIEncoded(myRepoName);
+            final String myRepoName = buildURL(myName);
+            final SVNURL myURL = SVNURL.parseURIEncoded(myRepoName);
 
             /* Access the repository */
-            SVNRepository myRepo = SVNRepositoryFactory.create(myURL);
+            final SVNRepository myRepo = SVNRepositoryFactory.create(myURL);
             myRepo.setAuthenticationManager(theAuth);
 
             /* Determine the most recent revision # in the repository */
@@ -246,11 +246,11 @@ public class ThemisBackup {
             /* If the backup file exists */
             if (myZipName.exists()) {
                 /* Access the last modified time of the backup */
-                Date myDate = new Date();
+                final Date myDate = new Date();
                 myDate.setTime(myZipName.lastModified());
 
                 /* Access the revision for the zip file */
-                long revZip = myRepo.getDatedRevision(myDate);
+                final long revZip = myRepo.getDatedRevision(myDate);
 
                 /* If the Backup date is later than the repository date */
                 if (revZip >= revLast) {
@@ -263,20 +263,20 @@ public class ThemisBackup {
         }
 
         /* Declare the number of revisions */
-        int myNumRevisions = (int) revLast;
+        final int myNumRevisions = (int) revLast;
         theStatus.setNumSteps(myNumRevisions);
 
         /* Note presumption of failure */
         boolean doDelete = true;
 
         /* Create a new password hash */
-        GordianKeySetHash myHash = pManager.newKeySetHash(myName);
+        final GordianKeySetHash myHash = pManager.newKeySetHash(myName);
 
         /* Protect against exceptions */
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);
              OutputStream myStream = myZipFile.getOutputStream(myEntryName)) {
             /* Access the current entry and set the number of revisions */
-            GordianZipFileEntry myEntry = myZipFile.getCurrentEntry();
+            final GordianZipFileEntry myEntry = myZipFile.getCurrentEntry();
             myEntry.setUserLongProperty(PROP_NUMREV, revLast);
 
             /* Dump the data to the zip file */
@@ -313,8 +313,8 @@ public class ThemisBackup {
         theAdminClient.setEventHandler(new SubversionHandler());
 
         /* Determine the repository and backup directories directory */
-        File myRepo = new File(thePreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
-        File myBackup = new File(thePreferences.getStringValue(ThemisSvnPreferenceKey.BACKUP));
+        final File myRepo = new File(thePreferences.getStringValue(ThemisSvnPreferenceKey.INSTALL));
+        final File myBackup = new File(thePreferences.getStringValue(ThemisSvnPreferenceKey.BACKUP));
 
         /* Report start of backup */
         theStatus.initTask("Backing up subVersion");
@@ -365,7 +365,7 @@ public class ThemisBackup {
         public void handleAdminEvent(final SVNAdminEvent pEvent,
                                      final double arg1) throws SVNException {
             /* If this is a step */
-            SVNAdminEventAction myAction = pEvent.getAction();
+            final SVNAdminEventAction myAction = pEvent.getAction();
             if (myAction.equals(SVNAdminEventAction.REVISION_DUMPED)
                 || myAction.equals(SVNAdminEventAction.REVISION_LOADED)) {
                 try {

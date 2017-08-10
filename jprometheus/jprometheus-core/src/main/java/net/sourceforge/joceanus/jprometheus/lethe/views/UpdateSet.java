@@ -92,7 +92,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * The version.
      */
-    private int theVersion = 0;
+    private int theVersion;
 
     /**
      * Are we editing?
@@ -212,7 +212,7 @@ public class UpdateSet<E extends Enum<E>>
     public <L extends DataList<?, E>> L getDataList(final E pDataType,
                                                     final Class<L> pClass) {
         /* Locate an existing entry */
-        UpdateEntry<?, E> myEntry = theMap.get(pDataType);
+        final UpdateEntry<?, E> myEntry = theMap.get(pDataType);
 
         /* Cast correctly */
         return myEntry != null
@@ -227,15 +227,15 @@ public class UpdateSet<E extends Enum<E>>
      */
     private Object findEntryValue(final String pName) {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access entry */
-            UpdateEntry<?, E> myEntry = myIterator.next();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
 
             /* If we have found the entry */
             if (pName.equals(myEntry.getName())) {
                 /* Return the value */
-                DataList<?, ?> myList = myEntry.getDataList();
+                final DataList<?, ?> myList = myEntry.getDataList();
                 return (myList == null)
                                         ? MetisFieldValue.SKIP
                                         : myList;
@@ -251,17 +251,17 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void incrementVersion() {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getNewProfile("incrementVersion");
+        final MetisProfile myTask = theControl.getNewProfile("incrementVersion");
 
         /* Increment the version */
         theVersion++;
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* Increment the version if the list exists */
             if (myDataList != null) {
@@ -288,7 +288,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void rewindToVersion(final int pVersion) {
         /* Obtain the active profile */
-        MetisProfile myTask = theControl.getActiveTask();
+        final MetisProfile myTask = theControl.getActiveTask();
         MetisProfile mySubTask = myTask.startTask("reWindToVersion");
 
         /* Record the version */
@@ -298,8 +298,8 @@ public class UpdateSet<E extends Enum<E>>
         Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* If the list exists */
             if (myDataList != null) {
@@ -316,8 +316,8 @@ public class UpdateSet<E extends Enum<E>>
         myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* If the list exists */
             if (myDataList != null) {
@@ -440,9 +440,9 @@ public class UpdateSet<E extends Enum<E>>
         /* Protect against exceptions */
         try {
             /* Loop through the items in the list */
-            Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+            final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
             while (myIterator.hasNext()) {
-                UpdateEntry<?, E> myEntry = myIterator.next();
+                final UpdateEntry<?, E> myEntry = myIterator.next();
 
                 /* Note the new step */
                 myTask.startTask(myEntry.getName());
@@ -470,9 +470,9 @@ public class UpdateSet<E extends Enum<E>>
         myTask = myTask.startTask("commitChanges");
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            UpdateEntry<?, E> myEntry = myIterator.next();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
 
             /* Note the new step */
             myTask.startTask(myEntry.getName());
@@ -498,9 +498,9 @@ public class UpdateSet<E extends Enum<E>>
         myTask = myTask.startTask("rollBackChanges");
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            UpdateEntry<?, E> myEntry = myIterator.next();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
 
             /* Note the new step */
             myTask.startTask(myEntry.getName());
@@ -528,11 +528,11 @@ public class UpdateSet<E extends Enum<E>>
      */
     public boolean hasErrors() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access entry */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* Determine whether there are errors */
             if ((myDataList != null) && (myDataList.hasErrors())) {
@@ -553,11 +553,11 @@ public class UpdateSet<E extends Enum<E>>
         myTask = myTask.startTask("validate");
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* if list exists */
             if (myDataList != null) {
@@ -579,12 +579,12 @@ public class UpdateSet<E extends Enum<E>>
      */
     public MetisEditState getEditState() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         MetisEditState myState = MetisEditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -604,7 +604,7 @@ public class UpdateSet<E extends Enum<E>>
     public void processCommand(final PrometheusUIEvent pCmd,
                                final MetisErrorPanel<?, ?> pError) {
         /* Create a new profile */
-        MetisProfile myTask = theControl.getNewProfile("EditCommand");
+        final MetisProfile myTask = theControl.getNewProfile("EditCommand");
 
         /* Switch on command */
         switch (pCmd) {
@@ -622,7 +622,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
+        final MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -643,7 +643,7 @@ public class UpdateSet<E extends Enum<E>>
                                    final int pVersion,
                                    final MetisErrorPanel<?, ?> pError) {
         /* Create a new profile */
-        MetisProfile myTask = theControl.getNewProfile("ItemCommand");
+        final MetisProfile myTask = theControl.getNewProfile("ItemCommand");
 
         /* Switch on command */
         switch (pCmd) {
@@ -661,7 +661,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
+        final MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -678,11 +678,11 @@ public class UpdateSet<E extends Enum<E>>
      */
     private void condenseHistory(final int pNewVersion) {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
+        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry<?, E> myEntry = myIterator.next();
-            DataList<?, E> myDataList = myEntry.getDataList();
+            final UpdateEntry<?, E> myEntry = myIterator.next();
+            final DataList<?, E> myDataList = myEntry.getDataList();
 
             /* Condense history in the list */
             if (myDataList != null) {

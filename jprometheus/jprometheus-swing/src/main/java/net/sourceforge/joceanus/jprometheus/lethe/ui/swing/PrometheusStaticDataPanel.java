@@ -171,7 +171,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theUtilitySet = pUtilitySet;
 
         /* Obtain GUI Factory */
-        TethysSwingGuiFactory myFactory = pUtilitySet.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pUtilitySet.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -196,7 +196,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         thePanels = new ArrayList<>();
 
         /* Create selection button and label */
-        TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
+        final TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
         theSelectButton = myFactory.newScrollButton();
 
         /* Create the CheckBox */
@@ -210,7 +210,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theNewCard = myFactory.newCardPane();
 
         /* Create the layout for the selection panel */
-        TethysSwingBoxPaneManager mySubPanel = myFactory.newHBoxPane();
+        final TethysSwingBoxPaneManager mySubPanel = myFactory.newHBoxPane();
         mySubPanel.addNode(myLabel);
         mySubPanel.addNode(theSelectButton);
         mySubPanel.addSpacer();
@@ -220,7 +220,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theSelectionPanel.setEast(theNewCard);
 
         /* Create the header panel */
-        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelectionPanel);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -239,7 +239,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
         theActionButtons.setVisible(false);
 
         /* Add listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handlePanelSelection());
         theSelectButton.setMenuConfigurator(e -> buildDataMenu());
         theDisabledCheckBox.getEventRegistrar().addEventListener(e -> showDisabled(theDisabledCheckBox.isSelected()));
@@ -292,8 +292,8 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      * Handle panel selection.
      */
     private void handlePanelSelection() {
-        PrometheusStaticDataTable<?, ?, ?, E> myPanel = theSelectButton.getValue();
-        String myName = myPanel.getItemType().getFieldName();
+        final PrometheusStaticDataTable<?, ?, ?, E> myPanel = theSelectButton.getValue();
+        final String myName = myPanel.getItemType().getFieldName();
         theTableCard.selectCard(myName);
         theNewCard.selectCard(myName);
         showNewButton();
@@ -304,7 +304,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      */
     private void handleErrorPanel() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelectionPanel.setVisible(!isError);
@@ -328,16 +328,16 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
 
         /* Record active item */
         TethysScrollMenuItem<PrometheusStaticDataTable<?, ?, ?, E>> myActive = null;
-        String myActiveName = theTableCard.getActiveName();
+        final String myActiveName = theTableCard.getActiveName();
 
         /* Loop through the panels */
-        Iterator<PrometheusStaticDataTable<?, ?, ?, E>> myIterator = thePanels.iterator();
+        final Iterator<PrometheusStaticDataTable<?, ?, ?, E>> myIterator = thePanels.iterator();
         while (myIterator.hasNext()) {
-            PrometheusStaticDataTable<?, ?, ?, E> myTable = myIterator.next();
+            final PrometheusStaticDataTable<?, ?, ?, E> myTable = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            String myName = myTable.getItemType().getFieldName();
-            TethysScrollMenuItem<PrometheusStaticDataTable<?, ?, ?, E>> myItem = theDataMenu.addItem(myTable, myName);
+            final String myName = myTable.getItemType().getFieldName();
+            final TethysScrollMenuItem<PrometheusStaticDataTable<?, ?, ?, E>> myItem = theDataMenu.addItem(myTable, myName);
 
             /* If this is the active panel */
             if (myName.equals(myActiveName)) {
@@ -371,13 +371,13 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
     public <L extends StaticList<T, S, E>, T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface> void addStatic(final E pItemType,
                                                                                                                               final Class<L> pListClass) {
         /* Create the new panel */
-        PrometheusStaticDataTable<L, T, S, E> myPanel = new PrometheusStaticDataTable<>(theControl, theUpdateSet, theUtilitySet, theError, pItemType, pListClass);
+        final PrometheusStaticDataTable<L, T, S, E> myPanel = new PrometheusStaticDataTable<>(theControl, theUpdateSet, theUtilitySet, theError, pItemType, pListClass);
 
         /* Add the listener for the panel */
         myPanel.getEventRegistrar().addEventListener(e -> setVisibility());
 
         /* Access list name */
-        String myName = pItemType.getFieldName();
+        final String myName = pItemType.getFieldName();
 
         /* Add to the card panels */
         theTableCard.addCard(myName, myPanel);
@@ -395,7 +395,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      */
     public void determineFocus() {
         /* Request the focus */
-        PrometheusStaticDataTable<?, ?, ?, E> myPanel = theTableCard.getActiveCard();
+        final PrometheusStaticDataTable<?, ?, ?, E> myPanel = theTableCard.getActiveCard();
         if (myPanel != null) {
             myPanel.determineFocus(theViewerEntry);
         }
@@ -445,13 +445,13 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      */
     public void selectStatic(final StaticData<?, ?, E> pStatic) {
         /* Access the item type */
-        E myType = pStatic.getItemType();
-        String myName = myType.getFieldName();
+        final E myType = pStatic.getItemType();
+        final String myName = myType.getFieldName();
 
         /* Access the panel */
         if (theTableCard.selectCard(myName)) {
             /* Update selection */
-            PrometheusStaticDataTable<?, ?, ?, E> myPanel = theTableCard.getActiveCard();
+            final PrometheusStaticDataTable<?, ?, ?, E> myPanel = theTableCard.getActiveCard();
             myPanel.selectStatic(pStatic);
             setSelection(myName);
         }
@@ -510,9 +510,9 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      */
     private void showNewButton() {
         /* Set visibility of New Button */
-        PrometheusStaticDataTable<?, ?, ?, E> myPanel = theSelectButton.getValue();
-        boolean showNew = myPanel != null
-                          && !myPanel.isFull();
+        final PrometheusStaticDataTable<?, ?, ?, E> myPanel = theSelectButton.getValue();
+        final boolean showNew = myPanel != null
+                                && !myPanel.isFull();
         theNewCard.setVisible(showNew);
     }
 
@@ -521,7 +521,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
      */
     protected void setVisibility() {
         /* Determine whether we have updates */
-        boolean hasUpdates = hasUpdates();
+        final boolean hasUpdates = hasUpdates();
 
         /* Update the action buttons */
         theActionButtons.setEnabled(true);

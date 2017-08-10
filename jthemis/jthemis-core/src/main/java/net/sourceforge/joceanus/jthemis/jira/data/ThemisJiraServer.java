@@ -119,13 +119,13 @@ public class ThemisJiraServer {
         thePriorities = new HashMap<>();
 
         /* Access the Jira preferences */
-        ThemisJiraPreferences myPreferences = pManager.getPreferenceSet(ThemisJiraPreferences.class);
-        String myBaseUrl = myPreferences.getStringValue(ThemisJiraPreferenceKey.SERVER);
-        String myUser = myPreferences.getStringValue(ThemisJiraPreferenceKey.USER);
-        char[] myPass = myPreferences.getCharArrayValue(ThemisJiraPreferenceKey.PASS);
+        final ThemisJiraPreferences myPreferences = pManager.getPreferenceSet(ThemisJiraPreferences.class);
+        final String myBaseUrl = myPreferences.getStringValue(ThemisJiraPreferenceKey.SERVER);
+        final String myUser = myPreferences.getStringValue(ThemisJiraPreferenceKey.USER);
+        final char[] myPass = myPreferences.getCharArrayValue(ThemisJiraPreferenceKey.PASS);
 
         /* Access the Jira Client */
-        String myAuth = myUser + ":" + new String(myPass);
+        final String myAuth = myUser + ":" + new String(myPass);
         theClient = new ThemisHTTPJiraClient(myBaseUrl, myAuth);
 
         /* Allocate the security class */
@@ -219,7 +219,7 @@ public class ThemisJiraServer {
             /* If we have source to parse */
             LocalDateTime myResult = null;
             if (pSource != null) {
-                TemporalAccessor myParsed = DATE_FORMATTER.parse(pSource);
+                final TemporalAccessor myParsed = DATE_FORMATTER.parse(pSource);
                 myResult = LocalDateTime.from(myParsed);
             }
 
@@ -237,7 +237,7 @@ public class ThemisJiraServer {
      */
     public ThemisJiraProject getProject(final String pProjectKey) throws OceanusException {
         /* Look up project in the cache */
-        ThemisJiraProject myProject = theProjects.get(pProjectKey);
+        final ThemisJiraProject myProject = theProjects.get(pProjectKey);
 
         /* If not in the cache */
         if (myProject == null) {
@@ -257,13 +257,13 @@ public class ThemisJiraServer {
      */
     public ThemisJiraIssue getIssue(final String pKey) throws OceanusException {
         /* Determine the project key for issue */
-        int iPos = pKey.indexOf('-');
+        final int iPos = pKey.indexOf('-');
         if (iPos != -1) {
             /* Access project key */
-            String myKey = pKey.substring(0, iPos);
+            final String myKey = pKey.substring(0, iPos);
 
             /* Look for project and load issue */
-            ThemisJiraProject myProject = getProject(myKey);
+            final ThemisJiraProject myProject = getProject(myKey);
             return myProject.getIssue(pKey);
         }
 
@@ -301,7 +301,7 @@ public class ThemisJiraServer {
      */
     public JiraIssueLinkType getIssueLinkType(final String pName) throws OceanusException {
         /* Look up issueType in the cache */
-        JiraIssueLinkType myType = theIssueLinkTypes.get(pName);
+        final JiraIssueLinkType myType = theIssueLinkTypes.get(pName);
 
         /* If not in the cache */
         if (myType == null) {
@@ -321,7 +321,7 @@ public class ThemisJiraServer {
      */
     public JiraIssueType getIssueType(final String pName) throws OceanusException {
         /* Look up issueType in the cache */
-        JiraIssueType myType = theIssueTypes.get(pName);
+        final JiraIssueType myType = theIssueTypes.get(pName);
 
         /* If not in the cache */
         if (myType == null) {
@@ -341,7 +341,7 @@ public class ThemisJiraServer {
      */
     public JiraStatusCategory getStatusCategory(final String pName) throws OceanusException {
         /* Look up status in the cache */
-        JiraStatusCategory myCategory = theStatusCategories.get(pName);
+        final JiraStatusCategory myCategory = theStatusCategories.get(pName);
 
         /* If not in the cache */
         if (myCategory == null) {
@@ -361,7 +361,7 @@ public class ThemisJiraServer {
      */
     public JiraStatus getStatus(final String pName) throws OceanusException {
         /* Look up status in the cache */
-        JiraStatus myStatus = theStatuses.get(pName);
+        final JiraStatus myStatus = theStatuses.get(pName);
 
         /* If not in the cache */
         if (myStatus == null) {
@@ -381,7 +381,7 @@ public class ThemisJiraServer {
      */
     public JiraResolution getResolution(final String pName) throws OceanusException {
         /* Look up resolution in the cache */
-        JiraResolution myResolution = theResolutions.get(pName);
+        final JiraResolution myResolution = theResolutions.get(pName);
 
         /* If not in the cache */
         if (myResolution == null) {
@@ -401,7 +401,7 @@ public class ThemisJiraServer {
      */
     public JiraPriority getPriority(final String pName) throws OceanusException {
         /* Look up priority in the cache */
-        JiraPriority myPriority = thePriorities.get(pName);
+        final JiraPriority myPriority = thePriorities.get(pName);
 
         /* If not in the cache */
         if (myPriority == null) {
@@ -421,14 +421,14 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the project keys */
-            JSONArray myProjects = theClient.getProjects();
-            int myNumTypes = myProjects.length();
+            final JSONArray myProjects = theClient.getProjects();
+            final int myNumTypes = myProjects.length();
             for (int i = 0; i < myNumTypes; i++) {
                 /* Access the type and register it */
                 JSONObject myProjDtl = myProjects.getJSONObject(i);
-                String myKey = myProjDtl.getString(ThemisJiraProject.FIELD_KEY);
+                final String myKey = myProjDtl.getString(ThemisJiraProject.FIELD_KEY);
                 myProjDtl = theClient.getProject(myKey);
-                ThemisJiraProject myProject = new ThemisJiraProject(this, myProjDtl);
+                final ThemisJiraProject myProject = new ThemisJiraProject(this, myProjDtl);
                 theProjects.put(myKey, myProject);
             }
         } catch (JSONException e) {
@@ -445,13 +445,13 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the issue link types */
-            JSONObject myTypes = theClient.getIssueLinkTypes();
-            JSONArray myEntries = myTypes.getJSONArray("issueLinkTypes");
-            int myNumTypes = myEntries.length();
+            final JSONObject myTypes = theClient.getIssueLinkTypes();
+            final JSONArray myEntries = myTypes.getJSONArray("issueLinkTypes");
+            final int myNumTypes = myEntries.length();
             for (int i = 0; i < myNumTypes; i++) {
                 /* Access the type and register it */
-                JSONObject myTypeDtl = myEntries.getJSONObject(i);
-                JiraIssueLinkType myType = new JiraIssueLinkType(myTypeDtl);
+                final JSONObject myTypeDtl = myEntries.getJSONObject(i);
+                final JiraIssueLinkType myType = new JiraIssueLinkType(myTypeDtl);
                 theIssueLinkTypes.put(myType.getName(), myType);
             }
         } catch (JSONException e) {
@@ -468,12 +468,12 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the issue types */
-            JSONArray myTypes = theClient.getIssueTypes();
-            int myNumTypes = myTypes.length();
+            final JSONArray myTypes = theClient.getIssueTypes();
+            final int myNumTypes = myTypes.length();
             for (int i = 0; i < myNumTypes; i++) {
                 /* Access the type and register it */
-                JSONObject myTypeDtl = myTypes.getJSONObject(i);
-                JiraIssueType myType = new JiraIssueType(myTypeDtl);
+                final JSONObject myTypeDtl = myTypes.getJSONObject(i);
+                final JiraIssueType myType = new JiraIssueType(myTypeDtl);
                 theIssueTypes.put(myType.getName(), myType);
             }
         } catch (JSONException e) {
@@ -490,12 +490,12 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the categories */
-            JSONArray myCategories = theClient.getStatusCategories();
-            int myNumCats = myCategories.length();
+            final JSONArray myCategories = theClient.getStatusCategories();
+            final int myNumCats = myCategories.length();
             for (int i = 0; i < myNumCats; i++) {
                 /* Access the category and register it */
-                JSONObject myCatDtl = myCategories.getJSONObject(i);
-                JiraStatusCategory myCategory = new JiraStatusCategory(myCatDtl);
+                final JSONObject myCatDtl = myCategories.getJSONObject(i);
+                final JiraStatusCategory myCategory = new JiraStatusCategory(myCatDtl);
                 theStatusCategories.put(myCategory.getName(), myCategory);
             }
         } catch (JSONException e) {
@@ -512,12 +512,12 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the statuses */
-            JSONArray myStatuses = theClient.getStatuses();
-            int myNumStatuses = myStatuses.length();
+            final JSONArray myStatuses = theClient.getStatuses();
+            final int myNumStatuses = myStatuses.length();
             for (int i = 0; i < myNumStatuses; i++) {
                 /* Access the status and register it */
-                JSONObject myStatusDtl = myStatuses.getJSONObject(i);
-                JiraStatus myStatus = new JiraStatus(myStatusDtl);
+                final JSONObject myStatusDtl = myStatuses.getJSONObject(i);
+                final JiraStatus myStatus = new JiraStatus(myStatusDtl);
                 theStatuses.put(myStatus.getName(), myStatus);
             }
         } catch (JSONException e) {
@@ -534,12 +534,12 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the resolutions */
-            JSONArray myResolutions = theClient.getResolutions();
-            int myNumRes = myResolutions.length();
+            final JSONArray myResolutions = theClient.getResolutions();
+            final int myNumRes = myResolutions.length();
             for (int i = 0; i < myNumRes; i++) {
                 /* Access the resolution and register it */
-                JSONObject myResDtl = myResolutions.getJSONObject(i);
-                JiraResolution myRes = new JiraResolution(myResDtl);
+                final JSONObject myResDtl = myResolutions.getJSONObject(i);
+                final JiraResolution myRes = new JiraResolution(myResDtl);
                 theResolutions.put(myRes.getName(), myRes);
             }
         } catch (JSONException e) {
@@ -556,12 +556,12 @@ public class ThemisJiraServer {
         /* Protect against exceptions */
         try {
             /* Access the priorities */
-            JSONArray myPriorities = theClient.getPriorities();
-            int myNumPri = myPriorities.length();
+            final JSONArray myPriorities = theClient.getPriorities();
+            final int myNumPri = myPriorities.length();
             for (int i = 0; i < myNumPri; i++) {
                 /* Access the priority and register it */
-                JSONObject myPriDtl = myPriorities.getJSONObject(i);
-                JiraPriority myPri = new JiraPriority(myPriDtl);
+                final JSONObject myPriDtl = myPriorities.getJSONObject(i);
+                final JiraPriority myPri = new JiraPriority(myPriDtl);
                 thePriorities.put(myPri.getName(), myPri);
             }
         } catch (JSONException e) {
@@ -1096,7 +1096,7 @@ public class ThemisJiraServer {
 
             /* Protect against exceptions */
             try {
-                JSONObject myCat = pStatus.getJSONObject("statusCategory");
+                final JSONObject myCat = pStatus.getJSONObject("statusCategory");
                 theCategory = getStatusCategory(myCat.getString("name"));
 
             } catch (JSONException e) {

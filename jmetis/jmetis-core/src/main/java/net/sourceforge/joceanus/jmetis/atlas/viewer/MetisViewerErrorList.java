@@ -88,7 +88,7 @@ public class MetisViewerErrorList
      */
     public void addList(final MetisViewerErrorList pValues) {
         /* Loop through the new values */
-        Iterator<MetisViewerExceptionWrapper> myIterator = pValues.iterator();
+        final Iterator<MetisViewerExceptionWrapper> myIterator = pValues.iterator();
         while (myIterator.hasNext()) {
             /* Add the value */
             theList.add(myIterator.next());

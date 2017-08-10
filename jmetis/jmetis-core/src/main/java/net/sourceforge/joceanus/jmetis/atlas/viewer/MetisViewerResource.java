@@ -224,7 +224,7 @@ public enum MetisViewerResource implements TethysResourceId {
      */
     private static Map<MetisViewerStandardEntry, TethysResourceId> buildEntryMap() {
         /* Create the map and return it */
-        Map<MetisViewerStandardEntry, TethysResourceId> myMap = new EnumMap<>(MetisViewerStandardEntry.class);
+        final Map<MetisViewerStandardEntry, TethysResourceId> myMap = new EnumMap<>(MetisViewerStandardEntry.class);
         myMap.put(MetisViewerStandardEntry.ERROR, VIEWER_ENTRY_ERROR);
         myMap.put(MetisViewerStandardEntry.PROFILE, VIEWER_ENTRY_PROFILE);
         myMap.put(MetisViewerStandardEntry.DATA, VIEWER_ENTRY_DATA);

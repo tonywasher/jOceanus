@@ -47,9 +47,9 @@ public abstract class PrometheusTableStaticData<T extends StaticData<T, ?, E>, E
         super(pDatabase, pTabName);
 
         /* Define the columns */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         myTableDef.addBooleanColumn(StaticData.FIELD_ENABLED);
-        PrometheusColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticData.FIELD_ORDER);
+        final PrometheusColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticData.FIELD_ORDER);
         myTableDef.addEncryptedColumn(StaticData.FIELD_NAME, StaticData.NAMELEN);
         myTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.DESCLEN);
 
@@ -61,7 +61,7 @@ public abstract class PrometheusTableStaticData<T extends StaticData<T, ?, E>, E
     protected void setFieldValue(final T pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (StaticData.FIELD_ENABLED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.getEnabled());
         } else if (StaticData.FIELD_ORDER.equals(iField)) {
@@ -78,8 +78,8 @@ public abstract class PrometheusTableStaticData<T extends StaticData<T, ?, E>, E
     @Override
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Obtain the values */
-        DataValues<E> myValues = super.getRowValues(pName);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final DataValues<E> myValues = super.getRowValues(pName);
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Add the info and return the new values */
         myValues.addValue(StaticData.FIELD_NAME, myTableDef.getBinaryValue(StaticData.FIELD_NAME));

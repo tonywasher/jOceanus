@@ -206,7 +206,7 @@ public abstract class MetisThreadProgressStatus<N, I>
         theStatusNode.setBorderTitle(NLS_STATUS);
 
         /* Create the task progress pane */
-        TethysBorderPaneManager<N, I> myTaskProgress = theGuiFactory.newBorderPane();
+        final TethysBorderPaneManager<N, I> myTaskProgress = theGuiFactory.newBorderPane();
         myTaskProgress.setHGap(GAP_WIDTH);
         myTaskProgress.setCentre(theTaskProgress);
         myTaskProgress.setWest(theTaskField);
@@ -218,7 +218,7 @@ public abstract class MetisThreadProgressStatus<N, I>
         theStagePanel.setWest(theStageField);
 
         /* Create the stage progress pane */
-        TethysGridPaneManager<N, I> myProgressGrid = theGuiFactory.newGridPane();
+        final TethysGridPaneManager<N, I> myProgressGrid = theGuiFactory.newGridPane();
         myProgressGrid.setHGap(GAP_WIDTH);
         myProgressGrid.addCell(myTaskProgress);
         myProgressGrid.allowCellGrowth(myTaskProgress);
@@ -281,7 +281,7 @@ public abstract class MetisThreadProgressStatus<N, I>
     @Override
     public void setProgress(final MetisThreadStatus pStatus) {
         /* Obtain the stage name */
-        String myStage = pStatus.getStage();
+        final String myStage = pStatus.getStage();
 
         /* Set the task name */
         theTaskField.setText(pStatus.getTask());
@@ -305,10 +305,10 @@ public abstract class MetisThreadProgressStatus<N, I>
     @Override
     public void setCompletion() {
         /* Obtain the task name */
-        String myTask = getThreadManager().getTaskName();
+        final String myTask = getThreadManager().getTaskName();
 
         /* Build the message */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myTask);
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(NLS_SUCCEEDED);
@@ -323,10 +323,10 @@ public abstract class MetisThreadProgressStatus<N, I>
     @Override
     public void setFailure(final Throwable pException) {
         /* Obtain the task name */
-        String myTask = getThreadManager().getTaskName();
+        final String myTask = getThreadManager().getTaskName();
 
         /* Build the message */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myTask);
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(NLS_FAILED);
@@ -345,10 +345,10 @@ public abstract class MetisThreadProgressStatus<N, I>
     @Override
     public void setCancelled() {
         /* Obtain the task name */
-        String myTask = getThreadManager().getTaskName();
+        final String myTask = getThreadManager().getTaskName();
 
         /* Build the message */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myTask);
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(NLS_CANCELLED);

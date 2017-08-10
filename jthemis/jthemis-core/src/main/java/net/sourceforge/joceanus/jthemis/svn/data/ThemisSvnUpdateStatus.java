@@ -97,9 +97,9 @@ public class ThemisSvnUpdateStatus
         theStatus = pStatus;
 
         /* Determine the name */
-        String myLocation = pCopy.getLocation()
-                            + File.separator;
-        String myName = theStatus.getFile().getAbsolutePath();
+        final String myLocation = pCopy.getLocation()
+                                  + File.separator;
+        final String myName = theStatus.getFile().getAbsolutePath();
         if (myName.startsWith(myLocation)) {
             theName = myName.substring(myLocation.length());
         } else {
@@ -127,7 +127,7 @@ public class ThemisSvnUpdateStatus
             return theStatus.getContentsStatus().toString();
         }
         if (FIELD_PSTATUS.equals(pField)) {
-            SVNStatusType myStatus = theStatus.getPropertiesStatus();
+            final SVNStatusType myStatus = theStatus.getPropertiesStatus();
             return myStatus.equals(SVNStatusType.STATUS_NORMAL)
                                                                 ? MetisDataFieldValue.SKIP
                                                                 : myStatus.toString();

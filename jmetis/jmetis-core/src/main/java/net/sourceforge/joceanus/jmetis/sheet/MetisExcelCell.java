@@ -89,7 +89,7 @@ public class MetisExcelCell
         try {
             return theExcelRow.parseValue(pSource, pClass);
         } catch (IllegalArgumentException e) {
-            MetisOasisCellAddress myAddress = new MetisOasisCellAddress(theExcelRow.getSheet().getName(), getPosition());
+            final MetisOasisCellAddress myAddress = new MetisOasisCellAddress(theExcelRow.getSheet().getName(), getPosition());
             throw new MetisDataException(pSource, "Bad Value at Cell "
                                                   + myAddress, e);
         }
@@ -101,7 +101,7 @@ public class MetisExcelCell
             case BOOLEAN:
                 return theExcelCell.getBooleanCellValue();
             case FORMULA:
-                CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
+                final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.BOOLEAN == myValue.getCellTypeEnum()
                                                                      ? myValue.getBooleanValue()
                                                                      : null;
@@ -121,10 +121,10 @@ public class MetisExcelCell
     public Integer getIntegerValue() {
         switch (theExcelCell.getCellTypeEnum()) {
             case NUMERIC:
-                Double myValue = theExcelCell.getNumericCellValue();
+                final Double myValue = theExcelCell.getNumericCellValue();
                 return myValue.intValue();
             case FORMULA:
-                CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
+                final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.NUMERIC == myCellValue.getCellTypeEnum()
                                                                          ? ((Double) myCellValue.getNumberValue()).intValue()
                                                                          : null;
@@ -137,10 +137,10 @@ public class MetisExcelCell
     public Long getLongValue() {
         switch (theExcelCell.getCellTypeEnum()) {
             case NUMERIC:
-                Double myValue = theExcelCell.getNumericCellValue();
+                final Double myValue = theExcelCell.getNumericCellValue();
                 return myValue.longValue();
             case FORMULA:
-                CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
+                final CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
                 return CellType.NUMERIC == myCellValue.getCellTypeEnum()
                                                                          ? ((Double) myCellValue.getNumberValue()).longValue()
                                                                          : null;
@@ -171,7 +171,7 @@ public class MetisExcelCell
      * @return the resolved value
      */
     private String getStringFormulaValue() {
-        CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
+        final CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
         switch (myValue.getCellTypeEnum()) {
             case STRING:
             case NUMERIC:

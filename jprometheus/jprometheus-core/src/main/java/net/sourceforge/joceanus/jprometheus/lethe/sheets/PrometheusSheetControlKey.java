@@ -63,7 +63,7 @@ public class PrometheusSheetControlKey
         super(pReader, SHEET_NAME);
 
         /* Access the Lists */
-        DataSet<?, ?> myData = pReader.getData();
+        final DataSet<?, ?> myData = pReader.getData();
         setDataList(myData.getControlKeys());
     }
 
@@ -76,14 +76,14 @@ public class PrometheusSheetControlKey
         super(pWriter, SHEET_NAME);
 
         /* Access the Control list */
-        DataSet<?, ?> myData = pWriter.getData();
+        final DataSet<?, ?> myData = pWriter.getData();
         setDataList(myData.getControlKeys());
     }
 
     @Override
     protected DataValues<CryptographyDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
+        final DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
         myValues.addValue(ControlKey.FIELD_PRIMEBYTES, loadBytes(COL_PRIMEKEYDATA));
         myValues.addValue(ControlKey.FIELD_ALTBYTES, loadBytes(COL_ALTKEYDATA));

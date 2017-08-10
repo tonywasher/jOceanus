@@ -69,9 +69,9 @@ public class ThemisSwingSvnManager
         theFrame.addWindowListener(new WindowClose());
 
         /* Add the icons to the frame */
-        TethysProgram myApp = pToolkit.getProgramDefinitions();
-        TethysIconId[] myIds = myApp.getIcons();
-        Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
+        final TethysProgram myApp = pToolkit.getProgramDefinitions();
+        final TethysIconId[] myIds = myApp.getIcons();
+        final Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
         theFrame.setIconImages(Arrays.asList(myIcons));
         theFrame.setTitle(myApp.getName());
 

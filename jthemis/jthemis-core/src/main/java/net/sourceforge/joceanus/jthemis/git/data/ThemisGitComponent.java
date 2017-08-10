@@ -100,7 +100,7 @@ public final class ThemisGitComponent
         theGitRepo = getRepositoryAccess();
 
         /* Create branch list */
-        GitBranchList myBranches = new GitBranchList(this);
+        final GitBranchList myBranches = new GitBranchList(this);
         setBranches(myBranches);
     }
 
@@ -122,7 +122,7 @@ public final class ThemisGitComponent
      * @return the working directory
      */
     public File getWorkingDir() {
-        File myBase = new File(getRepository().getBase());
+        final File myBase = new File(getRepository().getBase());
         return new File(myBase, getName());
     }
 
@@ -140,13 +140,13 @@ public final class ThemisGitComponent
         /* Protect against exceptions */
         try {
             /* StringBuilder */
-            StringBuilder myPathBuilder = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myPathBuilder = new StringBuilder(BUFFER_LEN);
             myPathBuilder.append(getRepository().getBase());
             myPathBuilder.append(File.separatorChar);
             myPathBuilder.append(getName());
 
             /* Describe repository */
-            FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
+            final FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
             myBuilder.setWorkTree(new File(myPathBuilder.toString()));
             myBuilder.readEnvironment();
             myBuilder.findGitDir();
@@ -172,7 +172,7 @@ public final class ThemisGitComponent
         /* Protect against exceptions */
         try {
             /* Build the underlying string */
-            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Build the initial path */
             myBuilder.append(pPath);
@@ -188,12 +188,12 @@ public final class ThemisGitComponent
             }
 
             /* Parse the project definition and return it */
-            ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
+            final ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
 
             /* Loop through the subModules */
-            Iterator<MvnSubModule> myIterator = myProject.subIterator();
+            final Iterator<MvnSubModule> myIterator = myProject.subIterator();
             while (myIterator.hasNext()) {
-                MvnSubModule myModule = myIterator.next();
+                final MvnSubModule myModule = myIterator.next();
 
                 /* Reset the string buffer */
                 myBuilder.setLength(0);
@@ -204,7 +204,7 @@ public final class ThemisGitComponent
                 myBuilder.append(myModule.getName());
 
                 /* Parse the project Object */
-                ThemisMvnProjectDefinition mySubDef = parseProjectObject(pCommitId, myBuilder.toString());
+                final ThemisMvnProjectDefinition mySubDef = parseProjectObject(pCommitId, myBuilder.toString());
                 myModule.setProjectDefinition(mySubDef);
             }
 
@@ -235,8 +235,8 @@ public final class ThemisGitComponent
         try (RevWalk myRevWalk = new RevWalk(theGitRepo);
              TreeWalk myTreeWalk = new TreeWalk(theGitRepo)) {
             /* Access the tree associated with the commit as part of a Revision Walk */
-            RevCommit myCommit = myRevWalk.parseCommit(pCommitId);
-            RevTree myTree = myCommit.getTree();
+            final RevCommit myCommit = myRevWalk.parseCommit(pCommitId);
+            final RevTree myTree = myCommit.getTree();
 
             /* Look for the file matching the path */
             myTreeWalk.addTree(myTree);
@@ -247,8 +247,8 @@ public final class ThemisGitComponent
             }
 
             /* Prepare to load object */
-            ObjectId myId = myTreeWalk.getObjectId(0);
-            ObjectLoader myLoader = theGitRepo.open(myId);
+            final ObjectId myId = myTreeWalk.getObjectId(0);
+            final ObjectLoader myLoader = theGitRepo.open(myId);
             return myLoader.openStream();
         } catch (IOException e) {
             throw new ThemisIOException("Unable to read File Object", e);
@@ -263,7 +263,7 @@ public final class ThemisGitComponent
     public Status getStatus() throws OceanusException {
         /* Protect against exceptions */
         try (Git myGit = new Git(theGitRepo)) {
-            StatusCommand myCmd = myGit.status();
+            final StatusCommand myCmd = myGit.status();
             return myCmd.call();
         } catch (NoWorkTreeException
                 | GitAPIException e) {
@@ -310,7 +310,7 @@ public final class ThemisGitComponent
             clear();
 
             /* Locate files */
-            File myBaseDir = new File(theRepository.getBase());
+            final File myBaseDir = new File(theRepository.getBase());
             for (File mySubDir : myBaseDir.listFiles()) {
                 /* Ignore if not a directory */
                 if (!mySubDir.isDirectory()) {
@@ -318,10 +318,10 @@ public final class ThemisGitComponent
                 }
 
                 /* Look to see if there is a Git subDirectory */
-                File myGitDir = new File(mySubDir, NAME_GITDIR);
+                final File myGitDir = new File(mySubDir, NAME_GITDIR);
                 if (myGitDir.isDirectory()) {
                     /* Create the component and add to the list */
-                    ThemisGitComponent myComp = new ThemisGitComponent(theRepository, mySubDir.getName());
+                    final ThemisGitComponent myComp = new ThemisGitComponent(theRepository, mySubDir.getName());
                     add(myComp);
                 }
             }
@@ -330,11 +330,11 @@ public final class ThemisGitComponent
             pReport.setNumStages(size() + 2);
 
             /* Loop through the components */
-            Iterator<ThemisGitComponent> myIterator = iterator();
+            final Iterator<ThemisGitComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the Component */
-                ThemisGitComponent myComponent = myIterator.next();
-                GitBranchList myBranches = myComponent.getBranches();
+                final ThemisGitComponent myComponent = myIterator.next();
+                final GitBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
                 pReport.setNewStage("Analysing component " + myComponent.getName());

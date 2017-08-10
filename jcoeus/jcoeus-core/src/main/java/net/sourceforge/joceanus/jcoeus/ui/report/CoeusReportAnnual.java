@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportHTMLBuilder.MetisHTMLTable;
 import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -209,6 +210,11 @@ public class CoeusReportAnnual
             myFilter.setTotalSet(myDef.theTotalSet);
             return myFilter;
         }
+        return null;
+    }
+
+    @Override
+    public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         return null;
     }
 

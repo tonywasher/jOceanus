@@ -249,7 +249,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @return the mapSet configuration
      */
     public static TethysIconMapSet<PrometheusAction> configureStatusIconButton() {
-        TethysIconMapSet<PrometheusAction> myMapSet = new TethysIconMapSet<>();
+        final TethysIconMapSet<PrometheusAction> myMapSet = new TethysIconMapSet<>();
         myMapSet.setMappingsForValue(PrometheusAction.ACTIVE, PrometheusAction.ACTIVE, ACTIVE, TIP_ACTIVE);
         myMapSet.setMappingsForValue(PrometheusAction.DELETE, PrometheusAction.DO, DELETE, TIP_DELETE);
         myMapSet.setMappingsForValue(PrometheusAction.INSERT, PrometheusAction.DO, NEW, TIP_NEW);
@@ -261,7 +261,7 @@ public enum PrometheusIcon implements TethysIconId {
      * @return the mapSet configuration
      */
     public static TethysIconMapSet<Boolean> configureEnabledIconButton() {
-        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>();
+        final TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>();
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, ACTIVE, TIP_DISABLE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, DISABLED, TIP_ENABLE);
         return myMapSet;

@@ -38,8 +38,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.MetisIOException;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -204,18 +204,18 @@ public class MetisViewerBuilder {
             theFormatter = pFormatter;
 
             /* Create the document builder */
-            DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
+            final DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
             theBuilder = myDocFactory.newDocumentBuilder();
 
             /* Create the transformer */
-            TransformerFactory myXformFactory = TransformerFactory.newInstance();
+            final TransformerFactory myXformFactory = TransformerFactory.newInstance();
             theXformer = myXformFactory.newTransformer();
 
             /* Create the document */
             theDocument = theBuilder.newDocument();
 
             /* Create the standard structure */
-            Element myHtml = theDocument.createElement(ELEMENT_HTML);
+            final Element myHtml = theDocument.createElement(ELEMENT_HTML);
             theDocument.appendChild(myHtml);
             theBody = theDocument.createElement(ELEMENT_BODY);
             myHtml.appendChild(theBody);
@@ -232,7 +232,7 @@ public class MetisViewerBuilder {
         /* protect against exceptions */
         try {
             /* Format the XML and write to stream */
-            StringWriter myWriter = new StringWriter();
+            final StringWriter myWriter = new StringWriter();
             theXformer.transform(new DOMSource(theDocument), new StreamResult(myWriter));
 
             /* Convert result to string */
@@ -273,7 +273,7 @@ public class MetisViewerBuilder {
      */
     protected void newTitle(final String pTitle) {
         /* Create the title */
-        Element myTitle = theDocument.createElement(ELEMENT_TITLE);
+        final Element myTitle = theDocument.createElement(ELEMENT_TITLE);
         theBody.appendChild(myTitle);
         myTitle.setTextContent(pTitle);
     }
@@ -283,10 +283,10 @@ public class MetisViewerBuilder {
      */
     protected void newTable() {
         /* Create the table */
-        Element myTable = theDocument.createElement(ELEMENT_TABLE);
+        final Element myTable = theDocument.createElement(ELEMENT_TABLE);
         myTable.setAttribute(ATTR_CLASS, CLASS_VIEWER);
         theBody.appendChild(myTable);
-        Element myHead = theDocument.createElement(ELEMENT_THEAD);
+        final Element myHead = theDocument.createElement(ELEMENT_THEAD);
         myTable.appendChild(myHead);
         theTblHdr = theDocument.createElement(ELEMENT_TROW);
         myHead.appendChild(theTblHdr);
@@ -304,7 +304,7 @@ public class MetisViewerBuilder {
      */
     protected void newTitleCell(final String pTitle) {
         /* Create the title cell */
-        Element myCell = theDocument.createElement(ELEMENT_THDR);
+        final Element myCell = theDocument.createElement(ELEMENT_THDR);
         theTblHdr.appendChild(myCell);
         myCell.setTextContent(pTitle);
     }
@@ -340,16 +340,16 @@ public class MetisViewerBuilder {
     protected void newDataCell(final Object pData,
                                final boolean pChanged) {
         /* Create the data cell */
-        Element myCell = theDocument.createElement(ELEMENT_TCELL);
+        final Element myCell = theDocument.createElement(ELEMENT_TCELL);
         theTblRow.appendChild(myCell);
 
         /* Determine the text */
-        String myText = formatValue(pData);
+        final String myText = formatValue(pData);
 
         /* If the Object is a data difference */
         if (pData instanceof MetisDataDifference) {
             /* Access the difference */
-            MetisDifference myDiff = ((MetisDataDifference) pData).getDifference();
+            final MetisDifference myDiff = ((MetisDataDifference) pData).getDifference();
 
             /* If there is a difference */
             if (!myDiff.isIdentical()) {
@@ -364,7 +364,7 @@ public class MetisViewerBuilder {
         /* If the object is link-able */
         if (MetisViewerPage.isLinkable(pData)) {
             /* Create the link */
-            Element myLink = theDocument.createElement(ELEMENT_LINK);
+            final Element myLink = theDocument.createElement(ELEMENT_LINK);
             myCell.appendChild(myLink);
             myLink.setAttribute(ATTR_HREF, thePage.newLink(pData));
             myLink.setTextContent(myText);
@@ -387,7 +387,7 @@ public class MetisViewerBuilder {
         /* Perform special formatting for a long byte[] */
         if (needsWrapping(pValue)
             && (myFormat.length() > WRAP_HEXSTRING)) {
-            StringBuilder myBuffer = new StringBuilder(myFormat.length() << 1);
+            final StringBuilder myBuffer = new StringBuilder(myFormat.length() << 1);
 
             /* Format the buffer */
             myBuffer.append(myFormat);

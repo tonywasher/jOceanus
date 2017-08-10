@@ -105,11 +105,11 @@ public class MetisOasisCellAddress {
      */
     protected MetisOasisCellAddress(final String pAddress) {
         /* Store parameters */
-        int iPos = pAddress.indexOf(CHAR_PERIOD);
+        final int iPos = pAddress.indexOf(CHAR_PERIOD);
         thePosition = parsePosition(pAddress.substring(iPos + 1));
-        String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR)
-                                                                               ? 1
-                                                                               : 0, iPos);
+        final String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR)
+                                                                                     ? 1
+                                                                                     : 0, iPos);
         theSheetName = new OasisSheetName(myName, true);
     }
 
@@ -160,7 +160,7 @@ public class MetisOasisCellAddress {
     @Override
     public String toString() {
         /* Build the name */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(CHAR_DOLLAR);
         myBuilder.append(theSheetName.getEscapedName());
         myBuilder.append(CHAR_PERIOD);
@@ -177,8 +177,8 @@ public class MetisOasisCellAddress {
     private void formatPosition(final StringBuilder pBuilder) {
         /* Calculate indexes */
         int col = thePosition.getColumnIndex();
-        int topCol = col
-                     / RADIX_COLUMN;
+        final int topCol = col
+                           / RADIX_COLUMN;
         col = col
               % RADIX_COLUMN;
 
@@ -237,7 +237,7 @@ public class MetisOasisCellAddress {
      */
     protected static String escapeApostrophes(final String pSource) {
         /* Create a builder around the name */
-        StringBuilder myBuilder = new StringBuilder(pSource);
+        final StringBuilder myBuilder = new StringBuilder(pSource);
 
         /* Escape all instances of apostrophe */
         int iLoc = myBuilder.indexOf(STR_APOS);
@@ -275,7 +275,7 @@ public class MetisOasisCellAddress {
         private OasisSheetName(final String pName,
                                final boolean isEscaped) {
             /* Access the length of the name */
-            int myLen = pName.length();
+            final int myLen = pName.length();
 
             /* If the name is escaped */
             if (isEscaped) {
@@ -286,7 +286,7 @@ public class MetisOasisCellAddress {
                 if ((pName.charAt(0) == CHAR_APOS)
                     && (pName.charAt(myLen - 1) == CHAR_APOS)) {
                     /* Create editor for name */
-                    StringBuilder myBuilder = new StringBuilder(pName);
+                    final StringBuilder myBuilder = new StringBuilder(pName);
 
                     /* Delete the wrapping apostrophes */
                     myBuilder.deleteCharAt(myLen - 1);
@@ -361,7 +361,7 @@ public class MetisOasisCellAddress {
             }
 
             /* OK if the name contains characters */
-            int iLen = pName.length();
+            final int iLen = pName.length();
             for (int i = 0; i < iLen; i++) {
                 if (!Character.isDigit(pName.charAt(i))) {
                     return false;
@@ -459,7 +459,7 @@ public class MetisOasisCellAddress {
          */
         public OasisCellRange(final String pAddress) {
             /* Locate the split */
-            int iSplit = pAddress.indexOf(CHAR_COLON);
+            final int iSplit = pAddress.indexOf(CHAR_COLON);
             isSingleCell = iSplit == -1;
             if (isSingleCell) {
                 theFirstCell = new MetisOasisCellAddress(pAddress);
@@ -512,7 +512,7 @@ public class MetisOasisCellAddress {
         @Override
         public String toString() {
             /* Build the name */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(theFirstCell.toString());
 
             /* If we are not single cell */

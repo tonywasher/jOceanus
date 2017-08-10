@@ -230,10 +230,8 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      * @throws SQLException on error
      */
     protected int countLoadItems() throws SQLException {
-        String myString;
         int myCount = 0;
-
-        myString = theTable.getCountString();
+        final String myString = theTable.getCountString();
         prepareStatement(myString);
         executeQuery();
 
@@ -322,7 +320,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             pReport.setNumSteps(countLoadItems());
 
             /* Load the items from the table */
-            String myQuery = theTable.getLoadString();
+            final String myQuery = theTable.getLoadString();
             prepareStatement(myQuery);
             executeQuery();
 
@@ -359,9 +357,9 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         int iCount = 0;
 
         /* Loop through the list */
-        Iterator<T> myIterator = theList.iterator();
+        final Iterator<T> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
+            final T myCurr = myIterator.next();
 
             /* Ignore items that are not this type */
             if (myCurr.getState() != pState) {
@@ -396,7 +394,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            int mySteps = countStateItems(MetisDataState.NEW);
+            final int mySteps = countStateItems(MetisDataState.NEW);
             pReport.setNumSteps(mySteps);
             if (mySteps == 0) {
                 return;
@@ -406,11 +404,11 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             pBatch.setCurrentTable(this, MetisDataState.NEW);
 
             /* Prepare the insert statement */
-            String myInsert = theTable.getInsertString();
+            final String myInsert = theTable.getInsertString();
             prepareStatement(myInsert);
 
             /* Loop through the list */
-            Iterator<T> myIterator = theList.iterator();
+            final Iterator<T> myIterator = theList.iterator();
             while (myIterator.hasNext()) {
                 /* Ignore non-new items */
                 myCurr = myIterator.next();
@@ -421,7 +419,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
                 /* Loop through the columns */
                 for (PrometheusColumnDefinition myCol : theTable.getColumns()) {
                     /* Access the column id */
-                    MetisField iField = myCol.getColumnId();
+                    final MetisField iField = myCol.getColumnId();
 
                     /* Set the field value */
                     setFieldValue(myCurr, iField);
@@ -472,7 +470,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         T myCurr = null;
         try {
             /* Declare the number of steps */
-            int mySteps = countStateItems(MetisDataState.CHANGED);
+            final int mySteps = countStateItems(MetisDataState.CHANGED);
             pReport.setNumSteps(mySteps);
             if (mySteps == 0) {
                 return;
@@ -482,7 +480,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             pBatch.setCurrentTable(this, MetisDataState.CHANGED);
 
             /* Loop through the list */
-            Iterator<T> myIterator = theList.iterator();
+            final Iterator<T> myIterator = theList.iterator();
             while (myIterator.hasNext()) {
                 /* Ignore non-changed items */
                 myCurr = myIterator.next();
@@ -493,7 +491,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
 
                 /* Record the id and access the update string */
                 theTable.setIntegerValue(DataItem.FIELD_ID, myCurr.getId());
-                String myUpdate = theTable.getUpdateString();
+                final String myUpdate = theTable.getUpdateString();
 
                 /* Prepare the statement and declare values */
                 prepareStatement(myUpdate);
@@ -532,8 +530,8 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      */
     private boolean updateItem(final T pItem) throws OceanusException {
         /* Access the object and base */
-        MetisValueSet myCurr = pItem.getValueSet();
-        MetisValueSet myBase = pItem.getOriginalValues();
+        final MetisValueSet myCurr = pItem.getValueSet();
+        final MetisValueSet myBase = pItem.getOriginalValues();
         boolean isUpdated = false;
 
         /* Loop through the fields */
@@ -544,7 +542,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             }
 
             /* Access the column id */
-            MetisField iField = myCol.getColumnId();
+            final MetisField iField = myCol.getColumnId();
 
             /* If the non-Id field has changed */
             if (!DataItem.FIELD_ID.equals(myCol.getColumnId())
@@ -585,17 +583,17 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             pBatch.setCurrentTable(this, MetisDataState.DELETED);
 
             /* Prepare the delete statement */
-            String myDelete = theTable.getDeleteString();
+            final String myDelete = theTable.getDeleteString();
             prepareStatement(myDelete);
 
             /* Access the iterator */
-            ListIterator<T> myIterator = theList.listIterator();
+            final ListIterator<T> myIterator = theList.listIterator();
 
             /* Loop through the list in reverse order */
             while (myIterator.hasPrevious()) {
                 /* Ignore non-deleted items */
                 myCurr = myIterator.previous();
-                MetisDataState myState = myCurr.getState();
+                final MetisDataState myState = myCurr.getState();
                 if ((myState != MetisDataState.DELETED)
                     && (myState != MetisDataState.DELNEW)) {
                     continue;
@@ -690,7 +688,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
         /* Protect the truncate */
         try {
             /* Execute the purge statement */
-            String myTrunc = theTable.getPurgeString();
+            final String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
 
         } catch (SQLException e) {
@@ -706,7 +704,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
      */
     protected DataValues<E> getRowValues(final String pName) throws OceanusException {
         /* Allocate the values */
-        DataValues<E> myValues = new DataValues<>(pName);
+        final DataValues<E> myValues = new DataValues<>(pName);
 
         /* Add the id and return the new values */
         myValues.addValue(DataItem.FIELD_ID, theTable.getIntegerValue(DataItem.FIELD_ID));

@@ -206,7 +206,7 @@ public final class ThemisGitTag
             clear();
 
             /* Access a Git instance */
-            Git myGit = new Git(theComponent.getGitRepo());
+            final Git myGit = new Git(theComponent.getGitRepo());
 
             /* Discover tags */
             discoverTags(myGit);
@@ -224,18 +224,18 @@ public final class ThemisGitTag
             /* Protect against exceptions */
             try {
                 /* Access list of branches */
-                ListTagCommand myCommand = pGit.tagList();
-                List<Ref> myTags = myCommand.call();
-                String myBranch = getBranch().getBranchName() + ThemisGitTag.PREFIX_TAG;
+                final ListTagCommand myCommand = pGit.tagList();
+                final List<Ref> myTags = myCommand.call();
+                final String myBranch = getBranch().getBranchName() + ThemisGitTag.PREFIX_TAG;
 
                 /* Loop through the tags */
-                Iterator<Ref> myIterator = myTags.iterator();
+                final Iterator<Ref> myIterator = myTags.iterator();
                 while (myIterator.hasNext()) {
-                    Ref myRef = myIterator.next();
+                    final Ref myRef = myIterator.next();
 
                     /* Access tag details */
                     String myName = myRef.getName();
-                    ObjectId myCommitId = myRef.getObjectId();
+                    final ObjectId myCommitId = myRef.getObjectId();
                     if (myName.startsWith(REF_TAGS)) {
                         myName = myName.substring(REF_TAGS.length());
                     }
@@ -246,10 +246,10 @@ public final class ThemisGitTag
                         myName = myName.substring(myBranch.length());
 
                         /* Determine tag */
-                        int myTagNo = Integer.parseInt(myName);
+                        final int myTagNo = Integer.parseInt(myName);
 
                         /* Create the new tag and add it */
-                        ThemisGitTag myTag = new ThemisGitTag(getBranch(), myTagNo, myCommitId);
+                        final ThemisGitTag myTag = new ThemisGitTag(getBranch(), myTagNo, myCommitId);
                         add(myTag);
                     }
                 }
@@ -269,19 +269,19 @@ public final class ThemisGitTag
          */
         private void analyseTags(final MetisThreadStatusReport pReport) throws OceanusException {
             /* Access repository */
-            ThemisGitRepository myRepo = theComponent.getRepository();
+            final ThemisGitRepository myRepo = theComponent.getRepository();
 
             /* Loop through the entries */
-            Iterator<ThemisGitTag> myIterator = iterator();
+            final Iterator<ThemisGitTag> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next tag */
-                ThemisGitTag myTag = myIterator.next();
+                final ThemisGitTag myTag = myIterator.next();
 
                 /* Report stage */
                 pReport.setNewStage("Analysing tag " + myTag.getTagName());
 
                 /* Parse project file */
-                ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTag.getCommitId(), "");
+                final ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTag.getCommitId(), "");
                 myTag.setProjectDefinition(myProject);
 
                 /* Register the tag */

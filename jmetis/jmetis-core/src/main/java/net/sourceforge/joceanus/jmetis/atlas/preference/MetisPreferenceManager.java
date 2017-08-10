@@ -107,7 +107,7 @@ public class MetisPreferenceManager
     @Override
     public Object getFieldValue(final MetisDataField pField) {
         /* Access preference set */
-        MetisPreferenceSet<?> mySet = theMap.get(pField.getName());
+        final MetisPreferenceSet<?> mySet = theMap.get(pField.getName());
 
         /* Return the value */
         return (mySet == null)
@@ -152,7 +152,7 @@ public class MetisPreferenceManager
      */
     public synchronized <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClass) {
         /* Locate a cached PreferenceSet */
-        String myName = pClass.getSimpleName();
+        final String myName = pClass.getSimpleName();
         X mySet = pClass.cast(theMap.get(myName));
 
         /* If we have not seen this set before */
@@ -160,7 +160,7 @@ public class MetisPreferenceManager
             /* Protect against exceptions */
             try {
                 /* Obtain the relevant constructor */
-                Constructor<X> myConstructor = pClass.getConstructor(getClass());
+                final Constructor<X> myConstructor = pClass.getConstructor(getClass());
 
                 /* Access the new set */
                 mySet = myConstructor.newInstance(this);

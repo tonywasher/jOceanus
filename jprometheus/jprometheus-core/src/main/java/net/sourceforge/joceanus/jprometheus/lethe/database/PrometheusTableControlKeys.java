@@ -45,7 +45,7 @@ public class PrometheusTableControlKeys
      */
     protected PrometheusTableControlKeys(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
         myTableDef.addBooleanColumn(ControlKey.FIELD_HASHPRIME);
@@ -61,10 +61,10 @@ public class PrometheusTableControlKeys
     @Override
     protected DataValues<CryptographyDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
+        final DataValues<CryptographyDataType> myValues = getRowValues(ControlKey.OBJECT_NAME);
         myValues.addValue(ControlKey.FIELD_HASHPRIME, myTableDef.getBooleanValue(ControlKey.FIELD_HASHPRIME));
         myValues.addValue(ControlKey.FIELD_PRIMEBYTES, myTableDef.getBinaryValue(ControlKey.FIELD_PRIMEBYTES));
         myValues.addValue(ControlKey.FIELD_ALTBYTES, myTableDef.getBinaryValue(ControlKey.FIELD_ALTBYTES));
@@ -77,7 +77,7 @@ public class PrometheusTableControlKeys
     protected void setFieldValue(final ControlKey pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (ControlKey.FIELD_HASHPRIME.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isHashPrime());
         } else if (ControlKey.FIELD_PRIMEBYTES.equals(iField)) {

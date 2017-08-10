@@ -319,7 +319,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
         theModel = pModel;
 
         /* Create the sorter and record it */
-        TethysSwingTableSorter<T> mySorter = new TethysSwingTableSorter<>(theModel);
+        final TethysSwingTableSorter<T> mySorter = new TethysSwingTableSorter<>(theModel);
         mySorter.setComparator((l, r) -> l.compareTo(r));
         theModel.registerSorter(mySorter);
         theTable.setRowSorter(mySorter);
@@ -332,7 +332,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
         theTable.setRowHeight(ROW_HEIGHT);
 
         /* Create a row Header table */
-        JTable myRowHdrTable = new JTable(theRowHdrModel, new PrometheusRowColumnModel<E>(this));
+        final JTable myRowHdrTable = new JTable(theRowHdrModel, new PrometheusRowColumnModel<E>(this));
         myRowHdrTable.setBackground(theTable.getTableHeader().getBackground());
         myRowHdrTable.setColumnSelectionAllowed(false);
         myRowHdrTable.setCellSelectionEnabled(false);
@@ -381,9 +381,9 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
      * @param pList the list
      */
     protected void setList(final DataList<T, E> pList) {
-        int myZeroRow = hasHeader()
-                                    ? 1
-                                    : 0;
+        final int myZeroRow = hasHeader()
+                                          ? 1
+                                          : 0;
 
         /* Store list and select correct mode */
         theList = pList;
@@ -426,9 +426,9 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
      */
     protected void scrollRowToView(final int row) {
         /* Shift display to row */
-        Rectangle rect = theTable.getCellRect(row, 0, true);
-        JViewport viewport = (JViewport) theTable.getParent();
-        Point pt = viewport.getViewPosition();
+        final Rectangle rect = theTable.getCellRect(row, 0, true);
+        final JViewport viewport = (JViewport) theTable.getParent();
+        final Point pt = viewport.getViewPosition();
         rect.setLocation(rect.x - pt.x, rect.y - pt.y);
         viewport.scrollRectToVisible(rect);
     }
@@ -462,16 +462,16 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
      */
     protected T[] cacheSelectedRows() {
         /* Determine the selected rows */
-        int[] mySelected = theTable.getSelectedRows();
+        final int[] mySelected = theTable.getSelectedRows();
 
         /* Create a row array relating to the selections */
         @SuppressWarnings("unchecked")
-        T[] myRows = (T[]) Array.newInstance(getDataClass(), mySelected.length);
+        final T[] myRows = (T[]) Array.newInstance(getDataClass(), mySelected.length);
 
         /* Loop through the selection indices */
         for (int i = 0; i < mySelected.length; i++) {
             /* Access the index and adjust for header */
-            int myIndex = theTable.convertRowIndexToModel(mySelected[i]);
+            final int myIndex = theTable.convertRowIndexToModel(mySelected[i]);
 
             /* Store the row */
             myRows[i] = theList.get(myIndex);
@@ -508,7 +508,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
             }
 
             /* Access a cache of the selected rows */
-            T[] myRows = cacheSelectedRows();
+            final T[] myRows = cacheSelectedRows();
             theTable.clearSelection();
 
             /* Store the new status */
@@ -522,7 +522,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
                 }
 
                 /* Access the row # and adjust for view */
-                int myRowNo = theTable.convertRowIndexToView(myRow.indexOf());
+                final int myRowNo = theTable.convertRowIndexToView(myRow.indexOf());
 
                 /* Select the row */
                 theTable.addRowSelectionInterval(myRowNo, myRowNo);
@@ -556,7 +556,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
         }
 
         /* Increment the value and check within range */
-        int myCount = theTable.getRowCount();
+        final int myCount = theTable.getRowCount();
         if (++myViewIndex >= myCount) {
             return null;
         }

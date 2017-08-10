@@ -164,8 +164,8 @@ public class MetisFieldSetPanelPair<N, I>
      */
     public MetisFieldSetPanel<N, I> addSubPanel(final String pName) {
         /* Create a new subPanel and add to tab manager */
-        MetisFieldSetPanel<N, I> myPanel = new MetisFieldSetPanel<>(this);
-        TethysTabItem<N, I> myItem = theTabManager.addTabItem(pName, myPanel);
+        final MetisFieldSetPanel<N, I> myPanel = new MetisFieldSetPanel<>(this);
+        final TethysTabItem<N, I> myItem = theTabManager.addTabItem(pName, myPanel);
         theSubPanelList.add(new SubPanelRegistration(myItem, myPanel));
         addListeners(myPanel);
         return myPanel;
@@ -188,9 +188,9 @@ public class MetisFieldSetPanelPair<N, I>
         theMainPanel.setItem(pItem);
 
         /* Loop through the subPanels */
-        Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
+        final Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
         while (myIterator.hasNext()) {
-            SubPanelRegistration myReg = myIterator.next();
+            final SubPanelRegistration myReg = myIterator.next();
             myReg.setItem(pItem);
         }
     }
@@ -220,12 +220,12 @@ public class MetisFieldSetPanelPair<N, I>
         boolean hasVisible = theMainPanel.refreshItem();
 
         /* Loop through the subPanels */
-        Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
+        final Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
         while (myIterator.hasNext()) {
-            SubPanelRegistration myReg = myIterator.next();
+            final SubPanelRegistration myReg = myIterator.next();
 
             /* refresh subPanel and adjust visibility */
-            boolean hasSubVisible = myReg.refreshItem();
+            final boolean hasSubVisible = myReg.refreshItem();
             myReg.setTabVisible(hasSubVisible);
 
             /* Combine states */
@@ -250,9 +250,9 @@ public class MetisFieldSetPanelPair<N, I>
             theMainPanel.setEditable(pEditable);
 
             /* Loop through the subPanels */
-            Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
+            final Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
             while (myIterator.hasNext()) {
-                SubPanelRegistration myReg = myIterator.next();
+                final SubPanelRegistration myReg = myIterator.next();
                 myReg.setEditable(pEditable);
             }
         }
@@ -266,7 +266,7 @@ public class MetisFieldSetPanelPair<N, I>
     public void setReadOnlyField(final MetisDataField pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
-        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.setReadOnly(pReadOnly);
@@ -281,7 +281,7 @@ public class MetisFieldSetPanelPair<N, I>
     public void setDeemedCurrency(final MetisDataField pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
-        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if ((myChild != null)
             && myChild instanceof TethysCurrencyEditField) {
             /* Set the currency */
@@ -297,7 +297,7 @@ public class MetisFieldSetPanelPair<N, I>
     public void showCmdButton(final MetisDataField pField,
                               final boolean pShow) {
         /* Look up the field */
-        MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.showCmdButton(pShow);
@@ -312,9 +312,9 @@ public class MetisFieldSetPanelPair<N, I>
         theMainPanel.adjustLabelWidth();
 
         /* Loop through the subPanels */
-        Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
+        final Iterator<SubPanelRegistration> myIterator = theSubPanelList.iterator();
         while (myIterator.hasNext()) {
-            SubPanelRegistration myReg = myIterator.next();
+            final SubPanelRegistration myReg = myIterator.next();
             myReg.adjustLabelWidth();
         }
     }
@@ -324,7 +324,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pPanel the panel
      */
     private void addListeners(final MetisFieldSetPanel<N, I> pPanel) {
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = pPanel.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = pPanel.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.NEWCOMMAND, theEventManager::cascadeEvent);

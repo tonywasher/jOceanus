@@ -267,4 +267,9 @@ public class MoneyWiseReportCapitalGains
         /* Return the formatted table */
         return myGains.getTable();
     }
+
+    @Override
+    public AnalysisFilter<?, ?> processFilter(final Object pSource) {
+        return null;
+    }
 }

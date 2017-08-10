@@ -116,7 +116,7 @@ public final class PrometheusDataList {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the value is specified */
-            MetisIntegerPreference<PrometheusDataListPreferenceKey> myPref = getIntegerPreference(PrometheusDataListPreferenceKey.GRANULARITY);
+            final MetisIntegerPreference<PrometheusDataListPreferenceKey> myPref = getIntegerPreference(PrometheusDataListPreferenceKey.GRANULARITY);
             if (!myPref.isAvailable()) {
                 myPref.setValue(DEFAULT_GRANULARITY);
             }

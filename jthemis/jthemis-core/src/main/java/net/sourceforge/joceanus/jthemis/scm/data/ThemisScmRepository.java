@@ -208,7 +208,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         if (!(pThat instanceof ThemisScmRepository)) {
             return false;
         }
-        ThemisScmRepository<?> myThat = (ThemisScmRepository<?>) pThat;
+        final ThemisScmRepository<?> myThat = (ThemisScmRepository<?>) pThat;
 
         /* Compare fields */
         return theName.equals(myThat.getName());

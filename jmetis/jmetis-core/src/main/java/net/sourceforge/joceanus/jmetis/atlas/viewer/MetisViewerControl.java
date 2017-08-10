@@ -153,7 +153,7 @@ public class MetisViewerControl<N, I>
         theSlider.getEventRegistrar().addEventListener(e -> theViewer.handleExplicitPage(theSlider.getValue() + 1));
 
         /* Create the Inner Slider Pane */
-        TethysBorderPaneManager<N, I> myInnerPane = pFactory.newBorderPane();
+        final TethysBorderPaneManager<N, I> myInnerPane = pFactory.newBorderPane();
         myInnerPane.setCentre(theSlider);
         myInnerPane.setEast(theNextButton);
         myInnerPane.setWest(thePrevButton);
@@ -217,17 +217,17 @@ public class MetisViewerControl<N, I>
      */
     protected void updateState(final MetisViewerPage pPage) {
         /* Only show Parent button if we have a parent */
-        boolean hasParent = pPage.hasParent();
+        final boolean hasParent = pPage.hasParent();
         theParentButton.setVisible(hasParent);
         boolean isVisible = hasParent;
 
         /* Set the active mode */
-        MetisViewerMode myMode = pPage.getMode();
-        boolean isList = !MetisViewerMode.CONTENTS.equals(myMode);
+        final MetisViewerMode myMode = pPage.getMode();
+        final boolean isList = !MetisViewerMode.CONTENTS.equals(myMode);
 
         /* Set the Mode Button */
         theModeButton.setValue(myMode);
-        boolean isEnabled = pPage.hasMultiModes();
+        final boolean isEnabled = pPage.hasMultiModes();
         theModeButton.setEnabled(isEnabled);
         if (isEnabled) {
             buildModeMenu(pPage);
@@ -235,8 +235,8 @@ public class MetisViewerControl<N, I>
         isVisible |= isEnabled;
 
         /* Obtain list details */
-        int mySize = pPage.getSize();
-        int myPos = pPage.getItemNo();
+        final int mySize = pPage.getSize();
+        final int myPos = pPage.getItemNo();
 
         /* If we are a list */
         if (isList
@@ -246,7 +246,7 @@ public class MetisViewerControl<N, I>
             isVisible = true;
 
             /* Build the text */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(TEXT_ITEM);
             myBuilder.append(CHAR_BLANK);
             myBuilder.append(myPos);
@@ -280,7 +280,7 @@ public class MetisViewerControl<N, I>
      */
     private void buildModeMenu(final MetisViewerPage pPage) {
         /* Access the menu and reset it */
-        TethysScrollMenu<MetisViewerMode, I> myMenu = theModeButton.getMenu();
+        final TethysScrollMenu<MetisViewerMode, I> myMenu = theModeButton.getMenu();
         myMenu.removeAllItems();
 
         /* Loop through the modes */

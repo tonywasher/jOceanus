@@ -107,9 +107,8 @@ public abstract class MetisHTTPDataClient
     /**
      * Constructor.
      * @param pBaseAddress the base address for the client.
-     * @throws OceanusException on error
      */
-    protected MetisHTTPDataClient(final String pBaseAddress) throws OceanusException {
+    protected MetisHTTPDataClient(final String pBaseAddress) {
         this(pBaseAddress, null);
     }
 
@@ -125,7 +124,7 @@ public abstract class MetisHTTPDataClient
 
         /* If we have an authorisation string */
         if (pAuth != null) {
-            byte[] myBytes = TethysDataConverter.stringToByteArray(pAuth);
+            final byte[] myBytes = TethysDataConverter.stringToByteArray(pAuth);
             theAuth = HEADER_AUTH_BASIC + TethysDataConverter.byteArrayToBase64(myBytes);
         } else {
             theAuth = null;
@@ -139,7 +138,7 @@ public abstract class MetisHTTPDataClient
      * @throws OceanusException on error
      */
     protected JSONObject getAbsoluteJSONObject(final String pURL) throws OceanusException {
-        JSONTokener myTokener = performJSONQuery(pURL);
+        final JSONTokener myTokener = performJSONQuery(pURL);
         return new JSONObject(myTokener);
     }
 
@@ -150,7 +149,7 @@ public abstract class MetisHTTPDataClient
      * @throws OceanusException on error
      */
     protected JSONArray getAbsoluteJSONArray(final String pURL) throws OceanusException {
-        JSONTokener myTokener = performJSONQuery(pURL);
+        final JSONTokener myTokener = performJSONQuery(pURL);
         return new JSONArray(myTokener);
     }
 
@@ -210,7 +209,7 @@ public abstract class MetisHTTPDataClient
                                                              final String pQuery,
                                                              final String pTrailer) throws OceanusException {
         /* Parse result as object */
-        JSONTokener myTokener = performJSONQuery(pHeader, pQuery, pTrailer);
+        final JSONTokener myTokener = performJSONQuery(pHeader, pQuery, pTrailer);
         return new JSONObject(myTokener);
     }
 
@@ -270,7 +269,7 @@ public abstract class MetisHTTPDataClient
                                                            final String pQuery,
                                                            final String pTrailer) throws OceanusException {
         /* Parse result as array */
-        JSONTokener myTokener = performJSONQuery(pHeader, pQuery, pTrailer);
+        final JSONTokener myTokener = performJSONQuery(pHeader, pQuery, pTrailer);
         return new JSONArray(myTokener);
     }
 
@@ -286,7 +285,7 @@ public abstract class MetisHTTPDataClient
                                          final String pQuery,
                                          final String pTrailer) throws OceanusException {
         /* Build the correct URL */
-        String myURL = buildURL(pHeader, pQuery, pTrailer);
+        final String myURL = buildURL(pHeader, pQuery, pTrailer);
 
         /* Perform the query */
         return performJSONQuery(myURL);
@@ -300,7 +299,7 @@ public abstract class MetisHTTPDataClient
      */
     private JSONTokener performJSONQuery(final String pURL) throws OceanusException {
         /* Create the get request */
-        HttpGet myGet = new HttpGet(pURL);
+        final HttpGet myGet = new HttpGet(pURL);
         if (theAuth != null) {
             /* Build header */
             myGet.addHeader(HEADER_AUTH, theAuth);
@@ -310,15 +309,15 @@ public abstract class MetisHTTPDataClient
         /* Protect against exceptions */
         try (CloseableHttpResponse myResponse = theClient.execute(myGet)) {
             /* Access the entity */
-            StatusLine myStatusLine = myResponse.getStatusLine();
+            final StatusLine myStatusLine = myResponse.getStatusLine();
 
             /* If we were successful */
             if (myStatusLine.getStatusCode() == HTTP_OK) {
                 /* Access the response as a JSON Object */
-                HttpEntity myEntity = myResponse.getEntity();
+                final HttpEntity myEntity = myResponse.getEntity();
 
                 /* Parse into string to prevent timeouts */
-                String myRes = EntityUtils.toString(myEntity);
+                final String myRes = EntityUtils.toString(myEntity);
                 return new JSONTokener(myRes);
             }
 
@@ -345,13 +344,13 @@ public abstract class MetisHTTPDataClient
         /* Protect against exceptions */
         try {
             /* Build up the URL */
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(theBaseAddress);
             if (pHeader != null) {
                 myBuilder.append(pHeader);
             }
             if (pQuery != null) {
-                String myQuery = URLEncoder.encode(pQuery, ENCODING);
+                final String myQuery = URLEncoder.encode(pQuery, ENCODING);
                 myBuilder.append(myQuery);
             }
             if (pTrailer != null) {

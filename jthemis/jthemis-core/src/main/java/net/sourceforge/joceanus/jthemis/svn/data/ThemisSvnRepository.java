@@ -116,7 +116,7 @@ public class ThemisSvnRepository
         theClientMgrPool = new ThemisSvnClientManager(thePreferences);
 
         /* Create component list */
-        SvnComponentList myComponents = new SvnComponentList(this);
+        final SvnComponentList myComponents = new SvnComponentList(this);
         setComponents(myComponents);
 
         /* Create RevisionHistoryMap */
@@ -212,7 +212,7 @@ public class ThemisSvnRepository
      */
     public String getPath() {
         /* Build the underlying string */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
         myBuilder.append(theBase);
@@ -239,7 +239,7 @@ public class ThemisSvnRepository
         /* Protect against exceptions */
         try {
             /* Build the underlying string */
-            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Build the repository */
             myBuilder.append(getPath());
@@ -266,7 +266,7 @@ public class ThemisSvnRepository
         }
 
         /* Compare bases */
-        int iResult = theBase.compareTo(pThat.theBase);
+        final int iResult = theBase.compareTo(pThat.theBase);
         if (iResult != 0) {
             return iResult;
         }
@@ -289,7 +289,7 @@ public class ThemisSvnRepository
         if (!(pThat instanceof ThemisSvnRepository)) {
             return false;
         }
-        ThemisSvnRepository myThat = (ThemisSvnRepository) pThat;
+        final ThemisSvnRepository myThat = (ThemisSvnRepository) pThat;
 
         /* Compare fields */
         if (!theBase.equals(myThat.theBase)) {

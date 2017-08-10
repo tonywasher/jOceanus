@@ -179,7 +179,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      */
     public void addToList(final T pItem) {
         /* Access the id */
-        Integer myId = pItem.getIndexedId();
+        final Integer myId = pItem.getIndexedId();
 
         /* Check that the id is not currently present */
         if (theIdMap.get(myId) != null) {
@@ -200,7 +200,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      */
     public void removeFromList(final T pItem) {
         /* Access the id */
-        Integer myId = pItem.getIndexedId();
+        final Integer myId = pItem.getIndexedId();
 
         /* Check that the id is present */
         if (theIdMap.get(myId) != null) {
@@ -259,7 +259,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      * @return the item that was removed
      */
     public T removeAtIndex(final int pIndex) {
-        T myItem = theList.remove(pIndex);
+        final T myItem = theList.remove(pIndex);
         theIdMap.remove(myItem.getIndexedId());
         return myItem;
     }
@@ -272,7 +272,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     public void insertAtIndex(final T pItem,
                               final int pIndex) {
         /* Access the id */
-        Integer myId = pItem.getIndexedId();
+        final Integer myId = pItem.getIndexedId();
 
         /* Check that the id is not currently present */
         if (theIdMap.get(myId) != null) {
@@ -355,14 +355,14 @@ public class MetisIndexedList<T extends MetisIndexedItem>
 
         /* Loop through the list */
         while (pSource.hasNext()) {
-            T myCurr = pSource.next();
+            final T myCurr = pSource.next();
 
             /* Add the item to the list */
             addToList(myCurr);
         }
 
         /* Report the refresh */
-        MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REFRESH);
+        final MetisListChange<T> myChange = new MetisListChange<>(MetisListEvent.REFRESH);
         fireEvent(myChange);
     }
 
@@ -394,7 +394,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         }
 
         /* Cast as list */
-        MetisIndexedList<?> myThat = (MetisIndexedList<?>) pThat;
+        final MetisIndexedList<?> myThat = (MetisIndexedList<?>) pThat;
 
         /* Check list */
         return theList.equals(myThat.theList);

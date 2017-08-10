@@ -53,7 +53,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
     /**
      * The list to which this index is attached.
      */
-    private MetisOrderedList<T> theList = null;
+    private MetisOrderedList<T> theList;
 
     /**
      * The granularity shift of the index.
@@ -68,17 +68,17 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
     /**
      * Array of standard indexes.
      */
-    private MetisOrderedNode<T>[] theMap = null;
+    private MetisOrderedNode<T>[] theMap;
 
     /**
      * The length of the map.
      */
-    private int theMapLength = 0;
+    private int theMapLength;
 
     /**
      * The active length of the map.
      */
-    private int theActiveMapLength = 0;
+    private int theActiveMapLength;
 
     /**
      * Constructor.
@@ -133,7 +133,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
      * @return the new index
      */
     protected MetisOrderedIndex<T> newIndex(final MetisOrderedList<T> pList) {
-        MetisOrderedIndex<T> myIndex = new MetisOrderedIndex<>(theGranularityShift);
+        final MetisOrderedIndex<T> myIndex = new MetisOrderedIndex<>(theGranularityShift);
         myIndex.declareList(pList);
         return myIndex;
     }
@@ -145,7 +145,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
      */
     protected MetisOrderedNode<T> getNodeAtIndex(final int iIndex) {
         /* Calculate the map index */
-        int iMapIndex = iIndex >>> theGranularityShift;
+        final int iMapIndex = iIndex >>> theGranularityShift;
 
         /* Handle out of range */
         if (iMapIndex > theActiveMapLength - 1) {
@@ -218,7 +218,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
                  */
                 while (iMinimum < iMaximum - 1) {
                     /* Access test item */
-                    int iTest = (iMinimum + iMaximum) >>> 1;
+                    final int iTest = (iMinimum + iMaximum) >>> 1;
                     myTest = theMap[iTest];
 
                     /* Check it against the object */
@@ -300,8 +300,8 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         MetisOrderedNode<T> myTest;
 
         /* Access first and last nodes */
-        MetisOrderedNode<T> myFirst = theList.getFirst();
-        MetisOrderedNode<T> myLast = theList.getLast();
+        final MetisOrderedNode<T> myFirst = theList.getFirst();
+        final MetisOrderedNode<T> myLast = theList.getLast();
 
         /* Check whether we should add at the end */
         if (myLast.compareTo(pNode) < 0) {
@@ -333,7 +333,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
                  */
                 while (iMinimum < iMaximum - 1) {
                     /* Access test item */
-                    int iTest = (iMinimum + iMaximum) >>> 1;
+                    final int iTest = (iMinimum + iMaximum) >>> 1;
                     myTest = theMap[iTest];
 
                     /* Check it against the object */
@@ -407,7 +407,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         }
 
         /* Access the index of the node */
-        int iIndex = pNode.getIndex();
+        final int iIndex = pNode.getIndex();
 
         /* Calculate the map index */
         int iMapIndex = iIndex >>> theGranularityShift;
@@ -421,7 +421,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         /* For all subsequent nodes */
         while (++iMapIndex < theMapLength) {
             /* Access the node in the map */
-            MetisOrderedNode<T> myNode = theMap[iMapIndex];
+            final MetisOrderedNode<T> myNode = theMap[iMapIndex];
 
             /* Break if we have reached the end of the map */
             if (myNode == null) {
@@ -433,7 +433,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         }
 
         /* Access the last node */
-        MetisOrderedNode<T> myLast = theList.getLast();
+        final MetisOrderedNode<T> myLast = theList.getLast();
 
         /* If the last node has been shifted and needs storing, then store it */
         if ((!pNode.equals(myLast))
@@ -448,7 +448,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
      */
     protected void removeNode(final MetisOrderedNode<T> pNode) {
         /* Access the index of the node */
-        int iIndex = pNode.getIndex();
+        final int iIndex = pNode.getIndex();
 
         /* Calculate the map index */
         int iMapIndex = iIndex >>> theGranularityShift;
@@ -467,7 +467,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         /* For all subsequent nodes */
         while (++iMapIndex < theMapLength) {
             /* Access the node in the map */
-            MetisOrderedNode<T> myNode = theMap[iMapIndex];
+            final MetisOrderedNode<T> myNode = theMap[iMapIndex];
 
             /* Break if we have reached the end of the map */
             if (myNode == null) {
@@ -511,7 +511,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
         /* Loop while there are elements to sort */
         while (myNode != null) {
             /* Access next and previous items */
-            MetisOrderedNode<T> myNext = myNode.getNext();
+            final MetisOrderedNode<T> myNext = myNode.getNext();
             MetisOrderedNode<T> myPrev = myNode.getPrev();
 
             /* Access the index */
@@ -520,7 +520,7 @@ public class MetisOrderedIndex<T extends Comparable<? super T>> {
             /* Loop while we are out of order */
             while (myNode.compareTo(myPrev) < 0) {
                 /* Calculate the map index */
-                int iMapIndex = iIndex >>> theGranularityShift;
+                final int iMapIndex = iIndex >>> theGranularityShift;
 
                 /* If the previous element is a mapped node */
                 if (((iIndex - 1) & theGranularityMask) == 0) {

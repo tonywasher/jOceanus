@@ -89,7 +89,7 @@ public final class MetisDataFormats {
      */
     private static String getIntegerFormat() {
         /* Create String builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
         myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
@@ -105,13 +105,13 @@ public final class MetisDataFormats {
      */
     private static String getStandardFormat(final TethysDecimal pValue) {
         /* Create String builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
         myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
 
         /* Determine scale */
-        int myScale = pValue.scale();
+        final int myScale = pValue.scale();
         if (myScale > 0) {
             /* Append the decimal point */
             myBuilder.append(TethysDecimalFormatter.STR_DEC);
@@ -133,14 +133,14 @@ public final class MetisDataFormats {
      */
     private static String getRateFormat(final TethysRate pValue) {
         /* Create String builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with zero */
         myBuilder.append(TethysDecimalFormatter.CHAR_ZERO);
 
         /* Determine scale */
-        int myScale = pValue.scale()
-                      - TethysDecimalParser.ADJUST_PERCENT;
+        final int myScale = pValue.scale()
+                            - TethysDecimalParser.ADJUST_PERCENT;
         if (myScale > 0) {
             /* Append the decimal point */
             myBuilder.append(TethysDecimalFormatter.STR_DEC);
@@ -165,7 +165,7 @@ public final class MetisDataFormats {
      */
     private static String getExtendedFormat(final TethysDecimal pValue) {
         /* Create String builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with standard decimal */
         myBuilder.append(getStandardFormat(pValue));
@@ -187,13 +187,13 @@ public final class MetisDataFormats {
      */
     private static String getCurrencyFormat(final TethysMoney pValue) {
         /* Create String builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with extended decimal */
-        String myFormat = getExtendedFormat(pValue);
+        final String myFormat = getExtendedFormat(pValue);
 
         /* Obtain currency code */
-        String myCurrency = pValue.getCurrency().getSymbol();
+        final String myCurrency = pValue.getCurrency().getSymbol();
 
         /* Insert initial values */
         myBuilder.append(myCurrency);
@@ -215,13 +215,13 @@ public final class MetisDataFormats {
      */
     private static String getAccountingFormat(final TethysMoney pValue) {
         /* Create String builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Start with currency format */
-        String myFormat = getCurrencyFormat(pValue);
+        final String myFormat = getCurrencyFormat(pValue);
 
         /* Obtain currency code */
-        String myCurrency = pValue.getCurrency().getSymbol();
+        final String myCurrency = pValue.getCurrency().getSymbol();
 
         /* Insert initial values */
         myBuilder.append(myFormat);
@@ -371,12 +371,12 @@ public final class MetisDataFormats {
             return getStyleName(Integer.class.getSimpleName());
         }
         if (pValue instanceof TethysPrice) {
-            String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
+            final String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
             return getStyleName(TethysPrice.class.getSimpleName()
                                 + myCurr);
         }
         if (pValue instanceof TethysMoney) {
-            String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
+            final String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
             return getStyleName(TethysMoney.class.getSimpleName()
                                 + myCurr);
         }
@@ -404,15 +404,15 @@ public final class MetisDataFormats {
         if (pValue instanceof String) {
             return getStyleName(MetisCellStyleType.HEADER.toString());
         }
-        String myXtra = "Curr";
+        final String myXtra = "Curr";
         if (pValue instanceof TethysPrice) {
-            String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
+            final String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
             return getStyleName(TethysPrice.class.getSimpleName()
                                 + myXtra
                                 + myCurr);
         }
         if (pValue instanceof TethysMoney) {
-            String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
+            final String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
             return getStyleName(TethysMoney.class.getSimpleName()
                                 + myXtra
                                 + myCurr);

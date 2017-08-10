@@ -71,7 +71,7 @@ public class JOceanusSwingUtilitySet
         processColorPreferences();
 
         /* Create listener */
-        TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
+        final TethysEventRegistrar<MetisPreferenceEvent> myRegistrar = theColorPreferences.getEventRegistrar();
         myRegistrar.addEventListener(e -> processColorPreferences());
     }
 
