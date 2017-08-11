@@ -227,9 +227,8 @@ public class GordianZipFileContents {
     /**
      * Encode the contents.
      * @return the encoded string
-     * @throws OceanusException on error
      */
-    protected String encodeContents() throws OceanusException {
+    protected String encodeContents() {
         final StringBuilder myString = new StringBuilder(BUFFER_LEN);
         GordianZipFileProperties myProperties;
 

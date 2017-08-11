@@ -22,20 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
+import java.util.List;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
 
 /**
  * Data Table selection class.
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
+public class PrometheusDataTableSelection<T extends PrometheusTableItem & Comparable<? super T>, E extends Enum<E>> {
     /**
      * The data table.
      */
@@ -130,7 +131,7 @@ public class PrometheusDataTableSelection<T extends DataItem<E> & Comparable<? s
      */
     private void recoverSelectedItem() {
         /* Obtain the model index of the selected item */
-        final DataList<T, E> myList = theDataTable.getList();
+        final List<T> myList = theDataTable.getList();
         final T myCurr = theItemPanel.getSelectedItem();
         int iIndex = myCurr == null
                                     ? -1

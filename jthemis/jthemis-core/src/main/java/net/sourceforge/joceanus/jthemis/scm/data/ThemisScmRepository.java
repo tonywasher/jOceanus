@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldIt
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 
@@ -101,9 +100,8 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
-     * @throws OceanusException on error
      */
-    public ThemisScmRepository(final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
+    public ThemisScmRepository(final MetisPreferenceManager pPreferenceMgr) {
         /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
 

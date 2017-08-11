@@ -127,9 +127,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
 
     @Override
     public MetisFields getDataFields() {
-        return (theLocalFields == null)
-                                        ? DataInfo.FIELD_DEFS
-                                        : theLocalFields;
+        return theLocalFields;
     }
 
     @Override

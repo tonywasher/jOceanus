@@ -24,12 +24,10 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -38,7 +36,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation.MetisErrorElement;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSetHistory;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -51,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataItem<E extends Enum<E>>
-        implements MetisOrderedIdItem<Integer>, MetisDataValues, MetisFieldSetItem {
+        implements PrometheusTableItem {
     /**
      * Report fields.
      */
@@ -556,10 +553,7 @@ public abstract class DataItem<E extends Enum<E>>
         return theId;
     }
 
-    /**
-     * Is the Item Active?
-     * @return <code>true/false</code>
-     */
+    @Override
     public boolean isActive() {
         return theTouchStatus.isActive();
     }
@@ -609,10 +603,7 @@ public abstract class DataItem<E extends Enum<E>>
         return theHistory;
     }
 
-    /**
-     * Determine whether the item is visible to standard searches.
-     * @param bDeleted <code>true/false</code>
-     */
+    @Override
     public void setDeleted(final boolean bDeleted) {
         /* If the state has changed */
         if (bDeleted != isDeleted()) {
@@ -635,18 +626,12 @@ public abstract class DataItem<E extends Enum<E>>
         return !isDeleted();
     }
 
-    /**
-     * Determine whether the item is visible to standard searches.
-     * @return <code>true/false</code>
-     */
+    @Override
     public boolean isDeleted() {
         return theValueSet.isDeletion();
     }
 
-    /**
-     * Determine whether the item is a header item.
-     * @return <code>true/false</code>
-     */
+    @Override
     public boolean isHeader() {
         return isHeader;
     }
@@ -812,25 +797,17 @@ public abstract class DataItem<E extends Enum<E>>
         return theHistory.getOriginalValues();
     }
 
-    /**
-     * Check to see whether any changes were made. If no changes were made remove last saved history
-     * since it is not needed.
-     * @return <code>true</code> if changes were made, <code>false</code> otherwise
-     */
+    @Override
     public boolean checkForHistory() {
         return theHistory.maybePopHistory();
     }
 
-    /**
-     * Push current values into history buffer ready for changes to be made.
-     */
+    @Override
     public void pushHistory() {
         theHistory.pushHistory(theList.getVersion() + 1);
     }
 
-    /**
-     * Remove the last changes for the history buffer and restore values from it.
-     */
+    @Override
     public void popHistory() {
         rewindToVersion(theList.getVersion());
     }
@@ -901,11 +878,7 @@ public abstract class DataItem<E extends Enum<E>>
         return (theEdit == MetisEditState.CLEAN) || (theEdit == MetisEditState.VALID);
     }
 
-    /**
-     * Determine whether a particular field has Errors.
-     * @param pField the particular field
-     * @return <code>true/false</code>
-     */
+    @Override
     public boolean hasErrors(final MetisField pField) {
         return pField != null
                && theErrors.hasErrors(pField);

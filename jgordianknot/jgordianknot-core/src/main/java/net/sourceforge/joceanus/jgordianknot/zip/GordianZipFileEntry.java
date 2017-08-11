@@ -135,9 +135,8 @@ public class GordianZipFileEntry {
     /**
      * Standard constructor from properties.
      * @param pProperties the properties
-     * @throws OceanusException on error
      */
-    protected GordianZipFileEntry(final GordianZipFileProperties pProperties) throws OceanusException {
+    protected GordianZipFileEntry(final GordianZipFileProperties pProperties) {
         /* Store the properties */
         theProperties = pProperties;
 
@@ -269,9 +268,8 @@ public class GordianZipFileEntry {
      * Get User String property.
      * @param pPropertyName the property name
      * @return the property value (or null)
-     * @throws OceanusException on error
      */
-    public String getUserStringProperty(final String pPropertyName) throws OceanusException {
+    public String getUserStringProperty(final String pPropertyName) {
         /* Set the property */
         return theProperties.getStringProperty(PROP_USERPFIX
                                                + pPropertyName);

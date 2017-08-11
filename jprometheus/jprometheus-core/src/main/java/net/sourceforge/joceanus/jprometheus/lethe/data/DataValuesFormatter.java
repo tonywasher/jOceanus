@@ -38,8 +38,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -56,6 +54,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.GroupedItem;
@@ -68,19 +67,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
     /**
-     * Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataValuesFormatter.class);
-
-    /**
      * Entry suffix.
      */
     private static final String SUFFIX_ENTRY = ".xml";
-
-    /**
-     * Delete error text.
-     */
-    private static final String ERROR_DELETE = "Failed to delete file";
 
     /**
      * The report.
@@ -158,7 +147,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        boolean bDelete = true;
+        boolean doDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile)) {
             /* Loop through the data lists */
             final Iterator<DataList<?, E>> myIterator = pData.iterator();
@@ -178,15 +167,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
             /* Complete the task */
             myStage.end();
-            bDelete = false;
+            doDelete = false;
 
         } catch (IOException e) {
             throw new PrometheusIOException("Failed to create backup XML", e);
         } finally {
-            /* Delete the file on error */
-            if (bDelete && !pFile.delete()) {
-                /* Nothing that we can do. At least we tried */
-                LOGGER.error(ERROR_DELETE);
+            /* Try to delete the file if required */
+            if (doDelete) {
+                MetisToolkit.cleanUpFile(pFile);
             }
         }
     }
@@ -210,7 +198,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        boolean bDelete = true;
+        boolean doDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
             /* Loop through the data lists */
             final Iterator<DataList<?, E>> myIterator = pData.iterator();
@@ -230,15 +218,14 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
             /* Complete the task */
             myStage.end();
-            bDelete = false;
+            doDelete = false;
 
         } catch (IOException e) {
             throw new PrometheusIOException("Failed to create extract XML", e);
         } finally {
-            /* Delete the file on error */
-            if (bDelete && !pFile.delete()) {
-                /* Nothing that we can do. At least we tried */
-                LOGGER.error(ERROR_DELETE);
+            /* Try to delete the file if required */
+            if (doDelete) {
+                MetisToolkit.cleanUpFile(pFile);
             }
         }
     }

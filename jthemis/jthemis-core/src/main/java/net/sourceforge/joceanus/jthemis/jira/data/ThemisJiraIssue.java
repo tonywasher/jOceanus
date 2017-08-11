@@ -486,9 +486,8 @@ public class ThemisJiraIssue
         /**
          * Constructor.
          * @param pKey the issue key
-         * @throws OceanusException on error
          */
-        private JiraIssueReference(final String pKey) throws OceanusException {
+        private JiraIssueReference(final String pKey) {
             /* record the details */
             theKey = pKey;
         }

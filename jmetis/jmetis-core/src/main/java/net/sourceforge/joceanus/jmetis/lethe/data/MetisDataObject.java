@@ -95,6 +95,60 @@ public final class MetisDataObject {
     }
 
     /**
+     * Deletable Item interface.
+     */
+    public interface MetisDataDeletable {
+        /**
+         * Is this active?
+         * @return true/false
+         */
+        boolean isActive();
+
+        /**
+         * Is this item deleted?
+         * @return true/false
+         */
+        boolean isDeleted();
+
+        /**
+         * Set the deleted flags for the item.
+         * @param pFlag true/false
+         */
+        void setDeleted(boolean pFlag);
+    }
+
+    /**
+     * Updateable Item interface.
+     */
+    public interface MetisDataUpdatable {
+        /**
+         * Push current values into history buffer ready for changes to be made.
+         */
+        void pushHistory();
+
+        /**
+         * Remove the last changes for the history buffer and restore values from it.
+         */
+        void popHistory();
+
+        /**
+         * Check to see whether any changes were made. If no changes were made remove last saved
+         * history since it is not needed.
+         * @return <code>true</code> if changes were made, <code>false</code> otherwise
+         */
+        boolean checkForHistory();
+
+        /**
+         * Determine whether a particular field has Errors.
+         * @param pField the particular field
+         * @return <code>true/false</code>
+         */
+        default boolean hasErrors(final MetisField pField) {
+            return false;
+        }
+    }
+
+    /**
      * List interface.
      * @param <T> the list element type
      */

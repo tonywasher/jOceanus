@@ -78,6 +78,11 @@ public final class MetisDataFormats {
     private static final String FORMAT_BOOLEAN = "BOOLEAN";
 
     /**
+     * Format current prefix.
+     */
+    private static final String FORMAT_CURR = "Curr";
+
+    /**
      * Prevent instantiation.
      */
     private MetisDataFormats() {
@@ -404,17 +409,16 @@ public final class MetisDataFormats {
         if (pValue instanceof String) {
             return getStyleName(MetisCellStyleType.HEADER.toString());
         }
-        final String myXtra = "Curr";
         if (pValue instanceof TethysPrice) {
             final String myCurr = ((TethysPrice) pValue).getCurrency().getCurrencyCode();
             return getStyleName(TethysPrice.class.getSimpleName()
-                                + myXtra
+                                + FORMAT_CURR
                                 + myCurr);
         }
         if (pValue instanceof TethysMoney) {
             final String myCurr = ((TethysMoney) pValue).getCurrency().getCurrencyCode();
             return getStyleName(TethysMoney.class.getSimpleName()
-                                + myXtra
+                                + FORMAT_CURR
                                 + myCurr);
         }
         return null;

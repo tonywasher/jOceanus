@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.BucketAttribute;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.AnalysisColumnSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -363,7 +364,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Create initial state */
         theState = new AnalysisState();
         theState.showColumns(true);
-        StatementSelect<N, I> mySelect = new StatementSelect<>(theRangeSelect, AnalysisFilter.FILTER_ALL);
+        StatementSelect<N, I> mySelect = new StatementSelect<>(theRangeSelect, new AllFilter());
         selectStatement(mySelect);
 
         /* Access the menus */

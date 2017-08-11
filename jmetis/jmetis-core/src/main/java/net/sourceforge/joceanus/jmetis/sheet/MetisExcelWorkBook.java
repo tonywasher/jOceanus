@@ -252,9 +252,8 @@ public class MetisExcelWorkBook {
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range or null if range does not exist
-     * @throws OceanusException on error
      */
-    protected MetisDataView getRangeView(final String pName) throws OceanusException {
+    protected MetisDataView getRangeView(final String pName) {
         /* Find the range of cells */
         final Name myName = theBook.getName(pName);
         if (myName == null) {
@@ -307,11 +306,10 @@ public class MetisExcelWorkBook {
      * @param pSheet the workSheet containing the cells
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
-     * @throws OceanusException on error
      */
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
-                                       final String pValidRange) throws OceanusException {
+                                       final String pValidRange) {
         /* Access the constraint */
         DVConstraint myConstraint = theConstraintMap.get(pValidRange);
         if (myConstraint == null) {
@@ -333,11 +331,10 @@ public class MetisExcelWorkBook {
      * @param pSheet the workSheet containing the cells
      * @param pCells the Cells to apply validation to
      * @param pValueList the list of valid values
-     * @throws OceanusException on error
      */
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
-                                       final String[] pValueList) throws OceanusException {
+                                       final String[] pValueList) {
         /* Access the constraint */
         DVConstraint myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
@@ -358,10 +355,9 @@ public class MetisExcelWorkBook {
      * Apply Data Filter.
      * @param pSheet the sheet to filter
      * @param pRange the range to apply the filter to
-     * @throws OceanusException on error
      */
     protected void applyDataFilter(final Sheet pSheet,
-                                   final CellRangeAddressList pRange) throws OceanusException {
+                                   final CellRangeAddressList pRange) {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }

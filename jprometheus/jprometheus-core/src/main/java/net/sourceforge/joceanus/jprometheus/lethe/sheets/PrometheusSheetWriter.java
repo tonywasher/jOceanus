@@ -29,14 +29,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -49,16 +47,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <T> the DataSet type
  */
 public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusSheetWriter.class);
-
-    /**
-     * Delete error text.
-     */
-    private static final String ERROR_DELETE = "Failed to delete file";
-
     /**
      * Report.
      */
@@ -142,7 +130,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
-        boolean bDelete = true;
+        boolean doDelete = true;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile);
              OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
             /* Record the DataSet */
@@ -159,16 +147,15 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
 
             /* Close the Zip file */
             myZipFile.close();
-            bDelete = false;
+            doDelete = false;
 
         } catch (IOException e) {
             /* Report the error */
             throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
         } finally {
-            /* Delete the file on error */
-            if (bDelete && !pFile.delete()) {
-                /* Nothing that we can do. At least we tried */
-                LOGGER.error(ERROR_DELETE);
+            /* Try to delete the file if required */
+            if (doDelete) {
+                MetisToolkit.cleanUpFile(pFile);
             }
         }
 
@@ -207,9 +194,8 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * Write the WorkBook.
      * @param pStream the output stream
      * @throws OceanusException on error
-     * @throws IOException on write error
      */
-    private void writeWorkBook(final OutputStream pStream) throws OceanusException, IOException {
+    private void writeWorkBook(final OutputStream pStream) throws OceanusException {
         /* Obtain the active profile */
         final MetisProfile myTask = theReport.getActiveTask();
 

@@ -28,8 +28,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
@@ -52,6 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
@@ -72,11 +71,6 @@ public class ThemisBackup {
      * The Data file name.
      */
     private static final String DATA_NAME = "zipData";
-
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThemisBackup.class);
 
     /**
      * The Buffer length.
@@ -296,9 +290,9 @@ public class ThemisBackup {
 
             /* Clean up on exit */
         } finally {
-            /* Delete the file on error */
-            if (doDelete && !myZipName.delete()) {
-                LOGGER.error("Failed to delete file on failure");
+            /* Try to delete the file if required */
+            if (doDelete) {
+                MetisToolkit.cleanUpFile(myZipName);
             }
         }
     }

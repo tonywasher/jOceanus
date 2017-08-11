@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldData;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSw
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & Comparable<? super T>, E extends Enum<E>>
         extends AbstractTableModel
         implements PopulateFieldData, TethysSwingTableSorterModel<T> {
     /**
@@ -445,7 +445,7 @@ public abstract class PrometheusDataTableModel<T extends DataItem<E> & Comparabl
             if (iRow >= 0) {
                 /* Access the row */
                 final PrometheusDataTableModel<?, E> myModel = theDataTable.getTableModel();
-                final DataItem<E> myRow = myModel.getItemAtIndex(iRow);
+                final PrometheusTableItem myRow = myModel.getItemAtIndex(iRow);
                 @SuppressWarnings("unchecked")
                 final PrometheusDataTableColumnModel<E> myColModel = (PrometheusDataTableColumnModel<E>) theTable.getColumnModel();
                 final MetisField[] iFields = myColModel.getColumnFields();

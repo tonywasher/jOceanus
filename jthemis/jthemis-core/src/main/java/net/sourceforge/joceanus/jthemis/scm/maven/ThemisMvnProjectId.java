@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Project element of POM.
@@ -109,9 +108,8 @@ public final class ThemisMvnProjectId
     /**
      * Constructor.
      * @param pModel the project model
-     * @throws OceanusException on error
      */
-    protected ThemisMvnProjectId(final Model pModel) throws OceanusException {
+    protected ThemisMvnProjectId(final Model pModel) {
         /* Store model */
         theModel = pModel;
         theDependency = null;
@@ -142,10 +140,9 @@ public final class ThemisMvnProjectId
      * Constructor.
      * @param pDependency the project dependency
      * @param pProject the parent project
-     * @throws OceanusException on error
      */
     protected ThemisMvnProjectId(final Dependency pDependency,
-                                 final ThemisMvnProjectId pProject) throws OceanusException {
+                                 final ThemisMvnProjectId pProject) {
         /* Store dependency */
         theModel = null;
         theDependency = pDependency;

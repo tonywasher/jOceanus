@@ -316,31 +316,6 @@ public class DataKey
         }
     }
 
-    /**
-     * Constructor for a cloned DataKey in a new DataKeySet.
-     * @param pList the list to add to
-     * @param pKeySet the ControlKey to which this key belongs
-     * @param pDataKey the DataKey to clone
-     * @throws OceanusException on error
-     */
-    private DataKey(final DataKeyList pList,
-                    final DataKeySet pKeySet,
-                    final DataKey pDataKey) throws OceanusException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Store the KeySet details */
-        setValueDataKeySet(pKeySet);
-
-        /* Copy the key details */
-        setValueDataKey(pDataKey.getDataKey());
-        setValueHashPrime(pDataKey.isHashPrime());
-        setValueSecuredKeyDef(pDataKey.getSecuredKeyDef());
-        setValueIsSymKey(pDataKey.isSymKey());
-        setValueKeyType(pDataKey.getKeyType());
-        setValueKeyTypeId(pDataKey.getKeyTypeId());
-    }
-
     @Override
     public MetisFields declareFields() {
         return FIELD_DEFS;

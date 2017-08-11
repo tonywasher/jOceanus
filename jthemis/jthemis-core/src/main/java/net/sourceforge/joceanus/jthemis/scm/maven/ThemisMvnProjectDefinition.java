@@ -253,11 +253,6 @@ public class ThemisMvnProjectDefinition
      * @throws OceanusException on error
      */
     public void writeToFile(final File pFile) throws OceanusException {
-        /* delete the file if it exists */
-        if (pFile.exists() && !pFile.delete()) {
-            throw new ThemisIOException("Failed to delete existing file");
-        }
-
         /* Protect against exceptions */
         try (FileOutputStream myOutFile = new FileOutputStream(pFile);
              BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile)) {

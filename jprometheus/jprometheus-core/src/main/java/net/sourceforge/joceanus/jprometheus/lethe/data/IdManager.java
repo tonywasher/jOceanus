@@ -35,7 +35,7 @@ public class IdManager<T extends DataItem<E> & Comparable<? super T>, E extends 
     /**
      * The maximum id.
      */
-    private Integer theMaxId;
+    private Integer theMaxId = 0;
 
     /**
      * Constructor.

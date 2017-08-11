@@ -183,9 +183,8 @@ public abstract class MetisDataCell {
     /**
      * Obtain byte array value of the cell.
      * @return the byte array value
-     * @throws OceanusException on error
      */
-    public byte[] getBytesValue() throws OceanusException {
+    public byte[] getBytesValue() {
         final String myValue = getStringValue();
         return (myValue == null)
                                  ? null

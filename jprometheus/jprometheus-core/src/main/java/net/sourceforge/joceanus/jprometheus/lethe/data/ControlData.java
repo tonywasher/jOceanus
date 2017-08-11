@@ -232,9 +232,8 @@ public class ControlData
     /**
      * Set a new ControlKey.
      * @param pControl the new control key
-     * @throws OceanusException on error
      */
-    protected void setControlKey(final ControlKey pControl) throws OceanusException {
+    protected void setControlKey(final ControlKey pControl) {
         /* If we do not have a control Key */
         if (getControlKey() == null) {
             /* Store the control details and return */

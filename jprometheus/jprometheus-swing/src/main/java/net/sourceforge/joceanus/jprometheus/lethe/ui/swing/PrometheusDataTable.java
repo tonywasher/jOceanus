@@ -26,6 +26,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.lang.reflect.Array;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -36,8 +37,8 @@ import javax.swing.ScrollPaneConstants;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusRowColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel.PrometheusRowTableModel;
@@ -57,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
  * @param <T> the data type.
  * @param <E> the data type enum class
  */
-public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+public abstract class PrometheusDataTable<T extends PrometheusTableItem & Comparable<? super T>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Panel height.
@@ -102,7 +103,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
     /**
      * The Data List associated with the table.
      */
-    private DataList<T, E> theList;
+    private PrometheusTableList<T> theList;
 
     /**
      * The UpdateSet associated with the table.
@@ -234,7 +235,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
      * Get the data list.
      * @return the data list
      */
-    public DataList<T, E> getList() {
+    public List<T> getList() {
         return theList;
     }
 
@@ -380,7 +381,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
      * Set the list for the table.
      * @param pList the list
      */
-    protected void setList(final DataList<T, E> pList) {
+    protected void setList(final PrometheusTableList<T> pList) {
         final int myZeroRow = hasHeader()
                                           ? 1
                                           : 0;
@@ -522,7 +523,7 @@ public abstract class PrometheusDataTable<T extends DataItem<E> & Comparable<? s
                 }
 
                 /* Access the row # and adjust for view */
-                final int myRowNo = theTable.convertRowIndexToView(myRow.indexOf());
+                final int myRowNo = theTable.convertRowIndexToView(theList.indexOf(myRow));
 
                 /* Select the row */
                 theTable.addRowSelectionInterval(myRowNo, myRowNo);

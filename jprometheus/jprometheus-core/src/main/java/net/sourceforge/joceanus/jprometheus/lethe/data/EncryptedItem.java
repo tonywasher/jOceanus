@@ -419,12 +419,10 @@ public abstract class EncryptedItem<E extends Enum<E>>
          * Adopt security from underlying list. If a match for the item is found in the underlying
          * list, its security is adopted. If no match is found then the security is initialised.
          * @param pReport the report
-         * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from
          * @throws OceanusException on error
          */
         protected void adoptSecurity(final MetisThreadStatusReport pReport,
-                                     final ControlKey pControl,
                                      final EncryptedList<?, E> pBase) throws OceanusException {
             /* Declare the new stage */
             pReport.setNewStage(listName());

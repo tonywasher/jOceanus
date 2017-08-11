@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedListIterator;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -47,7 +48,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
         extends MetisOrderedIdList<Integer, T>
-        implements MetisDataContents {
+        implements MetisDataContents, PrometheusTableList<T> {
     /**
      * DataList interface.
      * @param <E> the data type enum class
@@ -420,10 +421,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         return (theEdit == MetisEditState.CLEAN) || (theEdit == MetisEditState.VALID);
     }
 
-    /**
-     * Determine whether the list is Locked (overwritten as required).
-     * @return <code>true/false</code>
-     */
+    @Override
     public boolean isLocked() {
         return false;
     }

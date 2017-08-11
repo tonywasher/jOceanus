@@ -917,9 +917,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Initialise Security */
         theControlKeys.initialiseSecurity(pBase);
 
-        /* Access the control key */
-        final ControlKey myControl = getControlKey();
-
         /* Obtain base listMap */
         final Map<E, DataList<?, E>> myMap = pBase.getListMap();
 
@@ -937,7 +934,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
                 /* Adopt the security */
                 myStage.startTask(myList.listName());
                 final EncryptedList<?, E> myEncrypted = (EncryptedList<?, E>) myList;
-                myEncrypted.adoptSecurity(pReport, myControl, (EncryptedList<?, E>) myBase);
+                myEncrypted.adoptSecurity(pReport, (EncryptedList<?, E>) myBase);
             }
         }
 

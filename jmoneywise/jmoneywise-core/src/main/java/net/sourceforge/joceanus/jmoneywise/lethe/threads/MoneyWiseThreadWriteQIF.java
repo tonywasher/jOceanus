@@ -61,11 +61,6 @@ public class MoneyWiseThreadWriteQIF<N, I>
     private static final Logger LOGGER = LoggerFactory.getLogger(MoneyWiseThreadWriteQIF.class);
 
     /**
-     * Delete error text.
-     */
-    private static final String ERROR_DELETE = "Failed to delete file";
-
-    /**
      * Data View.
      */
     private final View<N, I> theView;
@@ -126,10 +121,9 @@ public class MoneyWiseThreadWriteQIF<N, I>
             /* Report the error */
             throw new MoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
         } finally {
-            /* Delete the file on failure */
-            if ((doDelete) && (!myOutFile.delete())) {
-                /* Nothing that we can do. At least we tried */
-                LOGGER.error(ERROR_DELETE);
+            /* Try to delete the file if required */
+            if (doDelete) {
+                MetisToolkit.cleanUpFile(myOutFile);
             }
         }
 

@@ -144,9 +144,8 @@ public class MetisHTTPYQLClient
     /**
      * Constructor.
      * @param pFormatter the data formatter
-     * @throws OceanusException on error
      */
-    public MetisHTTPYQLClient(final MetisDataFormatter pFormatter) throws OceanusException {
+    public MetisHTTPYQLClient(final MetisDataFormatter pFormatter) {
         super(YQL_WEBSITE);
         theParser = pFormatter.getDecimalParser();
     }

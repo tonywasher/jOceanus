@@ -130,7 +130,7 @@ public class TethysEventRegistration<E extends Enum<E>> {
         final TethysEventRegistration<?> myReg = (TethysEventRegistration<?>) o;
 
         /* Compare fields */
-        return theRegId == myReg.getRegId();
+        return theRegId.equals(myReg.getRegId());
     }
 
     @Override

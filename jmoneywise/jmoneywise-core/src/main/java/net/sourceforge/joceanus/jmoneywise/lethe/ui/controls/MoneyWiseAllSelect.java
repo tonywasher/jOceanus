@@ -52,7 +52,7 @@ public class MoneyWiseAllSelect<N, I>
     protected MoneyWiseAllSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the filter */
         thePanel = pFactory.newHBoxPane();
-        theFilter = AnalysisFilter.FILTER_ALL;
+        theFilter = new AllFilter();
     }
 
     @Override

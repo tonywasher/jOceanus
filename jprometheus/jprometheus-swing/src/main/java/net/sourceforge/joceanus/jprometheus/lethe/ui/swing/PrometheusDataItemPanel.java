@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusItemActions;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusItemEditActions;
@@ -63,7 +64,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * @param <G> the goto id type
  * @param <E> the data type enum class
  */
-public abstract class PrometheusDataItemPanel<T extends DataItem<E> & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
+public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent>, PrometheusItemEditParent {
     /**
      * Details Tab Title.

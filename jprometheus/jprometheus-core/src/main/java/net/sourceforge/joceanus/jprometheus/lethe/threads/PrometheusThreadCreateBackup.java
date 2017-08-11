@@ -157,9 +157,9 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
 
             /* Delete file on error */
         } finally {
-            /* Delete the file */
-            if ((doDelete) && (!myFile.delete())) {
-                doDelete = false;
+            /* Try to delete the file if required */
+            if (doDelete) {
+                MetisToolkit.cleanUpFile(myFile);
             }
         }
 

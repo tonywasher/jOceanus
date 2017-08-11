@@ -59,9 +59,8 @@ public class ThemisJiraSecurity {
     /**
      * Constructor.
      * @param pServer the server
-     * @throws OceanusException on error
      */
-    protected ThemisJiraSecurity(final ThemisJiraServer pServer) throws OceanusException {
+    protected ThemisJiraSecurity(final ThemisJiraServer pServer) {
         /* Access clients */
         theClient = pServer.getClient();
 

@@ -465,12 +465,11 @@ public class MetisOasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pValidRange the name of the validation range
-     * @throws OceanusException on error
      */
     protected void applyDataValidation(final MetisOasisSheet pSheet,
                                        final MetisCellPosition pFirstCell,
                                        final MetisCellPosition pLastCell,
-                                       final String pValidRange) throws OceanusException {
+                                       final String pValidRange) {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValidRange);
         if (myConstraint == null) {
@@ -491,12 +490,11 @@ public class MetisOasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pValueList the value list
-     * @throws OceanusException on error
      */
     protected void applyDataValidation(final MetisOasisSheet pSheet,
                                        final MetisCellPosition pFirstCell,
                                        final MetisCellPosition pLastCell,
-                                       final String[] pValueList) throws OceanusException {
+                                       final String[] pValueList) {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValueList);
         if (myConstraint == null) {
@@ -531,12 +529,11 @@ public class MetisOasisWorkBook {
      * @param pFirstCell the the first cell in the range
      * @param pLastCell the last cell in the range
      * @param pConstraint the constraint
-     * @throws OceanusException on error
      */
     private static void applyDataConstraint(final MetisOasisSheet pSheet,
                                             final MetisCellPosition pFirstCell,
                                             final MetisCellPosition pLastCell,
-                                            final TableContentValidationElement pConstraint) throws OceanusException {
+                                            final TableContentValidationElement pConstraint) {
         /* Determine size of range */
         final String myName = pConstraint.getTableNameAttribute();
         int iRow = pFirstCell.getRowIndex();
@@ -559,9 +556,8 @@ public class MetisOasisWorkBook {
      * Create Data Constraint.
      * @param pConstraint the constraint list
      * @return the constraint
-     * @throws OceanusException on error
      */
-    private TableContentValidationElement createDataConstraint(final String pConstraint) throws OceanusException {
+    private TableContentValidationElement createDataConstraint(final String pConstraint) {
         /* Build the name */
         final String myName = "val"
                               + ++theNumConstraints;
@@ -585,10 +581,9 @@ public class MetisOasisWorkBook {
 
     /**
      * Apply Data Filter.
-     * @param pRange the range to apply the filter to
-     * @throws OceanusException on error
+     * @param pRange the range
      */
-    protected void applyDataFilter(final OasisCellRange pRange) throws OceanusException {
+    protected void applyDataFilter(final OasisCellRange pRange) {
         /* Create the new filter */
         final TableDatabaseRangeElement myFilter = theFilters.newTableDatabaseRangeElement("Events.E1:Events.E15");
         myFilter.setTableNameAttribute("__Anonymous_Sheet_DB__14");

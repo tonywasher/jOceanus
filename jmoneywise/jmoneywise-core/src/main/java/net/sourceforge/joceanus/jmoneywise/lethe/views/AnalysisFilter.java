@@ -67,11 +67,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         implements MetisDataContents {
     /**
-     * AllFilter.
-     */
-    public static final AllFilter FILTER_ALL = new AllFilter();
-
-    /**
      * Local Report fields.
      */
     private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseViewResource.FILTER_NAME.getValue());
@@ -817,7 +812,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         /**
          * Constructor.
          */
-        private AllFilter() {
+        public AllFilter() {
             /* Store parameter */
             super(null, AccountAttribute.class);
             setCurrentAttribute(null);

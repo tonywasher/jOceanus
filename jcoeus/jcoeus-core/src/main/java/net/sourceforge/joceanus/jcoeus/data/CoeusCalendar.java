@@ -39,7 +39,7 @@ public class CoeusCalendar {
     /**
      * Use calendar totals.
      */
-    private Boolean makeCalendarTotals;
+    private final Boolean makeCalendarTotals;
 
     /**
      * Constructor.
