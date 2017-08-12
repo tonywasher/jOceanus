@@ -47,7 +47,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataButtonField.TethysFXDateButtonField;
@@ -245,12 +244,10 @@ public class TethysFXTableCellFactory<C, R> {
      * Obtain List Cell Factory.
      * @param <T> the column type
      * @param pColumn the column
-     * @param pClass the class of the item
      * @return the scroll cell factory
      */
-    protected <T> Callback<TableColumn<R, TethysItemList<T>>, TableCell<R, TethysItemList<T>>> listCellFactory(final TethysFXTableListColumn<T, C, R> pColumn,
-                                                                                                               final Class<T> pClass) {
-        return e -> new TethysFXTableListCell<>(pColumn, theGuiFactory, pClass);
+    protected <T extends Comparable<T>> Callback<TableColumn<R, List<T>>, TableCell<R, List<T>>> listCellFactory(final TethysFXTableListColumn<T, C, R> pColumn) {
+        return e -> new TethysFXTableListCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -471,7 +468,7 @@ public class TethysFXTableCellFactory<C, R> {
                 getTable().rePaintOnCommit(this);
 
                 /* Note that we are no longer editing */
-                getTable().setActiveCell(null);
+                cancelEdit();
             }
         }
 
@@ -896,18 +893,17 @@ public class TethysFXTableCellFactory<C, R> {
      * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableListCell<T, C, R>
-            extends TethysFXTableCell<TethysItemList<T>, C, R> {
+    public static class TethysFXTableListCell<T extends Comparable<T>, C, R>
+            extends TethysFXTableCell<List<T>, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
          * @param pFactory the GUI Factory
-         * @param pClass the field class
          */
         protected TethysFXTableListCell(final TethysFXTableListColumn<T, C, R> pColumn,
-                                        final TethysFXGuiFactory pFactory,
-                                        final Class<T> pClass) {
+                                        final TethysFXGuiFactory pFactory) {
             super(pColumn, pFactory.newListField());
+            getControl().setSelectables(() -> getColumn().getSelectables().apply(getActiveRow()));
         }
 
         @Override
@@ -915,10 +911,15 @@ public class TethysFXTableCellFactory<C, R> {
             return (TethysFXListButtonField<T>) super.getControl();
         }
 
+        @Override
+        public TethysFXTableListColumn<T, C, R> getColumn() {
+            return (TethysFXTableListColumn<T, C, R>) super.getColumn();
+        }
+
         @SuppressWarnings("unchecked")
         @Override
         protected void handleCommit(final TethysEvent<TethysUIEvent> pEvent) {
-            commitEdit(pEvent.getDetails(TethysItemList.class));
+            commitEdit(pEvent.getDetails(List.class));
         }
     }
 

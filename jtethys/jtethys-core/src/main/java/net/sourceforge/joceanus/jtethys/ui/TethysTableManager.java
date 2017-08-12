@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -461,11 +462,9 @@ public abstract class TethysTableManager<C, R, N, I>
      * Declare list column.
      * @param <T> the data type
      * @param pId the column id
-     * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<TethysItemList<T>, C, R, N, I> declareListColumn(C pId,
-                                                                                           Class<T> pClass);
+    public abstract <T extends Comparable<T>> TethysTableListColumn<T, C, R, N, I> declareListColumn(C pId);
 
     /**
      * Declare icon column.
@@ -670,6 +669,23 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pConfigurator the configurator
          */
         void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T, I>> pConfigurator);
+    }
+
+    /**
+     * ListTableColumn.
+     * @param <T> the data type
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableListColumn<T extends Comparable<T>, C, R, N, I>
+            extends TethysTableColumn<List<T>, C, R, N, I> {
+        /**
+         * Set the selectable supplier.
+         * @param pSelectables the supplier
+         */
+        void setSelectables(Function<R, Iterator<T>> pSelectables);
     }
 
     /**

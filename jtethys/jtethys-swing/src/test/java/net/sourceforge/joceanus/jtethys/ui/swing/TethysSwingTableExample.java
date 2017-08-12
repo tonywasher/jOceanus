@@ -210,9 +210,10 @@ public class TethysSwingTableExample {
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
-        TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST, TethysListId.class);
+        TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST);
         myListColumn.setCellValueFactory(p -> p.getList());
         myListColumn.setOnCommit((r, v) -> r.setList(v));
+        myListColumn.setSelectables(r -> theHelper.buildSelectableList());
 
         /* Create the password column */
         TethysSwingTableCharArrayColumn<TethysDataId, TethysSwingTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);

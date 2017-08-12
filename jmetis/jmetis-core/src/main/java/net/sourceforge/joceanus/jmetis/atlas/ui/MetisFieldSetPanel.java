@@ -431,7 +431,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the list field
      */
-    public <T> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisDataField pField) {
+    public <T extends Comparable<T>> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisDataField pField) {
         return registerField(new MetisFieldSetListItem<>(this, pField));
     }
 

@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysRawDecimalEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysValidatedEditField;
@@ -236,7 +237,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysListButtonManager<T, N, I> newListButton();
+    public abstract <T extends Comparable<T>> TethysListButtonManager<T, N, I> newListButton();
 
     /**
      * Obtain a new icon button manager.
@@ -465,7 +466,7 @@ public abstract class TethysGuiFactory<N, I> {
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysDataEditField<TethysItemList<T>, N, I> newListField();
+    public abstract <T extends Comparable<T>> TethysListButtonField<T, N, I> newListField();
 
     /**
      * Obtain a new simple icon data field.

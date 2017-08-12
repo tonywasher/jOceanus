@@ -154,9 +154,9 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pField the field id
      * @param pButton the scroll button
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
-                                    final MetisField pField,
-                                    final TethysSwingListButtonManager<I> pButton) {
+    protected <I extends Comparable<I>> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+                                                          final MetisField pField,
+                                                          final TethysSwingListButtonManager<I> pButton) {
         /* Initialise with correct component */
         this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton));
     }

@@ -363,11 +363,12 @@ public class MetisFieldManager
     /**
      * Allocate a ScrollListButtonEditor object.
      * @param <T> the type of the object
+     * @param pClazz the class of the objects
      * @return the ScrollListButton editor
      */
-    public <T> MetisFieldListButtonCellEditor<T> allocateScrollListButtonCellEditor() {
+    public <T extends Comparable<T>> MetisFieldListButtonCellEditor<T> allocateScrollListButtonCellEditor(final Class<T> pClazz) {
         /* Return a new ScrollListButtonEditor object */
-        return new MetisFieldListButtonCellEditor<>(theFactory.newListButton());
+        return new MetisFieldListButtonCellEditor<>(theFactory.newListButton(), pClazz);
     }
 
     /**

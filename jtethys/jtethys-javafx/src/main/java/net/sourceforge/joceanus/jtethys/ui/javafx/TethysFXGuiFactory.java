@@ -271,7 +271,7 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXListButtonManager<T> newListButton() {
+    public <T extends Comparable<T>> TethysFXListButtonManager<T> newListButton() {
         return new TethysFXListButtonManager<>(this);
     }
 
@@ -456,7 +456,7 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <T> TethysFXListButtonField<T> newListField() {
+    public <T extends Comparable<T>> TethysFXListButtonField<T> newListField() {
         return new TethysFXListButtonField<>(this);
     }
 

@@ -140,8 +140,8 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      * @param pField the field id
      * @param pButton the button
      */
-    public <I> void addFieldElement(final MetisField pField,
-                                    final TethysSwingListButtonManager<I> pButton) {
+    public <I extends Comparable<I>> void addFieldElement(final MetisField pField,
+                                                          final TethysSwingListButtonManager<I> pButton) {
         /* Create the field */
         final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pButton);
 

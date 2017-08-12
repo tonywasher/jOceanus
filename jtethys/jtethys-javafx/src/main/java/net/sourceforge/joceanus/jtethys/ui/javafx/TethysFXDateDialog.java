@@ -684,6 +684,9 @@ public class TethysFXDateDialog
                     isSelectable &= iDay <= iLatest;
                 }
 
+                /* Check for allowed date */
+                isSelectable &= theConfig.isAllowed(iDay);
+
                 /* Set text */
                 myLabel.setDay(iDay, isSelectable);
             }

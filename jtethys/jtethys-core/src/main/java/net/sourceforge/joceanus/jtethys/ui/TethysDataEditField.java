@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 import java.util.Currency;
 import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -139,8 +141,7 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     abstract class TethysBaseDataEditField<T, N, I>
-            implements
-            TethysDataEditField<T, N, I> {
+            implements TethysDataEditField<T, N, I> {
         /**
          * The Event Manager.
          */
@@ -323,14 +324,10 @@ public interface TethysDataEditField<T, N, I>
     }
 
     /**
-     * Generic class for displaying and editing a data field.
-     * @param <T> the data type
-     * @param <N> the Node type
-     * @param <I> the Icon type
+     * ValidatedField.
+     * @param <T> the item class
      */
-    interface TethysValidatedEditField<T, N, I>
-            extends
-            TethysDataEditField<T, N, I> {
+    interface TethysValidatedField<T> {
         /**
          * Set the validator.
          * <p>
@@ -338,6 +335,15 @@ public interface TethysDataEditField<T, N, I>
          * @param pValidator the validator
          */
         void setValidator(Function<T, String> pValidator);
+    }
+
+    /**
+     * ValidatedTextFieldControl.
+     * @param <T> the item class
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    interface TethysValidatedEditField<T, N, I> extends TethysDataEditField<T, N, I>, TethysValidatedField<T> {
     }
 
     /**
@@ -622,5 +628,26 @@ public interface TethysDataEditField<T, N, I>
      * @param <I> the Icon type
      */
     interface TethysScrollButtonField<T, N, I> extends TethysDataEditField<T, N, I>, TethysScrollButton<T, I> {
+    }
+
+    /**
+     * List Button Configuration.
+     * @param <T> the value type
+     */
+    interface TethysListButton<T extends Comparable<T>> {
+        /**
+         * Set the selectable supplier.
+         * @param pSelectables the supplier
+         */
+        void setSelectables(Supplier<Iterator<T>> pSelectables);
+    }
+
+    /**
+     * List Button Field.
+     * @param <T> the value type
+     * @param <N> the Node type
+     * @param <I> the Icon type
+     */
+    interface TethysListButtonField<T extends Comparable<T>, N, I> extends TethysDataEditField<List<T>, N, I>, TethysListButton<T> {
     }
 }

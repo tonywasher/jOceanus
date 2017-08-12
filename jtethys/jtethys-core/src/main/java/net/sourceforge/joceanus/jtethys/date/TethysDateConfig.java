@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.date;
 
 import java.time.LocalDate;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -75,6 +76,11 @@ public class TethysDateConfig
     private TethysDate theLatest;
 
     /**
+     * The list of disallowed dates.
+     */
+    private Predicate<TethysDate> theAllowed;
+
+    /**
      * The active display month.
      */
     private TethysDate theMonth;
@@ -88,6 +94,9 @@ public class TethysDateConfig
         theFormatter = pFormatter;
         theEventManager = new TethysEventManager<>();
         setLocale(pFormatter.getLocale());
+
+        /* Initialise the allowed predicate */
+        theAllowed = d -> true;
 
         /* Listen to locale changes */
         theFormatter.getEventRegistrar().addEventListener(e -> setLocale(theFormatter.getLocale()));
@@ -152,6 +161,25 @@ public class TethysDateConfig
      */
     public boolean showNarrowDays() {
         return doShowNarrowDays;
+    }
+
+    /**
+     * Set the Allowed predicate.
+     * @param pAllowed the predicate
+     */
+    public void setAllowed(final Predicate<TethysDate> pAllowed) {
+        theAllowed = pAllowed;
+    }
+
+    /**
+     * Determine whether the day in the month is allowed.
+     * @param pDay the day of the current month
+     * @return true/false
+     */
+    public boolean isAllowed(final int pDay) {
+        TethysDate myDate = new TethysDate(theMonth);
+        myDate.adjustDay(pDay - 1);
+        return theAllowed.test(myDate);
     }
 
     /**

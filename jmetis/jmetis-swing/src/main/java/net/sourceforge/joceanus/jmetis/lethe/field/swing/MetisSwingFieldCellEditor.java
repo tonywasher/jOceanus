@@ -29,6 +29,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Currency;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -46,7 +47,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
@@ -497,7 +497,7 @@ public final class MetisSwingFieldCellEditor {
      * ListButton Cell Editor.
      * @param <T> the object type
      */
-    public static class MetisFieldListButtonCellEditor<T>
+    public static class MetisFieldListButtonCellEditor<T extends Comparable<T>>
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -523,7 +523,7 @@ public final class MetisSwingFieldCellEditor {
         /**
          * The editor value.
          */
-        private transient TethysItemList<T> theValue;
+        private transient List<T> theValue;
 
         /**
          * The active table.
@@ -533,8 +533,10 @@ public final class MetisSwingFieldCellEditor {
         /**
          * Constructor.
          * @param pButton the button
+         * @param pClazz the class of the objects
          */
-        protected MetisFieldListButtonCellEditor(final TethysSwingListButtonManager<T> pButton) {
+        protected MetisFieldListButtonCellEditor(final TethysSwingListButtonManager<T> pButton,
+                                                 final Class<T> pClazz) {
             /* Store parameters */
             theButton = pButton;
 
@@ -573,7 +575,7 @@ public final class MetisSwingFieldCellEditor {
             theTable = pTable;
 
             /* Store current value */
-            theValue = (TethysItemList<T>) pValue;
+            theValue = (List<T>) pValue;
             theButton.setValue(theValue);
 
             /* Declare the mouse listener */

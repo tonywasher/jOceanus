@@ -23,6 +23,8 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Rectangle;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -39,10 +41,10 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -547,8 +549,9 @@ public final class TethysSwingDataButtonField {
      * ListButtonField class.
      * @param <T> the data type
      */
-    public static class TethysSwingListButtonField<T>
-            extends TethysSwingDataTextField<TethysItemList<T>> {
+    public static class TethysSwingListButtonField<T extends Comparable<T>>
+            extends TethysSwingDataTextField<List<T>>
+            implements TethysListButtonField<T, JComponent, Icon> {
         /**
          * The icon manager.
          */
@@ -620,7 +623,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public void setValue(final TethysItemList<T> pValue) {
+        public void setValue(final List<T> pValue) {
             super.setValue(pValue);
             theManager.setValue(pValue);
             updateText();
@@ -654,6 +657,11 @@ public final class TethysSwingDataButtonField {
         @Override
         protected TethysSwingListButtonField<T> cloneField(final JLabel pLabel) {
             return new TethysSwingListButtonField<>(getGuiFactory(), pLabel);
+        }
+
+        @Override
+        public void setSelectables(final Supplier<Iterator<T>> pSelectables) {
+            theManager.setSelectables(pSelectables);
         }
     }
 }

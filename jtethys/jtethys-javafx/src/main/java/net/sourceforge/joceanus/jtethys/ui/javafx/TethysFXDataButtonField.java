@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -37,10 +39,10 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButtonField;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
@@ -493,8 +495,9 @@ public final class TethysFXDataButtonField {
      * ListButtonField class.
      * @param <T> the data type
      */
-    public static class TethysFXListButtonField<T>
-            extends TethysFXDataTextField<TethysItemList<T>> {
+    public static class TethysFXListButtonField<T extends Comparable<T>>
+            extends TethysFXDataTextField<List<T>>
+            implements TethysListButtonField<T, Node, Node> {
         /**
          * The list manager.
          */
@@ -557,7 +560,7 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void setValue(final TethysItemList<T> pValue) {
+        public void setValue(final List<T> pValue) {
             super.setValue(pValue);
             theManager.setValue(pValue);
             updateText();
@@ -586,6 +589,11 @@ public final class TethysFXDataButtonField {
                 fireEvent(TethysUIEvent.EDITFOCUSLOST, this);
             }
             isCellEditing = false;
+        }
+
+        @Override
+        public void setSelectables(final Supplier<Iterator<T>> pSelectables) {
+            theManager.setSelectables(pSelectables);
         }
     }
 }

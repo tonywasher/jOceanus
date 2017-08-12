@@ -54,7 +54,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRawDecimalEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableCellFactory.TethysSwingTableCell;
@@ -309,9 +308,8 @@ public class TethysSwingTableManager<C, R>
     }
 
     @Override
-    public <T> TethysSwingTableListColumn<T, C, R> declareListColumn(final C pId,
-                                                                     final Class<T> pClass) {
-        return new TethysSwingTableListColumn<>(this, pId, pClass);
+    public <T extends Comparable<T>> TethysSwingTableListColumn<T, C, R> declareListColumn(final C pId) {
+        return new TethysSwingTableListColumn<>(this, pId);
     }
 
     @Override
@@ -349,6 +347,16 @@ public class TethysSwingTableManager<C, R>
      */
     public void fireTableRowDeleted(final int pRowIndex) {
         theModel.fireTableRowsDeleted(pRowIndex, pRowIndex);
+    }
+
+    /**
+     * Fire TableCell updated.
+     * @param pRowIndex the row index of the cell that has been updated
+     * @param pColIndex the column index of the cell that has been updated
+     */
+    public void fireTableCellUpdated(final int pRowIndex,
+                                     final int pColIndex) {
+        theModel.fireTableCellUpdated(pRowIndex, pColIndex);
     }
 
     /**
@@ -1028,19 +1036,37 @@ public class TethysSwingTableManager<C, R>
      * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysSwingTableListColumn<T, C, R>
-            extends TethysSwingTableColumn<TethysItemList<T>, C, R> {
+    public static class TethysSwingTableListColumn<T extends Comparable<T>, C, R>
+            extends TethysSwingTableColumn<List<T>, C, R>
+            implements TethysTableListColumn<T, C, R, JComponent, Icon> {
+        /**
+         * Selectable supplier.
+         */
+        private Function<R, Iterator<T>> theSelectables;
+
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
-         * @param pClass the item class
          */
         protected TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
-                                             final C pId,
-                                             final Class<T> pClass) {
+                                             final C pId) {
             super(pTable, pId, TethysFieldType.LIST);
-            declareCell(getTable().theCellFactory.listCell(this, pClass));
+            declareCell(getTable().theCellFactory.listCell(this));
+            theSelectables = r -> Collections.emptyIterator();
+        }
+
+        @Override
+        public void setSelectables(final Function<R, Iterator<T>> pSelectables) {
+            theSelectables = pSelectables;
+        }
+
+        /**
+         * Obtain the selectable supplier.
+         * @return the supplier
+         */
+        protected Function<R, Iterator<T>> getSelectables() {
+            return theSelectables;
         }
     }
 

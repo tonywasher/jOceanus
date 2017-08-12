@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui.swing;
 
+import java.util.List;
+
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
@@ -41,7 +43,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableCharArrayColumn;
@@ -297,10 +298,9 @@ public class MetisSwingTableManager<R extends MetisDataTableItem>
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TethysSwingTableListColumn<T, MetisDataField, R> declareListColumn(final MetisDataField pId,
-                                                                                  final Class<T> pClass) {
-        final TethysSwingTableListColumn<T, MetisDataField, R> myColumn = getTable().declareListColumn(pId, pClass);
-        myColumn.setCellValueFactory(p -> (TethysItemList<T>) getItemFieldValue(p, pId, TethysItemList.class));
+    public <T extends Comparable<T>> TethysSwingTableListColumn<T, MetisDataField, R> declareListColumn(final MetisDataField pId) {
+        final TethysSwingTableListColumn<T, MetisDataField, R> myColumn = getTable().declareListColumn(pId);
+        myColumn.setCellValueFactory(p -> (List<T>) getItemFieldValue(p, pId, List.class));
         return myColumn;
     }
 

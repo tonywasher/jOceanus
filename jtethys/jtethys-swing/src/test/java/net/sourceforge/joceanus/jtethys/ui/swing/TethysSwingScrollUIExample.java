@@ -273,7 +273,8 @@ public class TethysSwingScrollUIExample {
         myGrid.allowCellGrowth(theListValues);
         myGrid.newRow();
 
-        theListButtonMgr.setValue(theHelper.buildToggleList());
+        theListButtonMgr.setValue(theHelper.buildSelectedList());
+        theListButtonMgr.setSelectables(theHelper::buildSelectableList);
         theListButtonMgr.setText("Tag");
 
         /* Add listener */

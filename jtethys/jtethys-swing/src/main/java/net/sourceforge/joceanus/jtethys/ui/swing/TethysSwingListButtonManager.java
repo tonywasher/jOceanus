@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * PopUp menu that displays a list of checkMenu items.
  * @param <T> the item type
  */
-public final class TethysSwingListButtonManager<T>
+public final class TethysSwingListButtonManager<T extends Comparable<T>>
         extends TethysListButtonManager<T, JComponent, Icon> {
     /**
      * The node.

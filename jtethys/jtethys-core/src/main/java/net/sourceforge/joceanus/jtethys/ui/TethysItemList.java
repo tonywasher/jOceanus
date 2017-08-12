@@ -30,7 +30,7 @@ import java.util.List;
  * Selectable item list.
  * @param <T> the item type.
  */
-public class TethysItemList<T> {
+public class TethysItemList<T extends Comparable<T>> {
     /**
      * List of items.
      */
@@ -93,6 +93,19 @@ public class TethysItemList<T> {
     }
 
     /**
+     * Clear non-Selected Items.
+     */
+    public void clearNonSelectedItems() {
+        final Iterator<TethysItem<T>> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            final TethysItem<T> myItem = myIterator.next();
+            if (!myItem.isSelected()) {
+                myIterator.remove();
+            }
+        }
+    }
+
+    /**
      * Select Item.
      * @param pItem the item
      */
@@ -134,11 +147,18 @@ public class TethysItemList<T> {
     }
 
     /**
+     * Sort the list.
+     */
+    public void sortList() {
+        theList.sort(null);
+    }
+
+    /**
      * Locate item in list.
      * @param pItem the item
      * @return the list item or null
      */
-    private TethysItem<T> locateItem(final T pItem) {
+    protected TethysItem<T> locateItem(final T pItem) {
         final Iterator<TethysItem<T>> myIterator = iterator();
         while (myIterator.hasNext()) {
             final TethysItem<T> myItem = myIterator.next();
@@ -222,7 +242,7 @@ public class TethysItemList<T> {
      * Item class.
      * @param <T> the item type.
      */
-    public static final class TethysItem<T> {
+    protected static final class TethysItem<T extends Comparable<T>> implements Comparable<TethysItem<T>> {
         /**
          * The Item.
          */
@@ -245,7 +265,7 @@ public class TethysItemList<T> {
          * Constructor.
          * @param pSource the source item
          */
-        private TethysItem(final TethysItem<T> pSource) {
+        protected TethysItem(final TethysItem<T> pSource) {
             this(pSource.getItem(), pSource.isSelected());
         }
 
@@ -313,6 +333,11 @@ public class TethysItemList<T> {
         @Override
         public int hashCode() {
             return theItem.hashCode();
+        }
+
+        @Override
+        public int compareTo(final TethysItem<T> pThat) {
+            return theItem.compareTo(pThat.getItem());
         }
     }
 }

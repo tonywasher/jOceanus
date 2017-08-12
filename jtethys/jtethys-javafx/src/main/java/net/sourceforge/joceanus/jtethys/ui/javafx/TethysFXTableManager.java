@@ -58,7 +58,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditConverter.TethysRawDecimalEditConverter;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableCellFactory.TethysFXTableCell;
@@ -309,9 +308,8 @@ public class TethysFXTableManager<C, R>
     }
 
     @Override
-    public <T> TethysFXTableListColumn<T, C, R> declareListColumn(final C pId,
-                                                                  final Class<T> pClass) {
-        return new TethysFXTableListColumn<>(this, pId, pClass);
+    public <T extends Comparable<T>> TethysFXTableListColumn<T, C, R> declareListColumn(final C pId) {
+        return new TethysFXTableListColumn<>(this, pId);
     }
 
     @Override
@@ -855,19 +853,37 @@ public class TethysFXTableManager<C, R>
      * @param <C> the column identity
      * @param <R> the table item class
      */
-    public static class TethysFXTableListColumn<T, C, R>
-            extends TethysFXTableColumn<TethysItemList<T>, C, R> {
+    public static class TethysFXTableListColumn<T extends Comparable<T>, C, R>
+            extends TethysFXTableColumn<List<T>, C, R>
+            implements TethysTableListColumn<T, C, R, Node, Node> {
+        /**
+         * Selectable supplier.
+         */
+        private Function<R, Iterator<T>> theSelectables;
+
         /**
          * Constructor.
          * @param pTable the table
          * @param pId the id
-         * @param pClass the item class
          */
         protected TethysFXTableListColumn(final TethysFXTableManager<C, R> pTable,
-                                          final C pId,
-                                          final Class<T> pClass) {
+                                          final C pId) {
             super(pTable, pId, TethysFieldType.LIST);
-            declareCellFactory(getTable().theCellFactory.listCellFactory(this, pClass));
+            declareCellFactory(getTable().theCellFactory.listCellFactory(this));
+            theSelectables = r -> Collections.emptyIterator();
+        }
+
+        @Override
+        public void setSelectables(final Function<R, Iterator<T>> pSelectables) {
+            theSelectables = pSelectables;
+        }
+
+        /**
+         * Obtain the selectable supplier.
+         * @return the supplier
+         */
+        protected Function<R, Iterator<T>> getSelectables() {
+            return theSelectables;
         }
     }
 

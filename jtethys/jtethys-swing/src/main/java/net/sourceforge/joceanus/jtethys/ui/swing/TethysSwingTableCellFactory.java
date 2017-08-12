@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.function.Supplier;
 
 import javax.swing.AbstractCellEditor;
@@ -47,7 +48,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldAttribute;
 import net.sourceforge.joceanus.jtethys.ui.TethysFieldType;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCell;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
@@ -240,12 +240,10 @@ public class TethysSwingTableCellFactory<C, R> {
      * Obtain List Cell.
      * @param <T> the column type
      * @param pColumn the column
-     * @param pClass the class of the item
      * @return the list cell
      */
-    protected <T> TethysSwingTableCell<TethysItemList<T>, C, R> listCell(final TethysSwingTableListColumn<T, C, R> pColumn,
-                                                                         final Class<T> pClass) {
-        return new TethysSwingTableListCell<>(pColumn, theGuiFactory, pClass);
+    protected <T extends Comparable<T>> TethysSwingTableCell<List<T>, C, R> listCell(final TethysSwingTableListColumn<T, C, R> pColumn) {
+        return new TethysSwingTableListCell<>(pColumn, theGuiFactory);
     }
 
     /**
@@ -497,6 +495,11 @@ public class TethysSwingTableCellFactory<C, R> {
             private boolean stoppingEdit;
 
             /**
+             * The point at which we are editing.
+             */
+            private Point thePoint;
+
+            /**
              * Constructor.
              */
             protected TethysSwingTableCellEditor() {
@@ -522,12 +525,12 @@ public class TethysSwingTableCellFactory<C, R> {
                 setActiveRow(myRow);
 
                 /* Determine cell rectangle */
-                final Point myTableLoc = pTable.getLocationOnScreen();
+                thePoint = pTable.getLocationOnScreen();
                 Rectangle myCellLoc = pTable.getCellRect(pRow, pCol, false);
 
                 /* Calculate rectangle */
-                myCellLoc = new Rectangle(myTableLoc.x + myCellLoc.x,
-                        myTableLoc.y + myCellLoc.y,
+                myCellLoc = new Rectangle(thePoint.x + myCellLoc.x,
+                        thePoint.y + myCellLoc.y,
                         myCellLoc.width,
                         myCellLoc.height);
 
@@ -1004,19 +1007,18 @@ public class TethysSwingTableCellFactory<C, R> {
      * @param <R> the table item class
      * @param <T> the column item class
      */
-    public static class TethysSwingTableListCell<T, C, R>
-            extends TethysSwingTableCell<TethysItemList<T>, C, R> {
+    public static class TethysSwingTableListCell<T extends Comparable<T>, C, R>
+            extends TethysSwingTableCell<List<T>, C, R> {
         /**
          * Constructor.
          * @param pColumn the column
          * @param pFactory the GUI Factory
-         * @param pClass the field class
          */
         protected TethysSwingTableListCell(final TethysSwingTableListColumn<T, C, R> pColumn,
-                                           final TethysSwingGuiFactory pFactory,
-                                           final Class<T> pClass) {
+                                           final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newListField());
             useDialog();
+            getControl().setSelectables(() -> getColumn().getSelectables().apply(getActiveRow()));
         }
 
         @Override
@@ -1024,10 +1026,15 @@ public class TethysSwingTableCellFactory<C, R> {
             return (TethysSwingListButtonField<T>) super.getControl();
         }
 
+        @Override
+        public TethysSwingTableListColumn<T, C, R> getColumn() {
+            return (TethysSwingTableListColumn<T, C, R>) super.getColumn();
+        }
+
         @SuppressWarnings("unchecked")
         @Override
-        protected TethysItemList<T> getCastValue(final Object pValue) {
-            return (TethysItemList<T>) pValue;
+        protected List<T> getCastValue(final Object pValue) {
+            return (List<T>) pValue;
         }
     }
 

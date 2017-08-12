@@ -173,7 +173,7 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingListButtonManager<T> newListButton() {
+    public <T extends Comparable<T>> TethysSwingListButtonManager<T> newListButton() {
         return new TethysSwingListButtonManager<>(this);
     }
 
@@ -358,7 +358,7 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <T> TethysSwingListButtonField<T> newListField() {
+    public <T extends Comparable<T>> TethysSwingListButtonField<T> newListField() {
         return new TethysSwingListButtonField<>(this);
     }
 

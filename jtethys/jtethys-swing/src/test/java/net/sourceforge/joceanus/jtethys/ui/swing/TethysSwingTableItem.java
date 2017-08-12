@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.util.List;
+
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -30,7 +32,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 
@@ -121,7 +122,7 @@ public class TethysSwingTableItem {
     /**
      * List property.
      */
-    private TethysItemList<TethysListId> theList;
+    private List<TethysListId> theList;
 
     /**
      * Updates property.
@@ -148,7 +149,7 @@ public class TethysSwingTableItem {
         theRate = TethysScrollUITestHelper.RATE_DEF;
         theRatio = TethysScrollUITestHelper.RATIO_DEF;
         theDilution = TethysScrollUITestHelper.DILUTION_DEF;
-        theList = pHelper.buildToggleList();
+        theList = pHelper.buildSelectedList();
         theUpdates = new Integer(0);
     }
 
@@ -412,7 +413,7 @@ public class TethysSwingTableItem {
      * Obtain the list property.
      * @return the list property
      */
-    public TethysItemList<TethysListId> getList() {
+    public List<TethysListId> getList() {
         return theList;
     }
 
@@ -420,7 +421,7 @@ public class TethysSwingTableItem {
      * Set the list property.
      * @param pValue the new value
      */
-    public void setList(final TethysItemList<TethysListId> pValue) {
+    public void setList(final List<TethysListId> pValue) {
         theList = pValue;
     }
 

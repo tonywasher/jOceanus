@@ -22,7 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -160,23 +163,33 @@ public class TethysScrollUITestHelper<N, I> {
     }
 
     /**
-     * Create list.
+     * Create selected list.
      * @return the list
      */
-    public TethysItemList<TethysListId> buildToggleList() {
+    public List<TethysListId> buildSelectedList() {
         /* Create the list */
-        TethysItemList<TethysListId> myValues = new TethysItemList<>();
-
-        /* Loop through the items */
-        for (TethysListId myValue : TethysListId.values()) {
-            myValues.setSelectableItem(myValue);
-        }
-
-        /* Select the work value */
-        myValues.selectItem(TethysListId.WORK);
+        List<TethysListId> myValues = new ArrayList<>();
+        myValues.add(TethysListId.WORK);
 
         /* Set the value */
         return myValues;
+    }
+
+    /**
+     * Create selectable list.
+     * @return the list
+     */
+    public Iterator<TethysListId> buildSelectableList() {
+        /* Create the list */
+        List<TethysListId> myValues = new ArrayList<>();
+
+        /* Loop through the items */
+        for (TethysListId myValue : TethysListId.values()) {
+            myValues.add(myValue);
+        }
+
+        /* Set the value */
+        return myValues.iterator();
     }
 
     /**

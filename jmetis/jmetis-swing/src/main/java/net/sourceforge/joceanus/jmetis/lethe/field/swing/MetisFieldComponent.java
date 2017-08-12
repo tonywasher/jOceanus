@@ -264,9 +264,9 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param pButton the button
      * @return the field component
      */
-    protected static <I, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
-                                                                                             final MetisField pField,
-                                                                                             final TethysSwingListButtonManager<I> pButton) {
+    protected static <I extends Comparable<I>, X extends MetisFieldSetItem> MetisFieldComponent<X> deriveComponent(final MetisFieldSet<X> pFieldSet,
+                                                                                                                   final MetisField pField,
+                                                                                                                   final TethysSwingListButtonManager<I> pButton) {
         /* Allocate component */
         final TethysFieldModelObjectList<I, X> myModel = new TethysFieldModelObjectList<>(pFieldSet, pField);
         return new MetisFieldScrollListButton<>(pButton, myModel);
@@ -723,7 +723,7 @@ public abstract class MetisFieldComponent<T extends MetisFieldSetItem> {
      * @param <I> Button element type
      * @param <T> the Data Item type
      */
-    private static class MetisFieldScrollListButton<I, T extends MetisFieldSetItem>
+    private static class MetisFieldScrollListButton<I extends Comparable<I>, T extends MetisFieldSetItem>
             extends MetisFieldComponent<T> {
         /**
          * The Component.

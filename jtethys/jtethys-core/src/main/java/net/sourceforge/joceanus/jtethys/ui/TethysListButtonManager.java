@@ -22,11 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysListButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysItemList.TethysItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -47,8 +52,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * @param <N> the node type
  * @param <I> the Icon type
  */
-public abstract class TethysListButtonManager<T, N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
+        implements TethysListButton<T>, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
     /**
      * The GUI Manager.
      */
@@ -82,12 +87,22 @@ public abstract class TethysListButtonManager<T, N, I>
     /**
      * The Value.
      */
-    private TethysItemList<T> theValue;
+    private List<T> theValue;
 
     /**
      * The ActiveValue.
      */
     private TethysItemList<T> theActiveValue;
+
+    /**
+     * The NewValue.
+     */
+    private TethysItemList<T> theNewValue;
+
+    /**
+     * The selectable items supplier.
+     */
+    private Supplier<Iterator<T>> theSelectables;
 
     /**
      * Is the menu Showing?
@@ -110,6 +125,7 @@ public abstract class TethysListButtonManager<T, N, I>
 
         /* Set action handler */
         theButton.getEventRegistrar().addEventListener(e -> handleMenuRequest());
+        theSelectables = Collections::emptyIterator;
     }
 
     @Override
@@ -216,12 +232,71 @@ public abstract class TethysListButtonManager<T, N, I>
      */
     protected abstract void registerListeners();
 
+    @Override
+    public void setSelectables(final Supplier<Iterator<T>> pSelectables) {
+        theSelectables = pSelectables;
+    }
+
     /**
      * Set the value.
      * @param pValue the value
      */
-    public void setValue(final TethysItemList<T> pValue) {
-        theValue = pValue;
+    public void setValue(final List<T> pValue) {
+        /* If the value is null or empty */
+        if (pValue == null || pValue.isEmpty()) {
+            /* Set lists to null */
+            theValue = null;
+            theActiveValue = null;
+
+            /* else build the new lists */
+        } else {
+            /* Create the new lists */
+            theValue = new ArrayList<>(pValue);
+            theActiveValue = new TethysItemList<>();
+
+            /* Iterate through the list */
+            final Iterator<T> myIterator = theValue.iterator();
+            while (myIterator.hasNext()) {
+                /* Create the list item */
+                final T myItem = myIterator.next();
+                theActiveValue.setSelectableItem(myItem);
+                theActiveValue.setSelectedItem(myItem);
+            }
+        }
+
+        /* Update the text */
+        updateText();
+    }
+
+    /**
+     * Set the value.
+     * @param pValue the value
+     */
+    private void setValue(final TethysItemList<T> pValue) {
+        /* Create the new list */
+        theValue = new ArrayList<>();
+        theActiveValue = pValue;
+
+        /* Iterate through the list */
+        if (theActiveValue != null) {
+            final Iterator<TethysItem<T>> myIterator = theActiveValue.iterator();
+            while (myIterator.hasNext()) {
+                /* Create the list item */
+                final TethysItem<T> myItem = myIterator.next();
+                if (myItem.isSelected()) {
+                    theValue.add(myItem.getItem());
+                }
+            }
+        }
+
+        /* Handle no selections */
+        if (theValue.isEmpty()) {
+            /* Set lists to null */
+            theValue = null;
+            theActiveValue = null;
+        }
+
+        /* Update the text */
         updateText();
     }
 
@@ -229,7 +304,7 @@ public abstract class TethysListButtonManager<T, N, I>
      * Obtain the value.
      * @return the value
      */
-    public TethysItemList<T> getValue() {
+    public List<T> getValue() {
         return theValue;
     }
 
@@ -271,11 +346,17 @@ public abstract class TethysListButtonManager<T, N, I>
         /* Clear any existing elements from the menu */
         theMenu.removeAllItems();
 
+        /* Build the activeValue */
+        buildActiveValue();
+
         /* If we have any values */
-        if ((theValue != null)
-            && (theValue.size() > 0)) {
+        if ((theActiveValue != null)
+            && (theActiveValue.size() > 0)) {
+            /* Sort the list */
+            theActiveValue.sortList();
+
             /* Create a clone of the list */
-            theActiveValue = new TethysItemList<>(theValue);
+            theNewValue = new TethysItemList<>(theActiveValue);
 
             /* Iterate through the list */
             final Iterator<TethysItem<T>> myIterator = theActiveValue.iterator();
@@ -292,7 +373,36 @@ public abstract class TethysListButtonManager<T, N, I>
             /* Else nothing to display */
         } else {
             /* notify cancellation */
+            theActiveValue = null;
             return false;
+        }
+    }
+
+    /**
+     * buildActiveValue.
+     */
+    private void buildActiveValue() {
+        /* Clear out non-selected items */
+        if (theActiveValue != null) {
+            theActiveValue.clearNonSelectedItems();
+        }
+
+        /* Loop through the values */
+        final Iterator<T> myIterator = theSelectables.get();
+        while (myIterator.hasNext()) {
+            /* Create the menu item */
+            final T myItem = myIterator.next();
+
+            /* Create the Active Value if it does not exist */
+            if (theActiveValue == null) {
+                theActiveValue = new TethysItemList<>();
+            }
+
+            /* If the list does not contain the item */
+            if (theActiveValue.locateItem(myItem) == null) {
+                /* Add it */
+                theActiveValue.setSelectableItem(myItem);
+            }
         }
     }
 
@@ -310,7 +420,7 @@ public abstract class TethysListButtonManager<T, N, I>
         if ((mySelected != null)
             && (mySelected instanceof TethysScrollMenuToggleItem)) {
             /* Toggle the item */
-            theActiveValue.toggleItem(mySelected.getValue());
+            theNewValue.toggleItem(mySelected.getValue());
         }
     }
 
@@ -319,10 +429,11 @@ public abstract class TethysListButtonManager<T, N, I>
      */
     protected void handleMenuClosed() {
         /* If there has been a change */
-        if (!theActiveValue.equals(theValue)) {
+        if (!theActiveValue.equals(theNewValue)) {
             /* Record the new value */
-            setValue(theActiveValue);
-            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theActiveValue);
+            setValue(theNewValue);
+            theEventManager.fireEvent(TethysUIEvent.NEWVALUE, theValue);
+            theNewValue = null;
 
             /* else if the menu is showing */
         } else if (menuShowing) {
@@ -354,8 +465,8 @@ public abstract class TethysListButtonManager<T, N, I>
      * @return the formatted values
      */
     public String getText() {
-        return theValue == null
-                                ? null
-                                : theValue.toString();
+        return theActiveValue == null
+                                      ? null
+                                      : theActiveValue.toString();
     }
 }

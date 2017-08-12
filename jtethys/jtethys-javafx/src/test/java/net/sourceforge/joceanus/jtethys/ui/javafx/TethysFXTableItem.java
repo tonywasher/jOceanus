@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.List;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -33,7 +35,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 
@@ -124,7 +125,7 @@ public class TethysFXTableItem {
     /**
      * List property.
      */
-    private final ObjectProperty<TethysItemList<TethysListId>> theList = new SimpleObjectProperty<>(this, TethysDataId.LIST.toString());
+    private final ObjectProperty<List<TethysListId>> theList = new SimpleObjectProperty<>(this, TethysDataId.LIST.toString());
 
     /**
      * Updates property.
@@ -151,7 +152,7 @@ public class TethysFXTableItem {
         theRate.set(TethysScrollUITestHelper.RATE_DEF);
         theRatio.set(TethysScrollUITestHelper.RATIO_DEF);
         theDilution.set(TethysScrollUITestHelper.DILUTION_DEF);
-        theList.setValue(pHelper.buildToggleList());
+        theList.setValue(pHelper.buildSelectedList());
         theUpdates.setValue(new Integer(0));
     }
 
@@ -287,7 +288,7 @@ public class TethysFXTableItem {
      * Obtain the list property.
      * @return the list property
      */
-    public ObjectProperty<TethysItemList<TethysListId>> listProperty() {
+    public ObjectProperty<List<TethysListId>> listProperty() {
         return theList;
     }
 

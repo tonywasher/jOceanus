@@ -40,13 +40,13 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCurrencyColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconColumn;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableListColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableRawDecimalColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableScrollColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableValidatedColumn;
@@ -322,11 +322,9 @@ public abstract class MetisTableManager<R extends MetisDataTableItem, N, I>
      * Declare list column.
      * @param <T> the column type
      * @param pId the column id
-     * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableColumn<TethysItemList<T>, MetisDataField, R, N, I> declareListColumn(MetisDataField pId,
-                                                                                                        Class<T> pClass);
+    public abstract <T extends Comparable<T>> TethysTableListColumn<T, MetisDataField, R, N, I> declareListColumn(MetisDataField pId);
 
     /**
      * Declare icon column.

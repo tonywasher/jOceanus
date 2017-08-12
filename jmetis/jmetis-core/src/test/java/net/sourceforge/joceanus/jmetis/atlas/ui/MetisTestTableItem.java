@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 
@@ -184,7 +184,7 @@ public class MetisTestTableItem
         setRate(TethysScrollUITestHelper.RATE_DEF);
         setRatio(TethysScrollUITestHelper.RATIO_DEF);
         setDilution(TethysScrollUITestHelper.DILUTION_DEF);
-        setList(pHelper.buildToggleList());
+        setList(pHelper.buildSelectedList());
         setUpdates(new Integer(0));
     }
 
@@ -487,15 +487,15 @@ public class MetisTestTableItem
      * @return the list property
      */
     @SuppressWarnings("unchecked")
-    public TethysItemList<TethysListId> getList() {
-        return (TethysItemList<TethysListId>) getValueSet().getValue(FIELD_LIST, TethysItemList.class);
+    public List<TethysListId> getList() {
+        return (List<TethysListId>) getValueSet().getValue(FIELD_LIST, List.class);
     }
 
     /**
      * Set the list property.
      * @param pValue the new value
      */
-    public void setList(final TethysItemList<TethysListId> pValue) {
+    public void setList(final List<TethysListId> pValue) {
         getValueSet().setValue(FIELD_LIST, pValue);
     }
 

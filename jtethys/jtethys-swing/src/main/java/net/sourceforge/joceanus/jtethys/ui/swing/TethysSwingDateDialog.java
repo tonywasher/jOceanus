@@ -804,6 +804,9 @@ public class TethysSwingDateDialog
                     isSelectable &= iDay <= iLatest;
                 }
 
+                /* Check for allowed date */
+                isSelectable &= theConfig.isAllowed(iDay);
+
                 /* Set the day */
                 myLabel.setDay(iDay, isSelectable);
             }

@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.HeadlessException;
 import java.util.Currency;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -486,7 +486,8 @@ public class TethysSwingEditUIExample {
         myGrid.addCell(theListField);
         myGrid.allowCellGrowth(theListField);
         myGrid.newRow();
-        theListField.setValue(theHelper.buildToggleList());
+        theListField.setValue(theHelper.buildSelectedList());
+        theListField.setSelectables(theHelper::buildSelectableList);
         theListField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theListField, e));
 
         /* Create IconButton field line */
@@ -678,8 +679,8 @@ public class TethysSwingEditUIExample {
             theValue.setText(theDecimalFormatter.formatDecimal((TethysDecimal) pResults));
         } else if (pResults instanceof Boolean) {
             theValue.setText(pResults.toString());
-        } else if (pResults instanceof TethysItemList) {
-            theValue.setText(((TethysItemList<?>) pResults).toString());
+        } else if (pResults instanceof List) {
+            theValue.setText(((List<?>) pResults).toString());
         } else if (pResults instanceof TethysDate) {
             theValue.setText(theDateFormatter.formatDate((TethysDate) pResults));
         } else {
