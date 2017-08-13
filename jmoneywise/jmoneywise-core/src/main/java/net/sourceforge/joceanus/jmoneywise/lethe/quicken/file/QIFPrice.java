@@ -104,11 +104,11 @@ public class QIFPrice
                      final MetisDataFormatter pFormatter,
                      final String pLine) {
         /* Split out the parts */
-        String[] myParts = pLine.split(QIF_COMMA);
+        final String[] myParts = pLine.split(QIF_COMMA);
 
         /* Strip leading and trailing quotes */
         for (int i = 0; i < myParts.length; i++) {
-            String myStr = myParts[i];
+            final String myStr = myParts[i];
             if ((myStr.startsWith(QIF_QUOTE))
                 && (myStr.endsWith(QIF_QUOTE))) {
                 myParts[i] = myStr.substring(1, myStr.length() - 1);
@@ -139,7 +139,7 @@ public class QIFPrice
         QIFSecurity mySecurity = null;
         for (String myLine : pLines) {
             /* Create the price and add to the list */
-            QIFPrice myPrice = new QIFPrice(pFile, pFormatter, myLine);
+            final QIFPrice myPrice = new QIFPrice(pFile, pFormatter, myLine);
             mySecurity = myPrice.getSecurity();
             thePrices.add(myPrice);
         }
@@ -233,7 +233,7 @@ public class QIFPrice
         }
 
         /* Cast correctly */
-        QIFPrice myLine = (QIFPrice) pThat;
+        final QIFPrice myLine = (QIFPrice) pThat;
 
         /* Check security */
         if (!getSecurity().equals(myLine.getSecurity())) {

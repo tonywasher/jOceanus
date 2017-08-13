@@ -176,7 +176,7 @@ public class DepositCategoryType
 
         @Override
         protected DepositCategoryTypeList getEmptyList(final ListStyle pStyle) {
-            DepositCategoryTypeList myList = new DepositCategoryTypeList(this);
+            final DepositCategoryTypeList myList = new DepositCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -188,7 +188,7 @@ public class DepositCategoryType
                 throw new UnsupportedOperationException();
             }
 
-            DepositCategoryType myType = new DepositCategoryType(this, (DepositCategoryType) pItem);
+            final DepositCategoryType myType = new DepositCategoryType(this, (DepositCategoryType) pItem);
             add(myType);
             return myType;
         }
@@ -213,7 +213,7 @@ public class DepositCategoryType
          */
         public void addBasicItem(final String pDepCatType) throws OceanusException {
             /* Create a new Deposit Category Type */
-            DepositCategoryType myDepType = new DepositCategoryType(this, pDepCatType);
+            final DepositCategoryType myDepType = new DepositCategoryType(this, pDepCatType);
 
             /* Check that this DepositCategoryTypeId has not been previously added */
             if (!isIdUnique(myDepType.getId())) {
@@ -228,7 +228,7 @@ public class DepositCategoryType
         @Override
         public DepositCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            DepositCategoryType myType = new DepositCategoryType(this, pValues);
+            final DepositCategoryType myType = new DepositCategoryType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -246,7 +246,7 @@ public class DepositCategoryType
         @Override
         protected DepositCategoryType newItem(final DepositCategoryClass pClass) throws OceanusException {
             /* Create the type */
-            DepositCategoryType myType = new DepositCategoryType(this, pClass);
+            final DepositCategoryType myType = new DepositCategoryType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

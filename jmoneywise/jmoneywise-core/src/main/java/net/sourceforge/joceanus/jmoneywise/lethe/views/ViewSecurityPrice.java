@@ -172,16 +172,16 @@ public class ViewSecurityPrice
         }
 
         /* Access the list for the item */
-        ViewSecurityPriceList myList = (ViewSecurityPriceList) getList();
+        final ViewSecurityPriceList myList = (ViewSecurityPriceList) getList();
 
         /* Set null default dilution */
         setValueDilution(null);
         setValueDilutedPrice(null);
 
         /* Access Price details */
-        TethysDate myDate = getDate();
-        TethysPrice myPrice = getPrice();
-        Security mySecurity = getSecurity();
+        final TethysDate myDate = getDate();
+        final TethysPrice myPrice = getPrice();
+        final Security mySecurity = getSecurity();
 
         /* Ignore if we have no details */
         if ((myDate == null) || (myPrice == null)) {
@@ -189,7 +189,7 @@ public class ViewSecurityPrice
         }
 
         /* Obtain dilutions */
-        DilutionEventMap myDilutions = myList.getDilutions();
+        final DilutionEventMap myDilutions = myList.getDilutions();
 
         /* If we are unsure about dilutions check for them */
         if (theDilutionState.equals(DilutionState.UNKNOWN)
@@ -199,7 +199,7 @@ public class ViewSecurityPrice
         }
 
         /* Determine the dilution factor for the date */
-        TethysDilution myDilution = myDilutions.getDilutionFactor(mySecurity, myDate);
+        final TethysDilution myDilution = myDilutions.getDilutionFactor(mySecurity, myDate);
 
         /* If we have a dilution factor */
         if (myDilution != null) {
@@ -259,19 +259,19 @@ public class ViewSecurityPrice
             ensureMap();
 
             /* Access the base prices */
-            SecurityPriceList myPrices = getDataSet().getSecurityPrices();
+            final SecurityPriceList myPrices = getDataSet().getSecurityPrices();
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
             theDilutions = pView.getDilutions();
 
             /* Loop through the list */
-            Iterator<SecurityPrice> myIterator = myPrices.listIterator();
+            final Iterator<SecurityPrice> myIterator = myPrices.listIterator();
             while (myIterator.hasNext()) {
-                SecurityPrice myCurr = myIterator.next();
+                final SecurityPrice myCurr = myIterator.next();
 
                 /* Copy the item */
-                ViewSecurityPrice myItem = new ViewSecurityPrice(this, myCurr);
+                final ViewSecurityPrice myItem = new ViewSecurityPrice(this, myCurr);
                 myItem.resolveUpdateSetLinks(pUpdateSet);
                 add(myItem);
 
@@ -334,7 +334,7 @@ public class ViewSecurityPrice
          */
         @Override
         public ViewSecurityPrice addNewItem() {
-            ViewSecurityPrice myPrice = new ViewSecurityPrice(this);
+            final ViewSecurityPrice myPrice = new ViewSecurityPrice(this);
             add(myPrice);
             return myPrice;
         }

@@ -180,7 +180,7 @@ public class TaxBasis
 
         @Override
         protected TaxBasisList getEmptyList(final ListStyle pStyle) {
-            TaxBasisList myList = new TaxBasisList(this);
+            final TaxBasisList myList = new TaxBasisList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -197,7 +197,7 @@ public class TaxBasis
                 throw new UnsupportedOperationException();
             }
 
-            TaxBasis myBasis = new TaxBasis(this, (TaxBasis) pItem);
+            final TaxBasis myBasis = new TaxBasis(this, (TaxBasis) pItem);
             add(myBasis);
             return myBasis;
         }
@@ -226,7 +226,7 @@ public class TaxBasis
          */
         public void addBasicItem(final String pTaxBasis) throws OceanusException {
             /* Create a new Tax Basis */
-            TaxBasis myBasis = new TaxBasis(this, pTaxBasis);
+            final TaxBasis myBasis = new TaxBasis(this, pTaxBasis);
 
             /* Check that this TaxBasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
@@ -241,7 +241,7 @@ public class TaxBasis
         @Override
         public TaxBasis addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the basis */
-            TaxBasis myBasis = new TaxBasis(this, pValues);
+            final TaxBasis myBasis = new TaxBasis(this, pValues);
 
             /* Check that this BasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {
@@ -259,7 +259,7 @@ public class TaxBasis
         @Override
         protected TaxBasis newItem(final TaxBasisClass pClass) throws OceanusException {
             /* Create the basis */
-            TaxBasis myBasis = new TaxBasis(this, pClass);
+            final TaxBasis myBasis = new TaxBasis(this, pClass);
 
             /* Check that this BasisId has not been previously added */
             if (!isIdUnique(myBasis.getId())) {

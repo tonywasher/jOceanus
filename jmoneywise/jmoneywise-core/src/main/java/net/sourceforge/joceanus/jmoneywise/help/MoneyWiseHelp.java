@@ -41,12 +41,12 @@ public class MoneyWiseHelp
         super(MoneyWiseHelp.class, "MoneyWise Help");
 
         /* Create accounts tree */
-        TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+        final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
         myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
         myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
 
         /* Create static tree */
-        TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+        final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
         myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
         myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
 

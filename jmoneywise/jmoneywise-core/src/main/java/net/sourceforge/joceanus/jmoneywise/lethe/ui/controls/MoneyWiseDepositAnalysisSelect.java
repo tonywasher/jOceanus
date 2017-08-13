@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositCategoryBucket.DepositCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
@@ -133,8 +132,8 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        TethysLabel<N, I> myDepLabel = pFactory.newLabel(NLS_DEPOSIT + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myDepLabel = pFactory.newLabel(NLS_DEPOSIT + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -210,7 +209,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Deposits to select */
-        boolean dpAvailable = bEnabled && isAvailable();
+        final boolean dpAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theDepositButton.setEnabled(dpAvailable);
@@ -234,28 +233,12 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         /* Obtain the current deposit */
         DepositBucket myDeposit = theState.getDeposit();
 
-        /* If we have a selected Deposit */
-        if (myDeposit != null) {
-            /* Look for the equivalent bucket */
-            myDeposit = getMatchingBucket(myDeposit);
-        }
+        /* Switch to versions from the analysis */
+        myDeposit = myDeposit != null
+                                      ? theDeposits.getMatchingDeposit(myDeposit.getAccount())
+                                      : theDeposits.getDefaultDeposit();
 
-        /* If we do not have an active bucket and the list is non-empty */
-        if (myDeposit == null
-            && !theDeposits.isEmpty()) {
-            /* Check for an account in the same category */
-            DepositCategory myCategory = theState.getCategory();
-            DepositCategoryBucket myCatBucket = (myCategory == null)
-                                                                     ? null
-                                                                     : theCategories.findItemById(myCategory.getId());
-
-            /* Determine the next deposit */
-            myDeposit = myCatBucket != null
-                                            ? getFirstDeposit(myCategory)
-                                            : theDeposits.peekFirst();
-        }
-
-        /* Set the account */
+        /* Set the deposit */
         theState.setTheDeposit(myDeposit);
         theState.applyState();
     }
@@ -265,13 +248,13 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof DepositFilter) {
             /* Access filter */
-            DepositFilter myFilter = (DepositFilter) pFilter;
+            final DepositFilter myFilter = (DepositFilter) pFilter;
 
             /* Obtain the filter bucket */
             DepositBucket myDeposit = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myDeposit = getMatchingBucket(myDeposit);
+            myDeposit = theDeposits.getMatchingDeposit(myDeposit.getAccount());
 
             /* Set the deposit */
             theState.setTheDeposit(myDeposit);
@@ -280,44 +263,12 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
     }
 
     /**
-     * Obtain first account for category.
+     * Obtain the default Deposit for the category.
      * @param pCategory the category
-     * @return the first account
+     * @return the bucket
      */
-    private DepositBucket getFirstDeposit(final DepositCategory pCategory) {
-        /* Loop through the available account values */
-        Iterator<DepositBucket> myIterator = theDeposits.iterator();
-        while (myIterator.hasNext()) {
-            DepositBucket myBucket = myIterator.next();
-
-            /* Return if correct category */
-            if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
-                return myBucket;
-            }
-        }
-
-        /* No such account */
-        return null;
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private DepositBucket getMatchingBucket(final DepositBucket pBucket) {
-        /* Look up the matching DepositBucket */
-        Deposit myDeposit = pBucket.getAccount();
-        DepositBucket myBucket = theDeposits.findItemById(myDeposit.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = theDeposits.getOrphanBucket(myDeposit);
-        }
-
-        /* return the bucket */
-        return myBucket;
+    protected DepositBucket getDefaultDeposit(final DepositCategory pCategory) {
+        return theDeposits.getDefaultDeposit(pCategory);
     }
 
     /**
@@ -350,16 +301,16 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, TethysScrollSubMenu<DepositCategory, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<DepositCategory, ?>> myMap = new HashMap<>();
 
         /* Record active item */
-        DepositCategory myCurrent = theState.getCategory();
+        final DepositCategory myCurrent = theState.getCategory();
         TethysScrollMenuItem<DepositCategory> myActive = null;
 
         /* Re-Loop through the available category values */
-        Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
+        final Iterator<DepositCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            DepositCategoryBucket myBucket = myIterator.next();
+            final DepositCategoryBucket myBucket = myIterator.next();
 
             /* Only process low-level items */
             if (myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
@@ -367,8 +318,8 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             }
 
             /* Determine menu to add to */
-            DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
-            String myParentName = myParent.getName();
+            final DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            final String myParentName = myParent.getName();
             TethysScrollSubMenu<DepositCategory, ?> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
@@ -379,8 +330,8 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            DepositCategory myCategory = myBucket.getAccountCategory();
-            TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final DepositCategory myCategory = myBucket.getAccountCategory();
+            final TethysScrollMenuItem<DepositCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -403,16 +354,16 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         theDepositMenu.removeAllItems();
 
         /* Access current category */
-        DepositCategory myCategory = theState.getCategory();
-        DepositBucket myDeposit = theState.getDeposit();
+        final DepositCategory myCategory = theState.getCategory();
+        final DepositBucket myDeposit = theState.getDeposit();
 
         /* Record active item */
         TethysScrollMenuItem<DepositBucket> myActive = null;
 
         /* Loop through the available account values */
-        Iterator<DepositBucket> myIterator = theDeposits.iterator();
+        final Iterator<DepositBucket> myIterator = theDeposits.iterator();
         while (myIterator.hasNext()) {
-            DepositBucket myBucket = myIterator.next();
+            final DepositBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
             if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
@@ -420,7 +371,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            TethysScrollMenuItem<DepositBucket> myItem = theDepositMenu.addItem(myBucket);
+            final TethysScrollMenuItem<DepositBucket> myItem = theDepositMenu.addItem(myBucket);
 
             /* If this is the active deposit */
             if (myBucket.equals(myDeposit)) {
@@ -516,9 +467,9 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
          */
         private void setTheDeposit(final DepositBucket pDeposit) {
             /* Access category for account */
-            DepositCategory myCategory = pDeposit == null
-                                                          ? null
-                                                          : pDeposit.getCategory();
+            final DepositCategory myCategory = pDeposit == null
+                                                                ? null
+                                                                : pDeposit.getCategory();
             setTheDeposit(myCategory, pDeposit);
         }
 
@@ -547,7 +498,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         private boolean setCategory(final DepositCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDifference.isEqual(pCategory, theCategory)) {
-                setTheDeposit(pCategory, getFirstDeposit(pCategory));
+                setTheDeposit(pCategory, getDefaultDeposit(pCategory));
                 return true;
             }
             return false;
@@ -563,5 +514,4 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             theCatButton.setValue(theCategory);
         }
     }
-
 }

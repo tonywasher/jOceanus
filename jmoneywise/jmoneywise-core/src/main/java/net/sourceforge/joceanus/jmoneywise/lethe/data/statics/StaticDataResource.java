@@ -943,7 +943,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<DepositCategoryClass, TethysResourceId> buildDepositMap() {
         /* Create the map and return it */
-        Map<DepositCategoryClass, TethysResourceId> myMap = new EnumMap<>(DepositCategoryClass.class);
+        final Map<DepositCategoryClass, TethysResourceId> myMap = new EnumMap<>(DepositCategoryClass.class);
         myMap.put(DepositCategoryClass.CHECKING, DEPOSITTYPE_CHECKING);
         myMap.put(DepositCategoryClass.SAVINGS, DEPOSITTYPE_SAVINGS);
         myMap.put(DepositCategoryClass.TAXFREESAVINGS, DEPOSITTYPE_TAXFREESAVINGS);
@@ -969,7 +969,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<CashCategoryClass, TethysResourceId> buildCashMap() {
         /* Create the map and return it */
-        Map<CashCategoryClass, TethysResourceId> myMap = new EnumMap<>(CashCategoryClass.class);
+        final Map<CashCategoryClass, TethysResourceId> myMap = new EnumMap<>(CashCategoryClass.class);
         myMap.put(CashCategoryClass.CASH, CASHTYPE_CASH);
         myMap.put(CashCategoryClass.AUTOEXPENSE, CASHTYPE_AUTO);
         myMap.put(CashCategoryClass.PARENT, CATEGORYTYPE_PARENT);
@@ -991,7 +991,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<LoanCategoryClass, TethysResourceId> buildLoanMap() {
         /* Create the map and return it */
-        Map<LoanCategoryClass, TethysResourceId> myMap = new EnumMap<>(LoanCategoryClass.class);
+        final Map<LoanCategoryClass, TethysResourceId> myMap = new EnumMap<>(LoanCategoryClass.class);
         myMap.put(LoanCategoryClass.CREDITCARD, LOANTYPE_CREDIT);
         myMap.put(LoanCategoryClass.PRIVATELOAN, LOANTYPE_PRIVATE);
         myMap.put(LoanCategoryClass.LOAN, LOANTYPE_LOAN);
@@ -1014,7 +1014,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<PortfolioTypeClass, TethysResourceId> buildPortfolioMap() {
         /* Create the map and return it */
-        Map<PortfolioTypeClass, TethysResourceId> myMap = new EnumMap<>(PortfolioTypeClass.class);
+        final Map<PortfolioTypeClass, TethysResourceId> myMap = new EnumMap<>(PortfolioTypeClass.class);
         myMap.put(PortfolioTypeClass.STANDARD, PORTFOLIOTYPE_STANDARD);
         myMap.put(PortfolioTypeClass.TAXFREE, PORTFOLIOTYPE_TAXFREE);
         myMap.put(PortfolioTypeClass.SIPP, PORTFOLIOTYPE_SIPP);
@@ -1036,7 +1036,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<SecurityTypeClass, TethysResourceId> buildSecurityMap() {
         /* Create the map and return it */
-        Map<SecurityTypeClass, TethysResourceId> myMap = new EnumMap<>(SecurityTypeClass.class);
+        final Map<SecurityTypeClass, TethysResourceId> myMap = new EnumMap<>(SecurityTypeClass.class);
         myMap.put(SecurityTypeClass.SHARES, SECURITYTYPE_SHARES);
         myMap.put(SecurityTypeClass.INCOMEUNITTRUST, SECURITYTYPE_INCOMEUNIT);
         myMap.put(SecurityTypeClass.GROWTHUNITTRUST, SECURITYTYPE_GROWTHUNIT);
@@ -1066,7 +1066,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<PayeeTypeClass, TethysResourceId> buildPayeeMap() {
         /* Create the map and return it */
-        Map<PayeeTypeClass, TethysResourceId> myMap = new EnumMap<>(PayeeTypeClass.class);
+        final Map<PayeeTypeClass, TethysResourceId> myMap = new EnumMap<>(PayeeTypeClass.class);
         myMap.put(PayeeTypeClass.TAXMAN, PAYEETYPE_TAXMAN);
         myMap.put(PayeeTypeClass.GOVERNMENT, PAYEETYPE_GOVERNMENT);
         myMap.put(PayeeTypeClass.MARKET, PAYEETYPE_MARKET);
@@ -1093,7 +1093,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<TransactionCategoryClass, TethysResourceId> buildTransactionMap() {
         /* Create the map and return it */
-        Map<TransactionCategoryClass, TethysResourceId> myMap = new EnumMap<>(TransactionCategoryClass.class);
+        final Map<TransactionCategoryClass, TethysResourceId> myMap = new EnumMap<>(TransactionCategoryClass.class);
         myMap.put(TransactionCategoryClass.TAXEDINCOME, TRANSTYPE_TAXEDINCOME);
         myMap.put(TransactionCategoryClass.RENTALINCOME, TRANSTYPE_RENTALINCOME);
         myMap.put(TransactionCategoryClass.ROOMRENTALINCOME, TRANSTYPE_ROOMRENTINCOME);
@@ -1172,7 +1172,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<TaxBasisClass, TethysResourceId> buildTaxBasisMap() {
         /* Create the map and return it */
-        Map<TaxBasisClass, TethysResourceId> myMap = new EnumMap<>(TaxBasisClass.class);
+        final Map<TaxBasisClass, TethysResourceId> myMap = new EnumMap<>(TaxBasisClass.class);
         myMap.put(TaxBasisClass.SALARY, TAXBASIS_SALARY);
         myMap.put(TaxBasisClass.ROOMRENTAL, TAXBASIS_ROOMRENTAL);
         myMap.put(TaxBasisClass.RENTALINCOME, TAXBASIS_RENTALINCOME);
@@ -1210,7 +1210,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<FrequencyClass, TethysResourceId> buildFrequencyMap() {
         /* Create the map and return it */
-        Map<FrequencyClass, TethysResourceId> myMap = new EnumMap<>(FrequencyClass.class);
+        final Map<FrequencyClass, TethysResourceId> myMap = new EnumMap<>(FrequencyClass.class);
         myMap.put(FrequencyClass.ONCE, FREQUENCY_ONCE);
         myMap.put(FrequencyClass.DAILY, FREQUENCY_DAILY);
         myMap.put(FrequencyClass.WEEKLY, FREQUENCY_WEEKLY);
@@ -1244,7 +1244,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<AccountInfoClass, TethysResourceId> buildAccountInfoMap() {
         /* Create the map and return it */
-        Map<AccountInfoClass, TethysResourceId> myMap = new EnumMap<>(AccountInfoClass.class);
+        final Map<AccountInfoClass, TethysResourceId> myMap = new EnumMap<>(AccountInfoClass.class);
         myMap.put(AccountInfoClass.MATURITY, ACCOUNTINFO_MATURITY);
         myMap.put(AccountInfoClass.OPENINGBALANCE, ACCOUNTINFO_OPENING);
         myMap.put(AccountInfoClass.AUTOEXPENSE, ACCOUNTINFO_AUTOEXPENSE);
@@ -1279,7 +1279,7 @@ public enum StaticDataResource implements TethysResourceId {
      */
     private static Map<TransactionInfoClass, TethysResourceId> buildTransInfoMap() {
         /* Create the map and return it */
-        Map<TransactionInfoClass, TethysResourceId> myMap = new EnumMap<>(TransactionInfoClass.class);
+        final Map<TransactionInfoClass, TethysResourceId> myMap = new EnumMap<>(TransactionInfoClass.class);
         myMap.put(TransactionInfoClass.TAXCREDIT, TRANSINFO_TAXCREDIT);
         myMap.put(TransactionInfoClass.NATINSURANCE, TRANSTYPE_NATINS);
         myMap.put(TransactionInfoClass.DEEMEDBENEFIT, TRANSINFO_BENEFIT);

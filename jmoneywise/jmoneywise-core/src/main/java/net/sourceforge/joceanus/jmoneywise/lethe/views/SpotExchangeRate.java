@@ -168,8 +168,8 @@ public final class SpotExchangeRate
 
     @Override
     public MetisDataState getState() {
-        MetisValueSet myCurr = getValueSet();
-        MetisValueSet myBase = getOriginalValues();
+        final MetisValueSet myCurr = getValueSet();
+        final MetisValueSet myBase = getOriginalValues();
 
         /* If we have no changes we are CLEAN */
         if (myCurr.getVersion() == 0) {
@@ -264,15 +264,15 @@ public final class SpotExchangeRate
             theView = pView;
 
             /* Obtain the portfolio bucket */
-            MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = theView.getData();
             theCurrency = myData.getDefaultCurrency();
-            AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
+            final AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
 
             /* Loop through the Currencies */
-            TethysDate myDate = new TethysDate(theDate);
-            Iterator<AssetCurrency> myCurIterator = myCurrencies.iterator();
+            final TethysDate myDate = new TethysDate(theDate);
+            final Iterator<AssetCurrency> myCurIterator = myCurrencies.iterator();
             while (myCurIterator.hasNext()) {
-                AssetCurrency myCurrency = myCurIterator.next();
+                final AssetCurrency myCurrency = myCurIterator.next();
 
                 /* Ignore deleted/disabled and default currency */
                 boolean bIgnore = myCurrency.isDeleted() || myCurrency.isDisabled();
@@ -282,20 +282,20 @@ public final class SpotExchangeRate
                 }
 
                 /* Create a SpotRate entry */
-                SpotExchangeRate mySpot = new SpotExchangeRate(this, myCurrency);
+                final SpotExchangeRate mySpot = new SpotExchangeRate(this, myCurrency);
                 mySpot.setId(myCurrency.getId());
                 mySpot.setDate(myDate);
                 add(mySpot);
             }
 
             /* Set the base for this list */
-            ExchangeRateList myRates = myData.getExchangeRates();
+            final ExchangeRateList myRates = myData.getExchangeRates();
             setBase(myRates);
 
             /* Loop through the rates */
-            ListIterator<ExchangeRate> myIterator = myRates.listIterator();
+            final ListIterator<ExchangeRate> myIterator = myRates.listIterator();
             while (myIterator.hasPrevious()) {
-                ExchangeRate myRate = myIterator.previous();
+                final ExchangeRate myRate = myIterator.previous();
 
                 /* Ignore deleted rates */
                 if (myRate.isDeleted()) {
@@ -303,7 +303,7 @@ public final class SpotExchangeRate
                 }
 
                 /* Test the Date */
-                int iDiff = theDate.compareTo(myRate.getDate());
+                final int iDiff = theDate.compareTo(myRate.getDate());
 
                 /* If we are past the date */
                 if (iDiff < 0) {
@@ -313,8 +313,8 @@ public final class SpotExchangeRate
                 }
 
                 /* Access the Spot Rate and ignore if not relevant */
-                AssetCurrency myCurrency = myRate.getToCurrency();
-                SpotExchangeRate mySpot = findItemById(myCurrency.getId());
+                final AssetCurrency myCurrency = myRate.getToCurrency();
+                final SpotExchangeRate mySpot = findItemById(myCurrency.getId());
                 if (mySpot == null) {
                     continue;
                 }

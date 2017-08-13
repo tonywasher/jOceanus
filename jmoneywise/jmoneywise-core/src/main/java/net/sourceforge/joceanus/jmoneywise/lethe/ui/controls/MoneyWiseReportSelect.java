@@ -22,8 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -40,6 +47,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
@@ -73,6 +82,11 @@ public class MoneyWiseReportSelect<N, I>
      * Reports scroll button.
      */
     private final TethysScrollButtonManager<MoneyWiseReportType, N, I> theReportButton;
+
+    /**
+     * Holding scroll button.
+     */
+    private final TethysScrollButtonManager<SecurityBucket, N, I> theHoldingButton;
 
     /**
      * Range select.
@@ -109,14 +123,15 @@ public class MoneyWiseReportSelect<N, I>
      * @param pFactory the GUI factory
      */
     public MoneyWiseReportSelect(final TethysGuiFactory<N, I> pFactory) {
-        /* Create the report button */
+        /* Create the buttons */
         theReportButton = pFactory.newScrollButton();
+        theHoldingButton = pFactory.newScrollButton();
 
         /* Create the Range Select and disable its border */
         theRangeSelect = pFactory.newDateRangeSelector();
 
         /* Create the labels */
-        TethysLabel<N, I> myRepLabel = pFactory.newLabel(NLS_REPORT);
+        final TethysLabel<N, I> myRepLabel = pFactory.newLabel(NLS_REPORT);
 
         /* Create the print button */
         thePrintButton = pFactory.newButton();
@@ -148,9 +163,10 @@ public class MoneyWiseReportSelect<N, I>
         thePanel.addNode(theSaveButton);
 
         /* Add the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theReportButton.getEventRegistrar();
-        myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
+        theReportButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewReport());
         theReportButton.setMenuConfigurator(e -> buildReportMenu());
+        theHoldingButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewSecurity());
+        theHoldingButton.setMenuConfigurator(e -> buildHoldingMenu());
         thePrintButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.PRINT));
         theSaveButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusDataEvent.SAVETOFILE));
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewRange());
@@ -200,8 +216,8 @@ public class MoneyWiseReportSelect<N, I>
      */
     private void buildReportMenu() {
         /* Access builder */
-        boolean hasSecurities = theState.hasSecurities();
-        TethysScrollMenu<MoneyWiseReportType, ?> myBuilder = theReportButton.getMenu();
+        final boolean hasSecurities = theState.hasSecurities();
+        final TethysScrollMenu<MoneyWiseReportType, ?> myBuilder = theReportButton.getMenu();
         myBuilder.removeAllItems();
 
         /* Loop through the reports */
@@ -212,6 +228,51 @@ public class MoneyWiseReportSelect<N, I>
                 /* Create a new MenuItem for the report type */
                 myBuilder.addItem(myType);
             }
+        }
+    }
+
+    /**
+     * Build holding menu.
+     */
+    private void buildHoldingMenu() {
+        /* Access state details */
+        final Analysis myAnalysis = theState.getAnalysis();
+        final SecurityBucket mySecurity = theState.getSecurity();
+        final PortfolioBucketList myPortfolios = myAnalysis.getPortfolios();
+
+        /* Access builder */
+        final TethysScrollMenu<SecurityBucket, ?> myBuilder = theHoldingButton.getMenu();
+        myBuilder.removeAllItems();
+        TethysScrollMenuItem<SecurityBucket> myActive = null;
+
+        /* Loop through the Portfolio Buckets */
+        final Iterator<PortfolioBucket> myPortIterator = myPortfolios.iterator();
+        while (myPortIterator.hasNext()) {
+            final PortfolioBucket myPortBucket = myPortIterator.next();
+
+            /* Create subMenu */
+            final String myName = myPortBucket.getName();
+            final TethysScrollSubMenu<SecurityBucket, ?> myMenu = myBuilder.addSubMenu(myName);
+
+            /* Loop through the Security Buckets */
+            final SecurityBucketList mySecurities = myPortBucket.getSecurities();
+            final Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+            while (myIterator.hasNext()) {
+                final SecurityBucket myBucket = myIterator.next();
+
+                /* Add menuItem */
+                final TethysScrollMenuItem<SecurityBucket> myItem = myMenu.getSubMenu().addItem(myBucket);
+
+                /* Record active item */
+                if (myBucket.equals(mySecurity)) {
+                    myActive = myItem;
+                }
+            }
+        }
+
+        /* Ensure that active item is displayed */
+        if (myActive != null) {
+            myActive.scrollToItem();
         }
     }
 
@@ -230,6 +291,35 @@ public class MoneyWiseReportSelect<N, I>
      */
     public void setSecurities(final boolean pSecurities) {
         theState.setSecurities(pSecurities);
+    }
+
+    /**
+     * Set analysis.
+     * @param pAnalysis the analysis.
+     */
+    public void setAnalysis(final Analysis pAnalysis) {
+        /* Record the analysis */
+        theState.setAnalysis(pAnalysis);
+
+        /* Access the portfolios */
+        final PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+
+        /* If we have an existing security bucket */
+        SecurityBucket mySecurity = theState.getSecurity();
+        /* If we have a selected Security */
+        if (mySecurity != null) {
+            /* Look for the equivalent bucket */
+            mySecurity = myPortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding());
+        }
+
+        /* If we no longer have a selected security */
+        if (mySecurity == null) {
+            /* Obtain the default security holding */
+            mySecurity = myPortfolios.getDefaultSecurityHolding();
+        }
+
+        /* Set the selected security */
+        theState.setSecurity(mySecurity);
     }
 
     /**
@@ -282,6 +372,23 @@ public class MoneyWiseReportSelect<N, I>
     }
 
     /**
+     * Handle new holding.
+     */
+    private void handleNewSecurity() {
+        /* Set active flag */
+        isActive = true;
+
+        /* Look for a changed report type */
+        if (theState.setSecurity(theHoldingButton.getValue())) {
+            /* Notify that the state has changed */
+            theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+        }
+
+        /* Clear active flag */
+        isActive = false;
+    }
+
+    /**
      * Handle new range.
      */
     private void handleNewRange() {
@@ -298,6 +405,11 @@ public class MoneyWiseReportSelect<N, I>
      */
     private final class ReportState {
         /**
+         * The analysis.
+         */
+        private Analysis theAnalysis;
+
+        /**
          * The selected range.
          */
         private TethysDateRange theRange;
@@ -306,6 +418,11 @@ public class MoneyWiseReportSelect<N, I>
          * Do we have securities?
          */
         private boolean hasSecurities;
+
+        /**
+         * The securityBucket.
+         */
+        private SecurityBucket theSecurity;
 
         /**
          * The selected report type.
@@ -323,9 +440,19 @@ public class MoneyWiseReportSelect<N, I>
          * @param pState state to copy from
          */
         private ReportState(final ReportState pState) {
+            theAnalysis = pState.getAnalysis();
             theRange = pState.getRange();
             hasSecurities = pState.hasSecurities();
+            theSecurity = pState.getSecurity();
             theType = pState.getType();
+        }
+
+        /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        private Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -345,6 +472,14 @@ public class MoneyWiseReportSelect<N, I>
         }
 
         /**
+         * Obtain the security bucket.
+         * @return the bucket
+         */
+        private SecurityBucket getSecurity() {
+            return theSecurity;
+        }
+
+        /**
          * Obtain the selected report type.
          * @return the report type
          */
@@ -359,7 +494,7 @@ public class MoneyWiseReportSelect<N, I>
          */
         private boolean setRange(final TethysDateRangeSelector<N, I> pSelect) {
             /* Adjust the date and build the new range */
-            TethysDateRange myRange = pSelect.getRange();
+            final TethysDateRange myRange = pSelect.getRange();
             if (!MetisDifference.isEqual(myRange, theRange)) {
                 theRange = new TethysDateRange(myRange);
                 return true;
@@ -382,6 +517,27 @@ public class MoneyWiseReportSelect<N, I>
         }
 
         /**
+         * Set analysis.
+         * @param pAnalysis the analysis
+         */
+        private void setAnalysis(final Analysis pAnalysis) {
+            theAnalysis = pAnalysis;
+        }
+
+        /**
+         * Set security.
+         * @param pSecurity the security
+         * @return true/false did a change occur
+         */
+        private boolean setSecurity(final SecurityBucket pSecurity) {
+            if (!pSecurity.equals(theSecurity)) {
+                theSecurity = pSecurity;
+                return true;
+            }
+            return false;
+        }
+
+        /**
          * Set new Report Type.
          * @param pType the new type
          * @return true/false did a change occur
@@ -389,8 +545,8 @@ public class MoneyWiseReportSelect<N, I>
         private boolean setType(final MoneyWiseReportType pType) {
             if (!pType.equals(theType)) {
                 /* Are we currently point in time */
-                boolean isPointInTime = (theType != null)
-                                        && (theType.isPointInTime());
+                final boolean isPointInTime = (theType != null)
+                                              && (theType.isPointInTime());
 
                 /* Store the new type */
                 theType = pType;
@@ -425,6 +581,7 @@ public class MoneyWiseReportSelect<N, I>
             theReportButton.setFixedText((theType == null)
                                                            ? null
                                                            : theType.toString());
+            theHoldingButton.setValue(theSecurity);
         }
     }
 }

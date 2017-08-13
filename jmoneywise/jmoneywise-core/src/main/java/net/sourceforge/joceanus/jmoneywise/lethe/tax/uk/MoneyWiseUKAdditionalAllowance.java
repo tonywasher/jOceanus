@@ -82,10 +82,10 @@ public class MoneyWiseUKAdditionalAllowance
         TethysMoney myAllowance = super.calculateBasicAllowance(pConfig);
 
         /* If we have additional tax possible and we are above the allowance limit */
-        TethysMoney myGross = pConfig.getGrossTaxable();
+        final TethysMoney myGross = pConfig.getGrossTaxable();
         if (myGross.compareTo(theAddAllowLimit) > 0) {
             /* Calculate and apply the reduction */
-            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
+            final TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
             myAllowance = new TethysMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 

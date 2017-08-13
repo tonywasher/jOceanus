@@ -173,7 +173,7 @@ public class MoneyWiseTaxBandSet
          * @param pSource the source band
          */
         public MoneyWiseTaxBand(final MoneyWiseTaxBand pSource) {
-            TethysMoney myAmount = pSource.getAmount();
+            final TethysMoney myAmount = pSource.getAmount();
             theAmount = myAmount == null
                                          ? null
                                          : new TethysMoney(myAmount);
@@ -203,7 +203,7 @@ public class MoneyWiseTaxBandSet
 
         @Override
         public String toString() {
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             if (theAmount != null) {
                 myBuilder.append(theAmount);
                 myBuilder.append('@');

@@ -93,7 +93,7 @@ public abstract class QIFLine<T extends QLineType> {
     protected void formatLine(final MetisDataFormatter pFormatter,
                               final StringBuilder pBuilder) {
         /* Add the lineType */
-        T myType = getLineType();
+        final T myType = getLineType();
         pBuilder.append(myType.getSymbol());
 
         /* Format the Data */
@@ -116,7 +116,7 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         /* Cast correctly */
-        QIFLine<?> myLine = (QIFLine<?>) pThat;
+        final QIFLine<?> myLine = (QIFLine<?>) pThat;
 
         /* Check value */
         return getLineType().equals(myLine.getLineType());
@@ -183,7 +183,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFStringLine<?> myLine = (QIFStringLine<?>) pThat;
+            final QIFStringLine<?> myLine = (QIFStringLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -196,7 +196,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theValue.hashCode();
         }
     }
@@ -238,7 +238,7 @@ public abstract class QIFLine<T extends QLineType> {
         protected void formatData(final MetisDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
-            TethysDecimal myDecimal = new TethysDecimal(theMoney);
+            final TethysDecimal myDecimal = new TethysDecimal(theMoney);
 
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
@@ -260,7 +260,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFMoneyLine<?> myLine = (QIFMoneyLine<?>) pThat;
+            final QIFMoneyLine<?> myLine = (QIFMoneyLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -273,7 +273,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theMoney.hashCode();
         }
     }
@@ -334,7 +334,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFDateLine<?> myLine = (QIFDateLine<?>) pThat;
+            final QIFDateLine<?> myLine = (QIFDateLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -347,7 +347,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theDate.hashCode();
         }
     }
@@ -401,7 +401,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFFlagLine<?> myLine = (QIFFlagLine<?>) pThat;
+            final QIFFlagLine<?> myLine = (QIFFlagLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -414,7 +414,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + isSet.hashCode();
         }
     }
@@ -490,7 +490,7 @@ public abstract class QIFLine<T extends QLineType> {
         protected void formatData(final MetisDataFormatter pFormatter,
                                   final StringBuilder pBuilder) {
             /* Convert to Decimal */
-            TethysDecimal myDecimal = new TethysDecimal(thePrice);
+            final TethysDecimal myDecimal = new TethysDecimal(thePrice);
 
             /* Append the string data */
             pBuilder.append(pFormatter.formatObject(myDecimal));
@@ -512,7 +512,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFPriceLine<?> myLine = (QIFPriceLine<?>) pThat;
+            final QIFPriceLine<?> myLine = (QIFPriceLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -525,7 +525,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + thePrice.hashCode();
         }
     }
@@ -586,7 +586,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFUnitsLine<?> myLine = (QIFUnitsLine<?>) pThat;
+            final QIFUnitsLine<?> myLine = (QIFUnitsLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -599,7 +599,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theUnits.hashCode();
         }
     }
@@ -660,7 +660,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFRateLine<?> myLine = (QIFRateLine<?>) pThat;
+            final QIFRateLine<?> myLine = (QIFRateLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -673,7 +673,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theRate.hashCode();
         }
     }
@@ -734,7 +734,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFRatioLine<?> myLine = (QIFRatioLine<?>) pThat;
+            final QIFRatioLine<?> myLine = (QIFRatioLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -747,7 +747,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theRatio.hashCode();
         }
     }
@@ -808,7 +808,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFSecurityLine<?> myLine = (QIFSecurityLine<?>) pThat;
+            final QIFSecurityLine<?> myLine = (QIFSecurityLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -821,7 +821,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + theSecurity.hashCode();
         }
     }
@@ -897,9 +897,9 @@ public abstract class QIFLine<T extends QLineType> {
                 pBuilder.append(QIF_CLASS);
 
                 /* Iterate through the list */
-                Iterator<QIFClass> myIterator = theClasses.iterator();
+                final Iterator<QIFClass> myIterator = theClasses.iterator();
                 while (myIterator.hasNext()) {
-                    QIFClass myClass = myIterator.next();
+                    final QIFClass myClass = myIterator.next();
 
                     /* Add to the list */
                     pBuilder.append(myClass.getName());
@@ -924,14 +924,14 @@ public abstract class QIFLine<T extends QLineType> {
             /* If the line contains a category separator */
             if (pLine.contains(QIF_CATSEP)) {
                 /* Move to data following separator */
-                int i = pLine.indexOf(QIF_CATSEP);
+                final int i = pLine.indexOf(QIF_CATSEP);
                 myLine = pLine.substring(i + 1);
             }
 
             /* If the line contains classes */
             if (myLine.contains(QIF_CLASS)) {
                 /* drop class data */
-                int i = myLine.indexOf(QIF_CLASS);
+                final int i = myLine.indexOf(QIF_CLASS);
                 myLine = myLine.substring(0, i);
             }
 
@@ -939,10 +939,10 @@ public abstract class QIFLine<T extends QLineType> {
             if ((myLine.startsWith(QIF_XFERSTART))
                 && (myLine.endsWith(QIF_XFEREND))) {
                 /* Remove account delimiters */
-                int i = QIF_XFERSTART.length();
-                int j = QIF_XFEREND.length();
-                String myAccount = myLine.substring(i, myLine.length()
-                                                       - j);
+                final int i = QIF_XFERSTART.length();
+                final int j = QIF_XFEREND.length();
+                final String myAccount = myLine.substring(i, myLine.length()
+                                                             - j);
                 return pFile.getAccount(myAccount);
             }
 
@@ -964,19 +964,19 @@ public abstract class QIFLine<T extends QLineType> {
             /* If the line contains a category separator */
             if (pLine.contains(QIF_CATSEP)) {
                 /* Move to data following separator */
-                int i = pLine.indexOf(QIF_CATSEP);
+                final int i = pLine.indexOf(QIF_CATSEP);
                 myLine = pLine.substring(i + 1);
             }
 
             /* If the line contains classes */
             if (myLine.contains(QIF_CLASS)) {
                 /* drop preceding data */
-                int i = myLine.indexOf(QIF_CLASS);
+                final int i = myLine.indexOf(QIF_CLASS);
                 myLine = myLine.substring(i + 1);
 
                 /* Build list of classes */
-                String[] myClasses = myLine.split(QIF_CLASSSEP);
-                List<QIFClass> myList = new ArrayList<>();
+                final String[] myClasses = myLine.split(QIF_CLASSSEP);
+                final List<QIFClass> myList = new ArrayList<>();
                 for (String myClass : myClasses) {
                     myList.add(pFile.getClass(myClass));
                 }
@@ -1005,7 +1005,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFXferAccountLine<?> myLine = (QIFXferAccountLine<?>) pThat;
+            final QIFXferAccountLine<?> myLine = (QIFXferAccountLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1018,7 +1018,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Check classes */
-            List<QIFClass> myClasses = myLine.getClassList();
+            final List<QIFClass> myClasses = myLine.getClassList();
             if (theClasses == null) {
                 return myClasses == null;
             } else if (myClasses == null) {
@@ -1094,7 +1094,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFPayeeLine<?> myLine = (QIFPayeeLine<?>) pThat;
+            final QIFPayeeLine<?> myLine = (QIFPayeeLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1107,7 +1107,7 @@ public abstract class QIFLine<T extends QLineType> {
 
         @Override
         public int hashCode() {
-            int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
+            final int myResult = QIFFile.HASH_BASE * getLineType().hashCode();
             return myResult + thePayee.hashCode();
         }
     }
@@ -1181,9 +1181,9 @@ public abstract class QIFLine<T extends QLineType> {
                 pBuilder.append(QIF_CLASS);
 
                 /* Iterate through the list */
-                Iterator<QIFClass> myIterator = theClasses.iterator();
+                final Iterator<QIFClass> myIterator = theClasses.iterator();
                 while (myIterator.hasNext()) {
-                    QIFClass myClass = myIterator.next();
+                    final QIFClass myClass = myIterator.next();
 
                     /* Add to the list */
                     pBuilder.append(myClass.getName());
@@ -1208,14 +1208,14 @@ public abstract class QIFLine<T extends QLineType> {
             /* If the line contains a category separator */
             if (pLine.contains(QIF_CATSEP)) {
                 /* Drop data after separator */
-                int i = pLine.indexOf(QIF_CATSEP);
+                final int i = pLine.indexOf(QIF_CATSEP);
                 myLine = pLine.substring(0, i);
             }
 
             /* If the line contains classes */
             if (myLine.contains(QIF_CLASS)) {
                 /* drop class data */
-                int i = myLine.indexOf(QIF_CLASS);
+                final int i = myLine.indexOf(QIF_CLASS);
                 myLine = myLine.substring(0, i);
             }
 
@@ -1244,19 +1244,19 @@ public abstract class QIFLine<T extends QLineType> {
             /* If the line contains a category separator */
             if (pLine.contains(QIF_CATSEP)) {
                 /* Drop data after separator */
-                int i = pLine.indexOf(QIF_CATSEP);
+                final int i = pLine.indexOf(QIF_CATSEP);
                 myLine = pLine.substring(0, i);
             }
 
             /* If the line contains classes */
             if (myLine.contains(QIF_CLASS)) {
                 /* drop preceding data */
-                int i = myLine.indexOf(QIF_CLASS);
+                final int i = myLine.indexOf(QIF_CLASS);
                 myLine = myLine.substring(i + 1);
 
                 /* Build list of classes */
-                String[] myClasses = myLine.split(QIF_CLASSSEP);
-                List<QIFClass> myList = new ArrayList<>();
+                final String[] myClasses = myLine.split(QIF_CLASSSEP);
+                final List<QIFClass> myList = new ArrayList<>();
                 for (String myClass : myClasses) {
                     myList.add(pFile.getClass(myClass));
                 }
@@ -1285,7 +1285,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFCategoryLine<?> myLine = (QIFCategoryLine<?>) pThat;
+            final QIFCategoryLine<?> myLine = (QIFCategoryLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1298,7 +1298,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Check classes */
-            List<QIFClass> myClasses = myLine.getClassList();
+            final List<QIFClass> myClasses = myLine.getClassList();
             if (theClasses == null) {
                 return myClasses == null;
             } else if (myClasses == null) {
@@ -1404,9 +1404,9 @@ public abstract class QIFLine<T extends QLineType> {
                 pBuilder.append(QIF_CLASS);
 
                 /* Iterate through the list */
-                Iterator<QIFClass> myIterator = theClasses.iterator();
+                final Iterator<QIFClass> myIterator = theClasses.iterator();
                 while (myIterator.hasNext()) {
-                    QIFClass myClass = myIterator.next();
+                    final QIFClass myClass = myIterator.next();
 
                     /* Add to the list */
                     pBuilder.append(myClass.getName());
@@ -1433,7 +1433,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Cast correctly */
-            QIFCategoryAccountLine<?> myLine = (QIFCategoryAccountLine<?>) pThat;
+            final QIFCategoryAccountLine<?> myLine = (QIFCategoryAccountLine<?>) pThat;
 
             /* Check line type */
             if (!getLineType().equals(myLine.getLineType())) {
@@ -1451,7 +1451,7 @@ public abstract class QIFLine<T extends QLineType> {
             }
 
             /* Check classes */
-            List<QIFClass> myClasses = myLine.getClassList();
+            final List<QIFClass> myClasses = myLine.getClassList();
             if (theClasses == null) {
                 return myClasses == null;
             } else if (myClasses == null) {

@@ -129,7 +129,7 @@ public final class CashCategoryBucket
      * Update active flag for Cash Bucket.
      * @param pBucket the Cash bucket
      */
-    private void updateActive(final CashBucket pBucket) {
+    protected void updateActive(final CashBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -137,7 +137,7 @@ public final class CashCategoryBucket
      * Update active flag for Cash Category Bucket.
      * @param pBucket the Cash category bucket
      */
-    private void updateActive(final CashCategoryBucket pBucket) {
+    protected void updateActive(final CashCategoryBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -278,12 +278,12 @@ public final class CashCategoryBucket
         protected void analyseCash(final MarketAnalysis pMarket,
                                    final CashBucketList pCash) {
             /* Loop through the buckets */
-            TethysDateRange myRange = theAnalysis.getDateRange();
-            Iterator<CashBucket> myIterator = pCash.iterator();
+            final TethysDateRange myRange = theAnalysis.getDateRange();
+            final Iterator<CashBucket> myIterator = pCash.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
-                CashBucket myCurr = myIterator.next();
-                CashCategory myCategory = myCurr.getCategory();
+                final CashBucket myCurr = myIterator.next();
+                final CashCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
                 if (myCurr.isForeignCurrency()) {
@@ -296,7 +296,7 @@ public final class CashCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Access category bucket and add values */
-                CashCategoryBucket myBucket = getBucket(myCategory);
+                final CashCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
                 myBucket.updateActive(myCurr);
             }
@@ -308,11 +308,11 @@ public final class CashCategoryBucket
          */
         protected void buildCategories(final CashBucketList pCash) {
             /* Loop through the buckets */
-            Iterator<CashBucket> myIterator = pCash.iterator();
+            final Iterator<CashBucket> myIterator = pCash.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
-                CashBucket myCurr = myIterator.next();
-                CashCategory myCategory = myCurr.getCategory();
+                final CashBucket myCurr = myIterator.next();
+                final CashCategory myCategory = myCurr.getCategory();
                 getBucket(myCategory);
 
                 /* Access parent category */
@@ -325,16 +325,16 @@ public final class CashCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            MetisOrderedIdList<Integer, CashCategoryBucket> myTotals = new MetisOrderedIdList<>(CashCategoryBucket.class);
+            final MetisOrderedIdList<Integer, CashCategoryBucket> myTotals = new MetisOrderedIdList<>(CashCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<CashCategoryBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                CashCategoryBucket myCurr = myIterator.next();
+                final CashCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
-                CashCategory myCategory = myCurr.getAccountCategory();
-                CashCategory myParent = myCategory.getParentCategory();
+                final CashCategory myCategory = myCurr.getAccountCategory();
+                final CashCategory myParent = myCategory.getParentCategory();
 
                 /* Calculate delta for the category */
                 myCurr.calculateDelta();
@@ -366,7 +366,7 @@ public final class CashCategoryBucket
             /* Loop through the new totals */
             myIterator = myTotals.listIterator();
             while (myIterator.hasNext()) {
-                CashCategoryBucket myCurr = myIterator.next();
+                final CashCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
                 myCurr.calculateDelta();

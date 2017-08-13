@@ -143,20 +143,20 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         theData = theAnalysis.getData();
 
         /* Determine currency */
-        AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
-        AssetCurrency myAccountCurrency = (pAccount == null)
-                                                             ? myReportingCurrency
-                                                             : pAccount.getAssetCurrency();
+        final AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
+        final AssetCurrency myAccountCurrency = pAccount == null
+                                                                 ? myReportingCurrency
+                                                                 : pAccount.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
         isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myAccountCurrency);
-        Currency myCurrency = deriveCurrency(myAccountCurrency);
-        Currency myRepCurrency = deriveCurrency(myReportingCurrency);
+        final Currency myCurrency = deriveCurrency(myAccountCurrency);
+        final Currency myRepCurrency = deriveCurrency(myReportingCurrency);
 
         /* Create the history map */
-        AccountValues myValues = isForeignCurrency
-                                                   ? allocateForeignValues(myCurrency, myRepCurrency)
-                                                   : allocateStandardValues(myCurrency);
+        final AccountValues myValues = isForeignCurrency
+                                                         ? allocateForeignValues(myCurrency, myRepCurrency)
+                                                         : allocateStandardValues(myCurrency);
         theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
@@ -247,9 +247,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         /* Handle Attribute fields */
-        AccountAttribute myClass = getClassForField(pField);
+        final AccountAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -449,7 +449,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     private Object getAttributeValue(final AccountAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getValue(pAttr);
+        final Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -505,7 +505,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         /* Compare the Accounts */
-        AccountBucket<?> myThat = (AccountBucket<?>) pThat;
+        final AccountBucket<?> myThat = (AccountBucket<?>) pThat;
         if (!getAccount().equals(myThat.getAccount())) {
             return false;
         }
@@ -549,22 +549,22 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             /* If we are a foreign account */
             if (isForeignCurrency) {
                 /* Access local amount amount */
-                TethysMoney myLocalAmount = pHelper.getLocalAmount();
+                final TethysMoney myLocalAmount = pHelper.getLocalAmount();
 
                 /* Adjust counters */
                 adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
                 adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the debit exchangeRate and convert the foreign valuation */
-                TethysRatio myRate = pHelper.getDebitExchangeRate();
-                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+                final TethysRatio myRate = pHelper.getDebitExchangeRate();
+                final TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(AccountAttribute.VALUATION, myLocalValue);
                 setValue(AccountAttribute.EXCHANGERATE, myRate);
 
                 /* Determine currency fluctuation */
-                TethysMoney myFluct = new TethysMoney(myLocalValue);
+                final TethysMoney myFluct = new TethysMoney(myLocalValue);
                 myFluct.subtractAmount(theValues.getMoneyValue(AccountAttribute.LOCALVALUE));
                 adjustCounter(AccountAttribute.CURRENCYFLUCT, myFluct);
 
@@ -585,29 +585,29 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void adjustForCredit(final TransactionHelper pHelper) {
         /* Access event amount */
-        TethysMoney myAmount = pHelper.getCreditAmount();
+        final TethysMoney myAmount = pHelper.getCreditAmount();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
             if (isForeignCurrency) {
                 /* Access local amount amount */
-                TethysMoney myLocalAmount = pHelper.getLocalAmount();
+                final TethysMoney myLocalAmount = pHelper.getLocalAmount();
 
                 /* Adjust counters */
                 adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
                 adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
-                TethysRatio myRate = pHelper.getCreditExchangeRate();
-                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+                final TethysRatio myRate = pHelper.getCreditExchangeRate();
+                final TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(AccountAttribute.VALUATION, myLocalValue);
                 setValue(AccountAttribute.EXCHANGERATE, myRate);
 
                 /* Determine currency fluctuation */
-                TethysMoney myFluct = new TethysMoney(myLocalValue);
+                final TethysMoney myFluct = new TethysMoney(myLocalValue);
                 myFluct.subtractAmount(theValues.getMoneyValue(AccountAttribute.LOCALVALUE));
                 setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
 
@@ -628,29 +628,29 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void adjustForReturnedCashCredit(final TransactionHelper pHelper) {
         /* Access event amount */
-        TethysMoney myAmount = pHelper.getReturnedCash();
+        final TethysMoney myAmount = pHelper.getReturnedCash();
 
         /* If we have a non-zero amount */
         if (myAmount.isNonZero()) {
             /* If we are a foreign account */
             if (isForeignCurrency) {
                 /* Access local amount amount */
-                TethysMoney myLocalAmount = pHelper.getLocalReturnedCash();
+                final TethysMoney myLocalAmount = pHelper.getLocalReturnedCash();
 
                 /* Adjust counters */
                 adjustCounter(AccountAttribute.FOREIGNVALUE, myAmount);
                 adjustCounter(AccountAttribute.LOCALVALUE, myLocalAmount);
 
                 /* Obtain the credit exchangeRate and convert the foreign valuation */
-                TethysRatio myRate = pHelper.getReturnedCashExchangeRate();
-                TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+                final TethysRatio myRate = pHelper.getReturnedCashExchangeRate();
+                final TethysMoney myLocalValue = myAmount.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
                 /* Set the valuation */
                 setValue(AccountAttribute.VALUATION, myLocalValue);
                 setValue(AccountAttribute.EXCHANGERATE, myRate);
 
                 /* Determine currency fluctuation */
-                TethysMoney myFluct = new TethysMoney(myLocalValue);
+                final TethysMoney myFluct = new TethysMoney(myLocalValue);
                 myFluct.subtractAmount(theValues.getMoneyValue(AccountAttribute.LOCALVALUE));
                 setValue(AccountAttribute.CURRENCYFLUCT, myFluct);
 
@@ -673,18 +673,18 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     protected void setOpeningBalance(final TransactionHelper pHelper,
                                      final TethysMoney pBalance) {
         /* Obtain the base valuation */
-        AccountValues myValues = getBaseValues();
-        TethysMoney myBaseValue = myValues.getMoneyValue(AccountAttribute.VALUATION);
+        final AccountValues myValues = getBaseValues();
+        final TethysMoney myBaseValue = myValues.getMoneyValue(AccountAttribute.VALUATION);
 
         /* If we are a foreign account */
         if (isForeignCurrency) {
             /* Obtain the foreign valuation */
-            TethysMoney myForeignValue = myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
-            TethysMoney myLocalValue = myValues.getMoneyValue(AccountAttribute.LOCALVALUE);
+            final TethysMoney myForeignValue = myValues.getMoneyValue(AccountAttribute.FOREIGNVALUE);
+            final TethysMoney myLocalValue = myValues.getMoneyValue(AccountAttribute.LOCALVALUE);
 
             /* Obtain exchange rate and reporting value */
-            TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theData.getDateRange().getStart());
-            TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
+            final TethysRatio myRate = pHelper.getExchangeRate(theAccount.getAssetCurrency(), theData.getDateRange().getStart());
+            final TethysMoney myLocalAmount = pBalance.convertCurrency(theAnalysis.getCurrency().getCurrency(), myRate);
 
             /* Record details */
             myBaseValue.addAmount(myLocalAmount);
@@ -723,10 +723,10 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      */
     protected void calculateFluctuations(final TethysDateRange pRange) {
         /* Obtain the appropriate rates */
-        MoneyWiseData myData = theAnalysis.getData();
-        ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
-        TethysRatio[] myRates = myRateMap.getRatesForRange(theAccount.getAssetCurrency(), pRange);
-        Currency myBaseCurrency = theAnalysis.getCurrency().getCurrency();
+        final MoneyWiseData myData = theAnalysis.getData();
+        final ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+        final TethysRatio[] myRates = myRateMap.getRatesForRange(theAccount.getAssetCurrency(), pRange);
+        final Currency myBaseCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Access the base value */
         TethysRatio myRate = myRates[0];
@@ -768,7 +768,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         myDelta = new TethysMoney(myDelta);
 
         /* Subtract any base value */
-        TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myDelta.subtractAmount(myBase);
 
         /* Set the delta */
@@ -808,7 +808,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             super(AccountAttribute.class);
 
             /* Initialise valuation to zero */
-            setValue(AccountAttribute.VALUATION, new TethysMoney(pCurrency));
+            super.setValue(AccountAttribute.VALUATION, new TethysMoney(pCurrency));
         }
 
         /**
@@ -822,9 +822,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             this(pReportingCurrency);
 
             /* Initialise valuation to zero */
-            setValue(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
-            setValue(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
-            setValue(AccountAttribute.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
+            super.setValue(AccountAttribute.FOREIGNVALUE, new TethysMoney(pCurrency));
+            super.setValue(AccountAttribute.LOCALVALUE, new TethysMoney(pReportingCurrency));
+            super.setValue(AccountAttribute.CURRENCYFLUCT, new TethysMoney(pReportingCurrency));
         }
 
         /**
@@ -853,7 +853,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @return true/false
          */
         public boolean isActive() {
-            TethysMoney myValuation = getMoneyValue(AccountAttribute.VALUATION);
+            final TethysMoney myValuation = getMoneyValue(AccountAttribute.VALUATION);
             return (myValuation != null) && (myValuation.isNonZero());
         }
 
@@ -876,7 +876,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 myValue.setZero();
 
                 /* Adjust currency fluctuation values */
-                setValue(AccountAttribute.CURRENCYFLUCT, myValue);
+                super.setValue(AccountAttribute.CURRENCYFLUCT, myValue);
             }
         }
     }
@@ -951,12 +951,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          */
         protected void constructFromBase(final AccountBucketList<B, T> pBase) {
             /* Loop through the buckets */
-            Iterator<B> myIterator = pBase.iterator();
+            final Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                B myCurr = myIterator.next();
+                final B myCurr = myIterator.next();
 
                 /* Access the bucket */
-                B myBucket = newBucket(myCurr);
+                final B myBucket = newBucket(myCurr);
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
@@ -981,12 +981,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected void constructFromBase(final AccountBucketList<B, T> pBase,
                                          final TethysDate pDate) {
             /* Loop through the buckets */
-            Iterator<B> myIterator = pBase.iterator();
+            final Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                B myCurr = myIterator.next();
+                final B myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                B myBucket = newBucket(myCurr, pDate);
+                final B myBucket = newBucket(myCurr, pDate);
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
@@ -1014,12 +1014,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected void constructFromBase(final AccountBucketList<B, T> pBase,
                                          final TethysDateRange pRange) {
             /* Loop through the buckets */
-            Iterator<B> myIterator = pBase.listIterator();
+            final Iterator<B> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                B myCurr = myIterator.next();
+                final B myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                B myBucket = newBucket(myCurr, pRange);
+                final B myBucket = newBucket(myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
@@ -1073,10 +1073,10 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          */
         protected void markActiveAccounts() throws OceanusException {
             /* Loop through the buckets */
-            Iterator<B> myIterator = iterator();
+            final Iterator<B> myIterator = iterator();
             while (myIterator.hasNext()) {
-                B myCurr = myIterator.next();
-                T myAccount = myCurr.getAccount();
+                final B myCurr = myIterator.next();
+                final T myAccount = myCurr.getAccount();
 
                 /* If we are active */
                 if (myCurr.isActive()) {

@@ -79,7 +79,7 @@ public class SheetSchedule
         super(pReader, AREA_SCHEDULES);
 
         /* Access the Lists */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getSchedules());
     }
 
@@ -92,14 +92,14 @@ public class SheetSchedule
         super(pWriter, AREA_SCHEDULES);
 
         /* Access the Schedules list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getSchedules());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
         myValues.addValue(Schedule.FIELD_STARTDATE, loadDate(COL_STARTDATE));
         myValues.addValue(Schedule.FIELD_ENDDATE, loadDate(COL_ENDDATE));
         myValues.addValue(Schedule.FIELD_FREQ, loadInteger(COL_FREQ));

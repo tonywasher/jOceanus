@@ -75,13 +75,13 @@ public class QIFEvent
         addLine(new QIFEventClearedLine(isCleared));
 
         /* Add the reference line if it exists */
-        String myRef = pTrans.getReference();
+        final String myRef = pTrans.getReference();
         if (myRef != null) {
             recordReference(myRef);
         }
 
         /* Add the comment line if it exists */
-        String myComment = pTrans.getComments();
+        final String myComment = pTrans.getComments();
         if (myComment != null) {
             recordComment(myComment);
         }
@@ -127,29 +127,29 @@ public class QIFEvent
         QIFSplitEvent mySplit = null;
 
         /* Obtain parsers */
-        TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
-        TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
+        final TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
+        final TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
-        Iterator<String> myIterator = pLines.iterator();
+        final Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
-            String myLine = myIterator.next();
+            final String myLine = myIterator.next();
 
             /* Determine the category */
-            QEventLineType myType = QEventLineType.parseLine(myLine);
+            final QEventLineType myType = QEventLineType.parseLine(myLine);
             if (myType != null) {
                 /* Access data */
-                String myData = myLine.substring(myType.getSymbol().length());
+                final String myData = myLine.substring(myType.getSymbol().length());
 
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        TethysDate myDateDay = myDateParser.parseDateBase(myData, QIFWriter.QIF_BASEYEAR);
+                        final TethysDate myDateDay = myDateParser.parseDateBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
                     case CLEARED:
-                        Boolean myFlag = myData.equals(QIFLine.QIF_RECONCILED);
+                        final Boolean myFlag = myData.equals(QIFLine.QIF_RECONCILED);
                         addLine(new QIFEventClearedLine(myFlag));
                         myCleared = myFlag;
                         break;
@@ -172,11 +172,11 @@ public class QIFEvent
                         QIFEventCategory myCategory = QIFEventCategoryLine.parseCategory(pFile, myData);
                         if (myAccount != null) {
                             /* Look for account classes */
-                            List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
+                            final List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
                             addLine(new QIFEventAccountLine(myAccount, myClasses));
                         } else {
                             /* Look for category classes */
-                            List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
+                            final List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
                             addLine(new QIFEventCategoryLine(myCategory, myClasses));
                             convertPayee();
                         }
@@ -187,11 +187,11 @@ public class QIFEvent
                         myCategory = QIFEventCategoryLine.parseCategory(pFile, myData);
                         if (myAccount != null) {
                             /* Look for account classes */
-                            List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
+                            final List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
                             mySplit = new QIFSplitEvent(pFile, myAccount, myClasses);
                         } else {
                             /* Look for category classes */
-                            List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
+                            final List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
                             mySplit = new QIFSplitEvent(pFile, myCategory, myClasses);
                             convertPayee();
                         }
@@ -204,7 +204,7 @@ public class QIFEvent
                         mySplit.setSplitAmount(myMoney);
                         break;
                     case SPLITPERCENT:
-                        TethysRate myRate = myDecParser.parseRateValue(myData);
+                        final TethysRate myRate = myDecParser.parseRateValue(myData);
                         mySplit.setSplitPercentage(myRate);
                         break;
                     case SPLITCOMMENT:
@@ -326,7 +326,7 @@ public class QIFEvent
                                      final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pAccount);
+        final QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pAccount);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -346,7 +346,7 @@ public class QIFEvent
                                      final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pAccount, pClasses);
+        final QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pAccount, pClasses);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -364,7 +364,7 @@ public class QIFEvent
                                      final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pCategory);
+        final QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pCategory);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -384,7 +384,7 @@ public class QIFEvent
                                      final TethysMoney pAmount,
                                      final String pComment) {
         /* Create new split and add it */
-        QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pCategory, pClasses);
+        final QIFSplitEvent mySplit = new QIFSplitEvent(getFile(), pCategory, pClasses);
         mySplit.setSplitAmount(pAmount);
         if (pComment != null) {
             mySplit.setSplitComment(pComment);
@@ -397,14 +397,14 @@ public class QIFEvent
      */
     private void convertPayee() {
         /* Look for a payee line */
-        QIFLine<QEventLineType> myLine = getLine(QEventLineType.PAYEE);
+        final QIFLine<QEventLineType> myLine = getLine(QEventLineType.PAYEE);
         if (myLine instanceof QIFEventPayeeDescLine) {
             /* Access payee */
-            QIFEventPayeeDescLine myDesc = (QIFEventPayeeDescLine) myLine;
-            String myName = myDesc.getValue();
+            final QIFEventPayeeDescLine myDesc = (QIFEventPayeeDescLine) myLine;
+            final String myName = myDesc.getValue();
 
             /* Register the payee */
-            QIFPayee myPayee = getFile().registerPayee(myName);
+            final QIFPayee myPayee = getFile().registerPayee(myName);
             addLine(new QIFEventPayeeLine(myPayee));
         }
     }

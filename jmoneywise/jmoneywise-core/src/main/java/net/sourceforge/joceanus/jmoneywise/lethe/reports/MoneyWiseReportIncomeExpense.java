@@ -84,18 +84,18 @@ public class MoneyWiseReportIncomeExpense
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket list */
         theAnalysis = pAnalysis;
-        TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
-        TethysDateRange myRange = theAnalysis.getDateRange();
+        final TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
+        final TethysDateRange myRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
-        TransactionCategoryBucket myTotals = myCategories.getTotals();
+        final TransactionCategoryBucket myTotals = myCategories.getTotals();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
@@ -103,21 +103,21 @@ public class MoneyWiseReportIncomeExpense
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the SubTotal Buckets */
-        Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategoryBucket myBucket = myIterator.next();
+            final TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Only process subTotal items */
-            TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
+            final TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
             if (!myClass.isSubTotal()) {
                 continue;
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            CategoryValues myValues = myBucket.getValues();
+            final CategoryValues myValues = myBucket.getValues();
 
             /* Format the Category Total */
             theBuilder.startRow(myTable);
@@ -131,7 +131,7 @@ public class MoneyWiseReportIncomeExpense
         }
 
         /* Access values */
-        CategoryValues myValues = myTotals.getValues();
+        final CategoryValues myValues = myTotals.getValues();
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
@@ -147,9 +147,9 @@ public class MoneyWiseReportIncomeExpense
     @Override
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
-        Object mySource = pTable.getSource();
+        final Object mySource = pTable.getSource();
         if (mySource instanceof TransactionCategoryBucket) {
-            TransactionCategoryBucket mySourceBucket = (TransactionCategoryBucket) mySource;
+            final TransactionCategoryBucket mySourceBucket = (TransactionCategoryBucket) mySource;
             return createDelayedCategory(pTable.getParent(), mySourceBucket);
         }
 
@@ -166,28 +166,28 @@ public class MoneyWiseReportIncomeExpense
     protected MetisHTMLTable createDelayedCategory(final MetisHTMLTable pParent,
                                                    final TransactionCategoryBucket pSource) {
         /* Access the category */
-        TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
-        TransactionCategory myCategory = pSource.getTransactionCategory();
+        final TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
+        final TransactionCategory myCategory = pSource.getTransactionCategory();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<TransactionCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategoryBucket myBucket = myIterator.next();
+            final TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            TransactionCategory myCurr = myBucket.getTransactionCategory();
+            final TransactionCategory myCurr = myBucket.getTransactionCategory();
             if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            CategoryValues myValues = myBucket.getValues();
+            final CategoryValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);

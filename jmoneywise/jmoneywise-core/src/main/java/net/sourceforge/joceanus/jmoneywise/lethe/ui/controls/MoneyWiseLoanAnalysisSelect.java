@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanCategoryBucket.LoanCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
@@ -133,8 +132,8 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        TethysLabel<N, I> myLoanLabel = pFactory.newLabel(NLS_LOAN + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myLoanLabel = pFactory.newLabel(NLS_LOAN + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -210,7 +209,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Loans to select */
-        boolean lnAvailable = bEnabled && isAvailable();
+        final boolean lnAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theLoanButton.setEnabled(lnAvailable);
@@ -234,26 +233,10 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         /* Obtain the current account */
         LoanBucket myLoan = theState.getLoan();
 
-        /* If we have a selected Loan */
-        if (myLoan != null) {
-            /* Look for the equivalent bucket */
-            myLoan = getMatchingBucket(myLoan);
-        }
-
-        /* If we do not have an active bucket and the list is non-empty */
-        if (myLoan == null
-            && !theLoans.isEmpty()) {
-            /* Check for a loan in the same category */
-            LoanCategory myCategory = theState.getCategory();
-            LoanCategoryBucket myCatBucket = (myCategory == null)
-                                                                  ? null
-                                                                  : theCategories.findItemById(myCategory.getId());
-
-            /* Determine the next loan */
-            myLoan = myCatBucket != null
-                                         ? getFirstLoan(myCategory)
-                                         : theLoans.peekFirst();
-        }
+        /* Switch to versions from the analysis */
+        myLoan = myLoan != null
+                                ? theLoans.getMatchingLoan(myLoan.getAccount())
+                                : theLoans.getDefaultLoan();
 
         /* Set the loan */
         theState.setTheLoan(myLoan);
@@ -265,13 +248,13 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof LoanFilter) {
             /* Access filter */
-            LoanFilter myFilter = (LoanFilter) pFilter;
+            final LoanFilter myFilter = (LoanFilter) pFilter;
 
             /* Obtain the filter bucket */
             LoanBucket myLoan = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myLoan = getMatchingBucket(myLoan);
+            myLoan = theLoans.getMatchingLoan(myLoan.getAccount());
 
             /* Set the loan */
             theState.setTheLoan(myLoan);
@@ -280,44 +263,12 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
     }
 
     /**
-     * Obtain first loan for category.
+     * Obtain the default Loan for the category.
      * @param pCategory the category
-     * @return the first account
+     * @return the bucket
      */
-    private LoanBucket getFirstLoan(final LoanCategory pCategory) {
-        /* Loop through the available loan values */
-        Iterator<LoanBucket> myIterator = theLoans.iterator();
-        while (myIterator.hasNext()) {
-            LoanBucket myBucket = myIterator.next();
-
-            /* Return if correct category */
-            if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
-                return myBucket;
-            }
-        }
-
-        /* No such account */
-        return null;
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private LoanBucket getMatchingBucket(final LoanBucket pBucket) {
-        /* Look up the matching LoanBucket */
-        Loan myLoan = pBucket.getAccount();
-        LoanBucket myBucket = theLoans.findItemById(myLoan.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = theLoans.getOrphanBucket(myLoan);
-        }
-
-        /* return the bucket */
-        return myBucket;
+    protected LoanBucket getDefaultLoan(final LoanCategory pCategory) {
+        return theLoans.getDefaultLoan(pCategory);
     }
 
     /**
@@ -350,16 +301,16 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, TethysScrollSubMenu<LoanCategory, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<LoanCategory, ?>> myMap = new HashMap<>();
 
         /* Record active item */
-        LoanCategory myCurrent = theState.getCategory();
+        final LoanCategory myCurrent = theState.getCategory();
         TethysScrollMenuItem<LoanCategory> myActive = null;
 
         /* Re-Loop through the available category values */
-        Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
+        final Iterator<LoanCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            LoanCategoryBucket myBucket = myIterator.next();
+            final LoanCategoryBucket myBucket = myIterator.next();
 
             /* Only process low-level items */
             if (myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
@@ -367,8 +318,8 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
             }
 
             /* Determine menu to add to */
-            LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
-            String myParentName = myParent.getName();
+            final LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            final String myParentName = myParent.getName();
             TethysScrollSubMenu<LoanCategory, ?> myMenu = myMap.get(myParent.getName());
 
             /* If this is a new menu */
@@ -379,8 +330,8 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            LoanCategory myCategory = myBucket.getAccountCategory();
-            TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final LoanCategory myCategory = myBucket.getAccountCategory();
+            final TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -403,16 +354,16 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         theLoanMenu.removeAllItems();
 
         /* Access current category and Loan */
-        LoanCategory myCategory = theState.getCategory();
-        LoanBucket myLoan = theState.getLoan();
+        final LoanCategory myCategory = theState.getCategory();
+        final LoanBucket myLoan = theState.getLoan();
 
         /* Record active item */
         TethysScrollMenuItem<LoanBucket> myActive = null;
 
         /* Loop through the available account values */
-        Iterator<LoanBucket> myIterator = theLoans.iterator();
+        final Iterator<LoanBucket> myIterator = theLoans.iterator();
         while (myIterator.hasNext()) {
-            LoanBucket myBucket = myIterator.next();
+            final LoanBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
             if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
@@ -420,7 +371,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<LoanBucket> myItem = theLoanMenu.addItem(myBucket);
+            final TethysScrollMenuItem<LoanBucket> myItem = theLoanMenu.addItem(myBucket);
 
             /* If this is the active loan */
             if (myBucket.equals(myLoan)) {
@@ -516,9 +467,9 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
          */
         private void setTheLoan(final LoanBucket pLoan) {
             /* Access category for account */
-            LoanCategory myCategory = pLoan == null
-                                                    ? null
-                                                    : pLoan.getCategory();
+            final LoanCategory myCategory = pLoan == null
+                                                          ? null
+                                                          : pLoan.getCategory();
             setTheLoan(myCategory, pLoan);
         }
 
@@ -547,7 +498,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         private boolean setCategory(final LoanCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDifference.isEqual(pCategory, theCategory)) {
-                setTheLoan(pCategory, getFirstLoan(pCategory));
+                setTheLoan(pCategory, getDefaultLoan(pCategory));
                 return true;
             }
             return false;

@@ -128,11 +128,11 @@ public class QIFBuilder {
         thePortBuilder = new QIFPortfolioBuilder(this, pData, pAnalysis);
 
         /* Store Tax account */
-        PayeeList myPayees = pData.getPayees();
+        final PayeeList myPayees = pData.getPayees();
         theTaxMan = myPayees.getSingularClass(PayeeTypeClass.TAXMAN);
 
         /* Store categories */
-        TransactionCategoryList myCategories = pData.getTransCategories();
+        final TransactionCategoryList myCategories = pData.getTransCategories();
         theTaxCategory = myCategories.getEventInfoCategory(TransactionInfoClass.TAXCREDIT);
         theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.NATINSURANCE);
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);
@@ -170,9 +170,9 @@ public class QIFBuilder {
      */
     protected void processEvent(final Transaction pTrans) {
         /* Access account and partner */
-        TransactionAsset myAccount = pTrans.getAccount();
-        TransactionAsset myPartner = pTrans.getPartner();
-        boolean bFrom = pTrans.getDirection().isFrom();
+        final TransactionAsset myAccount = pTrans.getAccount();
+        final TransactionAsset myPartner = pTrans.getPartner();
+        final boolean bFrom = pTrans.getDirection().isFrom();
 
         /* If this deals with a payee */
         if (myPartner instanceof Payee) {
@@ -204,10 +204,10 @@ public class QIFBuilder {
                                   final TethysDate pStartDate,
                                   final TethysMoney pBalance) {
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pDeposit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pDeposit);
 
         /* Create the event */
-        QIFEvent myEvent = new QIFEvent(theFile, pStartDate);
+        final QIFEvent myEvent = new QIFEvent(theFile, pStartDate);
         myEvent.recordAmount(pBalance);
 
         /* If we are using self-Opening balance */
@@ -218,7 +218,7 @@ public class QIFBuilder {
             /* else use an event */
         } else {
             /* Register category */
-            QIFEventCategory myCategory = theFile.registerCategory(theOpeningCategory);
+            final QIFEventCategory myCategory = theFile.registerCategory(theOpeningCategory);
             myEvent.recordCategory(myCategory);
         }
 
@@ -308,7 +308,7 @@ public class QIFBuilder {
                                    final TransactionAsset pCredit,
                                    final Transaction pTrans) {
         /* Access details */
-        TransactionCategory myCat = pTrans.getCategory();
+        final TransactionCategory myCat = pTrans.getCategory();
 
         /* If this is a cash AutoExpense */
         if ((pCredit instanceof Cash)
@@ -415,19 +415,19 @@ public class QIFBuilder {
                                          final TransactionAsset pCredit,
                                          final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pPayee);
+        final QIFPayee myPayee = theFile.registerPayee(pPayee);
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(pTrans.getAmount());
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -446,23 +446,23 @@ public class QIFBuilder {
                                          final TransactionAsset pCredit,
                                          final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pPayee);
-        QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
+        final QIFPayee myPayee = theFile.registerPayee(pPayee);
+        final QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Obtain basic amount */
         TethysMoney myAmount = pTrans.getAmount();
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordPayee(myPayee);
         myEvent.recordAmount(myAmount);
 
@@ -479,7 +479,7 @@ public class QIFBuilder {
             myTaxCredit.negate();
 
             /* Access the Category details */
-            QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
+            final QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
@@ -494,7 +494,7 @@ public class QIFBuilder {
             myNatIns.negate();
 
             /* Access the Category details */
-            QIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
+            final QIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());
@@ -504,7 +504,7 @@ public class QIFBuilder {
         TethysMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Access the Category details */
-            QIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
+            final QIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
@@ -514,7 +514,7 @@ public class QIFBuilder {
             myBenefit.negate();
 
             /* Access the Category details */
-            QIFEventCategory myWithCategory = theFile.registerCategory(theBenefitCategory);
+            final QIFEventCategory myWithCategory = theFile.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myWithCategory, myBenefit, myPayee.getName());
@@ -529,7 +529,7 @@ public class QIFBuilder {
             myWithheld.negate();
 
             /* Access the Category details */
-            QIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
+            final QIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
@@ -549,23 +549,23 @@ public class QIFBuilder {
                                           final TransactionAsset pDebit,
                                           final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pPayee);
+        final QIFPayee myPayee = theFile.registerPayee(pPayee);
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        final TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -584,24 +584,24 @@ public class QIFBuilder {
                                           final TransactionAsset pDebit,
                                           final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pPayee);
-        QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
+        final QIFPayee myPayee = theFile.registerPayee(pPayee);
+        final QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Obtain basic amount */
         TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordPayee(myPayee);
         myEvent.recordAmount(myAmount);
 
@@ -610,39 +610,39 @@ public class QIFBuilder {
         myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
         /* Handle Tax Credit */
-        TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
         if (myTaxCredit != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myTaxCredit);
 
             /* Access the Category details */
-            QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
+            final QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
         }
 
         /* Handle National Insurance */
-        TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getNatInsurance();
         if (myNatIns != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myNatIns);
 
             /* Access the Category details */
-            QIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
+            final QIFEventCategory myInsCategory = theFile.registerCategory(theNatInsCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myInsCategory, myNatIns, myTaxPayee.getName());
         }
 
         /* Handle Deemed Benefit */
-        TethysMoney myBenefit = pTrans.getDeemedBenefit();
+        final TethysMoney myBenefit = pTrans.getDeemedBenefit();
         if (myBenefit != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myBenefit);
 
             /* Access the Category details */
-            QIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
+            final QIFEventCategory myBenCategory = theFile.registerCategory(theBenefitCategory);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myBenCategory, myBenefit, myPayee.getName());
@@ -662,14 +662,14 @@ public class QIFBuilder {
                                            final TransactionAsset pCredit,
                                            final Transaction pTrans) {
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
+        final TethysMoney myAmount = pTrans.getAmount();
 
         /* Access the Account details */
-        QIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);
-        QIFAccountEvents myCreditAccount = theFile.registerAccount(pCredit);
+        final QIFAccountEvents myDebitAccount = theFile.registerAccount(pDebit);
+        final QIFAccountEvents myCreditAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Create a new event */
         QIFEvent myEvent = new QIFEvent(theFile, pTrans);
@@ -683,7 +683,7 @@ public class QIFBuilder {
         myCreditAccount.addEvent(myEvent);
 
         /* Build out amount */
-        TethysMoney myOutAmount = new TethysMoney(myAmount);
+        final TethysMoney myOutAmount = new TethysMoney(myAmount);
         myOutAmount.negate();
 
         /* Create a new event */
@@ -705,10 +705,10 @@ public class QIFBuilder {
      */
     protected String buildXferFromPayee(final TransactionAsset pPartner) {
         /* Determine mode */
-        boolean useSimpleTransfer = theFileType.useSimpleTransfer();
+        final boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
         /* Build payee description */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(QIF_XFER);
         if (!useSimpleTransfer) {
             myBuilder.append(QIF_XFERFROM);
@@ -726,10 +726,10 @@ public class QIFBuilder {
      */
     protected String buildXferToPayee(final TransactionAsset pPartner) {
         /* Determine mode */
-        boolean useSimpleTransfer = theFileType.useSimpleTransfer();
+        final boolean useSimpleTransfer = theFileType.useSimpleTransfer();
 
         /* Build payee description */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(QIF_XFER);
         if (!useSimpleTransfer) {
             myBuilder.append(QIF_XFERTO);
@@ -753,26 +753,26 @@ public class QIFBuilder {
         TethysMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
-        boolean isRecursive = pDebit.equals(pCredit);
-        boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
-        boolean hasXtraDetail = hasXtraDetail(pTrans);
+        final boolean isRecursive = pDebit.equals(pCredit);
+        final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
+        final boolean hasXtraDetail = hasXtraDetail(pTrans);
 
         /* Access the Account details */
-        QIFAccountEvents myIntAccount = theFile.registerAccount(pDebit);
+        final QIFAccountEvents myIntAccount = theFile.registerAccount(pDebit);
 
         /* Access the payee */
-        QIFPayee myPayee = theFile.registerPayee((Payee) pDebit.getParent());
+        final QIFPayee myPayee = theFile.registerPayee((Payee) pDebit.getParent());
 
         /* Access the category */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* If this is a simple interest */
         if (isRecursive && !hasXtraDetail) {
             /* Create a new event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(myAmount);
@@ -785,7 +785,7 @@ public class QIFBuilder {
             /* Else we need splits */
         } else {
             /* Create a new event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Record basic details */
             myEvent.recordAmount(isRecursive
@@ -801,7 +801,7 @@ public class QIFBuilder {
             TethysMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
                 /* Access tax payee */
-                QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
+                final QIFPayee myTaxPayee = theFile.registerPayee(theTaxMan);
 
                 /* Add to amount */
                 myAmount.addAmount(myTaxCredit);
@@ -809,7 +809,7 @@ public class QIFBuilder {
                 myTaxCredit.negate();
 
                 /* Access the Category details */
-                QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
+                final QIFEventCategory myTaxCategory = theFile.registerCategory(theTaxCategory);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myTaxCategory, myTaxCredit, myTaxPayee.getName());
@@ -824,7 +824,7 @@ public class QIFBuilder {
                 myWithheld.negate();
 
                 /* Access the Category details */
-                QIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
+                final QIFEventCategory myWithCategory = theFile.registerCategory(theWithheldCategory);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myWithCategory, myWithheld, myPayee.getName());
@@ -833,11 +833,11 @@ public class QIFBuilder {
             /* Handle Non-Recursion */
             if (!isRecursive) {
                 /* Add to amount */
-                TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
+                final TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
                 myOutAmount.negate();
 
                 /* Access the Account details */
-                QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+                final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
                 /* Add Split event */
                 myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
@@ -850,10 +850,10 @@ public class QIFBuilder {
         /* If we need a balancing transfer */
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
-            QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+            final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
             /* Create a new event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(pTrans.getAmount());
@@ -880,25 +880,25 @@ public class QIFBuilder {
         TethysMoney myAmount = pTrans.getAmount();
 
         /* Determine mode */
-        boolean isRecursive = pDebit.equals(pCredit);
-        boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
+        final boolean isRecursive = pDebit.equals(pCredit);
+        final boolean hideBalancingTransfer = theFileType.hideBalancingSplitTransfer();
 
         /* Access the Account details */
-        QIFAccountEvents myBaseAccount = theFile.registerAccount(pDebit);
+        final QIFAccountEvents myBaseAccount = theFile.registerAccount(pDebit);
 
         /* Access the payee */
-        QIFPayee myPayee = theFile.registerPayee((Payee) pDebit.getParent());
+        final QIFPayee myPayee = theFile.registerPayee((Payee) pDebit.getParent());
 
         /* Access the category */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* If this is a simple cashBack */
         if (isRecursive) {
             /* Create a new event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(myAmount);
@@ -911,7 +911,7 @@ public class QIFBuilder {
             /* Else we need splits */
         } else {
             /* Create a new event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Record basic details */
             myEvent.recordAmount(new TethysMoney());
@@ -922,11 +922,11 @@ public class QIFBuilder {
             myEvent.recordSplitRecord(myCategory, myList, myAmount, myPayee.getName());
 
             /* Add to amount */
-            TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
+            final TethysMoney myOutAmount = new TethysMoney(pTrans.getAmount());
             myOutAmount.negate();
 
             /* Access the Account details */
-            QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+            final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
             /* Add Split event */
             myEvent.recordSplitRecord(myAccount.getAccount(), myOutAmount, null);
@@ -938,10 +938,10 @@ public class QIFBuilder {
         /* If we need a balancing transfer */
         if (!isRecursive && !hideBalancingTransfer) {
             /* Access the Account details */
-            QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+            final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
             /* Create a new event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
 
             /* Build simple event and add it */
             myEvent.recordAmount(pTrans.getAmount());
@@ -965,25 +965,25 @@ public class QIFBuilder {
                                        final Cash pCash,
                                        final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pPayee);
+        final QIFPayee myPayee = theFile.registerPayee(pPayee);
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        QIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pCash);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pCash);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        TethysMoney myInAmount = pTrans.getAmount();
-        TethysMoney myOutAmount = new TethysMoney(myInAmount);
+        final TethysMoney myInAmount = pTrans.getAmount();
+        final TethysMoney myOutAmount = new TethysMoney(myInAmount);
         myOutAmount.negate();
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(new TethysMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myCategory, myList, myInAmount, myPayee.getName());
@@ -1003,25 +1003,25 @@ public class QIFBuilder {
                                       final Cash pCash,
                                       final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pPayee);
+        final QIFPayee myPayee = theFile.registerPayee(pPayee);
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        QIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFEventCategory myAutoCategory = theFile.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pCash);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pCash);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the amount */
-        TethysMoney myInAmount = pTrans.getAmount();
-        TethysMoney myOutAmount = new TethysMoney(myInAmount);
+        final TethysMoney myInAmount = pTrans.getAmount();
+        final TethysMoney myOutAmount = new TethysMoney(myInAmount);
         myOutAmount.negate();
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(new TethysMoney());
         myEvent.recordPayee(myPayee);
         myEvent.recordSplitRecord(myAutoCategory, myList, myInAmount, pCash.getAutoPayee().getName());
@@ -1041,23 +1041,23 @@ public class QIFBuilder {
                                       final TransactionAsset pDebit,
                                       final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
+        final QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pDebit);
 
         /* Access the amount */
-        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        final TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -1076,19 +1076,19 @@ public class QIFBuilder {
                                       final TransactionAsset pCredit,
                                       final Transaction pTrans) {
         /* Access the Payee details */
-        QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
+        final QIFPayee myPayee = theFile.registerPayee(pCash.getAutoPayee());
 
         /* Access the Category details */
-        QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
+        final QIFEventCategory myCategory = theFile.registerCategory(pCash.getAutoExpense());
 
         /* Access the Account details */
-        QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
+        final QIFAccountEvents myAccount = theFile.registerAccount(pCredit);
 
         /* Obtain classes */
-        List<QIFClass> myList = getTransactionClasses(pTrans);
+        final List<QIFClass> myList = getTransactionClasses(pTrans);
 
         /* Create a new event */
-        QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
         myEvent.recordAmount(pTrans.getAmount());
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory, myList);
@@ -1107,7 +1107,7 @@ public class QIFBuilder {
         List<QIFClass> myList = null;
 
         /* Obtain the iterator for the transaction */
-        Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+        final Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
 
         /* If we have tags */
         if (myIterator != null) {
@@ -1116,11 +1116,11 @@ public class QIFBuilder {
 
             /* Loop through the classes */
             while (myIterator.hasNext()) {
-                TransactionInfo myInfo = myIterator.next();
+                final TransactionInfo myInfo = myIterator.next();
 
                 /* Access the transaction tag */
-                TransactionTag myTag = myInfo.getTransactionTag();
-                QIFClass myClass = theFile.registerClass(myTag);
+                final TransactionTag myTag = myInfo.getTransactionTag();
+                final QIFClass myClass = theFile.registerClass(myTag);
 
                 /* Add to the list */
                 myList.add(myClass);

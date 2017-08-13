@@ -78,7 +78,7 @@ public class SheetDepositRate
         super(pReader, AREA_RATES);
 
         /* Access the Rates list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getDepositRates());
     }
 
@@ -91,14 +91,14 @@ public class SheetDepositRate
         super(pWriter, AREA_RATES);
 
         /* Access the Rates list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getDepositRates());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
         myValues.addValue(DepositRate.FIELD_DEPOSIT, loadInteger(COL_DEPOSIT));
         myValues.addValue(DepositRate.FIELD_RATE, loadBytes(COL_RATE));
         myValues.addValue(DepositRate.FIELD_BONUS, loadBytes(COL_BONUS));
@@ -137,7 +137,7 @@ public class SheetDepositRate
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_RATES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_RATES);
 
             /* If the view is present */
             if (myView != null) {
@@ -164,13 +164,13 @@ public class SheetDepositRate
                                           final MoneyWiseData pData,
                                           final MetisDataView pView) throws OceanusException {
         /* Access the list of rates */
-        DepositRateList myList = pData.getDepositRates();
+        final DepositRateList myList = pData.getDepositRates();
 
         /* Declare the new stage */
         pReport.setNewStage(AREA_RATES);
 
         /* Count the number of Rates */
-        int myTotal = pView.getRowCount();
+        final int myTotal = pView.getRowCount();
 
         /* Declare the number of steps */
         pReport.setNumSteps(myTotal);
@@ -178,16 +178,16 @@ public class SheetDepositRate
         /* Loop through the rows of the table */
         for (int i = 0; i < myTotal; i++) {
             /* Access the cell by reference */
-            MetisDataRow myRow = pView.getRowByIndex(i);
+            final MetisDataRow myRow = pView.getRowByIndex(i);
             int iAdjust = -1;
 
             /* Access deposit */
             MetisDataCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
-            String myDeposit = myCell.getStringValue();
+            final String myDeposit = myCell.getStringValue();
 
             /* Handle Rate */
             myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
-            String myRate = myCell.getStringValue();
+            final String myRate = myCell.getStringValue();
 
             /* Handle bonus which may be missing */
             myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
@@ -204,7 +204,7 @@ public class SheetDepositRate
             }
 
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositRate.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositRate.OBJECT_NAME);
             myValues.addValue(DepositRate.FIELD_DEPOSIT, myDeposit);
             myValues.addValue(DepositRate.FIELD_RATE, myRate);
             myValues.addValue(DepositRate.FIELD_BONUS, myBonus);

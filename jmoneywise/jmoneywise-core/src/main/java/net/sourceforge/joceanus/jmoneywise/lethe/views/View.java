@@ -196,7 +196,7 @@ public class View<N, I>
         pData.initialiseAnalysis();
 
         /* Create the analysis */
-        TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceManager());
+        final TransactionAnalyser myAnalyser = new TransactionAnalyser(myTask, pData, getPreferenceManager());
 
         /* Post process the analysis */
         myAnalyser.postProcessAnalysis();
@@ -223,8 +223,8 @@ public class View<N, I>
         /* Protect against exceptions */
         try {
             /* Analyse the data */
-            TransactionAnalyser myAnalyser = analyseData(theData);
-            Analysis myAnalysis = myAnalyser.getAnalysis();
+            final TransactionAnalyser myAnalyser = analyseData(theData);
+            final Analysis myAnalysis = myAnalyser.getAnalysis();
             theAnalysisMgr = new AnalysisManager(myAnalysis);
 
             /* Analyse the basic ranged analysis */
@@ -234,7 +234,7 @@ public class View<N, I>
             hasActiveSecurities = theAnalysisMgr.haveActiveSecurities();
 
             /* Update the Data entry */
-            MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.ANALYSIS);
+            final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.ANALYSIS);
             myData.setTreeObject(theAnalysisMgr);
 
             /* Access the dilutions */

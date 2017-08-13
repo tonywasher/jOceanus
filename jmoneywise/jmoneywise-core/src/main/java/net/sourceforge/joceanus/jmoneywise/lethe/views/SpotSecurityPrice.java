@@ -180,8 +180,8 @@ public final class SpotSecurityPrice
 
     @Override
     public MetisDataState getState() {
-        MetisEncryptedValueSet myCurr = getValueSet();
-        MetisEncryptedValueSet myBase = getOriginalValues();
+        final MetisEncryptedValueSet myCurr = getValueSet();
+        final MetisEncryptedValueSet myBase = getOriginalValues();
 
         /* If we have no changes we are CLEAN */
         if (myCurr.getVersion() == 0) {
@@ -252,12 +252,12 @@ public final class SpotSecurityPrice
         /**
          * The next date.
          */
-        private TethysDate theNext = null;
+        private TethysDate theNext;
 
         /**
          * The previous date.
          */
-        private TethysDate thePrev = null;
+        private TethysDate thePrev;
 
         /**
          * Constructor.
@@ -279,35 +279,35 @@ public final class SpotSecurityPrice
             thePortfolio = pPortfolio;
 
             /* Obtain the portfolio bucket */
-            AnalysisManager myManager = theView.getAnalysisManager();
-            Analysis myAnalysis = myManager.getAnalysis();
-            PortfolioBucketList myPortfolios = myAnalysis.getPortfolios();
-            PortfolioBucket myBucket = myPortfolios.findItemById(thePortfolio.getId());
-            SecurityBucketList mySecurities = myBucket.getSecurities();
+            final AnalysisManager myManager = theView.getAnalysisManager();
+            final Analysis myAnalysis = myManager.getAnalysis();
+            final PortfolioBucketList myPortfolios = myAnalysis.getPortfolios();
+            final PortfolioBucket myBucket = myPortfolios.findItemById(thePortfolio.getId());
+            final SecurityBucketList mySecurities = myBucket.getSecurities();
 
             /* Loop through the Securities */
-            TethysDate myDate = new TethysDate(theDate);
-            Iterator<SecurityBucket> mySecIterator = mySecurities.iterator();
+            final TethysDate myDate = new TethysDate(theDate);
+            final Iterator<SecurityBucket> mySecIterator = mySecurities.iterator();
             while (mySecIterator.hasNext()) {
-                SecurityBucket mySecBucket = mySecIterator.next();
-                Security mySecurity = mySecBucket.getSecurity();
+                final SecurityBucket mySecBucket = mySecIterator.next();
+                final Security mySecurity = mySecBucket.getSecurity();
 
                 /* Create a SpotPrice entry */
-                SpotSecurityPrice mySpot = new SpotSecurityPrice(this, mySecurity);
+                final SpotSecurityPrice mySpot = new SpotSecurityPrice(this, mySecurity);
                 mySpot.setId(mySecurity.getId());
                 mySpot.setDate(myDate);
                 add(mySpot);
             }
 
             /* Set the base for this list */
-            MoneyWiseData myData = theView.getData();
-            SecurityPriceList myPrices = myData.getSecurityPrices();
+            final MoneyWiseData myData = theView.getData();
+            final SecurityPriceList myPrices = myData.getSecurityPrices();
             setBase(myPrices);
 
             /* Loop through the prices */
-            ListIterator<SecurityPrice> myIterator = myPrices.listIterator();
+            final ListIterator<SecurityPrice> myIterator = myPrices.listIterator();
             while (myIterator.hasPrevious()) {
-                SecurityPrice myPrice = myIterator.previous();
+                final SecurityPrice myPrice = myIterator.previous();
 
                 /* Ignore deleted prices */
                 if (myPrice.isDeleted()) {
@@ -315,7 +315,7 @@ public final class SpotSecurityPrice
                 }
 
                 /* Test the Date */
-                int iDiff = theDate.compareTo(myPrice.getDate());
+                final int iDiff = theDate.compareTo(myPrice.getDate());
 
                 /* If we are past the date */
                 if (iDiff < 0) {
@@ -325,8 +325,8 @@ public final class SpotSecurityPrice
                 }
 
                 /* Access the Spot Price and ignore if not relevant */
-                Security mySecurity = myPrice.getSecurity();
-                SpotSecurityPrice mySpot = findItemById(mySecurity.getId());
+                final Security mySecurity = myPrice.getSecurity();
+                final SpotSecurityPrice mySpot = findItemById(mySecurity.getId());
                 if (mySpot == null) {
                     continue;
                 }

@@ -122,10 +122,10 @@ public class MoneyWiseUKSavingsAllowance
         TethysMoney myAllowance = getAllowance();
 
         /* If we have additional tax possible and we are above the allowance limit */
-        TethysMoney myGross = pConfig.getGrossTaxable();
+        final TethysMoney myGross = pConfig.getGrossTaxable();
         if (myGross.compareTo(theAddAllowLimit) > 0) {
             /* Calculate and apply the reduction */
-            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
+            final TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAddAllowLimit);
             myAllowance = new TethysMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 
@@ -143,12 +143,12 @@ public class MoneyWiseUKSavingsAllowance
     @Override
     protected TethysMoney calculateSavingsAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Obtain the gross taxable and allowance */
-        TethysMoney myGross = pConfig.getGrossTaxable();
-        TethysMoney myBoundary = new TethysMoney(pConfig.getAllowance());
+        final TethysMoney myGross = pConfig.getGrossTaxable();
+        final TethysMoney myBoundary = new TethysMoney(pConfig.getAllowance());
 
         /* Obtain the tax bands */
-        MoneyWiseUKTaxBands myBands = pConfig.getTaxYear().getTaxBands();
-        Iterator<MoneyWiseTaxBand> myIterator = myBands.getStandardSet().iterator();
+        final MoneyWiseUKTaxBands myBands = pConfig.getTaxYear().getTaxBands();
+        final Iterator<MoneyWiseTaxBand> myIterator = myBands.getStandardSet().iterator();
 
         /* If we have a basic band */
         if (myIterator.hasNext()) {
@@ -160,7 +160,7 @@ public class MoneyWiseUKSavingsAllowance
         }
 
         /* If we have a high band */
-        TethysMoney myAllowance = new TethysMoney(theSavingsAllowance);
+        final TethysMoney myAllowance = new TethysMoney(theSavingsAllowance);
         if (myIterator.hasNext()) {
             /* If we are only a high taxPayer return the half allowance */
             myBoundary.addAmount(myIterator.next().getAmount());

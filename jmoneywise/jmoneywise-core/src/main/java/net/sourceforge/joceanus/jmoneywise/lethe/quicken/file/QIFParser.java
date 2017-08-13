@@ -88,12 +88,12 @@ public class QIFParser {
      */
     public boolean loadFile(final BufferedReader pStream) throws IOException {
         /* List of lines */
-        List<String> myLines = new ArrayList<>();
+        final List<String> myLines = new ArrayList<>();
 
         /* Loop through the file */
         for (;;) {
             /* Read the next line and break on EOF */
-            String myLine = pStream.readLine();
+            final String myLine = pStream.readLine();
             if (myLine == null) {
                 break;
             }
@@ -131,10 +131,10 @@ public class QIFParser {
         /* If the line is a type record */
         if (pLine.startsWith(QIFRecord.QIF_ITEMTYPE)) {
             /* Access the type */
-            String myType = pLine.substring(QIFRecord.QIF_ITEMTYPE.length());
+            final String myType = pLine.substring(QIFRecord.QIF_ITEMTYPE.length());
 
             /* Determine which section this describes */
-            QIFSection mySection = QIFSection.determineType(myType);
+            final QIFSection mySection = QIFSection.determineType(myType);
 
             /* If we found a section */
             if (mySection != null) {
@@ -155,7 +155,7 @@ public class QIFParser {
                 /* else if we have an active account */
             } else if (theActive != null) {
                 /* Make sure that the type matches */
-                String myActiveType = theActive.getAccount().getType();
+                final String myActiveType = theActive.getAccount().getType();
                 if (myActiveType.equals(myType)) {
                     /* Set events */
                     theSection = QIFSection.EVENT;
@@ -219,7 +219,7 @@ public class QIFParser {
      */
     private void processClassRecord(final List<String> pLines) {
         /* register the class */
-        QIFClass myClass = new QIFClass(theFile, pLines);
+        final QIFClass myClass = new QIFClass(theFile, pLines);
         theFile.registerClass(myClass);
     }
 
@@ -229,7 +229,7 @@ public class QIFParser {
      */
     private void processCategoryRecord(final List<String> pLines) {
         /* Register the category */
-        QIFEventCategory myCategory = new QIFEventCategory(theFile, pLines);
+        final QIFEventCategory myCategory = new QIFEventCategory(theFile, pLines);
         theFile.registerCategory(myCategory);
     }
 
@@ -239,7 +239,7 @@ public class QIFParser {
      */
     private void processAccountRecord(final List<String> pLines) {
         /* Register the account */
-        QIFAccount myAccount = new QIFAccount(theFile, theFormatter, pLines);
+        final QIFAccount myAccount = new QIFAccount(theFile, theFormatter, pLines);
         theActive = theFile.registerAccount(myAccount);
     }
 
@@ -249,7 +249,7 @@ public class QIFParser {
      */
     private void processSecurityRecord(final List<String> pLines) {
         /* Register the security */
-        QIFSecurity mySecurity = new QIFSecurity(theFile, pLines);
+        final QIFSecurity mySecurity = new QIFSecurity(theFile, pLines);
         theFile.registerSecurity(mySecurity);
     }
 
@@ -261,11 +261,11 @@ public class QIFParser {
         /* Switch on portfolio */
         if (isPortfolio) {
             /* Register the event */
-            QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, theFormatter, pLines);
+            final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, theFormatter, pLines);
             theActive.addEvent(myEvent);
         } else {
             /* Register the event */
-            QIFEvent myEvent = new QIFEvent(theFile, theFormatter, pLines);
+            final QIFEvent myEvent = new QIFEvent(theFile, theFormatter, pLines);
             theActive.addEvent(myEvent);
         }
     }
@@ -276,7 +276,7 @@ public class QIFParser {
      */
     private void processPriceRecord(final List<String> pLines) {
         /* Register the price */
-        QIFPrice myPrice = new QIFPrice(theFile, theFormatter, pLines);
+        final QIFPrice myPrice = new QIFPrice(theFile, theFormatter, pLines);
         theFile.registerPrice(myPrice);
     }
 

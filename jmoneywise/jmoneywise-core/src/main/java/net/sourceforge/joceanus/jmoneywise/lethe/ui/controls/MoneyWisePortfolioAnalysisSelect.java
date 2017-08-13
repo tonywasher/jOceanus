@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PortfolioCashFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -103,7 +102,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -119,7 +118,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         thePortfolioMenu = thePortButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
         thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
     }
@@ -172,7 +171,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any portfolios to select */
-        boolean portAvailable = bEnabled && isAvailable();
+        final boolean portAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         thePortButton.setEnabled(portAvailable);
@@ -194,17 +193,10 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         /* Obtain the current portfolio */
         PortfolioBucket myPortfolio = theState.getPortfolio();
 
-        /* If we have a selected Portfolio */
-        if (myPortfolio != null) {
-            /* Look for the equivalent bucket */
-            myPortfolio = getMatchingBucket(myPortfolio);
-        }
-
-        /* If we do not have an active bucket */
-        if (myPortfolio == null) {
-            /* Access the first portfolio */
-            myPortfolio = thePortfolios.peekFirst();
-        }
+        /* Switch to versions from the analysis */
+        myPortfolio = myPortfolio != null
+                                          ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
+                                          : thePortfolios.getDefaultPortfolio();
 
         /* Set the portfolio */
         theState.setThePortfolio(myPortfolio);
@@ -216,38 +208,18 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof PortfolioCashFilter) {
             /* Access filter */
-            PortfolioCashFilter myFilter = (PortfolioCashFilter) pFilter;
+            final PortfolioCashFilter myFilter = (PortfolioCashFilter) pFilter;
 
             /* Obtain the filter bucket */
             PortfolioBucket myPortfolio = myFilter.getPortfolioBucket();
 
             /* Look for the equivalent bucket */
-            myPortfolio = getMatchingBucket(myPortfolio);
+            myPortfolio = thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio());
 
             /* Set the portfolio */
             theState.setThePortfolio(myPortfolio);
             theState.applyState();
         }
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private PortfolioBucket getMatchingBucket(final PortfolioBucket pBucket) {
-        /* Look up the matching PortfolioBucket */
-        Portfolio myPortfolio = pBucket.getPortfolio();
-        PortfolioBucket myBucket = thePortfolios.findItemById(myPortfolio.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = thePortfolios.getOrphanBucket(myPortfolio);
-        }
-
-        /* return the bucket */
-        return myBucket;
     }
 
     /**
@@ -270,15 +242,15 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
 
         /* Record active item */
         TethysScrollMenuItem<PortfolioBucket> myActive = null;
-        PortfolioBucket myCurr = theState.getPortfolio();
+        final PortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
-        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
+            final TethysScrollMenuItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {

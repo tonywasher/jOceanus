@@ -53,11 +53,11 @@ public class TableCashCategory
      */
     protected TableCashCategory(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(CashCategory.FIELD_CATTYPE, TableCashCategoryType.TABLE_NAME);
-        PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(CashCategory.FIELD_PARENT);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(CashCategory.FIELD_CATTYPE, TableCashCategoryType.TABLE_NAME);
+        final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(CashCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(CashCategory.FIELD_NAME, CashCategory.NAMELEN);
         myTableDef.addNullEncryptedColumn(CashCategory.FIELD_DESC, CashCategory.DESCLEN);
 
@@ -68,17 +68,17 @@ public class TableCashCategory
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getCashCategories());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(CashCategory.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(CashCategory.OBJECT_NAME);
         myValues.addValue(CashCategory.FIELD_CATTYPE, myTableDef.getIntegerValue(CashCategory.FIELD_CATTYPE));
         myValues.addValue(CashCategory.FIELD_PARENT, myTableDef.getIntegerValue(CashCategory.FIELD_PARENT));
         myValues.addValue(CashCategory.FIELD_NAME, myTableDef.getBinaryValue(CashCategory.FIELD_NAME));
@@ -92,7 +92,7 @@ public class TableCashCategory
     protected void setFieldValue(final CashCategory pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (CashCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
         } else if (CashCategory.FIELD_PARENT.equals(iField)) {

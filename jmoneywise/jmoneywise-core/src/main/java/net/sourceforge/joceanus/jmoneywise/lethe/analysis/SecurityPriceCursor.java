@@ -70,7 +70,7 @@ public class SecurityPriceCursor {
     public TethysPrice getSecurityPrice(final Security pSecurity,
                                         final TethysDate pDate) {
         /* Access cursor and return rate */
-        SecurityCursor myCursor = getCursor(pSecurity);
+        final SecurityCursor myCursor = getCursor(pSecurity);
         return myCursor.getSecurityPrice(pDate);
     }
 
@@ -124,7 +124,7 @@ public class SecurityPriceCursor {
          */
         private SecurityCursor(final Security pSecurity) {
             /* Create the default price */
-            Currency myCurrency = pSecurity.getCurrency();
+            final Currency myCurrency = pSecurity.getCurrency();
             theCurrent = TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
 
             /* Access the Price list */
@@ -144,7 +144,7 @@ public class SecurityPriceCursor {
             /* If we have an iterator */
             if (theIterator.hasPrevious()) {
                 /* access next rate and record */
-                SecurityPrice myPrice = theIterator.previous();
+                final SecurityPrice myPrice = theIterator.previous();
                 theNextPrice = myPrice.getPrice();
                 theNextDate = myPrice.getDate();
             } else {

@@ -117,23 +117,23 @@ public class MoneyWiseReportBalanceSheet
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
         theAnalysis = pAnalysis;
-        DepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
-        CashCategoryBucketList myCash = theAnalysis.getCashCategories();
-        LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        TethysDateRange myDateRange = theAnalysis.getDateRange();
+        final DepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
+        final CashCategoryBucketList myCash = theAnalysis.getCashCategories();
+        final LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final TethysDateRange myDateRange = theAnalysis.getDateRange();
 
         /* Create the totals */
-        TethysMoney myTotal = new TethysMoney();
-        TethysMoney myBase = new TethysMoney();
-        TethysMoney myDelta = new TethysMoney();
+        final TethysMoney myTotal = new TethysMoney();
+        final TethysMoney myBase = new TethysMoney();
+        final TethysMoney myDelta = new TethysMoney();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDateRange));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
@@ -143,9 +143,9 @@ public class MoneyWiseReportBalanceSheet
         /* If we have deposits */
         if (!myDeposits.isEmpty()) {
             /* Loop through the SubTotal Buckets */
-            Iterator<DepositCategoryBucket> myIterator = myDeposits.iterator();
+            final Iterator<DepositCategoryBucket> myIterator = myDeposits.iterator();
             while (myIterator.hasNext()) {
-                DepositCategoryBucket myBucket = myIterator.next();
+                final DepositCategoryBucket myBucket = myIterator.next();
 
                 /* Only process subTotal items */
                 if (!myBucket.getAccountCategory().isCategoryClass(DepositCategoryClass.PARENT)) {
@@ -153,8 +153,8 @@ public class MoneyWiseReportBalanceSheet
                 }
 
                 /* Access values */
-                AccountValues myValues = myBucket.getValues();
-                AccountValues myBaseValues = myBucket.getBaseValues();
+                final AccountValues myValues = myBucket.getValues();
+                final AccountValues myBaseValues = myBucket.getBaseValues();
 
                 /* Format the Category Total */
                 theBuilder.startRow(myTable);
@@ -168,9 +168,9 @@ public class MoneyWiseReportBalanceSheet
             }
 
             /* Access totals */
-            DepositCategoryBucket myTotals = myDeposits.getTotals();
-            AccountValues myValues = myTotals.getValues();
-            AccountValues myBaseValues = myTotals.getBaseValues();
+            final DepositCategoryBucket myTotals = myDeposits.getTotals();
+            final AccountValues myValues = myTotals.getValues();
+            final AccountValues myBaseValues = myTotals.getBaseValues();
 
             /* Add to running totals */
             myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
@@ -181,9 +181,9 @@ public class MoneyWiseReportBalanceSheet
         /* If we have cash */
         if (!myCash.isEmpty()) {
             /* Loop through the SubTotal Buckets */
-            Iterator<CashCategoryBucket> myIterator = myCash.iterator();
+            final Iterator<CashCategoryBucket> myIterator = myCash.iterator();
             while (myIterator.hasNext()) {
-                CashCategoryBucket myBucket = myIterator.next();
+                final CashCategoryBucket myBucket = myIterator.next();
 
                 /* Only process subTotal items */
                 if (!myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
@@ -191,8 +191,8 @@ public class MoneyWiseReportBalanceSheet
                 }
 
                 /* Access values */
-                AccountValues myValues = myBucket.getValues();
-                AccountValues myBaseValues = myBucket.getBaseValues();
+                final AccountValues myValues = myBucket.getValues();
+                final AccountValues myBaseValues = myBucket.getBaseValues();
 
                 /* Format the Category Total */
                 theBuilder.startRow(myTable);
@@ -206,9 +206,9 @@ public class MoneyWiseReportBalanceSheet
             }
 
             /* Access totals */
-            CashCategoryBucket myTotals = myCash.getTotals();
-            AccountValues myValues = myTotals.getValues();
-            AccountValues myBaseValues = myTotals.getBaseValues();
+            final CashCategoryBucket myTotals = myCash.getTotals();
+            final AccountValues myValues = myTotals.getValues();
+            final AccountValues myBaseValues = myTotals.getBaseValues();
 
             /* Add to running totals */
             myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
@@ -219,14 +219,14 @@ public class MoneyWiseReportBalanceSheet
         /* If we have portfolios */
         if (!myPortfolios.isEmpty()) {
             /* Access totals */
-            PortfolioBucket myTotals = myPortfolios.getTotals();
-            SecurityValues myValues = myTotals.getValues();
-            SecurityValues myBaseValues = myTotals.getBaseValues();
+            final PortfolioBucket myTotals = myPortfolios.getTotals();
+            final SecurityValues myValues = myTotals.getValues();
+            final SecurityValues myBaseValues = myTotals.getBaseValues();
 
             /* Access interesting values */
-            TethysMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
-            TethysMoney myBaseValuation = myBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
-            TethysMoney myDeltaValuation = myValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
+            final TethysMoney myValuation = myValues.getMoneyValue(SecurityAttribute.VALUATION);
+            final TethysMoney myBaseValuation = myBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
+            final TethysMoney myDeltaValuation = myValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
 
             /* Format the Portfolios Total */
             theBuilder.startRow(myTable);
@@ -247,9 +247,9 @@ public class MoneyWiseReportBalanceSheet
         /* If we have loans */
         if (!myLoans.isEmpty()) {
             /* Loop through the SubTotal Buckets */
-            Iterator<LoanCategoryBucket> myIterator = myLoans.iterator();
+            final Iterator<LoanCategoryBucket> myIterator = myLoans.iterator();
             while (myIterator.hasNext()) {
-                LoanCategoryBucket myBucket = myIterator.next();
+                final LoanCategoryBucket myBucket = myIterator.next();
 
                 /* Only process subTotal items */
                 if (!myBucket.getAccountCategory().isCategoryClass(LoanCategoryClass.PARENT)) {
@@ -257,8 +257,8 @@ public class MoneyWiseReportBalanceSheet
                 }
 
                 /* Access values */
-                AccountValues myValues = myBucket.getValues();
-                AccountValues myBaseValues = myBucket.getBaseValues();
+                final AccountValues myValues = myBucket.getValues();
+                final AccountValues myBaseValues = myBucket.getBaseValues();
 
                 /* Format the Category Total */
                 theBuilder.startRow(myTable);
@@ -272,9 +272,9 @@ public class MoneyWiseReportBalanceSheet
             }
 
             /* Access totals */
-            LoanCategoryBucket myTotals = myLoans.getTotals();
-            AccountValues myValues = myTotals.getValues();
-            AccountValues myBaseValues = myTotals.getBaseValues();
+            final LoanCategoryBucket myTotals = myLoans.getTotals();
+            final AccountValues myValues = myTotals.getValues();
+            final AccountValues myBaseValues = myTotals.getBaseValues();
 
             /* Add to running totals */
             myTotal.addAmount(myValues.getMoneyValue(AccountAttribute.VALUATION));
@@ -301,29 +301,29 @@ public class MoneyWiseReportBalanceSheet
     private void makeDepositCategoryReport(final MetisHTMLTable pParent,
                                            final DepositCategoryBucket pCategory) {
         /* Access the category */
-        DepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();
-        DepositCategory myCategory = pCategory.getAccountCategory();
+        final DepositCategoryBucketList myCategories = theAnalysis.getDepositCategories();
+        final DepositCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        Iterator<DepositCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<DepositCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            DepositCategoryBucket myBucket = myIterator.next();
+            final DepositCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            DepositCategory myCurr = myBucket.getAccountCategory();
+            final DepositCategory myCurr = myBucket.getAccountCategory();
             if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            final AccountValues myValues = myBucket.getValues();
+            final AccountValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
@@ -348,29 +348,29 @@ public class MoneyWiseReportBalanceSheet
     private void makeCashCategoryReport(final MetisHTMLTable pParent,
                                         final CashCategoryBucket pCategory) {
         /* Access the category */
-        CashCategoryBucketList myCategories = theAnalysis.getCashCategories();
-        CashCategory myCategory = pCategory.getAccountCategory();
+        final CashCategoryBucketList myCategories = theAnalysis.getCashCategories();
+        final CashCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        Iterator<CashCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<CashCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            CashCategoryBucket myBucket = myIterator.next();
+            final CashCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            CashCategory myCurr = myBucket.getAccountCategory();
+            final CashCategory myCurr = myBucket.getAccountCategory();
             if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            final AccountValues myValues = myBucket.getValues();
+            final AccountValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
@@ -395,29 +395,29 @@ public class MoneyWiseReportBalanceSheet
     private void makeLoanCategoryReport(final MetisHTMLTable pParent,
                                         final LoanCategoryBucket pCategory) {
         /* Access the category */
-        LoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();
-        LoanCategory myCategory = pCategory.getAccountCategory();
+        final LoanCategoryBucketList myCategories = theAnalysis.getLoanCategories();
+        final LoanCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
-        Iterator<LoanCategoryBucket> myIterator = myCategories.iterator();
+        final Iterator<LoanCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            LoanCategoryBucket myBucket = myIterator.next();
+            final LoanCategoryBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
-            LoanCategory myCurr = myBucket.getAccountCategory();
+            final LoanCategory myCurr = myBucket.getAccountCategory();
             if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            final AccountValues myValues = myBucket.getValues();
+            final AccountValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
@@ -440,22 +440,22 @@ public class MoneyWiseReportBalanceSheet
      */
     private void makePortfolioReport(final MetisHTMLTable pParent) {
         /* Access the portfolios */
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Portfolio Buckets */
-        Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
-            SecurityValues myBaseValues = myBucket.getBaseValues();
+            final SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
@@ -475,18 +475,18 @@ public class MoneyWiseReportBalanceSheet
     @Override
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
-        Object mySource = pTable.getSource();
+        final Object mySource = pTable.getSource();
         if (mySource instanceof DepositCategoryBucket) {
-            DepositCategoryBucket mySourceBucket = (DepositCategoryBucket) mySource;
+            final DepositCategoryBucket mySourceBucket = (DepositCategoryBucket) mySource;
             return createDelayedDeposit(pTable.getParent(), mySourceBucket);
         } else if (mySource instanceof CashCategoryBucket) {
-            CashCategoryBucket mySourceBucket = (CashCategoryBucket) mySource;
+            final CashCategoryBucket mySourceBucket = (CashCategoryBucket) mySource;
             return createDelayedCash(pTable.getParent(), mySourceBucket);
         } else if (mySource instanceof LoanCategoryBucket) {
-            LoanCategoryBucket mySourceBucket = (LoanCategoryBucket) mySource;
+            final LoanCategoryBucket mySourceBucket = (LoanCategoryBucket) mySource;
             return createDelayedLoan(pTable.getParent(), mySourceBucket);
         } else if (mySource instanceof PortfolioBucket) {
-            PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+            final PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -503,17 +503,17 @@ public class MoneyWiseReportBalanceSheet
     private MetisHTMLTable createDelayedDeposit(final MetisHTMLTable pParent,
                                                 final DepositCategoryBucket pSource) {
         /* Access the category */
-        DepositBucketList myDeposits = theAnalysis.getDeposits();
-        DepositCategory myCategory = pSource.getAccountCategory();
-        boolean isForeign = pSource.hasForeignCurrency();
+        final DepositBucketList myDeposits = theAnalysis.getDeposits();
+        final DepositCategory myCategory = pSource.getAccountCategory();
+        final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Deposit Buckets */
-        Iterator<DepositBucket> myIterator = myDeposits.iterator();
+        final Iterator<DepositBucket> myIterator = myDeposits.iterator();
         while (myIterator.hasNext()) {
-            DepositBucket myBucket = myIterator.next();
+            final DepositBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
             if (!MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
@@ -521,11 +521,11 @@ public class MoneyWiseReportBalanceSheet
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            final AccountValues myValues = myBucket.getValues();
+            final AccountValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -565,17 +565,17 @@ public class MoneyWiseReportBalanceSheet
     private MetisHTMLTable createDelayedCash(final MetisHTMLTable pParent,
                                              final CashCategoryBucket pSource) {
         /* Access the category */
-        CashBucketList myCash = theAnalysis.getCash();
-        CashCategory myCategory = pSource.getAccountCategory();
-        boolean isForeign = pSource.hasForeignCurrency();
+        final CashBucketList myCash = theAnalysis.getCash();
+        final CashCategory myCategory = pSource.getAccountCategory();
+        final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Cash Buckets */
-        Iterator<CashBucket> myIterator = myCash.iterator();
+        final Iterator<CashBucket> myIterator = myCash.iterator();
         while (myIterator.hasNext()) {
-            CashBucket myBucket = myIterator.next();
+            final CashBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
             if (!MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
@@ -583,11 +583,11 @@ public class MoneyWiseReportBalanceSheet
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            final AccountValues myValues = myBucket.getValues();
+            final AccountValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -627,17 +627,17 @@ public class MoneyWiseReportBalanceSheet
     private MetisHTMLTable createDelayedLoan(final MetisHTMLTable pParent,
                                              final LoanCategoryBucket pSource) {
         /* Access the category */
-        LoanBucketList myLoans = theAnalysis.getLoans();
-        LoanCategory myCategory = pSource.getAccountCategory();
-        boolean isForeign = pSource.hasForeignCurrency();
+        final LoanBucketList myLoans = theAnalysis.getLoans();
+        final LoanCategory myCategory = pSource.getAccountCategory();
+        final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Loan Buckets */
-        Iterator<LoanBucket> myIterator = myLoans.iterator();
+        final Iterator<LoanBucket> myIterator = myLoans.iterator();
         while (myIterator.hasNext()) {
-            LoanBucket myBucket = myIterator.next();
+            final LoanBucket myBucket = myIterator.next();
 
             /* Skip record if incorrect category */
             if (!MetisDifference.isEqual(myBucket.getCategory(), myCategory)) {
@@ -645,11 +645,11 @@ public class MoneyWiseReportBalanceSheet
             }
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            AccountValues myValues = myBucket.getValues();
-            AccountValues myBaseValues = myBucket.getBaseValues();
+            final AccountValues myValues = myBucket.getValues();
+            final AccountValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -689,21 +689,21 @@ public class MoneyWiseReportBalanceSheet
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
                                                   final PortfolioBucket pSource) {
         /* Access the securities */
-        PortfolioCashBucket myCash = pSource.getPortfolioCash();
-        SecurityBucketList mySecurities = pSource.getSecurities();
-        boolean isForeign = pSource.hasForeignCurrency();
+        final PortfolioCashBucket myCash = pSource.getPortfolioCash();
+        final SecurityBucketList mySecurities = pSource.getSecurities();
+        final boolean isForeign = pSource.hasForeignCurrency();
 
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* If the portfolio cash is not idle */
         if (!myCash.isIdle()) {
             /* Access values */
-            AccountValues myValues = myCash.getValues();
-            AccountValues myBaseValues = myCash.getBaseValues();
+            final AccountValues myValues = myCash.getValues();
+            final AccountValues myBaseValues = myCash.getBaseValues();
 
             /* Access bucket name */
-            String myName = pSource.getName();
+            final String myName = pSource.getName();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -731,16 +731,16 @@ public class MoneyWiseReportBalanceSheet
         }
 
         /* Loop through the Security Buckets */
-        Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+        final Iterator<SecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
-            SecurityValues myBaseValues = myBucket.getBaseValues();
+            final SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);

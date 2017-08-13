@@ -349,7 +349,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         theFilterSelect = buildFilterSelect(pFactory);
 
         /* Create the control panel */
-        TethysBoxPaneManager<N, I> myPanel = buildControlPanel(pFactory, pNewButton);
+        final TethysBoxPaneManager<N, I> myPanel = buildControlPanel(pFactory, pNewButton);
 
         /* Create the panel */
         thePanel = pFactory.newVBoxPane();
@@ -364,7 +364,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Create initial state */
         theState = new AnalysisState();
         theState.showColumns(true);
-        StatementSelect<N, I> mySelect = new StatementSelect<>(theRangeSelect, new AllFilter());
+        final StatementSelect<N, I> mySelect = new StatementSelect<>(theRangeSelect, new AllFilter());
         selectStatement(mySelect);
 
         /* Access the menus */
@@ -465,10 +465,10 @@ public class MoneyWiseAnalysisSelect<N, I>
     private TethysBoxPaneManager<N, I> buildControlPanel(final TethysGuiFactory<N, I> pFactory,
                                                          final TethysButton<N, I> pNewButton) {
         /* Create the control panel */
-        TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
+        final TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
 
         /* Create the labels */
-        TethysLabel<N, I> myRangeLabel = pFactory.newLabel(NLS_RANGE);
+        final TethysLabel<N, I> myRangeLabel = pFactory.newLabel(NLS_RANGE);
 
         /* Create the panel */
         myPanel.setBorderTitle(NLS_TITLE);
@@ -490,10 +490,10 @@ public class MoneyWiseAnalysisSelect<N, I>
      */
     private TethysBoxPaneManager<N, I> buildFilterDetail(final TethysGuiFactory<N, I> pFactory) {
         /* Create the control panel */
-        TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
+        final TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
 
         /* Create the labels */
-        TethysLabel<N, I> myFilterLabel = pFactory.newLabel(NLS_FILTER);
+        final TethysLabel<N, I> myFilterLabel = pFactory.newLabel(NLS_FILTER);
 
         /* Create the panel */
         myPanel.addNode(myFilterLabel);
@@ -515,10 +515,10 @@ public class MoneyWiseAnalysisSelect<N, I>
      */
     private TethysBoxPaneManager<N, I> buildFilterSelect(final TethysGuiFactory<N, I> pFactory) {
         /* Create the filter panel */
-        TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
+        final TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
 
         /* Create the labels */
-        TethysLabel<N, I> myTypeLabel = pFactory.newLabel(NLS_FILTERTYPE);
+        final TethysLabel<N, I> myTypeLabel = pFactory.newLabel(NLS_FILTERTYPE);
 
         /* Add to the card panels */
         theCardPanel.addCard(AnalysisType.DEPOSIT.name(), theDepositSelect);
@@ -564,7 +564,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         isRefreshing = true;
 
         /* Update the range */
-        TethysDateRangeSelector<N, I> mySelect = pSelect.getRangeSelect();
+        final TethysDateRangeSelector<N, I> mySelect = pSelect.getRangeSelect();
         if (mySelect != null) {
             theRangeSelect.setSelection(mySelect);
             theRangeSelect.lockPeriod(false);
@@ -577,9 +577,9 @@ public class MoneyWiseAnalysisSelect<N, I>
         }
 
         /* Access the filter and the selection panel */
-        AnalysisFilter<?, ?> myFilter = pSelect.getFilter();
-        AnalysisType myType = myFilter.getAnalysisType();
-        MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+        final AnalysisFilter<?, ?> myFilter = pSelect.getFilter();
+        final AnalysisType myType = myFilter.getAnalysisType();
+        final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
 
         /* Move correct card to front and update it */
         theCardPanel.selectCard(myType.name());
@@ -597,7 +597,7 @@ public class MoneyWiseAnalysisSelect<N, I>
      */
     public void refreshData() {
         /* Update the range selection */
-        TethysDateRange myRange = theView.getRange();
+        final TethysDateRange myRange = theView.getRange();
         theRangeSelect.setOverallRange(myRange);
 
         /* Refresh the analysisView */
@@ -634,12 +634,12 @@ public class MoneyWiseAnalysisSelect<N, I>
      */
     private void updateFilter() {
         /* Access the active panel */
-        AnalysisType myType = theState.getType();
-        MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+        final AnalysisType myType = theState.getType();
+        final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
 
         /* Update filters */
         if (myPanel != null) {
-            AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            final AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
             myFilter.setCurrentAttribute(theState.getBucket());
             theState.setFilter(myFilter);
         }
@@ -711,9 +711,9 @@ public class MoneyWiseAnalysisSelect<N, I>
      */
     private boolean isAvailable() {
         /* Loop through the panels */
-        Iterator<MoneyWiseAnalysisFilterSelection<N>> myIterator = theMap.values().iterator();
+        final Iterator<MoneyWiseAnalysisFilterSelection<N>> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            MoneyWiseAnalysisFilterSelection<N> myEntry = myIterator.next();
+            final MoneyWiseAnalysisFilterSelection<N> myEntry = myIterator.next();
 
             /* If the filter is possible */
             if (myEntry.isAvailable()) {
@@ -736,22 +736,22 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* If the type is selected */
         if (myType != null) {
             /* Check that the filter is appropriate */
-            MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+            final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
             if (myPanel.isAvailable()) {
                 /* We are OK */
-                AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+                final AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
                 theState.setFilter(myFilter);
                 return;
             }
         }
 
         /* Loop through the panels */
-        Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>>> myIterator = theMap.entrySet().iterator();
+        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> myEntry = myIterator.next();
+            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> myEntry = myIterator.next();
 
             /* If the filter is possible */
-            MoneyWiseAnalysisFilterSelection<?> myPanel = myEntry.getValue();
+            final MoneyWiseAnalysisFilterSelection<?> myPanel = myEntry.getValue();
             if (myPanel.isAvailable()) {
                 /* Access Analysis type */
                 myType = myEntry.getKey();
@@ -760,8 +760,8 @@ public class MoneyWiseAnalysisSelect<N, I>
                 theCardPanel.selectCard(myType.name());
 
                 /* Obtain the relevant filter */
-                AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
-                BucketAttribute myDefault = myType.getDefaultValue();
+                final AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+                final BucketAttribute myDefault = myType.getDefaultValue();
                 if (myFilter != null) {
                     myFilter.setCurrentAttribute(myDefault);
                 }
@@ -791,9 +791,9 @@ public class MoneyWiseAnalysisSelect<N, I>
         theTypeMenu.removeAllItems();
 
         /* Loop through the panels */
-        Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>>> myIterator = theMap.entrySet().iterator();
+        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> myEntry = myIterator.next();
+            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> myEntry = myIterator.next();
 
             /* If the filter is possible */
             if (myEntry.getValue().isAvailable()) {
@@ -811,7 +811,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         theBucketMenu.removeAllItems();
 
         /* Loop through the buckets */
-        AnalysisFilter<?, ?> myFilter = theState.getFilter();
+        final AnalysisFilter<?, ?> myFilter = theState.getFilter();
         for (BucketAttribute myAttr : theState.getType().getValues()) {
             /* If the value is a counter */
             if (myAttr.isCounter()
@@ -833,7 +833,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         theColumnMenu.removeAllItems();
 
         /* Determine whether we have balances */
-        boolean hasBalances = theState.getType().hasBalances();
+        final boolean hasBalances = theState.getType().hasBalances();
 
         /* Loop through the sets */
         for (AnalysisColumnSet mySet : AnalysisColumnSet.values()) {
@@ -916,7 +916,7 @@ public class MoneyWiseAnalysisSelect<N, I>
     private void applyFilter(final AnalysisFilter<?, ?> pFilter) {
         /* Ignore if we are refreshing */
         if (!isRefreshing) {
-            BucketAttribute myBucket = theState.getBucket();
+            final BucketAttribute myBucket = theState.getBucket();
             if (pFilter.isRelevantCounter(myBucket)) {
                 pFilter.setCurrentAttribute(theState.getBucket());
             } else {
@@ -1009,9 +1009,9 @@ public class MoneyWiseAnalysisSelect<N, I>
             return;
         }
 
-        BucketAttribute myBucket = theBucketButton.getValue();
+        final BucketAttribute myBucket = theBucketButton.getValue();
         if (theState.setBucket(myBucket)) {
-            AnalysisFilter<?, ?> myFilter = theState.getFilter();
+            final AnalysisFilter<?, ?> myFilter = theState.getFilter();
             if (myBucket != null) {
                 myFilter.setCurrentAttribute(myBucket);
             }
@@ -1030,7 +1030,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         }
 
         /* Record the columns */
-        AnalysisColumnSet mySet = theColumnButton.getValue();
+        final AnalysisColumnSet mySet = theColumnButton.getValue();
         if (theState.setColumns(mySet)) {
             theState.applyState();
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
@@ -1047,10 +1047,10 @@ public class MoneyWiseAnalysisSelect<N, I>
         }
 
         /* If the type has changed */
-        AnalysisType myType = theFilterTypeButton.getValue();
+        final AnalysisType myType = theFilterTypeButton.getValue();
         if (theState.setAnalysisType(myType)) {
             /* Determine whether we are showing balances */
-            boolean showingBalances = !theState.showColumns();
+            final boolean showingBalances = !theState.showColumns();
             if (showingBalances && !myType.hasBalances()) {
                 /* Move to columns if we have no balances */
                 theState.showColumns(true);
@@ -1060,8 +1060,8 @@ public class MoneyWiseAnalysisSelect<N, I>
             theCardPanel.selectCard(myType.name());
 
             /* Obtain the relevant filter */
-            MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
-            AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
+            final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+            final AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
             myFilter.setCurrentAttribute(myType.getDefaultValue());
 
             /* Set new bucket type and apply state */
@@ -1200,7 +1200,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          */
         private boolean setRange(final TethysDateRangeSelector<N, I> pSelect) {
             /* Adjust the selected account */
-            TethysDateRange myRange = pSelect.getRange();
+            final TethysDateRange myRange = pSelect.getRange();
             if (!MetisDifference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;

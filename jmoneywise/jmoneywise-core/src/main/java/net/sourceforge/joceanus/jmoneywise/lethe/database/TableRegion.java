@@ -49,7 +49,7 @@ public class TableRegion
      */
     protected TableRegion(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(Region.FIELD_NAME, Region.NAMELEN);
@@ -58,17 +58,17 @@ public class TableRegion
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getRegions());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Region.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Region.OBJECT_NAME);
         myValues.addValue(Region.FIELD_NAME, myTableDef.getBinaryValue(Region.FIELD_NAME));
         myValues.addValue(Region.FIELD_DESC, myTableDef.getBinaryValue(Region.FIELD_DESC));
 
@@ -80,7 +80,7 @@ public class TableRegion
     protected void setFieldValue(final Region pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (Region.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (Region.FIELD_DESC.equals(iField)) {

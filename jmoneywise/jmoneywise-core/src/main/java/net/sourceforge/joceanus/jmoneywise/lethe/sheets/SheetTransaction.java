@@ -99,7 +99,7 @@ public class SheetTransaction
         super(pReader, AREA_TRANS);
 
         /* Access the Lists */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getTransactions());
     }
 
@@ -112,14 +112,14 @@ public class SheetTransaction
         super(pWriter, AREA_TRANS);
 
         /* Access the Transactions list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getTransactions());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
         myValues.addValue(Transaction.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(Transaction.FIELD_PAIR, loadInteger(COL_PAIR));
         myValues.addValue(Transaction.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
@@ -164,27 +164,27 @@ public class SheetTransaction
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of transactions */
-        TransactionList myList = pData.getTransactions();
-        TransactionInfoList myInfoList = pData.getTransactionInfo();
+        final TransactionList myList = pData.getTransactions();
+        final TransactionInfoList myInfoList = pData.getTransactionInfo();
 
         /* Protect against exceptions */
         try {
             /* Obtain the range iterator */
-            ListIterator<ArchiveYear> myIterator = pLoader.getReverseIterator();
+            final ListIterator<ArchiveYear> myIterator = pLoader.getReverseIterator();
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {
                 /* Access year */
-                ArchiveYear myYear = myIterator.previous();
+                final ArchiveYear myYear = myIterator.previous();
 
                 /* Find the range of cells */
-                MetisDataView myView = pWorkBook.getRangeView(myYear.getRangeName());
+                final MetisDataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
                 pReport.setNewStage("Events from " + myYear.getDate().getYear());
 
                 /* Count the number of Transactions */
-                int myTotal = myView.getRowCount();
+                final int myTotal = myView.getRowCount();
 
                 /* Declare the number of steps */
                 pReport.setNumSteps(myTotal);
@@ -192,7 +192,7 @@ public class SheetTransaction
                 /* Loop through the rows of the table */
                 for (int i = 0; i < myTotal; i++) {
                     /* Access the row */
-                    MetisDataRow myRow = myView.getRowByIndex(i);
+                    final MetisDataRow myRow = myView.getRowByIndex(i);
 
                     /* Process transaction and break loop if requested */
                     if (!processTransaction(pLoader, pData, myView, myRow)) {
@@ -242,29 +242,29 @@ public class SheetTransaction
                                               final MetisDataView pView,
                                               final MetisDataRow pRow) throws OceanusException {
         /* Access parent cache */
-        ParentCache myCache = pLoader.getParentCache();
+        final ParentCache myCache = pLoader.getParentCache();
         int iAdjust = -1;
 
         /* Access date */
         MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        TethysDate myDate = (myCell != null)
-                                             ? myCell.getDateValue()
-                                             : null;
+        final TethysDate myDate = (myCell != null)
+                                                   ? myCell.getDateValue()
+                                                   : null;
 
         /* Access the values */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myDebit = (myCell != null)
-                                          ? myCell.getStringValue()
-                                          : null;
+        final String myDebit = (myCell != null)
+                                                ? myCell.getStringValue()
+                                                : null;
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myCredit = (myCell != null)
-                                           ? myCell.getStringValue()
-                                           : null;
+        final String myCredit = (myCell != null)
+                                                 ? myCell.getStringValue()
+                                                 : null;
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myAmount = (myCell != null)
-                                           ? myCell.getStringValue()
-                                           : null;
-        String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myAmount = (myCell != null)
+                                                 ? myCell.getStringValue()
+                                                 : null;
+        final String myCategory = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Handle Reconciled which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
@@ -279,7 +279,7 @@ public class SheetTransaction
         }
 
         /* Build transaction */
-        Transaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
+        final Transaction myTrans = myCache.buildTransaction(myAmount, myReconciled);
 
         /* Handle Description which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
@@ -385,7 +385,7 @@ public class SheetTransaction
         /* If the debit was reversed */
         if (myCache.isDebitReversed()) {
             /* Flip the Debit and credit values */
-            String myTemp = myDebitUnits;
+            final String myTemp = myDebitUnits;
             myDebitUnits = myCreditUnits;
             myCreditUnits = myTemp;
             if (myCreditUnits != null) {
@@ -399,7 +399,7 @@ public class SheetTransaction
         }
 
         /* Add information relating to the account */
-        TransactionInfoList myInfoList = pData.getTransactionInfo();
+        final TransactionInfoList myInfoList = pData.getTransactionInfo();
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.COMMENTS, myDesc);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.NATINSURANCE, myNatInsurance);

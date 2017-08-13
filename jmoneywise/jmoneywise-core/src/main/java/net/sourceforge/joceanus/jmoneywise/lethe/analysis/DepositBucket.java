@@ -23,7 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
+import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -185,10 +187,10 @@ public final class DepositBucket
     @Override
     protected void recordRate(final TethysDate pDate) {
         /* Obtain the appropriate rate record */
-        MoneyWiseData myData = theAnalysis.getData();
-        DepositRateDataMap myRateMap = myData.getDepositRateDataMap();
-        Deposit myDeposit = getAccount();
-        DepositRate myRate = myRateMap.getRateForDate(myDeposit, pDate);
+        final MoneyWiseData myData = theAnalysis.getData();
+        final DepositRateDataMap myRateMap = myData.getDepositRateDataMap();
+        final Deposit myDeposit = getAccount();
+        final DepositRate myRate = myRateMap.getRateForDate(myDeposit, pDate);
         TethysDate myDate = myDeposit.getMaturity();
 
         /* If we have a rate */
@@ -214,8 +216,8 @@ public final class DepositBucket
         if (isPeer2Peer
             && isBadDebt(pHelper)) {
             /* Access the amount */
-            TethysMoney myAmount = pHelper.getDebitAmount();
-            AccountAttribute myAttr = badDebtAttr(pHelper);
+            final TethysMoney myAmount = pHelper.getDebitAmount();
+            final AccountAttribute myAttr = badDebtAttr(pHelper);
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -235,7 +237,7 @@ public final class DepositBucket
             && isBadDebt(pHelper)) {
             /* Access the amount */
             TethysMoney myAmount = pHelper.getCreditAmount();
-            AccountAttribute myAttr = badDebtAttr(pHelper);
+            final AccountAttribute myAttr = badDebtAttr(pHelper);
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -255,7 +257,7 @@ public final class DepositBucket
      * @param pHelper the transaction helper
      * @return true/false
      */
-    private boolean isBadDebt(final TransactionHelper pHelper) {
+    protected boolean isBadDebt(final TransactionHelper pHelper) {
         return pHelper.isCategoryClass(TransactionCategoryClass.BADDEBTCAPITAL)
                || pHelper.isCategoryClass(TransactionCategoryClass.BADDEBTINTEREST);
     }
@@ -265,7 +267,7 @@ public final class DepositBucket
      * @param pHelper the transaction helper
      * @return the attribute
      */
-    private AccountAttribute badDebtAttr(final TransactionHelper pHelper) {
+    protected AccountAttribute badDebtAttr(final TransactionHelper pHelper) {
         return pHelper.isCategoryClass(TransactionCategoryClass.BADDEBTCAPITAL)
                                                                                 ? AccountAttribute.BADDEBTCAPITAL
                                                                                 : AccountAttribute.BADDEBTINTEREST;
@@ -394,6 +396,54 @@ public final class DepositBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        /**
+         * Obtain the matching DepositBucket.
+         * @param pDeposit the deposit
+         * @return the matching bucket
+         */
+        public DepositBucket getMatchingDeposit(final Deposit pDeposit) {
+            /* Return the matching deposit if it exists else an orphan bucket */
+            final DepositBucket myDeposit = findItemById(pDeposit.getOrderedId());
+            return myDeposit != null
+                                     ? myDeposit
+                                     : new DepositBucket(getAnalysis(), pDeposit);
+        }
+
+        /**
+         * Obtain the default Deposit.
+         * @return the bucket
+         */
+        public DepositBucket getDefaultDeposit() {
+            /* Return the first deposit in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
+        }
+
+        /**
+         * Obtain the default Deposit for the category.
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public DepositBucket getDefaultDeposit(final DepositCategory pCategory) {
+            /* If there is a category */
+            if (pCategory != null) {
+                /* Loop through the available account values */
+                final Iterator<DepositBucket> myIterator = iterator();
+                while (myIterator.hasNext()) {
+                    final DepositBucket myBucket = myIterator.next();
+
+                    /* Return if correct category */
+                    if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
+                        return myBucket;
+                    }
+                }
+            }
+
+            /* No default deposit */
+            return null;
         }
 
         /**

@@ -49,7 +49,7 @@ public class SheetSecurityInfo
         super(pReader, AREA_SECURITYINFO);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getSecurityInfo());
     }
 
@@ -62,7 +62,7 @@ public class SheetSecurityInfo
         super(pWriter, AREA_SECURITYINFO);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getSecurityInfo());
     }
 

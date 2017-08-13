@@ -165,7 +165,7 @@ public class PortfolioType
 
         @Override
         protected PortfolioTypeList getEmptyList(final ListStyle pStyle) {
-            PortfolioTypeList myList = new PortfolioTypeList(this);
+            final PortfolioTypeList myList = new PortfolioTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -177,7 +177,7 @@ public class PortfolioType
                 throw new UnsupportedOperationException();
             }
 
-            PortfolioType myType = new PortfolioType(this, (PortfolioType) pItem);
+            final PortfolioType myType = new PortfolioType(this, (PortfolioType) pItem);
             add(myType);
             return myType;
         }
@@ -202,7 +202,7 @@ public class PortfolioType
          */
         public void addBasicItem(final String pPortType) throws OceanusException {
             /* Create a new Portfolio Type */
-            PortfolioType myPortType = new PortfolioType(this, pPortType);
+            final PortfolioType myPortType = new PortfolioType(this, pPortType);
 
             /* Check that this PortTypeId has not been previously added */
             if (!isIdUnique(myPortType.getId())) {
@@ -217,7 +217,7 @@ public class PortfolioType
         @Override
         public PortfolioType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            PortfolioType myType = new PortfolioType(this, pValues);
+            final PortfolioType myType = new PortfolioType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -235,7 +235,7 @@ public class PortfolioType
         @Override
         protected PortfolioType newItem(final PortfolioTypeClass pClass) throws OceanusException {
             /* Create the type */
-            PortfolioType myType = new PortfolioType(this, pClass);
+            final PortfolioType myType = new PortfolioType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

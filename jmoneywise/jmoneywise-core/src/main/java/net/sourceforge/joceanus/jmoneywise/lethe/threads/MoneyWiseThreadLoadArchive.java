@@ -61,15 +61,15 @@ public class MoneyWiseThreadLoadArchive<N, I>
     @Override
     public MoneyWiseData performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());
 
         /* Load workbook */
-        MetisPreferenceManager myMgr = pToolkit.getPreferenceManager();
-        ArchiveLoader myLoader = new ArchiveLoader();
-        MoneyWiseData myData = theView.getNewData();
+        final MetisPreferenceManager myMgr = pToolkit.getPreferenceManager();
+        final ArchiveLoader myLoader = new ArchiveLoader();
+        final MoneyWiseData myData = theView.getNewData();
         myLoader.loadArchive(myManager, myData, myMgr.getPreferenceSet(PrometheusBackupPreferences.class));
 
         /* Initialise the status window */
@@ -82,12 +82,12 @@ public class MoneyWiseThreadLoadArchive<N, I>
         myManager.initTask("Accessing DataStore");
 
         /* Create interface */
-        PrometheusDataStore<MoneyWiseData> myDatabase = theView.getDatabase();
+        final PrometheusDataStore<MoneyWiseData> myDatabase = theView.getDatabase();
 
         /* Protect against failures */
         try {
             /* Load underlying database */
-            MoneyWiseData myStore = theView.getNewData();
+            final MoneyWiseData myStore = theView.getNewData();
             myDatabase.loadDatabase(myManager, myStore);
 
             /* Check security on the database */

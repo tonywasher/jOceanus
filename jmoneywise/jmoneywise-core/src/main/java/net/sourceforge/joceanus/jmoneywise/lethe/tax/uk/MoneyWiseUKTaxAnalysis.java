@@ -198,7 +198,7 @@ public class MoneyWiseUKTaxAnalysis
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the birthDate is specified */
-            MetisDatePreference<MoneyWiseUKTaxPreferenceKey> myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
+            final MetisDatePreference<MoneyWiseUKTaxPreferenceKey> myPref = getDatePreference(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
             if (!myPref.isAvailable()) {
                 myPref.setValue(new TethysDate(YEAR, Month.JANUARY, 1));
             }
@@ -222,8 +222,8 @@ public class MoneyWiseUKTaxAnalysis
         theTaxBuckets = new ArrayList<>();
 
         /* Determine the client birthday */
-        MoneyWiseUKTaxPreferences myPreferences = pPrefMgr.getPreferenceSet(MoneyWiseUKTaxPreferences.class);
-        TethysDate myBirthday = myPreferences.getDateValue(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
+        final MoneyWiseUKTaxPreferences myPreferences = pPrefMgr.getPreferenceSet(MoneyWiseUKTaxPreferences.class);
+        final TethysDate myBirthday = myPreferences.getDateValue(MoneyWiseUKTaxPreferenceKey.BIRTHDATE);
         theTaxConfig = new MoneyWiseUKTaxConfig(theTaxYear, theTaxSource, myBirthday);
 
         /* Create the totals */
@@ -283,9 +283,9 @@ public class MoneyWiseUKTaxAnalysis
         theTaxDue.setZero();
 
         /* Loop through the tax bands */
-        Iterator<MoneyWiseTaxDueBucket> myIterator = theTaxBuckets.iterator();
+        final Iterator<MoneyWiseTaxDueBucket> myIterator = theTaxBuckets.iterator();
         while (myIterator.hasNext()) {
-            MoneyWiseTaxDueBucket myBucket = myIterator.next();
+            final MoneyWiseTaxDueBucket myBucket = myIterator.next();
 
             /* Add the values */
             theTaxableIncome.addAmount(myBucket.getTaxableIncome());
@@ -294,7 +294,7 @@ public class MoneyWiseUKTaxAnalysis
             /* If this is a sliced tax bucket */
             if (myBucket instanceof MoneyWiseUKSlicedTaxDueBucket) {
                 /* Apply Tax Relief */
-                MoneyWiseUKSlicedTaxDueBucket mySliced = (MoneyWiseUKSlicedTaxDueBucket) myBucket;
+                final MoneyWiseUKSlicedTaxDueBucket mySliced = (MoneyWiseUKSlicedTaxDueBucket) myBucket;
                 theTaxDue.subtractAmount(mySliced.getTaxRelief());
             }
         }
@@ -318,7 +318,7 @@ public class MoneyWiseUKTaxAnalysis
     protected void processItem(final TaxBasisClass pBasis,
                                final MoneyWiseUKIncomeScheme pScheme) {
         /* Obtain the amount */
-        TethysMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);
+        final TethysMoney myAmount = theTaxSource.getAmountForTaxBasis(pBasis);
 
         /* Ignore zero or negative amounts */
         if (myAmount.isZero()
@@ -327,10 +327,10 @@ public class MoneyWiseUKTaxAnalysis
         }
 
         /* Take a clone of the taxConfig */
-        MoneyWiseUKTaxConfig myConfig = theTaxConfig.cloneIt();
+        final MoneyWiseUKTaxConfig myConfig = theTaxConfig.cloneIt();
 
         /* Allocate the amount to the various taxBands */
-        MoneyWiseTaxBandSet myBands = pScheme.allocateToTaxBands(theTaxConfig, pBasis, myAmount);
+        final MoneyWiseTaxBandSet myBands = pScheme.allocateToTaxBands(theTaxConfig, pBasis, myAmount);
 
         /* Create the TaxDueBucket */
         MoneyWiseTaxDueBucket myBucket = new MoneyWiseTaxDueBucket(pBasis, myBands, myConfig);

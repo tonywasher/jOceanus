@@ -219,12 +219,12 @@ public class MoneyWiseChargeableGainSlice
             this();
 
             /* Loop through the source */
-            Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.theSlices.iterator();
+            final Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.theSlices.iterator();
             while (myIterator.hasNext()) {
-                MoneyWiseChargeableGainSlice mySlice = myIterator.next();
+                final MoneyWiseChargeableGainSlice mySlice = myIterator.next();
 
                 /* Check the range */
-                int iDiff = pRange.compareTo(mySlice.getDate());
+                final int iDiff = pRange.compareTo(mySlice.getDate());
 
                 /* If we are past the range, break the loop */
                 if (iDiff < 0) {
@@ -241,7 +241,7 @@ public class MoneyWiseChargeableGainSlice
 
         @Override
         public String formatObject() {
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(MoneyWiseChargeableGainSliceList.class.getSimpleName());
             myBuilder.append("(");
             myBuilder.append(theSlices.size());
@@ -257,7 +257,7 @@ public class MoneyWiseChargeableGainSlice
         public void addTransaction(final Transaction pTrans,
                                    final TethysMoney pGains) {
             /* Create the chargeable event */
-            MoneyWiseChargeableGainSlice mySlice = new MoneyWiseChargeableGainSlice(pTrans, pGains);
+            final MoneyWiseChargeableGainSlice mySlice = new MoneyWiseChargeableGainSlice(pTrans, pGains);
 
             /* Add it to the list */
             theSlices.add(mySlice);

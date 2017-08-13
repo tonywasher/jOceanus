@@ -73,7 +73,7 @@ public class SheetPayee
         super(pReader, AREA_PAYEES);
 
         /* Access the Payees list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getPayees());
     }
 
@@ -86,14 +86,14 @@ public class SheetPayee
         super(pWriter, AREA_PAYEES);
 
         /* Access the Payees list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getPayees());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_PAYEETYPE, loadInteger(COL_TYPE));
         myValues.addValue(Payee.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Payee.FIELD_DESC, loadBytes(COL_DESC));
@@ -133,28 +133,28 @@ public class SheetPayee
                                        final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip class */
         ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        final MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_NAME, myName);
         myValues.addValue(Payee.FIELD_PAYEETYPE, myType);
         myValues.addValue(Payee.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
-        PayeeList myList = pData.getPayees();
-        Payee myPayee = myList.addValuesItem(myValues);
+        final PayeeList myList = pData.getPayees();
+        final Payee myPayee = myList.addValuesItem(myValues);
 
         /* Declare the payee */
         pLoader.declareAsset(myPayee);

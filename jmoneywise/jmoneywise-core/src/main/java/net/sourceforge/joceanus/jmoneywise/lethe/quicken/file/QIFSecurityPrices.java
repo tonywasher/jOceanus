@@ -103,7 +103,7 @@ public class QIFSecurityPrices
      */
     protected void addPrice(final SecurityPrice pPrice) {
         /* Allocate price */
-        QIFPrice myPrice = new QIFPrice(theFile, theSecurity, pPrice);
+        final QIFPrice myPrice = new QIFPrice(theFile, theSecurity, pPrice);
 
         /* Add to the list */
         thePrices.append(myPrice);
@@ -133,9 +133,9 @@ public class QIFSecurityPrices
     protected void formatPrices(final MetisDataFormatter pFormatter,
                                 final StringBuilder pBuilder) {
         /* Loop through the prices */
-        Iterator<QIFPrice> myIterator = thePrices.iterator();
+        final Iterator<QIFPrice> myIterator = thePrices.iterator();
         while (myIterator.hasNext()) {
-            QIFPrice myPrice = myIterator.next();
+            final QIFPrice myPrice = myIterator.next();
 
             /* Format Item Type header */
             QIFRecord.formatItemType(QIFPrice.QIF_ITEM, pBuilder);
@@ -161,7 +161,7 @@ public class QIFSecurityPrices
         }
 
         /* Cast correctly */
-        QIFSecurityPrices myPrices = (QIFSecurityPrices) pThat;
+        final QIFSecurityPrices myPrices = (QIFSecurityPrices) pThat;
 
         /* Check security */
         if (!theSecurity.equals(myPrices.getSecurity())) {
@@ -174,7 +174,7 @@ public class QIFSecurityPrices
 
     @Override
     public int hashCode() {
-        int myResult = QIFFile.HASH_BASE * theSecurity.hashCode();
+        final int myResult = QIFFile.HASH_BASE * theSecurity.hashCode();
         return myResult + thePrices.hashCode();
     }
 

@@ -214,7 +214,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return the value
      */
     public TethysDecimal getStartingBalance() {
-        BucketValues<?, T> myValues = getBaseValues();
+        final BucketValues<?, T> myValues = getBaseValues();
         return myValues.getDecimalValue(getCurrentAttribute());
     }
 
@@ -224,7 +224,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return the value
      */
     public TethysDecimal getBalanceForTransaction(final Transaction pTrans) {
-        BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
+        final BucketValues<?, T> myValues = getValuesForTransaction(pTrans);
         return (myValues == null)
                                   ? null
                                   : myValues.getDecimalValue(getCurrentAttribute());
@@ -256,7 +256,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
      * @return the value
      */
     public TethysDecimal getCreditForTransaction(final Transaction pTrans) {
-        TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
+        final TethysDecimal myValue = getDeltaValueForTransaction(pTrans);
         return ((myValue != null)
                 && myValue.isPositive() && myValue.isNonZero())
                                                                 ? myValue
@@ -294,7 +294,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         }
 
         /* Access as AccountFilter */
-        AnalysisFilter<?, ?> myThat = (AnalysisFilter<?, ?>) pThat;
+        final AnalysisFilter<?, ?> myThat = (AnalysisFilter<?, ?>) pThat;
 
         /* Check equality */
         return MetisDifference.isEqual(getBucket(), myThat.getBucket());
@@ -669,7 +669,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         public TransactionCategoryFilter(final TransactionCategoryBucket pCategory) {
             /* Store parameter */
             super(pCategory, TransactionAttribute.class);
-            boolean isExpense = pCategory.getTransactionCategory().getCategoryTypeClass().isExpense();
+            final boolean isExpense = pCategory.getTransactionCategory().getCategoryTypeClass().isExpense();
             setCurrentAttribute(isExpense
                                           ? TransactionAttribute.EXPENSE
                                           : TransactionAttribute.INCOME);

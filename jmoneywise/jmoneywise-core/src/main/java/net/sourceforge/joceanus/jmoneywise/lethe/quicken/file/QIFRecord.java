@@ -178,9 +178,9 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         /* If we have subLists */
         if (theSubList != null) {
             /* Loop through the subList */
-            Iterator<QIFRecord<T>> myIterator = theSubList.iterator();
+            final Iterator<QIFRecord<T>> myIterator = theSubList.iterator();
             while (myIterator.hasNext()) {
-                QIFRecord<T> myRecord = myIterator.next();
+                final QIFRecord<T> myRecord = myIterator.next();
 
                 /* Format the lines of the subRecord */
                 myRecord.formatLines(pFormatter, pBuilder);
@@ -202,7 +202,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         /* Loop through the map in ordinal order */
         for (T myType : theClass.getEnumConstants()) {
             /* Look up value in the map */
-            QIFLine<T> myLine = theMap.get(myType);
+            final QIFLine<T> myLine = theMap.get(myType);
             if (myLine != null) {
                 /* Format the line */
                 myLine.formatLine(pFormatter, pBuilder);
@@ -279,7 +279,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
 
         /* Cast correctly */
         @SuppressWarnings("unchecked")
-        QIFRecord<T> myThat = (QIFRecord<T>) pThat;
+        final QIFRecord<T> myThat = (QIFRecord<T>) pThat;
 
         /* Check class */
         if (!theClass.equals(myThat.getLineClass())) {
@@ -292,7 +292,7 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
         }
 
         /* Check SubLists */
-        List<QIFRecord<T>> mySubThat = myThat.getSubList();
+        final List<QIFRecord<T>> mySubThat = myThat.getSubList();
         if (theSubList == null) {
             return mySubThat == null;
         }

@@ -158,7 +158,7 @@ public class MoneyWiseUKTaxYear
      * @return the amount
      */
     private static TethysDate getDate(final int pYear) {
-        TethysDate myDate = new TethysDate(pYear, Month.JANUARY, 1);
+        final TethysDate myDate = new TethysDate(pYear, Month.JANUARY, 1);
         return TethysFiscalYear.UK.endOfYear(myDate);
     }
 
@@ -209,7 +209,7 @@ public class MoneyWiseUKTaxYear
     public MoneyWiseUKTaxAnalysis analyseTaxYear(final MetisPreferenceManager pPreferences,
                                                  final MoneyWiseTaxSource pTaxSource) {
         /* Create a new analysis */
-        MoneyWiseUKTaxAnalysis myAnalysis = new MoneyWiseUKTaxAnalysis(pTaxSource, pPreferences, this);
+        final MoneyWiseUKTaxAnalysis myAnalysis = new MoneyWiseUKTaxAnalysis(pTaxSource, pPreferences, this);
 
         /* Process the standard amounts */
         myAnalysis.processItem(TaxBasisClass.SALARY, theIncomeScheme);

@@ -200,14 +200,14 @@ public class TransactionAnalyser
                                final MetisPreferenceManager pPreferenceMgr) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        MetisProfile myTask = theProfile.startTask("analyseTransactions");
+        final MetisProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
         theHoldingMap = pData.getSecurityHoldingsMap();
         thePriceMap = pData.getSecurityPriceDataMap();
 
         /* Access the lists */
-        TransactionList myTrans = pData.getTransactions();
+        final TransactionList myTrans = pData.getTransactions();
 
         /* Create a new analysis */
         myTask.startTask("Initialise");
@@ -232,9 +232,9 @@ public class TransactionAnalyser
 
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
-        Iterator<Transaction> myIterator = myTrans.listIterator();
+        final Iterator<Transaction> myIterator = myTrans.listIterator();
         while (myIterator.hasNext()) {
-            Transaction myCurr = myIterator.next();
+            final Transaction myCurr = myIterator.next();
 
             /* Ignore deleted transactions */
             if (myCurr.isDeleted()) {
@@ -270,11 +270,11 @@ public class TransactionAnalyser
                                final TransactionList pTransactions) throws OceanusException {
         /* Start a new task */
         theProfile = pTask;
-        MetisProfile myTask = theProfile.startTask("analyseTransactions");
+        final MetisProfile myTask = theProfile.startTask("analyseTransactions");
 
         /* Store the parameters */
         theAnalysis = new Analysis(pAnalysis);
-        MoneyWiseData myData = theAnalysis.getData();
+        final MoneyWiseData myData = theAnalysis.getData();
         theHoldingMap = myData.getSecurityHoldingsMap();
         thePriceMap = myData.getSecurityPriceDataMap();
 
@@ -299,9 +299,9 @@ public class TransactionAnalyser
 
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
-        Iterator<Transaction> myIterator = pTransactions.iterator();
+        final Iterator<Transaction> myIterator = pTransactions.iterator();
         while (myIterator.hasNext()) {
-            Transaction myCurr = myIterator.next();
+            final Transaction myCurr = myIterator.next();
 
             /* Ignore deleted transactions */
             if (myCurr.isDeleted()) {
@@ -319,11 +319,11 @@ public class TransactionAnalyser
         }
 
         /* Build category buckets */
-        CashCategoryBucketList myCash = theAnalysis.getCashCategories();
+        final CashCategoryBucketList myCash = theAnalysis.getCashCategories();
         myCash.buildCategories(theCashBuckets);
-        DepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
+        final DepositCategoryBucketList myDeposits = theAnalysis.getDepositCategories();
         myDeposits.buildCategories(theDepositBuckets);
-        LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
+        final LoanCategoryBucketList myLoans = theAnalysis.getLoanCategories();
         myLoans.buildCategories(theLoanBuckets);
 
         /* Complete the task */
@@ -372,7 +372,7 @@ public class TransactionAnalyser
      */
     public void postProcessAnalysis() throws OceanusException {
         /* Start a new task */
-        MetisProfile myTask = theProfile.startTask("postProcessAnalysis");
+        final MetisProfile myTask = theProfile.startTask("postProcessAnalysis");
         myTask.startTask("markActiveAccounts");
 
         /* Mark relevant accounts */
@@ -397,12 +397,12 @@ public class TransactionAnalyser
         theHelper.setTransaction(pTrans);
 
         /* Access key details */
-        TransactionAsset myDebitAsset = theHelper.getDebitAsset();
-        TransactionAsset myCreditAsset = theHelper.getCreditAsset();
-        MoneyWiseTaxCredit myYear = pTrans.getTaxYear();
+        final TransactionAsset myDebitAsset = theHelper.getDebitAsset();
+        final TransactionAsset myCreditAsset = theHelper.getCreditAsset();
+        final MoneyWiseTaxCredit myYear = pTrans.getTaxYear();
 
         /* Look for tags */
-        Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+        final Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
         if (myIterator != null) {
             /* Process the transaction tags */
             theTagBuckets.processTransaction(pTrans, myIterator);
@@ -433,7 +433,7 @@ public class TransactionAnalyser
             AssetBase<?> myDebit = (AssetBase<?>) myDebitAsset;
             AssetBase<?> myCredit = (AssetBase<?>) myCreditAsset;
             AssetBase<?> myChild = null;
-            TethysMoney myAmount = pTrans.getAmount();
+            final TethysMoney myAmount = pTrans.getAmount();
             TransactionCategory myCat = pTrans.getCategory();
 
             /* Switch on category class */
@@ -474,17 +474,17 @@ public class TransactionAnalyser
             /* If the debit account is auto-Expense */
             if ((myDebit instanceof Cash) && (myDebit.getAssetType() == AssetType.AUTOEXPENSE)) {
                 /* Access debit as cash */
-                Cash myCash = (Cash) myDebit;
-                TransactionCategory myAuto = myCash.getAutoExpense();
+                final Cash myCash = (Cash) myDebit;
+                final TransactionCategory myAuto = myCash.getAutoExpense();
                 myDebit = myCash.getAutoPayee();
                 myDebit.touchItem(pTrans);
 
                 /* Subtract expense from Payee bucket */
-                PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
+                final PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
                 myPayee.subtractExpense(theHelper, myAmount);
 
                 /* Subtract expense from Category bucket */
-                TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
+                final TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
                 myCatBucket.subtractExpense(theHelper, myAmount);
                 theTaxBasisBuckets.adjustAutoExpense(theHelper, false);
 
@@ -493,11 +493,11 @@ public class TransactionAnalyser
                 /* Determine the type of the debit account */
                 switch (myDebit.getAssetType()) {
                     case PAYEE:
-                        PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
+                        final PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
                         myPayee.adjustForDebit(theHelper);
                         break;
                     default:
-                        AccountBucket<?> myBucket = getAccountBucket(myDebit);
+                        final AccountBucket<?> myBucket = getAccountBucket(myDebit);
                         myBucket.adjustForDebit(theHelper);
                         break;
                 }
@@ -507,17 +507,17 @@ public class TransactionAnalyser
             if ((myCredit instanceof Cash)
                 && (myCredit.getAssetType() == AssetType.AUTOEXPENSE)) {
                 /* Access credit as cash */
-                Cash myCash = (Cash) myCredit;
-                TransactionCategory myAuto = myCash.getAutoExpense();
+                final Cash myCash = (Cash) myCredit;
+                final TransactionCategory myAuto = myCash.getAutoExpense();
                 myCredit = myCash.getAutoPayee();
                 myCredit.touchItem(pTrans);
 
                 /* Add expense to Payee bucket */
-                PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
+                final PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
                 myPayee.addExpense(theHelper, myAmount);
 
                 /* Adjust the relevant category bucket */
-                TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
+                final TransactionCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
                 myCatBucket.addExpense(theHelper, myAmount);
                 theTaxBasisBuckets.adjustAutoExpense(theHelper, true);
 
@@ -526,11 +526,11 @@ public class TransactionAnalyser
                 /* Determine the type of the credit account */
                 switch (myCredit.getAssetType()) {
                     case PAYEE:
-                        PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
+                        final PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
                         myPayee.adjustForCredit(theHelper);
                         break;
                     default:
-                        AccountBucket<?> myBucket = getAccountBucket(myCredit);
+                        final AccountBucket<?> myBucket = getAccountBucket(myCredit);
                         myBucket.adjustForCredit(theHelper);
                         break;
                 }
@@ -539,7 +539,7 @@ public class TransactionAnalyser
             /* If we should register the event with a child */
             if (myChild != null) {
                 /* Access bucket and register it */
-                AccountBucket<?> myBucket = getAccountBucket(myChild);
+                final AccountBucket<?> myBucket = getAccountBucket(myChild);
                 myBucket.registerTransaction(pTrans);
             }
 
@@ -578,7 +578,7 @@ public class TransactionAnalyser
         }
 
         /* Switch on the category */
-        TransactionCategory myCat = theHelper.getCategory();
+        final TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
             /* Process a stock right waived */
             case STOCKRIGHTSISSUE:
@@ -618,7 +618,7 @@ public class TransactionAnalyser
     private void processDebitCreditSecurityTransaction(final SecurityHolding pDebit,
                                                        final SecurityHolding pCredit) throws OceanusException {
         /* Switch on the category */
-        TransactionCategory myCat = theHelper.getCategory();
+        final TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
             /* Process a stock split */
             case STOCKSPLIT:
@@ -668,10 +668,10 @@ public class TransactionAnalyser
             throw new MoneyWiseLogicException("Invalid Debit Asset: "
                                               + pDebit.getAssetType());
         }
-        AssetBase<?> myDebit = (AssetBase<?>) pDebit;
+        final AssetBase<?> myDebit = (AssetBase<?>) pDebit;
 
         /* Switch on the category */
-        TransactionCategory myCat = theHelper.getCategory();
+        final TransactionCategory myCat = theHelper.getCategory();
         switch (myCat.getCategoryTypeClass()) {
             /* Process standard transfer in/out */
             case STOCKRIGHTSISSUE:
@@ -701,27 +701,27 @@ public class TransactionAnalyser
         theSecurities.add(theHelper.getTransaction());
 
         /* Access the portfolio buckets */
-        PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
-        PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
+        final PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource);
+        final PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
 
         /* Access source cash bucket */
-        PortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
+        final PortfolioCashBucket mySourceCash = mySource.getPortfolioCash();
         if (mySourceCash.isActive()) {
             /* Transfer any cash element */
-            PortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();
+            final PortfolioCashBucket myTargetCash = myTarget.getPortfolioCash();
             myTargetCash.adjustForXfer(mySourceCash, theHelper);
         }
 
         /* Loop through the source portfolio */
-        Iterator<SecurityBucket> myIterator = mySource.securityIterator();
+        final Iterator<SecurityBucket> myIterator = mySource.securityIterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* If the bucket is active */
             if (myBucket.isActive()) {
                 /* Adjust the Target Bucket */
-                SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
-                SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
+                final SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
+                final SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
                 /* Process the Transfer */
                 processPortfolioXfer(myBucket, myTargetBucket);
@@ -744,10 +744,10 @@ public class TransactionAnalyser
         TethysMoney myCost = mySourceValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         TethysMoney myInvested = mySourceValues.getMoneyValue(SecurityAttribute.INVESTED);
         TethysMoney myForeignInvested = mySourceValues.getMoneyValue(SecurityAttribute.FOREIGNINVESTED);
-        boolean isForeign = pSource.isForeignCurrency();
+        final boolean isForeign = pSource.isForeignCurrency();
 
         /* Determine value of the stock being transferred */
-        TethysPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
+        final TethysPrice myPrice = thePriceMap.getPriceForDate(pSource.getSecurity(), theHelper.getDate());
         TethysMoney myStockValue = myUnits.valueAtPrice(myPrice);
         TethysMoney myForeignValue = null;
         TethysRatio myRate = null;
@@ -772,7 +772,7 @@ public class TransactionAnalyser
         pTarget.adjustCounter(SecurityAttribute.UNITS, myUnits);
         pTarget.adjustCounter(SecurityAttribute.RESIDUALCOST, myCost);
         pTarget.adjustCounter(SecurityAttribute.INVESTED, myInvested);
-        SecurityValues myTargetValues = pTarget.registerTransaction(theHelper);
+        final SecurityValues myTargetValues = pTarget.registerTransaction(theHelper);
         myTargetValues.setValue(SecurityAttribute.PRICE, myPrice);
         myTargetValues.setValue(SecurityAttribute.VALUATION, myStockValue);
         myTargetValues.setValue(SecurityAttribute.XFERREDCOST, myCost);
@@ -816,17 +816,17 @@ public class TransactionAnalyser
     private void processPortfolioXfer(final SecurityHolding pSource,
                                       final Portfolio pTarget) {
         /* Access the portfolio buckets */
-        PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource.getPortfolio());
-        PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
+        final PortfolioBucket mySource = thePortfolioBuckets.getBucket(pSource.getPortfolio());
+        final PortfolioBucket myTarget = thePortfolioBuckets.getBucket(pTarget);
 
         /* Access source security bucket */
-        SecurityBucket myBucket = mySource.getSecurityBucket(pSource);
+        final SecurityBucket myBucket = mySource.getSecurityBucket(pSource);
 
         /* If the bucket is active */
         if (myBucket.isActive()) {
             /* Adjust the Target Bucket */
-            SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
-            SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
+            final SecurityHolding myTargetHolding = theHoldingMap.declareHolding(pTarget, myBucket.getSecurity());
+            final SecurityBucket myTargetBucket = myTarget.getSecurityBucket(myTargetHolding);
 
             /* Process the Transfer */
             processPortfolioXfer(myBucket, myTargetBucket);
@@ -843,10 +843,10 @@ public class TransactionAnalyser
      */
     private void processUnitsAdjust(final SecurityHolding pHolding) {
         /* Access the units */
-        TethysUnits myDelta = theHelper.getAccountDeltaUnits();
+        final TethysUnits myDelta = theHelper.getAccountDeltaUnits();
 
         /* Adjust the Security Units */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
+        final SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         myAsset.adjustCounter(SecurityAttribute.UNITS, myDelta);
 
         /* Register the transaction */
@@ -865,7 +865,7 @@ public class TransactionAnalyser
     private void processTransferIn(final AssetBase<?> pDebit,
                                    final SecurityHolding pCredit) {
         /* Access debit account and category */
-        TransactionCategory myCat = theHelper.getCategory();
+        final TransactionCategory myCat = theHelper.getCategory();
 
         /* Adjust the credit transfer details */
         processCreditXferIn(pCredit);
@@ -876,11 +876,11 @@ public class TransactionAnalyser
         /* Determine the type of the debit account */
         switch (pDebit.getAssetType()) {
             case PAYEE:
-                PayeeBucket myPayee = thePayeeBuckets.getBucket(pDebit);
+                final PayeeBucket myPayee = thePayeeBuckets.getBucket(pDebit);
                 myPayee.adjustForDebit(theHelper);
                 break;
             default:
-                AccountBucket<?> myAccount = getAccountBucket(pDebit);
+                final AccountBucket<?> myAccount = getAccountBucket(pDebit);
                 myAccount.adjustForDebit(theHelper);
                 break;
         }
@@ -898,14 +898,14 @@ public class TransactionAnalyser
      */
     private void processCreditXferIn(final SecurityHolding pHolding) {
         /* Transfer is to the credit account and may or may not have a change to the units */
-        TethysUnits myDeltaUnits = theHelper.getCreditUnits();
+        final TethysUnits myDeltaUnits = theHelper.getCreditUnits();
         TethysMoney myAmount = theHelper.getCreditAmount();
-        TethysRatio myExchangeRate = theHelper.getCreditExchangeRate();
-        Security mySecurity = pHolding.getSecurity();
+        final TethysRatio myExchangeRate = theHelper.getCreditExchangeRate();
+        final Security mySecurity = pHolding.getSecurity();
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-        boolean isForeign = myAsset.isForeignCurrency();
+        final SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
+        final boolean isForeign = myAsset.isForeignCurrency();
 
         /* If this is a foreign currency asset */
         if (isForeign) {
@@ -927,10 +927,10 @@ public class TransactionAnalyser
         }
 
         /* Get the appropriate price for the account */
-        TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
+        final TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
 
         /* Determine value of this stock after the transaction */
-        TethysUnits myUnits = myAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
+        final TethysUnits myUnits = myAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myValue = myUnits.valueAtPrice(myPrice);
 
         /* If we are foreign */
@@ -940,7 +940,7 @@ public class TransactionAnalyser
         }
 
         /* Register the transaction */
-        SecurityValues myValues = myAsset.registerTransaction(theHelper);
+        final SecurityValues myValues = myAsset.registerTransaction(theHelper);
         myValues.setValue(SecurityAttribute.PRICE, myPrice);
         myValues.setValue(SecurityAttribute.VALUATION, myValue);
         myValues.setValue(SecurityAttribute.CASHINVESTED, myAmount);
@@ -960,28 +960,28 @@ public class TransactionAnalyser
     private void processDividend(final SecurityHolding pHolding,
                                  final TransactionAsset pCredit) {
         /* The main security that we are interested in is the debit account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
-        TethysMoney myTaxCredit = theHelper.getTaxCredit();
-        TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
-        MoneyWiseTaxCredit myYear = theHelper.getTransaction().getTaxYear();
+        final TethysMoney myTaxCredit = theHelper.getTaxCredit();
+        final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
+        final MoneyWiseTaxCredit myYear = theHelper.getTransaction().getTaxYear();
 
         /* Obtain detailed category */
         TransactionCategory myCat = myPortfolio.getDetailedCategory(theHelper.getCategory(), myYear);
         myCat = mySecurity.getDetailedCategory(myCat, myYear);
 
         /* True debit account is the parent */
-        AssetBase<?> myDebit = mySecurity.getParent();
+        final AssetBase<?> myDebit = mySecurity.getParent();
 
         /* Adjust the debit payee bucket */
-        PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
+        final PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
         myPayee.adjustForDebit(theHelper);
 
         /* Access the Asset Account Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-        boolean isForeign = myAsset.isForeignCurrency();
-        boolean isReInvest = pCredit instanceof SecurityHolding;
+        final SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
+        final boolean isForeign = myAsset.isForeignCurrency();
+        final boolean isReInvest = pCredit instanceof SecurityHolding;
 
         /* If this is a foreign dividend */
         if (isForeign) {
@@ -1019,7 +1019,7 @@ public class TransactionAnalyser
             /* else we are paying out to another account */
         } else {
             /* Adjust the dividend total for this asset */
-            TethysMoney myAdjust = new TethysMoney(myAmount);
+            final TethysMoney myAdjust = new TethysMoney(myAmount);
 
             /* Any tax credit is viewed as a realised dividend from the account */
             if (myTaxCredit != null) {
@@ -1030,7 +1030,7 @@ public class TransactionAnalyser
             myAsset.adjustCounter(SecurityAttribute.DIVIDEND, myAdjust);
 
             /* Adjust the credit account bucket */
-            AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) pCredit);
+            final AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) pCredit);
             myBucket.adjustForCredit(theHelper);
         }
 
@@ -1054,13 +1054,13 @@ public class TransactionAnalyser
     private void processTransferOut(final SecurityHolding pHolding,
                                     final AssetBase<?> pCredit) {
         /* Access credit account and category */
-        TransactionCategory myCat = theHelper.getCategory();
+        final TransactionCategory myCat = theHelper.getCategory();
 
         /* Adjust the debit transfer details */
         processDebitXferOut(pHolding);
 
         /* Adjust the credit account bucket */
-        AccountBucket<?> myBucket = getAccountBucket(pCredit);
+        final AccountBucket<?> myBucket = getAccountBucket(pCredit);
         myBucket.adjustForCredit(theHelper);
 
         /* If the event category is not a transfer */
@@ -1078,22 +1078,22 @@ public class TransactionAnalyser
      */
     private void processDebitXferOut(final SecurityHolding pHolding) {
         /* Transfer out is from the debit account and may or may not have units */
-        Security myDebit = pHolding.getSecurity();
+        final Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysUnits myDeltaUnits = theHelper.getDebitUnits();
-        boolean isCapitalDistribution = myDeltaUnits == null;
+        final boolean isCapitalDistribution = myDeltaUnits == null;
         boolean isLargeCash = false;
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
+        final SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
         SecurityValues myValues = myAsset.getValues();
-        TethysRatio myXchangeRate = theHelper.getDebitExchangeRate();
-        boolean isForeign = myAsset.isForeignCurrency();
+        final TethysRatio myXchangeRate = theHelper.getDebitExchangeRate();
+        final boolean isForeign = myAsset.isForeignCurrency();
 
         /* If this is a foreign currency asset */
         if (isForeign) {
             /* Adjust foreign invested amount */
-            TethysMoney myDelta = new TethysMoney(myAmount);
+            final TethysMoney myDelta = new TethysMoney(myAmount);
             myDelta.negate();
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myDelta);
 
@@ -1102,17 +1102,17 @@ public class TransactionAnalyser
         }
 
         /* Record the delta investment */
-        TethysMoney myDelta = new TethysMoney(myAmount);
+        final TethysMoney myDelta = new TethysMoney(myAmount);
         myDelta.negate();
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
         /* Get the appropriate price for the account */
-        TethysPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
+        final TethysPrice myPrice = thePriceMap.getPriceForDate(myDebit, theHelper.getDate());
 
         /* Assume the the allowed cost is the full value */
         TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myAllowedCost = new TethysMoney(myAmount);
-        TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         TethysRatio myCostDilution = null;
         TethysMoney myConsideration = null;
 
@@ -1127,7 +1127,7 @@ public class TransactionAnalyser
 
             /* Record delta to units */
             myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
-            TethysUnits myNewUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+            final TethysUnits myNewUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
 
             /* Determine the cost dilution */
             myCostDilution = new TethysRatio(myNewUnits, myUnits);
@@ -1146,7 +1146,7 @@ public class TransactionAnalyser
         /* If we are performing a capital distribution */
         if (isCapitalDistribution) {
             /* Determine condition as to whether this is a large cash transaction */
-            TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
+            final TethysMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
             isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
                           && (myAmount.compareTo(myPortion) > 0);
 
@@ -1172,7 +1172,7 @@ public class TransactionAnalyser
         }
 
         /* Determine the delta to the cost */
-        TethysMoney myDeltaCost = new TethysMoney(myAllowedCost);
+        final TethysMoney myDeltaCost = new TethysMoney(myAllowedCost);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -1182,7 +1182,7 @@ public class TransactionAnalyser
         }
 
         /* Determine the capital gain */
-        TethysMoney myCapitalGain = new TethysMoney(myAmount);
+        final TethysMoney myCapitalGain = new TethysMoney(myAmount);
         myCapitalGain.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -1247,18 +1247,18 @@ public class TransactionAnalyser
     private void processChargeableGain(final SecurityHolding pHolding,
                                        final AssetBase<?> pCredit) {
         /* Chargeable Gain is from the debit account and may or may not have units */
-        Security myDebit = pHolding.getSecurity();
+        final Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
         TethysUnits myDeltaUnits = theHelper.getDebitUnits();
 
         /* Access the Asset Security Bucket */
-        SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
-        SecurityValues myValues = myAsset.getValues();
+        final SecurityBucket myAsset = thePortfolioBuckets.getBucket(pHolding);
+        final SecurityValues myValues = myAsset.getValues();
 
         /* If this is a foreign currency asset */
         if (myAsset.isForeignCurrency()) {
             /* Adjust foreign invested amount */
-            TethysMoney myDelta = new TethysMoney(myAmount);
+            final TethysMoney myDelta = new TethysMoney(myAmount);
             myDelta.negate();
             myValues.setValue(SecurityAttribute.EXCHANGERATE, theHelper.getDebitExchangeRate());
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myDelta);
@@ -1268,18 +1268,18 @@ public class TransactionAnalyser
         }
 
         /* Record the delta investment */
-        TethysMoney myDelta = new TethysMoney(myAmount);
+        final TethysMoney myDelta = new TethysMoney(myAmount);
         myDelta.negate();
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDelta);
 
         /* Assume the the cost reduction is the full value */
         TethysMoney myReduction = new TethysMoney(myAmount);
-        TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
         /* If we are reducing units in the account */
         if (myDeltaUnits != null) {
             /* The reduction is the relevant fraction of the cost */
-            TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
+            final TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
             myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
 
             /* Access units as negative value */
@@ -1297,7 +1297,7 @@ public class TransactionAnalyser
         }
 
         /* Determine the delta to the cost */
-        TethysMoney myDeltaCost = new TethysMoney(myReduction);
+        final TethysMoney myDeltaCost = new TethysMoney(myReduction);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -1307,7 +1307,7 @@ public class TransactionAnalyser
         }
 
         /* Determine the delta to the gains */
-        TethysMoney myDeltaGains = new TethysMoney(myAmount);
+        final TethysMoney myDeltaGains = new TethysMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -1320,14 +1320,14 @@ public class TransactionAnalyser
         myAsset.registerTransaction(theHelper);
 
         /* True debit account is the parent */
-        AssetBase<?> myParent = myDebit.getParent();
+        final AssetBase<?> myParent = myDebit.getParent();
 
         /* Adjust the debit account bucket */
-        PayeeBucket myPayee = thePayeeBuckets.getBucket(myParent);
+        final PayeeBucket myPayee = thePayeeBuckets.getBucket(myParent);
         myPayee.adjustForTaxCredit(theHelper);
 
         /* Adjust the credit account bucket */
-        AccountBucket<?> myBucket = getAccountBucket(pCredit);
+        final AccountBucket<?> myBucket = getAccountBucket(pCredit);
         myBucket.adjustForCredit(theHelper);
 
         /* Adjust the chargeableGains category bucket */
@@ -1352,12 +1352,12 @@ public class TransactionAnalyser
         /* Access the Debit Asset Security Bucket */
         SecurityBucket myAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myValues = myAsset.getValues();
-        TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
+        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
 
         /* Obtain current cost */
-        TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysDilution myDilution = theHelper.getDilution();
-        TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
+        final TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysDilution myDilution = theHelper.getDilution();
+        final TethysUnits myDeltaUnits = theHelper.getAccountDeltaUnits();
 
         /* If we reduced the units */
         if (myDeltaUnits != null) {
@@ -1366,8 +1366,8 @@ public class TransactionAnalyser
         }
 
         /* Calculate the cost dilution */
-        TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
-        TethysRatio myCostDilution = new TethysRatio(myNewCost, myCost);
+        final TethysMoney myNewCost = myCost.getDilutedMoney(myDilution);
+        final TethysRatio myCostDilution = new TethysRatio(myNewCost, myCost);
 
         /* Calculate the delta to the cost */
         TethysMoney myDeltaCost = new TethysMoney(myNewCost);
@@ -1376,9 +1376,9 @@ public class TransactionAnalyser
         /* Record the delta cost/investment */
         myAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
-        boolean isForeignDebit = myAsset.isForeignCurrency();
+        final boolean isForeignDebit = myAsset.isForeignCurrency();
         if (isForeignDebit) {
-            TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);
+            final TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myDebitRate);
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myInvested);
         }
 
@@ -1402,20 +1402,20 @@ public class TransactionAnalyser
         /* Record the delta cost/investment */
         myAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myDeltaCost);
-        boolean isForeignCredit = myAsset.isForeignCurrency();
-        TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        final boolean isForeignCredit = myAsset.isForeignCurrency();
+        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
         if (isForeignCredit) {
-            TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);
+            final TethysMoney myInvested = myDeltaCost.convertCurrency(myAsset.getCurrency().getCurrency(), myCreditRate);
             myAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myInvested);
         }
 
         /* Get the appropriate prices/rates for the stock */
-        TethysDate myDate = theHelper.getDate();
-        TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);
-        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+        final TethysDate myDate = theHelper.getDate();
+        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myAsset.getSecurity(), myDate);
+        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Determine value of the stock being deMerged */
-        TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
+        final TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
         TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
         if (isForeignCredit) {
             myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
@@ -1448,8 +1448,8 @@ public class TransactionAnalyser
      */
     private void processStockTakeover(final SecurityHolding pDebit,
                                       final SecurityHolding pCredit) {
-        TethysMoney myAmount = theHelper.getReturnedCash();
-        TransactionAsset myReturnedCashAct = theHelper.getReturnedCashAccount();
+        final TethysMoney myAmount = theHelper.getReturnedCash();
+        final TransactionAsset myReturnedCashAct = theHelper.getReturnedCashAccount();
 
         /* If we have a returned cash part of the transaction */
         if ((myReturnedCashAct != null)
@@ -1472,21 +1472,21 @@ public class TransactionAnalyser
     private void processStockOnlyTakeOver(final SecurityHolding pDebit,
                                           final SecurityHolding pCredit) {
         /* Access details */
-        Security myCredit = pCredit.getSecurity();
-        Security myDebit = pDebit.getSecurity();
+        final Security myCredit = pCredit.getSecurity();
+        final Security myDebit = pDebit.getSecurity();
 
         /* Access the Asset Security Buckets */
-        SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
+        final SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
-        SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
-        TethysDate myDate = theHelper.getDate();
+        final SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
+        final TethysDate myDate = theHelper.getDate();
 
         /* Get the appropriate prices/rates for the stock */
-        TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
-        TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
-        TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-        TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
-        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
+        final TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
+        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
+        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Determine value of the stock in both parts of the takeOver */
         TethysUnits myCreditUnits = theHelper.getPartnerDeltaUnits();
@@ -1496,19 +1496,19 @@ public class TransactionAnalyser
         TethysMoney myInvested = myDebitValues.getMoneyValue(SecurityAttribute.INVESTED);
 
         /* Handle foreign debit */
-        boolean isForeignDebit = myDebitAsset.isForeignCurrency();
+        final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
         if (isForeignDebit) {
             myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);
         }
 
         /* Handle foreign credit */
-        boolean isForeignCredit = myCreditAsset.isForeignCurrency();
+        final boolean isForeignCredit = myCreditAsset.isForeignCurrency();
         if (isForeignCredit) {
             myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Determine the residual cost of the old stock */
-        TethysMoney myDebitCost = myDebitValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myDebitCost = myDebitValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
         /* Allocate current profit between the two stocks */
         TethysMoney myProfit = new TethysMoney(myDebitValue);
@@ -1523,7 +1523,7 @@ public class TransactionAnalyser
         myCreditAsset.adjustCounter(SecurityAttribute.UNITS, myCreditUnits);
         myCreditAsset.adjustCounter(SecurityAttribute.INVESTED, myInvested);
         if (isForeignCredit) {
-            TethysMoney myForeign = myInvested.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
+            final TethysMoney myForeign = myInvested.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
             myCreditAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myForeign);
         }
 
@@ -1535,7 +1535,7 @@ public class TransactionAnalyser
         }
 
         /* Register the transaction */
-        SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
+        final SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
         myCreditValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
         myCreditValues.setValue(SecurityAttribute.XFERREDCOST, myDebitCost);
@@ -1545,7 +1545,7 @@ public class TransactionAnalyser
         }
 
         /* Drive debit cost down to zero */
-        TethysMoney myDeltaCost = new TethysMoney(myDebitCost);
+        final TethysMoney myDeltaCost = new TethysMoney(myDebitCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
         myDeltaCost.negate();
@@ -1587,23 +1587,23 @@ public class TransactionAnalyser
     private void processStockAndCashTakeOver(final SecurityHolding pDebit,
                                              final SecurityHolding pCredit) {
         /* Access details */
-        Security myDebit = pDebit.getSecurity();
-        Security myCredit = pCredit.getSecurity();
-        TethysDate myDate = theHelper.getDate();
-        TransactionAsset myReturnedCashAccount = theHelper.getReturnedCashAccount();
-        TethysMoney myAmount = theHelper.getLocalReturnedCash();
+        final Security myDebit = pDebit.getSecurity();
+        final Security myCredit = pCredit.getSecurity();
+        final TethysDate myDate = theHelper.getDate();
+        final TransactionAsset myReturnedCashAccount = theHelper.getReturnedCashAccount();
+        final TethysMoney myAmount = theHelper.getLocalReturnedCash();
 
         /* Access the Asset Security Buckets */
-        SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
+        final SecurityBucket myDebitAsset = thePortfolioBuckets.getBucket(pDebit);
         SecurityValues myDebitValues = myDebitAsset.getValues();
-        SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
+        final SecurityBucket myCreditAsset = thePortfolioBuckets.getBucket(pCredit);
 
         /* Get the appropriate prices for the assets */
-        TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
-        TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
-        TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
-        TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
-        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+        final TethysPrice myDebitPrice = thePriceMap.getPriceForDate(myDebit, myDate);
+        final TethysPrice myCreditPrice = thePriceMap.getPriceForDate(myCredit, myDate);
+        final TethysRatio myDebitRate = theHelper.getDebitExchangeRate();
+        final TethysRatio myCreditRate = theHelper.getCreditExchangeRate();
+        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Determine value of the base stock */
         TethysUnits myDebitUnits = myDebitValues.getUnitsValue(SecurityAttribute.UNITS);
@@ -1614,31 +1614,31 @@ public class TransactionAnalyser
         TethysMoney myCreditXferValue = myCreditUnits.valueAtPrice(myCreditPrice);
 
         /* Handle foreign debit */
-        boolean isForeignDebit = myDebitAsset.isForeignCurrency();
+        final boolean isForeignDebit = myDebitAsset.isForeignCurrency();
         if (isForeignDebit) {
             myDebitValue = myDebitValue.convertCurrency(myCurrency, myDebitRate);
         }
 
         /* Handle foreign credit */
-        boolean isForeignCredit = myCreditAsset.isForeignCurrency();
+        final boolean isForeignCredit = myCreditAsset.isForeignCurrency();
         if (isForeignCredit) {
             myCreditXferValue = myCreditXferValue.convertCurrency(myCurrency, myCreditRate);
         }
 
         /* Calculate the total consideration */
-        TethysMoney myConsideration = new TethysMoney(myAmount);
+        final TethysMoney myConsideration = new TethysMoney(myAmount);
         myConsideration.addAmount(myCreditXferValue);
 
         /* Access the current debit cost */
-        TethysMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myCost = myDebitValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         TethysRatio myCostDilution = null;
-        TethysMoney myCostXfer;
-        TethysMoney myAllowedCost;
+        final TethysMoney myCostXfer;
+        final TethysMoney myAllowedCost;
 
         /* Determine condition as to whether this is a large cash transaction */
-        TethysMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
-        boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
-                              && (myAmount.compareTo(myPortion) > 0);
+        final TethysMoney myPortion = myDebitValue.valueAtRate(LIMIT_RATE);
+        final boolean isLargeCash = (myAmount.compareTo(LIMIT_VALUE) > 0)
+                                    && (myAmount.compareTo(myPortion) > 0);
 
         /* If this is a large cash takeOver */
         if (isLargeCash) {
@@ -1665,7 +1665,7 @@ public class TransactionAnalyser
         }
 
         /* Determine the capital gain */
-        TethysMoney myCapitalGain = new TethysMoney(myAmount);
+        final TethysMoney myCapitalGain = new TethysMoney(myAmount);
         myCapitalGain.subtractAmount(myAllowedCost);
         if (myCapitalGain.isNonZero()) {
             /* Record the delta gains */
@@ -1688,7 +1688,7 @@ public class TransactionAnalyser
         myCreditAsset.adjustCounter(SecurityAttribute.UNITS, myCreditUnits);
         myCreditAsset.adjustCounter(SecurityAttribute.INVESTED, myCostXfer);
         if (isForeignCredit) {
-            TethysMoney myForeign = myCostXfer.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
+            final TethysMoney myForeign = myCostXfer.convertCurrency(myCreditAsset.getCurrency().getCurrency(), myCreditRate);
             myCreditAsset.adjustCounter(SecurityAttribute.FOREIGNINVESTED, myForeign);
         }
 
@@ -1700,7 +1700,7 @@ public class TransactionAnalyser
         }
 
         /* Register the transaction */
-        SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
+        final SecurityValues myCreditValues = myCreditAsset.registerTransaction(theHelper);
         myCreditValues.setValue(SecurityAttribute.PRICE, myCreditPrice);
         myCreditValues.setValue(SecurityAttribute.XFERREDVALUE, myCreditXferValue);
         myCreditValues.setValue(SecurityAttribute.XFERREDCOST, myCostXfer);
@@ -1710,7 +1710,7 @@ public class TransactionAnalyser
         }
 
         /* Drive debit cost down to zero */
-        TethysMoney myDeltaCost = new TethysMoney(myCost);
+        final TethysMoney myDeltaCost = new TethysMoney(myCost);
         myDeltaCost.negate();
         myDebitAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myDeltaCost);
 
@@ -1755,7 +1755,7 @@ public class TransactionAnalyser
                                                                        : MoneyWiseCashType.SMALLCASH);
 
         /* Adjust the ThirdParty account bucket */
-        AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) myReturnedCashAccount);
+        final AccountBucket<?> myBucket = getAccountBucket((AssetBase<?>) myReturnedCashAccount);
         myBucket.adjustForReturnedCashCredit(theHelper);
     }
 

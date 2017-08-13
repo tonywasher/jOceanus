@@ -570,7 +570,7 @@ public enum AnalysisResource implements TethysResourceId {
      */
     private static Map<AccountAttribute, TethysResourceId> buildAccountMap() {
         /* Create the map and return it */
-        Map<AccountAttribute, TethysResourceId> myMap = new EnumMap<>(AccountAttribute.class);
+        final Map<AccountAttribute, TethysResourceId> myMap = new EnumMap<>(AccountAttribute.class);
         myMap.put(AccountAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(AccountAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(AccountAttribute.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);
@@ -600,7 +600,7 @@ public enum AnalysisResource implements TethysResourceId {
      */
     private static Map<TransactionAttribute, TethysResourceId> buildTransMap() {
         /* Create the map and return it */
-        Map<TransactionAttribute, TethysResourceId> myMap = new EnumMap<>(TransactionAttribute.class);
+        final Map<TransactionAttribute, TethysResourceId> myMap = new EnumMap<>(TransactionAttribute.class);
         myMap.put(TransactionAttribute.INCOME, PAYEEATTR_INCOME);
         myMap.put(TransactionAttribute.EXPENSE, PAYEEATTR_EXPENSE);
         myMap.put(TransactionAttribute.PROFIT, ACCOUNTATTR_PROFIT);
@@ -622,7 +622,7 @@ public enum AnalysisResource implements TethysResourceId {
      */
     private static Map<PayeeAttribute, TethysResourceId> buildPayeeMap() {
         /* Create the map and return it */
-        Map<PayeeAttribute, TethysResourceId> myMap = new EnumMap<>(PayeeAttribute.class);
+        final Map<PayeeAttribute, TethysResourceId> myMap = new EnumMap<>(PayeeAttribute.class);
         myMap.put(PayeeAttribute.INCOME, PAYEEATTR_INCOME);
         myMap.put(PayeeAttribute.EXPENSE, PAYEEATTR_EXPENSE);
         myMap.put(PayeeAttribute.PROFIT, ACCOUNTATTR_PROFIT);
@@ -644,7 +644,7 @@ public enum AnalysisResource implements TethysResourceId {
      */
     private static Map<SecurityAttribute, TethysResourceId> buildSecurityMap() {
         /* Create the map and return it */
-        Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
+        final Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
         myMap.put(SecurityAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(SecurityAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(SecurityAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
@@ -691,7 +691,7 @@ public enum AnalysisResource implements TethysResourceId {
      */
     private static Map<TaxBasisAttribute, TethysResourceId> buildTaxMap() {
         /* Create the map and return it */
-        Map<TaxBasisAttribute, TethysResourceId> myMap = new EnumMap<>(TaxBasisAttribute.class);
+        final Map<TaxBasisAttribute, TethysResourceId> myMap = new EnumMap<>(TaxBasisAttribute.class);
         myMap.put(TaxBasisAttribute.GROSS, TAXATTR_GROSS);
         myMap.put(TaxBasisAttribute.NETT, TAXATTR_NETT);
         myMap.put(TaxBasisAttribute.TAXCREDIT, TAXATTR_TAX);
@@ -713,7 +713,7 @@ public enum AnalysisResource implements TethysResourceId {
      */
     private static Map<AnalysisType, TethysResourceId> buildAnalysisMap() {
         /* Create the map and return it */
-        Map<AnalysisType, TethysResourceId> myMap = new EnumMap<>(AnalysisType.class);
+        final Map<AnalysisType, TethysResourceId> myMap = new EnumMap<>(AnalysisType.class);
         myMap.put(AnalysisType.DEPOSIT, MoneyWiseDataTypeResource.DEPOSIT_NAME);
         myMap.put(AnalysisType.CASH, MoneyWiseDataTypeResource.CASH_NAME);
         myMap.put(AnalysisType.LOAN, MoneyWiseDataTypeResource.LOAN_NAME);

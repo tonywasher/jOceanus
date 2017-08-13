@@ -102,24 +102,24 @@ public class MoneyWiseReportTaxCalculation
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        MoneyWiseTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();
-        MoneyWiseTaxYear myYear = myTaxAnalysis.getTaxYear();
+        final MoneyWiseTaxAnalysis myTaxAnalysis = pAnalysis.getTaxAnalysis();
+        final MoneyWiseTaxYear myYear = myTaxAnalysis.getTaxYear();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myYear.getYearEnd()));
 
         /* Format the header */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseDataTypeResource.TAXBASIS_NAME.getValue());
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
         theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
 
         /* Loop through the Tax Due Buckets */
-        Iterator<MoneyWiseTaxDueBucket> myTaxIterator = myTaxAnalysis.taxDueIterator();
+        final Iterator<MoneyWiseTaxDueBucket> myTaxIterator = myTaxAnalysis.taxDueIterator();
         while (myTaxIterator.hasNext()) {
-            MoneyWiseTaxDueBucket myBucket = myTaxIterator.next();
+            final MoneyWiseTaxDueBucket myBucket = myTaxIterator.next();
 
             /* Format the line */
             theBuilder.startRow(myTable);
@@ -155,16 +155,16 @@ public class MoneyWiseReportTaxCalculation
     public void makeTaxReport(final MetisHTMLTable pParent,
                               final MoneyWiseTaxDueBucket pSummary) {
         /* Format the detail */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_INCOME);
         theBuilder.makeTitleCell(myTable, TEXT_RATE);
         theBuilder.makeTitleCell(myTable, TEXT_TAXDUE);
 
         /* Loop through the Transaction Detail Buckets */
-        Iterator<MoneyWiseTaxBandBucket> myIterator = pSummary.taxBandIterator();
+        final Iterator<MoneyWiseTaxBandBucket> myIterator = pSummary.taxBandIterator();
         while (myIterator.hasNext()) {
-            MoneyWiseTaxBandBucket myBucket = myIterator.next();
+            final MoneyWiseTaxBandBucket myBucket = myIterator.next();
 
             /* Format the detail */
             theBuilder.startRow(myTable);

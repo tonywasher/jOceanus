@@ -129,7 +129,7 @@ public final class LoanCategoryBucket
      * Update active flag for Loan Bucket.
      * @param pBucket the Loan bucket
      */
-    private void updateActive(final LoanBucket pBucket) {
+    protected void updateActive(final LoanBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -137,7 +137,7 @@ public final class LoanCategoryBucket
      * Update active flag for Loan Category Bucket.
      * @param pBucket the Loan category bucket
      */
-    private void updateActive(final LoanCategoryBucket pBucket) {
+    protected void updateActive(final LoanCategoryBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -278,12 +278,12 @@ public final class LoanCategoryBucket
         protected void analyseLoans(final MarketAnalysis pMarket,
                                     final LoanBucketList pLoans) {
             /* Loop through the buckets */
-            TethysDateRange myRange = theAnalysis.getDateRange();
-            Iterator<LoanBucket> myIterator = pLoans.iterator();
+            final TethysDateRange myRange = theAnalysis.getDateRange();
+            final Iterator<LoanBucket> myIterator = pLoans.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
-                LoanBucket myCurr = myIterator.next();
-                LoanCategory myCategory = myCurr.getCategory();
+                final LoanBucket myCurr = myIterator.next();
+                final LoanCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
                 if (myCurr.isForeignCurrency()) {
@@ -296,7 +296,7 @@ public final class LoanCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Access category bucket and add values */
-                LoanCategoryBucket myBucket = getBucket(myCategory);
+                final LoanCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
                 myBucket.updateActive(myCurr);
             }
@@ -308,11 +308,11 @@ public final class LoanCategoryBucket
          */
         protected void buildCategories(final LoanBucketList pLoans) {
             /* Loop through the buckets */
-            Iterator<LoanBucket> myIterator = pLoans.iterator();
+            final Iterator<LoanBucket> myIterator = pLoans.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
-                LoanBucket myCurr = myIterator.next();
-                LoanCategory myCategory = myCurr.getCategory();
+                final LoanBucket myCurr = myIterator.next();
+                final LoanCategory myCategory = myCurr.getCategory();
                 getBucket(myCategory);
 
                 /* Access parent category */
@@ -325,16 +325,16 @@ public final class LoanCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            MetisOrderedIdList<Integer, LoanCategoryBucket> myTotals = new MetisOrderedIdList<>(LoanCategoryBucket.class);
+            final MetisOrderedIdList<Integer, LoanCategoryBucket> myTotals = new MetisOrderedIdList<>(LoanCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<LoanCategoryBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                LoanCategoryBucket myCurr = myIterator.next();
+                final LoanCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
-                LoanCategory myCategory = myCurr.getAccountCategory();
-                LoanCategory myParent = myCategory.getParentCategory();
+                final LoanCategory myCategory = myCurr.getAccountCategory();
+                final LoanCategory myParent = myCategory.getParentCategory();
 
                 /* Calculate delta for the category */
                 myCurr.calculateDelta();
@@ -366,7 +366,7 @@ public final class LoanCategoryBucket
             /* Loop through the new totals */
             myIterator = myTotals.listIterator();
             while (myIterator.hasNext()) {
-                LoanCategoryBucket myCurr = myIterator.next();
+                final LoanCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
                 myCurr.calculateDelta();

@@ -86,15 +86,15 @@ public class QIFClass
         String myDesc = null;
 
         /* Loop through the lines */
-        Iterator<String> myIterator = pLines.iterator();
+        final Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
-            String myLine = myIterator.next();
+            final String myLine = myIterator.next();
 
             /* Determine the category */
-            QClassLineType myType = QClassLineType.parseLine(myLine);
+            final QClassLineType myType = QClassLineType.parseLine(myLine);
             if (myType != null) {
                 /* Access data */
-                String myData = myLine.substring(myType.getSymbol().length());
+                final String myData = myLine.substring(myType.getSymbol().length());
 
                 /* Switch on line type */
                 switch (myType) {

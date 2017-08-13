@@ -57,7 +57,7 @@ public class SheetAccountInfoType
         super(pReader, AREA_ACCOUNTINFOTYPES);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getActInfoTypes());
     }
 
@@ -70,7 +70,7 @@ public class SheetAccountInfoType
         super(pWriter, AREA_ACCOUNTINFOTYPES);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getActInfoTypes());
     }
 
@@ -91,18 +91,18 @@ public class SheetAccountInfoType
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of InfoTypes */
-        AccountInfoTypeList myList = pData.getActInfoTypes();
+        final AccountInfoTypeList myList = pData.getActInfoTypes();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_ACCOUNTINFOTYPES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_ACCOUNTINFOTYPES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_ACCOUNTINFOTYPES);
 
             /* Count the number of InfoTypes */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -110,8 +110,8 @@ public class SheetAccountInfoType
             /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());

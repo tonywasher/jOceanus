@@ -69,7 +69,7 @@ public class SheetCashCategory
         super(pReader, AREA_CASHCATEGORIES);
 
         /* Access the Categories list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getCashCategories());
     }
 
@@ -82,14 +82,14 @@ public class SheetCashCategory
         super(pWriter, AREA_CASHCATEGORIES);
 
         /* Access the Categories list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getCashCategories());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(CashCategory.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(CashCategory.OBJECT_NAME);
         myValues.addValue(CashCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
         myValues.addValue(CashCategory.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(CashCategory.FIELD_NAME, loadBytes(COL_NAME));

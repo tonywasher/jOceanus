@@ -75,18 +75,18 @@ public class MoneyWiseReportCashFlow
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        PayeeBucketList myPayees = pAnalysis.getPayees();
-        TethysDateRange myRange = pAnalysis.getDateRange();
+        final PayeeBucketList myPayees = pAnalysis.getPayees();
+        final TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
-        PayeeBucket myTotals = myPayees.getTotals();
+        final PayeeBucket myTotals = myPayees.getTotals();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_INCOME);
@@ -94,15 +94,15 @@ public class MoneyWiseReportCashFlow
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Payee Buckets */
-        Iterator<PayeeBucket> myIterator = myPayees.iterator();
+        final Iterator<PayeeBucket> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            PayeeBucket myBucket = myIterator.next();
+            final PayeeBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            PayeeValues myValues = myBucket.getValues();
+            final PayeeValues myValues = myBucket.getValues();
 
             /* Format the detail */
             theBuilder.startRow(myTable);
@@ -116,7 +116,7 @@ public class MoneyWiseReportCashFlow
         }
 
         /* Access values */
-        PayeeValues myValues = myTotals.getValues();
+        final PayeeValues myValues = myTotals.getValues();
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);

@@ -136,20 +136,20 @@ public class MoneyWiseReportCapitalGains
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        final PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
         theSecurities = pAnalysis.getSecurities();
         theEndDate = pAnalysis.getDateRange().getEnd();
 
         /* Access the totals */
-        PortfolioBucket myTotals = myPortfolios.getTotals();
-        TethysDate myDate = pAnalysis.getDateRange().getEnd();
+        final PortfolioBucket myTotals = myPortfolios.getTotals();
+        final TethysDate myDate = pAnalysis.getDateRange().getEnd();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
@@ -157,15 +157,15 @@ public class MoneyWiseReportCapitalGains
         theBuilder.makeTitleCell(myTable, TEXT_GAINS);
 
         /* Loop through the Portfolio Buckets */
-        Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myValues = myBucket.getValues();
 
             /* Format the Asset */
             theBuilder.startRow(myTable);
@@ -181,7 +181,7 @@ public class MoneyWiseReportCapitalGains
         }
 
         /* Access values */
-        SecurityValues myValues = myTotals.getValues();
+        final SecurityValues myValues = myTotals.getValues();
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
@@ -197,13 +197,13 @@ public class MoneyWiseReportCapitalGains
     @Override
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
-        Object mySource = pTable.getSource();
+        final Object mySource = pTable.getSource();
         if (mySource instanceof PortfolioBucket) {
-            PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+            final PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
         if (mySource instanceof SecurityBucket) {
-            SecurityBucket mySourceBucket = (SecurityBucket) mySource;
+            final SecurityBucket mySourceBucket = (SecurityBucket) mySource;
             return createDelayedGains(pTable.getParent(), mySourceBucket);
         }
 
@@ -220,23 +220,23 @@ public class MoneyWiseReportCapitalGains
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
                                                   final PortfolioBucket pSource) {
         /* Access the securities and portfolio */
-        SecurityBucketList mySecurities = pSource.getSecurities();
+        final SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Security Buckets */
-        Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+        final Iterator<SecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
             String myFullName = myBucket.getDecoratedName();
             myFullName = myFullName.replace(':', '-');
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -262,7 +262,7 @@ public class MoneyWiseReportCapitalGains
     private MetisHTMLTable createDelayedGains(final MetisHTMLTable pParent,
                                               final SecurityBucket pSource) {
         /* Create a gains analysis */
-        MoneyWiseReportGainsAnalysis myGains = new MoneyWiseReportGainsAnalysis(this, pParent, pSource);
+        final MoneyWiseReportGainsAnalysis myGains = new MoneyWiseReportGainsAnalysis(this, pParent, pSource);
 
         /* Return the formatted table */
         return myGains.getTable();

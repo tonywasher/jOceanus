@@ -195,7 +195,7 @@ public class ArchiveLoader {
      * @param pName the range name
      */
     private void addYear(final String pName) {
-        ArchiveYear myYear = new ArchiveYear(pName);
+        final ArchiveYear myYear = new ArchiveYear(pName);
         theYears.add(myYear);
     }
 
@@ -219,15 +219,15 @@ public class ArchiveLoader {
                             final MoneyWiseData pData,
                             final PrometheusBackupPreferences pPreferences) throws OceanusException {
         /* Determine the archive name */
-        String myName = pPreferences.getStringValue(PrometheusBackupPreferenceKey.ARCHIVE);
+        final String myName = pPreferences.getStringValue(PrometheusBackupPreferenceKey.ARCHIVE);
         theLastEvent = pPreferences.getDateValue(PrometheusBackupPreferenceKey.LASTEVENT);
-        File myArchive = new File(myName);
+        final File myArchive = new File(myName);
 
         /* Protect the workbook retrieval */
         try (FileInputStream myInFile = new FileInputStream(myArchive);
              InputStream myStream = new BufferedInputStream(myInFile)) {
             /* Determine the WorkBookType */
-            MetisWorkBookType myType = MetisWorkBookType.determineType(myName);
+            final MetisWorkBookType myType = MetisWorkBookType.determineType(myName);
 
             /* Load the data from the stream */
             loadArchiveStream(pReport, pData, myStream, myType);
@@ -258,23 +258,23 @@ public class ArchiveLoader {
                              final MetisDataWorkBook pWorkBook,
                              final MoneyWiseData pData) throws OceanusException {
         /* Find the range of cells */
-        MetisDataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
+        final MetisDataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
         /* Loop through the cells */
         for (int myIndex = 0; myIndex < myView.getColumnCount(); myIndex++) {
             /* Access the cell and add year to the list */
-            MetisDataCell myCell = myView.getCellByPosition(myIndex, 0);
+            final MetisDataCell myCell = myView.getCellByPosition(myIndex, 0);
             addYear(myCell.getStringValue());
         }
 
         /* Access the static */
-        ControlDataList myStatic = pData.getControlData();
+        final ControlDataList myStatic = pData.getControlData();
 
         /* Add the value into the finance tables (with no security as yet) */
         myStatic.addNewControl(0);
 
         /* Calculate the number of stages */
-        int myStages = NUM_ARCHIVE_AREAS + getNumYears();
+        final int myStages = NUM_ARCHIVE_AREAS + getNumYears();
 
         /* Declare the number of stages */
         pReport.setNumStages(myStages);
@@ -303,11 +303,11 @@ public class ArchiveLoader {
             theParentCache = new ParentCache(pData);
 
             /* Access the workbook from the stream */
-            MetisDataWorkBook myWorkbook = new MetisDataWorkBook(pStream, pType);
+            final MetisDataWorkBook myWorkbook = new MetisDataWorkBook(pStream, pType);
             pReport.checkForCancellation();
 
             /* Determine Year Range */
-            MetisProfile myStage = myTask.startTask("LoadSheets");
+            final MetisProfile myStage = myTask.startTask("LoadSheets");
             myStage.startTask("Range");
             loadArchive(pReport, myWorkbook, pData);
 
@@ -386,7 +386,7 @@ public class ArchiveLoader {
      */
     protected void declareAsset(final AssetBase<?> pAsset) throws OceanusException {
         /* Access the asset name */
-        String myName = pAsset.getName();
+        final String myName = pAsset.getName();
 
         /* Check for name already exists */
         if (theNameMap.get(myName) != null) {
@@ -404,7 +404,7 @@ public class ArchiveLoader {
      */
     protected void declareCategory(final TransactionCategory pCategory) throws OceanusException {
         /* Access the asset name */
-        String myName = pCategory.getName();
+        final String myName = pCategory.getName();
 
         /* Check for name already exists */
         if (theCategoryMap.get(myName) != null) {
@@ -424,7 +424,7 @@ public class ArchiveLoader {
     protected void declareSecurityHolding(final Security pSecurity,
                                           final String pPortfolio) throws OceanusException {
         /* Access the name */
-        String myName = pSecurity.getName();
+        final String myName = pSecurity.getName();
 
         /* Check for name already exists */
         if (theNameMap.get(myName) != null) {
@@ -446,13 +446,13 @@ public class ArchiveLoader {
                                        final String pAlias,
                                        final String pPortfolio) throws OceanusException {
         /* Check for name already exists */
-        Object myHolding = theNameMap.get(pAlias);
+        final Object myHolding = theNameMap.get(pAlias);
         if (!(myHolding instanceof SecurityHoldingDef)) {
             throw new PrometheusDataException(pAlias, "Aliased security not found");
         }
 
         /* Store the asset */
-        SecurityHoldingDef myAliased = (SecurityHoldingDef) myHolding;
+        final SecurityHoldingDef myAliased = (SecurityHoldingDef) myHolding;
         theNameMap.put(pName, new SecurityHoldingDef(myAliased.getSecurity(), pPortfolio));
     }
 
@@ -462,22 +462,22 @@ public class ArchiveLoader {
      */
     protected void resolveSecurityHoldings(final MoneyWiseData pData) {
         /* Access securityHoldingsMap and Portfolio list */
-        SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
-        PortfolioList myPortfolios = pData.getPortfolios();
+        final SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+        final PortfolioList myPortfolios = pData.getPortfolios();
 
         /* Loop through the name map */
-        Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
+        final Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<String, Object> myEntry = myIterator.next();
+            final Map.Entry<String, Object> myEntry = myIterator.next();
 
             /* If this is a security holding definition */
-            Object myValue = myEntry.getValue();
+            final Object myValue = myEntry.getValue();
             if (myValue instanceof SecurityHoldingDef) {
-                SecurityHoldingDef myDef = (SecurityHoldingDef) myValue;
+                final SecurityHoldingDef myDef = (SecurityHoldingDef) myValue;
 
                 /* Access security holding */
-                Portfolio myPortfolio = myPortfolios.findItemByName(myDef.getPortfolio());
-                SecurityHolding myHolding = myMap.declareHolding(myPortfolio, myDef.getSecurity());
+                final Portfolio myPortfolio = myPortfolios.findItemByName(myDef.getPortfolio());
+                final SecurityHolding myHolding = myMap.declareHolding(myPortfolio, myDef.getSecurity());
 
                 /* Replace definition in map */
                 myEntry.setValue(myHolding);
@@ -499,17 +499,17 @@ public class ArchiveLoader {
         if (!(pTarget instanceof Portfolio)) {
             throw new MoneyWiseDataException(pTarget, "Inconsistent portfolios");
         }
-        Portfolio myPortfolio = (Portfolio) pTarget;
+        final Portfolio myPortfolio = (Portfolio) pTarget;
 
-        SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
+        final SecurityHoldingMap myMap = pData.getSecurityHoldingsMap();
 
         /* Loop through the name map */
-        Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
+        final Iterator<Map.Entry<String, Object>> myIterator = theNameMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            Map.Entry<String, Object> myEntry = myIterator.next();
+            final Map.Entry<String, Object> myEntry = myIterator.next();
 
             /* If this is a security holding definition */
-            Object myValue = myEntry.getValue();
+            final Object myValue = myEntry.getValue();
             if (myValue instanceof SecurityHolding) {
                 SecurityHolding myHolding = (SecurityHolding) myValue;
 
@@ -548,7 +548,7 @@ public class ArchiveLoader {
             theRangeName = pName;
 
             /* Isolate the year part */
-            int myLen = pName.length();
+            final int myLen = pName.length();
             int myYear = Integer.parseInt(pName.substring(myLen - 2));
 
             /* Calculate the actual year */
@@ -559,7 +559,7 @@ public class ArchiveLoader {
             }
 
             /* Create the date */
-            TethysFiscalYear myFiscal = TethysFiscalYear.UK;
+            final TethysFiscalYear myFiscal = TethysFiscalYear.UK;
             theDate = new TethysDate(myYear, myFiscal.getFirstMonth(), myFiscal.getFirstDay());
             theDate.adjustDay(-1);
         }
@@ -724,7 +724,7 @@ public class ArchiveLoader {
         protected Transaction buildTransaction(final String pAmount,
                                                final boolean pReconciled) throws OceanusException {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(Transaction.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Transaction.OBJECT_NAME);
             myValues.addValue(Transaction.FIELD_DATE, theDate);
             myValues.addValue(Transaction.FIELD_CATEGORY, theCategory);
             myValues.addValue(Transaction.FIELD_PAIR, thePair);
@@ -736,7 +736,7 @@ public class ArchiveLoader {
             }
 
             /* Add the value into the list */
-            Transaction myTrans = theList.addValuesItem(myValues);
+            final Transaction myTrans = theList.addValuesItem(myValues);
 
             /* If we were not a child */
             if (!isSplit) {
@@ -837,12 +837,12 @@ public class ArchiveLoader {
             theParent = theLastParent;
 
             /* Resolve the debit and credit */
-            Object myDebit = (pDebit == null)
-                                              ? theLastDebit
-                                              : theNameMap.get(pDebit);
-            Object myCredit = (pCredit == null)
-                                                ? theLastCredit
-                                                : theNameMap.get(pCredit);
+            final Object myDebit = (pDebit == null)
+                                                    ? theLastDebit
+                                                    : theNameMap.get(pDebit);
+            final Object myCredit = (pCredit == null)
+                                                      ? theLastCredit
+                                                      : theNameMap.get(pCredit);
 
             /* Store last credit and debit */
             theLastDebit = myDebit;
@@ -863,16 +863,16 @@ public class ArchiveLoader {
          * @throws OceanusException on error
          */
         private void resolveAssets() throws OceanusException {
-            boolean isDebitHolding = theLastDebit instanceof SecurityHolding;
-            boolean isCreditHolding = theLastCredit instanceof SecurityHolding;
+            final boolean isDebitHolding = theLastDebit instanceof SecurityHolding;
+            final boolean isCreditHolding = theLastCredit instanceof SecurityHolding;
 
             /* Resolve debit and credit */
-            TransactionAsset myDebit = TransactionAsset.class.cast(theLastDebit);
-            TransactionAsset myCredit = TransactionAsset.class.cast(theLastCredit);
+            final TransactionAsset myDebit = TransactionAsset.class.cast(theLastDebit);
+            final TransactionAsset myCredit = TransactionAsset.class.cast(theLastCredit);
 
             /* Access asset types */
-            AssetType myDebitType = myDebit.getAssetType();
-            AssetType myCreditType = myCredit.getAssetType();
+            final AssetType myDebitType = myDebit.getAssetType();
+            final AssetType myCreditType = myCredit.getAssetType();
 
             /* Handle non-Asset debit */
             if (!myDebitType.isBaseAccount()) {
@@ -903,8 +903,8 @@ public class ArchiveLoader {
                 }
             } else {
                 /* Access parent assets */
-                TransactionAsset myParAccount = theParent.getAccount();
-                TransactionAsset myParPartner = theParent.getPartner();
+                final TransactionAsset myParAccount = theParent.getAccount();
+                final TransactionAsset myParPartner = theParent.getPartner();
 
                 /* If we match the parent on debit */
                 if (myDebit.equals(myParAccount)) {
@@ -938,13 +938,13 @@ public class ArchiveLoader {
                 /* Use debit as account */
                 theAccount = myDebit;
                 thePartner = myCredit;
-                Integer myPairId = AssetPair.getEncodedId(myDebitType, myCreditType, null, AssetDirection.TO);
+                final Integer myPairId = AssetPair.getEncodedId(myDebitType, myCreditType, null, AssetDirection.TO);
                 thePair = theAssetPairManager.lookUpPair(myPairId);
             } else {
                 /* Use credit as account */
                 theAccount = myCredit;
                 thePartner = myDebit;
-                Integer myPairId = AssetPair.getEncodedId(myCreditType, myDebitType, null, AssetDirection.FROM);
+                final Integer myPairId = AssetPair.getEncodedId(myCreditType, myDebitType, null, AssetDirection.FROM);
                 thePair = theAssetPairManager.lookUpPair(myPairId);
             }
 
@@ -953,7 +953,7 @@ public class ArchiveLoader {
             if (isDebitHolding) {
                 thePortfolio = ((SecurityHolding) theLastDebit).getPortfolio();
                 if (isCreditHolding) {
-                    Portfolio myPortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
+                    final Portfolio myPortfolio = ((SecurityHolding) theLastCredit).getPortfolio();
                     if (!thePortfolio.equals(myPortfolio)) {
                         throw new MoneyWiseDataException(theDate, "Inconsistent portfolios");
                     }

@@ -106,7 +106,7 @@ public final class DilutionEvent
     /**
      * The Transaction.
      */
-    private Transaction theTransaction = null;
+    private Transaction theTransaction;
 
     /**
      * Create a dilution event from a transaction.
@@ -207,7 +207,7 @@ public final class DilutionEvent
         }
 
         /* If the dates differ */
-        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        final int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -232,7 +232,7 @@ public final class DilutionEvent
         }
 
         /* Access as Dilution Event */
-        DilutionEvent myThat = (DilutionEvent) pThat;
+        final DilutionEvent myThat = (DilutionEvent) pThat;
 
         /* Check equality */
         return MetisDifference.isEqual(getDate(), myThat.getDate())
@@ -296,7 +296,7 @@ public final class DilutionEvent
 
         @Override
         public String formatObject() {
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(theSecurity.formatObject());
             myBuilder.append("(");
             myBuilder.append(size());
@@ -354,19 +354,19 @@ public final class DilutionEvent
         protected DilutionEventMap(final DilutionEventMap pSource,
                                    final TethysDate pDate) {
             /* Iterate through the source map */
-            Iterator<Entry<Integer, DilutionEventList>> myIterator = pSource.entrySet().iterator();
+            final Iterator<Entry<Integer, DilutionEventList>> myIterator = pSource.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Entry<Integer, DilutionEventList> myEntry = myIterator.next();
+                final Entry<Integer, DilutionEventList> myEntry = myIterator.next();
 
                 /* Access the id and list iterator */
-                Integer myId = myEntry.getKey();
-                DilutionEventList mySource = myEntry.getValue();
-                Iterator<DilutionEvent> myEventIterator = mySource.iterator();
+                final Integer myId = myEntry.getKey();
+                final DilutionEventList mySource = myEntry.getValue();
+                final Iterator<DilutionEvent> myEventIterator = mySource.iterator();
                 DilutionEventList myList = null;
 
                 /* Loop through the entries */
                 while (myEventIterator.hasNext()) {
-                    DilutionEvent myEvent = myEventIterator.next();
+                    final DilutionEvent myEvent = myEventIterator.next();
 
                     /* Check that we are wanting this event */
                     if (pDate.compareTo(myEvent.getDate()) > 0) {
@@ -397,10 +397,10 @@ public final class DilutionEvent
          */
         protected void addDilution(final Transaction pTrans) {
             /* Create the dilution event */
-            DilutionEvent myDilution = new DilutionEvent(theNextId++, pTrans);
+            final DilutionEvent myDilution = new DilutionEvent(theNextId++, pTrans);
 
             /* Look for the list associated with the security */
-            Security mySecurity = myDilution.getSecurity();
+            final Security mySecurity = myDilution.getSecurity();
             DilutionEventList myList = get(mySecurity.getId());
             if (myList == null) {
                 /* allocate new list if necessary */
@@ -432,16 +432,16 @@ public final class DilutionEvent
         public TethysDilution getDilutionFactor(final Security pSecurity,
                                                 final TethysDate pDate) {
             /* Access the dilutions for this security */
-            List<DilutionEvent> myList = get(pSecurity.getId());
+            final List<DilutionEvent> myList = get(pSecurity.getId());
             if (myList == null) {
                 return null;
             }
 
             /* Loop through the items */
-            ListIterator<DilutionEvent> myIterator = myList.listIterator(myList.size());
+            final ListIterator<DilutionEvent> myIterator = myList.listIterator(myList.size());
             TethysDilution myDilution = new TethysDilution(TethysDilution.MAX_DILUTION);
             while (myIterator.hasPrevious()) {
-                DilutionEvent myEvent = myIterator.previous();
+                final DilutionEvent myEvent = myIterator.previous();
 
                 /* If the event is earlier than we are interested in */
                 if (pDate.compareTo(myEvent.getDate()) > 0) {

@@ -149,9 +149,9 @@ public final class PortfolioBucket
                                              : null;
 
         /* Create the value maps and initialise them */
-        Currency myCurrency = theCurrency == null
-                                                  ? AccountBucket.DEFAULT_CURRENCY
-                                                  : theCurrency.getCurrency();
+        final Currency myCurrency = theCurrency == null
+                                                        ? AccountBucket.DEFAULT_CURRENCY
+                                                        : theCurrency.getCurrency();
         theValues = new SecurityValues(myCurrency);
         theBaseValues = new SecurityValues(myCurrency);
         initValues();
@@ -183,7 +183,7 @@ public final class PortfolioBucket
                                                : null;
 
         /* Create the value maps and initialise them */
-        Currency myCurrency = theCurrency.getCurrency();
+        final Currency myCurrency = theCurrency.getCurrency();
         theValues = new SecurityValues(myCurrency);
         theBaseValues = new SecurityValues(myCurrency);
         initValues();
@@ -212,7 +212,7 @@ public final class PortfolioBucket
                                                : null;
 
         /* Create the value maps and initialise them */
-        Currency myCurrency = theCurrency.getCurrency();
+        final Currency myCurrency = theCurrency.getCurrency();
         theValues = new SecurityValues(myCurrency);
         theBaseValues = new SecurityValues(myCurrency);
         initValues();
@@ -241,7 +241,7 @@ public final class PortfolioBucket
                                                : null;
 
         /* Create the value maps and initialise them */
-        Currency myCurrency = theCurrency.getCurrency();
+        final Currency myCurrency = theCurrency.getCurrency();
         theValues = new SecurityValues(myCurrency);
         theBaseValues = new SecurityValues(myCurrency);
         initValues();
@@ -268,9 +268,9 @@ public final class PortfolioBucket
         }
 
         /* Handle Attribute fields */
-        SecurityAttribute myClass = getClassForField(pField);
+        final SecurityAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -397,7 +397,7 @@ public final class PortfolioBucket
      */
     private Object getAttributeValue(final SecurityAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getValue(pAttr);
+        final Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -430,9 +430,9 @@ public final class PortfolioBucket
      */
     private void initValues() {
         /* Determine currency */
-        Currency myCurrency = theCurrency == null
-                                                  ? AccountBucket.DEFAULT_CURRENCY
-                                                  : theCurrency.getCurrency();
+        final Currency myCurrency = theCurrency == null
+                                                        ? AccountBucket.DEFAULT_CURRENCY
+                                                        : theCurrency.getCurrency();
 
         /* Create valuation fields for the portfolio */
         theValues.setValue(SecurityAttribute.VALUATION, new TethysMoney(myCurrency));
@@ -456,16 +456,6 @@ public final class PortfolioBucket
     protected SecurityBucket getSecurityBucket(final SecurityHolding pHolding) {
         /* Return the security bucket for the portfolio's list */
         return theSecurities.getBucket(pHolding);
-    }
-
-    /**
-     * Obtain an orphan SecurityBucket from this portfolio for a security holding.
-     * @param pHolding the security holding
-     * @return the bucket
-     */
-    public SecurityBucket getOrphanSecurityBucket(final SecurityHolding pHolding) {
-        /* Return the security bucket for the portfolio's list */
-        return theSecurities.getOrphanBucket(pHolding);
     }
 
     /**
@@ -506,7 +496,7 @@ public final class PortfolioBucket
         }
 
         /* Compare the Portfolios */
-        PortfolioBucket myThat = (PortfolioBucket) pThat;
+        final PortfolioBucket myThat = (PortfolioBucket) pThat;
         return getPortfolio().equals(myThat.getPortfolio());
     }
 
@@ -524,7 +514,7 @@ public final class PortfolioBucket
         myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        TethysMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
+        final TethysMoney myBase = theBaseValues.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -550,7 +540,7 @@ public final class PortfolioBucket
      * Add bucket to totals.
      * @param pBucket the underlying bucket
      */
-    private void addValues(final PortfolioCashBucket pBucket) {
+    protected void addValues(final PortfolioCashBucket pBucket) {
         /* Add values */
         addValues(theValues, pBucket.getValues());
 
@@ -566,8 +556,8 @@ public final class PortfolioBucket
     private static void addValues(final SecurityValues pTotals,
                                   final AccountValues pSource) {
         /* Add valuation values */
-        TethysMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
-        TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney myValue = pTotals.getMoneyValue(SecurityAttribute.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -648,9 +638,9 @@ public final class PortfolioBucket
         }
 
         /* Loop through securities */
-        Iterator<SecurityBucket> myIterator = securityIterator();
+        final Iterator<SecurityBucket> myIterator = securityIterator();
         while (myIterator.hasNext()) {
-            SecurityBucket mySecurity = myIterator.next();
+            final SecurityBucket mySecurity = myIterator.next();
 
             /* Look for active security */
             if (mySecurity.isActive()) {
@@ -673,9 +663,9 @@ public final class PortfolioBucket
         }
 
         /* Loop through securities */
-        Iterator<SecurityBucket> myIterator = securityIterator();
+        final Iterator<SecurityBucket> myIterator = securityIterator();
         while (myIterator.hasNext()) {
-            SecurityBucket mySecurity = myIterator.next();
+            final SecurityBucket mySecurity = myIterator.next();
 
             /* Look for active security */
             if (!mySecurity.isIdle()) {
@@ -694,9 +684,9 @@ public final class PortfolioBucket
      */
     public TethysMoney getCashValue(final boolean pBase) {
         /* Obtain the cash valuation */
-        AccountValues myCashValues = pBase
-                                           ? theCash.getBaseValues()
-                                           : theCash.getValues();
+        final AccountValues myCashValues = pBase
+                                                 ? theCash.getBaseValues()
+                                                 : theCash.getValues();
         return new TethysMoney(myCashValues.getMoneyValue(AccountAttribute.VALUATION));
     }
 
@@ -707,10 +697,10 @@ public final class PortfolioBucket
      */
     public TethysMoney getNonCashValue(final boolean pBase) {
         /* Handle valuation by subtracting the cash valuation */
-        SecurityValues myValues = pBase
-                                        ? theBaseValues
-                                        : theValues;
-        TethysMoney myValue = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        final SecurityValues myValues = pBase
+                                              ? theBaseValues
+                                              : theValues;
+        final TethysMoney myValue = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myValue.subtractAmount(getCashValue(pBase));
         return myValue;
     }
@@ -785,12 +775,12 @@ public final class PortfolioBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<PortfolioBucket> myIterator = pBase.iterator();
+            final Iterator<PortfolioBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myCurr = myIterator.next();
+                final PortfolioBucket myCurr = myIterator.next();
 
                 /* Access the bucket */
-                PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr);
+                final PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr);
 
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
@@ -815,12 +805,12 @@ public final class PortfolioBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<PortfolioBucket> myIterator = pBase.iterator();
+            final Iterator<PortfolioBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myCurr = myIterator.next();
+                final PortfolioBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pDate);
+                final PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pDate);
 
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
@@ -845,12 +835,12 @@ public final class PortfolioBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<PortfolioBucket> myIterator = pBase.iterator();
+            final Iterator<PortfolioBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myCurr = myIterator.next();
+                final PortfolioBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pRange);
+                final PortfolioBucket myBucket = new PortfolioBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
@@ -937,20 +927,10 @@ public final class PortfolioBucket
          */
         public PortfolioCashBucket getCashBucket(final Portfolio pPortfolio) {
             /* Locate the bucket in the list */
-            PortfolioBucket myItem = getBucket(pPortfolio);
+            final PortfolioBucket myItem = getBucket(pPortfolio);
 
             /* Return the bucket */
             return myItem.getPortfolioCash();
-        }
-
-        /**
-         * Obtain an orphan PortfolioBucket for a given portfolio account.
-         * @param pPortfolio the portfolio account
-         * @return the bucket
-         */
-        public PortfolioBucket getOrphanBucket(final Portfolio pPortfolio) {
-            /* Allocate an orphan bucket */
-            return new PortfolioBucket(theAnalysis, pPortfolio);
         }
 
         /**
@@ -960,11 +940,73 @@ public final class PortfolioBucket
          */
         public SecurityBucket getBucket(final SecurityHolding pHolding) {
             /* Locate the portfolio bucket in the list */
-            Portfolio myPortfolio = pHolding.getPortfolio();
-            PortfolioBucket myBucket = getBucket(myPortfolio);
+            final Portfolio myPortfolio = pHolding.getPortfolio();
+            final PortfolioBucket myBucket = getBucket(myPortfolio);
 
             /* Return the security bucket for the portfolio's list */
             return myBucket.getSecurityBucket(pHolding);
+        }
+
+        /**
+         * Obtain the matching PortfolioBucket.
+         * @param pPortfolio the portfolio
+         * @return the matching bucket
+         */
+        public PortfolioBucket getMatchingPortfolio(final Portfolio pPortfolio) {
+            /* Return the matching portfolio if it exists else an orphan bucket */
+            final PortfolioBucket myPortfolio = findItemById(pPortfolio.getOrderedId());
+            return myPortfolio != null
+                                       ? myPortfolio
+                                       : new PortfolioBucket(theAnalysis, pPortfolio);
+        }
+
+        /**
+         * Obtain the matching SecurityBucket.
+         * @param pSecurity the security
+         * @return the matching bucket
+         */
+        public SecurityBucket getMatchingSecurityHolding(final SecurityHolding pSecurity) {
+            /* Find the portfolio and holding */
+            final PortfolioBucket myPortfolio = findItemById(pSecurity.getPortfolio().getOrderedId());
+            final SecurityBucket mySecurity = myPortfolio == null
+                                                                  ? null
+                                                                  : myPortfolio.findSecurityBucket(pSecurity.getSecurity());
+            return mySecurity != null
+                                      ? mySecurity
+                                      : new SecurityBucket(theAnalysis, pSecurity);
+        }
+
+        /**
+         * Obtain the default PortfolioBucket.
+         * @return the default bucket
+         */
+        public PortfolioBucket getDefaultPortfolio() {
+            /* Return the first portfolio in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
+        }
+
+        /**
+         * Obtain the default SecurityBucket.
+         * @return the default bucket
+         */
+        public SecurityBucket getDefaultSecurityHolding() {
+            /* Loop through the portfolio buckets */
+            final Iterator<PortfolioBucket> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                final PortfolioBucket myPortfolio = myIterator.next();
+
+                /* Loop through the security buckets */
+                final Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();
+                if (mySecIterator.hasNext()) {
+                    /* Access bucket and category */
+                    return mySecIterator.next();
+                }
+            }
+
+            /* No security bucket found */
+            return null;
         }
 
         /**
@@ -982,16 +1024,16 @@ public final class PortfolioBucket
          */
         protected void analyseSecurities(final MarketAnalysis pMarket) {
             /* Access details */
-            TethysDateRange myRange = theAnalysis.getDateRange();
-            PortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
+            final TethysDateRange myRange = theAnalysis.getDateRange();
+            final PortfolioCashBucket myCashTotals = theTotals.getPortfolioCash();
 
             /* Loop through the portfolio buckets */
-            Iterator<PortfolioBucket> myIterator = iterator();
+            final Iterator<PortfolioBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myPortfolio = myIterator.next();
+                final PortfolioBucket myPortfolio = myIterator.next();
 
                 /* Access the cash bucket */
-                PortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
+                final PortfolioCashBucket myCash = myPortfolio.getPortfolioCash();
 
                 /* Handle foreign asset */
                 if (myCash.isForeignCurrency()) {
@@ -1007,10 +1049,10 @@ public final class PortfolioBucket
                 myCashTotals.addValues(myCash);
 
                 /* Loop through the buckets */
-                Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();
+                final Iterator<SecurityBucket> mySecIterator = myPortfolio.securityIterator();
                 while (mySecIterator.hasNext()) {
                     /* Access bucket and category */
-                    SecurityBucket myCurr = mySecIterator.next();
+                    final SecurityBucket myCurr = mySecIterator.next();
 
                     /* Analyse the security bucket */
                     myCurr.analyseBucket(myRange);
@@ -1045,15 +1087,15 @@ public final class PortfolioBucket
          */
         protected void markActiveSecurities() throws OceanusException {
             /* Loop through the portfolio buckets */
-            Iterator<PortfolioBucket> myIterator = iterator();
+            final Iterator<PortfolioBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                PortfolioBucket myCurr = myIterator.next();
+                final PortfolioBucket myCurr = myIterator.next();
 
                 /* Mark active securities */
-                SecurityBucketList mySecurities = myCurr.getSecurities();
+                final SecurityBucketList mySecurities = myCurr.getSecurities();
                 if (mySecurities.markActiveSecurities()) {
                     /* Check closed state */
-                    Portfolio myPortfolio = myCurr.getPortfolio();
+                    final Portfolio myPortfolio = myCurr.getPortfolio();
                     if (myPortfolio.isClosed()
                         && theAnalysis.getData().checkClosedAccounts()) {
                         /* throw exception */

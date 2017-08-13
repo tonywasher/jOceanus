@@ -84,7 +84,7 @@ public class SheetCash
         super(pReader, AREA_CASH);
 
         /* Access the Cash list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getCash());
     }
 
@@ -97,14 +97,14 @@ public class SheetCash
         super(pWriter, AREA_CASH);
 
         /* Access the Cash list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getCash());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Cash.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
         myValues.addValue(Cash.FIELD_NAME, loadBytes(COL_NAME));
@@ -146,8 +146,8 @@ public class SheetCash
                                       final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip class */
         ++iAdjust;
@@ -180,7 +180,7 @@ public class SheetCash
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getStringValue();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 
@@ -194,18 +194,18 @@ public class SheetCash
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Cash.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_NAME, myName);
         myValues.addValue(Cash.FIELD_CATEGORY, myType);
         myValues.addValue(Cash.FIELD_CURRENCY, myCurrency);
         myValues.addValue(Cash.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
-        CashList myList = pData.getCash();
-        Cash myCash = myList.addValuesItem(myValues);
+        final CashList myList = pData.getCash();
+        final Cash myCash = myList.addValuesItem(myValues);
 
         /* Add information relating to the cash */
-        CashInfoList myInfoList = pData.getCashInfo();
+        final CashInfoList myInfoList = pData.getCashInfo();
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOEXPENSE, myAutoExpense);
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.AUTOPAYEE, myAutoPayee);
         myInfoList.addInfoItem(null, myCash, AccountInfoClass.OPENINGBALANCE, myBalance);
@@ -228,7 +228,7 @@ public class SheetCash
                                            final MetisDataRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip type, class */
         ++iAdjust;
@@ -257,16 +257,16 @@ public class SheetCash
         /* Handle autoExpense which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         if (myCell != null) {
-            String myAutoPayee = myName + "Expense";
+            final String myAutoPayee = myName + "Expense";
 
             /* Build values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Payee.OBJECT_NAME);
             myValues.addValue(Payee.FIELD_NAME, myAutoPayee);
             myValues.addValue(Payee.FIELD_PAYEETYPE, PayeeTypeClass.PAYEE.toString());
             myValues.addValue(Payee.FIELD_CLOSED, isClosed);
 
             /* Add the value into the list */
-            PayeeList myPayeeList = pData.getPayees();
+            final PayeeList myPayeeList = pData.getPayees();
             myPayeeList.addValuesItem(myValues);
         }
     }

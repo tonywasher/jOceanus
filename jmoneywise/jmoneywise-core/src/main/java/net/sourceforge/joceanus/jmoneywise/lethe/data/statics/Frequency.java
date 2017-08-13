@@ -113,7 +113,7 @@ public class Frequency
      * @return true/false
      */
     public boolean isBaseFrequency() {
-        FrequencyClass myFreq = getFrequency();
+        final FrequencyClass myFreq = getFrequency();
         return myFreq != null
                && myFreq.isBaseFrequency();
     }
@@ -124,7 +124,7 @@ public class Frequency
      * @return true/false
      */
     public boolean isValidRepeat(final Frequency pFrequency) {
-        FrequencyClass myFreq = getFrequency();
+        final FrequencyClass myFreq = getFrequency();
         return myFreq != null
                && myFreq.isValidRepeat(pFrequency.getFrequency());
     }
@@ -134,7 +134,7 @@ public class Frequency
      * @return true/false
      */
     public boolean hasRepeatFrequency() {
-        FrequencyClass myFreq = getFrequency();
+        final FrequencyClass myFreq = getFrequency();
         return myFreq != null
                && myFreq.hasRepeatFrequency();
     }
@@ -144,7 +144,7 @@ public class Frequency
      * @return true/false
      */
     public boolean hasRepeatInterval() {
-        FrequencyClass myFreq = getFrequency();
+        final FrequencyClass myFreq = getFrequency();
         return myFreq != null
                && myFreq.hasRepeatInterval();
     }
@@ -154,7 +154,7 @@ public class Frequency
      * @return true/false
      */
     public boolean hasPattern() {
-        FrequencyClass myFreq = getFrequency();
+        final FrequencyClass myFreq = getFrequency();
         return myFreq != null
                && myFreq.hasPattern();
     }
@@ -197,7 +197,7 @@ public class Frequency
 
         @Override
         protected FrequencyList getEmptyList(final ListStyle pStyle) {
-            FrequencyList myList = new FrequencyList(this);
+            final FrequencyList myList = new FrequencyList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -242,7 +242,7 @@ public class Frequency
                 throw new UnsupportedOperationException();
             }
 
-            Frequency myFreq = new Frequency(this, (Frequency) pItem);
+            final Frequency myFreq = new Frequency(this, (Frequency) pItem);
             add(myFreq);
             return myFreq;
         }
@@ -263,7 +263,7 @@ public class Frequency
          */
         public void addBasicItem(final String pFrequency) throws OceanusException {
             /* Create a new Frequency */
-            Frequency myFrequency = new Frequency(this, pFrequency);
+            final Frequency myFrequency = new Frequency(this, pFrequency);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFrequency.getId())) {
@@ -278,7 +278,7 @@ public class Frequency
         @Override
         public Frequency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the frequency */
-            Frequency myFreq = new Frequency(this, pValues);
+            final Frequency myFreq = new Frequency(this, pValues);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {
@@ -296,7 +296,7 @@ public class Frequency
         @Override
         protected Frequency newItem(final FrequencyClass pClass) throws OceanusException {
             /* Create the frequency */
-            Frequency myFreq = new Frequency(this, pClass);
+            final Frequency myFreq = new Frequency(this, pClass);
 
             /* Check that this FreqId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {

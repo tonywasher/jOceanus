@@ -179,8 +179,8 @@ public class MoneyWiseSpotPricesSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
-        TethysLabel<N, I> myDate = pFactory.newLabel(NLS_DATE);
-        TethysLabel<N, I> myPort = pFactory.newLabel(NLS_PORT);
+        final TethysLabel<N, I> myDate = pFactory.newLabel(NLS_DATE);
+        final TethysLabel<N, I> myPort = pFactory.newLabel(NLS_PORT);
 
         /* Create the check box */
         theShowClosed = pFactory.newCheckBox(NLS_CLOSED);
@@ -234,7 +234,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
         thePortMenu = thePortButton.getMenu();
 
         /* Add the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = thePortButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPortfolio());
         thePortButton.setMenuConfigurator(e -> buildPortfolioMenu());
         theDownloadButton.getEventRegistrar().addEventListener(TethysUIEvent.PRESSED, e -> theEventManager.fireEvent(PrometheusDataEvent.DOWNLOAD));
@@ -278,7 +278,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
      * @return the portfolio
      */
     public final Portfolio getPortfolio() {
-        PortfolioBucket myBucket = theState.getPortfolio();
+        final PortfolioBucket myBucket = theState.getPortfolio();
         return (myBucket == null)
                                   ? null
                                   : myBucket.getPortfolio();
@@ -297,14 +297,14 @@ public class MoneyWiseSpotPricesSelect<N, I>
      */
     public final void refreshData() {
         /* Access the data */
-        TethysDateRange myRange = theView.getRange();
+        final TethysDateRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
 
         /* Access portfolio list */
-        AnalysisManager myManager = theView.getAnalysisManager();
-        Analysis myAnalysis = myManager.getAnalysis();
+        final AnalysisManager myManager = theView.getAnalysisManager();
+        final Analysis myAnalysis = myManager.getAnalysis();
         thePortfolios = myAnalysis.getPortfolios();
 
         /* Note that we are refreshing data */
@@ -339,7 +339,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
      */
     private PortfolioBucket getFirstPortfolio() {
         /* Loop through the available account values */
-        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         return myIterator.hasNext()
                                     ? myIterator.next()
                                     : null;
@@ -350,12 +350,12 @@ public class MoneyWiseSpotPricesSelect<N, I>
      * @param pRange the Range to set
      */
     public final void setRange(final TethysDateRange pRange) {
-        TethysDate myStart = (pRange == null)
-                                              ? null
-                                              : pRange.getStart();
-        TethysDate myEnd = (pRange == null)
-                                            ? null
-                                            : pRange.getEnd();
+        final TethysDate myStart = (pRange == null)
+                                                    ? null
+                                                    : pRange.getStart();
+        final TethysDate myEnd = (pRange == null)
+                                                  ? null
+                                                  : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDate(myStart);
@@ -415,15 +415,15 @@ public class MoneyWiseSpotPricesSelect<N, I>
 
         /* Record active item */
         TethysScrollMenuItem<PortfolioBucket> myActive = null;
-        PortfolioBucket myCurr = theState.getPortfolio();
+        final PortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
-        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<PortfolioBucket> myItem = thePortMenu.addItem(myBucket);
+            final TethysScrollMenuItem<PortfolioBucket> myItem = thePortMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -568,7 +568,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
          */
         private boolean setDate(final TethysDateButtonManager<N, I> pButton) {
             /* Adjust the date and build the new range */
-            TethysDate myDate = new TethysDate(pButton.getSelectedDate());
+            final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!MetisDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
@@ -619,7 +619,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
             thePortButton.setValue(thePortfolio);
 
             /* Determine whether we are todays date */
-            boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
+            final boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

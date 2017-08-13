@@ -65,7 +65,7 @@ public abstract class MoneyWiseUKDividendScheme
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                            final TethysMoney pAmount) {
         /* Adjust against the basic allowance */
-        TethysMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
+        final TethysMoney myRemaining = super.adjustAllowances(pConfig, pAmount);
 
         /* If we have any dividends left */
         if (myRemaining.isNonZero()) {
@@ -86,11 +86,11 @@ public abstract class MoneyWiseUKDividendScheme
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            TethysMoney myRemaining = new TethysMoney(pAmount);
+            final TethysMoney myRemaining = new TethysMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by dividend allowance */
-            TethysMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);
+            final TethysMoney myXtra = getAmountInBand(pConfig.getDividendAllowance(), myRemaining);
 
             /* Determine the total amount covered by the allowance */
             myAmount = new TethysMoney(myAmount);
@@ -130,10 +130,10 @@ public abstract class MoneyWiseUKDividendScheme
                                                          final TaxBasisClass pBasis) {
 
         /* Create a new List */
-        List<MoneyWiseTaxBand> myList = new ArrayList<>();
+        final List<MoneyWiseTaxBand> myList = new ArrayList<>();
 
         /* Access underlying iterator */
-        Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
+        final Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
         MoneyWiseTaxBand myBand = myIterator.next();
         TethysMoney myAmount = myBand.getAmount();
         TethysRate myRate = getBaseRate();

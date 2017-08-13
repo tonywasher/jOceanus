@@ -99,7 +99,7 @@ public class PortfolioCashBucket
     protected void adjustForXfer(final PortfolioCashBucket pSource,
                                  final TransactionHelper pTrans) {
         /* Access transfer amount */
-        AccountValues myValues = pSource.getValues();
+        final AccountValues myValues = pSource.getValues();
         TethysMoney myAmount = myValues.getMoneyValue(AccountAttribute.VALUATION);
 
         /* Adjust this valuation */
@@ -135,7 +135,7 @@ public class PortfolioCashBucket
         /* Add valuation values */
         TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
         myValue = new TethysMoney(myValue);
-        TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
         pTotals.setValue(AccountAttribute.VALUATION, myValue);
     }

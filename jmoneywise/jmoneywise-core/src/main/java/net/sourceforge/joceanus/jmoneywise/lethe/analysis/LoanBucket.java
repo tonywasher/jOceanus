@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
+import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -183,7 +185,7 @@ public final class LoanBucket
         /* If this is a credit card */
         if (isCreditCard) {
             /* Access the amount */
-            TethysMoney myAmount = pHelper.getDebitAmount();
+            final TethysMoney myAmount = pHelper.getDebitAmount();
 
             /* If we have a non-zero amount */
             if (myAmount.isNonZero()) {
@@ -338,13 +340,51 @@ public final class LoanBucket
         }
 
         /**
-         * Obtain an orphan LoanBucket for a given loan account.
-         * @param pLoan the loan account
+         * Obtain the matching LoanBucket.
+         * @param pLoan the loan
+         * @return the matching bucket
+         */
+        public LoanBucket getMatchingLoan(final Loan pLoan) {
+            /* Return the matching loan if it exists else an orphan bucket */
+            final LoanBucket myLoan = findItemById(pLoan.getOrderedId());
+            return myLoan != null
+                                  ? myLoan
+                                  : new LoanBucket(getAnalysis(), pLoan);
+        }
+
+        /**
+         * Obtain the default Cash.
          * @return the bucket
          */
-        public LoanBucket getOrphanBucket(final Loan pLoan) {
-            /* Allocate an orphan bucket */
-            return newBucket(pLoan);
+        public LoanBucket getDefaultLoan() {
+            /* Return the first loan in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
+        }
+
+        /**
+         * Obtain the default Loan for the category.
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public LoanBucket getDefaultLoan(final LoanCategory pCategory) {
+            /* If there is a category */
+            if (pCategory != null) {
+                /* Loop through the available account values */
+                final Iterator<LoanBucket> myIterator = iterator();
+                while (myIterator.hasNext()) {
+                    final LoanBucket myBucket = myIterator.next();
+
+                    /* Return if correct category */
+                    if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
+                        return myBucket;
+                    }
+                }
+            }
+
+            /* No default loan */
+            return null;
         }
 
         @Override

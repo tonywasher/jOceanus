@@ -253,6 +253,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
             /* Create the new lists */
             theValue = new ArrayList<>(pValue);
             theActiveValue = new TethysItemList<>();
+            theValue.sort(null);
 
             /* Iterate through the list */
             final Iterator<T> myIterator = theValue.iterator();

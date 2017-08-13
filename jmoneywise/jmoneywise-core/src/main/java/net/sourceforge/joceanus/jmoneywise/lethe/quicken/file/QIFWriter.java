@@ -123,7 +123,7 @@ public class QIFWriter {
      */
     private void writeClasses(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
         theReport.setNewStage("Writing classes");
@@ -142,9 +142,9 @@ public class QIFWriter {
         myBuilder.setLength(0);
 
         /* Loop through the categories */
-        Iterator<QIFClass> myIterator = theFile.classIterator();
+        final Iterator<QIFClass> myIterator = theFile.classIterator();
         while (myIterator.hasNext()) {
-            QIFClass myClass = myIterator.next();
+            final QIFClass myClass = myIterator.next();
 
             /* Format the record */
             myClass.formatRecord(theFormatter, myBuilder);
@@ -165,7 +165,7 @@ public class QIFWriter {
      */
     private void writeCategories(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
         theReport.setNewStage("Writing categories");
@@ -179,9 +179,9 @@ public class QIFWriter {
         myBuilder.setLength(0);
 
         /* Loop through the parent categories */
-        Iterator<QIFParentCategory> myIterator = theFile.categoryIterator();
+        final Iterator<QIFParentCategory> myIterator = theFile.categoryIterator();
         while (myIterator.hasNext()) {
-            QIFParentCategory myCategory = myIterator.next();
+            final QIFParentCategory myCategory = myIterator.next();
 
             /* Format the record */
             myCategory.formatRecord(theFormatter, myBuilder);
@@ -202,7 +202,7 @@ public class QIFWriter {
      */
     private void writeAccounts(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
         theReport.setNewStage("Writing accounts");
@@ -217,10 +217,10 @@ public class QIFWriter {
         myBuilder.setLength(0);
 
         /* Loop through the accounts */
-        Iterator<QIFAccountEvents> myIterator = theFile.accountIterator();
+        final Iterator<QIFAccountEvents> myIterator = theFile.accountIterator();
         while (myIterator.hasNext()) {
-            QIFAccountEvents myEvents = myIterator.next();
-            QIFAccount myAccount = myEvents.getAccount();
+            final QIFAccountEvents myEvents = myIterator.next();
+            final QIFAccount myAccount = myEvents.getAccount();
 
             /* Format the record */
             myAccount.formatRecord(theFormatter, myBuilder);
@@ -241,7 +241,7 @@ public class QIFWriter {
      */
     private void writeSecurities(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
         theReport.setNewStage("Writing securities");
@@ -260,10 +260,10 @@ public class QIFWriter {
         myBuilder.setLength(0);
 
         /* Loop through the securities */
-        Iterator<QIFSecurityPrices> myIterator = theFile.securityIterator();
+        final Iterator<QIFSecurityPrices> myIterator = theFile.securityIterator();
         while (myIterator.hasNext()) {
-            QIFSecurityPrices myList = myIterator.next();
-            QIFSecurity mySecurity = myList.getSecurity();
+            final QIFSecurityPrices myList = myIterator.next();
+            final QIFSecurity mySecurity = myList.getSecurity();
 
             /* Format Item Type header */
             QIFRecord.formatItemType(QIFSecurity.QIF_ITEM, myBuilder);
@@ -294,17 +294,17 @@ public class QIFWriter {
      */
     private void writeEvents(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
         theReport.setNewStage("Writing account events");
         theReport.setNumSteps(theFile.numAccounts());
 
         /* Loop through the accounts */
-        Iterator<QIFAccountEvents> myIterator = theFile.accountIterator();
+        final Iterator<QIFAccountEvents> myIterator = theFile.accountIterator();
         while (myIterator.hasNext()) {
-            QIFAccountEvents myEvents = myIterator.next();
-            QIFAccount myAccount = myEvents.getAccount();
+            final QIFAccountEvents myEvents = myIterator.next();
+            final QIFAccount myAccount = myEvents.getAccount();
 
             /* Format Item Type header */
             QIFRecord.formatHeader(QIFAccount.QIF_HDR, myBuilder);
@@ -320,9 +320,9 @@ public class QIFWriter {
             myBuilder.setLength(0);
 
             /* Loop through the events */
-            Iterator<QIFEventRecord<?>> myEvtIterator = myEvents.eventIterator();
+            final Iterator<QIFEventRecord<?>> myEvtIterator = myEvents.eventIterator();
             while (myEvtIterator.hasNext()) {
-                QIFEventRecord<?> myEvent = myEvtIterator.next();
+                final QIFEventRecord<?> myEvent = myEvtIterator.next();
 
                 /* Format the record */
                 myEvent.formatRecord(theFormatter, myBuilder);
@@ -344,7 +344,7 @@ public class QIFWriter {
      */
     private void writePrices(final QIFStreamWriter pStream) throws OceanusException {
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
 
         /* Update status bar */
         theReport.setNewStage("Writing prices");
@@ -356,9 +356,9 @@ public class QIFWriter {
         }
 
         /* Loop through the prices */
-        Iterator<QIFSecurityPrices> myIterator = theFile.securityIterator();
+        final Iterator<QIFSecurityPrices> myIterator = theFile.securityIterator();
         while (myIterator.hasNext()) {
-            QIFSecurityPrices myPriceList = myIterator.next();
+            final QIFSecurityPrices myPriceList = myIterator.next();
 
             /* Format Prices */
             myPriceList.formatPrices(theFormatter, myBuilder);

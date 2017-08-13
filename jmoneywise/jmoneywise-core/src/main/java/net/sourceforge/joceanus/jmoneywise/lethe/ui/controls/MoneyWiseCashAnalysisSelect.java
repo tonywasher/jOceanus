@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket.CashCategoryBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.CashCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
@@ -133,8 +132,8 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        TethysLabel<N, I> myCshLabel = pFactory.newLabel(NLS_CASH + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myCshLabel = pFactory.newLabel(NLS_CASH + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -210,7 +209,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Accounts to select */
-        boolean csAvailable = bEnabled && isAvailable();
+        final boolean csAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theCashButton.setEnabled(csAvailable);
@@ -231,29 +230,13 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         theCategories = pAnalysis.getCashCategories();
         theCash = pAnalysis.getCash();
 
-        /* Obtain the current account */
+        /* Obtain the current cash */
         CashBucket myCash = theState.getCash();
 
-        /* If we have a selected Cash */
-        if (myCash != null) {
-            /* Look for the equivalent bucket */
-            myCash = getMatchingBucket(myCash);
-        }
-
-        /* If we do not have an active bucket and the list is non-empty */
-        if (myCash == null
-            && !theCash.isEmpty()) {
-            /* Check for an account in the same category */
-            CashCategory myCategory = theState.getCategory();
-            CashCategoryBucket myCatBucket = (myCategory == null)
-                                                                  ? null
-                                                                  : theCategories.findItemById(myCategory.getId());
-
-            /* Determine the next cash */
-            myCash = myCatBucket != null
-                                         ? getFirstCash(myCategory)
-                                         : theCash.peekFirst();
-        }
+        /* Switch to versions from the analysis */
+        myCash = myCash != null
+                                ? theCash.getMatchingCash(myCash.getAccount())
+                                : theCash.getDefaultCash();
 
         /* Set the cash */
         theState.setTheCash(myCash);
@@ -265,13 +248,13 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof CashFilter) {
             /* Access filter */
-            CashFilter myFilter = (CashFilter) pFilter;
+            final CashFilter myFilter = (CashFilter) pFilter;
 
             /* Obtain the filter bucket */
             CashBucket myCash = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myCash = getMatchingBucket(myCash);
+            myCash = theCash.getMatchingCash(myCash.getAccount());
 
             /* Set the cash */
             theState.setTheCash(myCash);
@@ -280,44 +263,12 @@ public class MoneyWiseCashAnalysisSelect<N, I>
     }
 
     /**
-     * Obtain first cash account for category.
+     * Obtain the default Cash for the category.
      * @param pCategory the category
-     * @return the first cash account
+     * @return the bucket
      */
-    private CashBucket getFirstCash(final CashCategory pCategory) {
-        /* Loop through the available account values */
-        Iterator<CashBucket> myIterator = theCash.iterator();
-        while (myIterator.hasNext()) {
-            CashBucket myBucket = myIterator.next();
-
-            /* Return if correct category */
-            if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
-                return myBucket;
-            }
-        }
-
-        /* No such account */
-        return null;
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private CashBucket getMatchingBucket(final CashBucket pBucket) {
-        /* Look up the matching CashBucket */
-        Cash myCash = pBucket.getAccount();
-        CashBucket myBucket = theCash.findItemById(myCash.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = theCash.getOrphanBucket(myCash);
-        }
-
-        /* return the bucket */
-        return myBucket;
+    protected CashBucket getDefaultCash(final CashCategory pCategory) {
+        return theCash.getDefaultCash(pCategory);
     }
 
     /**
@@ -350,16 +301,16 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, TethysScrollSubMenu<CashCategory, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<CashCategory, ?>> myMap = new HashMap<>();
 
         /* Record active item */
-        CashCategory myCurrent = theState.getCategory();
+        final CashCategory myCurrent = theState.getCategory();
         TethysScrollMenuItem<CashCategory> myActive = null;
 
         /* Loop through the available category values */
-        Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
+        final Iterator<CashCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            CashCategoryBucket myBucket = myIterator.next();
+            final CashCategoryBucket myBucket = myIterator.next();
 
             /* Only process low-level items */
             if (myBucket.getAccountCategory().isCategoryClass(CashCategoryClass.PARENT)) {
@@ -367,8 +318,8 @@ public class MoneyWiseCashAnalysisSelect<N, I>
             }
 
             /* Determine menu to add to */
-            CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
-            String myParentName = myParent.getName();
+            final CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
+            final String myParentName = myParent.getName();
             TethysScrollSubMenu<CashCategory, ?> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
@@ -379,8 +330,8 @@ public class MoneyWiseCashAnalysisSelect<N, I>
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            CashCategory myCategory = myBucket.getAccountCategory();
-            TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final CashCategory myCategory = myBucket.getAccountCategory();
+            final TethysScrollMenuItem<CashCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myCategory.equals(myCurrent)) {
@@ -403,16 +354,16 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         theCashMenu.removeAllItems();
 
         /* Access current category and Account */
-        CashCategory myCategory = theState.getCategory();
-        CashBucket myCash = theState.getCash();
+        final CashCategory myCategory = theState.getCategory();
+        final CashBucket myCash = theState.getCash();
 
         /* Record active item */
         TethysScrollMenuItem<CashBucket> myActive = null;
 
         /* Loop through the available account values */
-        Iterator<CashBucket> myIterator = theCash.iterator();
+        final Iterator<CashBucket> myIterator = theCash.iterator();
         while (myIterator.hasNext()) {
-            CashBucket myBucket = myIterator.next();
+            final CashBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
             if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
@@ -420,7 +371,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
             }
 
             /* Create a new JMenuItem and add it to the popUp */
-            TethysScrollMenuItem<CashBucket> myItem = theCashMenu.addItem(myBucket);
+            final TethysScrollMenuItem<CashBucket> myItem = theCashMenu.addItem(myBucket);
 
             /* If this is the active cash */
             if (myBucket.equals(myCash)) {
@@ -516,9 +467,9 @@ public class MoneyWiseCashAnalysisSelect<N, I>
          */
         private void setTheCash(final CashBucket pCash) {
             /* Access category for account */
-            CashCategory myCategory = pCash == null
-                                                    ? null
-                                                    : pCash.getCategory();
+            final CashCategory myCategory = pCash == null
+                                                          ? null
+                                                          : pCash.getCategory();
             setTheCash(myCategory, pCash);
         }
 
@@ -547,7 +498,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         private boolean setCategory(final CashCategory pCategory) {
             /* Adjust the selected category */
             if (!MetisDifference.isEqual(pCategory, theCategory)) {
-                setTheCash(pCategory, getFirstCash(pCategory));
+                setTheCash(pCategory, getDefaultCash(pCategory));
                 return true;
             }
             return false;

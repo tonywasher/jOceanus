@@ -50,7 +50,7 @@ public class TableTransTag
      */
     protected TableTransTag(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addEncryptedColumn(TransactionTag.FIELD_NAME, TransactionTag.NAMELEN);
@@ -59,17 +59,17 @@ public class TableTransTag
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransactionTags());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
         myValues.addValue(TransactionTag.FIELD_NAME, myTableDef.getBinaryValue(TransactionTag.FIELD_NAME));
         myValues.addValue(TransactionTag.FIELD_DESC, myTableDef.getBinaryValue(TransactionTag.FIELD_DESC));
 
@@ -81,7 +81,7 @@ public class TableTransTag
     protected void setFieldValue(final TransactionTag pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (TransactionTag.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (TransactionTag.FIELD_DESC.equals(iField)) {

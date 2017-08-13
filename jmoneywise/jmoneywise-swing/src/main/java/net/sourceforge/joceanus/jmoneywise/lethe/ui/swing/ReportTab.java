@@ -283,8 +283,10 @@ public class ReportTab
         switch (myReportType) {
             case NETWORTH:
             case PORTFOLIO:
+            case ASSETGAINS:
             case CAPITALGAINS:
                 myAnalysis = myManager.getAnalysis(myRange.getEnd());
+                theSelect.setAnalysis(myAnalysis);
                 myDoc = theBuilder.createReport(myAnalysis, myReportType);
                 break;
 

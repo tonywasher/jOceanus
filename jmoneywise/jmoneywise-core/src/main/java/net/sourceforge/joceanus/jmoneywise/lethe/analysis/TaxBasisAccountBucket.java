@@ -72,9 +72,9 @@ public final class TaxBasisAccountBucket
      * @param pParent the parent bucket
      * @param pAccount the account
      */
-    private TaxBasisAccountBucket(final Analysis pAnalysis,
-                                  final TaxBasisBucket pParent,
-                                  final TransactionAsset pAccount) {
+    protected TaxBasisAccountBucket(final Analysis pAnalysis,
+                                    final TaxBasisBucket pParent,
+                                    final TransactionAsset pAccount) {
         /* Store the parameters */
         super(pAnalysis, pParent.getTaxBasis());
         theAccount = pAccount;
@@ -143,7 +143,7 @@ public final class TaxBasisAccountBucket
 
     @Override
     public String getName() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(getTaxBasis().getName());
         myBuilder.append(':');
         myBuilder.append(getSimpleName());
@@ -178,10 +178,10 @@ public final class TaxBasisAccountBucket
 
         /* Compare types of buckets */
         int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof TaxBasisAccountBucket)) {
+        if (iDiff == 0
+            && pThat instanceof TaxBasisAccountBucket) {
             /* Compare the Accounts */
-            TaxBasisAccountBucket myThat = (TaxBasisAccountBucket) pThat;
+            final TaxBasisAccountBucket myThat = (TaxBasisAccountBucket) pThat;
             iDiff = getAccount().compareTo(myThat.getAccount());
         }
 
@@ -203,7 +203,7 @@ public final class TaxBasisAccountBucket
         }
 
         /* Compare the Accounts */
-        TaxBasisAccountBucket myThat = (TaxBasisAccountBucket) pThat;
+        final TaxBasisAccountBucket myThat = (TaxBasisAccountBucket) pThat;
         if (!getAccount().equals(myThat.getAccount())) {
             return false;
         }
@@ -287,14 +287,12 @@ public final class TaxBasisAccountBucket
             theMap = new HashMap<>();
 
             /* Loop through the buckets */
-            Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TaxBasisAccountBucket myCurr = myIterator.next();
+                final TaxBasisAccountBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, theParent,
-                        myCurr,
-                        pDate);
+                final TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, theParent, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -323,14 +321,12 @@ public final class TaxBasisAccountBucket
             theMap = new HashMap<>();
 
             /* Loop through the buckets */
-            Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TaxBasisAccountBucket myCurr = myIterator.next();
+                final TaxBasisAccountBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, theParent,
-                        myCurr,
-                        pRange);
+                final TaxBasisAccountBucket myBucket = new TaxBasisAccountBucket(pAnalysis, theParent, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -377,10 +373,10 @@ public final class TaxBasisAccountBucket
                                            final TethysMoney pNett,
                                            final TethysMoney pTax) {
             /* Determine required asset */
-            TransactionAsset myAsset = deriveAsset(pTrans);
+            final TransactionAsset myAsset = deriveAsset(pTrans);
 
             /* Access the relevant account bucket */
-            TaxBasisAccountBucket myBucket = getBucket(myAsset);
+            final TaxBasisAccountBucket myBucket = getBucket(myAsset);
 
             /* register deltas */
             myBucket.registerDeltaValues(pTrans, pGross, pNett, pTax);
@@ -394,10 +390,10 @@ public final class TaxBasisAccountBucket
         protected void adjustValue(final TransactionHelper pTrans,
                                    final TethysMoney pGross) {
             /* Determine required asset */
-            TransactionAsset myAsset = deriveAsset(pTrans);
+            final TransactionAsset myAsset = deriveAsset(pTrans);
 
             /* Access the relevant account bucket */
-            TaxBasisAccountBucket myBucket = getBucket(myAsset);
+            final TaxBasisAccountBucket myBucket = getBucket(myAsset);
 
             /* adjust value */
             myBucket.adjustValue(pTrans, pGross);
@@ -426,7 +422,7 @@ public final class TaxBasisAccountBucket
          */
         private TaxBasisAccountBucket getBucket(final TransactionAsset pAccount) {
             /* Locate the bucket in the list */
-            Long myKey = deriveAssetKey(pAccount);
+            final Long myKey = deriveAssetKey(pAccount);
             TaxBasisAccountBucket myItem = theMap.get(myKey);
 
             /* If the item does not yet exist */
@@ -450,18 +446,8 @@ public final class TaxBasisAccountBucket
          */
         protected TaxBasisAccountBucket findBucket(final TransactionAsset pAccount) {
             /* Locate the bucket in the list */
-            Long myKey = deriveAssetKey(pAccount);
+            final Long myKey = deriveAssetKey(pAccount);
             return theMap.get(myKey);
-        }
-
-        /**
-         * Obtain an orphan TaxBasisAccountBucket for a given account.
-         * @param pAccount the account
-         * @return the bucket
-         */
-        protected TaxBasisAccountBucket getOrphanBucket(final TransactionAsset pAccount) {
-            /* Allocate an orphan bucket */
-            return new TaxBasisAccountBucket(theAnalysis, theParent, pAccount);
         }
 
         /**

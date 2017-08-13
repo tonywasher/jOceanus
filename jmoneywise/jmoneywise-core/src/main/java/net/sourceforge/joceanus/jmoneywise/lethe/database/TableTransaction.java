@@ -54,10 +54,10 @@ public class TableTransaction
      */
     protected TableTransaction(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(Transaction.FIELD_DATE);
+        final PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(Transaction.FIELD_DATE);
         myTableDef.addIntegerColumn(Transaction.FIELD_PAIR);
         myTableDef.addIntegerColumn(Transaction.FIELD_ACCOUNT);
         myTableDef.addIntegerColumn(Transaction.FIELD_PARTNER);
@@ -71,7 +71,7 @@ public class TableTransaction
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransactions());
     }
 
@@ -79,10 +79,10 @@ public class TableTransaction
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Transaction.OBJECT_NAME);
         myValues.addValue(Transaction.FIELD_DATE, myTableDef.getDateValue(Transaction.FIELD_DATE));
         myValues.addValue(Transaction.FIELD_PAIR, myTableDef.getIntegerValue(Transaction.FIELD_PAIR));
         myValues.addValue(Transaction.FIELD_CATEGORY, myTableDef.getIntegerValue(Transaction.FIELD_CATEGORY));
@@ -99,7 +99,7 @@ public class TableTransaction
     protected void setFieldValue(final Transaction pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (Transaction.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getDate());
         } else if (Transaction.FIELD_PAIR.equals(iField)) {

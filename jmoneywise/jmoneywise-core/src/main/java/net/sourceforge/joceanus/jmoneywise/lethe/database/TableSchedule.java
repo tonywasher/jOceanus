@@ -53,7 +53,7 @@ public class TableSchedule
      */
     protected TableSchedule(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
         myTableDef.addDateColumn(Schedule.FIELD_STARTDATE);
@@ -61,7 +61,7 @@ public class TableSchedule
         myTableDef.addReferenceColumn(Schedule.FIELD_FREQ, TableFrequency.TABLE_NAME);
         myTableDef.addNullIntegerColumn(Schedule.FIELD_REPFREQ);
         myTableDef.addNullIntegerColumn(Schedule.FIELD_PATTERN);
-        PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(Schedule.FIELD_NEXTDATE);
+        final PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(Schedule.FIELD_NEXTDATE);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -69,17 +69,17 @@ public class TableSchedule
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getSchedules());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Schedule.OBJECT_NAME);
         myValues.addValue(Schedule.FIELD_STARTDATE, myTableDef.getDateValue(Schedule.FIELD_STARTDATE));
         myValues.addValue(Schedule.FIELD_ENDDATE, myTableDef.getDateValue(Schedule.FIELD_ENDDATE));
         myValues.addValue(Schedule.FIELD_FREQ, myTableDef.getIntegerValue(Schedule.FIELD_FREQ));
@@ -95,7 +95,7 @@ public class TableSchedule
     protected void setFieldValue(final Schedule pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (Schedule.FIELD_STARTDATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getStartDate());
         } else if (Schedule.FIELD_ENDDATE.equals(iField)) {

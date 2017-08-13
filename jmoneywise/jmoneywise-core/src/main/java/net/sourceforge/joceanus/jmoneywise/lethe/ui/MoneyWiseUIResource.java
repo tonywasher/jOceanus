@@ -483,7 +483,7 @@ public enum MoneyWiseUIResource implements TethysResourceId {
      */
     private static Map<AnalysisColumnSet, TethysResourceId> buildColumnMap() {
         /* Create the map and return it */
-        Map<AnalysisColumnSet, TethysResourceId> myMap = new EnumMap<>(AnalysisColumnSet.class);
+        final Map<AnalysisColumnSet, TethysResourceId> myMap = new EnumMap<>(AnalysisColumnSet.class);
         myMap.put(AnalysisColumnSet.BALANCE, COLUMNSET_BALANCE);
         myMap.put(AnalysisColumnSet.STANDARD, COLUMNSET_STANDARD);
         myMap.put(AnalysisColumnSet.SALARY, COLUMNSET_SALARY);

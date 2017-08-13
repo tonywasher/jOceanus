@@ -52,10 +52,10 @@ public class TableCash
      */
     protected TableCash(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Cash.FIELD_CATEGORY, TableCashCategory.TABLE_NAME);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Cash.FIELD_CATEGORY, TableCashCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Cash.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addEncryptedColumn(Cash.FIELD_NAME, Cash.NAMELEN);
         myTableDef.addNullEncryptedColumn(Cash.FIELD_DESC, Cash.DESCLEN);
@@ -67,17 +67,17 @@ public class TableCash
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getCash());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Cash.OBJECT_NAME);
         myValues.addValue(Cash.FIELD_NAME, myTableDef.getBinaryValue(Cash.FIELD_NAME));
         myValues.addValue(Cash.FIELD_DESC, myTableDef.getBinaryValue(Cash.FIELD_DESC));
         myValues.addValue(Cash.FIELD_CATEGORY, myTableDef.getIntegerValue(Cash.FIELD_CATEGORY));
@@ -92,7 +92,7 @@ public class TableCash
     protected void setFieldValue(final Cash pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (Cash.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Cash.FIELD_CURRENCY.equals(iField)) {

@@ -52,10 +52,10 @@ public class TablePayee
      */
     protected TablePayee(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_PAYEETYPE, TablePayeeType.TABLE_NAME);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Payee.FIELD_PAYEETYPE, TablePayeeType.TABLE_NAME);
         myTableDef.addEncryptedColumn(Payee.FIELD_NAME, Payee.NAMELEN);
         myTableDef.addNullEncryptedColumn(Payee.FIELD_DESC, Payee.DESCLEN);
         myTableDef.addBooleanColumn(Payee.FIELD_CLOSED);
@@ -66,17 +66,17 @@ public class TablePayee
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getPayees());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Payee.OBJECT_NAME);
         myValues.addValue(Payee.FIELD_NAME, myTableDef.getBinaryValue(Payee.FIELD_NAME));
         myValues.addValue(Payee.FIELD_DESC, myTableDef.getBinaryValue(Payee.FIELD_DESC));
         myValues.addValue(Payee.FIELD_PAYEETYPE, myTableDef.getIntegerValue(Payee.FIELD_PAYEETYPE));
@@ -90,7 +90,7 @@ public class TablePayee
     protected void setFieldValue(final Payee pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (Payee.FIELD_PAYEETYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getPayeeTypeId());
         } else if (Payee.FIELD_NAME.equals(iField)) {

@@ -66,7 +66,7 @@ public class SheetRegion
         super(pReader, AREA_REGIONS);
 
         /* Access the Class list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getRegions());
     }
 
@@ -79,14 +79,14 @@ public class SheetRegion
         super(pWriter, AREA_REGIONS);
 
         /* Access the Class list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getRegions());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Region.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Region.OBJECT_NAME);
         myValues.addValue(Region.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(Region.FIELD_DESC, loadBytes(COL_DESC));
 
@@ -119,18 +119,18 @@ public class SheetRegion
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of regions */
-        RegionList myList = pData.getRegions();
+        final RegionList myList = pData.getRegions();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_REGIONS);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_REGIONS);
 
             /* Declare the new stage */
             pReport.setNewStage(Region.LIST_NAME);
 
             /* Count the number of regions */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -138,15 +138,15 @@ public class SheetRegion
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = -1;
 
                 /* Access name */
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                String myName = myCell.getStringValue();
+                final MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                final String myName = myCell.getStringValue();
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<>(Region.OBJECT_NAME);
+                final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Region.OBJECT_NAME);
                 myValues.addValue(Region.FIELD_NAME, myName);
 
                 /* Add the value into the list */

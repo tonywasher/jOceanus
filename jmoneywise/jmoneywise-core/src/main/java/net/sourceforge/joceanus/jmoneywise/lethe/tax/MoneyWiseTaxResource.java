@@ -308,7 +308,7 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
      */
     private static Map<MoneyWiseMarginalReduction, TethysResourceId> buildMarginalMap() {
         /* Create the map and return it */
-        Map<MoneyWiseMarginalReduction, TethysResourceId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
+        final Map<MoneyWiseMarginalReduction, TethysResourceId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
         myMap.put(MoneyWiseMarginalReduction.ONEINTWO, MARGINAL_ONEINTWO);
         myMap.put(MoneyWiseMarginalReduction.TWOINTHREE, MARGINAL_TWOINTHREE);
         return myMap;
@@ -329,7 +329,7 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
      */
     private static Map<MoneyWiseCashType, TethysResourceId> buildCashTypeMap() {
         /* Create the map and return it */
-        Map<MoneyWiseCashType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseCashType.class);
+        final Map<MoneyWiseCashType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseCashType.class);
         myMap.put(MoneyWiseCashType.LARGECASH, CASHTYPE_LARGE);
         myMap.put(MoneyWiseCashType.SMALLCASH, CASHTYPE_SMALL);
         return myMap;

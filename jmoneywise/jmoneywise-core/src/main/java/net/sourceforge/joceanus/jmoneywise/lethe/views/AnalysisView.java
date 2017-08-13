@@ -217,7 +217,7 @@ public class AnalysisView
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
-            MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = theView.getData();
             theTransactions = new TransactionView(myData.getTransactions(), theRange);
         } else {
             /* Set nulls */
@@ -248,7 +248,7 @@ public class AnalysisView
             theAnalysis = theBaseAnalysis;
 
             /* Create the new transaction list */
-            MoneyWiseData myData = theView.getData();
+            final MoneyWiseData myData = theView.getData();
             theTransactions = new TransactionView(myData.getTransactions(), theRange);
 
             /* register the lists */
@@ -265,7 +265,7 @@ public class AnalysisView
     private void registerLists() {
         /* If we have transactions */
         if (theTransactions != null) {
-            TransactionInfoList myInfo = theTransactions.getTransactionInfo();
+            final TransactionInfoList myInfo = theTransactions.getTransactionInfo();
             theTransEntry.setDataList(theTransactions);
             theInfoEntry.setDataList(myInfo);
         } else {
@@ -295,13 +295,13 @@ public class AnalysisView
             setTransInfoTypes(pSource.getTransInfoTypes());
 
             /* Create and store info List */
-            TransactionInfoList myTransInfo = pSource.getTransactionInfo();
+            final TransactionInfoList myTransInfo = pSource.getTransactionInfo();
             setTransactionInfo(myTransInfo.getEmptyList(ListStyle.EDIT));
 
             /* Loop through the Transactions extracting relevant elements */
-            Iterator<Transaction> myIterator = pSource.iterator();
+            final Iterator<Transaction> myIterator = pSource.iterator();
             while (myIterator.hasNext()) {
-                Transaction myCurr = myIterator.next();
+                final Transaction myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
@@ -309,7 +309,7 @@ public class AnalysisView
                 }
 
                 /* Check the range */
-                int myResult = pRange.compareTo(myCurr.getDate());
+                final int myResult = pRange.compareTo(myCurr.getDate());
 
                 /* Handle out of range */
                 if (myResult > 0) {
@@ -319,7 +319,7 @@ public class AnalysisView
                 }
 
                 /* Build the new linked transaction and add it to the list */
-                Transaction myTrans = new Transaction(this, myCurr);
+                final Transaction myTrans = new Transaction(this, myCurr);
                 append(myTrans);
             }
         }
@@ -332,7 +332,7 @@ public class AnalysisView
             /* Protect against exceptions */
             try {
                 /* Build the new analysis */
-                TransactionAnalyser myAnalyser = new TransactionAnalyser(theView.getActiveProfile(), theBaseAnalysis, this);
+                final TransactionAnalyser myAnalyser = new TransactionAnalyser(theView.getActiveProfile(), theBaseAnalysis, this);
                 theAnalysis = myAnalyser.getAnalysis();
 
                 /* Notify listeners */

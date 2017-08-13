@@ -117,7 +117,7 @@ public class MoneyWiseTaxDueBucket
             /* Ignore the band if there is zero amount */
             if (myBand.getAmount().isNonZero()) {
                 /* Create the tax band bucket */
-                MoneyWiseTaxBandBucket myBucket = new MoneyWiseTaxBandBucket(myBand);
+                final MoneyWiseTaxBandBucket myBucket = new MoneyWiseTaxBandBucket(myBand);
                 theTaxBands.add(myBucket);
             }
         }
@@ -190,9 +190,9 @@ public class MoneyWiseTaxDueBucket
      */
     private void calculateTaxDue() {
         /* Loop through the tax bands */
-        Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
+        final Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
         while (myIterator.hasNext()) {
-            MoneyWiseTaxBandBucket myBand = myIterator.next();
+            final MoneyWiseTaxBandBucket myBand = myIterator.next();
 
             /* Add the values */
             theTaxableIncome.addAmount(myBand.getAmount());
@@ -243,7 +243,7 @@ public class MoneyWiseTaxDueBucket
 
     @Override
     public String toString() {
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(theTaxBasis);
         myBuilder.append("==>");
         myBuilder.append(theTaxDue);
@@ -356,7 +356,7 @@ public class MoneyWiseTaxDueBucket
 
         @Override
         public String toString() {
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(theAmount);
             myBuilder.append('@');
             myBuilder.append(theRate);

@@ -77,7 +77,7 @@ public class SheetTransCategory
         super(pReader, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getTransCategories());
     }
 
@@ -90,14 +90,14 @@ public class SheetTransCategory
         super(pWriter, AREA_TRANSCATEGORIES);
 
         /* Access the Categories list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getTransCategories());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionCategory.OBJECT_NAME);
         myValues.addValue(TransactionCategory.FIELD_CATTYPE, loadInteger(COL_TYPE));
         myValues.addValue(TransactionCategory.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(TransactionCategory.FIELD_NAME, loadBytes(COL_NAME));
@@ -136,18 +136,18 @@ public class SheetTransCategory
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of categories */
-        TransactionCategoryList myList = pData.getTransCategories();
+        final TransactionCategoryList myList = pData.getTransCategories();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSCATEGORIES);
 
             /* Declare the new stage */
             pReport.setNewStage(TransactionCategory.LIST_NAME);
 
             /* Count the number of Categories */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -155,16 +155,16 @@ public class SheetTransCategory
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = -1;
 
                 /* Access name */
                 MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                String myName = myCell.getStringValue();
+                final String myName = myCell.getStringValue();
 
                 /* Access Type */
                 myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                String myType = myCell.getStringValue();
+                final String myType = myCell.getStringValue();
 
                 /* Access Parent */
                 String myParent = null;
@@ -174,13 +174,13 @@ public class SheetTransCategory
                 }
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionCategory.OBJECT_NAME);
+                final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionCategory.OBJECT_NAME);
                 myValues.addValue(TransactionCategory.FIELD_CATTYPE, myType);
                 myValues.addValue(TransactionCategory.FIELD_PARENT, myParent);
                 myValues.addValue(TransactionCategory.FIELD_NAME, myName);
 
                 /* Add the value into the list */
-                TransactionCategory myCategory = myList.addValuesItem(myValues);
+                final TransactionCategory myCategory = myList.addValuesItem(myValues);
 
                 /* Declare the category */
                 pLoader.declareCategory(myCategory);

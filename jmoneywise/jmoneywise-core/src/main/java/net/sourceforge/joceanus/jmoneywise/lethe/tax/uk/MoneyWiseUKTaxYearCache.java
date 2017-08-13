@@ -99,8 +99,8 @@ public class MoneyWiseUKTaxYearCache
         setTaxYearInCache(MoneyWiseUKTaxYearFactory.YEAR_2018);
 
         /* Determine the dateRange */
-        TethysDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
-        TethysDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2018.getYearEnd();
+        final TethysDate myStart = MoneyWiseUKTaxYearFactory.YEAR_1981.getYearEnd();
+        final TethysDate myEnd = MoneyWiseUKTaxYearFactory.YEAR_2018.getYearEnd();
         myStart.adjustDay(1);
         myStart.adjustYear(-1);
         theDateRange = new TethysDateRange(myStart, myEnd);
@@ -128,7 +128,7 @@ public class MoneyWiseUKTaxYearCache
 
     @Override
     public MoneyWiseUKTaxYear findTaxYearForDate(final TethysDate pDate) {
-        TethysDate myDate = getTaxYearDate(pDate);
+        final TethysDate myDate = getTaxYearDate(pDate);
         return theCache.get(myDate);
     }
 

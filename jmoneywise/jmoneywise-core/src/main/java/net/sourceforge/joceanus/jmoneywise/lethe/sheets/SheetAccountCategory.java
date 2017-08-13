@@ -70,13 +70,13 @@ public final class SheetAccountCategory {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_ACTCATEGORIES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_ACTCATEGORIES);
 
             /* Count the number of Categories */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -84,7 +84,7 @@ public final class SheetAccountCategory {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
 
                 /* Process category */
                 processCategory(pData, myView, myRow);
@@ -116,7 +116,7 @@ public final class SheetAccountCategory {
                                         final MetisDataRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
         ++iAdjust;
 
         /* Access parent */
@@ -132,8 +132,8 @@ public final class SheetAccountCategory {
         }
 
         /* Access class and category */
-        String myClass = myCell.getStringValue();
-        String myCat = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myClass = myCell.getStringValue();
+        final String myCat = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If the category is parent then null the parent reference */
         if (myName.indexOf(':') == -1) {
@@ -143,37 +143,37 @@ public final class SheetAccountCategory {
         /* If this is a Deposit Category */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositCategory.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositCategory.OBJECT_NAME);
             myValues.addValue(DepositCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(DepositCategory.FIELD_PARENT, myParent);
             myValues.addValue(DepositCategory.FIELD_NAME, myName);
 
             /* Add the value into the list */
-            DepositCategoryList myList = pData.getDepositCategories();
+            final DepositCategoryList myList = pData.getDepositCategories();
             myList.addValuesItem(myValues);
 
             /* If this is a cash category */
         } else if (myClass.equals(MoneyWiseDataType.CASH.toString())) {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(CashCategory.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(CashCategory.OBJECT_NAME);
             myValues.addValue(CashCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(CashCategory.FIELD_PARENT, myParent);
             myValues.addValue(CashCategory.FIELD_NAME, myName);
 
             /* Add the value into the list */
-            CashCategoryList myList = pData.getCashCategories();
+            final CashCategoryList myList = pData.getCashCategories();
             myList.addValuesItem(myValues);
 
             /* If this is a loan category */
         } else if (myClass.equals(MoneyWiseDataType.LOAN.toString())) {
             /* Build data values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(LoanCategory.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(LoanCategory.OBJECT_NAME);
             myValues.addValue(LoanCategory.FIELD_CATTYPE, myCat);
             myValues.addValue(LoanCategory.FIELD_PARENT, myParent);
             myValues.addValue(LoanCategory.FIELD_NAME, myName);
 
             /* Add the value into the list */
-            LoanCategoryList myList = pData.getLoanCategories();
+            final LoanCategoryList myList = pData.getLoanCategories();
             myList.addValuesItem(myValues);
 
         } else {
@@ -188,15 +188,15 @@ public final class SheetAccountCategory {
      */
     private static void resolveCategoryLists(final MoneyWiseData pData) throws OceanusException {
         /* Post process the deposit category list */
-        DepositCategoryList myDepositList = pData.getDepositCategories();
+        final DepositCategoryList myDepositList = pData.getDepositCategories();
         myDepositList.postProcessOnLoad();
 
         /* Post process the cash category list */
-        CashCategoryList myCashList = pData.getCashCategories();
+        final CashCategoryList myCashList = pData.getCashCategories();
         myCashList.postProcessOnLoad();
 
         /* Post process the loan category list */
-        LoanCategoryList myLoanList = pData.getLoanCategories();
+        final LoanCategoryList myLoanList = pData.getLoanCategories();
         myLoanList.postProcessOnLoad();
     }
 }

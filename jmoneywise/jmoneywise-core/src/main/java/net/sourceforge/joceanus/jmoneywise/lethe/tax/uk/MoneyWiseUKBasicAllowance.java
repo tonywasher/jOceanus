@@ -181,11 +181,11 @@ public abstract class MoneyWiseUKBasicAllowance
         if (pLoSavings == null) {
             return new MoneyWiseTaxBand(getZeroAmount(), TethysRate.getWholePercentage(0));
         }
-        MoneyWiseTaxBand myBand = new MoneyWiseTaxBand(pLoSavings);
-        TethysMoney myAmount = myBand.getAmount();
+        final MoneyWiseTaxBand myBand = new MoneyWiseTaxBand(pLoSavings);
+        final TethysMoney myAmount = myBand.getAmount();
 
         /* Obtain the preSavings income remaining after the allowance */
-        TethysMoney myPreSavings = new TethysMoney(pConfig.getGrossPreSavings());
+        final TethysMoney myPreSavings = new TethysMoney(pConfig.getGrossPreSavings());
         myPreSavings.subtractAmount(pConfig.getAllowance());
 
         /* If we have allowance left over, return the full loSavings band */
@@ -211,7 +211,7 @@ public abstract class MoneyWiseUKBasicAllowance
      */
     protected TethysMoney getZeroAmount() {
         /* Return a zero allowance */
-        TethysMoney myAllowance = new TethysMoney(theAllowance);
+        final TethysMoney myAllowance = new TethysMoney(theAllowance);
         myAllowance.setZero();
         return myAllowance;
     }

@@ -191,12 +191,12 @@ public class MoneyWiseUKAgeAllowance
     @Override
     protected TethysMoney calculateBasicAllowance(final MoneyWiseUKTaxConfig pConfig) {
         /* Access the client age */
-        TethysDate myBirthday = pConfig.getBirthday();
-        Integer myAge = pConfig.getClientAge();
+        final TethysDate myBirthday = pConfig.getBirthday();
+        final Integer myAge = pConfig.getClientAge();
         boolean hasAgeAllowance = false;
 
         /* Determine the allowance */
-        TethysMoney myBaseAllowance = getAllowance();
+        final TethysMoney myBaseAllowance = getAllowance();
         TethysMoney myAllowance = myBaseAllowance;
         if ((myBirthday.compareTo(HI_BIRTHDAY_MINIMUM) < 0)
             && (theHiAgeAllowance != null)
@@ -210,11 +210,11 @@ public class MoneyWiseUKAgeAllowance
         }
 
         /* If we have an age related allowance and we are above the allowance limit */
-        TethysMoney myGross = pConfig.getGrossTaxable();
+        final TethysMoney myGross = pConfig.getGrossTaxable();
         if (hasAgeAllowance
             && (myGross.compareTo(theAgeAllowanceLimit) > 0)) {
             /* Calculate and apply the reduction */
-            TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAgeAllowanceLimit);
+            final TethysMoney myReduction = getMarginalReduction().calculateReduction(myGross, theAgeAllowanceLimit);
             myAllowance = new TethysMoney(myAllowance);
             myAllowance.subtractAmount(myReduction);
 

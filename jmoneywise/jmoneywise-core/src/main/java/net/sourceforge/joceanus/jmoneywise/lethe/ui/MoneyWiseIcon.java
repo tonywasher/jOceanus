@@ -179,7 +179,7 @@ public enum MoneyWiseIcon implements TethysIconId {
      */
     public static Map<Boolean, TethysIconMapSet<Boolean>> configureLockedIconButton() {
         /* Create the map */
-        Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
 
         /* Create the TRUE state */
         TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
@@ -203,7 +203,7 @@ public enum MoneyWiseIcon implements TethysIconId {
      */
     public static Map<Boolean, TethysIconMapSet<Boolean>> configureReconciledIconButton() {
         /* Create the map */
-        Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
 
         /* Create the TRUE state */
         TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
@@ -226,7 +226,7 @@ public enum MoneyWiseIcon implements TethysIconId {
      */
     public static Map<Boolean, TethysIconMapSet<AssetDirection>> configureDirectionIconButton() {
         /* Create the map */
-        Map<Boolean, TethysIconMapSet<AssetDirection>> myMap = new HashMap<>();
+        final Map<Boolean, TethysIconMapSet<AssetDirection>> myMap = new HashMap<>();
 
         /* Create the TRUE state */
         TethysIconMapSet<AssetDirection> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
@@ -250,7 +250,7 @@ public enum MoneyWiseIcon implements TethysIconId {
      */
     public static Map<Boolean, TethysIconMapSet<Boolean>> configureOptionIconButton() {
         /* Create the map */
-        Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
 
         /* Create the TRUE state */
         TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);

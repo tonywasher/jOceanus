@@ -67,6 +67,11 @@ public enum MoneyWiseReportType {
     PORTFOLIO,
 
     /**
+     * Asset Gains.
+     */
+    ASSETGAINS,
+
+    /**
      * Capital Gains.
      */
     CAPITALGAINS;
@@ -96,6 +101,7 @@ public enum MoneyWiseReportType {
         switch (this) {
             case NETWORTH:
             case PORTFOLIO:
+            case ASSETGAINS:
             case CAPITALGAINS:
                 return true;
             default:
@@ -111,6 +117,7 @@ public enum MoneyWiseReportType {
         switch (this) {
             case MARKETGROWTH:
             case PORTFOLIO:
+            case ASSETGAINS:
             case CAPITALGAINS:
                 return true;
             default:

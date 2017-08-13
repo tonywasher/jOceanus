@@ -87,7 +87,7 @@ public class SheetDeposit
         super(pReader, AREA_DEPOSITS);
 
         /* Access the Deposits list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getDeposits());
     }
 
@@ -100,14 +100,14 @@ public class SheetDeposit
         super(pWriter, AREA_DEPOSITS);
 
         /* Access the Deposits list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getDeposits());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Deposit.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_CATEGORY, loadInteger(COL_CATEGORY));
         myValues.addValue(Deposit.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Deposit.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
@@ -151,8 +151,8 @@ public class SheetDeposit
                                          final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip class */
         ++iAdjust;
@@ -165,7 +165,7 @@ public class SheetDeposit
         }
 
         /* Access Parent account */
-        String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip alias and portfolio columns */
         ++iAdjust;
@@ -193,12 +193,12 @@ public class SheetDeposit
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getStringValue();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Deposit.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_NAME, myName);
         myValues.addValue(Deposit.FIELD_CATEGORY, myType);
         myValues.addValue(Deposit.FIELD_CURRENCY, myCurrency);
@@ -206,11 +206,11 @@ public class SheetDeposit
         myValues.addValue(Deposit.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
-        DepositList myList = pData.getDeposits();
-        Deposit myDeposit = myList.addValuesItem(myValues);
+        final DepositList myList = pData.getDeposits();
+        final Deposit myDeposit = myList.addValuesItem(myValues);
 
         /* Add information relating to the deposit */
-        DepositInfoList myInfoList = pData.getDepositInfo();
+        final DepositInfoList myInfoList = pData.getDepositInfo();
         myInfoList.addInfoItem(null, myDeposit, AccountInfoClass.MATURITY, myMaturity);
         myInfoList.addInfoItem(null, myDeposit, AccountInfoClass.OPENINGBALANCE, myBalance);
 

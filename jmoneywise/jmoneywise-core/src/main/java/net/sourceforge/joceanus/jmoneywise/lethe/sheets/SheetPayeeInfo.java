@@ -49,7 +49,7 @@ public class SheetPayeeInfo
         super(pReader, AREA_PAYEEINFO);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getPayeeInfo());
     }
 
@@ -62,7 +62,7 @@ public class SheetPayeeInfo
         super(pWriter, AREA_PAYEEINFO);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getPayeeInfo());
     }
 

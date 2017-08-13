@@ -170,7 +170,7 @@ public class SecurityType
 
         @Override
         protected SecurityTypeList getEmptyList(final ListStyle pStyle) {
-            SecurityTypeList myList = new SecurityTypeList(this);
+            final SecurityTypeList myList = new SecurityTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -182,7 +182,7 @@ public class SecurityType
                 throw new UnsupportedOperationException();
             }
 
-            SecurityType myType = new SecurityType(this, (SecurityType) pItem);
+            final SecurityType myType = new SecurityType(this, (SecurityType) pItem);
             add(myType);
             return myType;
         }
@@ -207,7 +207,7 @@ public class SecurityType
          */
         public void addBasicItem(final String pSecType) throws OceanusException {
             /* Create a new Security Type */
-            SecurityType mySecType = new SecurityType(this, pSecType);
+            final SecurityType mySecType = new SecurityType(this, pSecType);
 
             /* Check that this SecurityTypeId has not been previously added */
             if (!isIdUnique(mySecType.getId())) {
@@ -222,7 +222,7 @@ public class SecurityType
         @Override
         public SecurityType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            SecurityType myType = new SecurityType(this, pValues);
+            final SecurityType myType = new SecurityType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -240,7 +240,7 @@ public class SecurityType
         @Override
         protected SecurityType newItem(final SecurityTypeClass pClass) throws OceanusException {
             /* Create the type */
-            SecurityType myType = new SecurityType(this, pClass);
+            final SecurityType myType = new SecurityType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

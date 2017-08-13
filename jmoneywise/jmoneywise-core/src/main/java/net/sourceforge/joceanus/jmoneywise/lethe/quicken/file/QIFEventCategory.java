@@ -72,7 +72,7 @@ public class QIFEventCategory
         theDesc = pCategory.getDesc();
 
         /* Determine whether this is an income category */
-        TransactionCategoryClass myClass = pCategory.getCategoryTypeClass();
+        final TransactionCategoryClass myClass = pCategory.getCategoryTypeClass();
         isIncome = myClass.isIncome();
 
         /* Build lines */
@@ -103,15 +103,15 @@ public class QIFEventCategory
         boolean bIsIncome = false;
 
         /* Loop through the lines */
-        Iterator<String> myIterator = pLines.iterator();
+        final Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
-            String myLine = myIterator.next();
+            final String myLine = myIterator.next();
 
             /* Determine the category */
-            QCategoryLineType myType = QCategoryLineType.parseLine(myLine);
+            final QCategoryLineType myType = QCategoryLineType.parseLine(myLine);
             if (myType != null) {
                 /* Access data */
-                String myData = myLine.substring(myType.getSymbol().length());
+                final String myData = myLine.substring(myType.getSymbol().length());
 
                 /* Switch on line type */
                 switch (myType) {

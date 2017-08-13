@@ -164,7 +164,7 @@ public class AnalysisManager
      */
     public Analysis getAnalysis(final TethysDate pDate) {
         /* Create the new Range */
-        TethysDateRange myRange = new TethysDateRange(null, pDate);
+        final TethysDateRange myRange = new TethysDateRange(null, pDate);
 
         /* Look for the existing analysis */
         Analysis myAnalysis = theAnalysisMap.get(myRange);
@@ -222,31 +222,31 @@ public class AnalysisManager
      */
     private void produceTotals(final Analysis pAnalysis) {
         /* Create the market analysis */
-        MarketAnalysis myMarket = new MarketAnalysis(pAnalysis);
+        final MarketAnalysis myMarket = new MarketAnalysis(pAnalysis);
 
         /* Analyse the deposits */
-        DepositBucketList myDeposits = pAnalysis.getDeposits();
-        DepositCategoryBucketList myDepositCategories = pAnalysis.getDepositCategories();
+        final DepositBucketList myDeposits = pAnalysis.getDeposits();
+        final DepositCategoryBucketList myDepositCategories = pAnalysis.getDepositCategories();
         myDepositCategories.analyseDeposits(myMarket, myDeposits);
         myDepositCategories.produceTotals();
         haveForeignCurrency = myDepositCategories.haveForeignCurrency();
 
         /* Analyse the cash */
-        CashBucketList myCash = pAnalysis.getCash();
-        CashCategoryBucketList myCashCategories = pAnalysis.getCashCategories();
+        final CashBucketList myCash = pAnalysis.getCash();
+        final CashCategoryBucketList myCashCategories = pAnalysis.getCashCategories();
         myCashCategories.analyseCash(myMarket, myCash);
         myCashCategories.produceTotals();
         haveForeignCurrency |= myCashCategories.haveForeignCurrency();
 
         /* Analyse the loans */
-        LoanBucketList myLoans = pAnalysis.getLoans();
-        LoanCategoryBucketList myLoanCategories = pAnalysis.getLoanCategories();
+        final LoanBucketList myLoans = pAnalysis.getLoans();
+        final LoanCategoryBucketList myLoanCategories = pAnalysis.getLoanCategories();
         myLoanCategories.analyseLoans(myMarket, myLoans);
         myLoanCategories.produceTotals();
         haveForeignCurrency |= myLoanCategories.haveForeignCurrency();
 
         /* Analyse the securities */
-        PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        final PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
         myPortfolios.analyseSecurities(myMarket);
         haveForeignCurrency |= myPortfolios.haveForeignCurrency();
         haveActiveSecurities = myPortfolios.haveActiveSecurities();
@@ -255,15 +255,15 @@ public class AnalysisManager
         myMarket.propagateTotals();
 
         /* Analyse the Payees */
-        PayeeBucketList myPayees = pAnalysis.getPayees();
+        final PayeeBucketList myPayees = pAnalysis.getPayees();
         myPayees.produceTotals();
 
         /* Analyse the TransactionCategories */
-        TransactionCategoryBucketList myTransCategories = pAnalysis.getTransCategories();
+        final TransactionCategoryBucketList myTransCategories = pAnalysis.getTransCategories();
         myTransCategories.produceTotals();
 
         /* Analyse the TaxBasis */
-        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
+        final TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
         myTaxBasis.produceTotals();
     }
 
@@ -273,13 +273,13 @@ public class AnalysisManager
      */
     private void checkTotals(final Analysis pAnalysis) {
         /* Obtain Totals bucket */
-        DepositCategoryBucket myDepCat = pAnalysis.getDepositCategories().getTotals();
-        CashCategoryBucket myCashCat = pAnalysis.getCashCategories().getTotals();
-        LoanCategoryBucket myLoanCat = pAnalysis.getLoanCategories().getTotals();
-        PortfolioBucket myPort = pAnalysis.getPortfolios().getTotals();
-        PayeeBucket myPayee = pAnalysis.getPayees().getTotals();
-        TransactionCategoryBucket myTrans = pAnalysis.getTransCategories().getTotals();
-        TaxBasisBucket myTax = pAnalysis.getTaxBasis().getTotals();
+        final DepositCategoryBucket myDepCat = pAnalysis.getDepositCategories().getTotals();
+        final CashCategoryBucket myCashCat = pAnalysis.getCashCategories().getTotals();
+        final LoanCategoryBucket myLoanCat = pAnalysis.getLoanCategories().getTotals();
+        final PortfolioBucket myPort = pAnalysis.getPortfolios().getTotals();
+        final PayeeBucket myPayee = pAnalysis.getPayees().getTotals();
+        final TransactionCategoryBucket myTrans = pAnalysis.getTransCategories().getTotals();
+        final TaxBasisBucket myTax = pAnalysis.getTaxBasis().getTotals();
 
         /* Handle null data */
         if (myDepCat == null) {
@@ -288,12 +288,12 @@ public class AnalysisManager
 
         /* Access totals */
         TethysMoney myDepTotal = myDepCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
-        TethysMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
-        TethysMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
-        TethysMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.VALUEDELTA);
-        TethysMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.PROFIT);
-        TethysMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.PROFIT);
-        TethysMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
+        final TethysMoney myCashTotal = myCashCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        final TethysMoney myLoanTotal = myLoanCat.getValues().getMoneyValue(AccountAttribute.VALUEDELTA);
+        final TethysMoney myPortTotal = myPort.getValues().getMoneyValue(SecurityAttribute.VALUEDELTA);
+        final TethysMoney myPayTotal = myPayee.getValues().getMoneyValue(PayeeAttribute.PROFIT);
+        final TethysMoney myEvtTotal = myTrans.getValues().getMoneyValue(TransactionAttribute.PROFIT);
+        final TethysMoney myTaxTotal = myTax.getValues().getMoneyValue(TaxBasisAttribute.GROSS);
 
         /* Create a copy */
         myDepTotal = new TethysMoney(myDepTotal);

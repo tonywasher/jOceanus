@@ -78,7 +78,7 @@ public class SheetExchangeRate
         super(pReader, AREA_XCHGRATES);
 
         /* Access the Rates list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getExchangeRates());
     }
 
@@ -91,14 +91,14 @@ public class SheetExchangeRate
         super(pWriter, AREA_XCHGRATES);
 
         /* Access the Rates list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getExchangeRates());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
         myValues.addValue(ExchangeRate.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(ExchangeRate.FIELD_FROM, loadInteger(COL_FROM));
         myValues.addValue(ExchangeRate.FIELD_TO, loadInteger(COL_TO));
@@ -137,36 +137,36 @@ public class SheetExchangeRate
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of rates */
-        ExchangeRateList myList = pData.getExchangeRates();
+        final ExchangeRateList myList = pData.getExchangeRates();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_XCHGRATES);
 
             /* Count the number of Rates */
-            int myRows = myView.getRowCount();
-            int myCols = myView.getColumnCount();
-            int myTotal = (myRows - 1) * (myCols - 1);
+            final int myRows = myView.getRowCount();
+            final int myCols = myView.getColumnCount();
+            final int myTotal = (myRows - 1) * (myCols - 1);
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
 
             /* Obtain the default currency */
-            String myDefCurrency = pData.getDefaultCurrency().getName();
+            final String myDefCurrency = pData.getDefaultCurrency().getName();
 
             /* Loop through the rows of the table */
-            MetisDataRow myActRow = myView.getRowByIndex(0);
+            final MetisDataRow myActRow = myView.getRowByIndex(0);
             for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
 
                 /* Access date */
                 MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
-                TethysDate myDate = myCell.getDateValue();
+                final TethysDate myDate = myCell.getDateValue();
 
                 /* If the rate is too late */
                 if (!pLoader.checkDate(myDate)) {
@@ -181,16 +181,16 @@ public class SheetExchangeRate
                     if (myCell == null) {
                         continue;
                     }
-                    String myCurrency = myCell.getStringValue();
+                    final String myCurrency = myCell.getStringValue();
 
                     /* Handle rate which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
                         /* Access the formatted cell */
-                        String myRate = myCell.getStringValue();
+                        final String myRate = myCell.getStringValue();
 
                         /* Build data values */
-                        DataValues<MoneyWiseDataType> myValues = new DataValues<>(ExchangeRate.OBJECT_NAME);
+                        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(ExchangeRate.OBJECT_NAME);
                         myValues.addValue(ExchangeRate.FIELD_FROM, myDefCurrency);
                         myValues.addValue(ExchangeRate.FIELD_TO, myCurrency);
                         myValues.addValue(ExchangeRate.FIELD_DATE, myDate);

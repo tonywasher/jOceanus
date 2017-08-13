@@ -85,9 +85,9 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      */
     protected AccountCategoryBucket(final AssetCurrency pCurrency) {
         /* Create the value maps */
-        Currency myCurrency = pCurrency == null
-                                                ? AccountBucket.DEFAULT_CURRENCY
-                                                : pCurrency.getCurrency();
+        final Currency myCurrency = pCurrency == null
+                                                      ? AccountBucket.DEFAULT_CURRENCY
+                                                      : pCurrency.getCurrency();
         theValues = new AccountValues(myCurrency);
         theBaseValues = new AccountValues(myCurrency);
     }
@@ -99,9 +99,9 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         }
 
         /* Handle Attribute fields */
-        AccountAttribute myClass = getClassForField(pField);
+        final AccountAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -169,7 +169,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
      */
     private Object getAttributeValue(final AccountAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getValue(pAttr);
+        final Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -211,7 +211,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         }
 
         /* Compare the Account Categories */
-        AccountCategoryBucket<?, ?> myThat = (AccountCategoryBucket<?, ?>) pThat;
+        final AccountCategoryBucket<?, ?> myThat = (AccountCategoryBucket<?, ?>) pThat;
         return getAccountCategory().equals(myThat.getAccountCategory());
     }
 
@@ -237,7 +237,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
         myValue = new TethysMoney(myValue);
 
         /* Subtract any base value */
-        TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.VALUATION);
         myValue.subtractAmount(myBase);
 
         /* Set the delta */
@@ -291,8 +291,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private static void addValues(final AccountValues pTotals,
                                   final AccountValues pSource) {
         /* Add base values */
-        TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
-        TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 
@@ -304,8 +304,8 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private static void addValues(final AccountValues pTotals,
                                   final SecurityValues pSource) {
         /* Add base values */
-        TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
-        TethysMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
+        final TethysMoney myValue = pTotals.getMoneyValue(AccountAttribute.VALUATION);
+        final TethysMoney mySrcValue = pSource.getMoneyValue(SecurityAttribute.VALUATION);
         myValue.addAmount(mySrcValue);
     }
 }

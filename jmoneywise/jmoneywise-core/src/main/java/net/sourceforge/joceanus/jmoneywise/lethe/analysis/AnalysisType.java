@@ -98,7 +98,7 @@ public enum AnalysisType {
      * @return the default
      */
     public BucketAttribute getDefaultValue() {
-        BucketAttribute[] myValues = getValues();
+        final BucketAttribute[] myValues = getValues();
         return myValues != null && myValues.length > 0
                                                        ? myValues[0]
                                                        : null;

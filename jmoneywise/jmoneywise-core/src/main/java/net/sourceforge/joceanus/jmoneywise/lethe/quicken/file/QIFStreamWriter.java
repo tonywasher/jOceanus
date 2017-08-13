@@ -49,8 +49,8 @@ public class QIFStreamWriter
      */
     public QIFStreamWriter(final File pFile) throws IOException {
         /* Open the file */
-        FileOutputStream myOutput = new FileOutputStream(pFile);
-        BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
+        final FileOutputStream myOutput = new FileOutputStream(pFile);
+        final BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
         theWriter = new OutputStreamWriter(myBuffer, StandardCharsets.ISO_8859_1);
     }
 

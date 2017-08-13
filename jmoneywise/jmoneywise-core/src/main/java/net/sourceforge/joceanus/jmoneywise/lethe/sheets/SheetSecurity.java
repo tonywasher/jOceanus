@@ -88,7 +88,7 @@ public class SheetSecurity
         super(pReader, AREA_SECURITIES);
 
         /* Access the Securities list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getSecurities());
     }
 
@@ -101,14 +101,14 @@ public class SheetSecurity
         super(pWriter, AREA_SECURITIES);
 
         /* Access the Securities list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getSecurities());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_SECTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Security.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Security.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
@@ -152,17 +152,17 @@ public class SheetSecurity
                                           final MetisDataRow pRow) throws OceanusException {
         /* Access name and type */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
-        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Look for separator in category */
-        int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
+        final int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
         if (iIndex == -1) {
             throw new MoneyWiseLogicException("Unexpected Security Class " + myType);
         }
 
         /* Access subCategory as security type */
-        String mySecType = myType.substring(iIndex + 1);
+        final String mySecType = myType.substring(iIndex + 1);
 
         /* Skip class */
         ++iAdjust;
@@ -175,10 +175,10 @@ public class SheetSecurity
         }
 
         /* Access the list */
-        SecurityList myList = pData.getSecurities();
+        final SecurityList myList = pData.getSecurities();
 
         /* Access Parent account */
-        String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Access the alias account */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
@@ -188,7 +188,7 @@ public class SheetSecurity
         }
 
         /* Access Portfolio */
-        String myPortfolio = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myPortfolio = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If we have an alias */
         if (myAlias != null) {
@@ -221,12 +221,12 @@ public class SheetSecurity
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getStringValue();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Security.OBJECT_NAME);
         myValues.addValue(Security.FIELD_NAME, myName);
         myValues.addValue(Security.FIELD_SECTYPE, mySecType);
         myValues.addValue(Security.FIELD_CURRENCY, myCurrency);
@@ -234,10 +234,10 @@ public class SheetSecurity
         myValues.addValue(Security.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
-        Security mySecurity = myList.addValuesItem(myValues);
+        final Security mySecurity = myList.addValuesItem(myValues);
 
         /* Add information relating to the security */
-        SecurityInfoList myInfoList = pData.getSecurityInfo();
+        final SecurityInfoList myInfoList = pData.getSecurityInfo();
         myInfoList.addInfoItem(null, mySecurity, AccountInfoClass.SYMBOL, mySymbol);
         myInfoList.addInfoItem(null, mySecurity, AccountInfoClass.REGION, myRegion);
 

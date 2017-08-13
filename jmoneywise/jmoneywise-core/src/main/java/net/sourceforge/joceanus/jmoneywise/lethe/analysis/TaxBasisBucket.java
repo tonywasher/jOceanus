@@ -151,11 +151,11 @@ public class TaxBasisBucket
                     && theTaxBasis.getTaxClass().isExpense();
 
         /* Create the history map */
-        AssetCurrency myDefault = theAnalysis.getCurrency();
-        Currency myCurrency = myDefault == null
-                                                ? AccountBucket.DEFAULT_CURRENCY
-                                                : myDefault.getCurrency();
-        TaxBasisValues myValues = new TaxBasisValues(myCurrency);
+        final AssetCurrency myDefault = theAnalysis.getCurrency();
+        final Currency myCurrency = myDefault == null
+                                                      ? AccountBucket.DEFAULT_CURRENCY
+                                                      : myDefault.getCurrency();
+        final TaxBasisValues myValues = new TaxBasisValues(myCurrency);
         theHistory = new BucketHistory<>(myValues);
 
         /* Create the account list */
@@ -253,9 +253,9 @@ public class TaxBasisBucket
         }
 
         /* Handle Attribute fields */
-        TaxBasisAttribute myClass = getClassForField(pField);
+        final TaxBasisAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -342,18 +342,6 @@ public class TaxBasisBucket
     public TaxBasisAccountBucket findAccountBucket(final TransactionAsset pAccount) {
         return hasAccounts
                            ? theAccounts.findBucket(pAccount)
-                           : null;
-    }
-
-    /**
-     * Obtain an orphan TaxBasisAccountBucket for a given account.
-     * @param pAccount the account
-     * @return the bucket
-     */
-    public TaxBasisAccountBucket getOrphanAccountBucket(final TransactionAsset pAccount) {
-        /* Allocate an orphan bucket */
-        return hasAccounts
-                           ? theAccounts.getOrphanBucket(pAccount)
                            : null;
     }
 
@@ -463,7 +451,7 @@ public class TaxBasisBucket
      */
     private Object getAttributeValue(final TaxBasisAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getValue(pAttr);
+        final Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -519,7 +507,7 @@ public class TaxBasisBucket
         }
 
         /* Compare the Tax Bases */
-        TaxBasisBucket myThat = (TaxBasisBucket) pThat;
+        final TaxBasisBucket myThat = (TaxBasisBucket) pThat;
         if (!getTaxBasis().equals(myThat.getTaxBasis())) {
             return false;
         }
@@ -537,19 +525,19 @@ public class TaxBasisBucket
      * Add income transaction.
      * @param pTrans the transaction
      */
-    private void addIncomeTransaction(final TransactionHelper pTrans) {
+    protected void addIncomeTransaction(final TransactionHelper pTrans) {
         /* Access details */
-        TethysMoney myAmount = pTrans.getCreditAmount();
-        TethysMoney myTaxCredit = pTrans.getTaxCredit();
-        TethysMoney myNatIns = pTrans.getNatInsurance();
-        TethysMoney myBenefit = pTrans.getDeemedBenefit();
-        TethysMoney myWithheld = pTrans.getWithheld();
+        final TethysMoney myAmount = pTrans.getCreditAmount();
+        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myBenefit = pTrans.getDeemedBenefit();
+        final TethysMoney myWithheld = pTrans.getWithheld();
 
         /* Determine style of transaction */
         AssetDirection myDir = pTrans.getDirection();
 
         /* If the account is special */
-        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
         if (myClass.isSwitchDirection()) {
             /* switch the direction */
             myDir = myDir.reverse();
@@ -559,8 +547,8 @@ public class TaxBasisBucket
         TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new TethysMoney(myGross);
         myGross.setZero();
-        TethysMoney myNett = new TethysMoney(myGross);
-        TethysMoney myTax = new TethysMoney(myGross);
+        final TethysMoney myNett = new TethysMoney(myGross);
+        final TethysMoney myTax = new TethysMoney(myGross);
 
         /* If this is an expense */
         if (myDir.isTo()) {
@@ -641,20 +629,20 @@ public class TaxBasisBucket
      * Add expense transaction.
      * @param pTrans the transaction
      */
-    private void addExpenseTransaction(final TransactionHelper pTrans) {
+    protected void addExpenseTransaction(final TransactionHelper pTrans) {
         /* Access details */
-        TethysMoney myAmount = pTrans.getDebitAmount();
-        TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final TethysMoney myAmount = pTrans.getDebitAmount();
+        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
 
         /* Determine style of event */
-        AssetDirection myDir = pTrans.getDirection();
+        final AssetDirection myDir = pTrans.getDirection();
 
         /* Obtain zeroed counters */
         TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
         myGross = new TethysMoney(myGross);
         myGross.setZero();
-        TethysMoney myNett = new TethysMoney(myGross);
-        TethysMoney myTax = new TethysMoney(myGross);
+        final TethysMoney myNett = new TethysMoney(myGross);
+        final TethysMoney myTax = new TethysMoney(myGross);
 
         /* If this is a refunded expense */
         if (myDir.isFrom()) {
@@ -836,9 +824,9 @@ public class TaxBasisBucket
             super(TaxBasisAttribute.class);
 
             /* Create all possible values */
-            setValue(TaxBasisAttribute.GROSS, new TethysMoney(pCurrency));
-            setValue(TaxBasisAttribute.NETT, new TethysMoney(pCurrency));
-            setValue(TaxBasisAttribute.TAXCREDIT, new TethysMoney(pCurrency));
+            super.setValue(TaxBasisAttribute.GROSS, new TethysMoney(pCurrency));
+            super.setValue(TaxBasisAttribute.NETT, new TethysMoney(pCurrency));
+            super.setValue(TaxBasisAttribute.TAXCREDIT, new TethysMoney(pCurrency));
         }
 
         /**
@@ -873,14 +861,14 @@ public class TaxBasisBucket
         @Override
         protected void resetBaseValues() {
             /* Create a zero value in the correct currency */
-            TethysMoney myValue = getMoneyValue(TaxBasisAttribute.GROSS);
+            TethysMoney myValue = super.getMoneyValue(TaxBasisAttribute.GROSS);
             myValue = new TethysMoney(myValue);
             myValue.setZero();
 
             /* Reset Income and expense values */
-            setValue(TaxBasisAttribute.GROSS, myValue);
-            setValue(TaxBasisAttribute.NETT, new TethysMoney(myValue));
-            setValue(TaxBasisAttribute.TAXCREDIT, new TethysMoney(myValue));
+            super.setValue(TaxBasisAttribute.GROSS, myValue);
+            super.setValue(TaxBasisAttribute.NETT, new TethysMoney(myValue));
+            super.setValue(TaxBasisAttribute.TAXCREDIT, new TethysMoney(myValue));
         }
 
         /**
@@ -888,9 +876,9 @@ public class TaxBasisBucket
          * @return true/false
          */
         public boolean isActive() {
-            TethysMoney myGross = getMoneyValue(TaxBasisAttribute.GROSS);
-            TethysMoney myNet = getMoneyValue(TaxBasisAttribute.NETT);
-            TethysMoney myTax = getMoneyValue(TaxBasisAttribute.TAXCREDIT);
+            final TethysMoney myGross = super.getMoneyValue(TaxBasisAttribute.GROSS);
+            final TethysMoney myNet = super.getMoneyValue(TaxBasisAttribute.NETT);
+            final TethysMoney myTax = super.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
             return (myGross.isNonZero()) || (myNet.isNonZero()) || (myTax.isNonZero());
         }
     }
@@ -975,12 +963,12 @@ public class TaxBasisBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<TaxBasisBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TaxBasisBucket myCurr = myIterator.next();
+                final TaxBasisBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                TaxBasisBucket myBucket = new TaxBasisBucket(pAnalysis, myCurr, pDate);
+                final TaxBasisBucket myBucket = new TaxBasisBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -1007,12 +995,12 @@ public class TaxBasisBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<TaxBasisBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TaxBasisBucket myCurr = myIterator.next();
+                final TaxBasisBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                TaxBasisBucket myBucket = new TaxBasisBucket(pAnalysis, myCurr, pRange);
+                final TaxBasisBucket myBucket = new TaxBasisBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -1084,7 +1072,7 @@ public class TaxBasisBucket
          */
         public TaxBasisBucket getBucket(final TaxBasisClass pClass) {
             /* Locate the bucket in the list */
-            TaxBasis myBasis = theData.getTaxBases().findItemByClass(pClass);
+            final TaxBasis myBasis = theData.getTaxBases().findItemByClass(pClass);
             TaxBasisBucket myItem = findItemById(myBasis.getId());
 
             /* If the item does not yet exist */
@@ -1101,13 +1089,46 @@ public class TaxBasisBucket
         }
 
         /**
-         * Obtain an orphan TaxBasisBucket for a given taxBasis.
-         * @param pBasis the taxBasis
-         * @return the bucket
+         * Obtain the matching BasisBucket.
+         * @param pTaxBasis the taxBasis
+         * @return the matching bucket
          */
-        public TaxBasisBucket getOrphanBucket(final TaxBasis pBasis) {
-            /* Allocate an orphan bucket */
-            return new TaxBasisBucket(theAnalysis, pBasis);
+        public TaxBasisBucket getMatchingBasis(final TaxBasisBucket pTaxBasis) {
+            /* Access the matching taxBasis bucket */
+            TaxBasisBucket myBasis = findItemById(pTaxBasis.getTaxBasis().getOrderedId());
+            if (myBasis == null) {
+                myBasis = new TaxBasisBucket(theAnalysis, pTaxBasis.getTaxBasis());
+            }
+
+            /* If we are matching a TaxBasisAccount Bucket */
+            if (pTaxBasis instanceof TaxBasisAccountBucket) {
+                /* Look up the asset bucket */
+                final TransactionAsset myAsset = ((TaxBasisAccountBucket) pTaxBasis).getAccount();
+                TaxBasisAccountBucket myAccountBucket = myBasis.findAccountBucket(myAsset);
+
+                /* If there is no such bucket in the analysis */
+                if (myAccountBucket == null) {
+                    /* Allocate an orphan bucket */
+                    myAccountBucket = new TaxBasisAccountBucket(theAnalysis, myBasis, myAsset);
+                }
+
+                /* Set bucket as the account bucket */
+                myBasis = myAccountBucket;
+            }
+
+            /* Return the basis */
+            return myBasis;
+        }
+
+        /**
+         * Obtain the default BasisBucket.
+         * @return the default bucket
+         */
+        public TaxBasisBucket getDefaultBasis() {
+            /* Return the first basis in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
         }
 
         /**
@@ -1118,7 +1139,7 @@ public class TaxBasisBucket
         protected void adjustBasis(final TransactionHelper pTrans,
                                    final TransactionCategory pCategory) {
             /* Switch on the category type */
-            TaxBasisBucket myBucket;
+            final TaxBasisBucket myBucket;
             switch (pCategory.getCategoryTypeClass()) {
                 case TAXEDINCOME:
                     /* Adjust the Gross salary bucket */
@@ -1235,7 +1256,7 @@ public class TaxBasisBucket
                                    final TaxBasisClass pClass,
                                    final TethysMoney pIncome) {
             /* Access the bucket and adjust it */
-            TaxBasisBucket myBucket = getBucket(pClass);
+            final TaxBasisBucket myBucket = getBucket(pClass);
             myBucket.adjustValue(pTrans, pIncome);
         }
 
@@ -1254,7 +1275,7 @@ public class TaxBasisBucket
             }
 
             /* Access the bucket and adjust it */
-            TaxBasisBucket myBucket = getBucket(TaxBasisClass.EXPENSE);
+            final TaxBasisBucket myBucket = getBucket(TaxBasisClass.EXPENSE);
             myBucket.adjustValue(pTrans, myAmount);
         }
 
@@ -1266,11 +1287,11 @@ public class TaxBasisBucket
         protected void adjustMarket(final TethysMoney pIncome,
                                     final TethysMoney pExpense) {
             /* Calculate the delta */
-            TethysMoney myDelta = new TethysMoney(pIncome);
+            final TethysMoney myDelta = new TethysMoney(pIncome);
             myDelta.subtractAmount(pExpense);
 
             /* Access the bucket and adjust it */
-            TaxBasisBucket myBucket = getBucket(TaxBasisClass.MARKET);
+            final TaxBasisBucket myBucket = getBucket(TaxBasisClass.MARKET);
             myBucket.adjustValue(myDelta);
         }
 
@@ -1290,9 +1311,9 @@ public class TaxBasisBucket
          */
         protected void produceTotals() {
             /* Loop through the buckets */
-            Iterator<TaxBasisBucket> myIterator = iterator();
+            final Iterator<TaxBasisBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                TaxBasisBucket myBucket = myIterator.next();
+                final TaxBasisBucket myBucket = myIterator.next();
 
                 /* Adjust the Total Profit buckets */
                 theTotals.addValues(myBucket);
@@ -1304,9 +1325,9 @@ public class TaxBasisBucket
          */
         protected void prune() {
             /* Loop through the buckets */
-            Iterator<TaxBasisBucket> myIterator = listIterator();
+            final Iterator<TaxBasisBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                TaxBasisBucket myCurr = myIterator.next();
+                final TaxBasisBucket myCurr = myIterator.next();
 
                 /* Remove the bucket if it is inactive */
                 if (!myCurr.isActive()) {
@@ -1318,14 +1339,14 @@ public class TaxBasisBucket
         @Override
         public TethysMoney getAmountForTaxBasis(final TaxBasisClass pBasis) {
             /* Access the bucket */
-            TaxBasisBucket myItem = findItemById(pBasis.getClassId());
+            final TaxBasisBucket myItem = findItemById(pBasis.getClassId());
 
             /* If the bucket is not found */
             if (myItem == null) {
-                AssetCurrency myAssetCurrency = theAnalysis.getCurrency();
-                Currency myCurrency = myAssetCurrency == null
-                                                              ? Currency.getInstance(Locale.getDefault())
-                                                              : myAssetCurrency.getCurrency();
+                final AssetCurrency myAssetCurrency = theAnalysis.getCurrency();
+                final Currency myCurrency = myAssetCurrency == null
+                                                                    ? Currency.getInstance(Locale.getDefault())
+                                                                    : myAssetCurrency.getCurrency();
                 return new TethysMoney(myCurrency);
             }
 

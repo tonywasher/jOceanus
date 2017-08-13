@@ -51,7 +51,7 @@ public class TableExchangeRate
     /**
      * The formatter.
      */
-    private MetisDataFormatter theFormatter = null;
+    private MetisDataFormatter theFormatter;
 
     /**
      * Constructor.
@@ -59,11 +59,11 @@ public class TableExchangeRate
      */
     protected TableExchangeRate(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(ExchangeRate.FIELD_DATE);
-        PrometheusColumnDefinition myFromCol = myTableDef.addReferenceColumn(ExchangeRate.FIELD_FROM, TableAssetCurrency.TABLE_NAME);
+        final PrometheusColumnDefinition myDateCol = myTableDef.addDateColumn(ExchangeRate.FIELD_DATE);
+        final PrometheusColumnDefinition myFromCol = myTableDef.addReferenceColumn(ExchangeRate.FIELD_FROM, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(ExchangeRate.FIELD_TO, TableAssetCurrency.TABLE_NAME);
         myTableDef.addRatioColumn(ExchangeRate.FIELD_RATE);
 
@@ -74,7 +74,7 @@ public class TableExchangeRate
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getExchangeRates());
         theFormatter = myData.getDataFormatter();
     }
@@ -82,10 +82,10 @@ public class TableExchangeRate
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(ExchangeRate.OBJECT_NAME);
         myValues.addValue(ExchangeRate.FIELD_DATE, myTableDef.getDateValue(ExchangeRate.FIELD_DATE));
         myValues.addValue(ExchangeRate.FIELD_FROM, myTableDef.getIntegerValue(ExchangeRate.FIELD_FROM));
         myValues.addValue(ExchangeRate.FIELD_TO, myTableDef.getIntegerValue(ExchangeRate.FIELD_TO));
@@ -99,7 +99,7 @@ public class TableExchangeRate
     protected void setFieldValue(final ExchangeRate pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (ExchangeRate.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getDate());
         } else if (ExchangeRate.FIELD_FROM.equals(iField)) {

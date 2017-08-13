@@ -128,16 +128,16 @@ public class MoneyWiseUKChargeableGainsScheme
             super(pBase);
 
             /* Create the totals */
-            TethysMoney myZero = new TethysMoney(pBase.getTaxDue());
+            final TethysMoney myZero = new TethysMoney(pBase.getTaxDue());
             theTotalGains = new TethysMoney(myZero);
             theTotalSlices = new TethysMoney(myZero);
             theTaxRelief = new TethysMoney(myZero);
             theNettTaxDue = new TethysMoney(myZero);
 
             /* Process the slices */
-            Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.getGainSlices().getUnderlyingList().iterator();
+            final Iterator<MoneyWiseChargeableGainSlice> myIterator = pSource.getGainSlices().getUnderlyingList().iterator();
             while (myIterator.hasNext()) {
-                MoneyWiseChargeableGainSlice mySlice = myIterator.next();
+                final MoneyWiseChargeableGainSlice mySlice = myIterator.next();
                 processSlice(mySlice);
             }
 
@@ -221,14 +221,14 @@ public class MoneyWiseUKChargeableGainsScheme
          */
         private MoneyWiseTaxDueBucket buildSliceBucket() {
             /* Create a new taxBand set */
-            MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
-            TethysMoney myRemaining = new TethysMoney(theTotalSlices);
+            final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
+            final TethysMoney myRemaining = new TethysMoney(theTotalSlices);
 
             /* Calculate new tax allocation */
-            Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
+            final Iterator<MoneyWiseTaxBandBucket> myIterator = taxBandIterator();
             while (myRemaining.isNonZero()
                    && myIterator.hasNext()) {
-                MoneyWiseTaxBandBucket myBucket = myIterator.next();
+                final MoneyWiseTaxBandBucket myBucket = myIterator.next();
 
                 /* Determine amount in band */
                 TethysMoney myAmount = MoneyWiseUKIncomeScheme.getAmountInBand(myBucket.getAmount(), myRemaining);

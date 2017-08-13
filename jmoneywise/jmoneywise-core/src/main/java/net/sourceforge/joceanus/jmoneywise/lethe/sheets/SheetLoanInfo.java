@@ -49,7 +49,7 @@ public class SheetLoanInfo
         super(pReader, AREA_LOANINFO);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getLoanInfo());
     }
 
@@ -62,7 +62,7 @@ public class SheetLoanInfo
         super(pWriter, AREA_LOANINFO);
 
         /* Access the InfoType list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getLoanInfo());
     }
 

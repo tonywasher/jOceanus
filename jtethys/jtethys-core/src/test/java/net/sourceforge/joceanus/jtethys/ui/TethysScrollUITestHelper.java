@@ -169,6 +169,7 @@ public class TethysScrollUITestHelper<N, I> {
     public List<TethysListId> buildSelectedList() {
         /* Create the list */
         List<TethysListId> myValues = new ArrayList<>();
+        myValues.add(TethysListId.IMPORTANT);
         myValues.add(TethysListId.WORK);
 
         /* Set the value */

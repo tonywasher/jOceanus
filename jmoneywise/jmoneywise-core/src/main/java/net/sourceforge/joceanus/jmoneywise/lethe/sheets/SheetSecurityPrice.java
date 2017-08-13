@@ -73,7 +73,7 @@ public class SheetSecurityPrice
         super(pReader, AREA_PRICES);
 
         /* Access the Prices list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getSecurityPrices());
     }
 
@@ -86,14 +86,14 @@ public class SheetSecurityPrice
         super(pWriter, AREA_PRICES);
 
         /* Access the Prices list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getSecurityPrices());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(SecurityPrice.OBJECT_NAME);
         myValues.addValue(SecurityPrice.FIELD_SECURITY, loadInteger(COL_SECURITY));
         myValues.addValue(SecurityPrice.FIELD_DATE, loadDate(COL_DATE));
         myValues.addValue(SecurityPrice.FIELD_PRICE, loadBytes(COL_PRICE));
@@ -130,33 +130,33 @@ public class SheetSecurityPrice
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of prices */
-        SecurityPriceList myList = pData.getSecurityPrices();
+        final SecurityPriceList myList = pData.getSecurityPrices();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_PRICES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_PRICES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_PRICES);
 
             /* Count the number of Prices */
-            int myRows = myView.getRowCount();
-            int myCols = myView.getColumnCount();
-            int myTotal = (myRows - 1) * (myCols - 1);
+            final int myRows = myView.getRowCount();
+            final int myCols = myView.getColumnCount();
+            final int myTotal = (myRows - 1) * (myCols - 1);
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
 
             /* Loop through the rows of the table */
-            MetisDataRow myActRow = myView.getRowByIndex(0);
+            final MetisDataRow myActRow = myView.getRowByIndex(0);
             for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
 
                 /* Access date */
                 MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
-                TethysDate myDate = myCell.getDateValue();
+                final TethysDate myDate = myCell.getDateValue();
 
                 /* If the price is too late */
                 if (!pLoader.checkDate(myDate)) {
@@ -171,16 +171,16 @@ public class SheetSecurityPrice
                     if (myCell == null) {
                         continue;
                     }
-                    String mySecurity = myCell.getStringValue();
+                    final String mySecurity = myCell.getStringValue();
 
                     /* Handle price which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
                         /* Access the formatted cell */
-                        String myPrice = myCell.getStringValue();
+                        final String myPrice = myCell.getStringValue();
 
                         /* Build data values */
-                        DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityPrice.OBJECT_NAME);
+                        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityPrice.OBJECT_NAME);
                         myValues.addValue(SecurityPrice.FIELD_SECURITY, mySecurity);
                         myValues.addValue(SecurityPrice.FIELD_DATE, myDate);
                         myValues.addValue(SecurityPrice.FIELD_PRICE, myPrice);

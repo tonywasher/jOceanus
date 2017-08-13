@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.Iterator;
+
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -202,13 +205,51 @@ public final class CashBucket
         }
 
         /**
-         * Obtain an orphan CashBucket for a given cash account.
-         * @param pCash the cash account
+         * Obtain the matching CashBucket.
+         * @param pCash the cash
+         * @return the matching bucket
+         */
+        public CashBucket getMatchingCash(final Cash pCash) {
+            /* Return the matching cash if it exists else an orphan bucket */
+            final CashBucket myCash = findItemById(pCash.getOrderedId());
+            return myCash != null
+                                  ? myCash
+                                  : new CashBucket(getAnalysis(), pCash);
+        }
+
+        /**
+         * Obtain the default Cash.
          * @return the bucket
          */
-        public CashBucket getOrphanBucket(final Cash pCash) {
-            /* Allocate an orphan bucket */
-            return newBucket(pCash);
+        public CashBucket getDefaultCash() {
+            /* Return the first cash in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
+        }
+
+        /**
+         * Obtain the default Cash for the category.
+         * @param pCategory the category
+         * @return the bucket
+         */
+        public CashBucket getDefaultCash(final CashCategory pCategory) {
+            /* If there is a category */
+            if (pCategory != null) {
+                /* Loop through the available account values */
+                final Iterator<CashBucket> myIterator = iterator();
+                while (myIterator.hasNext()) {
+                    final CashBucket myBucket = myIterator.next();
+
+                    /* Return if correct category */
+                    if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
+                        return myBucket;
+                    }
+                }
+            }
+
+            /* No default cash */
+            return null;
         }
 
         @Override

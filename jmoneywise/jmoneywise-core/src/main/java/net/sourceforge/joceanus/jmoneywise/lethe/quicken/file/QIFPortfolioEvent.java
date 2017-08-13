@@ -92,7 +92,7 @@ public class QIFPortfolioEvent
         addLine(new QIFPortfolioClearedLine(isCleared));
 
         /* Add the comment line if it exists */
-        String myComment = pTrans.getComments();
+        final String myComment = pTrans.getComments();
         if (myComment != null) {
             addLine(new QIFPortfolioCommentLine(myComment));
         }
@@ -116,29 +116,29 @@ public class QIFPortfolioEvent
         Boolean myCleared = null;
 
         /* Obtain parsers */
-        TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
-        TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
+        final TethysDateFormatter myDateParser = pFormatter.getDateFormatter();
+        final TethysDecimalParser myDecParser = pFormatter.getDecimalParser();
 
         /* Loop through the lines */
-        Iterator<String> myIterator = pLines.iterator();
+        final Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
-            String myLine = myIterator.next();
+            final String myLine = myIterator.next();
 
             /* Determine the category */
-            QPortfolioLineType myType = QPortfolioLineType.parseLine(myLine);
+            final QPortfolioLineType myType = QPortfolioLineType.parseLine(myLine);
             if (myType != null) {
                 /* Access data */
-                String myData = myLine.substring(myType.getSymbol().length());
+                final String myData = myLine.substring(myType.getSymbol().length());
 
                 /* Switch on line type */
                 switch (myType) {
                     case DATE:
-                        TethysDate myDateDay = myDateParser.parseDateBase(myData, QIFWriter.QIF_BASEYEAR);
+                        final TethysDate myDateDay = myDateParser.parseDateBase(myData, QIFWriter.QIF_BASEYEAR);
                         addLine(new QIFPortfolioDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
                     case CLEARED:
-                        Boolean myFlag = myData.equals(QIFLine.QIF_RECONCILED);
+                        final Boolean myFlag = myData.equals(QIFLine.QIF_RECONCILED);
                         addLine(new QIFPortfolioClearedLine(myFlag));
                         myCleared = myFlag;
                         break;
@@ -154,7 +154,7 @@ public class QIFPortfolioEvent
                         addLine(new QIFPortfolioActionLine(myAction));
                         break;
                     case PRICE:
-                        TethysPrice myPrice = myDecParser.parsePriceValue(myData);
+                        final TethysPrice myPrice = myDecParser.parsePriceValue(myData);
                         addLine(new QIFPortfolioPriceLine(myPrice));
                         break;
                     case COMMISSION:
@@ -165,7 +165,7 @@ public class QIFPortfolioEvent
                         addLine(new QIFPortfolioPayeeDescLine(myData));
                         break;
                     case QUANTITY:
-                        TethysUnits myUnits = myDecParser.parseUnitsValue(myData);
+                        final TethysUnits myUnits = myDecParser.parseUnitsValue(myData);
                         addLine(new QIFPortfolioQuantityLine(myUnits));
                         break;
                     case SECURITY:
@@ -173,8 +173,8 @@ public class QIFPortfolioEvent
                         break;
                     case XFERACCOUNT:
                         /* Look for account, category and classes */
-                        QIFAccount myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
-                        QIFEventCategory myCategory = QIFCategoryLine.parseCategory(pFile, myData);
+                        final QIFAccount myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
+                        final QIFEventCategory myCategory = QIFCategoryLine.parseCategory(pFile, myData);
                         List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
                         if (myAccount == null) {
                             myClasses = QIFCategoryLine.parseCategoryClasses(pFile, myData);
@@ -361,14 +361,14 @@ public class QIFPortfolioEvent
      */
     private void convertPayee() {
         /* Look for a payee line */
-        QIFLine<QPortfolioLineType> myLine = getLine(QPortfolioLineType.PAYEE);
+        final QIFLine<QPortfolioLineType> myLine = getLine(QPortfolioLineType.PAYEE);
         if (myLine instanceof QIFPortfolioPayeeDescLine) {
             /* Access payee */
-            QIFPortfolioPayeeDescLine myDesc = (QIFPortfolioPayeeDescLine) myLine;
-            String myName = myDesc.getValue();
+            final QIFPortfolioPayeeDescLine myDesc = (QIFPortfolioPayeeDescLine) myLine;
+            final String myName = myDesc.getValue();
 
             /* Register the payee */
-            QIFPayee myPayee = getFile().registerPayee(myName);
+            final QIFPayee myPayee = getFile().registerPayee(myName);
             addLine(new QIFPortfolioPayeeLine(myPayee));
         }
     }
@@ -378,14 +378,14 @@ public class QIFPortfolioEvent
      */
     private void convertSplit() {
         /* Look for an action line */
-        QIFLine<QPortfolioLineType> myLine = getLine(QPortfolioLineType.QUANTITY);
+        final QIFLine<QPortfolioLineType> myLine = getLine(QPortfolioLineType.QUANTITY);
         if (myLine instanceof QIFPortfolioQuantityLine) {
             /* Extract action */
-            QIFPortfolioQuantityLine myQuantity = (QIFPortfolioQuantityLine) myLine;
-            TethysUnits myUnits = myQuantity.getUnits();
+            final QIFPortfolioQuantityLine myQuantity = (QIFPortfolioQuantityLine) myLine;
+            final TethysUnits myUnits = myQuantity.getUnits();
 
             /* Convert to ratio line */
-            TethysRatio myRatio = new TethysRatio(myUnits.toString());
+            final TethysRatio myRatio = new TethysRatio(myUnits.toString());
             addLine(new QIFPortfolioSplitRatioLine(myRatio));
         }
     }

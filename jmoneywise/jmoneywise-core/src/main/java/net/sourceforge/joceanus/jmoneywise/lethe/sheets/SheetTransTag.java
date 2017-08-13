@@ -67,7 +67,7 @@ public class SheetTransTag
         super(pReader, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getTransactionTags());
     }
 
@@ -80,14 +80,14 @@ public class SheetTransTag
         super(pWriter, AREA_TRANSTAGS);
 
         /* Access the Class list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getTransactionTags());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(TransactionTag.OBJECT_NAME);
         myValues.addValue(TransactionTag.FIELD_NAME, loadBytes(COL_NAME));
         myValues.addValue(TransactionTag.FIELD_DESC, loadBytes(COL_DESC));
 
@@ -120,18 +120,18 @@ public class SheetTransTag
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of tags */
-        TransactionTagList myList = pData.getTransactionTags();
+        final TransactionTagList myList = pData.getTransactionTags();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSTAGS);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_TRANSTAGS);
 
             /* Declare the new stage */
             pReport.setNewStage(TransactionTag.LIST_NAME);
 
             /* Count the number of tags */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -139,15 +139,15 @@ public class SheetTransTag
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = -1;
 
                 /* Access name */
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
-                String myName = myCell.getStringValue();
+                final MetisDataCell myCell = myView.getRowCellByIndex(myRow, ++iAdjust);
+                final String myName = myCell.getStringValue();
 
                 /* Build data values */
-                DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionTag.OBJECT_NAME);
+                final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionTag.OBJECT_NAME);
                 myValues.addValue(TransactionTag.FIELD_NAME, myName);
 
                 /* Add the value into the list */

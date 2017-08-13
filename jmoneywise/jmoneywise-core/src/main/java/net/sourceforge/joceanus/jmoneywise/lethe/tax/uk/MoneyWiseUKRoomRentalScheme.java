@@ -60,11 +60,11 @@ public class MoneyWiseUKRoomRentalScheme
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            TethysMoney myRemaining = new TethysMoney(pAmount);
+            final TethysMoney myRemaining = new TethysMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by basic allowance */
-            TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
+            final TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
 
             /* Determine the total amount covered by the allowance */
             myAmount = new TethysMoney(myAmount);

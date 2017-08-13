@@ -89,16 +89,16 @@ public class MoneyWiseUKIncomeScheme
                                                      final TaxBasisClass pBasis,
                                                      final TethysMoney pAmount) {
         /* Handle negative amounts */
-        TethysMoney myAmount = new TethysMoney(pAmount);
+        final TethysMoney myAmount = new TethysMoney(pAmount);
         if (!myAmount.isPositive()) {
             myAmount.setZero();
         }
 
         /* Determine the taxBand set */
-        MoneyWiseTaxBandSet myTaxBands = determineTaxBands(pConfig, pBasis, myAmount);
+        final MoneyWiseTaxBandSet myTaxBands = determineTaxBands(pConfig, pBasis, myAmount);
 
         /* Adjust allowances and taxBands */
-        TethysMoney myRemaining = adjustAllowances(pConfig, myAmount);
+        final TethysMoney myRemaining = adjustAllowances(pConfig, myAmount);
         adjustTaxBands(pConfig, myRemaining);
 
         /* return the taxBands */
@@ -116,22 +116,22 @@ public class MoneyWiseUKIncomeScheme
                                                   final TaxBasisClass pBasis,
                                                   final TethysMoney pAmount) {
         /* Create a new taxBand set */
-        MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
-        TethysMoney myRemaining = new TethysMoney(pAmount);
+        final MoneyWiseTaxBandSet myTaxBands = new MoneyWiseTaxBandSet();
+        final TethysMoney myRemaining = new TethysMoney(pAmount);
 
         /* Determine allowance */
-        TethysMoney myAllowance = new TethysMoney(getAmountInAllowance(pConfig, myRemaining));
+        final TethysMoney myAllowance = new TethysMoney(getAmountInAllowance(pConfig, myRemaining));
         if (myAllowance.isNonZero() && reliefAvailable) {
             myTaxBands.addTaxBand(new MoneyWiseTaxBand(myAllowance, TethysRate.getWholePercentage(0)));
             myRemaining.subtractAmount(myAllowance);
         }
 
         /* Loop through the taxBands */
-        Iterator<MoneyWiseTaxBand> myIterator = taxBandIterator(pConfig, pBasis);
+        final Iterator<MoneyWiseTaxBand> myIterator = taxBandIterator(pConfig, pBasis);
         while (myRemaining.isNonZero()
                && myIterator.hasNext()) {
             /* Determine amount in band */
-            MoneyWiseTaxBand myBand = myIterator.next();
+            final MoneyWiseTaxBand myBand = myIterator.next();
             TethysMoney myAmount = getAmountInBand(myBand.getAmount(), myRemaining);
 
             /* Add any held-over allowance */
@@ -215,7 +215,7 @@ public class MoneyWiseUKIncomeScheme
     protected TethysMoney adjustForAllowance(final TethysMoney pAllowance,
                                              final TethysMoney pAmount) {
         /* Take a copy of the amount */
-        TethysMoney myRemaining = new TethysMoney(pAmount);
+        final TethysMoney myRemaining = new TethysMoney(pAmount);
 
         /* If we have exhausted the allowance */
         if (myRemaining.compareTo(pAllowance) > 0) {

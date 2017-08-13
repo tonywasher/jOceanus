@@ -203,7 +203,7 @@ public class AccountInfoType
 
         @Override
         protected AccountInfoTypeList getEmptyList(final ListStyle pStyle) {
-            AccountInfoTypeList myList = new AccountInfoTypeList(this);
+            final AccountInfoTypeList myList = new AccountInfoTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -215,7 +215,7 @@ public class AccountInfoType
                 throw new UnsupportedOperationException();
             }
 
-            AccountInfoType myType = new AccountInfoType(this, (AccountInfoType) pItem);
+            final AccountInfoType myType = new AccountInfoType(this, (AccountInfoType) pItem);
             add(myType);
             return myType;
         }
@@ -240,7 +240,7 @@ public class AccountInfoType
          */
         public void addBasicItem(final String pInfoType) throws OceanusException {
             /* Create a new Account Info Type */
-            AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
+            final AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
@@ -255,7 +255,7 @@ public class AccountInfoType
         @Override
         public AccountInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            AccountInfoType myType = new AccountInfoType(this, pValues);
+            final AccountInfoType myType = new AccountInfoType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -273,7 +273,7 @@ public class AccountInfoType
         @Override
         protected AccountInfoType newItem(final AccountInfoClass pClass) throws OceanusException {
             /* Create the type */
-            AccountInfoType myType = new AccountInfoType(this, pClass);
+            final AccountInfoType myType = new AccountInfoType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

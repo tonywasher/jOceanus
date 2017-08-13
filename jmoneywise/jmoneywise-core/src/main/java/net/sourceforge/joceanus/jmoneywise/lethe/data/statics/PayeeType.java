@@ -167,7 +167,7 @@ public class PayeeType
 
         @Override
         protected PayeeTypeList getEmptyList(final ListStyle pStyle) {
-            PayeeTypeList myList = new PayeeTypeList(this);
+            final PayeeTypeList myList = new PayeeTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -179,7 +179,7 @@ public class PayeeType
                 throw new UnsupportedOperationException();
             }
 
-            PayeeType myType = new PayeeType(this, (PayeeType) pItem);
+            final PayeeType myType = new PayeeType(this, (PayeeType) pItem);
             add(myType);
             return myType;
         }
@@ -204,7 +204,7 @@ public class PayeeType
          */
         public void addBasicItem(final String pPayeeType) throws OceanusException {
             /* Create a new Payee Type */
-            PayeeType myPayeeType = new PayeeType(this, pPayeeType);
+            final PayeeType myPayeeType = new PayeeType(this, pPayeeType);
 
             /* Check that this PayeeTypeId has not been previously added */
             if (!isIdUnique(myPayeeType.getId())) {
@@ -219,7 +219,7 @@ public class PayeeType
         @Override
         public PayeeType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            PayeeType myType = new PayeeType(this, pValues);
+            final PayeeType myType = new PayeeType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -237,7 +237,7 @@ public class PayeeType
         @Override
         protected PayeeType newItem(final PayeeTypeClass pClass) throws OceanusException {
             /* Create the type */
-            PayeeType myType = new PayeeType(this, pClass);
+            final PayeeType myType = new PayeeType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -258,9 +258,9 @@ public class PayeeType
          */
         public PayeeType getDefaultPayeeType() {
             /* loop through the payee types */
-            Iterator<PayeeType> myIterator = iterator();
+            final Iterator<PayeeType> myIterator = iterator();
             while (myIterator.hasNext()) {
-                PayeeType myType = myIterator.next();
+                final PayeeType myType = myIterator.next();
 
                 /* Ignore deleted and singular types */
                 if (!myType.isDeleted() && !myType.getPayeeClass().isSingular()) {

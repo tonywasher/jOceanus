@@ -76,7 +76,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
             if (!pCountersOnly
                 || myKey.isCounter()) {
                 /* Copy non-null values */
-                Object myValue = pSource.getValue(myKey);
+                final Object myValue = pSource.getValue(myKey);
                 if (myValue != null) {
                     theMap.put(myKey, myValue);
                 }
@@ -150,7 +150,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
         /* Access current and previous values */
         TethysMoney myCurr = getMoneyValue(pAttr);
         if (pPrevious != null) {
-            TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
+            final TethysMoney myPrev = pPrevious.getMoneyValue(pAttr);
 
             /* Calculate delta */
             myCurr = new TethysMoney(myCurr);
@@ -170,7 +170,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
         /* Access current and previous values */
         TethysUnits myCurr = getUnitsValue(pAttr);
         if (pPrevious != null) {
-            TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
+            final TethysUnits myPrev = pPrevious.getUnitsValue(pAttr);
 
             /* Calculate delta */
             myCurr = new TethysUnits(myCurr);
@@ -189,7 +189,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
         /* Adjust spend values */
         TethysMoney myValue = getMoneyValue(pAttr);
         myValue = new TethysMoney(myValue);
-        TethysMoney myBaseValue = pBase.getMoneyValue(pAttr);
+        final TethysMoney myBaseValue = pBase.getMoneyValue(pAttr);
         myValue.subtractAmount(myBaseValue);
         theMap.put(pAttr, myValue);
     }

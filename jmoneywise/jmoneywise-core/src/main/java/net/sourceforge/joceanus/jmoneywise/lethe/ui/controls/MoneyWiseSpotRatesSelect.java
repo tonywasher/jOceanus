@@ -139,8 +139,8 @@ public class MoneyWiseSpotRatesSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
-        TethysLabel<N, I> myCurr = pFactory.newLabel(NLS_CURRENCY);
-        TethysLabel<N, I> myDate = pFactory.newLabel(NLS_DATE);
+        final TethysLabel<N, I> myCurr = pFactory.newLabel(NLS_CURRENCY);
+        final TethysLabel<N, I> myDate = pFactory.newLabel(NLS_DATE);
 
         /* Create the DateButton */
         theDateButton = pFactory.newDateButton();
@@ -225,14 +225,14 @@ public class MoneyWiseSpotRatesSelect<N, I>
      */
     public final void refreshData() {
         /* Access the data */
-        TethysDateRange myRange = theView.getRange();
+        final TethysDateRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
 
         /* Set the currency name */
-        MoneyWiseData myData = theView.getData();
-        AssetCurrency myDefault = myData.getDefaultCurrency();
+        final MoneyWiseData myData = theView.getData();
+        final AssetCurrency myDefault = myData.getDefaultCurrency();
         theCurrLabel.setText(myDefault != null
                                                ? myDefault.getDesc() + " (" + myDefault.getName() + ")"
                                                : null);
@@ -243,12 +243,12 @@ public class MoneyWiseSpotRatesSelect<N, I>
      * @param pRange the Range to set
      */
     private void setRange(final TethysDateRange pRange) {
-        TethysDate myStart = (pRange == null)
-                                              ? null
-                                              : pRange.getStart();
-        TethysDate myEnd = (pRange == null)
-                                            ? null
-                                            : pRange.getEnd();
+        final TethysDate myStart = (pRange == null)
+                                                    ? null
+                                                    : pRange.getStart();
+        final TethysDate myEnd = (pRange == null)
+                                                  ? null
+                                                  : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDate(myStart);
@@ -379,7 +379,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
          */
         private boolean setDate(final TethysDateButtonManager<N, I> pButton) {
             /* Adjust the date and build the new range */
-            TethysDate myDate = new TethysDate(pButton.getSelectedDate());
+            final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!MetisDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
@@ -429,7 +429,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
             theDateButton.setSelectedDate(theDate);
 
             /* Determine whether we are todays date */
-            boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
+            final boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

@@ -76,13 +76,13 @@ public final class SheetAccount {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(SHEET_AREA);
+            final MetisDataView myView = pWorkBook.getRangeView(SHEET_AREA);
 
             /* Declare the new stage */
             pReport.setNewStage(SHEET_AREA);
 
             /* Count the number of accounts */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps (*2) */
             pReport.setNumSteps(myTotal << 1);
@@ -90,7 +90,7 @@ public final class SheetAccount {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
 
                 /* Process payee account */
                 processPayee(pLoader, pData, myView, myRow);
@@ -105,7 +105,7 @@ public final class SheetAccount {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
 
                 /* Process account */
                 processAccount(pLoader, pData, myView, myRow);
@@ -143,7 +143,7 @@ public final class SheetAccount {
         ++iAdjust;
 
         /* Access account class */
-        String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If this is a Payee */
         if (myClass.equals(MoneyWiseDataType.PAYEE.toString())) {
@@ -175,7 +175,7 @@ public final class SheetAccount {
         ++iAdjust;
 
         /* Access account class */
-        String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myClass = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* If this is a deposit */
         if (myClass.equals(MoneyWiseDataType.DEPOSIT.toString())) {
@@ -215,8 +215,8 @@ public final class SheetAccount {
      */
     private static void resolvePayeeLists(final MoneyWiseData pData) throws OceanusException {
         /* PostProcess the Payees */
-        PayeeList myPayeeList = pData.getPayees();
-        PayeeInfoList myPayeeInfoList = pData.getPayeeInfo();
+        final PayeeList myPayeeList = pData.getPayees();
+        final PayeeInfoList myPayeeInfoList = pData.getPayeeInfo();
         myPayeeList.postProcessOnLoad();
         myPayeeInfoList.postProcessOnLoad();
     }
@@ -230,32 +230,32 @@ public final class SheetAccount {
     private static void resolveAccountLists(final ArchiveLoader pLoader,
                                             final MoneyWiseData pData) throws OceanusException {
         /* PostProcess the securities */
-        SecurityList mySecurityList = pData.getSecurities();
-        SecurityInfoList mySecInfoList = pData.getSecurityInfo();
+        final SecurityList mySecurityList = pData.getSecurities();
+        final SecurityInfoList mySecInfoList = pData.getSecurityInfo();
         mySecurityList.postProcessOnLoad();
         mySecInfoList.postProcessOnLoad();
 
         /* PostProcess the deposits */
-        DepositList myDepositList = pData.getDeposits();
-        DepositInfoList myDepInfoList = pData.getDepositInfo();
+        final DepositList myDepositList = pData.getDeposits();
+        final DepositInfoList myDepInfoList = pData.getDepositInfo();
         myDepositList.postProcessOnLoad();
         myDepInfoList.postProcessOnLoad();
 
         /* PostProcess the cash */
-        CashList myCashList = pData.getCash();
-        CashInfoList myCashInfoList = pData.getCashInfo();
+        final CashList myCashList = pData.getCash();
+        final CashInfoList myCashInfoList = pData.getCashInfo();
         myCashList.postProcessOnLoad();
         myCashInfoList.postProcessOnLoad();
 
         /* PostProcess the loans */
-        LoanList myLoanList = pData.getLoans();
-        LoanInfoList myLoanInfoList = pData.getLoanInfo();
+        final LoanList myLoanList = pData.getLoans();
+        final LoanInfoList myLoanInfoList = pData.getLoanInfo();
         myLoanList.postProcessOnLoad();
         myLoanInfoList.postProcessOnLoad();
 
         /* PostProcess the portfolios */
-        PortfolioList myPortfolioList = pData.getPortfolios();
-        PortfolioInfoList myPortInfoList = pData.getPortfolioInfo();
+        final PortfolioList myPortfolioList = pData.getPortfolios();
+        final PortfolioInfoList myPortInfoList = pData.getPortfolioInfo();
         myPortfolioList.postProcessOnLoad();
         myPortInfoList.postProcessOnLoad();
 

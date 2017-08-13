@@ -104,7 +104,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         theButton = pFactory.newScrollButton();
 
         /* Create the label */
-        TethysLabel<N, I> myLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -123,7 +123,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         theCategoryMenu = theButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewCategory());
         theButton.setMenuConfigurator(e -> buildCategoryMenu());
     }
@@ -195,18 +195,10 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         /* Obtain the current category */
         TransactionCategoryBucket myCategory = theState.getEventCategory();
 
-        /* If we have a selected Category */
-        if (myCategory != null) {
-            /* Look for the equivalent bucket */
-            myCategory = getMatchingBucket(myCategory);
-        }
-
-        /* If we do not have an active bucket and the list is non-empty */
-        if (myCategory == null
-            && !theCategories.isEmpty()) {
-            /* Use the first non-parent bucket */
-            myCategory = getFirstCategory();
-        }
+        /* Switch to versions from the analysis */
+        myCategory = myCategory != null
+                                        ? theCategories.getMatchingCategory(myCategory.getTransactionCategory())
+                                        : theCategories.getDefaultCategory();
 
         /* Set the category */
         theState.setTheCategory(myCategory);
@@ -218,58 +210,18 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof TransactionCategoryFilter) {
             /* Access filter */
-            TransactionCategoryFilter myFilter = (TransactionCategoryFilter) pFilter;
+            final TransactionCategoryFilter myFilter = (TransactionCategoryFilter) pFilter;
 
             /* Obtain the filter bucket */
             TransactionCategoryBucket myCategory = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myCategory = getMatchingBucket(myCategory);
+            myCategory = theCategories.getMatchingCategory(myCategory.getTransactionCategory());
 
             /* Set the category */
             theState.setTheCategory(myCategory);
             theState.applyState();
         }
-    }
-
-    /**
-     * Obtain first non-parent event category.
-     * @return the first event category
-     */
-    private TransactionCategoryBucket getFirstCategory() {
-        /* Loop through the available account values */
-        Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
-        while (myIterator.hasNext()) {
-            TransactionCategoryBucket myBucket = myIterator.next();
-
-            /* Return if non-parent */
-            if (!myBucket.getTransactionCategoryType().getCategoryClass().canParentCategory()) {
-                return myBucket;
-            }
-        }
-
-        /* No such account */
-        return null;
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private TransactionCategoryBucket getMatchingBucket(final TransactionCategoryBucket pBucket) {
-        /* Look up the matching CategoryBucket */
-        TransactionCategory myCategory = pBucket.getTransactionCategory();
-        TransactionCategoryBucket myBucket = theCategories.findItemById(myCategory.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = theCategories.getOrphanBucket(myCategory);
-        }
-
-        /* return the bucket */
-        return myBucket;
     }
 
     /**
@@ -291,27 +243,27 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        Map<String, TethysScrollSubMenu<TransactionCategoryBucket, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<TransactionCategoryBucket, ?>> myMap = new HashMap<>();
 
         /* Record active item */
-        TransactionCategoryBucket myCurrent = theState.getEventCategory();
+        final TransactionCategoryBucket myCurrent = theState.getEventCategory();
         TethysScrollMenuItem<TransactionCategoryBucket> myActive = null;
 
         /* Loop through the available category values */
-        Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
+        final Iterator<TransactionCategoryBucket> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategoryBucket myBucket = myIterator.next();
+            final TransactionCategoryBucket myBucket = myIterator.next();
 
             /* Only process low-level items */
-            TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
+            final TransactionCategoryClass myClass = myBucket.getTransactionCategoryType().getCategoryClass();
             if (myClass.canParentCategory()) {
                 continue;
             }
 
             /* Determine menu to add to */
-            TransactionCategory myCategory = myBucket.getTransactionCategory();
-            TransactionCategory myParent = myCategory.getParentCategory();
-            String myParentName = myParent.getName();
+            final TransactionCategory myCategory = myBucket.getTransactionCategory();
+            final TransactionCategory myParent = myCategory.getParentCategory();
+            final String myParentName = myParent.getName();
             TethysScrollSubMenu<TransactionCategoryBucket, ?> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
@@ -322,7 +274,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<TransactionCategoryBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myCategory.getSubCategory());
+            final TethysScrollMenuItem<TransactionCategoryBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myCategory.getSubCategory());
 
             /* If this is the active category */
             if (myBucket.equals(myCurrent)) {

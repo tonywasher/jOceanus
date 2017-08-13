@@ -64,11 +64,11 @@ public abstract class MoneyWiseUKCapitalScheme
         /* If we have income left over */
         if (myAmount.compareTo(pAmount) < 0) {
             /* Calculate remaining amount */
-            TethysMoney myRemaining = new TethysMoney(pAmount);
+            final TethysMoney myRemaining = new TethysMoney(pAmount);
             myRemaining.subtractAmount(myAmount);
 
             /* Calculate the amount covered by basic allowance */
-            TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
+            final TethysMoney myXtra = super.getAmountInAllowance(pConfig, myRemaining);
 
             /* Determine the total amount covered by the allowance */
             myAmount = new TethysMoney(myAmount);
@@ -143,7 +143,7 @@ public abstract class MoneyWiseUKCapitalScheme
         protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
                                                              final TaxBasisClass pBasis) {
             /* Create a new List */
-            List<MoneyWiseTaxBand> myList = new ArrayList<>();
+            final List<MoneyWiseTaxBand> myList = new ArrayList<>();
 
             /* Add the single band */
             myList.add(new MoneyWiseTaxBand(getBasicRate()));
@@ -212,11 +212,11 @@ public abstract class MoneyWiseUKCapitalScheme
         protected Iterator<MoneyWiseTaxBand> taxBandIterator(final MoneyWiseUKTaxConfig pConfig,
                                                              final TaxBasisClass pBasis) {
             /* Create a new List */
-            List<MoneyWiseTaxBand> myList = new ArrayList<>();
+            final List<MoneyWiseTaxBand> myList = new ArrayList<>();
 
             /* Access underlying iterator and obtain first band */
-            Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
-            MoneyWiseTaxBand myFirstBand = myIterator.next();
+            final Iterator<MoneyWiseTaxBand> myIterator = super.taxBandIterator(pConfig, pBasis);
+            final MoneyWiseTaxBand myFirstBand = myIterator.next();
 
             /* Add the two bands */
             myList.add(new MoneyWiseTaxBand(myFirstBand.getAmount(), getBasicRate()));

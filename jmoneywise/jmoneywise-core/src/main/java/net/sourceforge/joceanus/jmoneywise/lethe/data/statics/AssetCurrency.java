@@ -115,11 +115,11 @@ public class AssetCurrency
         super(pList, pValues);
 
         /* Store the Default */
-        Object myValue = pValues.getValue(FIELD_DEFAULT);
+        final Object myValue = pValues.getValue(FIELD_DEFAULT);
         if (myValue instanceof Boolean) {
             setValueDefault((Boolean) myValue);
         } else if (myValue instanceof String) {
-            MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+            final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
             setValueDefault(myFormatter.parseValue((String) myValue, Boolean.class));
         } else {
             setValueDefault(Boolean.FALSE);
@@ -222,10 +222,10 @@ public class AssetCurrency
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
 
         /* Adjust Default */
-        Object myDefault = myValues.getValue(FIELD_DEFAULT);
+        final Object myDefault = myValues.getValue(FIELD_DEFAULT);
         if (myDefault == null) {
             setValueDefault(Boolean.FALSE);
         }
@@ -241,8 +241,8 @@ public class AssetCurrency
 
     @Override
     public void validate() {
-        AssetCurrencyList myList = getList();
-        CurrencyDataMap myMap = myList.getDataMap();
+        final AssetCurrencyList myList = getList();
+        final CurrencyDataMap myMap = myList.getDataMap();
 
         /* Check that default is non-null */
         if (isDefault() == null) {
@@ -273,7 +273,7 @@ public class AssetCurrency
         }
 
         /* Access the data */
-        AssetCurrency myData = (AssetCurrency) pData;
+        final AssetCurrency myData = (AssetCurrency) pData;
 
         /* Store the current detail into history */
         pushHistory();
@@ -343,7 +343,7 @@ public class AssetCurrency
 
         @Override
         protected AssetCurrencyList getEmptyList(final ListStyle pStyle) {
-            AssetCurrencyList myList = new AssetCurrencyList(this);
+            final AssetCurrencyList myList = new AssetCurrencyList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -355,7 +355,7 @@ public class AssetCurrency
                 throw new UnsupportedOperationException();
             }
 
-            AssetCurrency myCurr = new AssetCurrency(this, (AssetCurrency) pItem);
+            final AssetCurrency myCurr = new AssetCurrency(this, (AssetCurrency) pItem);
             add(myCurr);
             return myCurr;
         }
@@ -380,7 +380,7 @@ public class AssetCurrency
          */
         public void addBasicItem(final String pCurrency) throws OceanusException {
             /* Create a new Account Currency */
-            AssetCurrency myCurr = new AssetCurrency(this, pCurrency);
+            final AssetCurrency myCurr = new AssetCurrency(this, pCurrency);
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
@@ -395,7 +395,7 @@ public class AssetCurrency
         @Override
         public AssetCurrency addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the currency */
-            AssetCurrency myCurrency = new AssetCurrency(this, pValues);
+            final AssetCurrency myCurrency = new AssetCurrency(this, pValues);
 
             /* Check that this CurrencyId has not been previously added */
             if (!isIdUnique(myCurrency.getId())) {
@@ -424,9 +424,9 @@ public class AssetCurrency
          */
         public void initialiseDefault() {
             /* Determine the locale currency */
-            Locale myLocale = Locale.getDefault();
-            DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(myLocale);
-            Currency myCurrency = mySymbols.getCurrency();
+            final Locale myLocale = Locale.getDefault();
+            final DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(myLocale);
+            final Currency myCurrency = mySymbols.getCurrency();
 
             /* Find the currency in the list */
             AssetCurrency myCurr = findCurrency(myCurrency);
@@ -450,7 +450,7 @@ public class AssetCurrency
          */
         public AssetCurrency findCurrency(final Currency pCurrency) {
             /* Look up the currency */
-            AssetCurrencyClass myClass = AssetCurrencyClass.fromCurrency(pCurrency);
+            final AssetCurrencyClass myClass = AssetCurrencyClass.fromCurrency(pCurrency);
             return findItemByClass(myClass);
         }
 
@@ -460,7 +460,7 @@ public class AssetCurrency
          */
         public AssetCurrency findDefault() {
             /* look up the default in the map */
-            CurrencyDataMap myMap = getDataMap();
+            final CurrencyDataMap myMap = getDataMap();
             return myMap == null
                                  ? null
                                  : myMap.getDefault();
@@ -469,7 +469,7 @@ public class AssetCurrency
         @Override
         protected AssetCurrency newItem(final AssetCurrencyClass pClass) throws OceanusException {
             /* Create the currency */
-            AssetCurrency myCurr = new AssetCurrency(this, pClass);
+            final AssetCurrency myCurr = new AssetCurrency(this, pClass);
 
             /* Check that this CurrId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
@@ -490,7 +490,7 @@ public class AssetCurrency
          */
         public void setDefaultCurrency(final AssetCurrency pCurrency) {
             /* Find the default currency */
-            AssetCurrency myCurr = findDefault();
+            final AssetCurrency myCurr = findDefault();
 
             /* If we are changing the currency */
             if (!pCurrency.equals(myCurr)) {

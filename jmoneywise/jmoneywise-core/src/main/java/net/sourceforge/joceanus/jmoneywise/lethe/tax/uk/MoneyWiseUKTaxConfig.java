@@ -206,7 +206,7 @@ public class MoneyWiseUKTaxConfig
         theGrossTaxable = determineGrossTaxableIncome();
 
         /* Access the basic allowances */
-        MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
+        final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Calculate the allowances */
         theAllowance = new TethysMoney(myAllowances.calculateBasicAllowance(this));
@@ -216,7 +216,7 @@ public class MoneyWiseUKTaxConfig
         theCapitalAllowance = new TethysMoney(myAllowances.getCapitalAllowance());
 
         /* Access the taxBands */
-        MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();
+        final MoneyWiseUKTaxBands myBands = theTaxYear.getTaxBands();
         theTaxBands = new MoneyWiseTaxBandSet(myBands.getStandardSet());
 
         /* Calculate the loSavings band */
@@ -454,7 +454,7 @@ public class MoneyWiseUKTaxConfig
      */
     private TethysMoney determineGrossTaxableIncome() {
         /* Initialise income to preSavings */
-        TethysMoney myIncome = new TethysMoney(theGrossPreSavings);
+        final TethysMoney myIncome = new TethysMoney(theGrossPreSavings);
 
         /* Add taxed interest to income */
         myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.TAXEDINTEREST));
@@ -486,10 +486,10 @@ public class MoneyWiseUKTaxConfig
      */
     private TethysMoney determineGrossPreSavings() {
         /* Access the basic allowances */
-        MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
+        final MoneyWiseUKBasicAllowance myAllowances = theTaxYear.getAllowances();
 
         /* Initialise income to correct currency */
-        TethysMoney myIncome = new TethysMoney(myAllowances.getAllowance());
+        final TethysMoney myIncome = new TethysMoney(myAllowances.getAllowance());
         myIncome.setZero();
 
         /* Add the salary to income */
@@ -502,10 +502,10 @@ public class MoneyWiseUKTaxConfig
         myIncome.addAmount(theTaxSource.getAmountForTaxBasis(TaxBasisClass.RENTALINCOME));
 
         /* Access the room rental income */
-        TethysMoney myChargeable = theTaxSource.getAmountForTaxBasis(TaxBasisClass.ROOMRENTAL);
+        final TethysMoney myChargeable = theTaxSource.getAmountForTaxBasis(TaxBasisClass.ROOMRENTAL);
 
         /* If we have a chargeable element */
-        TethysMoney myAllowance = myAllowances.getRentalAllowance();
+        final TethysMoney myAllowance = myAllowances.getRentalAllowance();
         if (myChargeable.compareTo(myAllowance) > 0) {
             /* Add the chargeable element to income */
             myChargeable.subtractAmount(myAllowance);

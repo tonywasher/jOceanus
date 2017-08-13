@@ -143,11 +143,11 @@ public final class TransactionCategoryBucket
                                       : pCategory.getCategoryType();
 
         /* Create the history map */
-        AssetCurrency myDefault = theAnalysis.getCurrency();
-        Currency myCurrency = myDefault == null
-                                                ? AccountBucket.DEFAULT_CURRENCY
-                                                : myDefault.getCurrency();
-        CategoryValues myValues = new CategoryValues(myCurrency);
+        final AssetCurrency myDefault = theAnalysis.getCurrency();
+        final Currency myCurrency = myDefault == null
+                                                      ? AccountBucket.DEFAULT_CURRENCY
+                                                      : myDefault.getCurrency();
+        final CategoryValues myValues = new CategoryValues(myCurrency);
         theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
@@ -225,9 +225,9 @@ public final class TransactionCategoryBucket
         }
 
         /* Handle Attribute fields */
-        TransactionAttribute myClass = getClassForField(pField);
+        final TransactionAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -377,7 +377,7 @@ public final class TransactionCategoryBucket
      */
     private Object getAttributeValue(final TransactionAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getValue(pAttr);
+        final Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -433,7 +433,7 @@ public final class TransactionCategoryBucket
         }
 
         /* Compare the transaction Categories */
-        TransactionCategoryBucket myThat = (TransactionCategoryBucket) pThat;
+        final TransactionCategoryBucket myThat = (TransactionCategoryBucket) pThat;
         if (!getTransactionCategory().equals(myThat.getTransactionCategory())) {
             return false;
         }
@@ -492,7 +492,7 @@ public final class TransactionCategoryBucket
     protected void subtractIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            TethysMoney myIncome = new TethysMoney(pValue);
+            final TethysMoney myIncome = new TethysMoney(pValue);
             myIncome.negate();
             adjustCounter(TransactionAttribute.INCOME, myIncome);
         }
@@ -544,7 +544,7 @@ public final class TransactionCategoryBucket
     protected void subtractExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            TethysMoney myExpense = new TethysMoney(pValue);
+            final TethysMoney myExpense = new TethysMoney(pValue);
             myExpense.negate();
             adjustCounter(TransactionAttribute.EXPENSE, myExpense);
         }
@@ -557,15 +557,15 @@ public final class TransactionCategoryBucket
      */
     private boolean adjustValues(final TransactionHelper pTrans) {
         /* Analyse the event */
-        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
         AssetDirection myDir = pTrans.getDirection();
         boolean isExpense = myClass.isExpense();
-        TethysMoney myAmount = new TethysMoney(pTrans.getLocalAmount());
+        final TethysMoney myAmount = new TethysMoney(pTrans.getLocalAmount());
 
         /* If this is an expense */
         if (isExpense) {
             /* Adjust for TaxCredit */
-            TethysMoney myTaxCredit = pTrans.getTaxCredit();
+            final TethysMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
                 myAmount.addAmount(myTaxCredit);
             }
@@ -588,19 +588,19 @@ public final class TransactionCategoryBucket
             /* else this is an income */
         } else {
             /* Adjust for TaxCredit */
-            TethysMoney myTaxCredit = pTrans.getTaxCredit();
+            final TethysMoney myTaxCredit = pTrans.getTaxCredit();
             if (myTaxCredit != null) {
                 myAmount.addAmount(myTaxCredit);
             }
 
             /* Adjust for NatInsurance */
-            TethysMoney myNatIns = pTrans.getNatInsurance();
+            final TethysMoney myNatIns = pTrans.getNatInsurance();
             if (myNatIns != null) {
                 myAmount.addAmount(myNatIns);
             }
 
             /* Adjust for Withheld */
-            TethysMoney myWithheld = pTrans.getWithheld();
+            final TethysMoney myWithheld = pTrans.getWithheld();
             if (myWithheld != null) {
                 myAmount.addAmount(myWithheld);
             }
@@ -645,7 +645,7 @@ public final class TransactionCategoryBucket
     /**
      * Adjust to base.
      */
-    private void adjustToBase() {
+    protected void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -655,9 +655,9 @@ public final class TransactionCategoryBucket
      * Add bucket to totals.
      * @param pSource the bucket to add
      */
-    private void addValues(final TransactionCategoryBucket pSource) {
+    protected void addValues(final TransactionCategoryBucket pSource) {
         /* Access source values */
-        CategoryValues mySource = pSource.getValues();
+        final CategoryValues mySource = pSource.getValues();
 
         /* Add income values */
         TethysMoney myValue = theValues.getMoneyValue(TransactionAttribute.INCOME);
@@ -693,8 +693,8 @@ public final class TransactionCategoryBucket
             super(TransactionAttribute.class);
 
             /* Create all possible values */
-            setValue(TransactionAttribute.INCOME, new TethysMoney(pCurrency));
-            setValue(TransactionAttribute.EXPENSE, new TethysMoney(pCurrency));
+            super.setValue(TransactionAttribute.INCOME, new TethysMoney(pCurrency));
+            super.setValue(TransactionAttribute.EXPENSE, new TethysMoney(pCurrency));
         }
 
         /**
@@ -735,11 +735,11 @@ public final class TransactionCategoryBucket
             myDelta = new TethysMoney(myDelta);
 
             /* Subtract the expense value */
-            TethysMoney myExpense = getMoneyValue(TransactionAttribute.EXPENSE);
+            final TethysMoney myExpense = getMoneyValue(TransactionAttribute.EXPENSE);
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            setValue(TransactionAttribute.PROFIT, myDelta);
+            super.setValue(TransactionAttribute.PROFIT, myDelta);
         }
 
         @Override
@@ -750,9 +750,9 @@ public final class TransactionCategoryBucket
             myValue.setZero();
 
             /* Reset Income and expense values */
-            setValue(TransactionAttribute.INCOME, myValue);
-            setValue(TransactionAttribute.EXPENSE, new TethysMoney(myValue));
-            setValue(TransactionAttribute.PROFIT, new TethysMoney(myValue));
+            super.setValue(TransactionAttribute.INCOME, myValue);
+            super.setValue(TransactionAttribute.EXPENSE, new TethysMoney(myValue));
+            super.setValue(TransactionAttribute.PROFIT, new TethysMoney(myValue));
         }
 
         /**
@@ -760,8 +760,8 @@ public final class TransactionCategoryBucket
          * @return true/false
          */
         public boolean isActive() {
-            TethysMoney myIncome = getMoneyValue(TransactionAttribute.INCOME);
-            TethysMoney myExpense = getMoneyValue(TransactionAttribute.EXPENSE);
+            final TethysMoney myIncome = getMoneyValue(TransactionAttribute.INCOME);
+            final TethysMoney myExpense = getMoneyValue(TransactionAttribute.EXPENSE);
             return (myIncome.isNonZero()) || (myExpense.isNonZero());
         }
     }
@@ -868,7 +868,7 @@ public final class TransactionCategoryBucket
             theTaxBasis = theAnalysis.getTaxBasis();
 
             /* Obtain the implied buckets */
-            TransactionCategoryList myList = theData.getTransCategories();
+            final TransactionCategoryList myList = theData.getTransCategories();
             theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
             theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.NATINSURANCE));
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
@@ -906,12 +906,12 @@ public final class TransactionCategoryBucket
             theCapitalGains = null;
 
             /* Loop through the buckets */
-            Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TransactionCategoryBucket myCurr = myIterator.next();
+                final TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                TransactionCategoryBucket myBucket = new TransactionCategoryBucket(pAnalysis, myCurr, pDate);
+                final TransactionCategoryBucket myBucket = new TransactionCategoryBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -948,12 +948,12 @@ public final class TransactionCategoryBucket
             theCapitalGains = null;
 
             /* Loop through the buckets */
-            Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TransactionCategoryBucket myCurr = myIterator.next();
+                final TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                TransactionCategoryBucket myBucket = new TransactionCategoryBucket(pAnalysis, myCurr, pRange);
+                final TransactionCategoryBucket myBucket = new TransactionCategoryBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -1033,26 +1033,40 @@ public final class TransactionCategoryBucket
         }
 
         /**
-         * Obtain an orphan CategoryBucket for a given category.
-         * @param pCategory the category
-         * @return the bucket
-         */
-        public TransactionCategoryBucket getOrphanBucket(final TransactionCategory pCategory) {
-            /* Allocate an orphan bucket */
-            return new TransactionCategoryBucket(theAnalysis, pCategory);
-        }
-
-        /**
          * Obtain the TransactionCategoryBucket for a given transaction category class.
          * @param pClass the transaction category class
          * @return the bucket
          */
         protected TransactionCategoryBucket getBucket(final TransactionCategoryClass pClass) {
             /* Determine required category */
-            TransactionCategory myCategory = theData.getTransCategories().getSingularClass(pClass);
+            final TransactionCategory myCategory = theData.getTransCategories().getSingularClass(pClass);
 
             /* Return the bucket */
             return getBucket(myCategory);
+        }
+
+        /**
+         * Obtain the matching CategoryBucket.
+         * @param pCategory the category
+         * @return the matching bucket
+         */
+        public TransactionCategoryBucket getMatchingCategory(final TransactionCategory pCategory) {
+            /* Return the matching category if it exists else an orphan bucket */
+            final TransactionCategoryBucket myCategory = findItemById(pCategory.getOrderedId());
+            return myCategory != null
+                                      ? myCategory
+                                      : new TransactionCategoryBucket(theAnalysis, pCategory);
+        }
+
+        /**
+         * Obtain the default CategoryBucket.
+         * @return the default bucket
+         */
+        public TransactionCategoryBucket getDefaultCategory() {
+            /* Return the first category in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
         }
 
         /**
@@ -1063,7 +1077,7 @@ public final class TransactionCategoryBucket
         protected void adjustCategories(final TransactionHelper pTrans,
                                         final TransactionCategory pCategory) {
             /* Adjust the primary category bucket */
-            TransactionCategoryBucket myCatBucket = getBucket(pCategory);
+            final TransactionCategoryBucket myCatBucket = getBucket(pCategory);
             myCatBucket.adjustValues(pTrans);
 
             /* Adjust tax basis */
@@ -1084,14 +1098,14 @@ public final class TransactionCategoryBucket
             }
 
             /* Adjust for NatInsurance */
-            TethysMoney myNatIns = pTrans.getNatInsurance();
+            final TethysMoney myNatIns = pTrans.getNatInsurance();
             if (myNatIns != null) {
                 theNatInsurance.addExpense(pTrans, myNatIns);
                 theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
             }
 
             /* Adjust for DeemedBenefit */
-            TethysMoney myBenefit = pTrans.getDeemedBenefit();
+            final TethysMoney myBenefit = pTrans.getDeemedBenefit();
             if (myBenefit != null) {
                 theDeemedBenefit.addIncome(pTrans, myBenefit);
                 theWithheld.addExpense(pTrans, myBenefit);
@@ -1099,7 +1113,7 @@ public final class TransactionCategoryBucket
             }
 
             /* Adjust for Withheld */
-            TethysMoney myWithheld = pTrans.getWithheld();
+            final TethysMoney myWithheld = pTrans.getWithheld();
             if (myWithheld != null) {
                 theWithheld.addExpense(pTrans, myWithheld);
                 theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myWithheld);
@@ -1116,17 +1130,17 @@ public final class TransactionCategoryBucket
                                           final SecurityHolding pSource,
                                           final TethysMoney pGains) {
             /* Access security and portfolio */
-            Security mySecurity = pSource.getSecurity();
-            Portfolio myPortfolio = pSource.getPortfolio();
+            final Security mySecurity = pSource.getSecurity();
+            final Portfolio myPortfolio = pSource.getPortfolio();
 
-            boolean bTaxFreeGains = myPortfolio.isTaxFree()
-                                    || !mySecurity.getSecurityTypeClass().isCapitalGains();
-            TransactionCategoryBucket myCategory = bTaxFreeGains
-                                                                 ? theTaxFreeGains
-                                                                 : theCapitalGains;
-            TaxBasisClass myTaxBasis = bTaxFreeGains
-                                                     ? TaxBasisClass.TAXFREE
-                                                     : TaxBasisClass.CAPITALGAINS;
+            final boolean bTaxFreeGains = myPortfolio.isTaxFree()
+                                          || !mySecurity.getSecurityTypeClass().isCapitalGains();
+            final TransactionCategoryBucket myCategory = bTaxFreeGains
+                                                                       ? theTaxFreeGains
+                                                                       : theCapitalGains;
+            final TaxBasisClass myTaxBasis = bTaxFreeGains
+                                                           ? TaxBasisClass.TAXFREE
+                                                           : TaxBasisClass.CAPITALGAINS;
 
             /* Add to Capital Gains income/expense */
             if (pGains.isPositive()) {
@@ -1149,7 +1163,7 @@ public final class TransactionCategoryBucket
             theChargeableGains.adjustValues(pTrans);
 
             /* Obtain normalised value */
-            TethysMoney myGains = new TethysMoney(pTrans.getLocalAmount());
+            final TethysMoney myGains = new TethysMoney(pTrans.getLocalAmount());
             myGains.subtractAmount(pReduction);
 
             /* Adjust for Tax Credit */
@@ -1174,16 +1188,16 @@ public final class TransactionCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets */
-            MetisOrderedIdList<Integer, TransactionCategoryBucket> myTotals = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
+            final MetisOrderedIdList<Integer, TransactionCategoryBucket> myTotals = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<TransactionCategoryBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                TransactionCategoryBucket myCurr = myIterator.next();
+                final TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
-                TransactionCategory myCategory = myCurr.getTransactionCategory();
-                TransactionCategory myParent = myCategory.getParentCategory();
+                final TransactionCategory myCategory = myCurr.getTransactionCategory();
+                final TransactionCategory myParent = myCategory.getParentCategory();
 
                 /* Access parent bucket */
                 TransactionCategoryBucket myTotal = findItemById(myParent.getId());
@@ -1212,7 +1226,7 @@ public final class TransactionCategoryBucket
             /* Loop through the new totals */
             myIterator = myTotals.listIterator();
             while (myIterator.hasNext()) {
-                TransactionCategoryBucket myCurr = myIterator.next();
+                final TransactionCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
                 myCurr.calculateDelta();

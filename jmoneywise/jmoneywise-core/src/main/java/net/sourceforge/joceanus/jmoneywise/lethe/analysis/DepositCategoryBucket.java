@@ -130,7 +130,7 @@ public final class DepositCategoryBucket
      * Update active flag for Deposit Bucket.
      * @param pBucket the Deposit bucket
      */
-    private void updateActive(final DepositBucket pBucket) {
+    protected void updateActive(final DepositBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -138,7 +138,7 @@ public final class DepositCategoryBucket
      * Update active flag for Deposit Category Bucket.
      * @param pBucket the Deposit category bucket
      */
-    private void updateActive(final DepositCategoryBucket pBucket) {
+    protected void updateActive(final DepositCategoryBucket pBucket) {
         isActive |= pBucket.isActive();
     }
 
@@ -279,12 +279,12 @@ public final class DepositCategoryBucket
         protected void analyseDeposits(final MarketAnalysis pMarket,
                                        final DepositBucketList pDeposits) {
             /* Loop through the buckets */
-            TethysDateRange myRange = theAnalysis.getDateRange();
-            Iterator<DepositBucket> myIterator = pDeposits.iterator();
+            final TethysDateRange myRange = theAnalysis.getDateRange();
+            final Iterator<DepositBucket> myIterator = pDeposits.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
-                DepositBucket myCurr = myIterator.next();
-                DepositCategory myCategory = myCurr.getCategory();
+                final DepositBucket myCurr = myIterator.next();
+                final DepositCategory myCategory = myCurr.getCategory();
 
                 /* Handle foreign asset */
                 if (myCurr.isForeignCurrency()) {
@@ -297,7 +297,7 @@ public final class DepositCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Access category bucket and add values */
-                DepositCategoryBucket myBucket = getBucket(myCategory);
+                final DepositCategoryBucket myBucket = getBucket(myCategory);
                 myBucket.addValues(myCurr);
                 myBucket.updateActive(myCurr);
             }
@@ -309,11 +309,11 @@ public final class DepositCategoryBucket
          */
         protected void buildCategories(final DepositBucketList pDeposits) {
             /* Loop through the buckets */
-            Iterator<DepositBucket> myIterator = pDeposits.iterator();
+            final Iterator<DepositBucket> myIterator = pDeposits.iterator();
             while (myIterator.hasNext()) {
                 /* Access bucket and category */
-                DepositBucket myCurr = myIterator.next();
-                DepositCategory myCategory = myCurr.getCategory();
+                final DepositBucket myCurr = myIterator.next();
+                final DepositCategory myCategory = myCurr.getCategory();
                 getBucket(myCategory);
 
                 /* Access parent category */
@@ -326,16 +326,16 @@ public final class DepositCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            MetisOrderedIdList<Integer, DepositCategoryBucket> myTotals = new MetisOrderedIdList<>(DepositCategoryBucket.class);
+            final MetisOrderedIdList<Integer, DepositCategoryBucket> myTotals = new MetisOrderedIdList<>(DepositCategoryBucket.class);
 
             /* Loop through the buckets */
             Iterator<DepositCategoryBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                DepositCategoryBucket myCurr = myIterator.next();
+                final DepositCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
-                DepositCategory myCategory = myCurr.getAccountCategory();
-                DepositCategory myParent = myCategory.getParentCategory();
+                final DepositCategory myCategory = myCurr.getAccountCategory();
+                final DepositCategory myParent = myCategory.getParentCategory();
 
                 /* Calculate delta for the category */
                 myCurr.calculateDelta();
@@ -367,7 +367,7 @@ public final class DepositCategoryBucket
             /* Loop through the new totals */
             myIterator = myTotals.listIterator();
             while (myIterator.hasNext()) {
-                DepositCategoryBucket myCurr = myIterator.next();
+                final DepositCategoryBucket myCurr = myIterator.next();
 
                 /* Calculate delta for the category total */
                 myCurr.calculateDelta();

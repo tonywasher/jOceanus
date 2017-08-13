@@ -30,8 +30,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -123,8 +121,8 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
-        TethysLabel<N, I> mySecLabel = pFactory.newLabel(NLS_SECURITY + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> mySecLabel = pFactory.newLabel(NLS_SECURITY + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -200,7 +198,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Securities to select */
-        boolean secAvailable = bEnabled && isAvailable();
+        final boolean secAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theSecButton.setEnabled(secAvailable);
@@ -221,34 +219,15 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         thePortfolios = pAnalysis.getPortfolios();
 
         /* Obtain the current security */
-        PortfolioBucket myPortfolio = theState.getPortfolio();
         SecurityBucket mySecurity = theState.getSecurity();
 
-        /* If we have a selected Security */
-        if (mySecurity != null) {
-            /* Look for the equivalent buckets */
-            myPortfolio = getMatchingPortfolioBucket(mySecurity.getPortfolio());
-            mySecurity = getMatchingSecurityBucket(myPortfolio, mySecurity);
-        }
-
-        /* If we do not have an active bucket */
-        if (mySecurity == null) {
-            /* Check for a security in the same portfolio */
-            myPortfolio = (myPortfolio == null)
-                                                ? null
-                                                : thePortfolios.findItemById(myPortfolio.getOrderedId());
-
-            /* If the portfolio no longer exists */
-            if (myPortfolio == null) {
-                /* Access the first portfolio */
-                myPortfolio = thePortfolios.peekFirst();
-            }
-
-            /* Use the first security for portfolio */
-            mySecurity = (myPortfolio == null)
-                                               ? null
-                                               : getFirstSecurity(myPortfolio);
-        }
+        /* Switch to versions from the analysis */
+        mySecurity = mySecurity != null
+                                        ? thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding())
+                                        : thePortfolios.getDefaultSecurityHolding();
+        final PortfolioBucket myPortfolio = (mySecurity != null)
+                                                                 ? thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio())
+                                                                 : thePortfolios.getDefaultPortfolio();
 
         /* Set the security */
         theState.setTheSecurity(myPortfolio, mySecurity);
@@ -260,73 +239,21 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof SecurityFilter) {
             /* Access filter */
-            SecurityFilter myFilter = (SecurityFilter) pFilter;
+            final SecurityFilter myFilter = (SecurityFilter) pFilter;
 
-            /* Obtain the filter bucket */
+            /* Obtain the filter buckets */
             SecurityBucket mySecurity = myFilter.getBucket();
 
             /* Look for the equivalent buckets */
-            PortfolioBucket myPortfolio = getMatchingPortfolioBucket(mySecurity.getPortfolio());
-            mySecurity = getMatchingSecurityBucket(myPortfolio, mySecurity);
+            mySecurity = thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding());
+
+            /* Determine the matching portfolio bucket */
+            final PortfolioBucket myPortfolio = thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio());
 
             /* Set the security */
             theState.setTheSecurity(myPortfolio, mySecurity);
             theState.applyState();
         }
-    }
-
-    /**
-     * Obtain first security for portfolio.
-     * @param pPortfolio the portfolio
-     * @return the first security
-     */
-    private static SecurityBucket getFirstSecurity(final PortfolioBucket pPortfolio) {
-        /* Loop through the available security values */
-        Iterator<SecurityBucket> myIterator = pPortfolio.securityIterator();
-        return myIterator.hasNext()
-                                    ? myIterator.next()
-                                    : null;
-    }
-
-    /**
-     * Obtain matching portfolio bucket.
-     * @param pPortfolio the portfolio
-     * @return the matching bucket
-     */
-    private PortfolioBucket getMatchingPortfolioBucket(final Portfolio pPortfolio) {
-        /* Look up the matching PortfolioBucket */
-        PortfolioBucket myBucket = thePortfolios.findItemById(pPortfolio.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = thePortfolios.getOrphanBucket(pPortfolio);
-        }
-
-        /* return the bucket */
-        return myBucket;
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pPortfolio the portfolio bucket
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private static SecurityBucket getMatchingSecurityBucket(final PortfolioBucket pPortfolio,
-                                                            final SecurityBucket pBucket) {
-        /* Look up the matching SecurityBucket */
-        Security mySecurity = pBucket.getSecurity();
-        SecurityBucket myBucket = pPortfolio.findSecurityBucket(mySecurity);
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = pPortfolio.getOrphanSecurityBucket(pBucket.getSecurityHolding());
-        }
-
-        /* return the bucket */
-        return myBucket;
     }
 
     /**
@@ -360,15 +287,15 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
 
         /* Record active item */
         TethysScrollMenuItem<PortfolioBucket> myActive = null;
-        PortfolioBucket myCurr = theState.getPortfolio();
+        final PortfolioBucket myCurr = theState.getPortfolio();
 
         /* Loop through the available portfolio values */
-        Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
+            final TethysScrollMenuItem<PortfolioBucket> myItem = thePortfolioMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -391,17 +318,17 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         theSecurityMenu.removeAllItems();
 
         /* Access current portfolio */
-        PortfolioBucket myPortfolio = theState.getPortfolio();
-        SecurityBucket myCurr = theState.getSecurity();
+        final PortfolioBucket myPortfolio = theState.getPortfolio();
+        final SecurityBucket myCurr = theState.getSecurity();
         TethysScrollMenuItem<SecurityBucket> myActive = null;
 
         /* Loop through the available security values */
-        Iterator<SecurityBucket> myIterator = myPortfolio.securityIterator();
+        final Iterator<SecurityBucket> myIterator = myPortfolio.securityIterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<SecurityBucket> myItem = theSecurityMenu.addItem(myBucket);
+            final TethysScrollMenuItem<SecurityBucket> myItem = theSecurityMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -518,6 +445,19 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Obtain first security for portfolio.
+         * @param pPortfolio the portfolio
+         * @return the first security
+         */
+        private SecurityBucket getFirstSecurity(final PortfolioBucket pPortfolio) {
+            /* Loop through the available security values */
+            final Iterator<SecurityBucket> myIterator = pPortfolio.securityIterator();
+            return myIterator.hasNext()
+                                        ? myIterator.next()
+                                        : null;
         }
 
         /**

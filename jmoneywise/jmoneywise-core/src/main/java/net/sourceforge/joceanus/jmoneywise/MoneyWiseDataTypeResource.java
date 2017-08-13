@@ -503,7 +503,7 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
      */
     private static Map<MoneyWiseDataType, TethysResourceId> buildNameMap() {
         /* Create the map and return it */
-        Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
         myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_NAME);
         myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_NAME);
         myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_NAME);
@@ -558,7 +558,7 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
      */
     private static Map<MoneyWiseDataType, TethysResourceId> buildListMap() {
         /* Create the map and return it */
-        Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
         myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_LIST);
         myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_LIST);
         myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_LIST);

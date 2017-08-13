@@ -81,33 +81,33 @@ public class MoneyWiseThreadWriteQIF<N, I>
     @Override
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask("Analysing Data");
 
         /* Load configuration */
-        MetisPreferenceManager myMgr = theView.getPreferenceManager();
-        MoneyWiseQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseQIFPreferences.class);
+        final MetisPreferenceManager myMgr = theView.getPreferenceManager();
+        final MoneyWiseQIFPreferences myPrefs = myMgr.getPreferenceSet(MoneyWiseQIFPreferences.class);
 
         /* Obtain the analysis */
-        Analysis myAnalysis = theView.getAnalysisManager().getAnalysis();
+        final Analysis myAnalysis = theView.getAnalysisManager().getAnalysis();
 
         /* Create QIF file */
-        QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
+        final QIFFile myQFile = QIFFile.buildQIFFile(theView.getData(), myAnalysis, myPrefs);
 
         /* Initialise the status window */
         myManager.initTask("Writing QIF file");
 
         /* Determine name of output file */
-        String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
-        QIFType myType = myPrefs.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+        final String myDirectory = myPrefs.getStringValue(MoneyWiseQIFPreferenceKey.QIFDIR);
+        final QIFType myType = myPrefs.getEnumValue(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
 
         /* Determine the output name */
-        File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
+        final File myOutFile = new File(myDirectory + File.separator + myType.getFileName());
 
         /* Create the Writer */
-        QIFWriter myQWriter = new QIFWriter(myManager, myQFile);
+        final QIFWriter myQWriter = new QIFWriter(myManager, myQFile);
 
         /* Protect against exceptions */
         boolean doDelete = true;
@@ -128,7 +128,7 @@ public class MoneyWiseThreadWriteQIF<N, I>
         }
 
         /* Create the Parser */
-        QIFParser myQParser = new QIFParser(myQFile.getFileType());
+        final QIFParser myQParser = new QIFParser(myQFile.getFileType());
 
         /* Protect against exceptions */
         try (FileInputStream myInput = new FileInputStream(myOutFile);
@@ -139,7 +139,7 @@ public class MoneyWiseThreadWriteQIF<N, I>
             myQParser.loadFile(myBuffer);
 
             /* Check that we successfully parsed the file */
-            QIFFile myNewFile = myQParser.getFile();
+            final QIFFile myNewFile = myQParser.getFile();
             if (!myNewFile.equals(myQFile)) {
                 LOGGER.error("Parsed file does not match source");
             }

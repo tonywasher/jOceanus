@@ -82,7 +82,7 @@ public class QIFPayee
         }
 
         /* Cast correctly */
-        QIFPayee myPayee = (QIFPayee) pThat;
+        final QIFPayee myPayee = (QIFPayee) pThat;
 
         /* Check date */
         return theName.equals(myPayee.getName());

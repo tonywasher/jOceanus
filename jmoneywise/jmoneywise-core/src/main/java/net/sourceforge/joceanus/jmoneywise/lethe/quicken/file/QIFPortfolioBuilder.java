@@ -116,7 +116,7 @@ public class QIFPortfolioBuilder {
     private TethysPrice getPriceForDate(final Security pSecurity,
                                         final TethysDate pDate) {
         /* Add the price */
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
+        final SecurityPriceDataMap<SecurityPrice> myPriceMap = theData.getSecurityPriceDataMap();
         return myPriceMap.getPriceForDate(pSecurity, pDate);
     }
 
@@ -129,11 +129,11 @@ public class QIFPortfolioBuilder {
     private TethysUnits getUnitsForHoldingEvent(final SecurityHolding pHolding,
                                                 final Transaction pTrans) {
         /* Access the relevant bucket */
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Access the resulting values */
-        SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
+        final SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
         return myValues.getUnitsValue(SecurityAttribute.UNITS);
     }
 
@@ -146,17 +146,17 @@ public class QIFPortfolioBuilder {
     protected TethysUnits getBaseUnitsForHolding(final SecurityHolding pHolding,
                                                  final Transaction pTrans) {
         /* Access the relevant bucket */
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Access the base values */
-        SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
+        final SecurityValues myValues = myBucket.getValuesForTransaction(pTrans);
         if (myValues != null) {
             TethysUnits myUnits = myValues.getUnitsValue(SecurityAttribute.UNITS);
             myUnits = new TethysUnits(myUnits);
 
             /* Determine the delta in units */
-            TethysUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
+            final TethysUnits myDelta = myBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
             if (myDelta != null) {
                 myUnits.subtractUnits(myDelta);
             }
@@ -175,8 +175,8 @@ public class QIFPortfolioBuilder {
     private TethysMoney getDeltaCostForHolding(final SecurityHolding pHolding,
                                                final Transaction pTrans) {
         /* Access the relevant bucket */
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final SecurityBucket myBucket = myPortfolios.getBucket(pHolding);
 
         /* Obtain the cost delta for the transaction */
         return myBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.RESIDUALCOST);
@@ -191,8 +191,8 @@ public class QIFPortfolioBuilder {
     private TethysMoney getPortfolioCashValue(final Portfolio pPortfolio,
                                               final Transaction pTrans) {
         /* Access the relevant bucket */
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        PortfolioCashBucket myBucket = myPortfolios.getCashBucket(pPortfolio);
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final PortfolioCashBucket myBucket = myPortfolios.getCashBucket(pPortfolio);
 
         /* Obtain the value delta for the transaction */
         TethysMoney myValue = myBucket.getMoneyDeltaForTransaction(pTrans, AccountAttribute.VALUATION);
@@ -213,37 +213,37 @@ public class QIFPortfolioBuilder {
                                            final SecurityHolding pHolding,
                                            final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPort = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
+        final Portfolio myPort = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
 
         /* Determine style */
-        boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
+        final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
 
         /* Access Transaction details */
-        QIFPayee myQPayee = theFile.registerPayee(pPayee);
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        QIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFPayee myQPayee = theFile.registerPayee(pPayee);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
-        TethysUnits myUnits = pTrans.getAccountDeltaUnits();
-        TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final TethysMoney myAmount = pTrans.getAmount();
+        final TethysUnits myUnits = pTrans.getAccountDeltaUnits();
+        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* If we are using a holding account */
         if (useHoldingAccount) {
             /* Access Holding Account */
-            QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
+            final QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
 
             /* Create output amount */
-            TethysMoney myOutAmount = new TethysMoney(myAmount);
+            final TethysMoney myOutAmount = new TethysMoney(myAmount);
             myOutAmount.negate();
 
             /* Create an event */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
             myEvent.recordAmount(new TethysMoney());
             myEvent.recordPayee(myQPayee);
 
@@ -257,7 +257,7 @@ public class QIFPortfolioBuilder {
             /* else we can do this properly */
         } else {
             /* Create a miscellaneous cash event */
-            QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
+            final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
             myEvent.recordAmount(myAmount);
             myEvent.recordPayee(myQPayee);
             myEvent.recordCategory(myQCategory, myList);
@@ -267,7 +267,7 @@ public class QIFPortfolioBuilder {
         }
 
         /* Create a buy shares event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.BUY);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.BUY);
         myEvent.recordAmount(myAmount);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(myUnits);
@@ -287,27 +287,27 @@ public class QIFPortfolioBuilder {
                                               final SecurityHolding pHolding,
                                               final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPort = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
+        final Portfolio myPort = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
 
         /* Determine style */
-        boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
+        final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
 
         /* Access Transaction details */
-        QIFPayee myQPayee = theFile.registerPayee(pPayee);
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        QIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());
+        final QIFPayee myQPayee = theFile.registerPayee(pPayee);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFEventCategory myQCategory = theFile.registerCategory(pTrans.getCategory());
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
+        final TethysMoney myAmount = pTrans.getAmount();
         TethysUnits myUnits = pTrans.getAccountDeltaUnits();
         myUnits = new TethysUnits(myUnits);
         myUnits.negate();
-        TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Create a sell shares event */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.SELL);
@@ -320,16 +320,16 @@ public class QIFPortfolioBuilder {
         myPortfolio.addEvent(myEvent);
 
         /* Create output amount */
-        TethysMoney myOutAmount = new TethysMoney(myAmount);
+        final TethysMoney myOutAmount = new TethysMoney(myAmount);
         myOutAmount.negate();
 
         /* If we are using a holding account */
         if (useHoldingAccount) {
             /* Access Holding Account */
-            QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
+            final QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPort);
 
             /* Create an event */
-            QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
             myHoldEvent.recordAmount(new TethysMoney());
             myHoldEvent.recordPayee(myQPayee);
 
@@ -372,16 +372,16 @@ public class QIFPortfolioBuilder {
         }
 
         /* Access Portfolio Account */
-        Portfolio myPort = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
+        final Portfolio myPort = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(myPort);
 
         /* Access Transaction details */
-        QIFAccountEvents mySource = theFile.registerAccount(pDebit);
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFAccountEvents mySource = theFile.registerAccount(pDebit);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Determine various flags */
-        boolean canTradeZeroShares = theFileType.canTradeZeroShares();
+        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
         boolean canXferLinked = theFileType.canXferPortfolio();
         boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();
         hideBalancingSplitXfer &= canXferLinked;
@@ -394,15 +394,15 @@ public class QIFPortfolioBuilder {
         }
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
+        final TethysMoney myAmount = pTrans.getAmount();
         TethysUnits myUnits = pTrans.getAccountDeltaUnits();
         if (myUnits == null) {
             myUnits = pTrans.getPartnerDeltaUnits();
         }
-        TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Handle zero units */
         boolean autoCorrectZeroUnits = false;
@@ -444,11 +444,11 @@ public class QIFPortfolioBuilder {
         /* If we are not hiding the balancing transfer */
         if (!hideBalancingSplitXfer) {
             /* Build output amount */
-            TethysMoney myOutAmount = new TethysMoney(myAmount);
+            final TethysMoney myOutAmount = new TethysMoney(myAmount);
             myOutAmount.negate();
 
             /* Build the source transfer */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
             myEvent.recordAccount(myPortfolio.getAccount(), myList);
             myEvent.recordAmount(myOutAmount);
 
@@ -533,29 +533,29 @@ public class QIFPortfolioBuilder {
     private void processStockSplit(final SecurityHolding pHolding,
                                    final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Obtain number of units after this event */
-        TethysUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
+        final TethysUnits myTotalUnits = getUnitsForHoldingEvent(pHolding, pTrans);
 
         /* Access the delta units */
-        TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
+        final TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
 
         /* Obtain number of units before event */
-        TethysUnits myBaseUnits = new TethysUnits(myTotalUnits);
+        final TethysUnits myBaseUnits = new TethysUnits(myTotalUnits);
         myBaseUnits.subtractUnits(myDeltaUnits);
 
         /* Obtain split ratio */
-        TethysRatio mySplit = new TethysRatio(myTotalUnits, myBaseUnits);
+        final TethysRatio mySplit = new TethysRatio(myTotalUnits, myBaseUnits);
         mySplit.multiply(TethysDecimal.RADIX_TEN);
 
         /* Create a stock split event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.STKSPLIT);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.STKSPLIT);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(mySplit);
 
@@ -571,25 +571,25 @@ public class QIFPortfolioBuilder {
     private void processSecurityAdjust(final SecurityHolding pHolding,
                                        final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Access the delta units */
         TethysUnits myUnits = pTrans.getAccountDeltaUnits();
-        boolean isCredit = myUnits.isPositive();
+        final boolean isCredit = myUnits.isPositive();
         if (!isCredit) {
             myUnits = new TethysUnits(myUnits);
             myUnits.negate();
         }
 
         /* Create a share movement event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, isCredit
-                                                                                    ? QActionType.SHRSIN
-                                                                                    : QActionType.SHRSOUT);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, isCredit
+                                                                                          ? QActionType.SHRSIN
+                                                                                          : QActionType.SHRSOUT);
         myEvent.recordSecurity(myQSecurity);
         myEvent.recordQuantity(myUnits);
 
@@ -607,26 +607,26 @@ public class QIFPortfolioBuilder {
                                       final TransactionAsset pCredit,
                                       final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Obtain flags */
         boolean canXferLinked = theFileType.canXferPortfolio();
-        boolean isPortfolio = pCredit.equals(myPortfolio);
+        final boolean isPortfolio = pCredit.equals(myPortfolio);
 
         /* Access Transaction details */
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
-        QIFAccountEvents myTarget = theFile.registerAccount(pCredit);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFAccountEvents myTarget = theFile.registerAccount(pCredit);
         TethysMoney myAmount = pTrans.getAmount();
-        TethysMoney myTaxCredit = pTrans.getTaxCredit();
-        TethysMoney myFullAmount = new TethysMoney(myAmount);
+        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final TethysMoney myFullAmount = new TethysMoney(myAmount);
         if (myTaxCredit != null) {
             myFullAmount.addAmount(myTaxCredit);
         }
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Determine whether we should XferLinked */
         boolean doXferLinked = canXferLinked && myTaxCredit == null;
@@ -670,7 +670,7 @@ public class QIFPortfolioBuilder {
             /* If the receiving account is a portfolio */
             if (pCredit instanceof Portfolio) {
                 /* Create the receiving transfer event */
-                QIFPortfolioEvent myXferEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+                final QIFPortfolioEvent myXferEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
                 myXferEvent.recordAmount(myAmount);
                 myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
                 myXferEvent.recordXfer(myQPortfolio.getAccount(), myList, myAmount);
@@ -681,7 +681,7 @@ public class QIFPortfolioBuilder {
                 /* else standard account */
             } else {
                 /* Create the receiving transfer event */
-                QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+                final QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
                 myXferEvent.recordAmount(myAmount);
                 myXferEvent.recordPayee(theBuilder.buildXferFromPayee(myPortfolio));
                 myXferEvent.recordAccount(myQPortfolio.getAccount(), myList);
@@ -694,23 +694,23 @@ public class QIFPortfolioBuilder {
         /* If we have a Tax Credit */
         if (myTaxCredit != null) {
             /* Determine flags */
-            boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
+            final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
 
             /* Access category */
-            QIFEventCategory myTaxCategory = theBuilder.getTaxCategory();
-            QIFPayee myTaxPayee = theBuilder.getTaxMan();
+            final QIFEventCategory myTaxCategory = theBuilder.getTaxCategory();
+            final QIFPayee myTaxPayee = theBuilder.getTaxMan();
 
             /* Create output amount */
-            TethysMoney myOutAmount = new TethysMoney(myTaxCredit);
+            final TethysMoney myOutAmount = new TethysMoney(myTaxCredit);
             myOutAmount.negate();
 
             /* If we are using a holding account */
             if (useHoldingAccount) {
                 /* Access Holding Account */
-                QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
+                final QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
 
                 /* Create an event */
-                QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
+                final QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
                 myHoldEvent.recordAmount(new TethysMoney());
                 myHoldEvent.recordPayee(myTaxPayee);
 
@@ -743,18 +743,18 @@ public class QIFPortfolioBuilder {
     private void processReinvestDividend(final SecurityHolding pHolding,
                                          final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Determine various flags */
-        boolean canTradeZeroShares = theFileType.canTradeZeroShares();
+        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
 
         /* Access Transaction details */
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
         TethysMoney myAmount = pTrans.getAmount();
         TethysUnits myUnits = pTrans.getAccountDeltaUnits();
-        TethysMoney myTaxCredit = pTrans.getTaxCredit();
+        final TethysMoney myTaxCredit = pTrans.getTaxCredit();
         myAmount = new TethysMoney(myAmount);
         if (myTaxCredit != null) {
             myAmount.addAmount(myTaxCredit);
@@ -794,12 +794,12 @@ public class QIFPortfolioBuilder {
         /* If we have a Tax Credit */
         if (myTaxCredit != null) {
             /* Determine flags */
-            boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
-            boolean useMiscIncX = theFileType.useMiscIncX4TaxCredit();
+            final boolean useHoldingAccount = theFileType.useInvestmentHolding4Category();
+            final boolean useMiscIncX = theFileType.useMiscIncX4TaxCredit();
 
             /* Access category */
-            QIFEventCategory myTaxCategory = theBuilder.getTaxCategory();
-            QIFPayee myTaxPayee = theBuilder.getTaxMan();
+            final QIFEventCategory myTaxCategory = theBuilder.getTaxCategory();
+            final QIFPayee myTaxPayee = theBuilder.getTaxMan();
 
             /* Create a tax credit event */
             myEvent = new QIFPortfolioEvent(theFile, pTrans, useMiscIncX
@@ -818,16 +818,16 @@ public class QIFPortfolioBuilder {
             /* If we need further elements */
             if (!useMiscIncX) {
                 /* Create output amount */
-                TethysMoney myOutAmount = new TethysMoney(myTaxCredit);
+                final TethysMoney myOutAmount = new TethysMoney(myTaxCredit);
                 myOutAmount.negate();
 
                 /* If we are using a holding account */
                 if (useHoldingAccount) {
                     /* Access Holding Account */
-                    QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
+                    final QIFAccountEvents myHolding = theFile.registerHoldingAccount(myPortfolio);
 
                     /* Create an event */
-                    QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
+                    final QIFEvent myHoldEvent = new QIFEvent(theFile, pTrans);
                     myHoldEvent.recordAmount(new TethysMoney());
                     myHoldEvent.recordPayee(myTaxPayee);
 
@@ -863,28 +863,28 @@ public class QIFPortfolioBuilder {
                                       final SecurityHolding pCredit,
                                       final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        Security myCredit = pCredit.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final Security myCredit = pCredit.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Determine whether we can return capital */
-        boolean canReturnCapital = theFileType.canReturnCapital();
-        boolean canTradeZeroShares = theFileType.canTradeZeroShares();
+        final boolean canReturnCapital = theFileType.canReturnCapital();
+        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
 
         /* Access Transaction details */
-        QIFSecurity myDebitSecurity = theFile.registerSecurity(mySecurity);
-        QIFSecurity myCreditSecurity = theFile.registerSecurity(myCredit);
+        final QIFSecurity myDebitSecurity = theFile.registerSecurity(mySecurity);
+        final QIFSecurity myCreditSecurity = theFile.registerSecurity(myCredit);
 
         /* Access details */
-        TethysDate myDate = pTrans.getDate();
+        final TethysDate myDate = pTrans.getDate();
         TethysUnits myUnits = pTrans.getAccountDeltaUnits();
         if (myUnits != null) {
             myUnits = new TethysUnits(myUnits);
             myUnits.negate();
         }
-        TethysPrice myDebitPrice = getPriceForDate(mySecurity, myDate);
-        TethysPrice myCreditPrice = getPriceForDate(myCredit, myDate);
+        final TethysPrice myDebitPrice = getPriceForDate(mySecurity, myDate);
+        final TethysPrice myCreditPrice = getPriceForDate(myCredit, myDate);
 
         /* Obtain the delta cost (i.e. value transferred) */
         TethysMoney myValue = getDeltaCostForHolding(pHolding, pTrans);
@@ -892,7 +892,7 @@ public class QIFPortfolioBuilder {
         myValue.negate();
 
         /* Determine whether we use return capital */
-        boolean doReturnCapital = canReturnCapital && myUnits == null;
+        final boolean doReturnCapital = canReturnCapital && myUnits == null;
 
         /* Handle zero units */
         boolean autoCorrectZeroUnits = false;
@@ -951,31 +951,31 @@ public class QIFPortfolioBuilder {
                                       final SecurityHolding pTarget,
                                       final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pSource.getPortfolio();
-        Security mySource = pSource.getSecurity();
-        Security myTarget = pTarget.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pSource.getPortfolio();
+        final Security mySource = pSource.getSecurity();
+        final Security myTarget = pTarget.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        QIFSecurity myDebitSecurity = theFile.registerSecurity(mySource);
-        QIFSecurity myCreditSecurity = theFile.registerSecurity(myTarget);
+        final QIFSecurity myDebitSecurity = theFile.registerSecurity(mySource);
+        final QIFSecurity myCreditSecurity = theFile.registerSecurity(myTarget);
 
         /* Access details */
-        TethysDate myDate = pTrans.getDate();
-        TethysUnits myUnits = pTrans.getPartnerDeltaUnits();
-        TethysPrice myDebitPrice = getPriceForDate(mySource, myDate);
-        TethysPrice myCreditPrice = getPriceForDate(myTarget, myDate);
-        Deposit myThirdParty = (Deposit) pTrans.getReturnedCashAccount();
-        TethysMoney myAmount = pTrans.getReturnedCash();
+        final TethysDate myDate = pTrans.getDate();
+        final TethysUnits myUnits = pTrans.getPartnerDeltaUnits();
+        final TethysPrice myDebitPrice = getPriceForDate(mySource, myDate);
+        final TethysPrice myCreditPrice = getPriceForDate(myTarget, myDate);
+        final Deposit myThirdParty = (Deposit) pTrans.getReturnedCashAccount();
+        final TethysMoney myAmount = pTrans.getReturnedCash();
 
         /* Obtain the number of units that we are selling */
-        TethysUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);
+        final TethysUnits myBaseUnits = getBaseUnitsForHolding(pSource, pTrans);
 
         /* Obtain the delta cost (i.e. value transferred) */
-        TethysMoney myStockCost = getDeltaCostForHolding(pSource, pTrans);
+        final TethysMoney myStockCost = getDeltaCostForHolding(pSource, pTrans);
 
         /* Determine the total sale value */
-        TethysMoney mySaleValue = new TethysMoney(myStockCost);
+        final TethysMoney mySaleValue = new TethysMoney(myStockCost);
         mySaleValue.addAmount(myAmount);
 
         /* Create a sellShares event for the share reduction */
@@ -1001,10 +1001,10 @@ public class QIFPortfolioBuilder {
         /* If we have a ThirdParty Account */
         if (myThirdParty != null) {
             /* determine flags */
-            boolean canXferDirect = theFileType.canXferPortfolio();
+            final boolean canXferDirect = theFileType.canXferPortfolio();
 
             /* Access Target account */
-            QIFAccountEvents myQTarget = theFile.registerAccount(myThirdParty);
+            final QIFAccountEvents myQTarget = theFile.registerAccount(myThirdParty);
 
             /* If we can transfer direct */
             if (canXferDirect) {
@@ -1017,7 +1017,7 @@ public class QIFPortfolioBuilder {
                 myQPortfolio.addEvent(myEvent);
             } else {
                 /* Build the target transfer */
-                QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+                final QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
                 myXferEvent.recordAccount(myQPortfolio.getAccount());
                 myXferEvent.recordAmount(myAmount);
 
@@ -1040,17 +1040,17 @@ public class QIFPortfolioBuilder {
                                     final TransactionAsset pCredit,
                                     final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pHolding.getPortfolio();
-        Security mySecurity = pHolding.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        QIFAccountEvents myTarget = theFile.registerAccount(pCredit);
-        QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+        final QIFAccountEvents myTarget = theFile.registerAccount(pCredit);
+        final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
 
         /* Determine various flags */
-        boolean canReturnCapital = theFileType.canReturnCapital();
-        boolean canTradeZeroShares = theFileType.canTradeZeroShares();
+        final boolean canReturnCapital = theFileType.canReturnCapital();
+        final boolean canTradeZeroShares = theFileType.canTradeZeroShares();
         boolean canXferLinked = theFileType.canXferPortfolio();
         boolean hideBalancingSplitXfer = theFileType.hideBalancingSplitTransfer();
         hideBalancingSplitXfer &= canXferLinked;
@@ -1063,10 +1063,10 @@ public class QIFPortfolioBuilder {
         }
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Access details */
-        TethysMoney myAmount = pTrans.getAmount();
+        final TethysMoney myAmount = pTrans.getAmount();
         TethysUnits myUnits = pTrans.getAccountDeltaUnits();
         if (myUnits == null) {
             myUnits = pTrans.getPartnerDeltaUnits();
@@ -1075,10 +1075,10 @@ public class QIFPortfolioBuilder {
             myUnits = new TethysUnits(myUnits);
             myUnits.negate();
         }
-        TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+        final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
         /* Determine whether we use return capital */
-        boolean doReturnCapital = canReturnCapital && myUnits == null;
+        final boolean doReturnCapital = canReturnCapital && myUnits == null;
 
         /* Handle zero units */
         boolean autoCorrectZeroUnits = false;
@@ -1126,7 +1126,7 @@ public class QIFPortfolioBuilder {
         /* If we are not hiding the balancing transfer */
         if (!hideBalancingSplitXfer) {
             /* Build the source transfer */
-            QIFEvent myEvent = new QIFEvent(theFile, pTrans);
+            final QIFEvent myEvent = new QIFEvent(theFile, pTrans);
             myEvent.recordAccount(myQPortfolio.getAccount(), myList);
             myEvent.recordAmount(myAmount);
 
@@ -1148,24 +1148,24 @@ public class QIFPortfolioBuilder {
                                          final SecurityHolding pTarget,
                                          final Transaction pTrans) {
         /* Access Portfolio Account */
-        Portfolio myPortfolio = pSource.getPortfolio();
-        Security mySource = pSource.getSecurity();
-        Security myTarget = pTarget.getSecurity();
-        QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
+        final Portfolio myPortfolio = pSource.getPortfolio();
+        final Security mySource = pSource.getSecurity();
+        final Security myTarget = pTarget.getSecurity();
+        final QIFAccountEvents myQPortfolio = theFile.registerAccount(myPortfolio);
 
         /* Access Transaction details */
-        QIFSecurity myQSource = theFile.registerSecurity(mySource);
-        QIFSecurity myQTarget = theFile.registerSecurity(myTarget);
+        final QIFSecurity myQSource = theFile.registerSecurity(mySource);
+        final QIFSecurity myQTarget = theFile.registerSecurity(myTarget);
 
         /* Access details */
-        TethysDate myDate = pTrans.getDate();
-        TethysMoney myAmount = pTrans.getAmount();
+        final TethysDate myDate = pTrans.getDate();
+        final TethysMoney myAmount = pTrans.getAmount();
         TethysUnits mySourceUnits = pTrans.getAccountDeltaUnits();
         mySourceUnits = new TethysUnits(mySourceUnits);
         mySourceUnits.negate();
-        TethysUnits myTargetUnits = pTrans.getPartnerDeltaUnits();
-        TethysPrice mySourcePrice = getPriceForDate(mySource, myDate);
-        TethysPrice myTargetPrice = getPriceForDate(myTarget, myDate);
+        final TethysUnits myTargetUnits = pTrans.getPartnerDeltaUnits();
+        final TethysPrice mySourcePrice = getPriceForDate(mySource, myDate);
+        final TethysPrice myTargetPrice = getPriceForDate(myTarget, myDate);
 
         /* Create a sellShares/returnCapital event */
         QIFPortfolioEvent myPortEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.SELL);
@@ -1225,14 +1225,14 @@ public class QIFPortfolioBuilder {
                                                          final Portfolio pTarget,
                                                          final Transaction pTrans) {
         /* If there is cash to transfer */
-        TethysMoney myAmount = getPortfolioCashValue(pSource, pTrans);
+        final TethysMoney myAmount = getPortfolioCashValue(pSource, pTrans);
         if (myAmount != null) {
             /* Access details */
-            QIFAccountEvents mySource = theFile.registerAccount(pSource);
-            QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+            final QIFAccountEvents mySource = theFile.registerAccount(pSource);
+            final QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
 
             /* Obtain classes */
-            List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+            final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
             /* Create an XOut event */
             QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
@@ -1254,13 +1254,13 @@ public class QIFPortfolioBuilder {
         }
 
         /* Access the relevant bucket */
-        PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
-        PortfolioBucket myBucket = myPortfolios.getBucket(pSource);
+        final PortfolioBucketList myPortfolios = theAnalysis.getPortfolios();
+        final PortfolioBucket myBucket = myPortfolios.getBucket(pSource);
 
         /* Loop through the securities */
-        Iterator<SecurityBucket> myIterator = myBucket.securityIterator();
+        final Iterator<SecurityBucket> myIterator = myBucket.securityIterator();
         while (myIterator.hasNext()) {
-            SecurityBucket mySecurity = myIterator.next();
+            final SecurityBucket mySecurity = myIterator.next();
 
             /* Process transfer for this bucket */
             processPortfolioXferForHolding(mySecurity.getSecurityHolding(), pTarget, pTrans);
@@ -1277,14 +1277,14 @@ public class QIFPortfolioBuilder {
                                                   final Portfolio pTarget,
                                                   final Transaction pTrans) {
         /* Determine if this holding was transferred */
-        TethysUnits myUnits = getBaseUnitsForHolding(pSource, pTrans);
+        final TethysUnits myUnits = getBaseUnitsForHolding(pSource, pTrans);
         if (myUnits.isNonZero()) {
             /* Access details */
-            Portfolio mySourcePortfolio = pSource.getPortfolio();
-            Security mySecurity = pSource.getSecurity();
-            QIFAccountEvents mySource = theFile.registerAccount(mySourcePortfolio);
-            QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
-            QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
+            final Portfolio mySourcePortfolio = pSource.getPortfolio();
+            final Security mySecurity = pSource.getSecurity();
+            final QIFAccountEvents mySource = theFile.registerAccount(mySourcePortfolio);
+            final QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+            final QIFSecurity myQSecurity = theFile.registerSecurity(mySecurity);
             TethysMoney myCost = getDeltaCostForHolding(pSource, pTrans);
 
             /* If there is an associated cost */
@@ -1294,10 +1294,10 @@ public class QIFPortfolioBuilder {
                 myCost.negate();
 
                 /* Obtain price for the date */
-                TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
+                final TethysPrice myPrice = getPriceForDate(mySecurity, pTrans.getDate());
 
                 /* Obtain classes */
-                List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+                final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
                 /* Create a sell shares event */
                 QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.SELL);
@@ -1368,12 +1368,12 @@ public class QIFPortfolioBuilder {
                                                         final Portfolio pTarget,
                                                         final Transaction pTrans) {
         /* Access details */
-        QIFAccountEvents mySource = theFile.registerAccount(pSource);
-        QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
-        TethysMoney myAmount = pTrans.getAmount();
+        final QIFAccountEvents mySource = theFile.registerAccount(pSource);
+        final QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+        final TethysMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Create an XOut event */
         QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
@@ -1424,15 +1424,15 @@ public class QIFPortfolioBuilder {
                                                   final TransactionAsset pSource,
                                                   final Transaction pTrans) {
         /* Access details */
-        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        QIFAccountEvents mySource = theFile.registerAccount(pSource);
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        final QIFAccountEvents mySource = theFile.registerAccount(pSource);
         TethysMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Create an XIn event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XIN);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(theBuilder.buildXferToPayee(pSource));
         myEvent.recordXfer(mySource.getAccount(), myList, myAmount);
@@ -1441,7 +1441,7 @@ public class QIFPortfolioBuilder {
         myPortfolio.addEvent(myEvent);
 
         /* Create the sending transfer event */
-        QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
         myAmount = new TethysMoney(myAmount);
         myAmount.negate();
         myXferEvent.recordAmount(myAmount);
@@ -1482,15 +1482,15 @@ public class QIFPortfolioBuilder {
                                                     final TransactionAsset pTarget,
                                                     final Transaction pTrans) {
         /* Access details */
-        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
-        TethysMoney myAmount = pTrans.getAmount();
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        final QIFAccountEvents myTarget = theFile.registerAccount(pTarget);
+        final TethysMoney myAmount = pTrans.getAmount();
 
         /* Obtain classes */
-        List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
+        final List<QIFClass> myList = theBuilder.getTransactionClasses(pTrans);
 
         /* Create an XOut event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.XOUT);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(theBuilder.buildXferToPayee(pTarget));
         myEvent.recordXfer(myTarget.getAccount(), myList, myAmount);
@@ -1499,7 +1499,7 @@ public class QIFPortfolioBuilder {
         myPortfolio.addEvent(myEvent);
 
         /* Create the receiving transfer event */
-        QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
+        final QIFEvent myXferEvent = new QIFEvent(theFile, pTrans);
         myXferEvent.recordAmount(myAmount);
         myXferEvent.recordPayee(theBuilder.buildXferFromPayee(pPortfolio));
         myXferEvent.recordAccount(myPortfolio.getAccount(), myList);
@@ -1518,14 +1518,14 @@ public class QIFPortfolioBuilder {
                                                final Portfolio pPortfolio,
                                                final Transaction pTrans) {
         /* Access Details */
-        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        QIFPayee myPayee = theFile.registerPayee(pCredit);
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        final QIFPayee myPayee = theFile.registerPayee(pCredit);
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final TethysMoney myAmount = new TethysMoney(pTrans.getAmount());
         myAmount.negate();
 
         /* Create an expense event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory);
@@ -1544,13 +1544,13 @@ public class QIFPortfolioBuilder {
                                             final Portfolio pPortfolio,
                                             final Transaction pTrans) {
         /* Access Details */
-        QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
-        QIFPayee myPayee = theFile.registerPayee(pDebit);
-        QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
-        TethysMoney myAmount = pTrans.getAmount();
+        final QIFAccountEvents myPortfolio = theFile.registerAccount(pPortfolio);
+        final QIFPayee myPayee = theFile.registerPayee(pDebit);
+        final QIFEventCategory myCategory = theFile.registerCategory(pTrans.getCategory());
+        final TethysMoney myAmount = pTrans.getAmount();
 
         /* Create an income event */
-        QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
+        final QIFPortfolioEvent myEvent = new QIFPortfolioEvent(theFile, pTrans, QActionType.CASH);
         myEvent.recordAmount(myAmount);
         myEvent.recordPayee(myPayee);
         myEvent.recordCategory(myCategory);

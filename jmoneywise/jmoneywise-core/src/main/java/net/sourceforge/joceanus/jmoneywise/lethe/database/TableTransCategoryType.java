@@ -52,7 +52,7 @@ public class TableTransCategoryType
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getTransCategoryTypes());
     }
 

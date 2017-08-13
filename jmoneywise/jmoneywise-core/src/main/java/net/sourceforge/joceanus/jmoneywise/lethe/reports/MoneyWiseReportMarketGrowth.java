@@ -131,19 +131,19 @@ public class MoneyWiseReportMarketGrowth
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        final PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
         hasForeign = myPortfolios.haveForeignCurrency();
 
         /* Access the totals */
-        PortfolioBucket myTotals = myPortfolios.getTotals();
-        TethysDateRange myRange = pAnalysis.getDateRange();
+        final PortfolioBucket myTotals = myPortfolios.getTotals();
+        final TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
@@ -158,15 +158,15 @@ public class MoneyWiseReportMarketGrowth
         theBuilder.makeTitleCell(myTable, TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
-        Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myValues = myBucket.getValues();
 
             /* Only declare the entry if we have securities */
             if (myBucket.securityIterator().hasNext()) {
@@ -191,7 +191,7 @@ public class MoneyWiseReportMarketGrowth
         }
 
         /* Access values */
-        SecurityValues myValues = myTotals.getValues();
+        final SecurityValues myValues = myTotals.getValues();
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
@@ -215,9 +215,9 @@ public class MoneyWiseReportMarketGrowth
     @Override
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
-        Object mySource = pTable.getSource();
+        final Object mySource = pTable.getSource();
         if (mySource instanceof PortfolioBucket) {
-            PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+            final PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -234,22 +234,22 @@ public class MoneyWiseReportMarketGrowth
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
                                                   final PortfolioBucket pSource) {
         /* Access the securities */
-        SecurityBucketList mySecurities = pSource.getSecurities();
+        final SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Security Buckets */
-        Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+        final Iterator<SecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
-            SecurityValues myBaseValues = myBucket.getBaseValues();
+            final SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myBaseValues = myBucket.getBaseValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -280,13 +280,13 @@ public class MoneyWiseReportMarketGrowth
      */
     private void checkPortfolioGrowth(final PortfolioBucket pBucket) {
         /* Check market profit */
-        SecurityValues myValues = pBucket.getValues();
-        TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
-        TethysMoney myCalcGrowth = pBucket.getNonCashValue(false);
+        final SecurityValues myValues = pBucket.getValues();
+        final TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
+        final TethysMoney myCalcGrowth = pBucket.getNonCashValue(false);
         myCalcGrowth.subtractAmount(pBucket.getNonCashValue(true));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
         myCalcGrowth.addAmount(myAdjust);
-        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getName(), myCalcGrowth);
         }
@@ -295,7 +295,7 @@ public class MoneyWiseReportMarketGrowth
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT));
-        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
+        final TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for portfolio {} of {}", pBucket.getName(), myCalcGrowth);
         }
@@ -307,14 +307,14 @@ public class MoneyWiseReportMarketGrowth
      */
     private void checkSecurityGrowth(final SecurityBucket pBucket) {
         /* Check market profit */
-        SecurityValues myValues = pBucket.getValues();
-        SecurityValues myBaseValues = pBucket.getBaseValues();
-        TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
-        TethysMoney myCalcGrowth = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        final SecurityValues myValues = pBucket.getValues();
+        final SecurityValues myBaseValues = pBucket.getBaseValues();
+        final TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
+        final TethysMoney myCalcGrowth = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcGrowth.subtractAmount(myBaseValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.INVESTED));
         myCalcGrowth.addAmount(myAdjust);
-        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
+        final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.MARKETPROFIT);
         if (!myProfit.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect profit calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
         }
@@ -322,11 +322,11 @@ public class MoneyWiseReportMarketGrowth
         /* Check market growth */
         myCalcGrowth.subtractAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcGrowth.subtractAmount(myAdjust);
-        TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
+        final TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
         if (myFluct != null) {
             myCalcGrowth.subtractAmount(myFluct);
         }
-        TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
+        final TethysMoney myGrowth = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
         if (!myGrowth.equals(myCalcGrowth)) {
             LOGGER.error("Incorrect growth calculation for security {} of {}", pBucket.getDecoratedName(), myCalcGrowth);
         }

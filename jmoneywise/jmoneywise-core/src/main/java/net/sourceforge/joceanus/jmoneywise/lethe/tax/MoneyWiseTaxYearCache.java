@@ -67,14 +67,14 @@ public abstract class MoneyWiseTaxYearCache
      */
     protected boolean checkTaxYearRange(final TethysDateRange pRange) {
         /* Check that the range ends of a tax year boundary */
-        TethysDate myEnd = pRange.getEnd();
+        final TethysDate myEnd = pRange.getEnd();
         if ((myEnd == null)
             || !myEnd.equals(getTaxYearDate(myEnd))) {
             return false;
         }
 
         /* Check that the range starts on the correct taxYear boundary */
-        TethysDate myStart = new TethysDate(myEnd);
+        final TethysDate myStart = new TethysDate(myEnd);
         myStart.adjustYear(-1);
         myStart.adjustDay(1);
         return myStart.equals(pRange.getStart());

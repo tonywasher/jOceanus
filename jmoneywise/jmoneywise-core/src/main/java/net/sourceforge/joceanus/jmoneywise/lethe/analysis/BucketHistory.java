@@ -109,10 +109,10 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
+        final Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
-            BucketSnapShot<T, E> myTrans = myEntry.getValue();
+            final Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we have passed the Date, break the loop */
             if (pDate.compareTo(myTrans.getDate()) < 0) {
@@ -120,7 +120,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             }
 
             /* Add to the map */
-            BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
+            final BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
             theLastValues = myNewTrans.getSnapShot();
             theHistoryMap.put(myEntry.getKey(), myNewTrans);
 
@@ -153,13 +153,13 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         BucketSnapShot<T, E> myLatest = null;
 
         /* Loop through the map */
-        Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
+        final Iterator<Map.Entry<Integer, BucketSnapShot<T, E>>> myIterator = pHistory.entryIterator();
         while (myIterator.hasNext()) {
-            Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
-            BucketSnapShot<T, E> myTrans = myEntry.getValue();
+            final Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the initial Date */
-            int iRange = pRange.compareTo(myTrans.getDate());
+            final int iRange = pRange.compareTo(myTrans.getDate());
             if (iRange <= 0) {
                 /* If we are within the range */
                 if (iRange == 0) {
@@ -184,15 +184,15 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
         /* If we broke the loop because we found an event */
         if (myLatest != null) {
             /* Add to the map */
-            BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myLatest, theBaseValues, theLastValues);
+            final BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myLatest, theBaseValues, theLastValues);
             theHistoryMap.put(myLatest.getId(), myNewTrans);
             theLastValues = myNewTrans.getSnapShot();
         }
 
         /* Continue the loop */
         while (myIterator.hasNext()) {
-            Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
-            BucketSnapShot<T, E> myTrans = myEntry.getValue();
+            final Map.Entry<Integer, BucketSnapShot<T, E>> myEntry = myIterator.next();
+            final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the range, break the loop */
             if (pRange.compareTo(myTrans.getDate()) < 0) {
@@ -200,7 +200,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             }
 
             /* Add to the map */
-            BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
+            final BucketSnapShot<T, E> myNewTrans = new BucketSnapShot<>(myTrans, theBaseValues, theLastValues);
             theHistoryMap.put(myEntry.getKey(), myNewTrans);
             theLastValues = myNewTrans.getSnapShot();
 
@@ -265,7 +265,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     protected T registerTransaction(final Transaction pTrans,
                                     final T pValues) {
         /* Allocate the transaction and add to map */
-        BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
+        final BucketSnapShot<T, E> myTrans = new BucketSnapShot<>(pTrans, pValues, theLastValues);
         theHistoryMap.put(pTrans.getId(), myTrans);
         theLastValues = myTrans.getSnapShot();
 
@@ -280,7 +280,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     public T getValuesForTransaction(final Transaction pTrans) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
+        final BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getSnapShot();
@@ -293,7 +293,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
      */
     public T getPreviousValuesForTransaction(final Transaction pTrans) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
+        final BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getPrevious();
@@ -308,7 +308,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     public TethysDecimal getDeltaValue(final Transaction pTrans,
                                        final E pAttr) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
+        final BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getDeltaValue(pAttr);
@@ -323,7 +323,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     public TethysMoney getDeltaMoneyValue(final Transaction pTrans,
                                           final E pAttr) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
+        final BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getDeltaMoneyValue(pAttr);
@@ -338,7 +338,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     public TethysUnits getDeltaUnitsValue(final Transaction pTrans,
                                           final E pAttr) {
         /* Locate the transaction in the map */
-        BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
+        final BucketSnapShot<T, E> myTrans = theHistoryMap.get(pTrans.getId());
         return (myTrans == null)
                                  ? null
                                  : myTrans.getDeltaUnitsValue(pAttr);

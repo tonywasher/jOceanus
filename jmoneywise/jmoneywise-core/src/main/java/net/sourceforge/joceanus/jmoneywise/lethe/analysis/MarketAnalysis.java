@@ -82,10 +82,10 @@ public class MarketAnalysis {
         theAnalysis = pAnalysis;
 
         /* Determine the currency */
-        AssetCurrency myCurr = pAnalysis.getCurrency();
-        Currency myCurrency = myCurr == null
-                                             ? AccountBucket.DEFAULT_CURRENCY
-                                             : myCurr.getCurrency();
+        final AssetCurrency myCurr = pAnalysis.getCurrency();
+        final Currency myCurrency = myCurr == null
+                                                   ? AccountBucket.DEFAULT_CURRENCY
+                                                   : myCurr.getCurrency();
 
         /* Create buckets */
         theMarketIncome = new TethysMoney(myCurrency);
@@ -102,8 +102,8 @@ public class MarketAnalysis {
      */
     protected void processAccount(final AccountBucket<?> pBucket) {
         /* Access market and gains */
-        AccountValues myValues = pBucket.getValues();
-        TethysMoney myFluct = myValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
+        final AccountValues myValues = pBucket.getValues();
+        final TethysMoney myFluct = myValues.getMoneyValue(AccountAttribute.CURRENCYFLUCT);
 
         /* If there are fluctuations in the period */
         if (myFluct != null && myFluct.isNonZero()) {
@@ -124,10 +124,10 @@ public class MarketAnalysis {
      */
     protected void processSecurity(final SecurityBucket pBucket) {
         /* Access market and gains */
-        SecurityValues myValues = pBucket.getValues();
-        TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
-        TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
-        TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
+        final SecurityValues myValues = pBucket.getValues();
+        final TethysMoney myMarket = myValues.getMoneyValue(SecurityAttribute.MARKETGROWTH);
+        final TethysMoney myGains = myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
+        final TethysMoney myFluct = myValues.getMoneyValue(SecurityAttribute.CURRENCYFLUCT);
 
         /* If there are gains in the period */
         if (myGains.isNonZero()) {
@@ -174,15 +174,15 @@ public class MarketAnalysis {
      */
     protected void propagateTotals() {
         /* Access lists */
-        PayeeBucketList myPayees = theAnalysis.getPayees();
-        TaxBasisBucketList myTaxBasis = theAnalysis.getTaxBasis();
-        TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
+        final PayeeBucketList myPayees = theAnalysis.getPayees();
+        final TaxBasisBucketList myTaxBasis = theAnalysis.getTaxBasis();
+        final TransactionCategoryBucketList myCategories = theAnalysis.getTransCategories();
 
         /* If we have market income/expense */
         if ((theMarketIncome.isNonZero())
             || (theMarketExpense.isNonZero())) {
             /* Access market payee */
-            PayeeBucket myMarket = myPayees.getBucket(PayeeTypeClass.MARKET);
+            final PayeeBucket myMarket = myPayees.getBucket(PayeeTypeClass.MARKET);
 
             /* Adjust totals */
             myMarket.addIncome(theMarketIncome);
@@ -193,7 +193,7 @@ public class MarketAnalysis {
         if ((theGrowthIncome.isNonZero())
             || (theGrowthExpense.isNonZero())) {
             /* Access marketGrowth category */
-            TransactionCategoryBucket myGrowth = myCategories.getBucket(TransactionCategoryClass.MARKETGROWTH);
+            final TransactionCategoryBucket myGrowth = myCategories.getBucket(TransactionCategoryClass.MARKETGROWTH);
 
             /* Adjust totals */
             myGrowth.addIncome(theGrowthIncome);
@@ -207,7 +207,7 @@ public class MarketAnalysis {
         if ((theFluctIncome.isNonZero())
             || (theFluctExpense.isNonZero())) {
             /* Access currecyFluctuation category */
-            TransactionCategoryBucket myFluct = myCategories.getBucket(TransactionCategoryClass.CURRENCYFLUCTUATION);
+            final TransactionCategoryBucket myFluct = myCategories.getBucket(TransactionCategoryClass.CURRENCYFLUCTUATION);
 
             /* Adjust totals */
             myFluct.addIncome(theFluctIncome);

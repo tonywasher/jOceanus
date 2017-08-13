@@ -129,11 +129,11 @@ public final class PayeeBucket
         theData = theAnalysis.getData();
 
         /* Create the history map */
-        AssetCurrency myDefault = theAnalysis.getCurrency();
-        Currency myCurrency = myDefault == null
-                                                ? AccountBucket.DEFAULT_CURRENCY
-                                                : myDefault.getCurrency();
-        PayeeValues myValues = new PayeeValues(myCurrency);
+        final AssetCurrency myDefault = theAnalysis.getCurrency();
+        final Currency myCurrency = myDefault == null
+                                                      ? AccountBucket.DEFAULT_CURRENCY
+                                                      : myDefault.getCurrency();
+        final PayeeValues myValues = new PayeeValues(myCurrency);
         theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
@@ -206,9 +206,9 @@ public final class PayeeBucket
         }
 
         /* Handle Attribute fields */
-        PayeeAttribute myClass = getClassForField(pField);
+        final PayeeAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -358,7 +358,7 @@ public final class PayeeBucket
      */
     private Object getAttributeValue(final PayeeAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getValue(pAttr);
+        final Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -414,7 +414,7 @@ public final class PayeeBucket
         }
 
         /* Compare the Payees */
-        PayeeBucket myThat = (PayeeBucket) pThat;
+        final PayeeBucket myThat = (PayeeBucket) pThat;
         if (!getPayee().equals(myThat.getPayee())) {
             return false;
         }
@@ -447,13 +447,13 @@ public final class PayeeBucket
      */
     protected void adjustForDebit(final TransactionHelper pTrans) {
         /* Access the class */
-        TransactionCategoryClass myClass = pTrans.getCategoryClass();
-        boolean isIncome = myClass.isIncome();
+        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        final boolean isIncome = myClass.isIncome();
         TethysMoney myIncome = null;
         TethysMoney myExpense = null;
 
         /* Access amount */
-        TethysMoney myAmount = pTrans.getLocalAmount();
+        final TethysMoney myAmount = pTrans.getLocalAmount();
         if (myAmount.isNonZero()) {
             /* If this is an income */
             if (isIncome) {
@@ -469,7 +469,7 @@ public final class PayeeBucket
         }
 
         /* If there is a non-zero TaxCredit */
-        TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final TethysMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
             if (isIncome) {
@@ -489,7 +489,7 @@ public final class PayeeBucket
         }
 
         /* If there is National Insurance */
-        TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getNatInsurance();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
             if (isIncome) {
@@ -509,7 +509,7 @@ public final class PayeeBucket
         }
 
         /* If there is Withheld */
-        TethysMoney myWithheld = pTrans.getWithheld();
+        final TethysMoney myWithheld = pTrans.getWithheld();
         if ((myWithheld != null) && (myWithheld.isNonZero())) {
             /* Adjust for Charity Donation */
             if (isIncome) {
@@ -549,13 +549,13 @@ public final class PayeeBucket
      */
     protected void adjustForCredit(final TransactionHelper pTrans) {
         /* Analyse the transaction */
-        TransactionCategoryClass myClass = pTrans.getCategoryClass();
-        boolean isExpense = !myClass.isIncome();
+        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        final boolean isExpense = !myClass.isIncome();
         TethysMoney myExpense = null;
         TethysMoney myIncome = null;
 
         /* Access amount */
-        TethysMoney myAmount = pTrans.getLocalAmount();
+        final TethysMoney myAmount = pTrans.getLocalAmount();
         if (myAmount.isNonZero()) {
             /* If this is an expense */
             if (isExpense) {
@@ -571,7 +571,7 @@ public final class PayeeBucket
         }
 
         /* If there is a non-zero TaxCredit */
-        TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final TethysMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
             if (isExpense) {
@@ -610,9 +610,9 @@ public final class PayeeBucket
      */
     protected void adjustForTaxCredit(final TransactionHelper pTrans) {
         /* Access amount */
-        TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final TethysMoney myTaxCred = pTrans.getTaxCredit();
         if (myTaxCred.isNonZero()) {
-            TransactionCategoryClass myClass = pTrans.getCategoryClass();
+            final TransactionCategoryClass myClass = pTrans.getCategoryClass();
             if (myClass.isExpense()) {
                 /* Update the expense */
                 adjustCounter(PayeeAttribute.EXPENSE, myTaxCred);
@@ -632,17 +632,17 @@ public final class PayeeBucket
      */
     protected void adjustForTaxPayments(final TransactionHelper pTrans) {
         /* Determine transaction type */
-        TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
         TethysMoney myAmount = null;
 
         /* Adjust for Tax credit */
-        TethysMoney myTaxCred = pTrans.getTaxCredit();
+        final TethysMoney myTaxCred = pTrans.getTaxCredit();
         if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
             myAmount = new TethysMoney(myTaxCred);
         }
 
         /* Adjust for national insurance */
-        TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getNatInsurance();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             if (myAmount == null) {
                 myAmount = new TethysMoney(myNatIns);
@@ -692,7 +692,7 @@ public final class PayeeBucket
     protected void subtractIncome(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            TethysMoney myIncome = new TethysMoney(pValue);
+            final TethysMoney myIncome = new TethysMoney(pValue);
             myIncome.negate();
             setValue(PayeeAttribute.INCOME, myIncome);
         }
@@ -744,7 +744,7 @@ public final class PayeeBucket
     protected void subtractExpense(final TethysMoney pValue) {
         /* Only adjust on non-zero */
         if (pValue.isNonZero()) {
-            TethysMoney myExpense = new TethysMoney(pValue);
+            final TethysMoney myExpense = new TethysMoney(pValue);
             myExpense.negate();
             adjustCounter(PayeeAttribute.EXPENSE, myExpense);
         }
@@ -756,7 +756,7 @@ public final class PayeeBucket
      */
     private void addValues(final PayeeBucket pSource) {
         /* Access source values */
-        PayeeValues mySource = pSource.getValues();
+        final PayeeValues mySource = pSource.getValues();
 
         /* Add income values */
         TethysMoney myValue = theValues.getMoneyValue(PayeeAttribute.INCOME);
@@ -772,7 +772,7 @@ public final class PayeeBucket
     /**
      * Calculate delta.
      */
-    private void calculateDelta() {
+    protected void calculateDelta() {
         /* Calculate delta for the values */
         theValues.calculateDelta();
     }
@@ -780,7 +780,7 @@ public final class PayeeBucket
     /**
      * Adjust to base.
      */
-    private void adjustToBase() {
+    protected void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -800,8 +800,8 @@ public final class PayeeBucket
             super(PayeeAttribute.class);
 
             /* Initialise income/expense to zero */
-            setValue(PayeeAttribute.INCOME, new TethysMoney(pCurrency));
-            setValue(PayeeAttribute.EXPENSE, new TethysMoney(pCurrency));
+            super.setValue(PayeeAttribute.INCOME, new TethysMoney(pCurrency));
+            super.setValue(PayeeAttribute.EXPENSE, new TethysMoney(pCurrency));
         }
 
         /**
@@ -841,9 +841,9 @@ public final class PayeeBucket
             myValue.setZero();
 
             /* Reset Income and expense values */
-            setValue(PayeeAttribute.INCOME, myValue);
-            setValue(PayeeAttribute.EXPENSE, new TethysMoney(myValue));
-            setValue(PayeeAttribute.PROFIT, new TethysMoney(myValue));
+            super.setValue(PayeeAttribute.INCOME, myValue);
+            super.setValue(PayeeAttribute.EXPENSE, new TethysMoney(myValue));
+            super.setValue(PayeeAttribute.PROFIT, new TethysMoney(myValue));
         }
 
         /**
@@ -855,11 +855,11 @@ public final class PayeeBucket
             myDelta = new TethysMoney(myDelta);
 
             /* Subtract the expense value */
-            TethysMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
+            final TethysMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
             myDelta.subtractAmount(myExpense);
 
             /* Set the delta */
-            setValue(PayeeAttribute.PROFIT, myDelta);
+            super.setValue(PayeeAttribute.PROFIT, myDelta);
         }
 
         /**
@@ -867,8 +867,8 @@ public final class PayeeBucket
          * @return true/false
          */
         public boolean isActive() {
-            TethysMoney myIncome = getMoneyValue(PayeeAttribute.INCOME);
-            TethysMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
+            final TethysMoney myIncome = getMoneyValue(PayeeAttribute.INCOME);
+            final TethysMoney myExpense = getMoneyValue(PayeeAttribute.EXPENSE);
             return (myIncome.isNonZero()) || (myExpense.isNonZero());
         }
     }
@@ -943,12 +943,12 @@ public final class PayeeBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<PayeeBucket> myIterator = pBase.listIterator();
+            final Iterator<PayeeBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                PayeeBucket myCurr = myIterator.next();
+                final PayeeBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                PayeeBucket myBucket = new PayeeBucket(pAnalysis, myCurr, pDate);
+                final PayeeBucket myBucket = new PayeeBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -974,12 +974,12 @@ public final class PayeeBucket
             theTotals = allocateTotalsBucket();
 
             /* Loop through the buckets */
-            Iterator<PayeeBucket> myIterator = pBase.listIterator();
+            final Iterator<PayeeBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                PayeeBucket myCurr = myIterator.next();
+                final PayeeBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                PayeeBucket myBucket = new PayeeBucket(pAnalysis, myCurr, pRange);
+                final PayeeBucket myBucket = new PayeeBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -1043,7 +1043,7 @@ public final class PayeeBucket
             }
 
             /* Access as payee */
-            Payee myPayee = Payee.class.cast(pPayee);
+            final Payee myPayee = Payee.class.cast(pPayee);
 
             /* Locate the bucket in the list */
             PayeeBucket myItem = findItemById(myPayee.getId());
@@ -1068,20 +1068,34 @@ public final class PayeeBucket
          */
         protected PayeeBucket getBucket(final PayeeTypeClass pClass) {
             /* Determine required payee */
-            Payee myPayee = theData.getPayees().getSingularClass(pClass);
+            final Payee myPayee = theData.getPayees().getSingularClass(pClass);
 
             /* Return the bucket */
             return getBucket(myPayee);
         }
 
         /**
-         * Obtain an orphan PayeeBucket for a given payee account.
-         * @param pPayee the payee account
-         * @return the bucket
+         * Obtain the matching PayeeBucket.
+         * @param pPayee the payee
+         * @return the matching bucket
          */
-        public PayeeBucket getOrphanBucket(final Payee pPayee) {
-            /* Allocate an orphan bucket */
-            return new PayeeBucket(theAnalysis, pPayee);
+        public PayeeBucket getMatchingPayee(final Payee pPayee) {
+            /* Return the matching payee if it exists else an orphan bucket */
+            final PayeeBucket myPayee = findItemById(pPayee.getOrderedId());
+            return myPayee != null
+                                   ? myPayee
+                                   : new PayeeBucket(theAnalysis, pPayee);
+        }
+
+        /**
+         * Obtain the default PayeeBucket.
+         * @return the default bucket
+         */
+        public PayeeBucket getDefaultPayee() {
+            /* Return the first payee in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
         }
 
         /**
@@ -1089,9 +1103,9 @@ public final class PayeeBucket
          */
         protected void produceTotals() {
             /* Loop through the buckets */
-            Iterator<PayeeBucket> myIterator = listIterator();
+            final Iterator<PayeeBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                PayeeBucket myCurr = myIterator.next();
+                final PayeeBucket myCurr = myIterator.next();
 
                 /* Calculate the delta */
                 myCurr.calculateDelta();

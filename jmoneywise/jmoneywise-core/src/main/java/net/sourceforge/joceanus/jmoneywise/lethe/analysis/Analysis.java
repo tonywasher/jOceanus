@@ -297,7 +297,7 @@ public class Analysis
         theTaxYearCache = (MoneyWiseUKTaxYearCache) theData.getTaxFactory();
 
         /* Access the underlying maps/lists */
-        TethysDate myStart = theDateRange.getStart();
+        final TethysDate myStart = theDateRange.getStart();
         theDilutions = myStart == null
                                        ? new DilutionEventMap()
                                        : new DilutionEventMap(pSource.getDilutions(), myStart);
@@ -328,7 +328,7 @@ public class Analysis
     protected Analysis(final AnalysisManager pManager,
                        final TethysDate pDate) {
         /* Store the data */
-        Analysis myBase = pManager.getAnalysis();
+        final Analysis myBase = pManager.getAnalysis();
         theData = myBase.getData();
         theCurrency = myBase.getCurrency();
         thePreferences = myBase.getPreferenceMgr();
@@ -366,7 +366,7 @@ public class Analysis
     protected Analysis(final AnalysisManager pManager,
                        final TethysDateRange pRange) {
         /* Store the data */
-        Analysis myBase = pManager.getAnalysis();
+        final Analysis myBase = pManager.getAnalysis();
         theData = myBase.getData();
         theCurrency = myBase.getCurrency();
         thePreferences = myBase.getPreferenceMgr();
@@ -395,7 +395,7 @@ public class Analysis
         theLoanCategories = new LoanCategoryBucketList(this);
 
         /* Handle new tax calculations */
-        MoneyWiseTaxYear myYear = theTaxYearCache.findTaxYearForRange(theDateRange);
+        final MoneyWiseTaxYear myYear = theTaxYearCache.findTaxYearForRange(theDateRange);
         theTaxAnalysis = myYear != null
                                         ? myYear.analyseTaxYear(thePreferences, theTaxBasis)
                                         : null;
@@ -658,43 +658,43 @@ public class Analysis
      */
     protected void addOpeningBalances(final TransactionHelper pHelper) {
         /* Iterate through the deposits */
-        Iterator<Deposit> myDepIterator = theData.getDeposits().iterator();
+        final Iterator<Deposit> myDepIterator = theData.getDeposits().iterator();
         while (myDepIterator.hasNext()) {
-            Deposit myDeposit = myDepIterator.next();
+            final Deposit myDeposit = myDepIterator.next();
 
             /* If the deposit has an opening balance */
-            TethysMoney myBalance = myDeposit.getOpeningBalance();
+            final TethysMoney myBalance = myDeposit.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual deposit bucket */
-                DepositBucket myBucket = theDeposits.getBucket(myDeposit);
+                final DepositBucket myBucket = theDeposits.getBucket(myDeposit);
                 myBucket.setOpeningBalance(pHelper, myBalance);
             }
         }
 
         /* Iterate through the cash */
-        Iterator<Cash> myCashIterator = theData.getCash().iterator();
+        final Iterator<Cash> myCashIterator = theData.getCash().iterator();
         while (myCashIterator.hasNext()) {
-            Cash myCash = myCashIterator.next();
+            final Cash myCash = myCashIterator.next();
 
             /* If the cash has an opening balance */
-            TethysMoney myBalance = myCash.getOpeningBalance();
+            final TethysMoney myBalance = myCash.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual cash bucket */
-                CashBucket myBucket = theCash.getBucket(myCash);
+                final CashBucket myBucket = theCash.getBucket(myCash);
                 myBucket.setOpeningBalance(pHelper, myBalance);
             }
         }
 
         /* Iterate through the loans */
-        Iterator<Loan> myLoanIterator = theData.getLoans().iterator();
+        final Iterator<Loan> myLoanIterator = theData.getLoans().iterator();
         while (myLoanIterator.hasNext()) {
-            Loan myLoan = myLoanIterator.next();
+            final Loan myLoan = myLoanIterator.next();
 
             /* If the loan has an opening balance */
-            TethysMoney myBalance = myLoan.getOpeningBalance();
+            final TethysMoney myBalance = myLoan.getOpeningBalance();
             if (myBalance != null) {
                 /* Obtain the actual loan bucket */
-                LoanBucket myBucket = theLoans.getBucket(myLoan);
+                final LoanBucket myBucket = theLoans.getBucket(myLoan);
                 myBucket.setOpeningBalance(pHelper, myBalance);
             }
         }

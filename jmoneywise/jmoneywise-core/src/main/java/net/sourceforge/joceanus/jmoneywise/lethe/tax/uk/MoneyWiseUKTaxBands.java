@@ -122,7 +122,7 @@ public class MoneyWiseUKTaxBands
     protected MoneyWiseUKTaxBands(final MoneyWiseUKTaxBands pSource) {
         theStandard = new MoneyWiseTaxBandSet(pSource.getStandardSet());
         hasLoTaxBand = pSource.hasLoTaxBand;
-        MoneyWiseTaxBand mySavings = pSource.getLoSavings();
+        final MoneyWiseTaxBand mySavings = pSource.getLoSavings();
         theLoSavings = mySavings == null
                                          ? null
                                          : new MoneyWiseTaxBand(mySavings);
@@ -157,7 +157,7 @@ public class MoneyWiseUKTaxBands
      * @return the rate
      */
     protected TethysRate getBasicTaxRate() {
-        Iterator<MoneyWiseTaxBand> myIterator = theStandard.iterator();
+        final Iterator<MoneyWiseTaxBand> myIterator = theStandard.iterator();
         if (hasLoTaxBand && myIterator.hasNext()) {
             myIterator.next();
         }

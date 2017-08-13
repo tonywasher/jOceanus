@@ -62,7 +62,7 @@ public class SheetAssetCurrency
         super(pReader, AREA_ACCOUNTCURRENCIES);
 
         /* Access the list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getAccountCurrencies());
     }
 
@@ -75,14 +75,14 @@ public class SheetAssetCurrency
         super(pWriter, AREA_ACCOUNTCURRENCIES);
 
         /* Access the list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getAccountCurrencies());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(AssetCurrency.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(AssetCurrency.OBJECT_NAME);
         myValues.addValue(AssetCurrency.FIELD_DEFAULT, loadBoolean(COL_DEFAULT));
 
         /* Return the values */
@@ -115,18 +115,18 @@ public class SheetAssetCurrency
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of account currencies */
-        AssetCurrencyList myList = pData.getAccountCurrencies();
+        final AssetCurrencyList myList = pData.getAccountCurrencies();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_ACCOUNTCURRENCIES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_ACCOUNTCURRENCIES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_ACCOUNTCURRENCIES);
 
             /* Count the number of AssetCurrencies */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -134,8 +134,8 @@ public class SheetAssetCurrency
             /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());

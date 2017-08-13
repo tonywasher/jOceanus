@@ -113,19 +113,19 @@ public final class QIFPreference {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the directory is specified */
-            MetisStringPreference<MoneyWiseQIFPreferenceKey> myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
+            final MetisStringPreference<MoneyWiseQIFPreferenceKey> myDirPref = getStringPreference(MoneyWiseQIFPreferenceKey.QIFDIR);
             if (!myDirPref.isAvailable()) {
                 myDirPref.setValue(System.getProperty("user.home"));
             }
 
             /* Make sure that the QIFType is specified */
-            MetisEnumPreference<MoneyWiseQIFPreferenceKey, QIFType> myTypePref = getEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
+            final MetisEnumPreference<MoneyWiseQIFPreferenceKey, QIFType> myTypePref = getEnumPreference(MoneyWiseQIFPreferenceKey.QIFTYPE, QIFType.class);
             if (!myTypePref.isAvailable()) {
                 myTypePref.setValue(QIFType.ACEMONEY);
             }
 
             /* Make sure that the eventDate is specified */
-            MetisDatePreference<MoneyWiseQIFPreferenceKey> myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
+            final MetisDatePreference<MoneyWiseQIFPreferenceKey> myPref = getDatePreference(MoneyWiseQIFPreferenceKey.LASTEVENT);
             if (!myPref.isAvailable()) {
                 myPref.setValue(new TethysDate());
             }

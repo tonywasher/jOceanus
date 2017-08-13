@@ -91,7 +91,7 @@ public class SheetPortfolio
         super(pReader, AREA_PORTFOLIOS);
 
         /* Access the Portfolios list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getPortfolios());
     }
 
@@ -104,14 +104,14 @@ public class SheetPortfolio
         super(pWriter, AREA_PORTFOLIOS);
 
         /* Access the Portfolios list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getPortfolios());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadSecureValues() throws OceanusException {
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_PORTTYPE, loadInteger(COL_TYPE));
         myValues.addValue(Portfolio.FIELD_PARENT, loadInteger(COL_PARENT));
         myValues.addValue(Portfolio.FIELD_CURRENCY, loadInteger(COL_CURRENCY));
@@ -156,19 +156,19 @@ public class SheetPortfolio
                                            final MetisDataRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
-        String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Access portfolio type */
-        String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myType = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Look for separator in category */
-        int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
+        final int iIndex = myType.indexOf(TransactionCategory.STR_SEP);
         if (iIndex == -1) {
             throw new MoneyWiseLogicException("Unexpected Portfolio Class " + myType);
         }
 
         /* Access subCategory as portfolio type */
-        String myPortType = myType.substring(iIndex + 1);
+        final String myPortType = myType.substring(iIndex + 1);
 
         /* Skip class */
         ++iAdjust;
@@ -181,7 +181,7 @@ public class SheetPortfolio
         }
 
         /* Access Parent account */
-        String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
+        final String myParent = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
 
         /* Skip alias, portfolio, maturity, openingBalance, symbol and region columns */
         ++iAdjust;
@@ -195,12 +195,12 @@ public class SheetPortfolio
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         AssetCurrency myCurrency = pData.getDefaultCurrency();
         if (myCell != null) {
-            String myCurrName = myCell.getStringValue();
+            final String myCurrName = myCell.getStringValue();
             myCurrency = pData.getAccountCurrencies().findItemByName(myCurrName);
         }
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = new DataValues<>(Portfolio.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = new DataValues<>(Portfolio.OBJECT_NAME);
         myValues.addValue(Portfolio.FIELD_NAME, myName);
         myValues.addValue(Portfolio.FIELD_PORTTYPE, myPortType);
         myValues.addValue(Portfolio.FIELD_PARENT, myParent);
@@ -208,8 +208,8 @@ public class SheetPortfolio
         myValues.addValue(Portfolio.FIELD_CLOSED, isClosed);
 
         /* Add the value into the list */
-        PortfolioList myList = pData.getPortfolios();
-        Portfolio myPortfolio = myList.addValuesItem(myValues);
+        final PortfolioList myList = pData.getPortfolios();
+        final Portfolio myPortfolio = myList.addValuesItem(myValues);
 
         /* Declare the portfolio */
         pLoader.declareAsset(myPortfolio);

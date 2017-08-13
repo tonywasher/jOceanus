@@ -74,6 +74,11 @@ public enum MoneyWiseReportResource implements TethysResourceId {
     TYPE_TAXCALC("Type.TaxCalc"),
 
     /**
+     * AssetGains ReportType.
+     */
+    TYPE_ASSETGAINS("Type.AssetGains"),
+
+    /**
      * CapitalGains ReportType.
      */
     TYPE_CAPITALGAINS("Type.CapitalGains"),
@@ -117,6 +122,11 @@ public enum MoneyWiseReportResource implements TethysResourceId {
      * MarketGrowth BaseValue.
      */
     MARKETGROWTH_BASE("MarketGrowth.Base"),
+
+    /**
+     * AssetGains Title.
+     */
+    ASSETGAINS_TITLE("AssetGains.Title"),
 
     /**
      * CapitalGains Title.
@@ -189,7 +199,7 @@ public enum MoneyWiseReportResource implements TethysResourceId {
      */
     private static Map<MoneyWiseReportType, TethysResourceId> buildReportMap() {
         /* Create the map and return it */
-        Map<MoneyWiseReportType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseReportType.class);
+        final Map<MoneyWiseReportType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseReportType.class);
         myMap.put(MoneyWiseReportType.NETWORTH, TYPE_NETWORTH);
         myMap.put(MoneyWiseReportType.BALANCESHEET, TYPE_BALANCESHEET);
         myMap.put(MoneyWiseReportType.CASHFLOW, TYPE_CASHFLOW);
@@ -198,6 +208,7 @@ public enum MoneyWiseReportResource implements TethysResourceId {
         myMap.put(MoneyWiseReportType.MARKETGROWTH, TYPE_MARKET);
         myMap.put(MoneyWiseReportType.TAXBASIS, TYPE_TAXBASIS);
         myMap.put(MoneyWiseReportType.TAXCALC, TYPE_TAXCALC);
+        myMap.put(MoneyWiseReportType.ASSETGAINS, TYPE_ASSETGAINS);
         myMap.put(MoneyWiseReportType.CAPITALGAINS, TYPE_CAPITALGAINS);
         return myMap;
     }

@@ -171,7 +171,7 @@ public class TransactionCategoryType
 
         @Override
         protected TransactionCategoryTypeList getEmptyList(final ListStyle pStyle) {
-            TransactionCategoryTypeList myList = new TransactionCategoryTypeList(this);
+            final TransactionCategoryTypeList myList = new TransactionCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -188,7 +188,7 @@ public class TransactionCategoryType
                 throw new UnsupportedOperationException();
             }
 
-            TransactionCategoryType myType = new TransactionCategoryType(this, (TransactionCategoryType) pItem);
+            final TransactionCategoryType myType = new TransactionCategoryType(this, (TransactionCategoryType) pItem);
             add(myType);
             return myType;
         }
@@ -217,7 +217,7 @@ public class TransactionCategoryType
          */
         public void addBasicItem(final String pCategoryType) throws OceanusException {
             /* Create a new Category Type */
-            TransactionCategoryType myCatType = new TransactionCategoryType(this, pCategoryType);
+            final TransactionCategoryType myCatType = new TransactionCategoryType(this, pCategoryType);
 
             /* Check that this CategoryTypeId has not been previously added */
             if (!isIdUnique(myCatType.getId())) {
@@ -232,7 +232,7 @@ public class TransactionCategoryType
         @Override
         public TransactionCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            TransactionCategoryType myType = new TransactionCategoryType(this, pValues);
+            final TransactionCategoryType myType = new TransactionCategoryType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -250,7 +250,7 @@ public class TransactionCategoryType
         @Override
         protected TransactionCategoryType newItem(final TransactionCategoryClass pClass) throws OceanusException {
             /* Create the type */
-            TransactionCategoryType myType = new TransactionCategoryType(this, pClass);
+            final TransactionCategoryType myType = new TransactionCategoryType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

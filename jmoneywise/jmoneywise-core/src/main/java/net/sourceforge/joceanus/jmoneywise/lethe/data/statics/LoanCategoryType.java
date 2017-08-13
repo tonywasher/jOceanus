@@ -176,7 +176,7 @@ public class LoanCategoryType
 
         @Override
         protected LoanCategoryTypeList getEmptyList(final ListStyle pStyle) {
-            LoanCategoryTypeList myList = new LoanCategoryTypeList(this);
+            final LoanCategoryTypeList myList = new LoanCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -188,7 +188,7 @@ public class LoanCategoryType
                 throw new UnsupportedOperationException();
             }
 
-            LoanCategoryType myType = new LoanCategoryType(this, (LoanCategoryType) pItem);
+            final LoanCategoryType myType = new LoanCategoryType(this, (LoanCategoryType) pItem);
             add(myType);
             return myType;
         }
@@ -213,7 +213,7 @@ public class LoanCategoryType
          */
         public void addBasicItem(final String pLoanCatType) throws OceanusException {
             /* Create a new Loan Category Type */
-            LoanCategoryType myLoanType = new LoanCategoryType(this, pLoanCatType);
+            final LoanCategoryType myLoanType = new LoanCategoryType(this, pLoanCatType);
 
             /* Check that this LoanCategoryTypeId has not been previously added */
             if (!isIdUnique(myLoanType.getId())) {
@@ -228,7 +228,7 @@ public class LoanCategoryType
         @Override
         public LoanCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            LoanCategoryType myType = new LoanCategoryType(this, pValues);
+            final LoanCategoryType myType = new LoanCategoryType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -246,7 +246,7 @@ public class LoanCategoryType
         @Override
         protected LoanCategoryType newItem(final LoanCategoryClass pClass) throws OceanusException {
             /* Create the type */
-            LoanCategoryType myType = new LoanCategoryType(this, pClass);
+            final LoanCategoryType myType = new LoanCategoryType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

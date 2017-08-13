@@ -193,7 +193,7 @@ public class TransactionInfoType
 
         @Override
         protected TransactionInfoTypeList getEmptyList(final ListStyle pStyle) {
-            TransactionInfoTypeList myList = new TransactionInfoTypeList(this);
+            final TransactionInfoTypeList myList = new TransactionInfoTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -205,7 +205,7 @@ public class TransactionInfoType
                 throw new UnsupportedOperationException();
             }
 
-            TransactionInfoType myType = new TransactionInfoType(this, (TransactionInfoType) pItem);
+            final TransactionInfoType myType = new TransactionInfoType(this, (TransactionInfoType) pItem);
             add(myType);
             return myType;
         }
@@ -230,7 +230,7 @@ public class TransactionInfoType
          */
         public void addBasicItem(final String pType) throws OceanusException {
             /* Create a new InfoType */
-            TransactionInfoType myType = new TransactionInfoType(this, pType);
+            final TransactionInfoType myType = new TransactionInfoType(this, pType);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -245,7 +245,7 @@ public class TransactionInfoType
         @Override
         public TransactionInfoType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            TransactionInfoType myType = new TransactionInfoType(this, pValues);
+            final TransactionInfoType myType = new TransactionInfoType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -263,7 +263,7 @@ public class TransactionInfoType
         @Override
         protected TransactionInfoType newItem(final TransactionInfoClass pClass) throws OceanusException {
             /* Create the type */
-            TransactionInfoType myType = new TransactionInfoType(this, pClass);
+            final TransactionInfoType myType = new TransactionInfoType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

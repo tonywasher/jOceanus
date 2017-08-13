@@ -176,7 +176,7 @@ public class CashCategoryType
 
         @Override
         protected CashCategoryTypeList getEmptyList(final ListStyle pStyle) {
-            CashCategoryTypeList myList = new CashCategoryTypeList(this);
+            final CashCategoryTypeList myList = new CashCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -188,7 +188,7 @@ public class CashCategoryType
                 throw new UnsupportedOperationException();
             }
 
-            CashCategoryType myType = new CashCategoryType(this, (CashCategoryType) pItem);
+            final CashCategoryType myType = new CashCategoryType(this, (CashCategoryType) pItem);
             add(myType);
             return myType;
         }
@@ -213,7 +213,7 @@ public class CashCategoryType
          */
         public void addBasicItem(final String pCatType) throws OceanusException {
             /* Create a new Cash Category Type */
-            CashCategoryType myCashType = new CashCategoryType(this, pCatType);
+            final CashCategoryType myCashType = new CashCategoryType(this, pCatType);
 
             /* Check that this CashCategoryTypeId has not been previously added */
             if (!isIdUnique(myCashType.getId())) {
@@ -228,7 +228,7 @@ public class CashCategoryType
         @Override
         public CashCategoryType addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the type */
-            CashCategoryType myType = new CashCategoryType(this, pValues);
+            final CashCategoryType myType = new CashCategoryType(this, pValues);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -246,7 +246,7 @@ public class CashCategoryType
         @Override
         protected CashCategoryType newItem(final CashCategoryClass pClass) throws OceanusException {
             /* Create the type */
-            CashCategoryType myType = new CashCategoryType(this, pClass);
+            final CashCategoryType myType = new CashCategoryType(this, pClass);
 
             /* Check that this TypeId has not been previously added */
             if (!isIdUnique(myType.getId())) {

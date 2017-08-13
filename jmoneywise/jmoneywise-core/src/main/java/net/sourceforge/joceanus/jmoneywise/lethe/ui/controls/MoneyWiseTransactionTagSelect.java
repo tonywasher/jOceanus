@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket.TransactionTagBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TagFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -103,7 +102,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the label */
-        TethysLabel<N, I> myTagLabel = pFactory.newLabel(NLS_TAG + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myTagLabel = pFactory.newLabel(NLS_TAG + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -116,7 +115,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
         theState.applyState();
 
         /* Create the listener */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theTagButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTag());
         theTagButton.setMenuConfigurator(e -> buildTagMenu());
         theTagMenu = theTagButton.getMenu();
@@ -170,7 +169,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Determine whether there are any Accounts to select */
-        boolean csAvailable = bEnabled && isAvailable();
+        final boolean csAvailable = bEnabled && isAvailable();
 
         /* Pass call on to buttons */
         theTagButton.setEnabled(csAvailable);
@@ -192,17 +191,10 @@ public class MoneyWiseTransactionTagSelect<N, I>
         /* Obtain the current tag */
         TransactionTagBucket myTag = theState.getTag();
 
-        /* If we have a selected Tag */
-        if (myTag != null) {
-            /* Look for the equivalent tag */
-            myTag = getMatchingBucket(myTag);
-        }
-
-        /* If we do not have an active tag and the list is non-empty */
-        if ((myTag == null) && (!theTags.isEmpty())) {
-            /* Determine the next tag */
-            myTag = theTags.peekFirst();
-        }
+        /* Switch to versions from the analysis */
+        myTag = myTag != null
+                              ? theTags.getMatchingTag(myTag.getTransTag())
+                              : theTags.getDefaultTag();
 
         /* Set the tag */
         theState.setTheTag(myTag);
@@ -214,38 +206,18 @@ public class MoneyWiseTransactionTagSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof TagFilter) {
             /* Access filter */
-            TagFilter myFilter = (TagFilter) pFilter;
+            final TagFilter myFilter = (TagFilter) pFilter;
 
             /* Obtain the tag */
             TransactionTagBucket myTag = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myTag = getMatchingBucket(myTag);
+            myTag = theTags.getMatchingTag(myTag.getTransTag());
 
             /* Set the tag */
             theState.setTheTag(myTag);
             theState.applyState();
         }
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private TransactionTagBucket getMatchingBucket(final TransactionTagBucket pBucket) {
-        /* Look up the matching TagBucket */
-        TransactionTag myTag = pBucket.getTransTag();
-        TransactionTagBucket myBucket = theTags.findItemById(myTag.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = theTags.getOrphanBucket(myTag);
-        }
-
-        /* return the bucket */
-        return myBucket;
     }
 
     /**
@@ -256,16 +228,16 @@ public class MoneyWiseTransactionTagSelect<N, I>
         theTagMenu.removeAllItems();
 
         /* Record active item */
-        TransactionTagBucket myCurrent = theState.getTag();
+        final TransactionTagBucket myCurrent = theState.getTag();
         TethysScrollMenuItem<TransactionTagBucket> myActive = null;
 
         /* Loop through the available tag values */
-        Iterator<TransactionTagBucket> myIterator = theTags.iterator();
+        final Iterator<TransactionTagBucket> myIterator = theTags.iterator();
         while (myIterator.hasNext()) {
-            TransactionTagBucket myTag = myIterator.next();
+            final TransactionTagBucket myTag = myIterator.next();
 
             /* Create a new JMenuItem and add it to the popUp */
-            TethysScrollMenuItem<TransactionTagBucket> myItem = theTagMenu.addItem(myTag);
+            final TethysScrollMenuItem<TransactionTagBucket> myItem = theTagMenu.addItem(myTag);
 
             /* If this is the active category */
             if (myTag.equals(myCurrent)) {

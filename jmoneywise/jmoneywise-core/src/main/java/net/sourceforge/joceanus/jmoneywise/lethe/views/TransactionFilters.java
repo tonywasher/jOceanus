@@ -108,9 +108,9 @@ public class TransactionFilters
      */
     private void analyseDeposits(final DepositBucketList pDeposits) {
         /* Loop through the deposit buckets */
-        Iterator<DepositBucket> myIterator = pDeposits.iterator();
+        final Iterator<DepositBucket> myIterator = pDeposits.iterator();
         while (myIterator.hasNext()) {
-            DepositBucket myBucket = myIterator.next();
+            final DepositBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -126,9 +126,9 @@ public class TransactionFilters
      */
     private void analyseCash(final CashBucketList pCash) {
         /* Loop through the cash buckets */
-        Iterator<CashBucket> myIterator = pCash.iterator();
+        final Iterator<CashBucket> myIterator = pCash.iterator();
         while (myIterator.hasNext()) {
-            CashBucket myBucket = myIterator.next();
+            final CashBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -144,9 +144,9 @@ public class TransactionFilters
      */
     private void analyseLoans(final LoanBucketList pLoans) {
         /* Loop through the loan buckets */
-        Iterator<LoanBucket> myIterator = pLoans.iterator();
+        final Iterator<LoanBucket> myIterator = pLoans.iterator();
         while (myIterator.hasNext()) {
-            LoanBucket myBucket = myIterator.next();
+            final LoanBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -162,15 +162,15 @@ public class TransactionFilters
      */
     private void analysePortfolios(final PortfolioBucketList pPortfolios) {
         /* Loop through the portfolio buckets */
-        Iterator<PortfolioBucket> myIterator = pPortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = pPortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Analyse Securities */
             analyseSecurities(myBucket.getSecurities());
 
             /* Check for Cash bucket is relevant for the transaction */
-            PortfolioCashBucket myCash = myBucket.getPortfolioCash();
+            final PortfolioCashBucket myCash = myBucket.getPortfolioCash();
             if (myCash.getValuesForTransaction(theTrans) != null) {
                 /* Add filter */
                 add(new PortfolioCashFilter(myBucket));
@@ -184,9 +184,9 @@ public class TransactionFilters
      */
     private void analyseSecurities(final SecurityBucketList pSecurities) {
         /* Loop through the security buckets */
-        Iterator<SecurityBucket> myIterator = pSecurities.iterator();
+        final Iterator<SecurityBucket> myIterator = pSecurities.iterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -202,9 +202,9 @@ public class TransactionFilters
      */
     private void analysePayees(final PayeeBucketList pPayees) {
         /* Loop through the payee buckets */
-        Iterator<PayeeBucket> myIterator = pPayees.iterator();
+        final Iterator<PayeeBucket> myIterator = pPayees.iterator();
         while (myIterator.hasNext()) {
-            PayeeBucket myBucket = myIterator.next();
+            final PayeeBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -220,9 +220,9 @@ public class TransactionFilters
      */
     private void analyseCategories(final TransactionCategoryBucketList pCategories) {
         /* Loop through the category buckets */
-        Iterator<TransactionCategoryBucket> myIterator = pCategories.iterator();
+        final Iterator<TransactionCategoryBucket> myIterator = pCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategoryBucket myBucket = myIterator.next();
+            final TransactionCategoryBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -238,9 +238,9 @@ public class TransactionFilters
      */
     private void analyseTaxBasis(final TaxBasisBucketList pBases) {
         /* Loop through the taxBasis buckets */
-        Iterator<TaxBasisBucket> myIterator = pBases.iterator();
+        final Iterator<TaxBasisBucket> myIterator = pBases.iterator();
         while (myIterator.hasNext()) {
-            TaxBasisBucket myBucket = myIterator.next();
+            final TaxBasisBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.getValuesForTransaction(theTrans) != null) {
@@ -256,9 +256,9 @@ public class TransactionFilters
      */
     private void analyseTags(final TransactionTagBucketList pTags) {
         /* Loop through the tag buckets */
-        Iterator<TransactionTagBucket> myIterator = pTags.iterator();
+        final Iterator<TransactionTagBucket> myIterator = pTags.iterator();
         while (myIterator.hasNext()) {
-            TransactionTagBucket myBucket = myIterator.next();
+            final TransactionTagBucket myBucket = myIterator.next();
 
             /* If this bucket is relevant for the transaction */
             if (myBucket.hasTransaction(theTrans)) {

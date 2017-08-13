@@ -87,13 +87,13 @@ public enum MoneyWiseMarginalReduction {
     public TethysMoney calculateReduction(final TethysMoney pGrossTaxable,
                                           final TethysMoney pLimit) {
         /* Determine the amount by which we are over the limit */
-        TethysMoney myExcess = new TethysMoney(pGrossTaxable);
+        final TethysMoney myExcess = new TethysMoney(pGrossTaxable);
         myExcess.subtractAmount(pLimit);
 
         /* Determine the quotient and multiplier in the required currency */
-        Currency myCurrency = myExcess.getCurrency();
-        TethysMoney myQuotient = TethysMoney.getWholeUnits(theQuotient, myCurrency);
-        TethysMoney myMultiplier = TethysMoney.getWholeUnits(theMultiplier, myCurrency);
+        final Currency myCurrency = myExcess.getCurrency();
+        final TethysMoney myQuotient = TethysMoney.getWholeUnits(theQuotient, myCurrency);
+        final TethysMoney myMultiplier = TethysMoney.getWholeUnits(theMultiplier, myCurrency);
 
         /* Calculate the reduction */
         myExcess.divide(myQuotient.unscaledValue());

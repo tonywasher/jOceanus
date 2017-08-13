@@ -57,7 +57,7 @@ public class SheetFrequency
         super(pReader, AREA_FREQUENCIES);
 
         /* Access the Frequency list */
-        MoneyWiseData myData = pReader.getData();
+        final MoneyWiseData myData = pReader.getData();
         setDataList(myData.getFrequencys());
     }
 
@@ -70,7 +70,7 @@ public class SheetFrequency
         super(pWriter, AREA_FREQUENCIES);
 
         /* Access the Frequency list */
-        MoneyWiseData myData = pWriter.getData();
+        final MoneyWiseData myData = pWriter.getData();
         setDataList(myData.getFrequencys());
     }
 
@@ -91,18 +91,18 @@ public class SheetFrequency
                                       final MetisDataWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Access the list of frequencies */
-        FrequencyList myList = pData.getFrequencys();
+        final FrequencyList myList = pData.getFrequencys();
 
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            MetisDataView myView = pWorkBook.getRangeView(AREA_FREQUENCIES);
+            final MetisDataView myView = pWorkBook.getRangeView(AREA_FREQUENCIES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_FREQUENCIES);
 
             /* Count the number of Frequencies */
-            int myTotal = myView.getRowCount();
+            final int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
             pReport.setNumSteps(myTotal);
@@ -110,8 +110,8 @@ public class SheetFrequency
             /* Loop through the rows of the single column range */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
-                MetisDataRow myRow = myView.getRowByIndex(i);
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
+                final MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Add the value into the tables */
                 myList.addBasicItem(myCell.getStringValue());

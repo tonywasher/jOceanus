@@ -140,7 +140,7 @@ public class QIFAccountEvents
         }
 
         /* Cast correctly */
-        QIFAccountEvents myEvents = (QIFAccountEvents) pThat;
+        final QIFAccountEvents myEvents = (QIFAccountEvents) pThat;
 
         /* Check account */
         if (!theAccount.equals(myEvents.getAccount())) {
@@ -153,7 +153,7 @@ public class QIFAccountEvents
 
     @Override
     public int hashCode() {
-        int myResult = QIFFile.HASH_BASE * theAccount.hashCode();
+        final int myResult = QIFFile.HASH_BASE * theAccount.hashCode();
         return myResult + theEvents.hashCode();
     }
 

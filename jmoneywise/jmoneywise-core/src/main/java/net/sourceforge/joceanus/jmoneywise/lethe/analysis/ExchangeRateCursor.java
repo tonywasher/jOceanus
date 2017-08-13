@@ -68,7 +68,7 @@ public class ExchangeRateCursor {
     public TethysRatio getExchangeRate(final AssetCurrency pCurrency,
                                        final TethysDate pDate) {
         /* Access cursor and return rate */
-        CurrencyCursor myCursor = getCursor(pCurrency);
+        final CurrencyCursor myCursor = getCursor(pCurrency);
         return myCursor.getExchangeRate(pDate);
     }
 
@@ -138,7 +138,7 @@ public class ExchangeRateCursor {
             /* If we have an iterator */
             if (theIterator.hasPrevious()) {
                 /* access next rate and record */
-                ExchangeRate myRate = theIterator.previous();
+                final ExchangeRate myRate = theIterator.previous();
                 theNextRate = myRate.getExchangeRate();
                 theNextDate = myRate.getDate();
             } else {

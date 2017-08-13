@@ -111,18 +111,18 @@ public class MoneyWiseReportPortfolioView
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
+        final PortfolioBucketList myPortfolios = pAnalysis.getPortfolios();
 
         /* Access the totals */
-        PortfolioBucket myTotals = myPortfolios.getTotals();
-        TethysDate myDate = pAnalysis.getDateRange().getEnd();
+        final PortfolioBucket myTotals = myPortfolios.getTotals();
+        final TethysDate myDate = pAnalysis.getDateRange().getEnd();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_VALUE);
@@ -133,15 +133,15 @@ public class MoneyWiseReportPortfolioView
         theBuilder.makeTitleCell(myTable, MoneyWiseReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Portfolio Buckets */
-        Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
+        final Iterator<PortfolioBucket> myIterator = myPortfolios.iterator();
         while (myIterator.hasNext()) {
-            PortfolioBucket myBucket = myIterator.next();
+            final PortfolioBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
+            final String myName = myBucket.getName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myValues = myBucket.getValues();
 
             /* Format the Asset */
             theBuilder.startRow(myTable);
@@ -161,7 +161,7 @@ public class MoneyWiseReportPortfolioView
         }
 
         /* Access values */
-        SecurityValues myValues = myTotals.getValues();
+        final SecurityValues myValues = myTotals.getValues();
 
         /* Create the total row */
         theBuilder.startTotalRow(myTable);
@@ -181,9 +181,9 @@ public class MoneyWiseReportPortfolioView
     @Override
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
-        Object mySource = pTable.getSource();
+        final Object mySource = pTable.getSource();
         if (mySource instanceof PortfolioBucket) {
-            PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
+            final PortfolioBucket mySourceBucket = (PortfolioBucket) mySource;
             return createDelayedPortfolio(pTable.getParent(), mySourceBucket);
         }
 
@@ -200,22 +200,22 @@ public class MoneyWiseReportPortfolioView
     private MetisHTMLTable createDelayedPortfolio(final MetisHTMLTable pParent,
                                                   final PortfolioBucket pSource) {
         /* Access the securities and portfolio */
-        SecurityBucketList mySecurities = pSource.getSecurities();
+        final SecurityBucketList mySecurities = pSource.getSecurities();
 
         /* Create a new table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Security Buckets */
-        Iterator<SecurityBucket> myIterator = mySecurities.iterator();
+        final Iterator<SecurityBucket> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            SecurityBucket myBucket = myIterator.next();
+            final SecurityBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
-            String myFullName = myBucket.getDecoratedName();
+            final String myName = myBucket.getName();
+            final String myFullName = myBucket.getDecoratedName();
 
             /* Access values */
-            SecurityValues myValues = myBucket.getValues();
+            final SecurityValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
@@ -241,13 +241,13 @@ public class MoneyWiseReportPortfolioView
      * @param pBucket the portfolio bucket
      */
     private void checkPortfolioProfit(final PortfolioBucket pBucket) {
-        SecurityValues myValues = pBucket.getValues();
-        TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
+        final SecurityValues myValues = pBucket.getValues();
+        final TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
-        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for portfolio {}", pBucket.getName());
         }
@@ -258,13 +258,13 @@ public class MoneyWiseReportPortfolioView
      * @param pBucket the security bucket
      */
     private void checkSecurityProfit(final SecurityBucket pBucket) {
-        SecurityValues myValues = pBucket.getValues();
-        TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
+        final SecurityValues myValues = pBucket.getValues();
+        final TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.REALISEDGAINS));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myCalcProfit.addAmount(myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
-        TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
+        final TethysMoney myProfit = myValues.getMoneyValue(SecurityAttribute.PROFIT);
         if (!myProfit.equals(myCalcProfit)) {
             LOGGER.error("Incorrect profit calculation for security {}", pBucket.getDecoratedName());
         }

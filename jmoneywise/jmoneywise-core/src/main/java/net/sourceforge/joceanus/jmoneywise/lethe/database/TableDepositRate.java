@@ -54,13 +54,13 @@ public class TableDepositRate
      */
     protected TableDepositRate(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
+        final PrometheusColumnDefinition myActCol = myTableDef.addReferenceColumn(DepositRate.FIELD_DEPOSIT, TableDeposit.TABLE_NAME);
         myTableDef.addEncryptedColumn(DepositRate.FIELD_RATE, MetisEncryptedData.RATELEN);
         myTableDef.addNullEncryptedColumn(DepositRate.FIELD_BONUS, MetisEncryptedData.RATELEN);
-        PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
+        final PrometheusColumnDefinition myDateCol = myTableDef.addNullDateColumn(DepositRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.DESCENDING);
@@ -69,17 +69,17 @@ public class TableDepositRate
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getDepositRates());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(DepositRate.OBJECT_NAME);
         myValues.addValue(DepositRate.FIELD_DEPOSIT, myTableDef.getIntegerValue(DepositRate.FIELD_DEPOSIT));
         myValues.addValue(DepositRate.FIELD_RATE, myTableDef.getBinaryValue(DepositRate.FIELD_RATE));
         myValues.addValue(DepositRate.FIELD_BONUS, myTableDef.getBinaryValue(DepositRate.FIELD_BONUS));
@@ -93,7 +93,7 @@ public class TableDepositRate
     protected void setFieldValue(final DepositRate pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (DepositRate.FIELD_DEPOSIT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getDepositId());
         } else if (DepositRate.FIELD_RATE.equals(iField)) {

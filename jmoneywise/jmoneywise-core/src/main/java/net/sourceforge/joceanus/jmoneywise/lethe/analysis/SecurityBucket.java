@@ -162,8 +162,8 @@ public final class SecurityBucket
      * @param pAnalysis the analysis
      * @param pHolding the security holding
      */
-    private SecurityBucket(final Analysis pAnalysis,
-                           final SecurityHolding pHolding) {
+    protected SecurityBucket(final Analysis pAnalysis,
+                             final SecurityHolding pHolding) {
         /* Store the details */
         theHolding = pHolding;
         theCurrency = pHolding.getAssetCurrency();
@@ -176,18 +176,18 @@ public final class SecurityBucket
         theCategory = theSecurity.getSecurityType();
 
         /* Determine currency */
-        AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
-        AssetCurrency myHoldingCurrency = pHolding.getAssetCurrency();
+        final AssetCurrency myReportingCurrency = pAnalysis.getCurrency();
+        final AssetCurrency myHoldingCurrency = pHolding.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
         isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myHoldingCurrency);
-        Currency myCurrency = AccountBucket.deriveCurrency(myHoldingCurrency);
-        Currency myRepCurrency = AccountBucket.deriveCurrency(myReportingCurrency);
+        final Currency myCurrency = AccountBucket.deriveCurrency(myHoldingCurrency);
+        final Currency myRepCurrency = AccountBucket.deriveCurrency(myReportingCurrency);
 
         /* Create the history map */
-        SecurityValues myValues = isForeignCurrency
-                                                    ? new SecurityValues(myCurrency, myRepCurrency)
-                                                    : new SecurityValues(myCurrency);
+        final SecurityValues myValues = isForeignCurrency
+                                                          ? new SecurityValues(myCurrency, myRepCurrency)
+                                                          : new SecurityValues(myCurrency);
         theHistory = new BucketHistory<>(myValues);
 
         /* Access the key value maps */
@@ -301,9 +301,9 @@ public final class SecurityBucket
         }
 
         /* Handle Attribute fields */
-        SecurityAttribute myClass = getClassForField(pField);
+        final SecurityAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            Object myValue = getAttributeValue(myClass);
+            final Object myValue = getAttributeValue(myClass);
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
@@ -522,7 +522,7 @@ public final class SecurityBucket
      */
     private Object getAttributeValue(final SecurityAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getAttribute(pAttr);
+        final Object myValue = getAttribute(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -561,7 +561,7 @@ public final class SecurityBucket
         }
 
         /* Check the portfolio */
-        int iDiff = MetisDifference.compareObject(getPortfolio(), pThat.getPortfolio());
+        final int iDiff = MetisDifference.compareObject(getPortfolio(), pThat.getPortfolio());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -584,7 +584,7 @@ public final class SecurityBucket
         }
 
         /* Compare the Portfolios */
-        SecurityBucket myThat = (SecurityBucket) pThat;
+        final SecurityBucket myThat = (SecurityBucket) pThat;
         if (!getPortfolio().equals(myThat.getPortfolio())) {
             return false;
         }
@@ -645,9 +645,9 @@ public final class SecurityBucket
      */
     private void valueAsset(final TethysDateRange pRange) {
         /* Obtain the appropriate price */
-        MoneyWiseData myData = theAnalysis.getData();
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
-        TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
+        final MoneyWiseData myData = theAnalysis.getData();
+        final SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
+        final TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
 
         /* Access base units */
         TethysUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.UNITS);
@@ -672,12 +672,12 @@ public final class SecurityBucket
      */
     private void valueForeignAsset(final TethysDateRange pRange) {
         /* Obtain the appropriate price */
-        MoneyWiseData myData = theAnalysis.getData();
-        SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
-        TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
-        ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
-        TethysRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);
-        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+        final MoneyWiseData myData = theAnalysis.getData();
+        final SecurityPriceDataMap<SecurityPrice> myPriceMap = myData.getSecurityPriceDataMap();
+        final TethysPrice[] myPrices = myPriceMap.getPricesForRange(theSecurity, pRange);
+        final ExchangeRateDataMap<ExchangeRate> myRateMap = myData.getExchangeRateDataMap();
+        final TethysRatio[] myRates = myRateMap.getRatesForRange(theSecurity.getAssetCurrency(), pRange);
+        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
 
         /* Access base units */
         TethysUnits myUnits = theBaseValues.getUnitsValue(SecurityAttribute.UNITS);
@@ -715,8 +715,8 @@ public final class SecurityBucket
      */
     private void calculateProfit() {
         /* Calculate the profit */
-        TethysMoney myValuation = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
-        TethysMoney myProfit = new TethysMoney(myValuation);
+        final TethysMoney myValuation = theValues.getMoneyValue(SecurityAttribute.VALUEDELTA);
+        final TethysMoney myProfit = new TethysMoney(myValuation);
         myProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.INVESTED));
         myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         myProfit.addAmount(theValues.getMoneyValue(SecurityAttribute.GROWTHADJUST));
@@ -725,7 +725,7 @@ public final class SecurityBucket
         setValue(SecurityAttribute.PROFIT, myProfit);
 
         /* Calculate the profit minus the dividend */
-        TethysMoney myMarketProfit = new TethysMoney(myProfit);
+        final TethysMoney myMarketProfit = new TethysMoney(myProfit);
         myMarketProfit.subtractAmount(theValues.getMoneyValue(SecurityAttribute.DIVIDEND));
         setValue(SecurityAttribute.MARKETPROFIT, myMarketProfit);
     }
@@ -786,7 +786,7 @@ public final class SecurityBucket
     /**
      * Adjust to base.
      */
-    private void adjustToBase() {
+    protected void adjustToBase() {
         /* Adjust to base values */
         theValues.adjustToBaseValues(theBaseValues);
         theBaseValues.resetBaseValues();
@@ -832,15 +832,15 @@ public final class SecurityBucket
         setValue(SecurityAttribute.FOREIGNMARKETGROWTH, myValue);
 
         /* Calculate the local equivalent */
-        Currency myCurrency = theAnalysis.getCurrency().getCurrency();
-        TethysRatio myRate = theValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
+        final Currency myCurrency = theAnalysis.getCurrency().getCurrency();
+        final TethysRatio myRate = theValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
         myValue = myValue.convertCurrency(myCurrency, myRate);
 
         /* Set the market growth */
         setValue(SecurityAttribute.MARKETGROWTH, myValue);
 
         /* Calculate the fluctuation */
-        TethysMoney myFluct = new TethysMoney(myBaseValue);
+        final TethysMoney myFluct = new TethysMoney(myBaseValue);
         myFluct.subtractAmount(myValue);
         setValue(SecurityAttribute.CURRENCYFLUCT, myFluct);
     }
@@ -867,12 +867,12 @@ public final class SecurityBucket
             super(SecurityAttribute.class);
 
             /* Initialise units etc. to zero */
-            setValue(SecurityAttribute.UNITS, new TethysUnits());
-            setValue(SecurityAttribute.RESIDUALCOST, new TethysMoney(pCurrency));
-            setValue(SecurityAttribute.INVESTED, new TethysMoney(pCurrency));
-            setValue(SecurityAttribute.REALISEDGAINS, new TethysMoney(pCurrency));
-            setValue(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
-            setValue(SecurityAttribute.DIVIDEND, new TethysMoney(pCurrency));
+            super.setValue(SecurityAttribute.UNITS, new TethysUnits());
+            super.setValue(SecurityAttribute.RESIDUALCOST, new TethysMoney(pCurrency));
+            super.setValue(SecurityAttribute.INVESTED, new TethysMoney(pCurrency));
+            super.setValue(SecurityAttribute.REALISEDGAINS, new TethysMoney(pCurrency));
+            super.setValue(SecurityAttribute.GROWTHADJUST, new TethysMoney(pCurrency));
+            super.setValue(SecurityAttribute.DIVIDEND, new TethysMoney(pCurrency));
         }
 
         /**
@@ -886,7 +886,7 @@ public final class SecurityBucket
             this(pReportingCurrency);
 
             /* Initialise additional values to zero */
-            setValue(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
+            super.setValue(SecurityAttribute.FOREIGNINVESTED, new TethysMoney(pCurrency));
         }
 
         /**
@@ -940,10 +940,10 @@ public final class SecurityBucket
             myValue.setZero();
 
             /* Reset Growth Adjust values */
-            setValue(SecurityAttribute.GROWTHADJUST, myValue);
-            setValue(SecurityAttribute.INVESTED, new TethysMoney(myValue));
-            setValue(SecurityAttribute.REALISEDGAINS, new TethysMoney(myValue));
-            setValue(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
+            super.setValue(SecurityAttribute.GROWTHADJUST, myValue);
+            super.setValue(SecurityAttribute.INVESTED, new TethysMoney(myValue));
+            super.setValue(SecurityAttribute.REALISEDGAINS, new TethysMoney(myValue));
+            super.setValue(SecurityAttribute.DIVIDEND, new TethysMoney(myValue));
 
             /* If we are a foreign security */
             if (isForeignSecurity()) {
@@ -953,7 +953,7 @@ public final class SecurityBucket
                 myValue.setZero();
 
                 /* Reset Invested values */
-                setValue(SecurityAttribute.FOREIGNINVESTED, myValue);
+                super.setValue(SecurityAttribute.FOREIGNINVESTED, myValue);
             }
         }
 
@@ -962,7 +962,7 @@ public final class SecurityBucket
          * @return true/false
          */
         public boolean isActive() {
-            TethysUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
+            final TethysUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
             return (myUnits != null) && (myUnits.isNonZero());
         }
     }
@@ -1015,12 +1015,12 @@ public final class SecurityBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<SecurityBucket> myIterator = pBase.iterator();
+            final Iterator<SecurityBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                SecurityBucket myCurr = myIterator.next();
+                final SecurityBucket myCurr = myIterator.next();
 
                 /* Access the bucket */
-                SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr);
+                final SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr);
 
                 /*
                  * Ignore idle securities. Note that we must include securities that have been
@@ -1047,12 +1047,12 @@ public final class SecurityBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<SecurityBucket> myIterator = pBase.iterator();
+            final Iterator<SecurityBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                SecurityBucket myCurr = myIterator.next();
+                final SecurityBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pDate);
+                final SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pDate);
 
                 /*
                  * Ignore idle securities. Note that we must include securities that have been
@@ -1079,12 +1079,12 @@ public final class SecurityBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<SecurityBucket> myIterator = pBase.iterator();
+            final Iterator<SecurityBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
-                SecurityBucket myCurr = myIterator.next();
+                final SecurityBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pRange);
+                final SecurityBucket myBucket = new SecurityBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
@@ -1123,7 +1123,7 @@ public final class SecurityBucket
          */
         public SecurityBucket getBucket(final SecurityHolding pHolding) {
             /* Locate the bucket in the list */
-            Security mySecurity = pHolding.getSecurity();
+            final Security mySecurity = pHolding.getSecurity();
             SecurityBucket myItem = findItemById(mySecurity.getId());
 
             /* If the item does not yet exist */
@@ -1140,16 +1140,6 @@ public final class SecurityBucket
         }
 
         /**
-         * Obtain an orphan SecurityBucket for a given security holding.
-         * @param pHolding the security holding
-         * @return the bucket
-         */
-        public SecurityBucket getOrphanBucket(final SecurityHolding pHolding) {
-            /* Allocate an orphan bucket */
-            return new SecurityBucket(theAnalysis, pHolding);
-        }
-
-        /**
          * Mark active securities.
          * @return true/false are there active securities?
          * @throws OceanusException on error
@@ -1157,10 +1147,10 @@ public final class SecurityBucket
         protected boolean markActiveSecurities() throws OceanusException {
             /* Loop through the buckets */
             boolean areActive = false;
-            Iterator<SecurityBucket> myIterator = iterator();
+            final Iterator<SecurityBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
-                SecurityBucket myCurr = myIterator.next();
-                Security mySecurity = myCurr.getSecurity();
+                final SecurityBucket myCurr = myIterator.next();
+                final Security mySecurity = myCurr.getSecurity();
 
                 /* If we are active */
                 if (myCurr.isActive()) {

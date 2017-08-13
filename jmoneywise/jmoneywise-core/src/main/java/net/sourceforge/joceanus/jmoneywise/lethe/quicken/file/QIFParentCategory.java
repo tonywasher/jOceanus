@@ -127,9 +127,9 @@ public class QIFParentCategory
         theSelf.formatRecord(pFormatter, pBuilder);
 
         /* Loop through the children */
-        Iterator<QIFEventCategory> myIterator = theChildren.iterator();
+        final Iterator<QIFEventCategory> myIterator = theChildren.iterator();
         while (myIterator.hasNext()) {
-            QIFEventCategory myCategory = myIterator.next();
+            final QIFEventCategory myCategory = myIterator.next();
 
             /* Format the child */
             myCategory.formatRecord(pFormatter, pBuilder);
@@ -152,7 +152,7 @@ public class QIFParentCategory
         }
 
         /* Cast correctly */
-        QIFParentCategory myParent = (QIFParentCategory) pThat;
+        final QIFParentCategory myParent = (QIFParentCategory) pThat;
 
         /* Check parent */
         if (!theSelf.equals(myParent.getParent())) {
@@ -165,7 +165,7 @@ public class QIFParentCategory
 
     @Override
     public int hashCode() {
-        int myResult = QIFFile.HASH_BASE * theSelf.hashCode();
+        final int myResult = QIFFile.HASH_BASE * theSelf.hashCode();
         return myResult + theChildren.hashCode();
     }
 

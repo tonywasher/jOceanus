@@ -118,25 +118,25 @@ public class QIFAccount
 
         /* Handle deposit */
         if (pAccount instanceof Deposit) {
-            Deposit myDeposit = (Deposit) pAccount;
+            final Deposit myDeposit = (Deposit) pAccount;
             theClass = myDeposit.getCategoryClass();
             theDesc = myDeposit.getDesc();
 
             /* Handle cash */
         } else if (pAccount instanceof Cash) {
-            Cash myCash = (Cash) pAccount;
+            final Cash myCash = (Cash) pAccount;
             theClass = myCash.getCategoryClass();
             theDesc = myCash.getDesc();
 
             /* Handle loan */
         } else if (pAccount instanceof Loan) {
-            Loan myLoan = (Loan) pAccount;
+            final Loan myLoan = (Loan) pAccount;
             theClass = myLoan.getCategoryClass();
             theDesc = myLoan.getDesc();
 
             /* Handle portfolio */
         } else if (pAccount instanceof Portfolio) {
-            Portfolio myPortfolio = (Portfolio) pAccount;
+            final Portfolio myPortfolio = (Portfolio) pAccount;
             theClass = MoneyWiseDataType.PORTFOLIO;
             theDesc = myPortfolio.getDesc();
         } else {
@@ -189,15 +189,15 @@ public class QIFAccount
         Enum<?> myClass = null;
 
         /* Loop through the lines */
-        Iterator<String> myIterator = pLines.iterator();
+        final Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
-            String myLine = myIterator.next();
+            final String myLine = myIterator.next();
 
             /* Determine the category */
-            QAccountLineType myType = QAccountLineType.parseLine(myLine);
+            final QAccountLineType myType = QAccountLineType.parseLine(myLine);
             if (myType != null) {
                 /* Access data */
-                String myData = myLine.substring(myType.getSymbol().length());
+                final String myData = myLine.substring(myType.getSymbol().length());
 
                 /* Switch on line type */
                 switch (myType) {
@@ -210,12 +210,12 @@ public class QIFAccount
                         myDesc = myData;
                         break;
                     case TYPE:
-                        QIFAccountTypeLine myQLine = new QIFAccountTypeLine(myData);
+                        final QIFAccountTypeLine myQLine = new QIFAccountTypeLine(myData);
                         addLine(myQLine);
                         myClass = myQLine.getAccountClass();
                         break;
                     case CREDITLIMIT:
-                        TethysMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        final TethysMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
                         addLine(new QIFAccountLimitLine(myMoney));
                         break;
                     default:
@@ -265,7 +265,7 @@ public class QIFAccount
      */
     private static Map<Enum<?>, String> createClassMap() {
         /* Create the map */
-        Map<Enum<?>, String> myMap = new HashMap<>();
+        final Map<Enum<?>, String> myMap = new HashMap<>();
 
         /* Add the entries */
         myMap.put(DepositCategoryClass.CHECKING, QIFACT_BANK);
@@ -376,9 +376,9 @@ public class QIFAccount
 
             /* Loop through the map entries */
             Enum<?> myClass = null;
-            Iterator<Map.Entry<Enum<?>, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
+            final Iterator<Map.Entry<Enum<?>, String>> myIterator = QIF_ACTCATMAP.entrySet().iterator();
             while (myIterator.hasNext()) {
-                Map.Entry<Enum<?>, String> myEntry = myIterator.next();
+                final Map.Entry<Enum<?>, String> myEntry = myIterator.next();
 
                 /* If we have a match */
                 if (pType.equals(myEntry.getValue())) {

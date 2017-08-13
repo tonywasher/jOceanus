@@ -31,8 +31,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisAccountBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket.TaxBasisBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasis;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.TaxBasisFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -127,8 +125,8 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        TethysLabel<N, I> myBasisLabel = pFactory.newLabel(NLS_BASIS + TethysLabel.STR_COLON);
-        TethysLabel<N, I> myAccountLabel = pFactory.newLabel(NLS_ACCOUNT + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myBasisLabel = pFactory.newLabel(NLS_BASIS + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myAccountLabel = pFactory.newLabel(NLS_ACCOUNT + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -223,17 +221,10 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         /* Obtain the current basis */
         TaxBasisBucket myBasis = theState.getTaxBasis();
 
-        /* If we have a selected TaxBasis */
-        if (myBasis != null) {
-            /* Look for the equivalent bucket */
-            myBasis = getMatchingBucket(myBasis);
-        }
-
-        /* If we do not have an active bucket and the list is non-empty */
-        if ((myBasis == null) && (!theTaxBases.isEmpty())) {
-            /* Use the first bucket */
-            myBasis = theTaxBases.peekFirst();
-        }
+        /* Switch to versions from the analysis */
+        myBasis = myBasis != null
+                                  ? theTaxBases.getMatchingBasis(myBasis)
+                                  : theTaxBases.getDefaultBasis();
 
         /* Set the basis */
         theState.setTheTaxBasis(myBasis);
@@ -245,51 +236,18 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof TaxBasisFilter) {
             /* Access filter */
-            TaxBasisFilter myFilter = (TaxBasisFilter) pFilter;
+            final TaxBasisFilter myFilter = (TaxBasisFilter) pFilter;
+
+            /* Obtain the filter bucket */
+            TaxBasisBucket myTaxBasis = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            TaxBasisBucket myTaxBasis = getMatchingBucket(myFilter.getBucket());
+            myTaxBasis = theTaxBases.getMatchingBasis(myTaxBasis);
 
             /* Set the taxBasis */
             theState.setTheTaxBasis(myTaxBasis);
             theState.applyState();
         }
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private TaxBasisBucket getMatchingBucket(final TaxBasisBucket pBucket) {
-        /* Look up the matching TaxBasisBucket */
-        TaxBasis myBasis = pBucket.getTaxBasis();
-        TaxBasisBucket myBucket = theTaxBases.findItemById(myBasis.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = theTaxBases.getOrphanBucket(myBasis);
-        }
-
-        /* If we are trying to match an AccountBucket */
-        if (pBucket instanceof TaxBasisAccountBucket) {
-            /* Look up the asset bucket */
-            TransactionAsset myAsset = ((TaxBasisAccountBucket) pBucket).getAccount();
-            TaxBasisAccountBucket myAccountBucket = myBucket.findAccountBucket(myAsset);
-
-            /* If there is no such bucket in the analysis */
-            if (myAccountBucket == null) {
-                /* Allocate an orphan bucket */
-                myAccountBucket = myBucket.getOrphanAccountBucket(myAsset);
-            }
-
-            /* Set bucket as the account bucket */
-            myBucket = myAccountBucket;
-        }
-
-        /* return the bucket */
-        return myBucket;
     }
 
     /**
@@ -323,15 +281,15 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
 
         /* Record active item */
         TethysScrollMenuItem<TaxBasisBucket> myActive = null;
-        TaxBasisBucket myCurr = theState.getTaxBasis();
+        final TaxBasisBucket myCurr = theState.getTaxBasis();
 
         /* Loop through the available basis values */
-        Iterator<TaxBasisBucket> myIterator = theTaxBases.iterator();
+        final Iterator<TaxBasisBucket> myIterator = theTaxBases.iterator();
         while (myIterator.hasNext()) {
-            TaxBasisBucket myBucket = myIterator.next();
+            final TaxBasisBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<TaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
+            final TethysScrollMenuItem<TaxBasisBucket> myItem = theTaxMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -354,19 +312,19 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         theAccountMenu.removeAllItems();
 
         /* Record active item */
-        TaxBasisBucket myBasis = theState.getTaxBasis();
-        TaxBasisAccountBucket myCurr = theState.getAccount();
+        final TaxBasisBucket myBasis = theState.getTaxBasis();
+        final TaxBasisAccountBucket myCurr = theState.getAccount();
 
         /* Add the all item menu */
         TethysScrollMenuItem<TaxBasisAccountBucket> myActive = theAccountMenu.addItem(null, NLS_ALL);
 
         /* Loop through the available account values */
-        Iterator<TaxBasisAccountBucket> myIterator = myBasis.accountIterator();
+        final Iterator<TaxBasisAccountBucket> myIterator = myBasis.accountIterator();
         while (myIterator.hasNext()) {
-            TaxBasisAccountBucket myBucket = myIterator.next();
+            final TaxBasisAccountBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<TaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
+            final TethysScrollMenuItem<TaxBasisAccountBucket> myItem = theAccountMenu.addItem(myBucket, myBucket.getSimpleName());
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {

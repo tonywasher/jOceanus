@@ -53,11 +53,11 @@ public class TableLoanCategory
      */
     protected TableLoanCategory(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(LoanCategory.FIELD_CATTYPE, TableLoanCategoryType.TABLE_NAME);
-        PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(LoanCategory.FIELD_PARENT);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(LoanCategory.FIELD_CATTYPE, TableLoanCategoryType.TABLE_NAME);
+        final PrometheusColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(LoanCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(LoanCategory.FIELD_NAME, LoanCategory.NAMELEN);
         myTableDef.addNullEncryptedColumn(LoanCategory.FIELD_DESC, LoanCategory.DESCLEN);
 
@@ -68,17 +68,17 @@ public class TableLoanCategory
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getLoanCategories());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(LoanCategory.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(LoanCategory.OBJECT_NAME);
         myValues.addValue(LoanCategory.FIELD_CATTYPE, myTableDef.getIntegerValue(LoanCategory.FIELD_CATTYPE));
         myValues.addValue(LoanCategory.FIELD_PARENT, myTableDef.getIntegerValue(LoanCategory.FIELD_PARENT));
         myValues.addValue(LoanCategory.FIELD_NAME, myTableDef.getBinaryValue(LoanCategory.FIELD_NAME));
@@ -92,7 +92,7 @@ public class TableLoanCategory
     protected void setFieldValue(final LoanCategory pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (LoanCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
         } else if (LoanCategory.FIELD_PARENT.equals(iField)) {

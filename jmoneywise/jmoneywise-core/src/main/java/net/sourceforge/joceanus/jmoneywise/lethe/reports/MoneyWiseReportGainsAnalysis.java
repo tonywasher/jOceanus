@@ -121,7 +121,7 @@ public class MoneyWiseReportGainsAnalysis {
                                final TethysDate pEndDate) {
         /* Loop through the transactions */
         while (pIterator.hasNext()) {
-            Transaction myTrans = pIterator.next();
+            final Transaction myTrans = pIterator.next();
 
             /* Check for End of report */
             if ((pEndDate != null)
@@ -130,7 +130,7 @@ public class MoneyWiseReportGainsAnalysis {
             }
 
             /* If the transaction relates to the security */
-            SecurityValues myValues = theBucket.getValuesForTransaction(myTrans);
+            final SecurityValues myValues = theBucket.getValuesForTransaction(myTrans);
             if (myValues != null) {
                 /* Format the transaction */
                 formatTransaction(myTrans, myValues);
@@ -198,9 +198,9 @@ public class MoneyWiseReportGainsAnalysis {
      * @return true/false
      */
     private boolean isDebit(final Transaction pTrans) {
-        TransactionAsset myDebit = pTrans.getDirection().isTo()
-                                                                ? pTrans.getAccount()
-                                                                : pTrans.getPartner();
+        final TransactionAsset myDebit = pTrans.getDirection().isTo()
+                                                                      ? pTrans.getAccount()
+                                                                      : pTrans.getPartner();
         return myDebit.equals(theBucket.getSecurityHolding());
     }
 
@@ -210,9 +210,9 @@ public class MoneyWiseReportGainsAnalysis {
      * @return true/false
      */
     private boolean isCredit(final Transaction pTrans) {
-        TransactionAsset myCredit = pTrans.getDirection().isFrom()
-                                                                   ? pTrans.getAccount()
-                                                                   : pTrans.getPartner();
+        final TransactionAsset myCredit = pTrans.getDirection().isFrom()
+                                                                         ? pTrans.getAccount()
+                                                                         : pTrans.getPartner();
         return myCredit.equals(theBucket.getSecurityHolding());
     }
 
@@ -476,20 +476,20 @@ public class MoneyWiseReportGainsAnalysis {
                                   final SecurityValues pValues) {
 
         /* Access interesting values */
-        TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+        final TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
         if (myDeltaUnits == null) {
             myDeltaUnits = pTrans.getPartnerDeltaUnits();
         }
-        TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysMoney myAmount = theBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.RESIDUALCOST);
-        TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
-        TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
+        final TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myAmount = theBucket.getMoneyDeltaForTransaction(pTrans, SecurityAttribute.RESIDUALCOST);
+        final TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
+        final TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
 
         /* Obtain the original units/cost */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
         /* If this is an inheritance */
         if (pTrans.isCategoryClass(TransactionCategoryClass.INHERITED)) {
@@ -513,24 +513,24 @@ public class MoneyWiseReportGainsAnalysis {
     private void formatTransferOut(final Transaction pTrans,
                                    final SecurityValues pValues) {
         /* Access interesting values */
-        TethysMoney myGain = pValues.getMoneyValue(SecurityAttribute.CAPITALGAIN);
-        TethysMoney myAllowedCost = pValues.getMoneyValue(SecurityAttribute.ALLOWEDCOST);
-        TethysRatio myCostDilution = pValues.getRatioValue(SecurityAttribute.COSTDILUTION);
-        TethysMoney myTotalGains = pValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
-        TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysMoney myCash = pValues.getMoneyValue(SecurityAttribute.RETURNEDCASH);
-        TethysMoney myConsideration = pValues.getMoneyValue(SecurityAttribute.CONSIDERATION);
-        MoneyWiseCashType myCashType = pValues.getEnumValue(SecurityAttribute.CASHTYPE, MoneyWiseCashType.class);
+        final TethysMoney myGain = pValues.getMoneyValue(SecurityAttribute.CAPITALGAIN);
+        final TethysMoney myAllowedCost = pValues.getMoneyValue(SecurityAttribute.ALLOWEDCOST);
+        final TethysRatio myCostDilution = pValues.getRatioValue(SecurityAttribute.COSTDILUTION);
+        final TethysMoney myTotalGains = pValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
+        final TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+        final TethysMoney myCash = pValues.getMoneyValue(SecurityAttribute.RETURNEDCASH);
+        final TethysMoney myConsideration = pValues.getMoneyValue(SecurityAttribute.CONSIDERATION);
+        final MoneyWiseCashType myCashType = pValues.getEnumValue(SecurityAttribute.CASHTYPE, MoneyWiseCashType.class);
 
         /* Obtain the original values */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+        final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
 
         /* Obtain the delta in units/money */
         TethysUnits myDeltaUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
-        TethysMoney myAmount = new TethysMoney(myCash);
+        final TethysMoney myAmount = new TethysMoney(myCash);
         myAmount.negate();
 
         /* Report the returned cash */
@@ -554,9 +554,9 @@ public class MoneyWiseReportGainsAnalysis {
             /* Else we need to format the cost dilution */
         } else if (myConsideration != null) {
             /* Format the valuation */
-            TethysMoney myValuation = pValues.getMoneyValue(SecurityAttribute.VALUATION);
-            TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
-            TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
+            final TethysMoney myValuation = pValues.getMoneyValue(SecurityAttribute.VALUATION);
+            final TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
+            final TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
             formatValuation(SecurityAttribute.VALUATION, myValuation, myUnits, myPrice, myXchangeRate);
             formatAddition(SecurityAttribute.CONSIDERATION, myConsideration, myCash, myValuation);
 
@@ -591,12 +591,12 @@ public class MoneyWiseReportGainsAnalysis {
         formatBasicTransaction(pTrans);
 
         /* Access interesting values */
-        TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+        final TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
         TethysUnits myDeltaUnits = pTrans.getAccountDeltaUnits();
 
         /* Obtain the original units */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+        final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
 
         /* Record the details */
         if (myDeltaUnits.isPositive()) {
@@ -634,23 +634,23 @@ public class MoneyWiseReportGainsAnalysis {
     private void formatDebitStockDeMerger(final Transaction pTrans,
                                           final SecurityValues pValues) {
         /* Access interesting values */
-        TethysRatio myCostDilution = pValues.getRatioValue(SecurityAttribute.COSTDILUTION);
-        TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysMoney myXferredCost = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+        final TethysRatio myCostDilution = pValues.getRatioValue(SecurityAttribute.COSTDILUTION);
+        final TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myXferredCost = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
         TethysUnits myDeltaUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
 
         /* Check whether the units have changed */
-        boolean isDeltaUnits = myDeltaUnits.isNonZero();
+        final boolean isDeltaUnits = myDeltaUnits.isNonZero();
 
         /* Obtain the original cost */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
         /* If we have changed the number of units */
         if (isDeltaUnits) {
             /* Obtain the various values */
-            TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
-            TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+            final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+            final TethysUnits myUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
             myDeltaUnits = new TethysUnits(myDeltaUnits);
             myDeltaUnits.negate();
 
@@ -676,12 +676,12 @@ public class MoneyWiseReportGainsAnalysis {
     private void formatCreditStockDeMerger(final Transaction pTrans,
                                            final SecurityValues pValues) {
         /* Access interesting values */
-        TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysMoney myXferredCost = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
-        TethysMoney myValueXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDVALUE);
-        TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
-        TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
-        TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
+        final TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysMoney myXferredCost = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+        final TethysMoney myValueXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDVALUE);
+        final TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
+        final TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
+        final TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
 
         /* Record the details */
         formatValuation(SecurityAttribute.XFERREDVALUE, myValueXfer, myUnits, myPrice, myXchangeRate);
@@ -700,14 +700,14 @@ public class MoneyWiseReportGainsAnalysis {
         formatBasicTransaction(pTrans);
 
         /* Split out Stock and Cash TakeOver */
-        TethysMoney myCash = pValues.getMoneyValue(SecurityAttribute.RETURNEDCASH);
+        final TethysMoney myCash = pValues.getMoneyValue(SecurityAttribute.RETURNEDCASH);
         if (myCash != null) {
             formatStockAndCashTakeOver(pTrans, pValues, myCash);
 
             /* Split workings for credit and debit */
         } else if (isDebit(pTrans)) {
             /* Record the transfer of cost for simple replacement takeOver */
-            TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+            final TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
             formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
         } else {
             formatCreditStockTakeOver(pTrans, pValues);
@@ -741,14 +741,14 @@ public class MoneyWiseReportGainsAnalysis {
                                                  final SecurityValues pValues,
                                                  final TethysMoney pCash) {
         /* Access interesting values */
-        TethysMoney myStock = pValues.getMoneyValue(SecurityAttribute.XFERREDVALUE);
-        TethysMoney myConsideration = pValues.getMoneyValue(SecurityAttribute.CONSIDERATION);
-        TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
-        TethysRatio myCostDilution = pValues.getRatioValue(SecurityAttribute.COSTDILUTION);
-        TethysMoney myAllowedCost = pValues.getMoneyValue(SecurityAttribute.ALLOWEDCOST);
-        TethysMoney myGain = pValues.getMoneyValue(SecurityAttribute.CAPITALGAIN);
-        TethysMoney myTotalGains = pValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
-        MoneyWiseCashType myCashType = pValues.getEnumValue(SecurityAttribute.CASHTYPE, MoneyWiseCashType.class);
+        final TethysMoney myStock = pValues.getMoneyValue(SecurityAttribute.XFERREDVALUE);
+        final TethysMoney myConsideration = pValues.getMoneyValue(SecurityAttribute.CONSIDERATION);
+        final TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+        final TethysRatio myCostDilution = pValues.getRatioValue(SecurityAttribute.COSTDILUTION);
+        final TethysMoney myAllowedCost = pValues.getMoneyValue(SecurityAttribute.ALLOWEDCOST);
+        final TethysMoney myGain = pValues.getMoneyValue(SecurityAttribute.CAPITALGAIN);
+        final TethysMoney myTotalGains = pValues.getMoneyValue(SecurityAttribute.REALISEDGAINS);
+        final MoneyWiseCashType myCashType = pValues.getEnumValue(SecurityAttribute.CASHTYPE, MoneyWiseCashType.class);
 
         /* Record the calculation of total consideration */
         formatValue(SecurityAttribute.RETURNEDCASH, pCash);
@@ -757,8 +757,8 @@ public class MoneyWiseReportGainsAnalysis {
         formatAddition(SecurityAttribute.CONSIDERATION, myConsideration, pCash, myStock);
 
         /* Obtain the original cost */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
 
         /* Format the cost dilution */
         if (myCostDilution != null) {
@@ -784,17 +784,17 @@ public class MoneyWiseReportGainsAnalysis {
     private void formatCreditStockTakeOver(final Transaction pTrans,
                                            final SecurityValues pValues) {
         /* Access interesting values */
-        TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
-        TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
-        TethysMoney myValueXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDVALUE);
-        TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
-        TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-        TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
+        final TethysPrice myPrice = pValues.getPriceValue(SecurityAttribute.PRICE);
+        final TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
+        final TethysMoney myValueXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDVALUE);
+        final TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+        final TethysMoney myResidualCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+        final TethysRatio myXchangeRate = pValues.getRatioValue(SecurityAttribute.EXCHANGERATE);
 
         /* Detail the new units and cost */
-        SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-        TethysUnits myNewUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
-        TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+        final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+        final TethysUnits myNewUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+        final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
         formatAddition(SecurityAttribute.UNITS, myNewUnits, myOriginalUnits, myUnits);
 
         /* Record the transfer of value and cost */
@@ -814,18 +814,18 @@ public class MoneyWiseReportGainsAnalysis {
         formatBasicTransaction(pTrans);
 
         /* Determine the direction of transfer */
-        TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
+        final TethysMoney myCostXfer = pValues.getMoneyValue(SecurityAttribute.XFERREDCOST);
         formatValue(SecurityAttribute.XFERREDCOST, myCostXfer);
 
-        TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
+        final TethysUnits myUnits = theBucket.getUnitsDeltaForTransaction(pTrans, SecurityAttribute.UNITS);
         if (myUnits.isPositive()) {
             /* Detail the new units and cost */
-            SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
-            TethysUnits myNewUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
-            TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
+            final SecurityValues myPreviousValues = theBucket.getPreviousValuesForTransaction(pTrans);
+            final TethysUnits myNewUnits = pValues.getUnitsValue(SecurityAttribute.UNITS);
+            final TethysUnits myOriginalUnits = myPreviousValues.getUnitsValue(SecurityAttribute.UNITS);
             formatAddition(SecurityAttribute.UNITS, myNewUnits, myOriginalUnits, myUnits);
-            TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
-            TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+            final TethysMoney myCost = pValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
+            final TethysMoney myOriginalCost = myPreviousValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
             formatAddition(SecurityAttribute.RESIDUALCOST, myCost, myOriginalCost, myCostXfer);
         }
     }

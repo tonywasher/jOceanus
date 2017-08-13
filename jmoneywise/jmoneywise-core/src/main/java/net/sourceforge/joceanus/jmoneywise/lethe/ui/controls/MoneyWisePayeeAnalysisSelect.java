@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeBucketList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.PayeeFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
@@ -103,7 +102,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the label */
-        TethysLabel<N, I> myLabel = pFactory.newLabel(NLS_PAYEE + TethysLabel.STR_COLON);
+        final TethysLabel<N, I> myLabel = pFactory.newLabel(NLS_PAYEE + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -119,7 +118,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         thePayeeMenu = theButton.getMenu();
 
         /* Create the listeners */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewPayee());
         theButton.setMenuConfigurator(e -> buildPayeeMenu());
     }
@@ -191,18 +190,10 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         /* Obtain the current payee */
         PayeeBucket myPayee = theState.getPayee();
 
-        /* If we have a selected Payee */
-        if (myPayee != null) {
-            /* Look for the equivalent bucket */
-            myPayee = getMatchingBucket(myPayee);
-        }
-
-        /* If we do not have an active bucket and the list is non-empty */
-        if (myPayee == null
-            && !thePayees.isEmpty()) {
-            /* Use the first bucket */
-            myPayee = thePayees.peekFirst();
-        }
+        /* Switch to versions from the analysis */
+        myPayee = myPayee != null
+                                  ? thePayees.getMatchingPayee(myPayee.getPayee())
+                                  : thePayees.getDefaultPayee();
 
         /* Set the payee */
         theState.setThePayee(myPayee);
@@ -214,38 +205,18 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         /* If this is the correct filter type */
         if (pFilter instanceof PayeeFilter) {
             /* Access filter */
-            PayeeFilter myFilter = (PayeeFilter) pFilter;
+            final PayeeFilter myFilter = (PayeeFilter) pFilter;
 
             /* Obtain the filter bucket */
             PayeeBucket myPayee = myFilter.getBucket();
 
             /* Obtain equivalent bucket */
-            myPayee = getMatchingBucket(myPayee);
+            myPayee = thePayees.getMatchingPayee(myPayee.getPayee());
 
             /* Set the payee */
             theState.setThePayee(myPayee);
             theState.applyState();
         }
-    }
-
-    /**
-     * Obtain matching bucket.
-     * @param pBucket the original bucket
-     * @return the matching bucket
-     */
-    private PayeeBucket getMatchingBucket(final PayeeBucket pBucket) {
-        /* Look up the matching PayeeBucket */
-        Payee myPayee = pBucket.getPayee();
-        PayeeBucket myBucket = thePayees.findItemById(myPayee.getOrderedId());
-
-        /* If there is no such bucket in the analysis */
-        if (myBucket == null) {
-            /* Allocate an orphan bucket */
-            myBucket = thePayees.getOrphanBucket(myPayee);
-        }
-
-        /* return the bucket */
-        return myBucket;
     }
 
     /**
@@ -268,15 +239,15 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
 
         /* Record active item */
         TethysScrollMenuItem<PayeeBucket> myActive = null;
-        PayeeBucket myCurr = theState.getPayee();
+        final PayeeBucket myCurr = theState.getPayee();
 
         /* Loop through the available payee values */
-        Iterator<PayeeBucket> myIterator = thePayees.iterator();
+        final Iterator<PayeeBucket> myIterator = thePayees.iterator();
         while (myIterator.hasNext()) {
-            PayeeBucket myBucket = myIterator.next();
+            final PayeeBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<PayeeBucket> myItem = thePayeeMenu.addItem(myBucket);
+            final TethysScrollMenuItem<PayeeBucket> myItem = thePayeeMenu.addItem(myBucket);
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {

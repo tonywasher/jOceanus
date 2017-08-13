@@ -479,9 +479,9 @@ public class TransactionHelper {
             theDilution = theCurrent.getDilution();
 
             /* Obtain the amounts */
-            TethysMoney myAmount = theCurrent.getAmount();
-            TethysMoney myPartnerAmount = theCurrent.getPartnerAmount();
-            TethysMoney myReturnedCash = theCurrent.getReturnedCash();
+            final TethysMoney myAmount = theCurrent.getAmount();
+            final TethysMoney myPartnerAmount = theCurrent.getPartnerAmount();
+            final TethysMoney myReturnedCash = theCurrent.getReturnedCash();
 
             /* Determine account prices */
             theAccountPrice = (theAccount instanceof SecurityHolding)
@@ -831,8 +831,8 @@ public class TransactionHelper {
             /* Obtain the required exchange rate */
             theBase = pAmount;
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            TethysRatio myRate = theExchangeRate;
-            Currency myCurrency = theCurrency.getCurrency();
+            final TethysRatio myRate = theExchangeRate;
+            final Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
             theAmount = theBase != null
@@ -893,8 +893,8 @@ public class TransactionHelper {
             /* Obtain the required exchange rate */
             theBase = pAmount;
             theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            TethysRatio myRate = theExchangeRate;
-            Currency myCurrency = theCurrency.getCurrency();
+            final TethysRatio myRate = theExchangeRate;
+            final Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */
             theAmount = theBase != null

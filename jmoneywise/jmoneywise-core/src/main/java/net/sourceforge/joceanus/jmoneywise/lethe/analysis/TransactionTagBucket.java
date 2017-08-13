@@ -108,9 +108,9 @@ public final class TransactionTagBucket
         this(pAnalysis, pBase.getTransTag());
 
         /* Loop through the map */
-        Iterator<Transaction> myIterator = pBase.iterator();
+        final Iterator<Transaction> myIterator = pBase.iterator();
         while (myIterator.hasNext()) {
-            Transaction myTrans = myIterator.next();
+            final Transaction myTrans = myIterator.next();
 
             /* If we have passed the Date, break the loop */
             if (pDate.compareTo(myTrans.getDate()) < 0) {
@@ -135,12 +135,12 @@ public final class TransactionTagBucket
         this(pAnalysis, pBase.getTransTag());
 
         /* Loop through the map */
-        Iterator<Transaction> myIterator = pBase.iterator();
+        final Iterator<Transaction> myIterator = pBase.iterator();
         while (myIterator.hasNext()) {
-            Transaction myTrans = myIterator.next();
+            final Transaction myTrans = myIterator.next();
 
             /* Check the range */
-            int iRange = pRange.compareTo(myTrans.getDate());
+            final int iRange = pRange.compareTo(myTrans.getDate());
             if (iRange < 0) {
                 break;
             } else if (iRange == 0) {
@@ -228,7 +228,7 @@ public final class TransactionTagBucket
      * is the bucket idle.
      * @return true/false
      */
-    private boolean isIdle() {
+    protected boolean isIdle() {
         return theHashMap.isEmpty();
     }
 
@@ -260,7 +260,7 @@ public final class TransactionTagBucket
         }
 
         /* Compare the Tags */
-        TransactionTagBucket myThat = (TransactionTagBucket) pThat;
+        final TransactionTagBucket myThat = (TransactionTagBucket) pThat;
         if (!getTransTag().equals(myThat.getTransTag())) {
             return false;
         }
@@ -342,12 +342,12 @@ public final class TransactionTagBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<TransactionTagBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionTagBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TransactionTagBucket myCurr = myIterator.next();
+                final TransactionTagBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this date */
-                TransactionTagBucket myBucket = new TransactionTagBucket(pAnalysis, myCurr, pDate);
+                final TransactionTagBucket myBucket = new TransactionTagBucket(pAnalysis, myCurr, pDate);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -371,12 +371,12 @@ public final class TransactionTagBucket
             theAnalysis = pAnalysis;
 
             /* Loop through the buckets */
-            Iterator<TransactionTagBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionTagBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
-                TransactionTagBucket myCurr = myIterator.next();
+                final TransactionTagBucket myCurr = myIterator.next();
 
                 /* Access the bucket for this range */
-                TransactionTagBucket myBucket = new TransactionTagBucket(pAnalysis, myCurr, pRange);
+                final TransactionTagBucket myBucket = new TransactionTagBucket(pAnalysis, myCurr, pRange);
 
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
@@ -430,13 +430,27 @@ public final class TransactionTagBucket
         }
 
         /**
-         * Obtain an orphan TagBucket for a given tag.
+         * Obtain the matching TagBucket.
          * @param pTag the tag
-         * @return the bucket
+         * @return the matching bucket
          */
-        public TransactionTagBucket getOrphanBucket(final TransactionTag pTag) {
-            /* Allocate an orphan bucket */
-            return new TransactionTagBucket(theAnalysis, pTag);
+        public TransactionTagBucket getMatchingTag(final TransactionTag pTag) {
+            /* Return the matching tag if it exists else an orphan bucket */
+            final TransactionTagBucket myTag = findItemById(pTag.getOrderedId());
+            return myTag != null
+                                 ? myTag
+                                 : new TransactionTagBucket(theAnalysis, pTag);
+        }
+
+        /**
+         * Obtain the default TagBucket.
+         * @return the default bucket
+         */
+        public TransactionTagBucket getDefaultTag() {
+            /* Return the first payee in the list if it exists */
+            return isEmpty()
+                             ? null
+                             : get(0);
         }
 
         /**
@@ -448,15 +462,15 @@ public final class TransactionTagBucket
                                           final Iterator<TransactionInfo> pIterator) {
             /* Loop through the tags */
             while (pIterator.hasNext()) {
-                TransactionInfo myInfo = pIterator.next();
+                final TransactionInfo myInfo = pIterator.next();
 
                 /* if the item is not deleted */
                 if (!myInfo.isDeleted()) {
                     /* Access details */
-                    TransactionTag myTag = myInfo.getTransactionTag();
+                    final TransactionTag myTag = myInfo.getTransactionTag();
 
                     /* Obtain the bucket and process the transaction */
-                    TransactionTagBucket myBucket = getBucket(myTag);
+                    final TransactionTagBucket myBucket = getBucket(myTag);
                     myBucket.processTransaction(pTrans);
                 }
             }

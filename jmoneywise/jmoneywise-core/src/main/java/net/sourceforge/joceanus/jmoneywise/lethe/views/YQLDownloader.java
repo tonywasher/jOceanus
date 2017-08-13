@@ -58,8 +58,8 @@ public final class YQLDownloader {
      */
     public static boolean downloadPrices(final SpotSecurityList<?, ?> pPrices) throws OceanusException {
         /* Determine currency for the prices */
-        MoneyWiseData myData = pPrices.getDataSet();
-        AssetCurrency myCurrency = myData.getDefaultCurrency();
+        final MoneyWiseData myData = pPrices.getDataSet();
+        final AssetCurrency myCurrency = myData.getDefaultCurrency();
         boolean hasChanges = false;
 
         /* If we have a default currency */
@@ -67,32 +67,32 @@ public final class YQLDownloader {
             /* Protect against exceptions */
             try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
                 /* Build the symbols list */
-                List<String> mySymbols = new ArrayList<>();
+                final List<String> mySymbols = new ArrayList<>();
                 Iterator<SpotSecurityPrice> myIterator = pPrices.iterator();
                 while (myIterator.hasNext()) {
-                    SpotSecurityPrice mySpot = myIterator.next();
+                    final SpotSecurityPrice mySpot = myIterator.next();
 
                     /* Ignore closed prices */
                     if (!mySpot.isDisabled()) {
                         /* Add the symbol to the list */
-                        Security mySecurity = mySpot.getSecurity();
+                        final Security mySecurity = mySpot.getSecurity();
                         mySymbols.add(mySecurity.getSymbol());
                     }
                 }
 
                 /* Access the prices */
-                Map<String, TethysPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
+                final Map<String, TethysPrice> myPrices = myClient.obtainSecurityPrices(mySymbols, myCurrency.getCurrency());
 
                 /* re-loop through the securities */
                 myIterator = pPrices.iterator();
                 while (myIterator.hasNext()) {
-                    SpotSecurityPrice mySpot = myIterator.next();
+                    final SpotSecurityPrice mySpot = myIterator.next();
 
                     /* Ignore closed prices */
                     if (!mySpot.isDisabled()) {
                         /* Lookup the price */
-                        Security mySecurity = mySpot.getSecurity();
-                        TethysPrice myPrice = myPrices.get(mySecurity.getSymbol());
+                        final Security mySecurity = mySpot.getSecurity();
+                        final TethysPrice myPrice = myPrices.get(mySecurity.getSymbol());
 
                         /* If we found a price */
                         if (myPrice != null) {
@@ -125,8 +125,8 @@ public final class YQLDownloader {
      */
     public static boolean downloadRates(final SpotExchangeList<?, ?> pRates) throws OceanusException {
         /* Determine currency for the prices */
-        MoneyWiseData myData = pRates.getDataSet();
-        AssetCurrency myCurrency = myData.getDefaultCurrency();
+        final MoneyWiseData myData = pRates.getDataSet();
+        final AssetCurrency myCurrency = myData.getDefaultCurrency();
         boolean hasChanges = false;
 
         /* If we have a default currency */
@@ -134,27 +134,27 @@ public final class YQLDownloader {
             /* Protect against exceptions */
             try (MetisHTTPYQLClient myClient = new MetisHTTPYQLClient(myData.getDataFormatter())) {
                 /* Build the currency list */
-                List<Currency> myCurrencies = new ArrayList<>();
+                final List<Currency> myCurrencies = new ArrayList<>();
                 Iterator<SpotExchangeRate> myIterator = pRates.iterator();
                 while (myIterator.hasNext()) {
-                    SpotExchangeRate mySpot = myIterator.next();
+                    final SpotExchangeRate mySpot = myIterator.next();
 
                     /* Add the currency to the list */
-                    AssetCurrency myToCurr = mySpot.getToCurrency();
+                    final AssetCurrency myToCurr = mySpot.getToCurrency();
                     myCurrencies.add(myToCurr.getCurrency());
                 }
 
                 /* Access the rates */
-                Map<Currency, TethysRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
+                final Map<Currency, TethysRatio> myRates = myClient.obtainExchangeRates(myCurrency.getCurrency(), myCurrencies);
 
                 /* re-loop through the rates */
                 myIterator = pRates.iterator();
                 while (myIterator.hasNext()) {
-                    SpotExchangeRate mySpot = myIterator.next();
+                    final SpotExchangeRate mySpot = myIterator.next();
 
                     /* Lookup the rate */
-                    AssetCurrency myCurr = mySpot.getToCurrency();
-                    TethysRatio myRate = myRates.get(myCurr.getCurrency());
+                    final AssetCurrency myCurr = mySpot.getToCurrency();
+                    final TethysRatio myRate = myRates.get(myCurr.getCurrency());
 
                     /* If we found a rate */
                     if (myRate != null) {

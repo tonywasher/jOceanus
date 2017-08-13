@@ -88,40 +88,40 @@ public class MoneyWiseReportTaxationBasis
     @Override
     public Document createReport(final Analysis pAnalysis) {
         /* Access the bucket lists */
-        TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
-        TethysDateRange myRange = pAnalysis.getDateRange();
+        final TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
+        final TethysDateRange myRange = pAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
-        TaxBasisBucket myTotals = myTaxBasis.getTotals();
+        final TaxBasisBucket myTotals = myTaxBasis.getTotals();
 
         /* Start the report */
-        Element myBody = theBuilder.startReport();
+        final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        final MetisHTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_NETT);
         theBuilder.makeTitleCell(myTable, TEXT_GROSS);
 
         /* Loop through the TaxBasis Buckets */
-        Iterator<TaxBasisBucket> myIterator = myTaxBasis.iterator();
+        final Iterator<TaxBasisBucket> myIterator = myTaxBasis.iterator();
         while (myIterator.hasNext()) {
-            TaxBasisBucket myBucket = myIterator.next();
+            final TaxBasisBucket myBucket = myIterator.next();
 
             /* Access the tax basis */
-            boolean hasAccounts = myBucket.hasAccounts();
+            final boolean hasAccounts = myBucket.hasAccounts();
 
             /* Access the amount */
-            TaxBasisValues myValues = myBucket.getValues();
-            TethysMoney myGross = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
-            TethysMoney myNett = myValues.getMoneyValue(TaxBasisAttribute.NETT);
+            final TaxBasisValues myValues = myBucket.getValues();
+            final TethysMoney myGross = myValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            final TethysMoney myNett = myValues.getMoneyValue(TaxBasisAttribute.NETT);
 
             /* If we have a non-zero value */
             if (myGross.isNonZero()) {
                 /* Access bucket name */
-                String myName = myBucket.getName();
+                final String myName = myBucket.getName();
 
                 /* Format the detail */
                 theBuilder.startRow(myTable);
@@ -143,7 +143,7 @@ public class MoneyWiseReportTaxationBasis
         }
 
         /* Access values */
-        TaxBasisValues myValues = myTotals.getValues();
+        final TaxBasisValues myValues = myTotals.getValues();
 
         /* Format the total */
         theBuilder.startTotalRow(myTable);
@@ -158,9 +158,9 @@ public class MoneyWiseReportTaxationBasis
     @Override
     public MetisHTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the source */
-        Object mySource = pTable.getSource();
+        final Object mySource = pTable.getSource();
         if (mySource instanceof TaxBasisBucket) {
-            TaxBasisBucket mySourceBucket = (TaxBasisBucket) mySource;
+            final TaxBasisBucket mySourceBucket = (TaxBasisBucket) mySource;
             return createDelayedAccounts(pTable.getParent(), mySourceBucket);
         }
 
@@ -177,19 +177,19 @@ public class MoneyWiseReportTaxationBasis
     protected MetisHTMLTable createDelayedAccounts(final MetisHTMLTable pParent,
                                                    final TaxBasisBucket pSource) {
         /* Create an embedded table */
-        MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
+        final MetisHTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Account Buckets */
-        Iterator<TaxBasisAccountBucket> myIterator = pSource.accountIterator();
+        final Iterator<TaxBasisAccountBucket> myIterator = pSource.accountIterator();
         while (myIterator.hasNext()) {
-            TaxBasisAccountBucket myBucket = myIterator.next();
+            final TaxBasisAccountBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            String myName = myBucket.getName();
-            String mySimpleName = myBucket.getSimpleName();
+            final String myName = myBucket.getName();
+            final String mySimpleName = myBucket.getSimpleName();
 
             /* Access values */
-            TaxBasisValues myValues = myBucket.getValues();
+            final TaxBasisValues myValues = myBucket.getValues();
 
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);

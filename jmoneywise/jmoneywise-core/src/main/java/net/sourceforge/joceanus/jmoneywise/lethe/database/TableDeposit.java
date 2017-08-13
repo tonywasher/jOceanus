@@ -52,10 +52,10 @@ public class TableDeposit
      */
     protected TableDeposit(final PrometheusDataStore<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Deposit.FIELD_CATEGORY, TableDepositCategory.TABLE_NAME);
+        final PrometheusColumnDefinition myCatCol = myTableDef.addReferenceColumn(Deposit.FIELD_CATEGORY, TableDepositCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Deposit.FIELD_CURRENCY, TableAssetCurrency.TABLE_NAME);
         myTableDef.addReferenceColumn(Deposit.FIELD_PARENT, TablePayee.TABLE_NAME);
         myTableDef.addEncryptedColumn(Deposit.FIELD_NAME, Deposit.NAMELEN);
@@ -68,17 +68,17 @@ public class TableDeposit
 
     @Override
     protected void declareData(final DataSet<?, ?> pData) {
-        MoneyWiseData myData = (MoneyWiseData) pData;
+        final MoneyWiseData myData = (MoneyWiseData) pData;
         setList(myData.getDeposits());
     }
 
     @Override
     protected DataValues<MoneyWiseDataType> loadValues() throws OceanusException {
         /* Access the table definition */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
 
         /* Build data values */
-        DataValues<MoneyWiseDataType> myValues = getRowValues(Deposit.OBJECT_NAME);
+        final DataValues<MoneyWiseDataType> myValues = getRowValues(Deposit.OBJECT_NAME);
         myValues.addValue(Deposit.FIELD_NAME, myTableDef.getBinaryValue(Deposit.FIELD_NAME));
         myValues.addValue(Deposit.FIELD_DESC, myTableDef.getBinaryValue(Deposit.FIELD_DESC));
         myValues.addValue(Deposit.FIELD_CATEGORY, myTableDef.getIntegerValue(Deposit.FIELD_CATEGORY));
@@ -94,7 +94,7 @@ public class TableDeposit
     protected void setFieldValue(final Deposit pItem,
                                  final MetisField iField) throws OceanusException {
         /* Switch on field id */
-        PrometheusTableDefinition myTableDef = getTableDef();
+        final PrometheusTableDefinition myTableDef = getTableDef();
         if (Deposit.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Deposit.FIELD_PARENT.equals(iField)) {
