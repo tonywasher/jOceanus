@@ -79,9 +79,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * @param pError the error panel
      */
     protected MoneyWiseItemPanel(final TethysSwingGuiFactory pFactory,
-                                    final MetisFieldManager pFieldMgr,
-                                    final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                    final MetisErrorPanel<JComponent, Icon> pError) {
+                                 final MetisFieldManager pFieldMgr,
+                                 final UpdateSet<MoneyWiseDataType> pUpdateSet,
+                                 final MetisErrorPanel<JComponent, Icon> pError) {
         super(pFactory, pFieldMgr, pUpdateSet, pError);
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();
@@ -154,15 +154,15 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         processGoToFilters(pMenu);
 
         /* Create a simple map for top-level categories */
-        Map<MoneyWiseDataType, TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?>> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?>> myMap = new EnumMap<>(MoneyWiseDataType.class);
 
         /* Loop through the items */
-        Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
+        final Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
         while (myIterator.hasNext()) {
-            DataItem<MoneyWiseDataType> myItem = myIterator.next();
+            final DataItem<MoneyWiseDataType> myItem = myIterator.next();
 
             /* Determine DataType and obtain parent menu */
-            MoneyWiseDataType myType = myItem.getItemType();
+            final MoneyWiseDataType myType = myItem.getItemType();
             TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> myMenu = myMap.get(myType);
 
             /* If this is a new menu */
@@ -178,29 +178,29 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
             /* Handle differing items */
             if (myItem instanceof StaticData) {
-                StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) myItem;
+                final StaticData<?, ?, ?> myStatic = (StaticData<?, ?, ?>) myItem;
                 myId = MoneyWiseGoToId.STATIC;
                 myName = myStatic.getName();
             } else if (myItem instanceof AssetBase) {
-                AssetBase<?> myAccount = (AssetBase<?>) myItem;
+                final AssetBase<?> myAccount = (AssetBase<?>) myItem;
                 myId = MoneyWiseGoToId.ACCOUNT;
                 myName = myAccount.getName();
             } else if (myItem instanceof CategoryBase) {
-                CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) myItem;
+                final CategoryBase<?, ?, ?> myCategory = (CategoryBase<?, ?, ?>) myItem;
                 myId = MoneyWiseGoToId.CATEGORY;
                 myName = myCategory.getName();
             } else if (myItem instanceof Region) {
-                Region myRegion = (Region) myItem;
+                final Region myRegion = (Region) myItem;
                 myId = MoneyWiseGoToId.REGION;
                 myName = myRegion.getName();
             } else if (myItem instanceof TransactionTag) {
-                TransactionTag myTag = (TransactionTag) myItem;
+                final TransactionTag myTag = (TransactionTag) myItem;
                 myId = MoneyWiseGoToId.TAG;
                 myName = myTag.getName();
             }
 
             /* Build the item */
-            PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myItem);
+            final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myItem);
             myMenu.getSubMenu().addItem(myEvent, myName);
         }
     }
@@ -214,9 +214,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
         TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> myMenu = null;
 
         /* Loop through the items */
-        Iterator<AnalysisFilter<?, ?>> myIterator = theGoToFilterList.iterator();
+        final Iterator<AnalysisFilter<?, ?>> myIterator = theGoToFilterList.iterator();
         while (myIterator.hasNext()) {
-            AnalysisFilter<?, ?> myFilter = myIterator.next();
+            final AnalysisFilter<?, ?> myFilter = myIterator.next();
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -225,11 +225,11 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
             }
 
             /* Determine action */
-            StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(null, myFilter);
-            MoneyWiseGoToId myId = MoneyWiseGoToId.STATEMENT;
+            final StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(null, myFilter);
+            final MoneyWiseGoToId myId = MoneyWiseGoToId.STATEMENT;
 
             /* Build the item */
-            PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myStatement);
+            final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myStatement);
             myMenu.getSubMenu().addItem(myEvent, myFilter.getName());
         }
     }

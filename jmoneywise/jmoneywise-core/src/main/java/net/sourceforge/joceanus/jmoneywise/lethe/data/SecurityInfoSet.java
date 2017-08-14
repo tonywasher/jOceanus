@@ -80,7 +80,7 @@ public class SecurityInfoSet
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -95,7 +95,7 @@ public class SecurityInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
-        Object myValue;
+        final Object myValue;
 
         switch (pInfoClass) {
             case REGION:
@@ -154,7 +154,7 @@ public class SecurityInfoSet
      */
     public Region getRegion(final AccountInfoClass pInfoClass) {
         /* Access existing entry */
-        SecurityInfo myValue = getInfo(pInfoClass);
+        final SecurityInfo myValue = getInfo(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -172,7 +172,7 @@ public class SecurityInfoSet
      */
     public Security getSecurity(final AccountInfoClass pInfoClass) {
         /* Access existing entry */
-        SecurityInfo myValue = getInfo(pInfoClass);
+        final SecurityInfo myValue = getInfo(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -189,7 +189,7 @@ public class SecurityInfoSet
      * @return the status
      */
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED
                                : isClassRequired(myClass);
@@ -198,8 +198,8 @@ public class SecurityInfoSet
     @Override
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Security */
-        Security mySec = getOwner();
-        SecurityTypeClass myType = mySec.getSecurityTypeClass();
+        final Security mySec = getOwner();
+        final SecurityTypeClass myType = mySec.getSecurityTypeClass();
 
         /* If we have no Type, no class is allowed */
         if (myType == null) {
@@ -252,16 +252,16 @@ public class SecurityInfoSet
      */
     protected void validate() {
         /* Access details about the Security */
-        Security mySecurity = getOwner();
+        final Security mySecurity = getOwner();
 
         /* Loop through the classes */
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             /* Access info for class */
-            SecurityInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+            final SecurityInfo myInfo = getInfo(myClass);
+            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            MetisFieldRequired myState = isClassRequired(myClass);
+            final MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
@@ -282,28 +282,28 @@ public class SecurityInfoSet
             switch (myClass) {
                 case NOTES:
                     /* Access data */
-                    char[] myArray = myInfo.getValue(char[].class);
+                    final char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
                 case SYMBOL:
                     /* Access data */
-                    String mySymbol = myInfo.getValue(String.class);
+                    final String mySymbol = myInfo.getValue(String.class);
                     if (mySymbol.length() > myClass.getMaximumLength()) {
                         mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
                 case UNDERLYINGSTOCK:
                     /* Access data */
-                    Security myStock = myInfo.getValue(Security.class);
+                    final Security myStock = myInfo.getValue(Security.class);
                     if (!myStock.getSecurityTypeClass().isShares()) {
                         mySecurity.addError("Invalid underlying stock", getFieldForClass(myClass));
                     }
                     break;
                 case OPTIONPRICE:
                     /* Access data */
-                    TethysPrice myPrice = myInfo.getValue(TethysPrice.class);
+                    final TethysPrice myPrice = myInfo.getValue(TethysPrice.class);
                     if (myPrice.isZero()) {
                         mySecurity.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (!myPrice.isPositive()) {

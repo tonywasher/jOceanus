@@ -99,7 +99,7 @@ public class PortfolioInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getPortfolios());
 
@@ -107,7 +107,7 @@ public class PortfolioInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the PortfolioInfoSet and register this data */
-            PortfolioInfoSet mySet = getOwner().getInfoSet();
+            final PortfolioInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -163,7 +163,7 @@ public class PortfolioInfo
     @Override
     public void deRegister() {
         /* Access the PortfolioInfoSet and register this value */
-        PortfolioInfoSet mySet = getOwner().getInfoSet();
+        final PortfolioInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -205,12 +205,12 @@ public class PortfolioInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getPortfolios());
 
         /* Access the PortfolioInfoSet and register this data */
-        PortfolioInfoSet mySet = getOwner().getInfoSet();
+        final PortfolioInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -227,7 +227,7 @@ public class PortfolioInfo
         }
 
         /* Access as PortfolioInfo */
-        PortfolioInfo myPortInfo = (PortfolioInfo) pInfo;
+        final PortfolioInfo myPortInfo = (PortfolioInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -299,7 +299,7 @@ public class PortfolioInfo
 
         @Override
         protected PortfolioInfoList getEmptyList(final ListStyle pStyle) {
-            PortfolioInfoList myList = new PortfolioInfoList(this);
+            final PortfolioInfoList myList = new PortfolioInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -311,7 +311,7 @@ public class PortfolioInfo
                 throw new UnsupportedOperationException();
             }
 
-            PortfolioInfo myInfo = new PortfolioInfo(this, (PortfolioInfo) pItem);
+            final PortfolioInfo myInfo = new PortfolioInfo(this, (PortfolioInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -325,7 +325,7 @@ public class PortfolioInfo
         protected PortfolioInfo addNewItem(final Portfolio pOwner,
                                            final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            PortfolioInfo myInfo = new PortfolioInfo(this, pOwner, pInfoType);
+            final PortfolioInfo myInfo = new PortfolioInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -343,23 +343,23 @@ public class PortfolioInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pPortfolio, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(PortfolioInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(PortfolioInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pPortfolio);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Portfolio Info */
-            PortfolioInfo myInfo = new PortfolioInfo(this, myValues);
+            final PortfolioInfo myInfo = new PortfolioInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -374,7 +374,7 @@ public class PortfolioInfo
         @Override
         public PortfolioInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            PortfolioInfo myInfo = new PortfolioInfo(this, pValues);
+            final PortfolioInfo myInfo = new PortfolioInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -395,7 +395,7 @@ public class PortfolioInfo
             validateOnLoad();
 
             /* Map and Validate the Portfolios */
-            PortfolioList myPortfolios = getDataSet().getPortfolios();
+            final PortfolioList myPortfolios = getDataSet().getPortfolios();
             myPortfolios.mapData();
             myPortfolios.validateOnLoad();
         }

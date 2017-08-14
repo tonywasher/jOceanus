@@ -99,7 +99,7 @@ public class LoanInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getDeposits());
 
@@ -107,7 +107,7 @@ public class LoanInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the LoanInfoSet and register this data */
-            LoanInfoSet mySet = getOwner().getInfoSet();
+            final LoanInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -163,7 +163,7 @@ public class LoanInfo
     @Override
     public void deRegister() {
         /* Access the LoanInfoSet and register this value */
-        LoanInfoSet mySet = getOwner().getInfoSet();
+        final LoanInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -205,12 +205,12 @@ public class LoanInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getLoans());
 
         /* Access the LoanInfoSet and register this data */
-        LoanInfoSet mySet = getOwner().getInfoSet();
+        final LoanInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -227,7 +227,7 @@ public class LoanInfo
         }
 
         /* Access as LoanInfo */
-        LoanInfo myLoanInfo = (LoanInfo) pInfo;
+        final LoanInfo myLoanInfo = (LoanInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -299,7 +299,7 @@ public class LoanInfo
 
         @Override
         protected LoanInfoList getEmptyList(final ListStyle pStyle) {
-            LoanInfoList myList = new LoanInfoList(this);
+            final LoanInfoList myList = new LoanInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -311,7 +311,7 @@ public class LoanInfo
                 throw new UnsupportedOperationException();
             }
 
-            LoanInfo myInfo = new LoanInfo(this, (LoanInfo) pItem);
+            final LoanInfo myInfo = new LoanInfo(this, (LoanInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -325,7 +325,7 @@ public class LoanInfo
         protected LoanInfo addNewItem(final Loan pOwner,
                                       final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            LoanInfo myInfo = new LoanInfo(this, pOwner, pInfoType);
+            final LoanInfo myInfo = new LoanInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -343,23 +343,23 @@ public class LoanInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pLoan, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<MoneyWiseDataType>(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pLoan);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Loan Info */
-            LoanInfo myInfo = new LoanInfo(this, myValues);
+            final LoanInfo myInfo = new LoanInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -374,7 +374,7 @@ public class LoanInfo
         @Override
         public LoanInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            LoanInfo myInfo = new LoanInfo(this, pValues);
+            final LoanInfo myInfo = new LoanInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -395,7 +395,7 @@ public class LoanInfo
             validateOnLoad();
 
             /* Map and Validate the Loans */
-            LoanList myLoans = getDataSet().getLoans();
+            final LoanList myLoans = getDataSet().getLoans();
             myLoans.mapData();
             myLoans.validateOnLoad();
         }

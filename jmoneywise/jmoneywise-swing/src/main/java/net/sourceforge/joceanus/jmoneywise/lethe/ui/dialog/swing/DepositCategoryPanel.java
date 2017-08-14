@@ -75,13 +75,13 @@ public class DepositCategoryPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField mySubName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField mySubName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<DepositCategoryType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<DepositCategory> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<DepositCategoryType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<DepositCategory> myParentButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         restrictField(myName, DepositCategory.NAMELEN);
@@ -99,8 +99,8 @@ public class DepositCategoryPanel
         theFieldSet.addFieldElement(DepositCategory.FIELD_PARENT, DepositCategory.class, myParentButton);
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
-        SpringLayout mySpring = new SpringLayout();
+        final JPanel myPanel = getMainPanel();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(DepositCategory.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(DepositCategory.FIELD_SUBCAT, myPanel);
@@ -120,9 +120,9 @@ public class DepositCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        DepositCategory myItem = getItem();
+        final DepositCategory myItem = getItem();
         if (myItem != null) {
-            DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
+            final DepositCategoryList myCategories = getDataList(MoneyWiseDataType.DEPOSITCATEGORY, DepositCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -133,12 +133,12 @@ public class DepositCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        DepositCategory myCategory = getItem();
-        DepositCategoryType myType = myCategory.getCategoryType();
-        boolean isParent = myType.isDepositCategory(DepositCategoryClass.PARENT);
+        final DepositCategory myCategory = getItem();
+        final DepositCategoryType myType = myCategory.getCategoryType();
+        final boolean isParent = myType.isDepositCategory(DepositCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(DepositCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
@@ -159,8 +159,8 @@ public class DepositCategoryPanel
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        DepositCategory myCategory = getItem();
+        final MetisField myField = pUpdate.getField();
+        final DepositCategory myCategory = getItem();
 
         /* Process updates */
         if (myField.equals(DepositCategory.FIELD_NAME)) {
@@ -183,10 +183,10 @@ public class DepositCategoryPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        DepositCategory myItem = getItem();
-        DepositCategory myParent = myItem.getParentCategory();
+        final DepositCategory myItem = getItem();
+        final DepositCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            DepositCategoryType myType = myItem.getCategoryType();
+            final DepositCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -203,16 +203,16 @@ public class DepositCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        DepositCategoryType myCurr = pCategory.getCategoryType();
+        final DepositCategoryType myCurr = pCategory.getCategoryType();
         TethysScrollMenuItem<DepositCategoryType> myActive = null;
 
         /* Access Deposit Category types */
-        DepositCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
+        final DepositCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.DEPOSITTYPE, DepositCategoryTypeList.class);
 
         /* Loop through the DepositCategoryTypes */
-        Iterator<DepositCategoryType> myIterator = myCategoryTypes.iterator();
+        final Iterator<DepositCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            DepositCategoryType myType = myIterator.next();
+            final DepositCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
@@ -224,7 +224,7 @@ public class DepositCategoryPanel
             }
 
             /* Create a new action for the type */
-            TethysScrollMenuItem<DepositCategoryType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<DepositCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -250,23 +250,23 @@ public class DepositCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        DepositCategory myCurr = pCategory.getParentCategory();
+        final DepositCategory myCurr = pCategory.getParentCategory();
         TethysScrollMenuItem<DepositCategory> myActive = null;
 
         /* Loop through the DepositCategories */
-        DepositCategoryList myCategories = pCategory.getList();
-        Iterator<DepositCategory> myIterator = myCategories.iterator();
+        final DepositCategoryList myCategories = pCategory.getList();
+        final Iterator<DepositCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            DepositCategory myCat = myIterator.next();
+            final DepositCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-parent items */
-            DepositCategoryClass myClass = myCat.getCategoryTypeClass();
+            final DepositCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isParentCategory()) {
                 continue;
             }
 
             /* Create a new action for the parent */
-            TethysScrollMenuItem<DepositCategory> myItem = pMenu.addItem(myCat);
+            final TethysScrollMenuItem<DepositCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

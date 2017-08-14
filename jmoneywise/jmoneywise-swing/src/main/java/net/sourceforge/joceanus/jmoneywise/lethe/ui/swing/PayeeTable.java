@@ -60,9 +60,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -203,7 +203,7 @@ public class PayeeTable
         super(pView.getGuiFactory());
 
         /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
@@ -223,7 +223,7 @@ public class PayeeTable
 
         /* Create the data column model and declare it */
         theColumns = new PayeeColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -311,13 +311,13 @@ public class PayeeTable
         myTask = myTask.startTask("Payees");
 
         /* Access the various lists */
-        MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = theView.getData();
 
         /* Get the Payees edit list */
-        PayeeList myPayees = myData.getPayees();
+        final PayeeList myPayees = myData.getPayees();
         thePayees = myPayees.deriveEditList();
         thePayeeEntry.setDataList(thePayees);
-        PayeeInfoList myInfo = thePayees.getPayeeInfo();
+        final PayeeInfoList myInfo = thePayees.getPayeeInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
@@ -513,7 +513,7 @@ public class PayeeTable
             /* Protect against Exceptions */
             try {
                 /* Create the new payee */
-                Payee myPayee = new Payee(thePayees);
+                final Payee myPayee = new Payee(thePayees);
                 myPayee.setDefaults();
 
                 /* Add the new item */
@@ -531,7 +531,7 @@ public class PayeeTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);
@@ -593,20 +593,20 @@ public class PayeeTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<PayeeType> myTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PayeeType.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<PayeeType> myTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PayeeType.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
-            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
             myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
             myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
@@ -685,7 +685,7 @@ public class PayeeTable
                                              ? PrometheusAction.ACTIVE
                                              : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
-                    Transaction myTran = pPayee.getLatest();
+                    final Transaction myTran = pPayee.getLatest();
                     return (myTran == null)
                                             ? null
                                             : myTran.getDate();
@@ -779,7 +779,7 @@ public class PayeeTable
         private void buildPayeeTypeMenu(final Integer pRowIndex,
                                         final TethysScrollMenu<PayeeType, Icon> pMenu) {
             /* Record active item */
-            Payee myPayee = thePayees.get(pRowIndex);
+            final Payee myPayee = thePayees.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildPayeeTypeMenu(pMenu, myPayee);
@@ -791,7 +791,7 @@ public class PayeeTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            Payee myPayee = thePayees.get(pRowIndex);
+            final Payee myPayee = thePayees.get(pRowIndex);
             return myPayee.isClosed() || !myPayee.isRelevant();
         }
     }

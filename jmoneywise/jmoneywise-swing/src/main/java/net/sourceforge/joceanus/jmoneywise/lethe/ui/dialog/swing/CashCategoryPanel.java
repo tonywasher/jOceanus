@@ -75,13 +75,13 @@ public class CashCategoryPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField mySubName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField mySubName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         restrictField(myName, CashCategory.NAMELEN);
@@ -99,8 +99,8 @@ public class CashCategoryPanel
         theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, myParentButton);
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
-        SpringLayout mySpring = new SpringLayout();
+        final JPanel myPanel = getMainPanel();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(CashCategory.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(CashCategory.FIELD_SUBCAT, myPanel);
@@ -120,9 +120,9 @@ public class CashCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        CashCategory myItem = getItem();
+        final CashCategory myItem = getItem();
         if (myItem != null) {
-            CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
+            final CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -133,12 +133,12 @@ public class CashCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        CashCategory myCategory = getItem();
-        CashCategoryType myType = myCategory.getCategoryType();
-        boolean isParent = myType.isCashCategory(CashCategoryClass.PARENT);
+        final CashCategory myCategory = getItem();
+        final CashCategoryType myType = myCategory.getCategoryType();
+        final boolean isParent = myType.isCashCategory(CashCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(CashCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
@@ -159,8 +159,8 @@ public class CashCategoryPanel
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        CashCategory myCategory = getItem();
+        final MetisField myField = pUpdate.getField();
+        final CashCategory myCategory = getItem();
 
         /* Process updates */
         if (myField.equals(CashCategory.FIELD_NAME)) {
@@ -183,10 +183,10 @@ public class CashCategoryPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        CashCategory myItem = getItem();
-        CashCategory myParent = myItem.getParentCategory();
+        final CashCategory myItem = getItem();
+        final CashCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            CashCategoryType myType = myItem.getCategoryType();
+            final CashCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -203,16 +203,16 @@ public class CashCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        CashCategoryType myCurr = pCategory.getCategoryType();
+        final CashCategoryType myCurr = pCategory.getCategoryType();
         TethysScrollMenuItem<CashCategoryType> myActive = null;
 
         /* Access Cash Category types */
-        CashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
+        final CashCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.CASHTYPE, CashCategoryTypeList.class);
 
         /* Loop through the CashCategoryTypes */
-        Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();
+        final Iterator<CashCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            CashCategoryType myType = myIterator.next();
+            final CashCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
@@ -224,7 +224,7 @@ public class CashCategoryPanel
             }
 
             /* Create a new action for the type */
-            TethysScrollMenuItem<CashCategoryType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<CashCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -250,23 +250,23 @@ public class CashCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        CashCategory myCurr = pCategory.getParentCategory();
+        final CashCategory myCurr = pCategory.getParentCategory();
         TethysScrollMenuItem<CashCategory> myActive = null;
 
         /* Loop through the CashCategories */
-        CashCategoryList myCategories = pCategory.getList();
-        Iterator<CashCategory> myIterator = myCategories.iterator();
+        final CashCategoryList myCategories = pCategory.getList();
+        final Iterator<CashCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            CashCategory myCat = myIterator.next();
+            final CashCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-parent items */
-            CashCategoryClass myClass = myCat.getCategoryTypeClass();
+            final CashCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isParentCategory()) {
                 continue;
             }
 
             /* Create a new action for the type */
-            TethysScrollMenuItem<CashCategory> myItem = pMenu.addItem(myCat);
+            final TethysScrollMenuItem<CashCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

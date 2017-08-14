@@ -352,7 +352,7 @@ public class TransactionTag
         }
 
         /* Check the names */
-        int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        final int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -381,10 +381,10 @@ public class TransactionTag
 
     @Override
     public void validate() {
-        TransactionTagList myList = getList();
-        String myName = getName();
-        String myDesc = getDesc();
-        TagDataMap myMap = myList.getDataMap();
+        final TransactionTagList myList = getList();
+        final String myName = getName();
+        final String myDesc = getDesc();
+        final TagDataMap myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -430,7 +430,7 @@ public class TransactionTag
         if (!(pTag instanceof TransactionTag)) {
             return false;
         }
-        TransactionTag myTag = (TransactionTag) pTag;
+        final TransactionTag myTag = (TransactionTag) pTag;
 
         /* Store the current detail into history */
         pushHistory();
@@ -451,8 +451,8 @@ public class TransactionTag
 
     @Override
     public void adjustMapForItem() {
-        TransactionTagList myList = getList();
-        TagDataMap myMap = myList.getDataMap();
+        final TransactionTagList myList = getList();
+        final TagDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -510,7 +510,7 @@ public class TransactionTag
 
         @Override
         protected TransactionTagList getEmptyList(final ListStyle pStyle) {
-            TransactionTagList myList = new TransactionTagList(this);
+            final TransactionTagList myList = new TransactionTagList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -521,13 +521,13 @@ public class TransactionTag
          */
         public TransactionTagList deriveEditList() {
             /* Build an empty List */
-            TransactionTagList myList = getEmptyList(ListStyle.EDIT);
+            final TransactionTagList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the tags */
-            Iterator<TransactionTag> myIterator = iterator();
+            final Iterator<TransactionTag> myIterator = iterator();
             while (myIterator.hasNext()) {
-                TransactionTag myCurr = myIterator.next();
+                final TransactionTag myCurr = myIterator.next();
 
                 /* Ignore deleted tags */
                 if (myCurr.isDeleted()) {
@@ -535,7 +535,7 @@ public class TransactionTag
                 }
 
                 /* Build the new linked tag and add it to the list */
-                TransactionTag myTag = new TransactionTag(myList, myCurr);
+                final TransactionTag myTag = new TransactionTag(myList, myCurr);
                 myList.append(myTag);
 
                 /* Adjust the map */
@@ -558,7 +558,7 @@ public class TransactionTag
                 throw new UnsupportedOperationException();
             }
 
-            TransactionTag myTag = new TransactionTag(this, (TransactionTag) pTag);
+            final TransactionTag myTag = new TransactionTag(this, (TransactionTag) pTag);
             add(myTag);
             return myTag;
         }
@@ -569,7 +569,7 @@ public class TransactionTag
          */
         @Override
         public TransactionTag addNewItem() {
-            TransactionTag myTag = new TransactionTag(this);
+            final TransactionTag myTag = new TransactionTag(this);
             add(myTag);
             return myTag;
         }
@@ -586,7 +586,7 @@ public class TransactionTag
          */
         public String getUniqueName() {
             /* Set up base constraints */
-            String myBase = NAME_NEWTAG;
+            final String myBase = NAME_NEWTAG;
             int iNextId = 1;
 
             /* Loop until we found a name */
@@ -605,7 +605,7 @@ public class TransactionTag
         @Override
         public TransactionTag addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the tag */
-            TransactionTag myTag = new TransactionTag(this, pValues);
+            final TransactionTag myTag = new TransactionTag(this, pValues);
 
             /* Check that this TagId has not been previously added */
             if (!isIdUnique(myTag.getId())) {

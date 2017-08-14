@@ -190,8 +190,8 @@ public class AccountPanel
         theView = pView;
 
         /* Access GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
-        MetisViewerManager myViewer = pView.getViewerManager();
+        final TethysSwingGuiFactory myFactory = pView.getUtilitySet().getGuiFactory();
+        final MetisViewerManager myViewer = pView.getViewerManager();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -203,7 +203,7 @@ public class AccountPanel
         thePanel = myFactory.newBorderPane();
 
         /* Create the top level viewer entry for this view */
-        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
+        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.MAINTENANCE);
         theViewerEntry = myViewer.newEntry(mySection, NLS_DATAENTRY);
         theViewerEntry.setTreeObject(theUpdateSet);
 
@@ -222,7 +222,7 @@ public class AccountPanel
         thePortfolioTable = new PortfolioTable(pView, theUpdateSet, theError);
 
         /* Create selection button and label */
-        TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
+        final TethysSwingLabel myLabel = myFactory.newLabel(NLS_DATA);
         theSelectButton = myFactory.newScrollButton();
         buildSelectMenu();
 
@@ -262,7 +262,7 @@ public class AccountPanel
         theSelectPanel.addSpacer();
 
         /* Create the header panel */
-        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelectPanel);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -331,7 +331,7 @@ public class AccountPanel
      */
     private void buildSelectMenu() {
         /* Create builder */
-        TethysScrollMenu<PanelName, ?> myMenu = theSelectButton.getMenu();
+        final TethysScrollMenu<PanelName, ?> myMenu = theSelectButton.getMenu();
 
         /* Loop through the panels */
         for (PanelName myPanel : PanelName.values()) {
@@ -568,7 +568,7 @@ public class AccountPanel
      */
     private void showPanel(final PanelName pName) {
         /* Obtain name of panel */
-        String myName = pName.toString();
+        final String myName = pName.toString();
 
         /* Move correct card to front */
         theCardPanel.selectCard(myName);
@@ -587,8 +587,8 @@ public class AccountPanel
      */
     protected void setVisibility() {
         /* Determine whether we have updates */
-        boolean hasUpdates = hasUpdates();
-        boolean isItemEditing = isItemEditing();
+        final boolean hasUpdates = hasUpdates();
+        final boolean isItemEditing = isItemEditing();
 
         /* Update the action buttons */
         theActionButtons.setEnabled(true);
@@ -607,7 +607,7 @@ public class AccountPanel
      */
     private void handleErrorPane() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelectPanel.setVisible(!isError);
@@ -649,7 +649,7 @@ public class AccountPanel
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
-        PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
+        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {

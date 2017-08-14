@@ -352,7 +352,7 @@ public class Region
         }
 
         /* Check the names */
-        int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        final int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -381,10 +381,10 @@ public class Region
 
     @Override
     public void validate() {
-        RegionList myList = getList();
-        String myName = getName();
-        String myDesc = getDesc();
-        RegionDataMap myMap = myList.getDataMap();
+        final RegionList myList = getList();
+        final String myName = getName();
+        final String myDesc = getDesc();
+        final RegionDataMap myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -430,7 +430,7 @@ public class Region
         if (!(pTag instanceof Region)) {
             return false;
         }
-        Region myRegion = (Region) pTag;
+        final Region myRegion = (Region) pTag;
 
         /* Store the current detail into history */
         pushHistory();
@@ -451,8 +451,8 @@ public class Region
 
     @Override
     public void adjustMapForItem() {
-        RegionList myList = getList();
-        RegionDataMap myMap = myList.getDataMap();
+        final RegionList myList = getList();
+        final RegionDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -510,7 +510,7 @@ public class Region
 
         @Override
         protected RegionList getEmptyList(final ListStyle pStyle) {
-            RegionList myList = new RegionList(this);
+            final RegionList myList = new RegionList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -521,13 +521,13 @@ public class Region
          */
         public RegionList deriveEditList() {
             /* Build an empty List */
-            RegionList myList = getEmptyList(ListStyle.EDIT);
+            final RegionList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the regions */
-            Iterator<Region> myIterator = iterator();
+            final Iterator<Region> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Region myCurr = myIterator.next();
+                final Region myCurr = myIterator.next();
 
                 /* Ignore deleted regions */
                 if (myCurr.isDeleted()) {
@@ -535,7 +535,7 @@ public class Region
                 }
 
                 /* Build the new linked region and add it to the list */
-                Region myRegion = new Region(myList, myCurr);
+                final Region myRegion = new Region(myList, myCurr);
                 myList.append(myRegion);
 
                 /* Adjust the map */
@@ -558,7 +558,7 @@ public class Region
                 throw new UnsupportedOperationException();
             }
 
-            Region myRegion = new Region(this, (Region) pRegion);
+            final Region myRegion = new Region(this, (Region) pRegion);
             add(myRegion);
             return myRegion;
         }
@@ -569,7 +569,7 @@ public class Region
          */
         @Override
         public Region addNewItem() {
-            Region myRegion = new Region(this);
+            final Region myRegion = new Region(this);
             add(myRegion);
             return myRegion;
         }
@@ -586,7 +586,7 @@ public class Region
          */
         public String getUniqueName() {
             /* Set up base constraints */
-            String myBase = NAME_NEWREGION;
+            final String myBase = NAME_NEWREGION;
             int iNextId = 1;
 
             /* Loop until we found a name */
@@ -605,7 +605,7 @@ public class Region
         @Override
         public Region addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the region */
-            Region myRegion = new Region(this, pValues);
+            final Region myRegion = new Region(this, pValues);
 
             /* Check that this regionId has not been previously added */
             if (!isIdUnique(myRegion.getId())) {

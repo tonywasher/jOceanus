@@ -754,7 +754,7 @@ public final class PayeeBucket
      * Add bucket to totals.
      * @param pSource the bucket to add
      */
-    private void addValues(final PayeeBucket pSource) {
+    protected void addValues(final PayeeBucket pSource) {
         /* Access source values */
         final PayeeValues mySource = pSource.getValues();
 

@@ -51,9 +51,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -177,7 +177,7 @@ public class TransactionTagTable
         setModel(theModel);
 
         /* Create the data column model and declare it */
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         theColumns = new TransactionTagColumnModel(this);
         myTable.setColumnModel(theColumns);
 
@@ -194,7 +194,7 @@ public class TransactionTagTable
         thePanel.add(super.getNode(), BorderLayout.CENTER);
 
         /* Create new button */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theNewButton = myFactory.newButton();
         PrometheusIcon.configureNewIconButton(theNewButton);
 
@@ -261,8 +261,8 @@ public class TransactionTagTable
         myTask = myTask.startTask("Tags");
 
         /* Get the Events edit list */
-        MoneyWiseData myData = theView.getData();
-        TransactionTagList myTransactionTags = myData.getTransactionTags();
+        final MoneyWiseData myData = theView.getData();
+        final TransactionTagList myTransactionTags = myData.getTransactionTags();
         theTransactionTags = myTransactionTags.deriveEditList();
         theTransactionTagEntry.setDataList(theTransactionTags);
 
@@ -311,7 +311,7 @@ public class TransactionTagTable
      */
     protected void selectTag(final TransactionTag pTag) {
         /* Find the item in the list */
-        int myIndex = theTransactionTags.indexOf(pTag);
+        final int myIndex = theTransactionTags.indexOf(pTag);
         if (myIndex != -1) {
             /* Select the row and ensure that it is visible */
             selectRowWithScroll(myIndex);
@@ -440,7 +440,7 @@ public class TransactionTagTable
             /* Protect against Exceptions */
             try {
                 /* Create the new tag */
-                TransactionTag myTag = new TransactionTag(theTransactionTags);
+                final TransactionTag myTag = new TransactionTag(theTransactionTags);
                 myTag.setDefaults();
 
                 /* Add the new item */
@@ -458,7 +458,7 @@ public class TransactionTagTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new tag", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new tag", e);
 
                 /* Show the error */
                 setError(myError);
@@ -500,13 +500,13 @@ public class TransactionTagTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myIconRenderer.setIconMapSet(r -> myActionMapSet);
             myIconEditor.setIconMapSet(r -> myActionMapSet);
 

@@ -92,9 +92,8 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * Constructor for default control.
      * @param pUtilitySet the utility set
-     * @throws OceanusException on error
      */
-    protected DataControl(final JOceanusUtilitySet<N, I> pUtilitySet) throws OceanusException {
+    protected DataControl(final JOceanusUtilitySet<N, I> pUtilitySet) {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
         theToolkit = pUtilitySet.getToolkit();

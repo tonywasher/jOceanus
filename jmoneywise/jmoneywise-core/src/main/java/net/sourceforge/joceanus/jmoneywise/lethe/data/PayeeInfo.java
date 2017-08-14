@@ -99,7 +99,7 @@ public class PayeeInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getPayees());
 
@@ -107,7 +107,7 @@ public class PayeeInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the PayeeInfoSet and register this data */
-            PayeeInfoSet mySet = getOwner().getInfoSet();
+            final PayeeInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -163,7 +163,7 @@ public class PayeeInfo
     @Override
     public void deRegister() {
         /* Access the PayeeInfoSet and register this value */
-        PayeeInfoSet mySet = getOwner().getInfoSet();
+        final PayeeInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -205,12 +205,12 @@ public class PayeeInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getPayees());
 
         /* Access the PayeeInfoSet and register this data */
-        PayeeInfoSet mySet = getOwner().getInfoSet();
+        final PayeeInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -227,7 +227,7 @@ public class PayeeInfo
         }
 
         /* Access as PayeeInfo */
-        PayeeInfo myPayeeInfo = (PayeeInfo) pInfo;
+        final PayeeInfo myPayeeInfo = (PayeeInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -299,7 +299,7 @@ public class PayeeInfo
 
         @Override
         protected PayeeInfoList getEmptyList(final ListStyle pStyle) {
-            PayeeInfoList myList = new PayeeInfoList(this);
+            final PayeeInfoList myList = new PayeeInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -311,7 +311,7 @@ public class PayeeInfo
                 throw new UnsupportedOperationException();
             }
 
-            PayeeInfo myInfo = new PayeeInfo(this, (PayeeInfo) pItem);
+            final PayeeInfo myInfo = new PayeeInfo(this, (PayeeInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -325,7 +325,7 @@ public class PayeeInfo
         protected PayeeInfo addNewItem(final Payee pOwner,
                                        final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            PayeeInfo myInfo = new PayeeInfo(this, pOwner, pInfoType);
+            final PayeeInfo myInfo = new PayeeInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -343,23 +343,23 @@ public class PayeeInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pPayee, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(PayeeInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(PayeeInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pPayee);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Payee Info */
-            PayeeInfo myInfo = new PayeeInfo(this, myValues);
+            final PayeeInfo myInfo = new PayeeInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -374,7 +374,7 @@ public class PayeeInfo
         @Override
         public PayeeInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            PayeeInfo myInfo = new PayeeInfo(this, pValues);
+            final PayeeInfo myInfo = new PayeeInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -395,7 +395,7 @@ public class PayeeInfo
             validateOnLoad();
 
             /* Map and Validate the Payees */
-            PayeeList myPayees = getDataSet().getPayees();
+            final PayeeList myPayees = getDataSet().getPayees();
             myPayees.mapData();
             myPayees.validateOnLoad();
         }

@@ -242,7 +242,7 @@ public class Security
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -316,7 +316,7 @@ public class Security
      * @return the parentId
      */
     public Integer getParentId() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getId();
@@ -327,7 +327,7 @@ public class Security
      * @return the parentName
      */
     public String getParentName() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getName();
@@ -346,7 +346,7 @@ public class Security
      * @return the securityTypeId
      */
     public Integer getSecurityTypeId() {
-        SecurityType myType = getSecurityType();
+        final SecurityType myType = getSecurityType();
         return (myType == null)
                                 ? null
                                 : myType.getId();
@@ -357,7 +357,7 @@ public class Security
      * @return the securityTypeName
      */
     public String getSecurityTypeName() {
-        SecurityType myType = getSecurityType();
+        final SecurityType myType = getSecurityType();
         return (myType == null)
                                 ? null
                                 : myType.getName();
@@ -368,7 +368,7 @@ public class Security
      * @return the securityTypeClass
      */
     public SecurityTypeClass getSecurityTypeClass() {
-        SecurityType myType = getSecurityType();
+        final SecurityType myType = getSecurityType();
         return (myType == null)
                                 ? null
                                 : myType.getSecurityClass();
@@ -575,7 +575,7 @@ public class Security
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -627,7 +627,7 @@ public class Security
 
     @Override
     public void deRegister() {
-        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        final SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
         myMap.deRegister(this);
     }
 
@@ -652,8 +652,8 @@ public class Security
      */
     public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access category class and parent */
-        SecurityTypeClass myClass = getSecurityTypeClass();
-        Payee myParent = getParent();
+        final SecurityTypeClass myClass = getSecurityTypeClass();
+        final Payee myParent = getParent();
 
         /* Ensure that we have a valid parent */
         if ((myParent == null)
@@ -668,10 +668,10 @@ public class Security
      */
     public SecurityType getDefaultSecurityType() {
         /* loop through the security types */
-        SecurityTypeList myTypes = getDataSet().getSecurityTypes();
-        Iterator<SecurityType> myIterator = myTypes.iterator();
+        final SecurityTypeList myTypes = getDataSet().getSecurityTypes();
+        final Iterator<SecurityType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            SecurityType myType = myIterator.next();
+            final SecurityType myType = myIterator.next();
 
             /* Ignore deleted types */
             if (!myType.isDeleted()) {
@@ -690,13 +690,13 @@ public class Security
      */
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access details */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        SecurityTypeClass myClass = getSecurityTypeClass();
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final SecurityTypeClass myClass = getSecurityTypeClass();
 
         /* loop through the payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
             if (myPayee.isDeleted() || myPayee.isClosed()) {
@@ -728,7 +728,7 @@ public class Security
         if ((iDiff == 0)
             && (pThat instanceof Security)) {
             /* Check the security type */
-            Security myThat = (Security) pThat;
+            final Security myThat = (Security) pThat;
             iDiff = MetisDifference.compareObject(getSecurityType(), myThat.getSecurityType());
             if (iDiff == 0) {
                 /* Check the underlying base */
@@ -746,7 +746,7 @@ public class Security
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_SECTYPE, myData.getSecurityTypes());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
@@ -755,7 +755,7 @@ public class Security
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 
@@ -850,7 +850,7 @@ public class Security
                                                    final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
         if (TransactionCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
-            TransactionCategoryList myCategories = getDataSet().getTransCategories();
+            final TransactionCategoryList myCategories = getDataSet().getTransCategories();
             return myCategories.getSingularClass(getSecurityTypeClass().isUnitTrust()
                                                                                       ? TransactionCategoryClass.UNITTRUSTDIVIDEND
                                                                                       : TransactionCategoryClass.SHAREDIVIDEND);
@@ -880,10 +880,10 @@ public class Security
 
     @Override
     public void validate() {
-        Payee myParent = getParent();
-        SecurityType mySecType = getSecurityType();
-        AssetCurrency myCurrency = getAssetCurrency();
-        String mySymbol = getSymbol();
+        final Payee myParent = getParent();
+        final SecurityType mySecType = getSecurityType();
+        final AssetCurrency myCurrency = getAssetCurrency();
+        final String mySymbol = getSymbol();
 
         /* Validate base components */
         super.validate();
@@ -917,8 +917,8 @@ public class Security
             /* Check class */
             if (mySecType != null) {
                 /* Access the classes */
-                SecurityTypeClass myClass = mySecType.getSecurityClass();
-                PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
+                final SecurityTypeClass myClass = mySecType.getSecurityClass();
+                final PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
 
                 /* Parent must be suitable */
                 if (!myParClass.canParentSecurity(myClass)) {
@@ -975,7 +975,7 @@ public class Security
         if (!(pSecurity instanceof Security)) {
             return false;
         }
-        Security mySecurity = (Security) pSecurity;
+        final Security mySecurity = (Security) pSecurity;
 
         /* Store the current detail into history */
         pushHistory();
@@ -1004,8 +1004,8 @@ public class Security
 
     @Override
     public void adjustMapForItem() {
-        SecurityList myList = getList();
-        SecurityDataMap myMap = myList.getDataMap();
+        final SecurityList myList = getList();
+        final SecurityDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -1089,7 +1089,7 @@ public class Security
 
         @Override
         protected SecurityList getEmptyList(final ListStyle pStyle) {
-            SecurityList myList = new SecurityList(this);
+            final SecurityList myList = new SecurityList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -1102,20 +1102,20 @@ public class Security
          */
         public SecurityList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
-            SecurityList myList = getEmptyList(ListStyle.EDIT);
+            final SecurityList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            SecurityInfoList mySecInfo = getSecurityInfo();
+            final SecurityInfoList mySecInfo = getSecurityInfo();
             myList.theInfoList = mySecInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the securities */
-            Iterator<Security> myIterator = iterator();
+            final Iterator<Security> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Security myCurr = myIterator.next();
+                final Security myCurr = myIterator.next();
 
                 /* Ignore deleted securities */
                 if (myCurr.isDeleted()) {
@@ -1123,7 +1123,7 @@ public class Security
                 }
 
                 /* Build the new linked security and add it to the list */
-                Security mySecurity = new Security(myList, myCurr);
+                final Security mySecurity = new Security(myList, myCurr);
                 mySecurity.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(mySecurity);
 
@@ -1185,7 +1185,7 @@ public class Security
                 throw new UnsupportedOperationException();
             }
 
-            Security mySecurity = new Security(this, (Security) pSecurity);
+            final Security mySecurity = new Security(this, (Security) pSecurity);
             add(mySecurity);
             return mySecurity;
         }
@@ -1196,7 +1196,7 @@ public class Security
          */
         @Override
         public Security addNewItem() {
-            Security mySecurity = new Security(this);
+            final Security mySecurity = new Security(this);
             add(mySecurity);
             return mySecurity;
         }
@@ -1204,7 +1204,7 @@ public class Security
         @Override
         public Security addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the security */
-            Security mySecurity = new Security(this, pValues);
+            final Security mySecurity = new Security(this, pValues);
 
             /* Check that this SecurityId has not been previously added */
             if (!isIdUnique(mySecurity.getId())) {
@@ -1218,12 +1218,12 @@ public class Security
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(mySecurity);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(mySecurity);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1318,8 +1318,8 @@ public class Security
         @Override
         public void adjustForItem(final Security pItem) {
             /* Adjust symbol count */
-            String mySymbol = pItem.getSymbol();
-            Integer myCount = theSymbolCountMap.get(mySymbol);
+            final String mySymbol = pItem.getSymbol();
+            final Integer myCount = theSymbolCountMap.get(mySymbol);
             if (myCount == null) {
                 theSymbolCountMap.put(mySymbol, ONE);
             } else {
@@ -1357,7 +1357,7 @@ public class Security
          * @return true/false
          */
         public boolean validSymbolCount(final String pSymbol) {
-            Integer myResult = theSymbolCountMap.get(pSymbol);
+            final Integer myResult = theSymbolCountMap.get(pSymbol);
             return ONE.equals(myResult);
         }
 

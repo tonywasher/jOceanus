@@ -132,7 +132,7 @@ public class DepositRate
         super(pList, pValues);
 
         /* Access the formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -151,7 +151,7 @@ public class DepositRate
             } else if (myValue instanceof byte[]) {
                 setValueRate((byte[]) myValue);
             } else if (myValue instanceof String) {
-                String myString = (String) myValue;
+                final String myString = (String) myValue;
                 setValueRate(myString);
                 setValueRate(myFormatter.parseValue(myString, TethysRate.class));
             }
@@ -163,7 +163,7 @@ public class DepositRate
             } else if (myValue instanceof byte[]) {
                 setValueBonus((byte[]) myValue);
             } else if (myValue instanceof String) {
-                String myString = (String) myValue;
+                final String myString = (String) myValue;
                 setValueBonus(myString);
                 setValueBonus(myFormatter.parseValue(myString, TethysRate.class));
             }
@@ -173,7 +173,7 @@ public class DepositRate
             if (myValue instanceof TethysDate) {
                 setValueEndDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueEndDate(myParser.parseDate((String) myValue));
             }
 
@@ -218,16 +218,16 @@ public class DepositRate
     @Override
     public String formatObject() {
         /* Access Key Values */
-        MetisEncryptedValueSet myValues = getValueSet();
-        Object myDeposit = myValues.getValue(FIELD_DEPOSIT);
-        Object myRate = myValues.getValue(FIELD_RATE);
-        Object myEndDate = myValues.getValue(FIELD_ENDDATE);
+        final MetisEncryptedValueSet myValues = getValueSet();
+        final Object myDeposit = myValues.getValue(FIELD_DEPOSIT);
+        final Object myRate = myValues.getValue(FIELD_RATE);
+        final Object myEndDate = myValues.getValue(FIELD_ENDDATE);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myFormatter.formatObject(myDeposit));
         myBuilder.append('@');
         myBuilder.append(myFormatter.formatObject(myRate));
@@ -317,7 +317,7 @@ public class DepositRate
      * @return the depositId
      */
     public Integer getDepositId() {
-        Deposit myDeposit = getDeposit();
+        final Deposit myDeposit = getDeposit();
         return (myDeposit == null)
                                    ? null
                                    : myDeposit.getId();
@@ -328,7 +328,7 @@ public class DepositRate
      * @return the depositName
      */
     public String getDepositName() {
-        Deposit myDeposit = getDeposit();
+        final Deposit myDeposit = getDeposit();
         return (myDeposit == null)
                                    ? null
                                    : myDeposit.getName();
@@ -567,7 +567,7 @@ public class DepositRate
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_DEPOSIT, myData.getDeposits());
     }
 
@@ -578,7 +578,7 @@ public class DepositRate
      */
     private void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
-        DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
         resolveDataLink(FIELD_DEPOSIT, myDeposits);
     }
 
@@ -587,13 +587,13 @@ public class DepositRate
      */
     @Override
     public void validate() {
-        DepositRateList myList = getList();
-        TethysDate myDate = getEndDate();
-        TethysRate myRate = getRate();
-        TethysRate myBonus = getBonus();
+        final DepositRateList myList = getList();
+        final TethysDate myDate = getEndDate();
+        final TethysRate myRate = getRate();
+        final TethysRate myBonus = getBonus();
 
         /* Count instances of this date for the account */
-        DepositRateDataMap myMap = myList.getDataMap();
+        final DepositRateDataMap myMap = myList.getDataMap();
         if (!myMap.validRateCount(this)) {
             /* Each date must be unique for deposit (even null) */
             addError(myDate == null
@@ -682,8 +682,7 @@ public class DepositRate
         if (!(pRate instanceof DepositRate)) {
             return false;
         }
-
-        DepositRate myRate = (DepositRate) pRate;
+        final DepositRate myRate = (DepositRate) pRate;
 
         /* Store the current detail into history */
         pushHistory();
@@ -709,8 +708,8 @@ public class DepositRate
 
     @Override
     public void adjustMapForItem() {
-        DepositRateList myList = getList();
-        DepositRateDataMap myMap = myList.getDataMap();
+        final DepositRateList myList = getList();
+        final DepositRateDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -742,7 +741,7 @@ public class DepositRate
 
         @Override
         protected DepositRateList getEmptyList(final ListStyle pStyle) {
-            DepositRateList myList = new DepositRateList(this);
+            final DepositRateList myList = new DepositRateList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -780,16 +779,16 @@ public class DepositRate
          */
         public DepositRateList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
-            DepositRateList myList = getEmptyList(ListStyle.EDIT);
+            final DepositRateList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the list */
-            Iterator<DepositRate> myIterator = iterator();
+            final Iterator<DepositRate> myIterator = iterator();
             while (myIterator.hasNext()) {
-                DepositRate myCurr = myIterator.next();
+                final DepositRate myCurr = myIterator.next();
 
                 /* Copy the item */
-                DepositRate myItem = new DepositRate(myList, myCurr);
+                final DepositRate myItem = new DepositRate(myList, myCurr);
                 myItem.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myItem);
 
@@ -813,7 +812,7 @@ public class DepositRate
                 throw new UnsupportedOperationException();
             }
 
-            DepositRate myRate = new DepositRate(this, (DepositRate) pRate);
+            final DepositRate myRate = new DepositRate(this, (DepositRate) pRate);
             add(myRate);
             return myRate;
         }
@@ -824,7 +823,7 @@ public class DepositRate
          */
         @Override
         public DepositRate addNewItem() {
-            DepositRate myRate = new DepositRate(this);
+            final DepositRate myRate = new DepositRate(this);
             add(myRate);
             return myRate;
         }
@@ -832,7 +831,7 @@ public class DepositRate
         @Override
         public DepositRate addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the rate */
-            DepositRate myRate = new DepositRate(this, pValues);
+            final DepositRate myRate = new DepositRate(this, pValues);
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {
@@ -925,7 +924,7 @@ public class DepositRate
         @Override
         public void adjustForItem(final DepositRate pItem) {
             /* Access the Deposit Id */
-            Deposit myDeposit = pItem.getDeposit();
+            final Deposit myDeposit = pItem.getDeposit();
             if (myDeposit == null) {
                 return;
             }
@@ -938,8 +937,8 @@ public class DepositRate
             }
 
             /* Adjust rate count */
-            TethysDate myDate = pItem.getEndDate();
-            Integer myCount = myMap.get(myDate);
+            final TethysDate myDate = pItem.getEndDate();
+            final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
             } else {
@@ -964,13 +963,13 @@ public class DepositRate
          */
         public boolean validRateCount(final DepositRate pItem) {
             /* Access the Details */
-            Deposit myDeposit = pItem.getDeposit();
-            TethysDate myDate = pItem.getEndDate();
+            final Deposit myDeposit = pItem.getDeposit();
+            final TethysDate myDate = pItem.getEndDate();
 
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
             if (myMap != null) {
-                Integer myResult = myMap.get(myDate);
+                final Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
@@ -985,7 +984,7 @@ public class DepositRate
         public boolean availableDate(final Deposit pDeposit,
                                      final TethysDate pDate) {
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(pDeposit);
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(pDeposit);
             return myMap == null
                    || myMap.get(pDate) == null;
         }
@@ -999,15 +998,15 @@ public class DepositRate
         public DepositRate getRateForDate(final Deposit pDeposit,
                                           final TethysDate pDate) {
             /* Access list for deposit */
-            RateList myList = theMapOfRates.get(pDeposit);
+            final RateList myList = theMapOfRates.get(pDeposit);
             if (myList != null) {
                 /* Loop through the rates */
-                ListIterator<DepositRate> myIterator = myList.listIterator(myList.size());
+                final ListIterator<DepositRate> myIterator = myList.listIterator(myList.size());
                 while (myIterator.hasPrevious()) {
-                    DepositRate myCurr = myIterator.previous();
+                    final DepositRate myCurr = myIterator.previous();
 
                     /* Access the date */
-                    TethysDate myDate = myCurr.getDate();
+                    final TethysDate myDate = myCurr.getDate();
 
                     /* break loop if we have the correct record */
                     if ((myDate == null)

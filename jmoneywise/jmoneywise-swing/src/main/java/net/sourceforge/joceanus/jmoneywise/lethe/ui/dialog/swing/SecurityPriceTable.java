@@ -190,7 +190,7 @@ public class SecurityPriceTable
 
         /* Create the data column model and declare it */
         theColumns = new SecurityPriceColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -247,7 +247,7 @@ public class SecurityPriceTable
      */
     protected void addNewPrice(final Security pSecurity) throws OceanusException {
         /* Create the new price */
-        ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
+        final ViewSecurityPrice myPrice = new ViewSecurityPrice(thePrices);
 
         /* Set the item value */
         myPrice.setSecurity(pSecurity);
@@ -392,7 +392,7 @@ public class SecurityPriceTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new price", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new price", e);
 
                 /* Show the error */
                 setError(myError);
@@ -468,15 +468,15 @@ public class SecurityPriceTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldPriceCellEditor myPriceEditor = theFieldMgr.allocatePriceCellEditor();
-            MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldPriceCellEditor myPriceEditor = theFieldMgr.allocatePriceCellEditor();
+            final MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -517,7 +517,7 @@ public class SecurityPriceTable
          */
         private void setColumns() {
             /* Determine whether the security is diluted */
-            boolean isDiluted = theDilutions != null && theDilutions.hasDilution(theSecurity);
+            final boolean isDiluted = theDilutions != null && theDilutions.hasDilution(theSecurity);
             if (isDiluted) {
                 revealColumn(theDilutionColumn);
                 revealColumn(theDilutedColumn);

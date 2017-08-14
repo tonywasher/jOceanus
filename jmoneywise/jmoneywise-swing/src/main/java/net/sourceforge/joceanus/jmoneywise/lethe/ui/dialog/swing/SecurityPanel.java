@@ -122,10 +122,10 @@ public class SecurityPanel
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel(pFactory);
+        final JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
-        JTabbedPane myTabs = new JTabbedPane();
+        final JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the info panel */
         JPanel myPanel = buildInfoPanel(pFactory);
@@ -162,15 +162,15 @@ public class SecurityPanel
      */
     private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
-        TethysSwingStringTextField mySymbol = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField mySymbol = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
-        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysSwingScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Security.NAMELEN);
@@ -190,10 +190,10 @@ public class SecurityPanel
         theFieldSet.addFieldElement(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Security.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Security.FIELD_DESC, myPanel);
@@ -207,7 +207,7 @@ public class SecurityPanel
         myTypeButton.setMenuConfigurator(c -> buildSecTypeMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
         /* Return the new panel */
@@ -221,15 +221,15 @@ public class SecurityPanel
      */
     private JPanel buildInfoPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField mySymbol = pFactory.newStringField();
-        TethysSwingStringTextField myPrice = pFactory.newStringField();
+        final TethysSwingStringTextField mySymbol = pFactory.newStringField();
+        final TethysSwingStringTextField myPrice = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<Security> myStockButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<Security> myStockButton = pFactory.newScrollButton();
 
         /* Restrict the fields */
-        int myWidth = Transaction.DESCLEN >> 1;
+        final int myWidth = Transaction.DESCLEN >> 1;
         restrictField(mySymbol, myWidth);
         restrictField(myPrice, myWidth);
         restrictField(myRegionButton, myWidth);
@@ -242,10 +242,10 @@ public class SecurityPanel
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
 
         /* Create the Info panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the info panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), myPanel);
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), myPanel);
@@ -268,18 +268,18 @@ public class SecurityPanel
      */
     private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingTextArea myNotes = pFactory.newTextArea();
-        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        final TethysSwingTextArea myNotes = pFactory.newTextArea();
+        final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -291,9 +291,9 @@ public class SecurityPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        Security myItem = getItem();
+        final Security myItem = getItem();
         if (myItem != null) {
-            SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+            final SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
             setItem(mySecurities.findItemById(myItem.getId()));
         }
 
@@ -307,29 +307,29 @@ public class SecurityPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        Security mySecurity = getItem();
-        boolean bIsClosed = mySecurity.isClosed();
-        boolean bIsActive = mySecurity.isActive();
-        boolean bIsRelevant = mySecurity.isRelevant();
-        Currency myCurrency = mySecurity.getCurrency();
+        final Security mySecurity = getItem();
+        final boolean bIsClosed = mySecurity.isClosed();
+        final boolean bIsActive = mySecurity.isActive();
+        final boolean bIsRelevant = mySecurity.isRelevant();
+        final Currency myCurrency = mySecurity.getCurrency();
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
+        final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = bIsClosed
-                                        ? !mySecurity.getParent().isClosed()
-                                        : !bIsRelevant;
+        final boolean bEditClosed = bIsClosed
+                                              ? !mySecurity.getParent().isClosed()
+                                              : !bIsRelevant;
         theFieldSet.setEditable(Security.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || mySecurity.getDesc() != null;
+        final boolean bShowDesc = isEditable || mySecurity.getDesc() != null;
         theFieldSet.setVisibility(Security.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
+        final boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
         theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Determine whether the symbol field should be visible */
@@ -378,18 +378,18 @@ public class SecurityPanel
     public static boolean isEditableField(final Security pSecurity,
                                           final AccountInfoClass pField) {
         /* Access the infoSet */
-        SecurityInfoSet myInfoSet = pSecurity.getInfoSet();
+        final SecurityInfoSet myInfoSet = pSecurity.getInfoSet();
 
         /* Check whether the field is available */
-        MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        final MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
         return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        Security mySecurity = getItem();
+        final MetisField myField = pUpdate.getField();
+        final Security mySecurity = getItem();
 
         /* Process updates */
         if (myField.equals(Security.FIELD_NAME)) {
@@ -437,12 +437,12 @@ public class SecurityPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        Security myItem = getItem();
-        Payee myParent = myItem.getParent();
+        final Security myItem = getItem();
+        final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            SecurityType myType = myItem.getSecurityType();
-            AssetCurrency myCurrency = myItem.getAssetCurrency();
-            Region myRegion = myItem.getRegion();
+            final SecurityType myType = myItem.getSecurityType();
+            final AssetCurrency myCurrency = myItem.getAssetCurrency();
+            final Region myRegion = myItem.getRegion();
             declareGoToItem(myType);
             declareGoToItem(myRegion);
             declareGoToItem(myCurrency);
@@ -507,25 +507,25 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        SecurityType myCurr = pSecurity.getSecurityType();
+        final SecurityType myCurr = pSecurity.getSecurityType();
         TethysScrollMenuItem<SecurityType> myActive = null;
 
         /* Access SecurityTypes */
-        SecurityTypeList myTypes = getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
+        final SecurityTypeList myTypes = getDataList(MoneyWiseDataType.SECURITYTYPE, SecurityTypeList.class);
 
         /* Loop through the SecurityTypes */
-        Iterator<SecurityType> myIterator = myTypes.iterator();
+        final Iterator<SecurityType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            SecurityType myType = myIterator.next();
+            final SecurityType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
-            boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
+            final boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the secType */
-            TethysScrollMenuItem<SecurityType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<SecurityType> myItem = pMenu.addItem(myType);
 
             /* If this is the active secType */
             if (myType.equals(myCurr)) {
@@ -551,17 +551,17 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        SecurityTypeClass myType = pSecurity.getSecurityTypeClass();
-        Payee myCurr = pSecurity.getParent();
+        final SecurityTypeClass myType = pSecurity.getSecurityTypeClass();
+        final Payee myCurr = pSecurity.getParent();
         TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
             boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentSecurity(myType);
@@ -571,7 +571,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the payee */
-            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -597,25 +597,25 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        Region myCurr = pSecurity.getRegion();
+        final Region myCurr = pSecurity.getRegion();
         TethysScrollMenuItem<Region> myActive = null;
 
         /* Access regions */
-        RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
+        final RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
 
         /* Loop through the Regions */
-        Iterator<Region> myIterator = myRegions.iterator();
+        final Iterator<Region> myIterator = myRegions.iterator();
         while (myIterator.hasNext()) {
-            Region myRegion = myIterator.next();
+            final Region myRegion = myIterator.next();
 
             /* Ignore deleted */
-            boolean bIgnore = myRegion.isDeleted();
+            final boolean bIgnore = myRegion.isDeleted();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the region */
-            TethysScrollMenuItem<Region> myItem = pMenu.addItem(myRegion);
+            final TethysScrollMenuItem<Region> myItem = pMenu.addItem(myRegion);
 
             /* If this is the active region */
             if (myRegion.equals(myCurr)) {
@@ -641,16 +641,16 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        Security myCurr = pSecurity.getUnderlyingStock();
+        final Security myCurr = pSecurity.getUnderlyingStock();
         TethysScrollMenuItem<Security> myActive = null;
 
         /* Access securities */
-        SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        final SecurityList mySecurities = getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
 
         /* Loop through the Securities */
-        Iterator<Security> myIterator = mySecurities.iterator();
+        final Iterator<Security> myIterator = mySecurities.iterator();
         while (myIterator.hasNext()) {
-            Security mySecurity = myIterator.next();
+            final Security mySecurity = myIterator.next();
 
             /* Ignore deleted and non share */
             boolean bIgnore = mySecurity.isDeleted();
@@ -660,7 +660,7 @@ public class SecurityPanel
             }
 
             /* Create a new action for the region */
-            TethysScrollMenuItem<Security> myItem = pMenu.addItem(mySecurity);
+            final TethysScrollMenuItem<Security> myItem = pMenu.addItem(mySecurity);
 
             /* If this is the active stock */
             if (mySecurity.equals(myCurr)) {
@@ -686,25 +686,25 @@ public class SecurityPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        AssetCurrency myCurr = pSecurity.getAssetCurrency();
+        final AssetCurrency myCurr = pSecurity.getAssetCurrency();
         TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
-        AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
+        final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
+        final Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            AssetCurrency myCurrency = myIterator.next();
+            final AssetCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
-            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            final boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the currency */
-            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

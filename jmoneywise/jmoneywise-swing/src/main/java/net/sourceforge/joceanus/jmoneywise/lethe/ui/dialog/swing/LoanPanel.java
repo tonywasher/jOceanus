@@ -100,10 +100,10 @@ public class LoanPanel
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel(pFactory);
+        final JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
-        JTabbedPane myTabs = new JTabbedPane();
+        final JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
         JPanel myPanel = buildXtrasPanel(pFactory);
@@ -130,14 +130,14 @@ public class LoanPanel
      */
     private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<LoanCategory> myCategoryButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
-        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysSwingScrollButtonManager<LoanCategory> myCategoryButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Loan.NAMELEN);
@@ -156,10 +156,10 @@ public class LoanPanel
         theFieldSet.addFieldElement(Loan.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Loan.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Loan.FIELD_DESC, myPanel);
@@ -173,7 +173,7 @@ public class LoanPanel
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
         /* Return the new panel */
@@ -187,13 +187,13 @@ public class LoanPanel
      */
     private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField mySortCode = pFactory.newStringField();
-        TethysSwingStringTextField myAccount = pFactory.newStringField();
-        TethysSwingStringTextField myReference = pFactory.newStringField();
-        TethysSwingStringTextField myOpening = pFactory.newStringField();
+        final TethysSwingStringTextField mySortCode = pFactory.newStringField();
+        final TethysSwingStringTextField myAccount = pFactory.newStringField();
+        final TethysSwingStringTextField myReference = pFactory.newStringField();
+        final TethysSwingStringTextField myOpening = pFactory.newStringField();
 
         /* Restrict the fields */
-        int myWidth = Loan.NAMELEN >> 1;
+        final int myWidth = Loan.NAMELEN >> 1;
         restrictField(mySortCode, myWidth);
         restrictField(myAccount, myWidth);
         restrictField(myReference, myWidth);
@@ -206,10 +206,10 @@ public class LoanPanel
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
         /* Create the extras panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
@@ -228,18 +228,18 @@ public class LoanPanel
      */
     private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingTextArea myNotes = pFactory.newTextArea();
-        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        final TethysSwingTextArea myNotes = pFactory.newTextArea();
+        final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
         /* Adjust FieldSet */
         theFieldSet.addFieldElement(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -251,9 +251,9 @@ public class LoanPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        Loan myItem = getItem();
+        final Loan myItem = getItem();
         if (myItem != null) {
-            LoanList myLoans = getDataList(MoneyWiseDataType.LOAN, LoanList.class);
+            final LoanList myLoans = getDataList(MoneyWiseDataType.LOAN, LoanList.class);
             setItem(myLoans.findItemById(myItem.getId()));
         }
 
@@ -264,39 +264,39 @@ public class LoanPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        Loan myLoan = getItem();
-        boolean bIsClosed = myLoan.isClosed();
-        boolean bIsActive = myLoan.isActive();
-        boolean bIsRelevant = myLoan.isRelevant();
-        boolean bIsChangeable = !bIsActive && isEditable;
+        final Loan myLoan = getItem();
+        final boolean bIsClosed = myLoan.isClosed();
+        final boolean bIsActive = myLoan.isActive();
+        final boolean bIsRelevant = myLoan.isRelevant();
+        final boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
+        final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Loan.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = bIsClosed
-                                        ? !myLoan.getParent().isClosed()
-                                        : !bIsRelevant;
+        final boolean bEditClosed = bIsClosed
+                                              ? !myLoan.getParent().isClosed()
+                                              : !bIsRelevant;
         theFieldSet.setEditable(Loan.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myLoan.getDesc() != null;
+        final boolean bShowDesc = isEditable || myLoan.getDesc() != null;
         theFieldSet.setVisibility(Loan.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
+        final boolean bShowSortCode = isEditable || myLoan.getSortCode() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
-        boolean bShowAccount = isEditable || myLoan.getAccount() != null;
+        final boolean bShowAccount = isEditable || myLoan.getAccount() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
-        boolean bShowReference = isEditable || myLoan.getReference() != null;
+        final boolean bShowReference = isEditable || myLoan.getReference() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
-        boolean bHasOpening = myLoan.getOpeningBalance() != null;
-        boolean bShowOpening = bIsChangeable || bHasOpening;
-        MetisField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
+        final boolean bHasOpening = myLoan.getOpeningBalance() != null;
+        final boolean bShowOpening = bIsChangeable || bHasOpening;
+        final MetisField myOpeningField = LoanInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         theFieldSet.setVisibility(myOpeningField, bShowOpening);
-        boolean bShowNotes = isEditable || myLoan.getNotes() != null;
+        final boolean bShowNotes = isEditable || myLoan.getNotes() != null;
         theFieldSet.setVisibility(LoanInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
@@ -314,8 +314,8 @@ public class LoanPanel
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        Loan myLoan = getItem();
+        final MetisField myField = pUpdate.getField();
+        final Loan myLoan = getItem();
 
         /* Process updates */
         if (myField.equals(Loan.FIELD_NAME)) {
@@ -363,11 +363,11 @@ public class LoanPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        Loan myItem = getItem();
-        Payee myParent = myItem.getParent();
+        final Loan myItem = getItem();
+        final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            LoanCategory myCategory = myItem.getCategory();
-            AssetCurrency myCurrency = myItem.getAssetCurrency();
+            final LoanCategory myCategory = myItem.getCategory();
+            final AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCategory);
             declareGoToItem(myCurrency);
         }
@@ -385,29 +385,29 @@ public class LoanPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        LoanCategory myCurr = pLoan.getCategory();
+        final LoanCategory myCurr = pLoan.getCategory();
         TethysScrollMenuItem<LoanCategory> myActive = null;
 
         /* Access Loan Categories */
-        LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+        final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        Map<String, TethysScrollSubMenu<LoanCategory, Icon>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<LoanCategory, Icon>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
-        Iterator<LoanCategory> myIterator = myCategories.iterator();
+        final Iterator<LoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            LoanCategory myCategory = myIterator.next();
+            final LoanCategory myCategory = myIterator.next();
 
             /* Ignore deleted or parent */
-            boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(LoanCategoryClass.PARENT);
+            final boolean bIgnore = myCategory.isDeleted() || myCategory.isCategoryClass(LoanCategoryClass.PARENT);
             if (bIgnore) {
                 continue;
             }
 
             /* Determine menu to add to */
-            LoanCategory myParent = myCategory.getParentCategory();
-            String myParentName = myParent.getName();
+            final LoanCategory myParent = myCategory.getParentCategory();
+            final String myParentName = myParent.getName();
             TethysScrollSubMenu<LoanCategory, Icon> myMenu = myMap.get(myParentName);
 
             /* If this is a new subMenu */
@@ -418,7 +418,7 @@ public class LoanPanel
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
+            final TethysScrollMenuItem<LoanCategory> myItem = myMenu.getSubMenu().addItem(myCategory, myCategory.getSubCategory());
 
             /* Note active category */
             if (myCategory.equals(myCurr)) {
@@ -443,17 +443,17 @@ public class LoanPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        LoanCategoryClass myType = pLoan.getCategoryClass();
-        Payee myCurr = pLoan.getParent();
+        final LoanCategoryClass myType = pLoan.getCategoryClass();
+        final Payee myCurr = pLoan.getParent();
         TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted or non-owner */
             boolean bIgnore = myPayee.isDeleted() || !myPayee.getPayeeTypeClass().canParentLoan(myType);
@@ -463,7 +463,7 @@ public class LoanPanel
             }
 
             /* Create a new action for the payee */
-            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -489,25 +489,25 @@ public class LoanPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        AssetCurrency myCurr = pLoan.getAssetCurrency();
+        final AssetCurrency myCurr = pLoan.getAssetCurrency();
         TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
-        AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
+        final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
+        final Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            AssetCurrency myCurrency = myIterator.next();
+            final AssetCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
-            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            final boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the currency */
-            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

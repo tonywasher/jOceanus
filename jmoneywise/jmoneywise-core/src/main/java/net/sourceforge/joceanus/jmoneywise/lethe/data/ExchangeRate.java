@@ -137,7 +137,7 @@ public class ExchangeRate
         super(pList, pValues);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -146,7 +146,7 @@ public class ExchangeRate
             if (myValue instanceof TethysDate) {
                 setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDate((String) myValue));
             }
 
@@ -171,7 +171,7 @@ public class ExchangeRate
             if (myValue instanceof TethysRatio) {
                 setValueExchangeRate((TethysRatio) myValue);
             } else if (myValue instanceof String) {
-                String myString = (String) myValue;
+                final String myString = (String) myValue;
                 setValueExchangeRate(myString);
                 setValueExchangeRate(myFormatter.parseValue(myString, TethysRatio.class));
             }
@@ -249,7 +249,7 @@ public class ExchangeRate
      * @return the fromCurrencyId
      */
     public Integer getFromCurrencyId() {
-        AssetCurrency myCurr = getFromCurrency();
+        final AssetCurrency myCurr = getFromCurrency();
         return (myCurr == null)
                                 ? null
                                 : myCurr.getId();
@@ -260,7 +260,7 @@ public class ExchangeRate
      * @return the fromCurrencyName
      */
     public String getFromCurrencyName() {
-        AssetCurrency myCurr = getFromCurrency();
+        final AssetCurrency myCurr = getFromCurrency();
         return (myCurr == null)
                                 ? null
                                 : myCurr.getName();
@@ -279,7 +279,7 @@ public class ExchangeRate
      * @return the toCurrencyId
      */
     public Integer getToCurrencyId() {
-        AssetCurrency myCurr = getToCurrency();
+        final AssetCurrency myCurr = getToCurrency();
         return (myCurr == null)
                                 ? null
                                 : myCurr.getId();
@@ -290,7 +290,7 @@ public class ExchangeRate
      * @return the toCurrencyName
      */
     public String getToCurrencyName() {
-        AssetCurrency myCurr = getToCurrency();
+        final AssetCurrency myCurr = getToCurrency();
         return (myCurr == null)
                                 ? null
                                 : myCurr.getName();
@@ -309,7 +309,7 @@ public class ExchangeRate
      * @return the inverse rate
      */
     public TethysRatio getInverseRate() {
-        TethysRatio myRate = getExchangeRate();
+        final TethysRatio myRate = getExchangeRate();
         return (myRate == null)
                                 ? null
                                 : myRate.getInverseRatio();
@@ -478,8 +478,8 @@ public class ExchangeRate
         super.resolveDataSetLinks();
 
         /* Resolve currencies */
-        MoneyWiseData myData = getDataSet();
-        AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
+        final MoneyWiseData myData = getDataSet();
+        final AssetCurrencyList myCurrencies = myData.getAccountCurrencies();
         resolveDataLink(FIELD_FROM, myCurrencies);
         resolveDataLink(FIELD_TO, myCurrencies);
     }
@@ -525,12 +525,12 @@ public class ExchangeRate
 
     @Override
     public void validate() {
-        ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
-        AssetCurrency myFrom = getFromCurrency();
-        AssetCurrency myTo = getToCurrency();
-        TethysDate myDate = getDate();
-        TethysRatio myRate = getExchangeRate();
-        TethysDateRange myRange = getDataSet().getDateRange();
+        final ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
+        final AssetCurrency myFrom = getFromCurrency();
+        final AssetCurrency myTo = getToCurrency();
+        final TethysDate myDate = getDate();
+        final TethysRatio myRate = getExchangeRate();
+        final TethysDateRange myRange = getDataSet().getDateRange();
 
         /* Date must be non-null */
         if (myDate == null) {
@@ -539,7 +539,7 @@ public class ExchangeRate
             /* else date is non-null */
         } else {
             /* Date must be unique for this currency */
-            ExchangeRateDataMap<? extends ExchangeRate> myMap = myList.getDataMap();
+            final ExchangeRateDataMap<? extends ExchangeRate> myMap = myList.getDataMap();
             if (!myMap.validRateCount(this)) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
@@ -572,7 +572,7 @@ public class ExchangeRate
             }
 
             /* From currency must be the default currency */
-            AssetCurrency myDefault = getDataSet().getDefaultCurrency();
+            final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
             if (!myFrom.equals(myDefault)) {
                 addError(ERROR_DEF, FIELD_FROM);
             }
@@ -604,7 +604,7 @@ public class ExchangeRate
         if (!(pRate instanceof ExchangeRate)) {
             return false;
         }
-        ExchangeRate myRate = (ExchangeRate) pRate;
+        final ExchangeRate myRate = (ExchangeRate) pRate;
 
         /* Store the current detail into history */
         pushHistory();
@@ -636,8 +636,8 @@ public class ExchangeRate
     @Override
     @SuppressWarnings("unchecked")
     public void adjustMapForItem() {
-        ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
-        ExchangeRateDataMap<ExchangeRate> myMap = (ExchangeRateDataMap<ExchangeRate>) myList.getDataMap();
+        final ExchangeRateBaseList<? extends ExchangeRate> myList = getList();
+        final ExchangeRateDataMap<ExchangeRate> myMap = (ExchangeRateDataMap<ExchangeRate>) myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -757,7 +757,7 @@ public class ExchangeRate
 
         @Override
         protected ExchangeRateList getEmptyList(final ListStyle pStyle) {
-            ExchangeRateList myList = new ExchangeRateList(this);
+            final ExchangeRateList myList = new ExchangeRateList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -774,7 +774,7 @@ public class ExchangeRate
                 throw new UnsupportedOperationException();
             }
 
-            ExchangeRate myRate = new ExchangeRate(this, (ExchangeRate) pRate);
+            final ExchangeRate myRate = new ExchangeRate(this, (ExchangeRate) pRate);
             add(myRate);
             return myRate;
         }
@@ -785,7 +785,7 @@ public class ExchangeRate
          */
         @Override
         public ExchangeRate addNewItem() {
-            ExchangeRate myRate = new ExchangeRate(this);
+            final ExchangeRate myRate = new ExchangeRate(this);
             add(myRate);
             return myRate;
         }
@@ -794,7 +794,7 @@ public class ExchangeRate
         public ExchangeRate addValuesItem(final DataValues<MoneyWiseDataType> pValues)
                 throws OceanusException {
             /* Create the rate */
-            ExchangeRate myRate = new ExchangeRate(this, pValues);
+            final ExchangeRate myRate = new ExchangeRate(this, pValues);
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {
@@ -821,10 +821,10 @@ public class ExchangeRate
                                            final TethysDate pDate) {
             /* Obtain the existing currency */
             TethysMoney myValue = pValue;
-            AssetCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
-            Currency myCurrent = pValue.getCurrency();
-            Currency myDefault = theDefault.getCurrency();
-            Currency myTarget = pCurrency.getCurrency();
+            final AssetCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
+            final Currency myCurrent = pValue.getCurrency();
+            final Currency myDefault = theDefault.getCurrency();
+            final Currency myTarget = pCurrency.getCurrency();
 
             /* Handle no conversion required */
             if (myCurrent.equals(myTarget)) {
@@ -834,7 +834,7 @@ public class ExchangeRate
             /* If the value is not already the default currency */
             if (!myCurrent.equals(myDefault)) {
                 /* Find the required exchange rate */
-                TethysRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
+                final TethysRatio myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
 
                 /* Convert the currency */
                 myValue = myValue.convertCurrency(myDefault, myRate);
@@ -843,7 +843,7 @@ public class ExchangeRate
             /* If we need to convert to a non-default currency */
             if (!myDefault.equals(myTarget)) {
                 /* Find the required exchange rate */
-                TethysRatio myRate = findRate(pCurrency, pDate);
+                final TethysRatio myRate = findRate(pCurrency, pDate);
 
                 /* Convert the currency */
                 myValue = myValue.convertCurrency(myTarget, myRate);
@@ -871,18 +871,18 @@ public class ExchangeRate
          */
         public void setDefaultCurrency(final AssetCurrency pCurrency) {
             /* Access the iterator */
-            Iterator<ExchangeRate> myIterator = iterator();
+            final Iterator<ExchangeRate> myIterator = iterator();
             TethysRatio myCurrRate = null;
             TethysDate myCurrDate = null;
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
-                ExchangeRate myCurr = myIterator.next();
+                final ExchangeRate myCurr = myIterator.next();
 
                 /* Access details */
-                TethysDate myDate = myCurr.getDate();
-                AssetCurrency myTo = myCurr.getToCurrency();
-                TethysRatio myRatio = myCurr.getExchangeRate();
+                final TethysDate myDate = myCurr.getDate();
+                final AssetCurrency myTo = myCurr.getToCurrency();
+                final TethysRatio myRatio = myCurr.getExchangeRate();
 
                 /* If this is a new date */
                 if ((myCurrDate == null) || (!myDate.equals(myCurrDate))) {
@@ -994,7 +994,7 @@ public class ExchangeRate
         @Override
         public void adjustForItem(final T pItem) {
             /* Access the Currency Id */
-            AssetCurrency myCurrency = pItem.getToCurrency();
+            final AssetCurrency myCurrency = pItem.getToCurrency();
             if (myCurrency == null) {
                 return;
             }
@@ -1007,8 +1007,8 @@ public class ExchangeRate
             }
 
             /* Adjust rate count */
-            TethysDate myDate = pItem.getDate();
-            Integer myCount = myMap.get(myDate);
+            final TethysDate myDate = pItem.getDate();
+            final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
             } else {
@@ -1033,13 +1033,13 @@ public class ExchangeRate
          */
         public boolean validRateCount(final ExchangeRate pItem) {
             /* Access the Details */
-            AssetCurrency myCurrency = pItem.getToCurrency();
-            TethysDate myDate = pItem.getDate();
+            final AssetCurrency myCurrency = pItem.getToCurrency();
+            final TethysDate myDate = pItem.getDate();
 
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myCurrency);
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(myCurrency);
             if (myMap != null) {
-                Integer myResult = myMap.get(myDate);
+                final Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
@@ -1054,7 +1054,7 @@ public class ExchangeRate
         public boolean availableDate(final AssetCurrency pCurrency,
                                      final TethysDate pDate) {
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(pCurrency);
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(pCurrency);
             return myMap == null
                    || myMap.get(pDate) == null;
         }
@@ -1068,15 +1068,15 @@ public class ExchangeRate
         public TethysRatio getRateForDate(final AssetCurrency pCurrency,
                                           final TethysDate pDate) {
             /* Access list for currency */
-            RateList myList = theMapOfRates.get(pCurrency);
+            final RateList myList = theMapOfRates.get(pCurrency);
             if (myList != null) {
                 /* Loop through the rates */
-                ListIterator<ExchangeRate> myIterator = myList.listIterator();
+                final ListIterator<ExchangeRate> myIterator = myList.listIterator();
                 while (myIterator.hasNext()) {
-                    ExchangeRate myCurr = myIterator.next();
+                    final ExchangeRate myCurr = myIterator.next();
 
                     /* Access the date */
-                    TethysDate myDate = myCurr.getDate();
+                    final TethysDate myDate = myCurr.getDate();
 
                     /* break loop if we have the correct record */
                     if (myDate.compareTo(pDate) >= 0) {
@@ -1100,19 +1100,19 @@ public class ExchangeRate
             /* Set rate */
             TethysRatio myFirst = TethysRatio.ONE;
             TethysRatio myLatest = TethysRatio.ONE;
-            TethysDate myStart = pRange.getStart();
+            final TethysDate myStart = pRange.getStart();
 
             /* Access list for security */
-            RateList myList = theMapOfRates.get(pCurrency);
+            final RateList myList = theMapOfRates.get(pCurrency);
             if (myList != null) {
                 /* Loop through the rates */
-                ListIterator<ExchangeRate> myIterator = myList.listIterator(myList.size());
+                final ListIterator<ExchangeRate> myIterator = myList.listIterator(myList.size());
                 while (myIterator.hasPrevious()) {
-                    ExchangeRate myCurr = myIterator.previous();
+                    final ExchangeRate myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
-                    TethysDate myDate = myCurr.getDate();
-                    int iComp = pRange.compareTo(myDate);
+                    final TethysDate myDate = myCurr.getDate();
+                    final int iComp = pRange.compareTo(myDate);
 
                     /* If this is later than the range we are finished */
                     if (iComp < 0) {
@@ -1142,7 +1142,7 @@ public class ExchangeRate
          */
         public ListIterator<ExchangeRate> rateIterator(final AssetCurrency pCurrency) {
             /* Access list for currency */
-            RateList myList = theMapOfRates.get(pCurrency);
+            final RateList myList = theMapOfRates.get(pCurrency);
             return (myList != null)
                                     ? myList.listIterator(myList.size())
                                     : null;

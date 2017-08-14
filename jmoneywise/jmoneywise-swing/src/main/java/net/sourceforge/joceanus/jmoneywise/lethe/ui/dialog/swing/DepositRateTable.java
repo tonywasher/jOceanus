@@ -172,7 +172,7 @@ public class DepositRateTable
 
         /* Create the data column model and declare it */
         theColumns = new DepositRateColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -342,7 +342,7 @@ public class DepositRateTable
          */
         private void addNewItem() {
             /* Create the new rate */
-            DepositRate myRate = new DepositRate(theRates);
+            final DepositRate myRate = new DepositRate(theRates);
 
             /* Protect against Exceptions */
             try {
@@ -353,7 +353,7 @@ public class DepositRateTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new rate", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new rate", e);
 
                 /* Show the error */
                 setError(myError);
@@ -361,11 +361,11 @@ public class DepositRateTable
             }
 
             /* Obtain latest element */
-            Iterator<DepositRate> myIterator = theModel.viewIterator();
+            final Iterator<DepositRate> myIterator = theModel.viewIterator();
             myIterator.next();
-            DepositRate myLatest = myIterator.hasNext()
-                                                        ? myIterator.next()
-                                                        : null;
+            final DepositRate myLatest = myIterator.hasNext()
+                                                              ? myIterator.next()
+                                                              : null;
 
             /* If we have a latest element with no date */
             if (myLatest != null
@@ -435,15 +435,15 @@ public class DepositRateTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldRateCellEditor myRateEditor = theFieldMgr.allocateRateCellEditor();
-            MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldRateCellEditor myRateEditor = theFieldMgr.allocateRateCellEditor();
+            final MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -469,8 +469,8 @@ public class DepositRateTable
         private void handleDateEvent(final Integer pRowIndex,
                                      final TethysDateConfig pConfig) {
             /* Determine whether this is the latest entry */
-            int i = getTable().convertRowIndexToView(pRowIndex);
-            boolean bAllowNull = i == 1;
+            final int i = getTable().convertRowIndexToView(pRowIndex);
+            final boolean bAllowNull = i == 1;
             pConfig.setAllowNullDateSelection(bAllowNull);
             pConfig.setEarliestDate(theRange == null
                                                      ? null

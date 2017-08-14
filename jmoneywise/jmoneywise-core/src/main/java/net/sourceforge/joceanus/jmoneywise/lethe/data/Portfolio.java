@@ -254,7 +254,7 @@ public class Portfolio
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -358,7 +358,7 @@ public class Portfolio
      * @return the parentId
      */
     public Integer getParentId() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getId();
@@ -369,7 +369,7 @@ public class Portfolio
      * @return the parentName
      */
     public String getParentName() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getName();
@@ -388,7 +388,7 @@ public class Portfolio
      * @return the portfolioTypeId
      */
     public Integer getPortfolioTypeId() {
-        PortfolioType myType = getPortfolioType();
+        final PortfolioType myType = getPortfolioType();
         return (myType == null)
                                 ? null
                                 : myType.getId();
@@ -399,7 +399,7 @@ public class Portfolio
      * @return the portfolioTypeName
      */
     public String getPortfolioTypeName() {
-        PortfolioType myType = getPortfolioType();
+        final PortfolioType myType = getPortfolioType();
         return (myType == null)
                                 ? null
                                 : myType.getName();
@@ -410,7 +410,7 @@ public class Portfolio
      * @return the portfolioTypeClass
      */
     public PortfolioTypeClass getPortfolioTypeClass() {
-        PortfolioType myType = getPortfolioType();
+        final PortfolioType myType = getPortfolioType();
         return (myType == null)
                                 ? null
                                 : myType.getPortfolioClass();
@@ -423,7 +423,7 @@ public class Portfolio
 
     @Override
     public Boolean isTaxFree() {
-        PortfolioType myType = getPortfolioType();
+        final PortfolioType myType = getPortfolioType();
         return (myType == null)
                                 ? Boolean.FALSE
                                 : myType.getPortfolioClass().isTaxFree();
@@ -625,7 +625,7 @@ public class Portfolio
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -649,7 +649,7 @@ public class Portfolio
 
     @Override
     public void deRegister() {
-        SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
+        final SecurityHoldingMap myMap = getDataSet().getSecurityHoldingsMap();
         myMap.deRegister(this);
     }
 
@@ -674,10 +674,10 @@ public class Portfolio
      */
     private static Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* loop through the payees */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees and those that cannot parent this portfolio */
             boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
@@ -697,10 +697,10 @@ public class Portfolio
      */
     public PortfolioType getDefaultPortfolioType() {
         /* loop through the portfolio types */
-        PortfolioTypeList myTypes = getDataSet().getPortfolioTypes();
-        Iterator<PortfolioType> myIterator = myTypes.iterator();
+        final PortfolioTypeList myTypes = getDataSet().getPortfolioTypes();
+        final Iterator<PortfolioType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            PortfolioType myType = myIterator.next();
+            final PortfolioType myType = myIterator.next();
 
             /* Ignore deleted types */
             if (!myType.isDeleted()) {
@@ -727,7 +727,7 @@ public class Portfolio
         if ((iDiff == 0)
             && (pThat instanceof Portfolio)) {
             /* Check the portfolio type */
-            Portfolio myThat = (Portfolio) pThat;
+            final Portfolio myThat = (Portfolio) pThat;
             iDiff = MetisDifference.compareObject(getPortfolioType(), myThat.getPortfolioType());
             if (iDiff == 0) {
                 /* Check the underlying base */
@@ -745,7 +745,7 @@ public class Portfolio
         super.resolveDataSetLinks();
 
         /* Resolve holding account */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_PARENT, myData.getPayees());
         resolveDataLink(FIELD_PORTTYPE, myData.getPortfolioTypes());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
@@ -754,8 +754,8 @@ public class Portfolio
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent/holding within list */
-        MoneyWiseData myData = getDataSet();
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final MoneyWiseData myData = getDataSet();
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PORTTYPE, myData.getPortfolioTypes());
         resolveDataLink(FIELD_PARENT, myPayees);
     }
@@ -763,9 +763,8 @@ public class Portfolio
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws OceanusException {
+    public void setParent(final Payee pParent) {
         setValueParent(pParent);
     }
 
@@ -878,7 +877,7 @@ public class Portfolio
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
                                                    final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
-        TransactionCategoryList myCategories = getDataSet().getTransCategories();
+        final TransactionCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
                 if (isTaxFree()) {
@@ -923,9 +922,9 @@ public class Portfolio
 
     @Override
     public void validate() {
-        Payee myParent = getParent();
-        PortfolioType myPortType = getPortfolioType();
-        AssetCurrency myCurrency = getAssetCurrency();
+        final Payee myParent = getParent();
+        final PortfolioType myPortType = getPortfolioType();
+        final AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();
@@ -945,7 +944,7 @@ public class Portfolio
             addError(ERROR_MISSING, FIELD_PARENT);
         } else {
             /* Parent must be suitable */
-            PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
+            final PayeeTypeClass myParClass = myParent.getPayeeTypeClass();
             if (!myParClass.canParentPortfolio()) {
                 addError(ERROR_BADPARENT, FIELD_PARENT);
             }
@@ -997,7 +996,7 @@ public class Portfolio
         if (!(pPortfolio instanceof Portfolio)) {
             return false;
         }
-        Portfolio myPortfolio = (Portfolio) pPortfolio;
+        final Portfolio myPortfolio = (Portfolio) pPortfolio;
 
         /* Store the current detail into history */
         pushHistory();
@@ -1026,8 +1025,8 @@ public class Portfolio
 
     @Override
     public void adjustMapForItem() {
-        PortfolioList myList = getList();
-        PortfolioDataMap myMap = myList.getDataMap();
+        final PortfolioList myList = getList();
+        final PortfolioDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -1111,7 +1110,7 @@ public class Portfolio
 
         @Override
         protected PortfolioList getEmptyList(final ListStyle pStyle) {
-            PortfolioList myList = new PortfolioList(this);
+            final PortfolioList myList = new PortfolioList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -1124,21 +1123,21 @@ public class Portfolio
          */
         public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
-            PortfolioList myList = getEmptyList(ListStyle.EDIT);
-            DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            final PortfolioList myList = getEmptyList(ListStyle.EDIT);
+            final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             myList.ensureMap(myDeposits);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            PortfolioInfoList myPortInfo = getPortfolioInfo();
+            final PortfolioInfoList myPortInfo = getPortfolioInfo();
             myList.theInfoList = myPortInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the portfolios */
-            Iterator<Portfolio> myIterator = iterator();
+            final Iterator<Portfolio> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Portfolio myCurr = myIterator.next();
+                final Portfolio myCurr = myIterator.next();
 
                 /* Ignore deleted portfolios */
                 if (myCurr.isDeleted()) {
@@ -1146,7 +1145,7 @@ public class Portfolio
                 }
 
                 /* Build the new linked portfolio and add it to the list */
-                Portfolio myPortfolio = new Portfolio(myList, myCurr);
+                final Portfolio myPortfolio = new Portfolio(myList, myCurr);
                 myPortfolio.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myPortfolio);
 
@@ -1188,7 +1187,7 @@ public class Portfolio
                 throw new UnsupportedOperationException();
             }
 
-            Portfolio myPortfolio = new Portfolio(this, (Portfolio) pPortfolio);
+            final Portfolio myPortfolio = new Portfolio(this, (Portfolio) pPortfolio);
             add(myPortfolio);
             return myPortfolio;
         }
@@ -1199,7 +1198,7 @@ public class Portfolio
          */
         @Override
         public Portfolio addNewItem() {
-            Portfolio myPortfolio = new Portfolio(this);
+            final Portfolio myPortfolio = new Portfolio(this);
             add(myPortfolio);
             return myPortfolio;
         }
@@ -1207,7 +1206,7 @@ public class Portfolio
         @Override
         public Portfolio addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the portfolio */
-            Portfolio myPortfolio = new Portfolio(this, pValues);
+            final Portfolio myPortfolio = new Portfolio(this, pValues);
 
             /* Check that this PortfolioId has not been previously added */
             if (!isIdUnique(myPortfolio.getId())) {
@@ -1221,12 +1220,12 @@ public class Portfolio
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPortfolio);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPortfolio);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1323,7 +1322,7 @@ public class Portfolio
          * @return the matching item
          */
         public Portfolio findItemByName(final String pName) {
-            AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Portfolio
                                                 ? (Portfolio) myAsset
                                                 : null;

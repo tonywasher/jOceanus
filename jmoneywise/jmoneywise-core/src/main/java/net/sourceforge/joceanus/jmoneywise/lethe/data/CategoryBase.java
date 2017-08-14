@@ -254,7 +254,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @return the categoryTypeId
      */
     public Integer getCategoryTypeId() {
-        S myType = getCategoryType();
+        final S myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getId();
@@ -265,7 +265,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @return the categoryTypeName
      */
     public String getCategoryTypeName() {
-        S myType = getCategoryType();
+        final S myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getName();
@@ -288,7 +288,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @return the parentId
      */
     public Integer getParentCategoryId() {
-        T myParent = getParentCategory();
+        final T myParent = getParentCategory();
         return (myParent == null)
                                   ? null
                                   : myParent.getId();
@@ -299,7 +299,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      * @return the parentName
      */
     public String getParentCategoryName() {
-        T myParent = getParentCategory();
+        final T myParent = getParentCategory();
         return (myParent == null)
                                   ? null
                                   : myParent.getName();
@@ -526,13 +526,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         setValueSubCategory(null);
 
         /* Obtain the name */
-        String myName = getName();
+        final String myName = getName();
         if (myName != null) {
             /* Look for separator */
-            int iIndex = myName.indexOf(STR_SEP);
+            final int iIndex = myName.indexOf(STR_SEP);
             if (iIndex != -1) {
                 /* Access and set subCategory */
-                String mySub = myName.substring(iIndex + 1);
+                final String mySub = myName.substring(iIndex + 1);
                 setValueSubCategory(mySub);
             }
         }
@@ -568,14 +568,14 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     public void setSubCategoryName(final String pName) throws OceanusException {
         /* Obtain parent */
-        T myParent = getParentCategory();
-        String myName = getName();
+        final T myParent = getParentCategory();
+        final String myName = getName();
         boolean updateChildren = false;
 
         /* Set name appropriately */
         if (myParent != null) {
             /* Access class of parent */
-            C myClass = myParent.getCategoryTypeClass();
+            final C myClass = myParent.getCategoryTypeClass();
 
             /* Handle subTotals separately */
             if (myClass.isTotals()) {
@@ -595,7 +595,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
         /* If we should update the children */
         if (updateChildren) {
-            CategoryBaseList<T, S, C> myList = getList();
+            final CategoryBaseList<T, S, C> myList = getList();
             myList.updateChildren(myList.getBaseClass().cast(this));
         }
     }
@@ -622,7 +622,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     public void setParentCategory(final T pParent) throws OceanusException {
         setValueParent(pParent);
-        String mySubName = getSubCategory();
+        final String mySubName = getSubCategory();
         if (mySubName != null) {
             setSubCategoryName(mySubName);
         }
@@ -634,7 +634,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         getCategoryType().touchItem(this);
 
         /* Touch parent if it exists */
-        T myParent = getParentCategory();
+        final T myParent = getParentCategory();
         if (myParent != null) {
             myParent.touchItem(this);
         }
@@ -642,10 +642,10 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
     @Override
     public void validate() {
-        CategoryBaseList<T, S, C> myList = getList();
-        String myName = getName();
-        String myDesc = getDesc();
-        CategoryDataMap<T, S, C> myMap = myList.getDataMap();
+        final CategoryBaseList<T, S, C> myList = getList();
+        final String myName = getName();
+        final String myDesc = getDesc();
+        final CategoryDataMap<T, S, C> myMap = myList.getDataMap();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -660,7 +660,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
             /* The name must be unique */
             if (!myMap.validNameCount(myName)) {
-                String mySubName = getSubCategory();
+                final String mySubName = getSubCategory();
                 addError(ERROR_DUPLICATE, (mySubName == null)
                                                               ? FIELD_NAME
                                                               : FIELD_SUBCAT);
@@ -697,8 +697,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
 
     @Override
     public void adjustMapForItem() {
-        CategoryBaseList<T, S, C> myList = getList();
-        CategoryDataMap<T, S, C> myMap = myList.getDataMap();
+        final CategoryBaseList<T, S, C> myList = getList();
+        final CategoryDataMap<T, S, C> myMap = myList.getDataMap();
         myMap.adjustForItem(myList.getBaseClass().cast(this));
     }
 
@@ -708,7 +708,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         clearTouches(getItemType());
 
         /* Touch parent if it exists */
-        T myParent = getParentCategory();
+        final T myParent = getParentCategory();
         if (myParent != null) {
             myParent.touchItem(this);
         }
@@ -761,7 +761,7 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         @Override
         public T findItemByName(final String pName) {
             /* Access the dataMap */
-            CategoryDataMap<T, S, C> myMap = getDataMap();
+            final CategoryDataMap<T, S, C> myMap = getDataMap();
 
             /* Use it if we have it */
             if (myMap != null) {
@@ -769,9 +769,9 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
             }
 
             /* No map so we must do a slow lookUp */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myItem = myIterator.next();
+                final T myItem = myIterator.next();
 
                 /* If this is not deleted and matches */
                 if (!myItem.isDeleted() && MetisDifference.isEqual(pName, myItem.getName())) {
@@ -791,12 +791,12 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          */
         public String getUniqueName(final T pParent) {
             /* Set up base constraints */
-            String myBase = pParent == null
-                                            ? ""
-                                            : pParent.getName() + STR_SEP;
-            String myCore = pParent == null
-                                            ? NAME_NEWPARENT
-                                            : NAME_NEWCATEGORY;
+            final String myBase = pParent == null
+                                                  ? ""
+                                                  : pParent.getName() + STR_SEP;
+            final String myCore = pParent == null
+                                                  ? NAME_NEWPARENT
+                                                  : NAME_NEWCATEGORY;
             int iNextId = 1;
 
             /* Loop until we found a name */
@@ -819,13 +819,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          */
         private void updateChildren(final T pParent) throws OceanusException {
             /* Determine the id */
-            Integer myId = pParent.getId();
-            String myName = pParent.getName();
+            final Integer myId = pParent.getId();
+            final String myName = pParent.getName();
 
             /* Loop through the items */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
+                final T myCurr = myIterator.next();
 
                 /* If we have a child of the parent */
                 if (myId.equals(myCurr.getParentCategoryId())) {
@@ -844,9 +844,9 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
          */
         public void resolveUpdateSetLinks() throws OceanusException {
             /* Loop through the items */
-            Iterator<T> myIterator = iterator();
+            final Iterator<T> myIterator = iterator();
             while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
+                final T myCurr = myIterator.next();
                 myCurr.resolveUpdateSetLinks();
             }
         }

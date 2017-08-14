@@ -105,12 +105,12 @@ public class TransactionBuilder {
      */
     public void autoCorrect(final Transaction pTrans) throws OceanusException {
         /* Access details */
-        TransactionAsset myAccount = pTrans.getAccount();
+        final TransactionAsset myAccount = pTrans.getAccount();
         TransactionAsset myPartner = pTrans.getPartner();
         TransactionCategory myCategory = pTrans.getCategory();
-        AssetDirection myDir = pTrans.getDirection();
-        TethysMoney myAmount = pTrans.getAmount();
-        Currency myCurrency = myAccount.getCurrency();
+        final AssetDirection myDir = pTrans.getDirection();
+        final TethysMoney myAmount = pTrans.getAmount();
+        final Currency myCurrency = myAccount.getCurrency();
 
         /* Check that category is valid */
         if (!TransactionValidator.isValidCategory(myAccount, myCategory)) {
@@ -153,7 +153,7 @@ public class TransactionBuilder {
         }
 
         /* AutoCorrect the InfoSet */
-        TransactionInfoSet myInfoSet = pTrans.getInfoSet();
+        final TransactionInfoSet myInfoSet = pTrans.getInfoSet();
         myInfoSet.autoCorrect(theUpdateSet);
     }
 
@@ -209,11 +209,11 @@ public class TransactionBuilder {
      */
     private void buildStandardDetails(final Transaction pTrans) throws OceanusException {
         /* Access standard range */
-        TethysDateRange myRange = theRange;
+        final TethysDateRange myRange = theRange;
 
         /* Determine date */
         TethysDate myDate = new TethysDate();
-        int iResult = myRange.compareTo(myDate);
+        final int iResult = myRange.compareTo(myDate);
         if (iResult < 0) {
             myDate = myRange.getEnd();
         } else if (iResult > 0) {
@@ -222,8 +222,8 @@ public class TransactionBuilder {
         pTrans.setDate(myDate);
 
         /* Create a zero amount */
-        TransactionAsset myAccount = pTrans.getAccount();
-        Currency myCurrency = myAccount.getCurrency();
+        final TransactionAsset myAccount = pTrans.getAccount();
+        final Currency myCurrency = myAccount.getCurrency();
         pTrans.setAmount(new TethysMoney(myCurrency));
     }
 
@@ -233,7 +233,7 @@ public class TransactionBuilder {
      * @throws OceanusException on error
      */
     private Transaction buildDefaultTransaction() throws OceanusException {
-        TransactionCategory myCategory = getDefaultCategory();
+        final TransactionCategory myCategory = getDefaultCategory();
         if (myCategory == null) {
             return null;
         }
@@ -255,20 +255,20 @@ public class TransactionBuilder {
         }
 
         /* Build an empty transaction */
-        Transaction myTrans = newTransaction();
+        final Transaction myTrans = newTransaction();
 
         /* Record the payee */
         myTrans.setPartner(pPayee);
 
         /* Build default category */
-        TransactionCategory myCategory = getDefaultCategory();
+        final TransactionCategory myCategory = getDefaultCategory();
         if (myCategory == null) {
             return null;
         }
         myTrans.setCategory(myCategory);
 
         /* Build default account */
-        TransactionAsset myAccount = getDefaultAccountForCategory(myCategory);
+        final TransactionAsset myAccount = getDefaultAccountForCategory(myCategory);
         if (myAccount == null) {
             return null;
         }
@@ -302,20 +302,20 @@ public class TransactionBuilder {
         }
 
         /* Build an empty transaction */
-        Transaction myTrans = newTransaction();
+        final Transaction myTrans = newTransaction();
 
         /* Record the category */
         myTrans.setCategory(pCategory);
 
         /* Build default account category */
-        TransactionAsset myAccount = getDefaultAccountForCategory(pCategory);
+        final TransactionAsset myAccount = getDefaultAccountForCategory(pCategory);
         if (myAccount == null) {
             return null;
         }
         myTrans.setAccount(myAccount);
 
         /* Build default partner */
-        TransactionAsset myPartner = getDefaultPartnerForAccountAndCategory(myAccount, pCategory);
+        final TransactionAsset myPartner = getDefaultPartnerForAccountAndCategory(myAccount, pCategory);
         if (myPartner == null) {
             return null;
         }
@@ -344,20 +344,20 @@ public class TransactionBuilder {
         }
 
         /* Build an empty transaction */
-        Transaction myTrans = newTransaction();
+        final Transaction myTrans = newTransaction();
 
         /* Record the account */
         myTrans.setAccount(pAccount);
 
         /* Build default expense category */
-        TransactionCategory myCategory = getDefaultCategory();
+        final TransactionCategory myCategory = getDefaultCategory();
         if (myCategory == null) {
             return null;
         }
         myTrans.setCategory(myCategory);
 
         /* Build default partner */
-        TransactionAsset myPartner = getDefaultPartnerForAccountAndCategory(pAccount, myCategory);
+        final TransactionAsset myPartner = getDefaultPartnerForAccountAndCategory(pAccount, myCategory);
         if (myPartner == null) {
             return null;
         }
@@ -386,20 +386,20 @@ public class TransactionBuilder {
         }
 
         /* Build an empty transaction */
-        Transaction myTrans = newTransaction();
+        final Transaction myTrans = newTransaction();
 
         /* Record the account */
         myTrans.setAccount(pHolding);
 
         /* Build default category */
-        TransactionCategory myCategory = getDefaultCategoryForAccount(pHolding);
+        final TransactionCategory myCategory = getDefaultCategoryForAccount(pHolding);
         if (myCategory == null) {
             return null;
         }
         myTrans.setCategory(myCategory);
 
         /* Build default partner */
-        TransactionAsset myPartner = getDefaultPartnerForAccountAndCategory(pHolding, myCategory);
+        final TransactionAsset myPartner = getDefaultPartnerForAccountAndCategory(pHolding, myCategory);
         if (myPartner == null) {
             return null;
         }
@@ -469,15 +469,15 @@ public class TransactionBuilder {
      */
     private TransactionCategory getDefaultCategory(final CategoryType pType) {
         /* Access Categories */
-        TransactionCategoryList myCategories = theUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        final TransactionCategoryList myCategories = theUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Loop through the available category values */
-        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategory myCategory = myIterator.next();
+            final TransactionCategory myCategory = myIterator.next();
 
             /* Only process non-deleted low-level items */
-            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
             if (myCategory.isDeleted() || myClass.canParentCategory()) {
                 continue;
             }
@@ -514,15 +514,15 @@ public class TransactionBuilder {
      */
     private TransactionCategory getDefaultCategoryForAccount(final TransactionAsset pAccount) {
         /* Access Categories */
-        TransactionCategoryList myCategories = theUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        final TransactionCategoryList myCategories = theUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Loop through the available category values */
-        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategory myCategory = myIterator.next();
+            final TransactionCategory myCategory = myIterator.next();
 
             /* Only process non-deleted low-level items */
-            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
             if (myCategory.isDeleted() || myClass.canParentCategory()) {
                 continue;
             }
@@ -584,9 +584,9 @@ public class TransactionBuilder {
     private static <X extends AssetBase<X>> TransactionAsset getDefaultAssetForCategory(final AssetBaseList<X> pList,
                                                                                         final TransactionCategory pCategory) {
         /* Loop through the available values */
-        Iterator<X> myIterator = pList.iterator();
+        final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
-            X myAsset = myIterator.next();
+            final X myAsset = myIterator.next();
 
             /* Only process non-deleted, non-closed items */
             if (myAsset.isDeleted() || myAsset.isClosed()) {
@@ -615,9 +615,9 @@ public class TransactionBuilder {
                                                                                     final TransactionAsset pAccount,
                                                                                     final TransactionCategory pCategory) {
         /* Loop through the available values */
-        Iterator<X> myIterator = pList.iterator();
+        final Iterator<X> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
-            X myAsset = myIterator.next();
+            final X myAsset = myIterator.next();
 
             /* Only process non-deleted, non-closed items */
             if (myAsset.isDeleted() || myAsset.isClosed()) {
@@ -643,14 +643,14 @@ public class TransactionBuilder {
     private static SecurityHolding getDefaultHolding(final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                                      final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
-        PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-        SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        final PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
-        Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        final Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
-            Portfolio myPortfolio = myPortIterator.next();
+            final Portfolio myPortfolio = myPortIterator.next();
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
@@ -658,11 +658,11 @@ public class TransactionBuilder {
             }
 
             /* Look for existing holdings */
-            Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            final Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
             if (myExistIterator != null) {
                 /* Loop through them */
                 while (myExistIterator.hasNext()) {
-                    SecurityHolding myHolding = myExistIterator.next();
+                    final SecurityHolding myHolding = myExistIterator.next();
 
                     /* Check whether the asset is allowable for the combination */
                     if (TransactionValidator.isValidCategory(myHolding, pCategory)) {
@@ -687,14 +687,14 @@ public class TransactionBuilder {
                                                             final TransactionAsset pAccount,
                                                             final TransactionCategory pCategory) {
         /* Access Portfolios and Holdings Map */
-        MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
-        PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
-        SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseData myData = pUpdateSet.getDataSet(MoneyWiseData.class);
+        final PortfolioList myPortfolios = pUpdateSet.getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+        final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
-        Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        final Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
-            Portfolio myPortfolio = myPortIterator.next();
+            final Portfolio myPortfolio = myPortIterator.next();
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
@@ -702,11 +702,11 @@ public class TransactionBuilder {
             }
 
             /* Look for existing holdings */
-            Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            final Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
             if (myExistIterator != null) {
                 /* Loop through them */
                 while (myExistIterator.hasNext()) {
-                    SecurityHolding myHolding = myExistIterator.next();
+                    final SecurityHolding myHolding = myExistIterator.next();
 
                     /* Check whether the asset is allowable for the combination */
                     if (TransactionValidator.isValidPartner(pAccount, pCategory, myHolding)) {

@@ -47,7 +47,7 @@ public final class TransactionValidator {
      */
     public static boolean isValidAccount(final TransactionAsset pAccount) {
         /* Check type of account */
-        AssetType myType = pAccount.getAssetType();
+        final AssetType myType = pAccount.getAssetType();
         return myType.isBaseAccount() && !pAccount.isHidden();
     }
 
@@ -60,8 +60,8 @@ public final class TransactionValidator {
     public static boolean isValidCategory(final TransactionAsset pAccount,
                                           final TransactionCategory pCategory) {
         /* Access details */
-        AssetType myType = pAccount.getAssetType();
-        TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final AssetType myType = pAccount.getAssetType();
+        final TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
 
         /* Immediately reject hidden categories */
         if (myCatClass.isHiddenType()) {
@@ -159,7 +159,7 @@ public final class TransactionValidator {
         /* TODO relax some of these rules */
 
         /* Access details */
-        TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
 
         /* Switch on the CategoryClass */
         switch (myCatClass) {
@@ -227,9 +227,9 @@ public final class TransactionValidator {
                                          final TransactionCategory pCategory,
                                          final TransactionAsset pPartner) {
         /* Access details */
-        boolean isRecursive = MetisDifference.isEqual(pAccount, pPartner);
-        AssetType myPartnerType = pPartner.getAssetType();
-        TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+        final boolean isRecursive = MetisDifference.isEqual(pAccount, pPartner);
+        final AssetType myPartnerType = pPartner.getAssetType();
+        final TransactionCategoryClass myCatClass = pCategory.getCategoryTypeClass();
 
         /* Immediately reject hidden partners */
         if (pPartner.isHidden()) {
@@ -240,7 +240,7 @@ public final class TransactionValidator {
         if (pAccount.isAutoExpense()
             || pPartner.isAutoExpense()) {
             /* Access account type */
-            AssetType myAccountType = pAccount.getAssetType();
+            final AssetType myAccountType = pAccount.getAssetType();
 
             /* Special processing */
             switch (myCatClass) {
@@ -381,8 +381,8 @@ public final class TransactionValidator {
         }
 
         /* Access holdings */
-        SecurityHolding myAccount = (SecurityHolding) pAccount;
-        SecurityHolding myPartner = (SecurityHolding) pPartner;
+        final SecurityHolding myAccount = (SecurityHolding) pAccount;
+        final SecurityHolding myPartner = (SecurityHolding) pPartner;
 
         /* Portfolios must be the same */
         if (!MetisDifference.isEqual(myAccount.getPortfolio(), myPartner.getPortfolio())) {
@@ -405,7 +405,7 @@ public final class TransactionValidator {
         if ((pAccount instanceof SecurityHolding)
             && (pPartner instanceof Portfolio)) {
             /* Must be same portfolios */
-            SecurityHolding myHolding = (SecurityHolding) pAccount;
+            final SecurityHolding myHolding = (SecurityHolding) pAccount;
             return MetisDifference.isEqual(myHolding.getPortfolio(), pPartner);
         }
 
@@ -460,7 +460,7 @@ public final class TransactionValidator {
         if ((pAccount instanceof Portfolio)
             && (pPartner instanceof SecurityHolding)) {
             /* Must be same portfolios */
-            SecurityHolding myHolding = (SecurityHolding) pPartner;
+            final SecurityHolding myHolding = (SecurityHolding) pPartner;
             return MetisDifference.isEqual(myHolding.getPortfolio(), pAccount);
         }
 
@@ -485,7 +485,7 @@ public final class TransactionValidator {
         if ((pAccount instanceof SecurityHolding)
             && (pPartner instanceof Portfolio)) {
             /* Must be same portfolios */
-            SecurityHolding myHolding = (SecurityHolding) pAccount;
+            final SecurityHolding myHolding = (SecurityHolding) pAccount;
             if (!MetisDifference.isEqual(myHolding.getPortfolio(), pPartner)) {
                 return false;
             }
@@ -495,7 +495,7 @@ public final class TransactionValidator {
         if ((pPartner instanceof SecurityHolding)
             && (pAccount instanceof Portfolio)) {
             /* Must be same portfolios */
-            SecurityHolding myHolding = (SecurityHolding) pPartner;
+            final SecurityHolding myHolding = (SecurityHolding) pPartner;
             if (!MetisDifference.isEqual(myHolding.getPortfolio(), pAccount)) {
                 return false;
             }
@@ -532,7 +532,7 @@ public final class TransactionValidator {
         /* If account is security holding */
         if (pAccount instanceof SecurityHolding) {
             /* Must be different portfolios */
-            SecurityHolding myHolding = (SecurityHolding) pAccount;
+            final SecurityHolding myHolding = (SecurityHolding) pAccount;
             return !MetisDifference.isEqual(myHolding.getPortfolio(), pPartner);
         }
 

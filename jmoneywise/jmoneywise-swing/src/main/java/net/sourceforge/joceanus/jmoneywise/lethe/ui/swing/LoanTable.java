@@ -62,9 +62,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -215,7 +215,7 @@ public class LoanTable
         super(pView.getGuiFactory());
 
         /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
@@ -235,7 +235,7 @@ public class LoanTable
 
         /* Create the data column model and declare it */
         theColumns = new LoanColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -324,13 +324,13 @@ public class LoanTable
         myTask = myTask.startTask("Loans");
 
         /* Access the various lists */
-        MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = theView.getData();
 
         /* Obtain the loan edit list */
-        LoanList myLoans = myData.getLoans();
+        final LoanList myLoans = myData.getLoans();
         theLoans = myLoans.deriveEditList(theUpdateSet);
         theLoanEntry.setDataList(theLoans);
-        LoanInfoList myInfo = theLoans.getLoanInfo();
+        final LoanInfoList myInfo = theLoans.getLoanInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
@@ -526,7 +526,7 @@ public class LoanTable
             /* Protect against Exceptions */
             try {
                 /* Create the new loan */
-                Loan myLoan = new Loan(theLoans);
+                final Loan myLoan = new Loan(theLoans);
                 myLoan.setDefaults(theUpdateSet);
 
                 /* Add the new item */
@@ -544,7 +544,7 @@ public class LoanTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);
@@ -616,22 +616,22 @@ public class LoanTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<LoanCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategory.class);
-            MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<LoanCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategory.class);
+            final MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            final MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
-            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
             myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
             myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
@@ -722,7 +722,7 @@ public class LoanTable
                                             ? PrometheusAction.ACTIVE
                                             : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
-                    Transaction myTran = pLoan.getLatest();
+                    final Transaction myTran = pLoan.getLatest();
                     return (myTran == null)
                                             ? null
                                             : myTran.getDate();
@@ -832,7 +832,7 @@ public class LoanTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theLoans.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, myLoan);
@@ -846,7 +846,7 @@ public class LoanTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<LoanCategory, Icon> pMenu) {
             /* Record active item */
-            Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theLoans.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCategoryMenu(pMenu, myLoan);
@@ -860,7 +860,7 @@ public class LoanTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theLoans.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myLoan);
@@ -872,7 +872,7 @@ public class LoanTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theLoans.get(pRowIndex);
             return myLoan.isClosed() || !myLoan.isRelevant();
         }
     }

@@ -158,7 +158,7 @@ public class MaintenanceTab
         theParent = pTop;
 
         /* Access GUI Factory */
-        TethysSwingGuiFactory myFactory = theView.getUtilitySet().getGuiFactory();
+        final TethysSwingGuiFactory myFactory = theView.getUtilitySet().getGuiFactory();
         theId = myFactory.getNextId();
 
         /* Create the event manager */
@@ -197,7 +197,7 @@ public class MaintenanceTab
         theStatic.addStatic(MoneyWiseDataType.TRANSINFOTYPE, TransactionInfoTypeList.class);
 
         /* Create the Preferences Tab */
-        MetisPreferenceManager myPrefs = theView.getPreferenceManager();
+        final MetisPreferenceManager myPrefs = theView.getPreferenceManager();
         thePreferences = new MetisPreferenceView<>(myFactory, myPrefs);
         theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 
@@ -207,7 +207,7 @@ public class MaintenanceTab
         myPrefs.getPreferenceSet(MoneyWiseQIFPreferences.class);
 
         /* Create the layout for the panel */
-        BorderLayout myLayout = new BorderLayout();
+        final BorderLayout myLayout = new BorderLayout();
         thePanel.setLayout(myLayout);
         thePanel.add(theTabs.getNode());
 
@@ -361,7 +361,7 @@ public class MaintenanceTab
             /* View the requested account */
             case ACCOUNT:
                 /* Select the requested account */
-                AssetBase<?> myAccount = pEvent.getDetails(AssetBase.class);
+                final AssetBase<?> myAccount = pEvent.getDetails(AssetBase.class);
                 theAccountTab.selectAccount(myAccount);
 
                 /* Goto the Account tab */
@@ -371,7 +371,7 @@ public class MaintenanceTab
             /* View the requested category */
             case CATEGORY:
                 /* Select the requested category */
-                Object myCategory = pEvent.getDetails();
+                final Object myCategory = pEvent.getDetails();
                 theCategoryTab.selectCategory(myCategory);
 
                 /* Goto the Category tab */
@@ -381,7 +381,7 @@ public class MaintenanceTab
             /* View the requested tag */
             case TAG:
                 /* Select the requested tag */
-                Object myTag = pEvent.getDetails();
+                final Object myTag = pEvent.getDetails();
                 theCategoryTab.selectTag(myTag);
 
                 /* Goto the Category tab */
@@ -391,7 +391,7 @@ public class MaintenanceTab
             /* View the requested region */
             case REGION:
                 /* Select the requested tag */
-                Object myRegion = pEvent.getDetails();
+                final Object myRegion = pEvent.getDetails();
                 theCategoryTab.selectRegion(myRegion);
 
                 /* Goto the Category tab */
@@ -402,7 +402,7 @@ public class MaintenanceTab
             case STATIC:
                 /* Select the requested tag */
                 @SuppressWarnings("unchecked")
-                StaticData<?, ?, MoneyWiseDataType> myData = (StaticData<?, ?, MoneyWiseDataType>) pEvent.getDetails(StaticData.class);
+                final StaticData<?, ?, MoneyWiseDataType> myData = (StaticData<?, ?, MoneyWiseDataType>) pEvent.getDetails(StaticData.class);
                 theStatic.selectStatic(myData);
 
                 /* Goto the Static tab */
@@ -421,7 +421,7 @@ public class MaintenanceTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
+        final TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }
@@ -432,7 +432,7 @@ public class MaintenanceTab
      */
     protected void setVisibility() {
         /* Determine whether we have any locked session */
-        boolean hasSession = hasSession();
+        final boolean hasSession = hasSession();
 
         /* Enable/Disable the Account tab */
         boolean doEnabled = !hasSession || theAccountTab.hasSession();
@@ -459,8 +459,8 @@ public class MaintenanceTab
      */
     protected void determineFocus() {
         /* Access the selected component */
-        TethysSwingTabItem myItem = theTabs.getSelectedTab();
-        JComponent myComponent = myItem.getNode();
+        final TethysSwingTabItem myItem = theTabs.getSelectedTab();
+        final JComponent myComponent = myItem.getNode();
 
         /* If the selected component is Account */
         if (myComponent.equals(theAccountTab.getNode())) {
@@ -491,7 +491,7 @@ public class MaintenanceTab
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
-        PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
+        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {

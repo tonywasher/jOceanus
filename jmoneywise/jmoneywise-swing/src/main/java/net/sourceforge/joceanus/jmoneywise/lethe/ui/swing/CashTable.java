@@ -61,9 +61,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -209,7 +209,7 @@ public class CashTable
         super(pView.getGuiFactory());
 
         /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
@@ -229,7 +229,7 @@ public class CashTable
 
         /* Create the data column model and declare it */
         theColumns = new CashColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -317,13 +317,13 @@ public class CashTable
         myTask = myTask.startTask("Cash");
 
         /* Access the various lists */
-        MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = theView.getData();
 
         /* Get the Cash edit list */
-        CashList myCash = myData.getCash();
+        final CashList myCash = myData.getCash();
         theCash = myCash.deriveEditList(theUpdateSet);
         theCashEntry.setDataList(theCash);
-        CashInfoList myInfo = theCash.getCashInfo();
+        final CashInfoList myInfo = theCash.getCashInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
@@ -519,7 +519,7 @@ public class CashTable
             /* Protect against Exceptions */
             try {
                 /* Create the new cash */
-                Cash myCash = new Cash(theCash);
+                final Cash myCash = new Cash(theCash);
                 myCash.setDefaults(theUpdateSet);
 
                 /* Add the new item */
@@ -537,7 +537,7 @@ public class CashTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);
@@ -604,21 +604,21 @@ public class CashTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<CashCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(CashCategory.class);
-            MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<CashCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(CashCategory.class);
+            final MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
-            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
             myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
             myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
@@ -648,7 +648,7 @@ public class CashTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<CashCategory, Icon> pMenu) {
             /* Determine active item */
-            Cash myCash = theCash.get(pRowIndex);
+            final Cash myCash = theCash.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCategoryMenu(pMenu, myCash);
@@ -662,7 +662,7 @@ public class CashTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Determine active item */
-            Cash myCash = theCash.get(pRowIndex);
+            final Cash myCash = theCash.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myCash);
@@ -712,7 +712,7 @@ public class CashTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            Cash myCash = theCash.get(pRowIndex);
+            final Cash myCash = theCash.get(pRowIndex);
             return myCash.isClosed() || !myCash.isRelevant();
         }
 
@@ -741,7 +741,7 @@ public class CashTable
                                             ? PrometheusAction.ACTIVE
                                             : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
-                    Transaction myTran = pCash.getLatest();
+                    final Transaction myTran = pCash.getLatest();
                     return (myTran == null)
                                             ? null
                                             : myTran.getDate();

@@ -63,23 +63,23 @@ public final class Control {
     private static void createAndShowGUI(final MetisProgram pInfo) {
         try {
             /* Create the view */
-            SwingView myView = new SwingView(pInfo);
-            MetisSwingToolkit myToolkit = myView.getToolkit();
+            final SwingView myView = new SwingView(pInfo);
+            final MetisSwingToolkit myToolkit = myView.getToolkit();
 
             /* Obtain program details */
-            TethysProgram myApp = pInfo.getProgramDefinitions();
+            final TethysProgram myApp = pInfo.getProgramDefinitions();
 
             /* Create the frame and declare it */
-            JFrame myFrame = new JFrame(myApp.getName());
+            final JFrame myFrame = new JFrame(myApp.getName());
             myToolkit.getGuiFactory().setFrame(myFrame);
 
             /* Create the window */
-            MainTab myWindow = new MainTab(myView);
+            final MainTab myWindow = new MainTab(myView);
             myWindow.makeFrame();
 
             /* Add the icons to the frame */
-            TethysIconId[] myIds = myApp.getIcons();
-            Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
+            final TethysIconId[] myIds = myApp.getIcons();
+            final Image[] myIcons = TethysSwingGuiUtils.getIcons(myIds);
             myFrame.setIconImages(Arrays.asList(myIcons));
 
             /* Show the frame */
@@ -102,10 +102,10 @@ public final class Control {
     public static void main(final String[] args) {
         try {
             /* Create a timer */
-            MetisProgram myInfo = new MetisProgram(MoneyWiseApp.class);
+            final MetisProgram myInfo = new MetisProgram(MoneyWiseApp.class);
 
             /* Obtain program details */
-            TethysProgram myApp = myInfo.getProgramDefinitions();
+            final TethysProgram myApp = myInfo.getProgramDefinitions();
 
             /* Sort out splash frame */
             TethysSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());

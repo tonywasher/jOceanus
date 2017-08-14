@@ -129,7 +129,7 @@ public class ReportTab
         theView = pView;
 
         /* Access GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -138,9 +138,9 @@ public class ReportTab
         thePanel = myFactory.newBorderPane();
 
         /* Create the top level debug entry for this view */
-        MetisViewerManager myDataMgr = theView.getViewerManager();
-        MetisViewerEntry mySection = theView.getViewerEntry(PrometheusViewerEntryId.VIEW);
-        MetisViewerEntry myReport = myDataMgr.newEntry(mySection, NLS_DATAENTRY);
+        final MetisViewerManager myDataMgr = theView.getViewerManager();
+        final MetisViewerEntry mySection = theView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        final MetisViewerEntry myReport = myDataMgr.newEntry(mySection, NLS_DATAENTRY);
         theSpotEntry = myDataMgr.newEntry(myReport, PrometheusViewerEntryId.ANALYSIS.toString());
         theSpotEntry.setVisible(false);
 
@@ -160,11 +160,11 @@ public class ReportTab
         theError = theView.getToolkit().newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        TethysSwingScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
+        final TethysSwingScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
         /* Create the header panel */
-        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelect);
         myHeader.setNorth(theError);
 
@@ -179,7 +179,7 @@ public class ReportTab
         theView.getEventRegistrar().addEventListener(e -> refreshData());
         theManager.getEventRegistrar().addEventListener(this::handleGoToRequest);
         theError.getEventRegistrar().addEventListener(e -> handleErrorPane());
-        TethysEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
+        final TethysEventRegistrar<PrometheusDataEvent> myRegistrar = theSelect.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusDataEvent.SELECTIONCHANGED, e -> handleReportRequest());
         myRegistrar.addEventListener(PrometheusDataEvent.PRINT, e -> theHTMLPane.printIt());
         myRegistrar.addEventListener(PrometheusDataEvent.SAVETOFILE, e -> theHTMLPane.saveToFile());
@@ -223,7 +223,7 @@ public class ReportTab
      * @throws OceanusException on error
      */
     private void loadCSS(final String pName) throws OceanusException {
-        String myCSS = TethysResourceBuilder.loadResourceToString(MoneyWiseReportResource.class, pName);
+        final String myCSS = TethysResourceBuilder.loadResourceToString(MoneyWiseReportResource.class, pName);
         theHTMLPane.setCSSContent(myCSS);
     }
 
@@ -265,11 +265,11 @@ public class ReportTab
      */
     private void buildReport() throws OceanusException {
         /* Access the values from the selection */
-        MoneyWiseReportType myReportType = theSelect.getReportType();
-        TethysDateRange myRange = theSelect.getDateRange();
-        AnalysisManager myManager = theView.getAnalysisManager();
-        Document myDoc;
-        Analysis myAnalysis;
+        final MoneyWiseReportType myReportType = theSelect.getReportType();
+        final TethysDateRange myRange = theSelect.getDateRange();
+        final AnalysisManager myManager = theView.getAnalysisManager();
+        final Document myDoc;
+        final Analysis myAnalysis;
 
         /* set lockDown of selection */
         theSelect.setEnabled(true);
@@ -312,7 +312,7 @@ public class ReportTab
         theManager.setDocument(myDoc);
 
         /* Create initial display version */
-        String myText = theManager.formatXML();
+        final String myText = theManager.formatXML();
         theHTMLPane.setHTMLContent(myText, "");
     }
 
@@ -321,7 +321,7 @@ public class ReportTab
      */
     private void handleErrorPane() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelect.setVisible(!isError);
@@ -336,9 +336,9 @@ public class ReportTab
      */
     private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
         /* Create the details of the report */
-        TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
-        AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
-        StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
+        final TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
+        final AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
+        final StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
 
         /* Request the action */
         theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent<>(MoneyWiseGoToId.STATEMENT, myStatement));
@@ -359,7 +359,7 @@ public class ReportTab
             /* Catch Exceptions */
         } catch (OceanusException e) {
             /* Build the error */
-            OceanusException myError = new MoneyWiseDataException("Failed to change selection", e);
+            final OceanusException myError = new MoneyWiseDataException("Failed to change selection", e);
 
             /* Show the error */
             theError.addError(myError);

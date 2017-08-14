@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Report Classes.
@@ -72,9 +71,8 @@ public class MoneyWiseReportBuilder {
     /**
      * Constructor.
      * @param pManager the report manager
-     * @throws OceanusException on error
      */
-    public MoneyWiseReportBuilder(final MetisReportManager<AnalysisFilter<?, ?>> pManager) throws OceanusException {
+    public MoneyWiseReportBuilder(final MetisReportManager<AnalysisFilter<?, ?>> pManager) {
         /* Record the details */
         theManager = pManager;
 

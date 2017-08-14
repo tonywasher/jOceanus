@@ -86,7 +86,7 @@ public class LoanCategory
         super(pList, pValues);
 
         /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        final Object myValue = pValues.getValue(FIELD_CATTYPE);
         if (myValue instanceof Integer) {
             setValueType((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -125,7 +125,7 @@ public class LoanCategory
 
     @Override
     public LoanCategoryClass getCategoryTypeClass() {
-        LoanCategoryType myType = getCategoryType();
+        final LoanCategoryType myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getLoanClass();
@@ -200,7 +200,7 @@ public class LoanCategory
      */
     public void setDefaults(final LoanCategory pParent) throws OceanusException {
         /* Set values */
-        LoanCategoryTypeList myTypes = getDataSet().getLoanCategoryTypes();
+        final LoanCategoryTypeList myTypes = getDataSet().getLoanCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
                                                                 ? LoanCategoryClass.PARENT
                                                                 : LoanCategoryClass.LOAN));
@@ -214,7 +214,7 @@ public class LoanCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATTYPE, myData.getLoanCategoryTypes());
     }
 
@@ -235,15 +235,15 @@ public class LoanCategory
         super.validate();
 
         /* Access details */
-        LoanCategoryType myCatType = getCategoryType();
-        LoanCategory myParent = getParentCategory();
+        final LoanCategoryType myCatType = getCategoryType();
+        final LoanCategory myParent = getParentCategory();
 
         /* LoanCategoryType must be non-null */
         if (myCatType == null) {
             addError(ERROR_MISSING, FIELD_CATTYPE);
         } else {
             /* Access the class */
-            LoanCategoryClass myClass = myCatType.getLoanClass();
+            final LoanCategoryClass myClass = myCatType.getLoanClass();
 
             /* AccountCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
@@ -265,10 +265,10 @@ public class LoanCategory
                     } else if (!myParent.isCategoryClass(LoanCategoryClass.PARENT)) {
                         addError(ERROR_BADPARENT, FIELD_PARENT);
                     } else {
-                        String myName = getName();
+                        final String myName = getName();
 
                         /* Check validity of parent */
-                        LoanCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                        final LoanCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (myParentClass != LoanCategoryClass.PARENT) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
@@ -298,7 +298,7 @@ public class LoanCategory
         if (!(pCategory instanceof LoanCategory)) {
             return false;
         }
-        LoanCategory myCategory = (LoanCategory) pCategory;
+        final LoanCategory myCategory = (LoanCategory) pCategory;
 
         /* Store the current detail into history */
         pushHistory();
@@ -358,7 +358,7 @@ public class LoanCategory
 
         @Override
         protected LoanCategoryList getEmptyList(final ListStyle pStyle) {
-            LoanCategoryList myList = new LoanCategoryList(this);
+            final LoanCategoryList myList = new LoanCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -369,13 +369,13 @@ public class LoanCategory
          */
         public LoanCategoryList deriveEditList() {
             /* Build an empty List */
-            LoanCategoryList myList = getEmptyList(ListStyle.EDIT);
+            final LoanCategoryList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the categories */
-            Iterator<LoanCategory> myIterator = iterator();
+            final Iterator<LoanCategory> myIterator = iterator();
             while (myIterator.hasNext()) {
-                LoanCategory myCurr = myIterator.next();
+                final LoanCategory myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
@@ -383,7 +383,7 @@ public class LoanCategory
                 }
 
                 /* Build the new linked category and add it to the list */
-                LoanCategory myCategory = new LoanCategory(myList, myCurr);
+                final LoanCategory myCategory = new LoanCategory(myList, myCurr);
                 myList.append(myCategory);
 
                 /* Adjust the map */
@@ -406,7 +406,7 @@ public class LoanCategory
                 throw new UnsupportedOperationException();
             }
 
-            LoanCategory myCategory = new LoanCategory(this, (LoanCategory) pCategory);
+            final LoanCategory myCategory = new LoanCategory(this, (LoanCategory) pCategory);
             add(myCategory);
             return myCategory;
         }
@@ -417,7 +417,7 @@ public class LoanCategory
          */
         @Override
         public LoanCategory addNewItem() {
-            LoanCategory myCategory = new LoanCategory(this);
+            final LoanCategory myCategory = new LoanCategory(this);
             add(myCategory);
             return myCategory;
         }
@@ -425,7 +425,7 @@ public class LoanCategory
         @Override
         public LoanCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
-            LoanCategory myCategory = new LoanCategory(this, pValues);
+            final LoanCategory myCategory = new LoanCategory(this, pValues);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {

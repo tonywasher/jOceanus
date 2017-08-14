@@ -78,7 +78,7 @@ public class PayeeInfoSet
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -94,7 +94,7 @@ public class PayeeInfoSet
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
         /* Return the value */
-        Object myValue = getField(pInfoClass);
+        final Object myValue = getField(pInfoClass);
         return (myValue != null)
                                  ? myValue
                                  : MetisFieldValue.SKIP;
@@ -135,7 +135,7 @@ public class PayeeInfoSet
      * @return the status
      */
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED
                                : isClassRequired(myClass);
@@ -175,16 +175,16 @@ public class PayeeInfoSet
      */
     protected void validate() {
         /* Access details about the Payee */
-        Payee myPayee = getOwner();
+        final Payee myPayee = getOwner();
 
         /* Loop through the classes */
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             /* Access info for class */
-            PayeeInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+            final PayeeInfo myInfo = getInfo(myClass);
+            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            MetisFieldRequired myState = isClassRequired(myClass);
+            final MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
@@ -212,7 +212,7 @@ public class PayeeInfoSet
                 case NOTES:
                 case REFERENCE:
                     /* Access data */
-                    char[] myArray = myInfo.getValue(char[].class);
+                    final char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         myPayee.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }

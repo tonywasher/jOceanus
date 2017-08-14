@@ -150,7 +150,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super(pList, pValues);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -201,7 +201,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             } else if (myValue instanceof byte[]) {
                 setValueAmount((byte[]) myValue);
             } else if (myValue instanceof String) {
-                String myString = (String) myValue;
+                final String myString = (String) myValue;
                 setValueAmount(myString);
                 setValueAmount(myFormatter.parseValue(myString, TethysMoney.class));
             }
@@ -256,21 +256,21 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     @Override
     public String formatObject() {
         /* Access Key Values */
-        MetisEncryptedValueSet myValues = getValueSet();
-        Object myAccount = myValues.getValue(FIELD_ACCOUNT);
-        Object myPartner = myValues.getValue(FIELD_PARTNER);
-        Object myPair = myValues.getValue(FIELD_PAIR);
-        AssetDirection myDir = myPair instanceof AssetPair
-                                                           ? ((AssetPair) myPair).getDirection()
-                                                           : null;
-        Object myCategory = myValues.getValue(FIELD_CATEGORY);
-        Object myAmount = myValues.getValue(FIELD_AMOUNT);
+        final MetisEncryptedValueSet myValues = getValueSet();
+        final Object myAccount = myValues.getValue(FIELD_ACCOUNT);
+        final Object myPartner = myValues.getValue(FIELD_PARTNER);
+        final Object myPair = myValues.getValue(FIELD_PAIR);
+        final AssetDirection myDir = myPair instanceof AssetPair
+                                                                 ? ((AssetPair) myPair).getDirection()
+                                                                 : null;
+        final Object myCategory = myValues.getValue(FIELD_CATEGORY);
+        final Object myAmount = myValues.getValue(FIELD_AMOUNT);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myFormatter.formatObject(myCategory));
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(myAmount == null
@@ -302,7 +302,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the assetPairId
      */
     public Integer getAssetPairId() {
-        AssetPair myPair = getAssetPair();
+        final AssetPair myPair = getAssetPair();
         return (myPair == null)
                                 ? null
                                 : myPair.getEncodedId();
@@ -329,7 +329,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        TransactionCategory myCategory = getCategory();
+        final TransactionCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getId();
@@ -340,7 +340,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the categoryName
      */
     public String getCategoryName() {
-        TransactionCategory myCategory = getCategory();
+        final TransactionCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getName();
@@ -351,7 +351,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the eventCategoryClass
      */
     public TransactionCategoryClass getCategoryClass() {
-        TransactionCategory myCategory = getCategory();
+        final TransactionCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getCategoryTypeClass();
@@ -394,7 +394,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the accountId
      */
     public Integer getAccountId() {
-        TransactionAsset myAccount = getAccount();
+        final TransactionAsset myAccount = getAccount();
         return (myAccount == null)
                                    ? null
                                    : myAccount.getId();
@@ -413,7 +413,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the partnerId
      */
     public Integer getPartnerId() {
-        TransactionAsset myPartner = getPartner();
+        final TransactionAsset myPartner = getPartner();
         return (myPartner == null)
                                    ? null
                                    : myPartner.getId();
@@ -424,7 +424,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return the direction
      */
     public AssetDirection getDirection() {
-        AssetPair myPair = getAssetPair();
+        final AssetPair myPair = getAssetPair();
         return myPair == null
                               ? null
                               : myPair.getDirection();
@@ -515,7 +515,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @param pValue the value
      */
     protected final void setValueAssetPair(final AssetPair pValue) {
-        MetisEncryptedValueSet myValues = getValueSet();
+        final MetisEncryptedValueSet myValues = getValueSet();
         myValues.setValue(FIELD_PAIR, pValue);
         myValues.setValue(FIELD_DIRECTION, pValue.getDirection());
     }
@@ -699,7 +699,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         /* If the categories differ */
-        int iDiff = MetisDifference.compareObject(getCategory(), pThat.getCategory());
+        final int iDiff = MetisDifference.compareObject(getCategory(), pThat.getCategory());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -714,12 +714,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
-        MetisValueSet myValues = getValueSet();
-        AssetPairManager myManager = getAssetPairManager();
+        final MoneyWiseData myData = getDataSet();
+        final MetisValueSet myValues = getValueSet();
+        final AssetPairManager myManager = getAssetPairManager();
 
         /* Adjust Reconciled */
-        Object myReconciled = myValues.getValue(FIELD_RECONCILED);
+        final Object myReconciled = myValues.getValue(FIELD_RECONCILED);
         if (myReconciled == null) {
             setValueReconciled(Boolean.FALSE);
         }
@@ -741,7 +741,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         /* Store value and access as pair */
         myValues.setValue(FIELD_PAIR, myValue);
-        AssetPair myPair = (AssetPair) myValue;
+        final AssetPair myPair = (AssetPair) myValue;
         myValues.setValue(FIELD_DIRECTION, myPair.getDirection());
 
         /* Resolve data links */
@@ -752,8 +752,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
     @Override
     public boolean isLocked() {
-        TransactionAsset myAccount = getAccount();
-        TransactionAsset myPartner = getPartner();
+        final TransactionAsset myAccount = getAccount();
+        final TransactionAsset myPartner = getPartner();
 
         /* Check credit and debit accounts */
         return ((myAccount != null) && myAccount.isClosed())
@@ -788,7 +788,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     public boolean isInterest() {
         /* Check for interest */
-        TransactionCategoryClass myClass = getCategoryClass();
+        final TransactionCategoryClass myClass = getCategoryClass();
         return myClass != null
                && myClass.isInterest();
     }
@@ -798,7 +798,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return dividend true/false
      */
     public boolean isDividend() {
-        TransactionCategoryClass myClass = getCategoryClass();
+        final TransactionCategoryClass myClass = getCategoryClass();
         return myClass != null
                && myClass.isDividend();
     }
@@ -808,7 +808,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      * @return true/false
      */
     public boolean needsNullAmount() {
-        TransactionCategoryClass myClass = getCategoryClass();
+        final TransactionCategoryClass myClass = getCategoryClass();
         return myClass != null
                && myClass.needsNullAmount();
     }
@@ -870,8 +870,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         setValueAssetPair(myPair);
 
         /* Flip details */
-        TransactionAsset myAccount = getAccount();
-        TransactionAsset myPartner = getPartner();
+        final TransactionAsset myAccount = getAccount();
+        final TransactionAsset myPartner = getPartner();
         setValueAccount(myPartner);
         setValuePartner(myAccount);
     }
@@ -916,11 +916,11 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     @Override
     public void validate() {
-        TransactionAsset myAccount = getAccount();
-        TransactionAsset myPartner = getPartner();
-        AssetDirection myDir = getDirection();
-        TethysMoney myAmount = getAmount();
-        TransactionCategory myCategory = getCategory();
+        final TransactionAsset myAccount = getAccount();
+        final TransactionAsset myPartner = getPartner();
+        final AssetDirection myDir = getDirection();
+        final TethysMoney myAmount = getAmount();
+        final TransactionCategory myCategory = getCategory();
         boolean doCheckCombo = true;
 
         /* Account must be non-null */
@@ -996,7 +996,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
             /* Check that amount is correct currency */
             if (myAccount != null) {
-                Currency myCurrency = myAccount.getCurrency();
+                final Currency myCurrency = myAccount.getCurrency();
                 if (!myAmount.getCurrency().equals(myCurrency)) {
                     addError(ERROR_CURRENCY, FIELD_AMOUNT);
                 }

@@ -62,9 +62,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -215,7 +215,7 @@ public class PortfolioTable
         super(pView.getGuiFactory());
 
         /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
@@ -235,7 +235,7 @@ public class PortfolioTable
 
         /* Create the data column model and declare it */
         theColumns = new PortfolioColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
         theColumns.setColumns();
 
@@ -325,11 +325,11 @@ public class PortfolioTable
         myTask = myTask.startTask("Portfolios");
 
         /* Get the Portfolios edit list */
-        MoneyWiseData myData = theView.getData();
-        PortfolioList myPortfolios = myData.getPortfolios();
+        final MoneyWiseData myData = theView.getData();
+        final PortfolioList myPortfolios = myData.getPortfolios();
         thePortfolios = myPortfolios.deriveEditList(theUpdateSet);
         thePortfolioEntry.setDataList(thePortfolios);
-        PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
+        final PortfolioInfoList myInfo = thePortfolios.getPortfolioInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Notify panel of refresh */
@@ -525,7 +525,7 @@ public class PortfolioTable
             /* Protect against Exceptions */
             try {
                 /* Create the new portfolio */
-                Portfolio myPortfolio = new Portfolio(thePortfolios);
+                final Portfolio myPortfolio = new Portfolio(thePortfolios);
                 myPortfolio.setDefaults(theUpdateSet);
 
                 /* Add the new item */
@@ -543,7 +543,7 @@ public class PortfolioTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);
@@ -615,22 +615,22 @@ public class PortfolioTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<PortfolioType> myTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PortfolioType.class);
-            MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<PortfolioType> myTypeEditor = theFieldMgr.allocateScrollButtonCellEditor(PortfolioType.class);
+            final MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            final MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
-            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
             myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
             myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
@@ -721,7 +721,7 @@ public class PortfolioTable
                                                  ? PrometheusAction.ACTIVE
                                                  : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
-                    Transaction myTran = pPortfolio.getLatest();
+                    final Transaction myTran = pPortfolio.getLatest();
                     return (myTran == null)
                                             ? null
                                             : myTran.getDate();
@@ -827,7 +827,7 @@ public class PortfolioTable
         private void buildTypeMenu(final Integer pRowIndex,
                                    final TethysScrollMenu<PortfolioType, Icon> pMenu) {
             /* Record active item */
-            Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildTypeMenu(pMenu, myPortfolio);
@@ -841,7 +841,7 @@ public class PortfolioTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, myPortfolio);
@@ -855,7 +855,7 @@ public class PortfolioTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myPortfolio);
@@ -867,7 +867,7 @@ public class PortfolioTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
             return myPortfolio.isClosed() || !myPortfolio.isRelevant();
         }
     }

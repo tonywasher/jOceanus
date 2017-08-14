@@ -205,10 +205,9 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * @param pStream the input stream
      * @param pType the workBookType
      * @throws OceanusException on error
-     * @throws IOException on read error
      */
     private void initialiseWorkBook(final InputStream pStream,
-                                    final MetisWorkBookType pType) throws OceanusException, IOException {
+                                    final MetisWorkBookType pType) throws OceanusException {
         /* Initialise the list */
         theSheets = new ArrayList<>();
 

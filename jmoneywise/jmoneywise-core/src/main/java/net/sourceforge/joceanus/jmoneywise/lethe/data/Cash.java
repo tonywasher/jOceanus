@@ -219,7 +219,7 @@ public class Cash
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -286,7 +286,7 @@ public class Cash
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        CashCategory myCategory = getCategory();
+        final CashCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getId();
@@ -297,7 +297,7 @@ public class Cash
      * @return the categoryName
      */
     public String getCategoryName() {
-        CashCategory myCategory = getCategory();
+        final CashCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getName();
@@ -308,7 +308,7 @@ public class Cash
      * @return the categoryClass
      */
     public CashCategoryClass getCategoryClass() {
-        CashCategory myCategory = getCategory();
+        final CashCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getCategoryTypeClass();
@@ -494,7 +494,7 @@ public class Cash
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -546,10 +546,10 @@ public class Cash
      */
     private CashCategory getDefaultCategory() {
         /* loop through the categories */
-        CashCategoryList myCategories = getDataSet().getCashCategories();
-        Iterator<CashCategory> myIterator = myCategories.iterator();
+        final CashCategoryList myCategories = getDataSet().getCashCategories();
+        final Iterator<CashCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            CashCategory myCategory = myIterator.next();
+            final CashCategory myCategory = myIterator.next();
 
             /* Ignore deleted categories */
             if (myCategory.isDeleted()) {
@@ -581,7 +581,7 @@ public class Cash
         if ((iDiff == 0)
             && (pThat instanceof Cash)) {
             /* Check the category */
-            Cash myThat = (Cash) pThat;
+            final Cash myThat = (Cash) pThat;
             iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
@@ -599,7 +599,7 @@ public class Cash
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATEGORY, myData.getCashCategories());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
     }
@@ -691,8 +691,8 @@ public class Cash
 
     @Override
     public void validate() {
-        CashCategory myCategory = getCategory();
-        AssetCurrency myCurrency = getAssetCurrency();
+        final CashCategory myCategory = getCategory();
+        final AssetCurrency myCurrency = getAssetCurrency();
 
         /* Validate base components */
         super.validate();
@@ -734,7 +734,7 @@ public class Cash
         if (!(pCash instanceof Cash)) {
             return false;
         }
-        Cash myCash = (Cash) pCash;
+        final Cash myCash = (Cash) pCash;
 
         /* Store the current detail into history */
         pushHistory();
@@ -758,8 +758,8 @@ public class Cash
 
     @Override
     public void adjustMapForItem() {
-        CashList myList = getList();
-        CashDataMap myMap = myList.getDataMap();
+        final CashList myList = getList();
+        final CashDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -776,12 +776,12 @@ public class Cash
         /**
          * The CashInfo List.
          */
-        private CashInfoList theInfoList = null;
+        private CashInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
          */
-        private AccountInfoTypeList theInfoTypeList = null;
+        private AccountInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE list.
@@ -843,7 +843,7 @@ public class Cash
 
         @Override
         protected CashList getEmptyList(final ListStyle pStyle) {
-            CashList myList = new CashList(this);
+            final CashList myList = new CashList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -855,21 +855,21 @@ public class Cash
          */
         public CashList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
             /* Build an empty List */
-            CashList myList = getEmptyList(ListStyle.EDIT);
-            DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            final CashList myList = getEmptyList(ListStyle.EDIT);
+            final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             myList.ensureMap(myDeposits);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            CashInfoList myDepInfo = getCashInfo();
+            final CashInfoList myDepInfo = getCashInfo();
             myList.theInfoList = myDepInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the cash */
-            Iterator<Cash> myIterator = iterator();
+            final Iterator<Cash> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Cash myCurr = myIterator.next();
+                final Cash myCurr = myIterator.next();
 
                 /* Ignore deleted deposits */
                 if (myCurr.isDeleted()) {
@@ -877,7 +877,7 @@ public class Cash
                 }
 
                 /* Build the new linked cash and add it to the list */
-                Cash myCash = new Cash(myList, myCurr);
+                final Cash myCash = new Cash(myList, myCurr);
                 myList.append(myCash);
             }
 
@@ -910,14 +910,14 @@ public class Cash
                 throw new UnsupportedOperationException();
             }
 
-            Cash myCash = new Cash(this, (Cash) pCash);
+            final Cash myCash = new Cash(this, (Cash) pCash);
             add(myCash);
             return myCash;
         }
 
         @Override
         public Cash addNewItem() {
-            Cash myCash = new Cash(this);
+            final Cash myCash = new Cash(this);
             add(myCash);
             return myCash;
         }
@@ -925,7 +925,7 @@ public class Cash
         @Override
         public Cash addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the deposit */
-            Cash myCash = new Cash(this, pValues);
+            final Cash myCash = new Cash(this, pValues);
 
             /* Check that this CashId has not been previously added */
             if (!isIdUnique(myCash.getId())) {
@@ -939,12 +939,12 @@ public class Cash
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myCash);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myCash);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1041,7 +1041,7 @@ public class Cash
          * @return the matching item
          */
         public Cash findItemByName(final String pName) {
-            AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Cash
                                            ? (Cash) myAsset
                                            : null;

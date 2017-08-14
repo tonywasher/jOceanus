@@ -625,7 +625,7 @@ public enum MoneyWiseDataResource implements TethysResourceId {
      */
     private static Map<AssetType, TethysResourceId> buildTypeMap() {
         /* Create the map and return it */
-        Map<AssetType, TethysResourceId> myMap = new EnumMap<>(AssetType.class);
+        final Map<AssetType, TethysResourceId> myMap = new EnumMap<>(AssetType.class);
         myMap.put(AssetType.PAYEE, ASSETTYPE_PAYEE);
         myMap.put(AssetType.SECURITY, ASSETTYPE_SECURITY);
         myMap.put(AssetType.DEPOSIT, ASSETTYPE_DEPOSIT);
@@ -652,7 +652,7 @@ public enum MoneyWiseDataResource implements TethysResourceId {
      */
     private static Map<AssetDirection, TethysResourceId> buildDirectionMap() {
         /* Create the map and return it */
-        Map<AssetDirection, TethysResourceId> myMap = new EnumMap<>(AssetDirection.class);
+        final Map<AssetDirection, TethysResourceId> myMap = new EnumMap<>(AssetDirection.class);
         myMap.put(AssetDirection.TO, ASSETDIRECTION_TO);
         myMap.put(AssetDirection.FROM, ASSETDIRECTION_FROM);
         return myMap;

@@ -132,8 +132,8 @@ public class Schedule
         super(pList, pValues);
 
         /* Access parsers */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
-        TethysDateFormatter myParser = myFormatter.getDateFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final TethysDateFormatter myParser = myFormatter.getDateFormatter();
 
         /* Protect against exceptions */
         try {
@@ -253,7 +253,7 @@ public class Schedule
      * @return true/false
      */
     public boolean hasRepeatFrequency() {
-        Frequency myFreq = getFrequency();
+        final Frequency myFreq = getFrequency();
         return myFreq != null
                && myFreq.hasRepeatFrequency();
     }
@@ -263,7 +263,7 @@ public class Schedule
      * @return true/false
      */
     public boolean hasRepeatInterval() {
-        Frequency myFreq = getFrequency();
+        final Frequency myFreq = getFrequency();
         return myFreq != null
                && myFreq.hasRepeatInterval();
     }
@@ -273,7 +273,7 @@ public class Schedule
      * @return true/false
      */
     public boolean hasPattern() {
-        Frequency myFreq = getFrequency();
+        final Frequency myFreq = getFrequency();
         return myFreq != null
                && myFreq.hasPattern();
     }
@@ -291,7 +291,7 @@ public class Schedule
      * @return the frequencyId
      */
     public Integer getFrequencyId() {
-        Frequency myFreq = getFrequency();
+        final Frequency myFreq = getFrequency();
         return (myFreq == null)
                                 ? null
                                 : myFreq.getId();
@@ -312,7 +312,7 @@ public class Schedule
      * @return the repeat frequencyId
      */
     public Integer getRepeatFrequencyId() {
-        Frequency myFreq = getRepeatFrequency();
+        final Frequency myFreq = getRepeatFrequency();
         return (myFreq == null)
                                 ? getRepeatInterval()
                                 : myFreq.getId();
@@ -341,7 +341,7 @@ public class Schedule
      * @return the frequencyId
      */
     public Integer getPatternValue() {
-        SchedulePattern myPattern = getPattern();
+        final SchedulePattern myPattern = getPattern();
         return (myPattern == null)
                                    ? null
                                    : myPattern.getPatternValue();
@@ -570,10 +570,10 @@ public class Schedule
         super.resolveDataSetLinks();
 
         /* Access data */
-        MoneyWiseData myData = getDataSet();
-        MetisDataFormatter myFormatter = myData.getDataFormatter();
-        FrequencyList myFreqs = myData.getFrequencys();
-        MetisValueSet myValues = getValueSet();
+        final MoneyWiseData myData = getDataSet();
+        final MetisDataFormatter myFormatter = myData.getDataFormatter();
+        final FrequencyList myFreqs = myData.getFrequencys();
+        final MetisValueSet myValues = getValueSet();
 
         /* Resolve dataLinks */
         resolveDataLink(FIELD_FREQ, myFreqs);
@@ -582,22 +582,22 @@ public class Schedule
 
             /* resolve repeat interval */
         } else if (hasRepeatInterval()) {
-            Object myValue = myValues.getValue(FIELD_REPFREQ);
+            final Object myValue = myValues.getValue(FIELD_REPFREQ);
             if (myValue instanceof String) {
-                Integer myInt = myFormatter.parseValue((String) myValue, Integer.class);
+                final Integer myInt = myFormatter.parseValue((String) myValue, Integer.class);
                 setValueRepeatInterval(myInt);
             }
         }
 
         /* Resolve Pattern */
-        Object myValue = myValues.getValue(FIELD_PATTERN);
+        final Object myValue = myValues.getValue(FIELD_PATTERN);
         if (myValue instanceof Integer) {
             /* Store pattern */
-            SchedulePattern myPattern = SchedulePattern.allocatePattern(getFrequency(), (Integer) myValue);
+            final SchedulePattern myPattern = SchedulePattern.allocatePattern(getFrequency(), (Integer) myValue);
             setValuePattern(myPattern);
         } else if (myValue instanceof String) {
             /* Store pattern */
-            SchedulePattern myPattern = SchedulePattern.parsePattern(getFrequency(), (String) myValue);
+            final SchedulePattern myPattern = SchedulePattern.parsePattern(getFrequency(), (String) myValue);
             setValuePattern(myPattern);
         }
     }
@@ -605,10 +605,10 @@ public class Schedule
     @Override
     public void validate() {
         /* Access data */
-        TethysDate myStart = getStartDate();
-        TethysDate myEnd = getEndDate();
-        TethysDate myNext = getNextDate();
-        Frequency myFrequency = getFrequency();
+        final TethysDate myStart = getStartDate();
+        final TethysDate myEnd = getEndDate();
+        final TethysDate myNext = getNextDate();
+        final Frequency myFrequency = getFrequency();
 
         /* Check that startDate is non-null */
         if (myStart == null) {
@@ -649,7 +649,7 @@ public class Schedule
         /* If we have a repeat frequency */
         if (hasRepeatFrequency()) {
             /* Check that frequency is non-null, enabled and relevant */
-            Frequency myRepeat = getRepeatFrequency();
+            final Frequency myRepeat = getRepeatFrequency();
             if (myRepeat == null) {
                 addError(ERROR_MISSING, FIELD_REPFREQ);
             } else if (!myRepeat.getEnabled()) {
@@ -661,7 +661,7 @@ public class Schedule
             /* else if we have a repeat interval */
         } else if (hasRepeatInterval()) {
             /* Check that interval is non-null, nonZero and positive */
-            Integer myInterval = getRepeatInterval();
+            final Integer myInterval = getRepeatInterval();
             if (myInterval == null) {
                 addError(ERROR_MISSING, FIELD_REPFREQ);
             } else if (myInterval < 0) {
@@ -674,7 +674,7 @@ public class Schedule
         }
 
         /* If we have a repeat frequency */
-        SchedulePattern myPattern = getPattern();
+        final SchedulePattern myPattern = getPattern();
         if (hasPattern()) {
             if (myPattern == null) {
                 addError(ERROR_MISSING, FIELD_PATTERN);
@@ -756,8 +756,7 @@ public class Schedule
         if (!(pSchedule instanceof Schedule)) {
             return false;
         }
-
-        Schedule mySchedule = (Schedule) pSchedule;
+        final Schedule mySchedule = (Schedule) pSchedule;
 
         /* Store the current detail into history */
         pushHistory();
@@ -849,7 +848,7 @@ public class Schedule
 
         @Override
         protected ScheduleList getEmptyList(final ListStyle pStyle) {
-            ScheduleList myList = new ScheduleList(this);
+            final ScheduleList myList = new ScheduleList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -860,15 +859,15 @@ public class Schedule
          */
         public ScheduleList deriveEditList() {
             /* Build an empty Update */
-            ScheduleList myList = getEmptyList(ListStyle.EDIT);
+            final ScheduleList myList = getEmptyList(ListStyle.EDIT);
 
             /* Loop through the Schedule */
-            Iterator<Schedule> myIterator = listIterator();
+            final Iterator<Schedule> myIterator = listIterator();
             while (myIterator.hasNext()) {
-                Schedule myCurr = myIterator.next();
+                final Schedule myCurr = myIterator.next();
 
                 /* Copy the item */
-                Schedule myItem = new Schedule(myList, myCurr);
+                final Schedule myItem = new Schedule(myList, myCurr);
                 myList.append(myItem);
             }
 
@@ -891,7 +890,7 @@ public class Schedule
                 throw new UnsupportedOperationException();
             }
 
-            Schedule mySchedule = new Schedule(this, (Schedule) pSchedule);
+            final Schedule mySchedule = new Schedule(this, (Schedule) pSchedule);
             add(mySchedule);
             return mySchedule;
         }
@@ -899,7 +898,7 @@ public class Schedule
         @Override
         public Schedule addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the schedule */
-            Schedule mySchedule = new Schedule(this, pValues);
+            final Schedule mySchedule = new Schedule(this, pValues);
 
             /* Check that this ScheduleId has not been previously added */
             if (!isIdUnique(mySchedule.getId())) {
@@ -923,7 +922,7 @@ public class Schedule
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
-            resolveDataSetLinks();
+            super.resolveDataSetLinks();
             reSort();
 
             /* Validate the schedules */

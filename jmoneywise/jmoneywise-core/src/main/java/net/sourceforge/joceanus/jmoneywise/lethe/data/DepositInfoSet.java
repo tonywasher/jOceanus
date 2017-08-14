@@ -85,7 +85,7 @@ public class DepositInfoSet
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -101,7 +101,7 @@ public class DepositInfoSet
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
         /* Return the value */
-        Object myValue = getField(pInfoClass);
+        final Object myValue = getField(pInfoClass);
         return (myValue != null)
                                  ? myValue
                                  : MetisFieldValue.SKIP;
@@ -142,7 +142,7 @@ public class DepositInfoSet
      * @return the status
      */
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED
                                : isClassRequired(myClass);
@@ -151,14 +151,14 @@ public class DepositInfoSet
     @Override
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Deposit */
-        Deposit myDeposit = getOwner();
-        DepositCategory myCategory = myDeposit.getCategory();
+        final Deposit myDeposit = getOwner();
+        final DepositCategory myCategory = myDeposit.getCategory();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
-        DepositCategoryClass myClass = myCategory.getCategoryTypeClass();
+        final DepositCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
         switch (pClass) {
@@ -197,16 +197,16 @@ public class DepositInfoSet
      */
     protected void validate() {
         /* Access details about the Deposit */
-        Deposit myDeposit = getOwner();
+        final Deposit myDeposit = getOwner();
 
         /* Loop through the classes */
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             /* Access info for class */
-            DepositInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+            final DepositInfo myInfo = getInfo(myClass);
+            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            MetisFieldRequired myState = isClassRequired(myClass);
+            final MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
@@ -227,7 +227,7 @@ public class DepositInfoSet
             switch (myClass) {
                 case OPENINGBALANCE:
                     /* Access data */
-                    TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
+                    final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
                     if (!myBalance.getCurrency().equals(myDeposit.getCurrency())) {
                         myDeposit.addError(ERROR_CURRENCY, getFieldForClass(myClass));
                     }
@@ -237,7 +237,7 @@ public class DepositInfoSet
                 case NOTES:
                 case REFERENCE:
                     /* Access data */
-                    char[] myArray = myInfo.getValue(char[].class);
+                    final char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         myDeposit.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }

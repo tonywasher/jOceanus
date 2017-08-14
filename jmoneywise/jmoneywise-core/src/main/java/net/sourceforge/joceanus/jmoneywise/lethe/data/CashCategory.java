@@ -86,7 +86,7 @@ public class CashCategory
         super(pList, pValues);
 
         /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        final Object myValue = pValues.getValue(FIELD_CATTYPE);
         if (myValue instanceof Integer) {
             setValueType((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -125,7 +125,7 @@ public class CashCategory
 
     @Override
     public CashCategoryClass getCategoryTypeClass() {
-        CashCategoryType myType = getCategoryType();
+        final CashCategoryType myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getCashClass();
@@ -200,7 +200,7 @@ public class CashCategory
      */
     public void setDefaults(final CashCategory pParent) throws OceanusException {
         /* Set values */
-        CashCategoryTypeList myTypes = getDataSet().getCashCategoryTypes();
+        final CashCategoryTypeList myTypes = getDataSet().getCashCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
                                                                 ? CashCategoryClass.PARENT
                                                                 : CashCategoryClass.CASH));
@@ -214,7 +214,7 @@ public class CashCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATTYPE, myData.getCashCategoryTypes());
     }
 
@@ -235,15 +235,15 @@ public class CashCategory
         super.validate();
 
         /* Access details */
-        CashCategoryType myCatType = getCategoryType();
-        CashCategory myParent = getParentCategory();
+        final CashCategoryType myCatType = getCategoryType();
+        final CashCategory myParent = getParentCategory();
 
         /* CashCategoryType must be non-null */
         if (myCatType == null) {
             addError(ERROR_MISSING, FIELD_CATTYPE);
         } else {
             /* Access the class */
-            CashCategoryClass myClass = myCatType.getCashClass();
+            final CashCategoryClass myClass = myCatType.getCashClass();
 
             /* CashCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
@@ -265,10 +265,10 @@ public class CashCategory
                     } else if (!myParent.isCategoryClass(CashCategoryClass.PARENT)) {
                         addError(ERROR_BADPARENT, FIELD_PARENT);
                     } else {
-                        String myName = getName();
+                        final String myName = getName();
 
                         /* Check validity of parent */
-                        CashCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                        final CashCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (myParentClass != CashCategoryClass.PARENT) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
@@ -298,7 +298,7 @@ public class CashCategory
         if (!(pCategory instanceof CashCategory)) {
             return false;
         }
-        CashCategory myCategory = (CashCategory) pCategory;
+        final CashCategory myCategory = (CashCategory) pCategory;
 
         /* Store the current detail into history */
         pushHistory();
@@ -358,7 +358,7 @@ public class CashCategory
 
         @Override
         protected CashCategoryList getEmptyList(final ListStyle pStyle) {
-            CashCategoryList myList = new CashCategoryList(this);
+            final CashCategoryList myList = new CashCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -369,13 +369,13 @@ public class CashCategory
          */
         public CashCategoryList deriveEditList() {
             /* Build an empty List */
-            CashCategoryList myList = getEmptyList(ListStyle.EDIT);
+            final CashCategoryList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the categories */
-            Iterator<CashCategory> myIterator = iterator();
+            final Iterator<CashCategory> myIterator = iterator();
             while (myIterator.hasNext()) {
-                CashCategory myCurr = myIterator.next();
+                final CashCategory myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
@@ -383,7 +383,7 @@ public class CashCategory
                 }
 
                 /* Build the new linked cash category and add it to the list */
-                CashCategory myCategory = new CashCategory(myList, myCurr);
+                final CashCategory myCategory = new CashCategory(myList, myCurr);
                 myList.append(myCategory);
 
                 /* Adjust the map */
@@ -406,7 +406,7 @@ public class CashCategory
                 throw new UnsupportedOperationException();
             }
 
-            CashCategory myCategory = new CashCategory(this, (CashCategory) pCategory);
+            final CashCategory myCategory = new CashCategory(this, (CashCategory) pCategory);
             add(myCategory);
             return myCategory;
         }
@@ -417,7 +417,7 @@ public class CashCategory
          */
         @Override
         public CashCategory addNewItem() {
-            CashCategory myCategory = new CashCategory(this);
+            final CashCategory myCategory = new CashCategory(this);
             add(myCategory);
             return myCategory;
         }
@@ -425,7 +425,7 @@ public class CashCategory
         @Override
         public CashCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
-            CashCategory myCategory = new CashCategory(this, pValues);
+            final CashCategory myCategory = new CashCategory(this, pValues);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {

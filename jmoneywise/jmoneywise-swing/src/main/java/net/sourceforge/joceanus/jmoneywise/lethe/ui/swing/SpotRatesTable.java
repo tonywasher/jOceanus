@@ -56,8 +56,8 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
@@ -195,8 +195,8 @@ public class SpotRatesTable
         setUpdateSet(theUpdateSet);
 
         /* Create the top level viewer entry for this view */
-        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
-        MetisViewerManager myViewer = theView.getViewerManager();
+        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        final MetisViewerManager myViewer = theView.getViewerManager();
         theViewerPrice = myViewer.newEntry(mySection, NLS_DATAENTRY);
         theViewerPrice.setTreeObject(theUpdateSet);
 
@@ -206,7 +206,7 @@ public class SpotRatesTable
 
         /* Create the data column model and declare it */
         theColumns = new SpotViewColumnModel();
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -217,7 +217,7 @@ public class SpotRatesTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the sub panels */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theSelect = new MoneyWiseSpotRatesSelect<>(myFactory, theView);
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
@@ -225,7 +225,7 @@ public class SpotRatesTable
         theError = theView.getToolkit().newErrorPanel(theViewerPrice);
 
         /* Create the header panel */
-        JPanel myHeader = new TethysSwingEnablePanel();
+        final JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
         myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
@@ -299,7 +299,7 @@ public class SpotRatesTable
     @Override
     public void notifyChanges() {
         /* Determine whether we have updates */
-        boolean hasUpdates = hasUpdates();
+        final boolean hasUpdates = hasUpdates();
 
         /* Update the table buttons */
         theActionButtons.setEnabled(true);
@@ -375,7 +375,7 @@ public class SpotRatesTable
      */
     private void handleErrorPane() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelect.setVisible(!isError);
@@ -407,7 +407,7 @@ public class SpotRatesTable
      */
     private void handleNewSelection() {
         /* Access selection */
-        TethysDate myDate = theSelect.getDate();
+        final TethysDate myDate = theSelect.getDate();
 
         /* If the selection differs */
         if (!MetisDifference.isEqual(theDate, myDate)) {
@@ -553,15 +553,15 @@ public class SpotRatesTable
             super(SpotRatesTable.this);
 
             /* Create the relevant formatters/editors */
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            MetisFieldRatioCellEditor myRatioEditor = theFieldMgr.allocateRatioCellEditor();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            final MetisFieldRatioCellEditor myRatioEditor = theFieldMgr.allocateRatioCellEditor();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 

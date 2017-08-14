@@ -95,7 +95,7 @@ public final class TransactionCategory
         super(pList, pValues);
 
         /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        final Object myValue = pValues.getValue(FIELD_CATTYPE);
         if (myValue instanceof Integer) {
             setValueType((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -139,7 +139,7 @@ public final class TransactionCategory
 
     @Override
     public TransactionCategoryClass getCategoryTypeClass() {
-        TransactionCategoryType myType = getCategoryType();
+        final TransactionCategoryType myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getCategoryClass();
@@ -213,7 +213,7 @@ public final class TransactionCategory
      */
     public boolean isTransfer() {
         /* Check for match */
-        TransactionCategoryClass myClass = getCategoryTypeClass();
+        final TransactionCategoryClass myClass = getCategoryTypeClass();
         return myClass != null
                && myClass.isTransfer();
     }
@@ -225,9 +225,9 @@ public final class TransactionCategory
      */
     public void setDefaults(final TransactionCategory pParent) throws OceanusException {
         /* Set values */
-        TransactionCategoryTypeList myTypes = getDataSet().getTransCategoryTypes();
-        TransactionCategoryClass myParentClass = pParent.getCategoryTypeClass();
-        TransactionCategoryClass myNewClass;
+        final TransactionCategoryTypeList myTypes = getDataSet().getTransCategoryTypes();
+        final TransactionCategoryClass myParentClass = pParent.getCategoryTypeClass();
+        final TransactionCategoryClass myNewClass;
         if (myParentClass.isTotals()) {
             myNewClass = TransactionCategoryClass.EXPENSETOTALS;
         } else if (myParentClass.isIncome()) {
@@ -253,7 +253,7 @@ public final class TransactionCategory
         }
 
         /* Compare the hidden attribute */
-        boolean isHidden = isHidden();
+        final boolean isHidden = isHidden();
         if (isHidden != pThat.isHidden()) {
             return isHidden
                             ? 1
@@ -270,7 +270,7 @@ public final class TransactionCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATTYPE, myData.getTransCategoryTypes());
     }
 
@@ -291,17 +291,17 @@ public final class TransactionCategory
         super.validate();
 
         /* Access details */
-        TransactionCategoryList myList = getList();
-        TransactionCategoryType myCatType = getCategoryType();
-        TransactionCategory myParent = getParentCategory();
-        String myName = getName();
+        final TransactionCategoryList myList = getList();
+        final TransactionCategoryType myCatType = getCategoryType();
+        final TransactionCategory myParent = getParentCategory();
+        final String myName = getName();
 
         /* EventCategoryType must be non-null */
         if (myCatType == null) {
             addError(ERROR_MISSING, FIELD_CATTYPE);
         } else {
             /* Access the class */
-            TransactionCategoryClass myClass = myCatType.getCategoryClass();
+            final TransactionCategoryClass myClass = myCatType.getCategoryClass();
 
             /* EventCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
@@ -311,7 +311,7 @@ public final class TransactionCategory
             /* If the CategoryType is singular */
             if (myClass.isSingular()) {
                 /* Count the elements of this class */
-                TransCategoryDataMap myMap = myList.getDataMap();
+                final TransCategoryDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
                     addError(ERROR_MULT, FIELD_CATTYPE);
                 }
@@ -337,8 +337,8 @@ public final class TransactionCategory
                     break;
                 default:
                     /* Check parent requirement */
-                    boolean isTransfer = myClass == TransactionCategoryClass.TRANSFER;
-                    boolean hasParent = myParent != null;
+                    final boolean isTransfer = myClass == TransactionCategoryClass.TRANSFER;
+                    final boolean hasParent = myParent != null;
                     if (hasParent == isTransfer) {
                         if (isTransfer) {
                             addError(ERROR_EXIST, FIELD_PARENT);
@@ -347,7 +347,7 @@ public final class TransactionCategory
                         }
                     } else if (hasParent) {
                         /* Check validity of parent */
-                        TransactionCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                        final TransactionCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (!myParentClass.canParentCategory()) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
@@ -382,7 +382,7 @@ public final class TransactionCategory
         if (!(pCategory instanceof TransactionCategory)) {
             return false;
         }
-        TransactionCategory myCategory = (TransactionCategory) pCategory;
+        final TransactionCategory myCategory = (TransactionCategory) pCategory;
 
         /* Store the current detail into history */
         pushHistory();
@@ -404,7 +404,7 @@ public final class TransactionCategory
      * @return true/false
      */
     public boolean isHidden() {
-        TransactionCategoryClass myClass = this.getCategoryTypeClass();
+        final TransactionCategoryClass myClass = this.getCategoryTypeClass();
         return myClass != null
                && myClass.isHiddenType();
     }
@@ -457,7 +457,7 @@ public final class TransactionCategory
 
         @Override
         protected TransactionCategoryList getEmptyList(final ListStyle pStyle) {
-            TransactionCategoryList myList = new TransactionCategoryList(this);
+            final TransactionCategoryList myList = new TransactionCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -468,13 +468,13 @@ public final class TransactionCategory
          */
         public TransactionCategoryList deriveEditList() {
             /* Build an empty List */
-            TransactionCategoryList myList = getEmptyList(ListStyle.EDIT);
+            final TransactionCategoryList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the categories */
-            Iterator<TransactionCategory> myIterator = iterator();
+            final Iterator<TransactionCategory> myIterator = iterator();
             while (myIterator.hasNext()) {
-                TransactionCategory myCurr = myIterator.next();
+                final TransactionCategory myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
@@ -482,7 +482,7 @@ public final class TransactionCategory
                 }
 
                 /* Build the new linked category and add it to the list */
-                TransactionCategory myCategory = new TransactionCategory(myList, myCurr);
+                final TransactionCategory myCategory = new TransactionCategory(myList, myCurr);
                 myList.append(myCategory);
 
                 /* Adjust the map */
@@ -505,7 +505,7 @@ public final class TransactionCategory
                 throw new UnsupportedOperationException();
             }
 
-            TransactionCategory myCategory = new TransactionCategory(this, (TransactionCategory) pCategory);
+            final TransactionCategory myCategory = new TransactionCategory(this, (TransactionCategory) pCategory);
             add(myCategory);
             return myCategory;
         }
@@ -516,7 +516,7 @@ public final class TransactionCategory
          */
         @Override
         public TransactionCategory addNewItem() {
-            TransactionCategory myCategory = new TransactionCategory(this);
+            final TransactionCategory myCategory = new TransactionCategory(this);
             add(myCategory);
             return myCategory;
         }
@@ -555,7 +555,7 @@ public final class TransactionCategory
         @Override
         public TransactionCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
-            TransactionCategory myCategory = new TransactionCategory(this, pValues);
+            final TransactionCategory myCategory = new TransactionCategory(this, pValues);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
@@ -649,11 +649,11 @@ public final class TransactionCategory
         @Override
         public void adjustForItem(final TransactionCategory pItem) {
             /* If the class is singular */
-            TransactionCategoryClass myClass = pItem.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = pItem.getCategoryTypeClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
-                Integer myId = myClass.getClassId();
-                Integer myCount = theCategoryCountMap.get(myId);
+                final Integer myId = myClass.getClassId();
+                final Integer myCount = theCategoryCountMap.get(myId);
                 if (myCount == null) {
                     theCategoryCountMap.put(myId, ONE);
                 } else {
@@ -683,7 +683,7 @@ public final class TransactionCategory
          * @return true/false
          */
         public boolean validSingularCount(final TransactionCategoryClass pClass) {
-            Integer myResult = theCategoryCountMap.get(pClass.getClassId());
+            final Integer myResult = theCategoryCountMap.get(pClass.getClassId());
             return ONE.equals(myResult);
         }
     }

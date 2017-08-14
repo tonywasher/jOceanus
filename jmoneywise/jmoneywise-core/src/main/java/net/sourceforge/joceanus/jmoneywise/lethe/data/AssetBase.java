@@ -150,7 +150,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         super(pList, pAsset);
 
         /* If we are creating an edit copy from core */
-        ListStyle myBaseStyle = pAsset.getList().getStyle();
+        final ListStyle myBaseStyle = pAsset.getList().getStyle();
         if ((pList.getStyle() == ListStyle.EDIT)
             && (myBaseStyle == ListStyle.CORE)) {
             /* Update underlying flags */
@@ -173,7 +173,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         super(pList, pValues);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -285,7 +285,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @return the currencyId
      */
     public Integer getAssetCurrencyId() {
-        AssetCurrency myCurrency = getAssetCurrency();
+        final AssetCurrency myCurrency = getAssetCurrency();
         return (myCurrency == null)
                                     ? null
                                     : myCurrency.getId();
@@ -296,7 +296,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      * @return the currencyName
      */
     public String getAssetCurrencyName() {
-        AssetCurrency myCurrency = getAssetCurrency();
+        final AssetCurrency myCurrency = getAssetCurrency();
         return (myCurrency == null)
                                     ? null
                                     : myCurrency.getName();
@@ -614,9 +614,9 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public void adjustClosed() throws OceanusException {
         /* Access latest activity date */
-        TethysDate myCloseDate = (theLatest == null)
-                                                     ? null
-                                                     : theLatest.getDate();
+        final TethysDate myCloseDate = (theLatest == null)
+                                                           ? null
+                                                           : theLatest.getDate();
 
         /* Store the close date */
         theCloseDate = myCloseDate;
@@ -639,7 +639,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         /* If we are being touched by a transaction */
         if (pSource instanceof Transaction) {
             /* Access as transaction */
-            Transaction myTrans = (Transaction) pSource;
+            final Transaction myTrans = (Transaction) pSource;
 
             /* Record the transaction */
             if (theEarliest == null) {
@@ -654,7 +654,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
             }
 
             /* Touch parent if it exists */
-            AssetBase<?> myParent = getParent();
+            final AssetBase<?> myParent = getParent();
             if (myParent != null) {
                 myParent.touchItem(pSource);
             }
@@ -663,7 +663,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         /* If we are being touched by an asset */
         if (pSource instanceof AssetBase) {
             /* Access as assetBase */
-            AssetBase<?> myAsset = (AssetBase<?>) pSource;
+            final AssetBase<?> myAsset = (AssetBase<?>) pSource;
 
             /* Mark as relevant if child is open */
             if (!myAsset.isClosed()) {
@@ -691,7 +691,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         }
 
         /* Access as AssetBase */
-        AssetBase<?> myThat = (AssetBase<?>) pThat;
+        final AssetBase<?> myThat = (AssetBase<?>) pThat;
 
         /* Check data type */
         return getItemType().ordinal() - myThat.getItemType().ordinal();
@@ -704,7 +704,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected int compareAsset(final T pThat) {
         /* Check the names */
-        int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        final int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -719,10 +719,10 @@ public abstract class AssetBase<T extends AssetBase<T>>
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MetisValueSet myValues = getValueSet();
+        final MetisValueSet myValues = getValueSet();
 
         /* Adjust Closed */
-        Object myClosed = myValues.getValue(FIELD_CLOSED);
+        final Object myClosed = myValues.getValue(FIELD_CLOSED);
         if (myClosed == null) {
             setValueClosed(Boolean.FALSE);
         }
@@ -765,8 +765,8 @@ public abstract class AssetBase<T extends AssetBase<T>>
 
     @Override
     public void validate() {
-        String myName = getName();
-        String myDesc = getDesc();
+        final String myName = getName();
+        final String myDesc = getDesc();
 
         /* Name must be non-null */
         if (myName == null) {
@@ -790,7 +790,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected void validateName(final String pName) {
         /* Access the list */
-        AssetBaseList<T> myList = getList();
+        final AssetBaseList<T> myList = getList();
 
         /* The name must not be too long */
         if (pName.length() > NAMELEN) {
@@ -897,7 +897,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
-            resolveDataSetLinks();
+            super.resolveDataSetLinks();
             reSort();
 
             /* Map the data */

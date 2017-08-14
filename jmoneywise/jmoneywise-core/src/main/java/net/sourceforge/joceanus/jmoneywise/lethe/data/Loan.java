@@ -236,7 +236,7 @@ public class Loan
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -310,7 +310,7 @@ public class Loan
      * @return the parentId
      */
     public Integer getParentId() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getId();
@@ -321,7 +321,7 @@ public class Loan
      * @return the parentName
      */
     public String getParentName() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getName();
@@ -340,7 +340,7 @@ public class Loan
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        LoanCategory myCategory = getCategory();
+        final LoanCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getId();
@@ -351,7 +351,7 @@ public class Loan
      * @return the categoryName
      */
     public String getCategoryName() {
-        LoanCategory myCategory = getCategory();
+        final LoanCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getName();
@@ -362,7 +362,7 @@ public class Loan
      * @return the actCategoryClass
      */
     public LoanCategoryClass getCategoryClass() {
-        LoanCategory myCategory = getCategory();
+        final LoanCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getCategoryTypeClass();
@@ -569,7 +569,7 @@ public class Loan
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -622,8 +622,8 @@ public class Loan
      */
     public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Access category class and parent */
-        LoanCategoryClass myClass = getCategoryClass();
-        Payee myParent = getParent();
+        final LoanCategoryClass myClass = getCategoryClass();
+        final Payee myParent = getParent();
 
         /* Ensure that we have valid parent */
         if ((myParent == null)
@@ -638,10 +638,10 @@ public class Loan
      */
     public LoanCategory getDefaultCategory() {
         /* loop through the categories */
-        LoanCategoryList myCategories = getDataSet().getLoanCategories();
-        Iterator<LoanCategory> myIterator = myCategories.iterator();
+        final LoanCategoryList myCategories = getDataSet().getLoanCategories();
+        final Iterator<LoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            LoanCategory myCategory = myIterator.next();
+            final LoanCategory myCategory = myIterator.next();
 
             /* Ignore deleted categories */
             if (myCategory.isDeleted()) {
@@ -665,13 +665,13 @@ public class Loan
      */
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access details */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        LoanCategoryClass myClass = getCategoryClass();
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final LoanCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
             if (myPayee.isDeleted() || myPayee.isClosed()) {
@@ -703,7 +703,7 @@ public class Loan
         if ((iDiff == 0)
             && (pThat instanceof Loan)) {
             /* Check the category */
-            Loan myThat = (Loan) pThat;
+            final Loan myThat = (Loan) pThat;
             iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
@@ -721,7 +721,7 @@ public class Loan
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATEGORY, myData.getLoanCategories());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
@@ -730,7 +730,7 @@ public class Loan
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 
@@ -842,10 +842,10 @@ public class Loan
 
     @Override
     public void validate() {
-        Payee myParent = getParent();
-        LoanCategory myCategory = getCategory();
-        AssetCurrency myCurrency = getAssetCurrency();
-        LoanCategoryClass myClass = getCategoryClass();
+        final Payee myParent = getParent();
+        final LoanCategory myCategory = getCategory();
+        final AssetCurrency myCurrency = getAssetCurrency();
+        final LoanCategoryClass myClass = getCategoryClass();
 
         /* Validate base components */
         super.validate();
@@ -906,7 +906,7 @@ public class Loan
         if (!(pLoan instanceof Loan)) {
             return false;
         }
-        Loan myLoan = (Loan) pLoan;
+        final Loan myLoan = (Loan) pLoan;
 
         /* Store the current detail into history */
         pushHistory();
@@ -935,8 +935,8 @@ public class Loan
 
     @Override
     public void adjustMapForItem() {
-        LoanList myList = getList();
-        LoanDataMap myMap = myList.getDataMap();
+        final LoanList myList = getList();
+        final LoanDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -953,12 +953,12 @@ public class Loan
         /**
          * The LoanInfo List.
          */
-        private LoanInfoList theInfoList = null;
+        private LoanInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
          */
-        private AccountInfoTypeList theInfoTypeList = null;
+        private AccountInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE list.
@@ -1020,7 +1020,7 @@ public class Loan
 
         @Override
         protected LoanList getEmptyList(final ListStyle pStyle) {
-            LoanList myList = new LoanList(this);
+            final LoanList myList = new LoanList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -1033,21 +1033,21 @@ public class Loan
          */
         public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
-            LoanList myList = getEmptyList(ListStyle.EDIT);
-            DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+            final LoanList myList = getEmptyList(ListStyle.EDIT);
+            final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
             myList.ensureMap(myDeposits);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            LoanInfoList myDepInfo = getLoanInfo();
+            final LoanInfoList myDepInfo = getLoanInfo();
             myList.theInfoList = myDepInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the loans */
-            Iterator<Loan> myIterator = iterator();
+            final Iterator<Loan> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Loan myCurr = myIterator.next();
+                final Loan myCurr = myIterator.next();
 
                 /* Ignore deleted deposits */
                 if (myCurr.isDeleted()) {
@@ -1055,7 +1055,7 @@ public class Loan
                 }
 
                 /* Build the new linked loan and add it to the list */
-                Loan myLoan = new Loan(myList, myCurr);
+                final Loan myLoan = new Loan(myList, myCurr);
                 myLoan.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myLoan);
 
@@ -1092,14 +1092,14 @@ public class Loan
                 throw new UnsupportedOperationException();
             }
 
-            Loan myLoan = new Loan(this, (Loan) pLoan);
+            final Loan myLoan = new Loan(this, (Loan) pLoan);
             add(myLoan);
             return myLoan;
         }
 
         @Override
         public Loan addNewItem() {
-            Loan myLoan = new Loan(this);
+            final Loan myLoan = new Loan(this);
             add(myLoan);
             return myLoan;
         }
@@ -1107,7 +1107,7 @@ public class Loan
         @Override
         public Loan addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the loan */
-            Loan myLoan = new Loan(this, pValues);
+            final Loan myLoan = new Loan(this, pValues);
 
             /* Check that this LoanId has not been previously added */
             if (!isIdUnique(myLoan.getId())) {
@@ -1121,12 +1121,12 @@ public class Loan
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myLoan);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myLoan);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1223,7 +1223,7 @@ public class Loan
          * @return the matching item
          */
         public Loan findItemByName(final String pName) {
-            AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Loan
                                            ? (Loan) myAsset
                                            : null;

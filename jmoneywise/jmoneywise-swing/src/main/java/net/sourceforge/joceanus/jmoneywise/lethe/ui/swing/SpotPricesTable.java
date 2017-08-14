@@ -199,8 +199,8 @@ public class SpotPricesTable
         setUpdateSet(theUpdateSet);
 
         /* Create the top level viewer entry for this view */
-        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
-        MetisViewerManager myViewer = theView.getViewerManager();
+        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        final MetisViewerManager myViewer = theView.getViewerManager();
         theViewerPrice = myViewer.newEntry(mySection, NLS_DATAENTRY);
         theViewerPrice.setTreeObject(theUpdateSet);
 
@@ -210,7 +210,7 @@ public class SpotPricesTable
 
         /* Create the data column model and declare it */
         theColumns = new SpotViewColumnModel();
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -221,7 +221,7 @@ public class SpotPricesTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the sub panels */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theSelect = new MoneyWiseSpotPricesSelect<>(myFactory, theView);
         theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
 
@@ -229,7 +229,7 @@ public class SpotPricesTable
         theError = theView.getToolkit().newErrorPanel(theViewerPrice);
 
         /* Create the header panel */
-        JPanel myHeader = new TethysSwingEnablePanel();
+        final JPanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
         myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
         myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
@@ -303,7 +303,7 @@ public class SpotPricesTable
     @Override
     public void notifyChanges() {
         /* Determine whether we have updates */
-        boolean hasUpdates = hasUpdates();
+        final boolean hasUpdates = hasUpdates();
 
         /* Update the table buttons */
         theActionButtons.setEnabled(true);
@@ -382,7 +382,7 @@ public class SpotPricesTable
      */
     private void handleErrorPane() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelect.setVisible(!isError);
@@ -417,8 +417,8 @@ public class SpotPricesTable
         setShowAll(theSelect.getShowClosed());
 
         /* Access selection */
-        Portfolio myPortfolio = theSelect.getPortfolio();
-        TethysDate myDate = theSelect.getDate();
+        final Portfolio myPortfolio = theSelect.getPortfolio();
+        final TethysDate myDate = theSelect.getDate();
 
         /* If the selection differs */
         if (!MetisDifference.isEqual(theDate, myDate) || !MetisDifference.isEqual(thePortfolio, myPortfolio)) {
@@ -559,15 +559,15 @@ public class SpotPricesTable
             super(SpotPricesTable.this);
 
             /* Create the relevant formatters/editors */
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            MetisFieldPriceCellEditor myPriceEditor = theFieldMgr.allocatePriceCellEditor();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            final MetisFieldPriceCellEditor myPriceEditor = theFieldMgr.allocatePriceCellEditor();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -704,9 +704,9 @@ public class SpotPricesTable
          */
         private Currency determineCurrency(final Integer pRowIndex) {
             /* Update to allow correct currency */
-            SpotSecurityPrice myPrice = thePrices.get(pRowIndex);
-            Security mySecurity = myPrice.getSecurity();
-            AssetCurrency myCurrency = mySecurity.getAssetCurrency();
+            final SpotSecurityPrice myPrice = thePrices.get(pRowIndex);
+            final Security mySecurity = myPrice.getSecurity();
+            final AssetCurrency myCurrency = mySecurity.getAssetCurrency();
             return myCurrency.getCurrency();
         }
     }

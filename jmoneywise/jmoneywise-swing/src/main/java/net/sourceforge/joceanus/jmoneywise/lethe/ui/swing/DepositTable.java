@@ -64,9 +64,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -222,7 +222,7 @@ public class DepositTable
         super(pView.getGuiFactory());
 
         /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
 
         /* Record the passed details */
         theView = pView;
@@ -243,7 +243,7 @@ public class DepositTable
 
         /* Create the data column model and declare it */
         theColumns = new DepositColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -332,13 +332,13 @@ public class DepositTable
         myTask = myTask.startTask("Deposits");
 
         /* Access the various lists */
-        MoneyWiseData myData = theView.getData();
+        final MoneyWiseData myData = theView.getData();
 
         /* Get the Deposits edit list */
-        DepositList myDeposits = myData.getDeposits();
+        final DepositList myDeposits = myData.getDeposits();
         theDeposits = myDeposits.deriveEditList(theUpdateSet);
         theDepositEntry.setDataList(theDeposits);
-        DepositInfoList myInfo = theDeposits.getDepositInfo();
+        final DepositInfoList myInfo = theDeposits.getDepositInfo();
         theInfoEntry.setDataList(myInfo);
 
         /* Get the Deposit rates list */
@@ -539,7 +539,7 @@ public class DepositTable
             /* Protect against Exceptions */
             try {
                 /* Create the new deposit */
-                Deposit myDeposit = new Deposit(theDeposits);
+                final Deposit myDeposit = new Deposit(theDeposits);
                 myDeposit.setDefaults(theUpdateSet);
 
                 /* Add the new item */
@@ -557,7 +557,7 @@ public class DepositTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new account", e);
 
                 /* Show the error */
                 setError(myError);
@@ -629,22 +629,22 @@ public class DepositTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<DepositCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(DepositCategory.class);
-            MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
-            MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<Boolean> myClosedIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<DepositCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(DepositCategory.class);
+            final MetisFieldScrollButtonCellEditor<Payee> myParentEditor = theFieldMgr.allocateScrollButtonCellEditor(Payee.class);
+            final MetisFieldScrollButtonCellEditor<AssetCurrency> myCurrencyEditor = theFieldMgr.allocateScrollButtonCellEditor(AssetCurrency.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myClosedIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButtons */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
-            Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+            final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
             myClosedIconEditor.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
             myClosedIconRenderer.setIconMapSet(r -> myMapSets.get(determineClosedState(r)));
 
@@ -735,7 +735,7 @@ public class DepositTable
                                                ? PrometheusAction.ACTIVE
                                                : PrometheusAction.DELETE;
                 case COLUMN_LASTTRAN:
-                    Transaction myTran = pDeposit.getLatest();
+                    final Transaction myTran = pDeposit.getLatest();
                     return (myTran == null)
                                             ? null
                                             : myTran.getDate();
@@ -843,7 +843,7 @@ public class DepositTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theDeposits.get(pRowIndex);
             return myDeposit.isClosed() || !myDeposit.isRelevant();
         }
 
@@ -855,7 +855,7 @@ public class DepositTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theDeposits.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, myDeposit);
@@ -869,7 +869,7 @@ public class DepositTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<DepositCategory, Icon> pMenu) {
             /* Record active item */
-            Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theDeposits.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCategoryMenu(pMenu, myDeposit);
@@ -883,7 +883,7 @@ public class DepositTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theDeposits.get(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myDeposit);

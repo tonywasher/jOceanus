@@ -197,9 +197,8 @@ public class ThemisMvnProjectDefinition
 
     /**
      * Parse dependencies.
-     * @throws OceanusException on error
      */
-    private void parseDependencies() throws OceanusException {
+    private void parseDependencies() {
         /* Obtain the dependency list */
         final List<Dependency> myDependencies = theModel.getDependencies();
 

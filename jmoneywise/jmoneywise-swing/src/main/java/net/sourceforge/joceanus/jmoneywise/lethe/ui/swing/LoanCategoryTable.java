@@ -57,9 +57,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -225,7 +225,7 @@ public class LoanCategoryTable
 
         /* Create the data column model and declare it */
         theColumns = new CategoryColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -236,12 +236,12 @@ public class LoanCategoryTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theNewButton = myFactory.newButton();
         PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter components */
-        TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
+        final TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
         theSelectButton = myFactory.newScrollButton();
         theSelectButton.setValue(null, FILTER_PARENTS);
 
@@ -275,7 +275,7 @@ public class LoanCategoryTable
         theCategoryMenu = theSelectButton.getMenu();
 
         /* Listen to swing events */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleLoanSelection());
         theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
         theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
@@ -324,8 +324,8 @@ public class LoanCategoryTable
         myTask = myTask.startTask("Loans");
 
         /* Get the Category edit list */
-        MoneyWiseData myData = theView.getData();
-        LoanCategoryList myCategories = myData.getLoanCategories();
+        final MoneyWiseData myData = theView.getData();
+        final LoanCategoryList myCategories = myData.getLoanCategories();
         theCategories = myCategories.deriveEditList();
         theCategories.resolveUpdateSetLinks();
         theCategoryEntry.setDataList(theCategories);
@@ -427,7 +427,7 @@ public class LoanCategoryTable
      * Handle deposit selection.
      */
     private void handleLoanSelection() {
-        LoanCategory myCategory = theSelectButton.getValue();
+        final LoanCategory myCategory = theSelectButton.getValue();
         if (!MetisDifference.isEqual(myCategory, theParent)) {
             /* Store new category */
             selectParent(myCategory);
@@ -488,10 +488,10 @@ public class LoanCategoryTable
         }
 
         /* Loop through the available category values */
-        Iterator<LoanCategory> myIterator = theCategories.iterator();
+        final Iterator<LoanCategory> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            LoanCategory myCurr = myIterator.next();
-            LoanCategoryType myType = myCurr.getCategoryType();
+            final LoanCategory myCurr = myIterator.next();
+            final LoanCategoryType myType = myCurr.getCategoryType();
 
             /* Ignore deleted */
             boolean bIgnore = myCurr.isDeleted();
@@ -610,7 +610,7 @@ public class LoanCategoryTable
             /* Protect against Exceptions */
             try {
                 /* Create the new category */
-                LoanCategory myCategory = new LoanCategory(theCategories);
+                final LoanCategory myCategory = new LoanCategory(theCategories);
                 myCategory.setDefaults(theParent);
 
                 /* Add the new item */
@@ -628,7 +628,7 @@ public class LoanCategoryTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new tag", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new tag", e);
 
                 /* Show the error */
                 setError(myError);
@@ -690,14 +690,14 @@ public class LoanCategoryTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<LoanCategoryType> myScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategoryType.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<LoanCategoryType> myScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(LoanCategoryType.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myIconRenderer.setIconMapSet(r -> myActionMapSet);
             myIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -761,7 +761,7 @@ public class LoanCategoryTable
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    String mySubCat = pCategory.getSubCategory();
+                    final String mySubCat = pCategory.getSubCategory();
                     return (mySubCat == null)
                                               ? pCategory.getName()
                                               : mySubCat;
@@ -860,7 +860,7 @@ public class LoanCategoryTable
         private void buildCategoryTypeMenu(final Integer pRowIndex,
                                            final TethysScrollMenu<LoanCategoryType, Icon> pMenu) {
             /* Record active item */
-            LoanCategory myCategory = theCategories.get(pRowIndex);
+            final LoanCategory myCategory = theCategories.get(pRowIndex);
 
             /* Build the menu */
             theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);

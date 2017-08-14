@@ -173,7 +173,7 @@ public class MoneyWiseData
         }
 
         /* Handle List fields */
-        MoneyWiseDataType myType = FIELDSET_MAP.get(pField);
+        final MoneyWiseDataType myType = FIELDSET_MAP.get(pField);
         if (myType != null) {
             /* Access the list */
             return getFieldListValue(myType);
@@ -645,7 +645,7 @@ public class MoneyWiseData
     @Override
     public MoneyWiseData deriveUpdateSet() throws OceanusException {
         /* Build an empty DataSet */
-        MoneyWiseData myExtract = new MoneyWiseData(this);
+        final MoneyWiseData myExtract = new MoneyWiseData(this);
 
         /* Obtain underlying updates */
         myExtract.deriveUpdateSet(this);
@@ -657,7 +657,7 @@ public class MoneyWiseData
     @Override
     public MoneyWiseData deriveCloneSet() throws OceanusException {
         /* Build an empty DataSet */
-        MoneyWiseData myExtract = new MoneyWiseData(this);
+        final MoneyWiseData myExtract = new MoneyWiseData(this);
 
         /* Create empty clone lists */
         myExtract.buildEmptyCloneSet(this);
@@ -683,7 +683,7 @@ public class MoneyWiseData
     public MoneyWiseData getDifferenceSet(final MetisThreadStatusReport pReport,
                                           final MoneyWiseData pOld) throws OceanusException {
         /* Build an empty DataSet */
-        MoneyWiseData myDiffers = new MoneyWiseData(this);
+        final MoneyWiseData myDiffers = new MoneyWiseData(this);
 
         /* Obtain underlying differences */
         myDiffers.deriveDifferences(pReport, this, pOld);
@@ -694,16 +694,15 @@ public class MoneyWiseData
 
     /**
      * Initialise the analysis.
-     * @throws OceanusException on error
      */
-    public void initialiseAnalysis() throws OceanusException {
+    public void initialiseAnalysis() {
         /* Loop through the list types */
-        Iterator<Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>>> myIterator = entryIterator();
+        final Iterator<Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>>> myIterator = entryIterator();
         while (myIterator.hasNext()) {
-            Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>> myEntry = myIterator.next();
+            final Entry<MoneyWiseDataType, DataList<?, MoneyWiseDataType>> myEntry = myIterator.next();
 
             /* Prepare list for analysis */
-            DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
+            final DataList<?, MoneyWiseDataType> myList = myEntry.getValue();
             myList.prepareForAnalysis();
         }
     }

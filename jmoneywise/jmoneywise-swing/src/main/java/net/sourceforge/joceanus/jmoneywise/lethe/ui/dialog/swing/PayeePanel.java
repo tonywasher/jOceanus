@@ -94,10 +94,10 @@ public class PayeePanel
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel(pFactory);
+        final JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
-        JTabbedPane myTabs = new JTabbedPane();
+        final JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
         JPanel myPanel = buildXtrasPanel(pFactory);
@@ -124,12 +124,12 @@ public class PayeePanel
      */
     private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<PayeeType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysSwingScrollButtonManager<PayeeType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Payee.NAMELEN);
@@ -144,10 +144,10 @@ public class PayeePanel
         theFieldSet.addFieldElement(Payee.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Payee.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Payee.FIELD_DESC, myPanel);
@@ -157,7 +157,7 @@ public class PayeePanel
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildPayeeTypeMenu(c, getItem()));
-        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
         /* Return the new panel */
@@ -171,16 +171,16 @@ public class PayeePanel
      */
     private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField mySortCode = pFactory.newStringField();
-        TethysSwingStringTextField myAccount = pFactory.newStringField();
-        TethysSwingStringTextField myReference = pFactory.newStringField();
-        TethysSwingStringTextField myWebSite = pFactory.newStringField();
-        TethysSwingStringTextField myCustNo = pFactory.newStringField();
-        TethysSwingStringTextField myUserId = pFactory.newStringField();
-        TethysSwingStringTextField myPassWord = pFactory.newStringField();
+        final TethysSwingStringTextField mySortCode = pFactory.newStringField();
+        final TethysSwingStringTextField myAccount = pFactory.newStringField();
+        final TethysSwingStringTextField myReference = pFactory.newStringField();
+        final TethysSwingStringTextField myWebSite = pFactory.newStringField();
+        final TethysSwingStringTextField myCustNo = pFactory.newStringField();
+        final TethysSwingStringTextField myUserId = pFactory.newStringField();
+        final TethysSwingStringTextField myPassWord = pFactory.newStringField();
 
         /* Restrict the fields */
-        int myWidth = Payee.NAMELEN >> 1;
+        final int myWidth = Payee.NAMELEN >> 1;
         restrictField(mySortCode, myWidth);
         restrictField(myAccount, myWidth);
         restrictField(myReference, myWidth);
@@ -199,10 +199,10 @@ public class PayeePanel
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
 
         /* Create the extras panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
@@ -224,18 +224,18 @@ public class PayeePanel
      */
     private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingTextArea myNotes = pFactory.newTextArea();
-        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        final TethysSwingTextArea myNotes = pFactory.newTextArea();
+        final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -247,9 +247,9 @@ public class PayeePanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        Payee myItem = getItem();
+        final Payee myItem = getItem();
         if (myItem != null) {
-            PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
             setItem(myPayees.findItemById(myItem.getId()));
         }
 
@@ -260,53 +260,53 @@ public class PayeePanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        Payee myPayee = getItem();
-        boolean bIsClosed = myPayee.isClosed();
-        boolean bIsActive = myPayee.isActive();
-        boolean bIsRelevant = myPayee.isRelevant();
+        final Payee myPayee = getItem();
+        final boolean bIsClosed = myPayee.isClosed();
+        final boolean bIsActive = myPayee.isActive();
+        final boolean bIsRelevant = myPayee.isRelevant();
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
+        final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Payee.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = bIsClosed || !bIsRelevant;
+        final boolean bEditClosed = bIsClosed || !bIsRelevant;
         theFieldSet.setEditable(Payee.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myPayee.getDesc() != null;
+        final boolean bShowDesc = isEditable || myPayee.getDesc() != null;
         theFieldSet.setVisibility(Payee.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        boolean bShowSortCode = isEditable || myPayee.getSortCode() != null;
+        final boolean bShowSortCode = isEditable || myPayee.getSortCode() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
-        boolean bShowAccount = isEditable || myPayee.getAccount() != null;
+        final boolean bShowAccount = isEditable || myPayee.getAccount() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
-        boolean bShowReference = isEditable || myPayee.getReference() != null;
+        final boolean bShowReference = isEditable || myPayee.getReference() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
-        boolean bShowWebSite = isEditable || myPayee.getWebSite() != null;
+        final boolean bShowWebSite = isEditable || myPayee.getWebSite() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
-        boolean bShowCustNo = isEditable || myPayee.getCustNo() != null;
+        final boolean bShowCustNo = isEditable || myPayee.getCustNo() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
-        boolean bShowUserId = isEditable || myPayee.getUserId() != null;
+        final boolean bShowUserId = isEditable || myPayee.getUserId() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
-        boolean bShowPasswd = isEditable || myPayee.getPassword() != null;
+        final boolean bShowPasswd = isEditable || myPayee.getPassword() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
-        boolean bShowNotes = isEditable || myPayee.getNotes() != null;
+        final boolean bShowNotes = isEditable || myPayee.getNotes() != null;
         theFieldSet.setVisibility(PayeeInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Payee type cannot be changed if the item is singular, or if its relevant */
-        PayeeTypeClass myClass = myPayee.getPayeeTypeClass();
-        boolean bIsSingular = myClass.isSingular();
+        final PayeeTypeClass myClass = myPayee.getPayeeTypeClass();
+        final boolean bIsSingular = myClass.isSingular();
         theFieldSet.setEditable(Payee.FIELD_PAYEETYPE, isEditable && !bIsSingular && !bIsRelevant);
     }
 
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        Payee myPayee = getItem();
+        final MetisField myField = pUpdate.getField();
+        final Payee myPayee = getItem();
 
         /* Process updates */
         if (myField.equals(Payee.FIELD_NAME)) {
@@ -357,8 +357,8 @@ public class PayeePanel
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         if (!pUpdates) {
-            Payee myItem = getItem();
-            PayeeType myType = myItem.getPayeeType();
+            final Payee myItem = getItem();
+            final PayeeType myType = myItem.getPayeeType();
             declareGoToItem(myType);
         }
     }
@@ -374,17 +374,17 @@ public class PayeePanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        PayeeType myCurr = pPayee.getPayeeType();
-        PayeeList myList = pPayee.getList();
+        final PayeeType myCurr = pPayee.getPayeeType();
+        final PayeeList myList = pPayee.getList();
         TethysScrollMenuItem<PayeeType> myActive = null;
 
         /* Access PayeeTypes */
-        PayeeTypeList myTypes = getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
+        final PayeeTypeList myTypes = getDataList(MoneyWiseDataType.PAYEETYPE, PayeeTypeList.class);
 
         /* Loop through the PayeeTypes */
-        Iterator<PayeeType> myIterator = myTypes.iterator();
+        final Iterator<PayeeType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            PayeeType myType = myIterator.next();
+            final PayeeType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
@@ -392,10 +392,10 @@ public class PayeePanel
             /* If the type is a likely candidate */
             if (!bIgnore) {
                 /* Check for singular class */
-                PayeeTypeClass myClass = myType.getPayeeClass();
+                final PayeeTypeClass myClass = myType.getPayeeClass();
                 if (myClass.isSingular()) {
                     /* Cannot change to this type if one already exists */
-                    Payee myExisting = myList.getSingularClass(myClass);
+                    final Payee myExisting = myList.getSingularClass(myClass);
                     bIgnore = myExisting != null;
                 }
             }
@@ -406,7 +406,7 @@ public class PayeePanel
             }
 
             /* Create a new action for the payeeType */
-            TethysScrollMenuItem<PayeeType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<PayeeType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {

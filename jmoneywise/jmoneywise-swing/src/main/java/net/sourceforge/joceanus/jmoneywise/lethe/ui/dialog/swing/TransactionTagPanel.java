@@ -67,8 +67,8 @@ public class TransactionTagPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* restrict the fields */
         restrictField(myName, TransactionTag.NAMELEN);
@@ -80,8 +80,8 @@ public class TransactionTagPanel
         theFieldSet.addFieldElement(TransactionTag.FIELD_DESC, MetisDataType.STRING, myDesc);
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
-        SpringLayout mySpring = new SpringLayout();
+        final JPanel myPanel = getMainPanel();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionTag.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(TransactionTag.FIELD_DESC, myPanel);
@@ -94,9 +94,9 @@ public class TransactionTagPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        TransactionTag myItem = getItem();
+        final TransactionTag myItem = getItem();
         if (myItem != null) {
-            TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+            final TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
             setItem(myTags.findItemById(myItem.getId()));
         }
 
@@ -107,15 +107,15 @@ public class TransactionTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || getItem().getDesc() != null;
+        final boolean bShowDesc = isEditable || getItem().getDesc() != null;
         theFieldSet.setVisibility(TransactionTag.FIELD_DESC, bShowDesc);
     }
 
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        TransactionTag myTag = getItem();
+        final MetisField myField = pUpdate.getField();
+        final TransactionTag myTag = getItem();
 
         /* Process updates */
         if (myField.equals(TransactionTag.FIELD_NAME)) {

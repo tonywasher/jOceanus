@@ -555,7 +555,7 @@ public final class TransactionCategoryBucket
      * @param pTrans the transaction helper
      * @return isIncome true/false
      */
-    private boolean adjustValues(final TransactionHelper pTrans) {
+    protected boolean adjustValues(final TransactionHelper pTrans) {
         /* Analyse the event */
         final TransactionCategoryClass myClass = pTrans.getCategoryClass();
         AssetDirection myDir = pTrans.getDirection();

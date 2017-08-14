@@ -105,7 +105,7 @@ public abstract class SchedulePattern
         }
 
         /* Compare the Patterns */
-        SchedulePattern myThat = (SchedulePattern) pThat;
+        final SchedulePattern myThat = (SchedulePattern) pThat;
         return getPatternValue().equals(myThat.getPatternValue());
     }
 
@@ -118,9 +118,8 @@ public abstract class SchedulePattern
      * allocate pattern.
      * @param pFrequency the frequency
      * @return the resulting pattern
-     * @throws OceanusException one error
      */
-    public static SchedulePattern allocatePattern(final Frequency pFrequency) throws OceanusException {
+    public static SchedulePattern allocatePattern(final Frequency pFrequency) {
         return allocatePattern(pFrequency, 0);
     }
 
@@ -129,10 +128,9 @@ public abstract class SchedulePattern
      * @param pFrequency the frequency
      * @param pPattern the integer pattern value
      * @return the resulting pattern
-     * @throws OceanusException one error
      */
     public static SchedulePattern allocatePattern(final Frequency pFrequency,
-                                                  final Integer pPattern) throws OceanusException {
+                                                  final Integer pPattern) {
         switch (pFrequency.getFrequency()) {
             case WEEKLY:
                 return new WeeklyPattern(pPattern);
@@ -169,7 +167,7 @@ public abstract class SchedulePattern
      * @throws OceanusException one error
      */
     private static WeeklyPattern parseWeeklyPattern(final String pPattern) throws OceanusException {
-        StringBuilder myBuilder = new StringBuilder(pPattern);
+        final StringBuilder myBuilder = new StringBuilder(pPattern);
         int myValue = 0;
         for (int iIndex = myBuilder.indexOf(ITEM_SEP); iIndex != -1; myBuilder.delete(0, iIndex + 1)) {
             myValue |= WeeklyPattern.parseFlag(myBuilder.substring(0, iIndex));
@@ -185,7 +183,7 @@ public abstract class SchedulePattern
      * @throws OceanusException one error
      */
     private static MonthlyPattern parseMonthlyPattern(final String pPattern) throws OceanusException {
-        StringBuilder myBuilder = new StringBuilder(pPattern);
+        final StringBuilder myBuilder = new StringBuilder(pPattern);
         int myValue = 0;
         for (int iIndex = myBuilder.indexOf(ITEM_SEP); iIndex != -1; myBuilder.delete(0, iIndex + 1)) {
             myValue |= MonthlyPattern.parseFlag(myBuilder.substring(0, iIndex));
@@ -220,7 +218,7 @@ public abstract class SchedulePattern
          */
         public WeeklyPattern setSelectedDay(final DayOfWeek pDay) {
             /* Obtain flag value */
-            int myFlag = getFlag(pDay);
+            final int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
                                      ? this
                                      : new WeeklyPattern(getPatternValue() | myFlag);
@@ -233,7 +231,7 @@ public abstract class SchedulePattern
          */
         public WeeklyPattern clearSelectedDay(final DayOfWeek pDay) {
             /* Obtain flag value */
-            int myFlag = getFlag(pDay);
+            final int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
                                      ? new WeeklyPattern(getPatternValue() & ~myFlag)
                                      : this;
@@ -246,7 +244,7 @@ public abstract class SchedulePattern
          */
         public boolean isSelectedDay(final DayOfWeek pDay) {
             /* Obtain flag value */
-            int myFlag = getFlag(pDay);
+            final int myFlag = getFlag(pDay);
             return isFlagSet(myFlag);
         }
 
@@ -256,7 +254,7 @@ public abstract class SchedulePattern
          * @return the flag
          */
         private static int getFlag(final DayOfWeek pDay) {
-            int myValue = pDay.getValue();
+            final int myValue = pDay.getValue();
             return 1 << myValue - 1;
         }
 
@@ -274,7 +272,7 @@ public abstract class SchedulePattern
 
             /* Parse the value */
             try {
-                DayOfWeek myValue = DayOfWeek.valueOf(pName);
+                final DayOfWeek myValue = DayOfWeek.valueOf(pName);
                 return getFlag(myValue);
             } catch (IllegalArgumentException e) {
                 throw new MoneyWiseDataException(pName, DataItem.ERROR_RESOLUTION, e);
@@ -285,8 +283,8 @@ public abstract class SchedulePattern
         public String formatObject() {
             /* Initialise variables */
             boolean myFirst = true;
-            Locale myLocale = Locale.getDefault();
-            StringBuilder myBuilder = new StringBuilder();
+            final Locale myLocale = Locale.getDefault();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Loop through the Days of the week */
             for (DayOfWeek myDay : DayOfWeek.values()) {
@@ -345,7 +343,7 @@ public abstract class SchedulePattern
          */
         public MonthlyPattern setSelectedDay(final int pDay) {
             /* Obtain flag value */
-            int myFlag = getFlag(pDay);
+            final int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
                                      ? this
                                      : new MonthlyPattern(getPatternValue() | myFlag);
@@ -358,7 +356,7 @@ public abstract class SchedulePattern
          */
         public MonthlyPattern clearSelectedDay(final int pDay) {
             /* Obtain flag value */
-            int myFlag = getFlag(pDay);
+            final int myFlag = getFlag(pDay);
             return isFlagSet(myFlag)
                                      ? new MonthlyPattern(getPatternValue() & ~myFlag)
                                      : this;
@@ -371,7 +369,7 @@ public abstract class SchedulePattern
          */
         public boolean isSelectedDay(final int pDay) {
             /* Obtain flag value */
-            int myFlag = getFlag(pDay);
+            final int myFlag = getFlag(pDay);
             return isFlagSet(myFlag);
         }
 
@@ -402,7 +400,7 @@ public abstract class SchedulePattern
 
             /* Parse the integer */
             try {
-                int myValue = Integer.parseInt(pName);
+                final int myValue = Integer.parseInt(pName);
                 return getFlag(myValue);
             } catch (NumberFormatException e) {
                 throw new MoneyWiseDataException(pName, DataItem.ERROR_RESOLUTION, e);
@@ -413,10 +411,10 @@ public abstract class SchedulePattern
         public String formatObject() {
             /* Initialise variables */
             boolean myFirst = true;
-            StringBuilder myBuilder = new StringBuilder();
+            final StringBuilder myBuilder = new StringBuilder();
 
             /* Loop through the Days of the month */
-            int myLength = Month.JANUARY.length(false);
+            final int myLength = Month.JANUARY.length(false);
             for (int myDay = 1; myDay <= myLength; myDay++) {
                 /* If the day is active */
                 if (isSelectedDay(myDay)) {

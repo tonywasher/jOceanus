@@ -67,8 +67,8 @@ public class RegionPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* restrict the fields */
         restrictField(myName, Region.NAMELEN);
@@ -80,8 +80,8 @@ public class RegionPanel
         theFieldSet.addFieldElement(Region.FIELD_DESC, MetisDataType.STRING, myDesc);
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
-        SpringLayout mySpring = new SpringLayout();
+        final JPanel myPanel = getMainPanel();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Region.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Region.FIELD_DESC, myPanel);
@@ -94,9 +94,9 @@ public class RegionPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        Region myItem = getItem();
+        final Region myItem = getItem();
         if (myItem != null) {
-            RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
+            final RegionList myRegions = getDataList(MoneyWiseDataType.REGION, RegionList.class);
             setItem(myRegions.findItemById(myItem.getId()));
         }
 
@@ -107,15 +107,15 @@ public class RegionPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || getItem().getDesc() != null;
+        final boolean bShowDesc = isEditable || getItem().getDesc() != null;
         theFieldSet.setVisibility(Region.FIELD_DESC, bShowDesc);
     }
 
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        Region myRegion = getItem();
+        final MetisField myField = pUpdate.getField();
+        final Region myRegion = getItem();
 
         /* Process updates */
         if (myField.equals(Region.FIELD_NAME)) {

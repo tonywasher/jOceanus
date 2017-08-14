@@ -90,7 +90,7 @@ public class CashInfoSet
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -105,7 +105,7 @@ public class CashInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
-        Object myValue;
+        final Object myValue;
 
         switch (pInfoClass) {
             case AUTOPAYEE:
@@ -155,7 +155,7 @@ public class CashInfoSet
      */
     public Payee getPayee(final AccountInfoClass pInfoClass) {
         /* Access existing entry */
-        CashInfo myValue = getInfo(pInfoClass);
+        final CashInfo myValue = getInfo(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -173,7 +173,7 @@ public class CashInfoSet
      */
     public TransactionCategory getEventCategory(final AccountInfoClass pInfoClass) {
         /* Access existing entry */
-        CashInfo myValue = getInfo(pInfoClass);
+        final CashInfo myValue = getInfo(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -199,7 +199,7 @@ public class CashInfoSet
      * @return the status
      */
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED
                                : isClassRequired(myClass);
@@ -208,8 +208,8 @@ public class CashInfoSet
     @Override
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Cash */
-        Cash myCash = getOwner();
-        CashCategory myCategory = myCash.getCategory();
+        final Cash myCash = getOwner();
+        final CashCategory myCategory = myCash.getCategory();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
@@ -255,16 +255,16 @@ public class CashInfoSet
      */
     protected void validate() {
         /* Access details about the Cash */
-        Cash myCash = getOwner();
+        final Cash myCash = getOwner();
 
         /* Loop through the classes */
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             /* Access info for class */
-            CashInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+            final CashInfo myInfo = getInfo(myClass);
+            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            MetisFieldRequired myState = isClassRequired(myClass);
+            final MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
@@ -285,22 +285,22 @@ public class CashInfoSet
             switch (myClass) {
                 case OPENINGBALANCE:
                     /* Access data */
-                    TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
+                    final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
                     if (!myBalance.getCurrency().equals(myCash.getCurrency())) {
                         myCash.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
                     break;
                 case AUTOEXPENSE:
                     /* Access data */
-                    TransactionCategory myExpense = myInfo.getEventCategory();
-                    TransactionCategoryClass myCatClass = myExpense.getCategoryTypeClass();
+                    final TransactionCategory myExpense = myInfo.getEventCategory();
+                    final TransactionCategoryClass myCatClass = myExpense.getCategoryTypeClass();
                     if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
                         myCash.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
                     }
                     break;
                 case NOTES:
                     /* Access data */
-                    char[] myArray = myInfo.getValue(char[].class);
+                    final char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         myCash.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
@@ -334,12 +334,12 @@ public class CashInfoSet
      */
     private static TransactionCategory getDefaultAutoExpense(final DataListSet<MoneyWiseDataType> pUpdateSet) {
         /* Access the category list */
-        TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        final TransactionCategoryList myCategories = pUpdateSet.getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* loop through the categories */
-        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategory myCategory = myIterator.next();
+            final TransactionCategory myCategory = myIterator.next();
 
             /* Ignore deleted categories */
             if (myCategory.isDeleted()) {
@@ -347,7 +347,7 @@ public class CashInfoSet
             }
 
             /* Ignore categories that are the wrong class */
-            TransactionCategoryClass myCatClass = myCategory.getCategoryTypeClass();
+            final TransactionCategoryClass myCatClass = myCategory.getCategoryTypeClass();
             if (myCatClass.isExpense() && !myCatClass.canParentCategory()) {
                 return myCategory;
             }
@@ -364,12 +364,12 @@ public class CashInfoSet
      */
     private static Payee getDefaultAutoPayee(final DataListSet<MoneyWiseDataType> pUpdateSet) {
         /* Access the payee list */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* loop through the payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
             if (!myPayee.isDeleted() && !myPayee.isClosed()) {

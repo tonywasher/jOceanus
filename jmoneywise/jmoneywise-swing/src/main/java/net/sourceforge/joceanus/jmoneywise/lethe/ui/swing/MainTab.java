@@ -154,7 +154,7 @@ public class MainTab
 
         /* Create the Report Tab */
         myTask.startTask("Report");
-        ReportTab myReports = new ReportTab(theView);
+        final ReportTab myReports = new ReportTab(theView);
         theTabs.addTabItem(TITLE_REPORT, myReports);
 
         /* Create the Register Tab */
@@ -262,7 +262,7 @@ public class MainTab
      */
     public void loadSpreadsheet() {
         /* Create the worker thread */
-        MoneyWiseThreadLoadArchive<JComponent, Icon> myThread = new MoneyWiseThreadLoadArchive<>(theView);
+        final MoneyWiseThreadLoadArchive<JComponent, Icon> myThread = new MoneyWiseThreadLoadArchive<>(theView);
         startThread(myThread);
     }
 
@@ -271,7 +271,7 @@ public class MainTab
      */
     public void createQIF() {
         /* Create the worker thread */
-        MoneyWiseThreadWriteQIF<JComponent, Icon> myThread = new MoneyWiseThreadWriteQIF<>(theView);
+        final MoneyWiseThreadWriteQIF<JComponent, Icon> myThread = new MoneyWiseThreadWriteQIF<>(theView);
         startThread(myThread);
     }
 
@@ -305,7 +305,7 @@ public class MainTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
+        final TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }
@@ -317,16 +317,16 @@ public class MainTab
         super.setVisibility();
 
         /* Determine whether we have any session focus */
-        boolean hasSession = hasSession();
+        final boolean hasSession = hasSession();
 
         /* Note whether we have a worker thread */
-        boolean hasWorker = hasWorker();
+        final boolean hasWorker = hasWorker();
 
         /* Note whether we have data */
-        boolean hasControl = theView.getData().getControl() != null;
+        final boolean hasControl = theView.getData().getControl() != null;
 
         /* Obtain the menuBar */
-        TethysMenuBarManager myMenuBar = getMenuBar();
+        final TethysMenuBarManager myMenuBar = getMenuBar();
 
         /* Disable menus if we have no data */
         myMenuBar.setEnabled(MoneyWiseThreadId.CREATEQIF, !hasWorker && hasControl);
@@ -367,8 +367,8 @@ public class MainTab
      */
     private void determineFocus() {
         /* Access the selected component */
-        TethysSwingTabItem myItem = theTabs.getSelectedTab();
-        JComponent myComponent = myItem.getNode();
+        final TethysSwingTabItem myItem = theTabs.getSelectedTab();
+        final JComponent myComponent = myItem.getNode();
 
         /* If the selected component is Register */
         if (myComponent.equals(theRegister.getNode())) {
@@ -404,14 +404,14 @@ public class MainTab
     private void handleGoToEvent(final TethysEvent<PrometheusDataEvent> pEvent) {
         /* Access details */
         @SuppressWarnings("unchecked")
-        PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
+        final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = (PrometheusGoToEvent<MoneyWiseGoToId>) pEvent.getDetails(PrometheusGoToEvent.class);
 
         /* Access event and obtain details */
         switch (myEvent.getId()) {
             /* View the requested statement */
             case STATEMENT:
                 @SuppressWarnings("unchecked")
-                StatementSelect<JComponent, Icon> mySelect = myEvent.getDetails(StatementSelect.class);
+                final StatementSelect<JComponent, Icon> mySelect = myEvent.getDetails(StatementSelect.class);
                 selectStatement(mySelect);
                 break;
 

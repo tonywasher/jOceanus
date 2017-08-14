@@ -99,7 +99,7 @@ public class DepositInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getDeposits());
 
@@ -107,7 +107,7 @@ public class DepositInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the DepositInfoSet and register this data */
-            DepositInfoSet mySet = getOwner().getInfoSet();
+            final DepositInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -163,7 +163,7 @@ public class DepositInfo
     @Override
     public void deRegister() {
         /* Access the DepositInfoSet and register this value */
-        DepositInfoSet mySet = getOwner().getInfoSet();
+        final DepositInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -205,12 +205,12 @@ public class DepositInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getDeposits());
 
         /* Access the DepositInfoSet and register this data */
-        DepositInfoSet mySet = getOwner().getInfoSet();
+        final DepositInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -227,7 +227,7 @@ public class DepositInfo
         }
 
         /* Access as DepositInfo */
-        DepositInfo myDepInfo = (DepositInfo) pInfo;
+        final DepositInfo myDepInfo = (DepositInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -299,7 +299,7 @@ public class DepositInfo
 
         @Override
         protected DepositInfoList getEmptyList(final ListStyle pStyle) {
-            DepositInfoList myList = new DepositInfoList(this);
+            final DepositInfoList myList = new DepositInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -311,7 +311,7 @@ public class DepositInfo
                 throw new UnsupportedOperationException();
             }
 
-            DepositInfo myInfo = new DepositInfo(this, (DepositInfo) pItem);
+            final DepositInfo myInfo = new DepositInfo(this, (DepositInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -325,7 +325,7 @@ public class DepositInfo
         protected DepositInfo addNewItem(final Deposit pOwner,
                                          final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            DepositInfo myInfo = new DepositInfo(this, pOwner, pInfoType);
+            final DepositInfo myInfo = new DepositInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -343,23 +343,23 @@ public class DepositInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pDeposit, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pDeposit);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Deposit Info */
-            DepositInfo myInfo = new DepositInfo(this, myValues);
+            final DepositInfo myInfo = new DepositInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -374,7 +374,7 @@ public class DepositInfo
         @Override
         public DepositInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            DepositInfo myInfo = new DepositInfo(this, pValues);
+            final DepositInfo myInfo = new DepositInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -395,7 +395,7 @@ public class DepositInfo
             validateOnLoad();
 
             /* Map and Validate the Deposits */
-            DepositList myDeposits = getDataSet().getDeposits();
+            final DepositList myDeposits = getDataSet().getDeposits();
             myDeposits.mapData();
             myDeposits.validateOnLoad();
         }

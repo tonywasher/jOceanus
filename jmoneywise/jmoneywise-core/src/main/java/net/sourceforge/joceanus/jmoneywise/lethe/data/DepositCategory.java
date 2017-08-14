@@ -86,7 +86,7 @@ public class DepositCategory
         super(pList, pValues);
 
         /* Store the Category Type */
-        Object myValue = pValues.getValue(FIELD_CATTYPE);
+        final Object myValue = pValues.getValue(FIELD_CATTYPE);
         if (myValue instanceof Integer) {
             setValueType((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -125,7 +125,7 @@ public class DepositCategory
 
     @Override
     public DepositCategoryClass getCategoryTypeClass() {
-        DepositCategoryType myType = getCategoryType();
+        final DepositCategoryType myType = getCategoryType();
         return (myType == null)
                                 ? null
                                 : myType.getDepositClass();
@@ -200,7 +200,7 @@ public class DepositCategory
      */
     public void setDefaults(final DepositCategory pParent) throws OceanusException {
         /* Set values */
-        DepositCategoryTypeList myTypes = getDataSet().getDepositCategoryTypes();
+        final DepositCategoryTypeList myTypes = getDataSet().getDepositCategoryTypes();
         setCategoryType(myTypes.findItemByClass(pParent == null
                                                                 ? DepositCategoryClass.PARENT
                                                                 : DepositCategoryClass.SAVINGS));
@@ -214,7 +214,7 @@ public class DepositCategory
         super.resolveDataSetLinks();
 
         /* Resolve category type and parent */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATTYPE, myData.getDepositCategoryTypes());
     }
 
@@ -235,15 +235,15 @@ public class DepositCategory
         super.validate();
 
         /* Access details */
-        DepositCategoryType myCatType = getCategoryType();
-        DepositCategory myParent = getParentCategory();
+        final DepositCategoryType myCatType = getCategoryType();
+        final DepositCategory myParent = getParentCategory();
 
         /* DepositCategoryType must be non-null */
         if (myCatType == null) {
             addError(ERROR_MISSING, FIELD_CATTYPE);
         } else {
             /* Access the class */
-            DepositCategoryClass myClass = myCatType.getDepositClass();
+            final DepositCategoryClass myClass = myCatType.getDepositClass();
 
             /* DepositCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
@@ -265,10 +265,10 @@ public class DepositCategory
                     } else if (!myParent.isCategoryClass(DepositCategoryClass.PARENT)) {
                         addError(ERROR_BADPARENT, FIELD_PARENT);
                     } else {
-                        String myName = getName();
+                        final String myName = getName();
 
                         /* Check validity of parent */
-                        DepositCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                        final DepositCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (myParentClass != DepositCategoryClass.PARENT) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
@@ -298,7 +298,7 @@ public class DepositCategory
         if (!(pCategory instanceof DepositCategory)) {
             return false;
         }
-        DepositCategory myCategory = (DepositCategory) pCategory;
+        final DepositCategory myCategory = (DepositCategory) pCategory;
 
         /* Store the current detail into history */
         pushHistory();
@@ -358,7 +358,7 @@ public class DepositCategory
 
         @Override
         protected DepositCategoryList getEmptyList(final ListStyle pStyle) {
-            DepositCategoryList myList = new DepositCategoryList(this);
+            final DepositCategoryList myList = new DepositCategoryList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -369,13 +369,13 @@ public class DepositCategory
          */
         public DepositCategoryList deriveEditList() {
             /* Build an empty List */
-            DepositCategoryList myList = getEmptyList(ListStyle.EDIT);
+            final DepositCategoryList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Loop through the categories */
-            Iterator<DepositCategory> myIterator = iterator();
+            final Iterator<DepositCategory> myIterator = iterator();
             while (myIterator.hasNext()) {
-                DepositCategory myCurr = myIterator.next();
+                final DepositCategory myCurr = myIterator.next();
 
                 /* Ignore deleted events */
                 if (myCurr.isDeleted()) {
@@ -383,7 +383,7 @@ public class DepositCategory
                 }
 
                 /* Build the new linked category and add it to the list */
-                DepositCategory myCategory = new DepositCategory(myList, myCurr);
+                final DepositCategory myCategory = new DepositCategory(myList, myCurr);
                 myList.append(myCategory);
 
                 /* Adjust the map */
@@ -406,7 +406,7 @@ public class DepositCategory
                 throw new UnsupportedOperationException();
             }
 
-            DepositCategory myCategory = new DepositCategory(this, (DepositCategory) pCategory);
+            final DepositCategory myCategory = new DepositCategory(this, (DepositCategory) pCategory);
             add(myCategory);
             return myCategory;
         }
@@ -417,7 +417,7 @@ public class DepositCategory
          */
         @Override
         public DepositCategory addNewItem() {
-            DepositCategory myCategory = new DepositCategory(this);
+            final DepositCategory myCategory = new DepositCategory(this);
             add(myCategory);
             return myCategory;
         }
@@ -425,7 +425,7 @@ public class DepositCategory
         @Override
         public DepositCategory addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the category */
-            DepositCategory myCategory = new DepositCategory(this, pValues);
+            final DepositCategory myCategory = new DepositCategory(this, pValues);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {

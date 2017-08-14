@@ -99,7 +99,7 @@ public class SecurityInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getSecurities());
 
@@ -107,7 +107,7 @@ public class SecurityInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the SecurityInfoSet and register this data */
-            SecurityInfoSet mySet = getOwner().getInfoSet();
+            final SecurityInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
             /* Resolve any link value */
@@ -188,7 +188,7 @@ public class SecurityInfo
 
     @Override
     public String getLinkName() {
-        DataItem<?> myItem = getLink(DataItem.class);
+        final DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Region) {
             return ((Region) myItem).getName();
         }
@@ -216,7 +216,7 @@ public class SecurityInfo
     @Override
     public void deRegister() {
         /* Access the SecurityInfoSet and register this value */
-        SecurityInfoSet mySet = getOwner().getInfoSet();
+        final SecurityInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -243,7 +243,7 @@ public class SecurityInfo
         }
 
         /* Compare the Info Types */
-        AccountInfoType myType = getInfoType();
+        final AccountInfoType myType = getInfoType();
         iDiff = myType.compareTo(pThat.getInfoType());
         if (iDiff != 0) {
             return iDiff;
@@ -268,7 +268,7 @@ public class SecurityInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getSecurities());
 
@@ -276,7 +276,7 @@ public class SecurityInfo
         resolveLink();
 
         /* Access the SecurityInfoSet and register this data */
-        SecurityInfoSet mySet = getOwner().getInfoSet();
+        final SecurityInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -286,12 +286,12 @@ public class SecurityInfo
      */
     private void resolveLink() throws OceanusException {
         /* If we have a link */
-        AccountInfoType myType = getInfoType();
+        final AccountInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            MoneyWiseData myData = getDataSet();
-            MetisValueSet myValues = getValueSet();
-            Object myLinkId = myValues.getValue(FIELD_VALUE);
+            final MoneyWiseData myData = getDataSet();
+            final MetisValueSet myValues = getValueSet();
+            final Object myLinkId = myValues.getValue(FIELD_VALUE);
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
@@ -326,7 +326,7 @@ public class SecurityInfo
         }
 
         /* Access as SecurityInfo */
-        SecurityInfo mySecInfo = (SecurityInfo) pInfo;
+        final SecurityInfo mySecInfo = (SecurityInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -416,7 +416,7 @@ public class SecurityInfo
 
         @Override
         protected SecurityInfoList getEmptyList(final ListStyle pStyle) {
-            SecurityInfoList myList = new SecurityInfoList(this);
+            final SecurityInfoList myList = new SecurityInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -428,7 +428,7 @@ public class SecurityInfo
                 throw new UnsupportedOperationException();
             }
 
-            SecurityInfo myInfo = new SecurityInfo(this, (SecurityInfo) pItem);
+            final SecurityInfo myInfo = new SecurityInfo(this, (SecurityInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -442,7 +442,7 @@ public class SecurityInfo
         protected SecurityInfo addNewItem(final Security pOwner,
                                           final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            SecurityInfo myInfo = new SecurityInfo(this, pOwner, pInfoType);
+            final SecurityInfo myInfo = new SecurityInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -460,23 +460,23 @@ public class SecurityInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pSecurity, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(SecurityInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pSecurity);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Security Info */
-            SecurityInfo myInfo = new SecurityInfo(this, myValues);
+            final SecurityInfo myInfo = new SecurityInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -491,7 +491,7 @@ public class SecurityInfo
         @Override
         public SecurityInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            SecurityInfo myInfo = new SecurityInfo(this, pValues);
+            final SecurityInfo myInfo = new SecurityInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -512,7 +512,7 @@ public class SecurityInfo
             validateOnLoad();
 
             /* Map and Validate the Securities */
-            SecurityList mySecurities = getDataSet().getSecurities();
+            final SecurityList mySecurities = getDataSet().getSecurities();
             mySecurities.mapData();
             mySecurities.validateOnLoad();
         }

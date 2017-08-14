@@ -123,10 +123,9 @@ public final class ControlKey
      * Values constructor.
      * @param pList the List to add to
      * @param pValues the values constructor
-     * @throws OceanusException on error
      */
     private ControlKey(final ControlKeyList pList,
-                       final DataValues<CryptographyDataType> pValues) throws OceanusException {
+                       final DataValues<CryptographyDataType> pValues) {
         /* Initialise the item */
         super(pList, pValues);
 
@@ -497,7 +496,7 @@ public final class ControlKey
     /**
      * Delete the old set of ControlKey and DataKeys.
      */
-    private void deleteControlSet() {
+    protected void deleteControlSet() {
         /* Delete the DataKeySet */
         theDataKeySet.deleteDataKeySets();
 

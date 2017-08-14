@@ -101,7 +101,7 @@ public class CashInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getCash());
 
@@ -112,7 +112,7 @@ public class CashInfo
             resolveLink();
 
             /* Access the CashInfoSet and register this data */
-            CashInfoSet mySet = getOwner().getInfoSet();
+            final CashInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
         } catch (OceanusException e) {
@@ -190,7 +190,7 @@ public class CashInfo
 
     @Override
     public String getLinkName() {
-        DataItem<?> myItem = getLink(DataItem.class);
+        final DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Payee) {
             return ((Payee) myItem).getName();
         }
@@ -218,7 +218,7 @@ public class CashInfo
     @Override
     public void deRegister() {
         /* Access the CashInfoSet and register this value */
-        CashInfoSet mySet = getOwner().getInfoSet();
+        final CashInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -260,7 +260,7 @@ public class CashInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getActInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getCash());
 
@@ -268,7 +268,7 @@ public class CashInfo
         resolveLink();
 
         /* Access the CashInfoSet and register this data */
-        CashInfoSet mySet = getOwner().getInfoSet();
+        final CashInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -278,12 +278,12 @@ public class CashInfo
      */
     private void resolveLink() throws OceanusException {
         /* If we have a link */
-        AccountInfoType myType = getInfoType();
+        final AccountInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            MoneyWiseData myData = getDataSet();
-            MetisValueSet myValues = getValueSet();
-            Object myLinkId = myValues.getValue(FIELD_VALUE);
+            final MoneyWiseData myData = getDataSet();
+            final MetisValueSet myValues = getValueSet();
+            final Object myLinkId = myValues.getValue(FIELD_VALUE);
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
@@ -318,7 +318,7 @@ public class CashInfo
         }
 
         /* Access as CashInfo */
-        CashInfo myInfo = (CashInfo) pInfo;
+        final CashInfo myInfo = (CashInfo) pInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -423,7 +423,7 @@ public class CashInfo
 
         @Override
         protected CashInfoList getEmptyList(final ListStyle pStyle) {
-            CashInfoList myList = new CashInfoList(this);
+            final CashInfoList myList = new CashInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -435,7 +435,7 @@ public class CashInfo
                 throw new UnsupportedOperationException();
             }
 
-            CashInfo myInfo = new CashInfo(this, (CashInfo) pItem);
+            final CashInfo myInfo = new CashInfo(this, (CashInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -449,7 +449,7 @@ public class CashInfo
         protected CashInfo addNewItem(final Cash pOwner,
                                       final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            CashInfo myInfo = new CashInfo(this, pOwner, pInfoType);
+            final CashInfo myInfo = new CashInfo(this, pOwner, pInfoType);
             add(myInfo);
 
             /* return it */
@@ -467,23 +467,23 @@ public class CashInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
+            final AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pCash, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(DepositInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pCash);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Cash Info */
-            CashInfo myInfo = new CashInfo(this, myValues);
+            final CashInfo myInfo = new CashInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -498,7 +498,7 @@ public class CashInfo
         @Override
         public CashInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            CashInfo myInfo = new CashInfo(this, pValues);
+            final CashInfo myInfo = new CashInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -519,9 +519,9 @@ public class CashInfo
          */
         public void resolveValueLinks() throws OceanusException {
             /* Loop through the Info items */
-            Iterator<CashInfo> myIterator = iterator();
+            final Iterator<CashInfo> myIterator = iterator();
             while (myIterator.hasNext()) {
-                CashInfo myCurr = myIterator.next();
+                final CashInfo myCurr = myIterator.next();
 
                 /* If this is an infoItem */
                 if (myCurr.getInfoType().isLink()) {
@@ -537,7 +537,7 @@ public class CashInfo
             validateOnLoad();
 
             /* Map and Validate the Cash */
-            CashList myCash = getDataSet().getCash();
+            final CashList myCash = getDataSet().getCash();
             myCash.mapData();
             myCash.validateOnLoad();
         }

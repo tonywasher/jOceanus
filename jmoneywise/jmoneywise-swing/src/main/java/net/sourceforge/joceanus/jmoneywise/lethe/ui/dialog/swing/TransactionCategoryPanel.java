@@ -75,13 +75,13 @@ public class TransactionCategoryPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField mySubName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField mySubName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<TransactionCategoryType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<TransactionCategory> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<TransactionCategoryType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<TransactionCategory> myParentButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         restrictField(myName, TransactionCategory.NAMELEN);
@@ -99,8 +99,8 @@ public class TransactionCategoryPanel
         theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, myParentButton);
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
-        SpringLayout mySpring = new SpringLayout();
+        final JPanel myPanel = getMainPanel();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionCategory.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(TransactionCategory.FIELD_SUBCAT, myPanel);
@@ -120,9 +120,9 @@ public class TransactionCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        TransactionCategory myItem = getItem();
+        final TransactionCategory myItem = getItem();
         if (myItem != null) {
-            TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+            final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -133,13 +133,13 @@ public class TransactionCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        TransactionCategory myCategory = getItem();
-        TransactionCategoryType myType = myCategory.getCategoryType();
-        CategoryType myCurrType = CategoryType.determineType(myType);
-        boolean showParent = myCurrType.hasSubCatName();
+        final TransactionCategory myCategory = getItem();
+        final TransactionCategoryType myType = myCategory.getCategoryType();
+        final CategoryType myCurrType = CategoryType.determineType(myType);
+        final boolean showParent = myCurrType.hasSubCatName();
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(TransactionCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
@@ -147,7 +147,7 @@ public class TransactionCategoryPanel
         theFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
-        boolean canEdit = isEditable && !myCategory.isActive() && myCurrType.isChangeable();
+        final boolean canEdit = isEditable && !myCategory.isActive() && myCurrType.isChangeable();
         theFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
@@ -157,8 +157,8 @@ public class TransactionCategoryPanel
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        TransactionCategory myCategory = getItem();
+        final MetisField myField = pUpdate.getField();
+        final TransactionCategory myCategory = getItem();
 
         /* Process updates */
         if (myField.equals(TransactionCategory.FIELD_NAME)) {
@@ -181,10 +181,10 @@ public class TransactionCategoryPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        TransactionCategory myItem = getItem();
-        TransactionCategory myParent = myItem.getParentCategory();
+        final TransactionCategory myItem = getItem();
+        final TransactionCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            TransactionCategoryType myType = myItem.getCategoryType();
+            final TransactionCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -201,17 +201,17 @@ public class TransactionCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        TransactionCategoryType myCurr = pCategory.getCategoryType();
-        CategoryType myCurrType = CategoryType.determineType(myCurr);
+        final TransactionCategoryType myCurr = pCategory.getCategoryType();
+        final CategoryType myCurrType = CategoryType.determineType(myCurr);
         TethysScrollMenuItem<TransactionCategoryType> myActive = null;
 
         /* Access Transaction Category types */
-        TransactionCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
+        final TransactionCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.TRANSTYPE, TransactionCategoryTypeList.class);
 
         /* Loop through the TransCategoryTypes */
-        Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
+        final Iterator<TransactionCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategoryType myType = myIterator.next();
+            final TransactionCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
@@ -223,7 +223,7 @@ public class TransactionCategoryPanel
             }
 
             /* Create a new action for the type */
-            TethysScrollMenuItem<TransactionCategoryType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<TransactionCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -249,18 +249,18 @@ public class TransactionCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        TransactionCategory myCurr = pCategory.getParentCategory();
-        CategoryType myCurrType = CategoryType.determineType(pCategory);
+        final TransactionCategory myCurr = pCategory.getParentCategory();
+        final CategoryType myCurrType = CategoryType.determineType(pCategory);
         TethysScrollMenuItem<TransactionCategory> myActive = null;
 
         /* Loop through the TransactionCategories */
-        TransactionCategoryList myCategories = getItem().getList();
-        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final TransactionCategoryList myCategories = getItem().getList();
+        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategory myCat = myIterator.next();
+            final TransactionCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-subTotal items */
-            TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isSubTotal()) {
                 continue;
             }
@@ -268,7 +268,7 @@ public class TransactionCategoryPanel
             /* If we are interested */
             if (myCurrType.isParentMatch(myClass)) {
                 /* Create a new action for the type */
-                TethysScrollMenuItem<TransactionCategory> myItem = pMenu.addItem(myCat);
+                final TethysScrollMenuItem<TransactionCategory> myItem = pMenu.addItem(myCat);
 
                 /* If this is the active parent */
                 if (myCat.equals(myCurr)) {
@@ -339,7 +339,7 @@ public class TransactionCategoryPanel
          */
         public static CategoryType determineType(final TransactionCategoryType pType) {
             /* Access class */
-            TransactionCategoryClass myClass = pType.getCategoryClass();
+            final TransactionCategoryClass myClass = pType.getCategoryClass();
 
             /* Handle Totals */
             if (myClass.isTotals()) {

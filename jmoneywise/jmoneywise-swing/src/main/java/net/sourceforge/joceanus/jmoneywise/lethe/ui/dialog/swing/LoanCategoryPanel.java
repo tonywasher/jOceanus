@@ -75,13 +75,13 @@ public class LoanCategoryPanel
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField mySubName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField mySubName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<LoanCategoryType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<LoanCategory> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<LoanCategoryType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<LoanCategory> myParentButton = pFactory.newScrollButton();
 
         /* restrict the fields */
         restrictField(myName, LoanCategory.NAMELEN);
@@ -99,8 +99,8 @@ public class LoanCategoryPanel
         theFieldSet.addFieldElement(LoanCategory.FIELD_PARENT, LoanCategory.class, myParentButton);
 
         /* Layout the main panel */
-        JPanel myPanel = getMainPanel();
-        SpringLayout mySpring = new SpringLayout();
+        final JPanel myPanel = getMainPanel();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(LoanCategory.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(LoanCategory.FIELD_SUBCAT, myPanel);
@@ -120,9 +120,9 @@ public class LoanCategoryPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        LoanCategory myItem = getItem();
+        final LoanCategory myItem = getItem();
         if (myItem != null) {
-            LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
+            final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
             setItem(myCategories.findItemById(myItem.getId()));
         }
 
@@ -133,12 +133,12 @@ public class LoanCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Determine whether parent/full-name fields are visible */
-        LoanCategory myCategory = getItem();
-        LoanCategoryType myType = myCategory.getCategoryType();
-        boolean isParent = myType.isLoanCategory(LoanCategoryClass.PARENT);
+        final LoanCategory myCategory = getItem();
+        final LoanCategoryType myType = myCategory.getCategoryType();
+        final boolean isParent = myType.isLoanCategory(LoanCategoryClass.PARENT);
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myCategory.getDesc() != null;
+        final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
         theFieldSet.setVisibility(LoanCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
@@ -159,8 +159,8 @@ public class LoanCategoryPanel
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        LoanCategory myCategory = getItem();
+        final MetisField myField = pUpdate.getField();
+        final LoanCategory myCategory = getItem();
 
         /* Process updates */
         if (myField.equals(LoanCategory.FIELD_NAME)) {
@@ -183,10 +183,10 @@ public class LoanCategoryPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        LoanCategory myItem = getItem();
-        LoanCategory myParent = myItem.getParentCategory();
+        final LoanCategory myItem = getItem();
+        final LoanCategory myParent = myItem.getParentCategory();
         if (!pUpdates) {
-            LoanCategoryType myType = myItem.getCategoryType();
+            final LoanCategoryType myType = myItem.getCategoryType();
             declareGoToItem(myType);
         }
         declareGoToItem(myParent);
@@ -203,16 +203,16 @@ public class LoanCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        LoanCategoryType myCurr = pCategory.getCategoryType();
+        final LoanCategoryType myCurr = pCategory.getCategoryType();
         TethysScrollMenuItem<LoanCategoryType> myActive = null;
 
         /* Access Loan Category types */
-        LoanCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
+        final LoanCategoryTypeList myCategoryTypes = getDataList(MoneyWiseDataType.LOANTYPE, LoanCategoryTypeList.class);
 
         /* Loop through the LoanCategoryTypes */
-        Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();
+        final Iterator<LoanCategoryType> myIterator = myCategoryTypes.iterator();
         while (myIterator.hasNext()) {
-            LoanCategoryType myType = myIterator.next();
+            final LoanCategoryType myType = myIterator.next();
 
             /* Ignore deleted or disabled */
             boolean bIgnore = myType.isDeleted() || !myType.getEnabled();
@@ -224,7 +224,7 @@ public class LoanCategoryPanel
             }
 
             /* Create a new action for the type */
-            TethysScrollMenuItem<LoanCategoryType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<LoanCategoryType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -250,23 +250,23 @@ public class LoanCategoryPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        LoanCategory myCurr = pCategory.getParentCategory();
+        final LoanCategory myCurr = pCategory.getParentCategory();
         TethysScrollMenuItem<LoanCategory> myActive = null;
 
         /* Loop through the LoanCategories */
-        LoanCategoryList myCategories = pCategory.getList();
-        Iterator<LoanCategory> myIterator = myCategories.iterator();
+        final LoanCategoryList myCategories = pCategory.getList();
+        final Iterator<LoanCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            LoanCategory myCat = myIterator.next();
+            final LoanCategory myCat = myIterator.next();
 
             /* Ignore deleted and non-parent items */
-            LoanCategoryClass myClass = myCat.getCategoryTypeClass();
+            final LoanCategoryClass myClass = myCat.getCategoryTypeClass();
             if (myCat.isDeleted() || !myClass.isParentCategory()) {
                 continue;
             }
 
             /* Create a new action for the parent */
-            TethysScrollMenuItem<LoanCategory> myItem = pMenu.addItem(myCat);
+            final TethysScrollMenuItem<LoanCategory> myItem = pMenu.addItem(myCat);
 
             /* If this is the active parent */
             if (myCat.equals(myCurr)) {

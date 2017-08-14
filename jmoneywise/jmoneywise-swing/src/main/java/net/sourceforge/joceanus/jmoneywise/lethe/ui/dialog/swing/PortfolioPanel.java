@@ -97,10 +97,10 @@ public class PortfolioPanel
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel(pFactory);
+        final JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
-        JTabbedPane myTabs = new JTabbedPane();
+        final JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the detail panel */
         JPanel myPanel = buildXtrasPanel(pFactory);
@@ -127,14 +127,14 @@ public class PortfolioPanel
      */
     private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Create the text fields */
-        TethysSwingStringTextField myName = pFactory.newStringField();
-        TethysSwingStringTextField myDesc = pFactory.newStringField();
+        final TethysSwingStringTextField myName = pFactory.newStringField();
+        final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<PortfolioType> myTypeButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
-        TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
+        final TethysSwingScrollButtonManager<PortfolioType> myTypeButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<Payee> myParentButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
+        final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myName, Portfolio.NAMELEN);
@@ -153,10 +153,10 @@ public class PortfolioPanel
         theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Create the main panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, myPanel);
         theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, myPanel);
@@ -170,7 +170,7 @@ public class PortfolioPanel
         myTypeButton.setMenuConfigurator(c -> buildTypeMenu(c, getItem()));
         myParentButton.setMenuConfigurator(c -> buildParentMenu(c, getItem()));
         myCurrencyButton.setMenuConfigurator(c -> buildCurrencyMenu(c, getItem()));
-        Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myMapSets = MoneyWiseIcon.configureLockedIconButton();
         myClosedButton.setIconMapSet(() -> myMapSets.get(theClosedState));
 
         /* Return the new panel */
@@ -184,16 +184,16 @@ public class PortfolioPanel
      */
     private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField mySortCode = pFactory.newStringField();
-        TethysSwingStringTextField myAccount = pFactory.newStringField();
-        TethysSwingStringTextField myReference = pFactory.newStringField();
-        TethysSwingStringTextField myWebSite = pFactory.newStringField();
-        TethysSwingStringTextField myCustNo = pFactory.newStringField();
-        TethysSwingStringTextField myUserId = pFactory.newStringField();
-        TethysSwingStringTextField myPassWord = pFactory.newStringField();
+        final TethysSwingStringTextField mySortCode = pFactory.newStringField();
+        final TethysSwingStringTextField myAccount = pFactory.newStringField();
+        final TethysSwingStringTextField myReference = pFactory.newStringField();
+        final TethysSwingStringTextField myWebSite = pFactory.newStringField();
+        final TethysSwingStringTextField myCustNo = pFactory.newStringField();
+        final TethysSwingStringTextField myUserId = pFactory.newStringField();
+        final TethysSwingStringTextField myPassWord = pFactory.newStringField();
 
         /* Restrict the fields */
-        int myWidth = Portfolio.NAMELEN >> 1;
+        final int myWidth = Portfolio.NAMELEN >> 1;
         restrictField(mySortCode, myWidth);
         restrictField(myAccount, myWidth);
         restrictField(myReference, myWidth);
@@ -212,10 +212,10 @@ public class PortfolioPanel
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
 
         /* Create the extras panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the extras panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
@@ -237,18 +237,18 @@ public class PortfolioPanel
      */
     private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingTextArea myNotes = pFactory.newTextArea();
-        TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
+        final TethysSwingTextArea myNotes = pFactory.newTextArea();
+        final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
         /* Create the notes panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the notes panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
@@ -260,9 +260,9 @@ public class PortfolioPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        Portfolio myItem = getItem();
+        final Portfolio myItem = getItem();
         if (myItem != null) {
-            PortfolioList myPortfolios = getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
+            final PortfolioList myPortfolios = getDataList(MoneyWiseDataType.PORTFOLIO, PortfolioList.class);
             setItem(myPortfolios.findItemById(myItem.getId()));
         }
 
@@ -273,41 +273,41 @@ public class PortfolioPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        Portfolio myPortfolio = getItem();
-        boolean bIsClosed = myPortfolio.isClosed();
-        boolean bIsActive = myPortfolio.isActive();
-        boolean bIsRelevant = myPortfolio.isRelevant();
-        boolean bIsChangeable = !bIsActive && isEditable;
+        final Portfolio myPortfolio = getItem();
+        final boolean bIsClosed = myPortfolio.isClosed();
+        final boolean bIsActive = myPortfolio.isActive();
+        final boolean bIsRelevant = myPortfolio.isRelevant();
+        final boolean bIsChangeable = !bIsActive && isEditable;
 
         /* Determine whether the closed button should be visible */
-        boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
+        final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
         theFieldSet.setVisibility(Portfolio.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
-        boolean bEditClosed = bIsClosed || !bIsRelevant;
+        final boolean bEditClosed = bIsClosed || !bIsRelevant;
         theFieldSet.setEditable(Portfolio.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
-        boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
+        final boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
         theFieldSet.setVisibility(Portfolio.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
-        boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
+        final boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
-        boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
+        final boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
-        boolean bShowReference = isEditable || myPortfolio.getReference() != null;
+        final boolean bShowReference = isEditable || myPortfolio.getReference() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
-        boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
+        final boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
-        boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
+        final boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
-        boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
+        final boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
-        boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
+        final boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
-        boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
+        final boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
         theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Type, Parent and Currency status cannot be changed if the item is active */
@@ -322,8 +322,8 @@ public class PortfolioPanel
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        Portfolio myPortfolio = getItem();
+        final MetisField myField = pUpdate.getField();
+        final Portfolio myPortfolio = getItem();
 
         /* Process updates */
         if (myField.equals(Portfolio.FIELD_NAME)) {
@@ -379,12 +379,12 @@ public class PortfolioPanel
 
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
-        Portfolio myItem = getItem();
-        Payee myParent = myItem.getParent();
+        final Portfolio myItem = getItem();
+        final Payee myParent = myItem.getParent();
         if (!pUpdates) {
-            PortfolioType myType = myItem.getPortfolioType();
+            final PortfolioType myType = myItem.getPortfolioType();
             declareGoToItem(myType);
-            AssetCurrency myCurrency = myItem.getAssetCurrency();
+            final AssetCurrency myCurrency = myItem.getAssetCurrency();
             declareGoToItem(myCurrency);
         }
         declareGoToItem(myParent);
@@ -401,19 +401,19 @@ public class PortfolioPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        PortfolioType myCurr = pPortfolio.getPortfolioType();
+        final PortfolioType myCurr = pPortfolio.getPortfolioType();
         TethysScrollMenuItem<PortfolioType> myActive = null;
 
         /* Access PortfolioTypes */
-        PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
+        final PortfolioTypeList myTypes = getDataList(MoneyWiseDataType.PORTFOLIOTYPE, PortfolioTypeList.class);
 
         /* Loop through the Types */
-        Iterator<PortfolioType> myIterator = myTypes.iterator();
+        final Iterator<PortfolioType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            PortfolioType myType = myIterator.next();
+            final PortfolioType myType = myIterator.next();
 
             /* Create a new action for the type */
-            TethysScrollMenuItem<PortfolioType> myItem = pMenu.addItem(myType);
+            final TethysScrollMenuItem<PortfolioType> myItem = pMenu.addItem(myType);
 
             /* If this is the active type */
             if (myType.equals(myCurr)) {
@@ -439,16 +439,16 @@ public class PortfolioPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        Payee myCurr = pPortfolio.getParent();
+        final Payee myCurr = pPortfolio.getParent();
         TethysScrollMenuItem<Payee> myActive = null;
 
         /* Access Payees */
-        PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
 
         /* Loop through the Payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted/closed and ones that cannot own this portfolio */
             boolean bIgnore = myPayee.isDeleted() || myPayee.isClosed();
@@ -458,7 +458,7 @@ public class PortfolioPanel
             }
 
             /* Create a new action for the payee */
-            TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
+            final TethysScrollMenuItem<Payee> myItem = pMenu.addItem(myPayee);
 
             /* If this is the active parent */
             if (myPayee.equals(myCurr)) {
@@ -484,25 +484,25 @@ public class PortfolioPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        AssetCurrency myCurr = pPortfolio.getAssetCurrency();
+        final AssetCurrency myCurr = pPortfolio.getAssetCurrency();
         TethysScrollMenuItem<AssetCurrency> myActive = null;
 
         /* Access Currencies */
-        AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
+        final AssetCurrencyList myCurrencies = getDataList(MoneyWiseDataType.CURRENCY, AssetCurrencyList.class);
 
         /* Loop through the AccountCurrencies */
-        Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
+        final Iterator<AssetCurrency> myIterator = myCurrencies.iterator();
         while (myIterator.hasNext()) {
-            AssetCurrency myCurrency = myIterator.next();
+            final AssetCurrency myCurrency = myIterator.next();
 
             /* Ignore deleted or disabled */
-            boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
+            final boolean bIgnore = myCurrency.isDeleted() || !myCurrency.getEnabled();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the currency */
-            TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
+            final TethysScrollMenuItem<AssetCurrency> myItem = pMenu.addItem(myCurrency);
 
             /* If this is the active currency */
             if (myCurrency.equals(myCurr)) {

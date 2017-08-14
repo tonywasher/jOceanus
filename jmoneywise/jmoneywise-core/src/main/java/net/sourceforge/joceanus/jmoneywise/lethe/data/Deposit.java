@@ -247,7 +247,7 @@ public class Deposit
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -331,7 +331,7 @@ public class Deposit
      * @return the parentId
      */
     public Integer getParentId() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getId();
@@ -342,7 +342,7 @@ public class Deposit
      * @return the parentName
      */
     public String getParentName() {
-        Payee myParent = getParent();
+        final Payee myParent = getParent();
         return (myParent == null)
                                   ? null
                                   : myParent.getName();
@@ -361,7 +361,7 @@ public class Deposit
      * @return the categoryId
      */
     public Integer getCategoryId() {
-        DepositCategory myCategory = getCategory();
+        final DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getId();
@@ -372,7 +372,7 @@ public class Deposit
      * @return the categoryName
      */
     public String getCategoryName() {
-        DepositCategory myCategory = getCategory();
+        final DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getName();
@@ -383,7 +383,7 @@ public class Deposit
      * @return the categoryClass
      */
     public DepositCategoryClass getCategoryClass() {
-        DepositCategory myCategory = getCategory();
+        final DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? null
                                     : myCategory.getCategoryTypeClass();
@@ -396,7 +396,7 @@ public class Deposit
 
     @Override
     public Boolean isGross() {
-        DepositCategory myCategory = getCategory();
+        final DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? Boolean.FALSE
                                     : myCategory.getCategoryTypeClass().isGross();
@@ -404,7 +404,7 @@ public class Deposit
 
     @Override
     public Boolean isTaxFree() {
-        DepositCategory myCategory = getCategory();
+        final DepositCategory myCategory = getCategory();
         return (myCategory == null)
                                     ? Boolean.FALSE
                                     : myCategory.getCategoryTypeClass().isTaxFree();
@@ -606,7 +606,7 @@ public class Deposit
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -659,8 +659,8 @@ public class Deposit
      */
     public void autoCorrect(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Access category class */
-        DepositCategoryClass myClass = getCategoryClass();
-        Payee myParent = getParent();
+        final DepositCategoryClass myClass = getCategoryClass();
+        final Payee myParent = getParent();
 
         /* Ensure that we have a valid parent */
         if ((myParent == null)
@@ -672,7 +672,7 @@ public class Deposit
         if (!DepositCategoryClass.BOND.equals(myClass)) {
             setMaturity(null);
         } else if (getMaturity() == null) {
-            TethysDate myDate = new TethysDate();
+            final TethysDate myDate = new TethysDate();
             myDate.adjustYear(1);
             setMaturity(myDate);
         }
@@ -684,10 +684,10 @@ public class Deposit
      */
     private DepositCategory getDefaultCategory() {
         /* loop through the categories */
-        DepositCategoryList myCategories = getDataSet().getDepositCategories();
-        Iterator<DepositCategory> myIterator = myCategories.iterator();
+        final DepositCategoryList myCategories = getDataSet().getDepositCategories();
+        final Iterator<DepositCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            DepositCategory myCategory = myIterator.next();
+            final DepositCategory myCategory = myIterator.next();
 
             /* Ignore deleted categories */
             if (myCategory.isDeleted()) {
@@ -711,13 +711,13 @@ public class Deposit
      */
     private Payee getDefaultParent(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Access details */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
-        DepositCategoryClass myClass = getCategoryClass();
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final DepositCategoryClass myClass = getCategoryClass();
 
         /* loop through the payees */
-        Iterator<Payee> myIterator = myPayees.iterator();
+        final Iterator<Payee> myIterator = myPayees.iterator();
         while (myIterator.hasNext()) {
-            Payee myPayee = myIterator.next();
+            final Payee myPayee = myIterator.next();
 
             /* Ignore deleted and closed payees */
             if (myPayee.isDeleted() || myPayee.isClosed()) {
@@ -749,7 +749,7 @@ public class Deposit
         if ((iDiff == 0)
             && (pThat instanceof Deposit)) {
             /* Check the category */
-            Deposit myThat = (Deposit) pThat;
+            final Deposit myThat = (Deposit) pThat;
             iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
@@ -767,7 +767,7 @@ public class Deposit
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_CATEGORY, myData.getDepositCategories());
         resolveDataLink(FIELD_CURRENCY, myData.getAccountCurrencies());
         resolveDataLink(FIELD_PARENT, myData.getPayees());
@@ -776,7 +776,7 @@ public class Deposit
     @Override
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
-        PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+        final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
         resolveDataLink(FIELD_PARENT, myPayees);
     }
 
@@ -891,7 +891,7 @@ public class Deposit
     public TransactionCategory getDetailedCategory(final TransactionCategory pCategory,
                                                    final MoneyWiseTaxCredit pYear) {
         /* Switch on category type */
-        TransactionCategoryList myCategories = getDataSet().getTransCategories();
+        final TransactionCategoryList myCategories = getDataSet().getTransCategories();
         switch (pCategory.getCategoryTypeClass()) {
             case INTEREST:
                 if (isTaxFree()) {
@@ -939,10 +939,10 @@ public class Deposit
 
     @Override
     public void validate() {
-        Payee myParent = getParent();
-        DepositCategory myCategory = getCategory();
-        AssetCurrency myCurrency = getAssetCurrency();
-        DepositCategoryClass myClass = getCategoryClass();
+        final Payee myParent = getParent();
+        final DepositCategory myCategory = getCategory();
+        final AssetCurrency myCurrency = getAssetCurrency();
+        final DepositCategoryClass myClass = getCategoryClass();
 
         /* Validate base components */
         super.validate();
@@ -1003,7 +1003,7 @@ public class Deposit
         if (!(pDeposit instanceof Deposit)) {
             return false;
         }
-        Deposit myDeposit = (Deposit) pDeposit;
+        final Deposit myDeposit = (Deposit) pDeposit;
 
         /* Store the current detail into history */
         pushHistory();
@@ -1032,8 +1032,8 @@ public class Deposit
 
     @Override
     public void adjustMapForItem() {
-        DepositList myList = getList();
-        DepositDataMap myMap = myList.getDataMap();
+        final DepositList myList = getList();
+        final DepositDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -1050,12 +1050,12 @@ public class Deposit
         /**
          * The DepositInfo List.
          */
-        private DepositInfoList theInfoList = null;
+        private DepositInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
          */
-        private AccountInfoTypeList theInfoTypeList = null;
+        private AccountInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE list.
@@ -1117,7 +1117,7 @@ public class Deposit
 
         @Override
         protected DepositList getEmptyList(final ListStyle pStyle) {
-            DepositList myList = new DepositList(this);
+            final DepositList myList = new DepositList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -1130,20 +1130,20 @@ public class Deposit
          */
         public DepositList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
-            DepositList myList = getEmptyList(ListStyle.EDIT);
+            final DepositList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            DepositInfoList myDepInfo = getDepositInfo();
+            final DepositInfoList myDepInfo = getDepositInfo();
             myList.theInfoList = myDepInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the deposits */
-            Iterator<Deposit> myIterator = iterator();
+            final Iterator<Deposit> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Deposit myCurr = myIterator.next();
+                final Deposit myCurr = myIterator.next();
 
                 /* Ignore deleted deposits */
                 if (myCurr.isDeleted()) {
@@ -1151,7 +1151,7 @@ public class Deposit
                 }
 
                 /* Build the new linked deposit and add it to the list */
-                Deposit myDeposit = new Deposit(myList, myCurr);
+                final Deposit myDeposit = new Deposit(myList, myCurr);
                 myDeposit.resolveUpdateSetLinks(pUpdateSet);
                 myList.append(myDeposit);
 
@@ -1188,14 +1188,14 @@ public class Deposit
                 throw new UnsupportedOperationException();
             }
 
-            Deposit myDeposit = new Deposit(this, (Deposit) pDeposit);
+            final Deposit myDeposit = new Deposit(this, (Deposit) pDeposit);
             add(myDeposit);
             return myDeposit;
         }
 
         @Override
         public Deposit addNewItem() {
-            Deposit myDeposit = new Deposit(this);
+            final Deposit myDeposit = new Deposit(this);
             add(myDeposit);
             return myDeposit;
         }
@@ -1203,7 +1203,7 @@ public class Deposit
         @Override
         public Deposit addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the deposit */
-            Deposit myDeposit = new Deposit(this, pValues);
+            final Deposit myDeposit = new Deposit(this, pValues);
 
             /* Check that this DepositId has not been previously added */
             if (!isIdUnique(myDeposit.getId())) {
@@ -1217,12 +1217,12 @@ public class Deposit
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myDeposit);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myDeposit);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1240,9 +1240,9 @@ public class Deposit
         public Deposit getDefaultHolding(final Payee pParent,
                                          final Boolean isTaxFree) {
             /* loop through the deposits */
-            Iterator<Deposit> myIterator = iterator();
+            final Iterator<Deposit> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Deposit myDeposit = myIterator.next();
+                final Deposit myDeposit = myIterator.next();
 
                 /* Ignore deleted and closed deposits and wrong taxFree status */
                 boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
@@ -1344,7 +1344,7 @@ public class Deposit
          * @return the matching item
          */
         public Deposit findItemByName(final String pName) {
-            AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
             return myAsset instanceof Deposit
                                               ? (Deposit) myAsset
                                               : null;

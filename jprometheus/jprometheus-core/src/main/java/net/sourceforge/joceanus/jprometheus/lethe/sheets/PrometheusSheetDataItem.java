@@ -644,9 +644,8 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
      * Access a byte array from the WorkSheet.
      * @param pOffset the column offset
      * @return the byte array
-     * @throws OceanusException on error
      */
-    protected byte[] loadBytes(final int pOffset) throws OceanusException {
+    protected byte[] loadBytes(final int pOffset) {
         /* Access the cells by reference */
         final MetisDataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, pOffset);
 

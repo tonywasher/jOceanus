@@ -58,9 +58,9 @@ import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableModel;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableSelection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
@@ -226,7 +226,7 @@ public class TransactionCategoryTable
 
         /* Create the data column model and declare it */
         theColumns = new CategoryColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -237,12 +237,12 @@ public class TransactionCategoryTable
         myTable.setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create new button */
-        TethysSwingGuiFactory myFactory = pView.getGuiFactory();
+        final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theNewButton = myFactory.newButton();
         PrometheusIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter components */
-        TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
+        final TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);
         theSelectButton = myFactory.newScrollButton();
         theSelectButton.setValue(null, FILTER_ALL);
 
@@ -276,7 +276,7 @@ public class TransactionCategoryTable
         theCategoryMenu = theSelectButton.getMenu();
 
         /* Listen to swing events */
-        TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
+        final TethysEventRegistrar<TethysUIEvent> myRegistrar = theSelectButton.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> handleCategorySelection());
         theSelectButton.setMenuConfigurator(e -> buildSelectMenu());
         theNewButton.getEventRegistrar().addEventListener(e -> theModel.addNewItem());
@@ -325,8 +325,8 @@ public class TransactionCategoryTable
         myTask = myTask.startTask("Transactions");
 
         /* Get the Category edit list */
-        MoneyWiseData myData = theView.getData();
-        TransactionCategoryList myCategories = myData.getTransCategories();
+        final MoneyWiseData myData = theView.getData();
+        final TransactionCategoryList myCategories = myData.getTransCategories();
         theCategories = myCategories.deriveEditList();
         theCategories.resolveUpdateSetLinks();
         theCategoryEntry.setDataList(theCategories);
@@ -431,7 +431,7 @@ public class TransactionCategoryTable
      * Handle deposit selection.
      */
     private void handleCategorySelection() {
-        TransactionCategory myCategory = theSelectButton.getValue();
+        final TransactionCategory myCategory = theSelectButton.getValue();
         if (!MetisDifference.isEqual(myCategory, theParent)) {
             /* Store new category */
             selectParent(myCategory);
@@ -492,7 +492,7 @@ public class TransactionCategoryTable
         }
 
         /* Create the totals MenuItem and add it to the popUp */
-        TransactionCategory myTotals = theCategories.getSingularClass(TransactionCategoryClass.TOTALS);
+        final TransactionCategory myTotals = theCategories.getSingularClass(TransactionCategoryClass.TOTALS);
         myItem = theCategoryMenu.addItem(myTotals);
 
         /* If this is the active parent */
@@ -502,12 +502,12 @@ public class TransactionCategoryTable
         }
 
         /* Loop through the available category values */
-        Iterator<TransactionCategory> myIterator = theCategories.iterator();
+        final Iterator<TransactionCategory> myIterator = theCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategory myCurr = myIterator.next();
+            final TransactionCategory myCurr = myIterator.next();
 
             /* Ignore category if it is not a subTotal */
-            TransactionCategoryClass myClass = myCurr.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myCurr.getCategoryTypeClass();
             if (!myClass.isSubTotal()) {
                 continue;
             }
@@ -620,7 +620,7 @@ public class TransactionCategoryTable
             /* Protect against Exceptions */
             try {
                 /* Create the new category */
-                TransactionCategory myCategory = new TransactionCategory(theCategories);
+                final TransactionCategory myCategory = new TransactionCategory(theCategories);
                 myCategory.setDefaults(theParent);
 
                 /* Add the new item */
@@ -638,7 +638,7 @@ public class TransactionCategoryTable
                 /* Handle Exceptions */
             } catch (OceanusException e) {
                 /* Build the error */
-                OceanusException myError = new MoneyWiseDataException("Failed to create new category", e);
+                final OceanusException myError = new MoneyWiseDataException("Failed to create new category", e);
 
                 /* Show the error */
                 setError(myError);
@@ -695,14 +695,14 @@ public class TransactionCategoryTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldScrollButtonCellEditor<TransactionCategoryType> myScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategoryType.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldScrollButtonCellEditor<TransactionCategoryType> myScrollEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategoryType.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButton */
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myIconRenderer.setIconMapSet(r -> myActionMapSet);
             myIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -764,7 +764,7 @@ public class TransactionCategoryTable
             /* Return the appropriate value */
             switch (pColIndex) {
                 case COLUMN_NAME:
-                    String mySubCat = pCategory.getSubCategory();
+                    final String mySubCat = pCategory.getSubCategory();
                     return (mySubCat == null)
                                               ? pCategory.getName()
                                               : mySubCat;
@@ -866,7 +866,7 @@ public class TransactionCategoryTable
         private void buildCategoryTypeMenu(final Integer pRowIndex,
                                            final TethysScrollMenu<TransactionCategoryType, Icon> pMenu) {
             /* Record active item */
-            TransactionCategory myCategory = theCategories.get(pRowIndex);
+            final TransactionCategory myCategory = theCategories.get(pRowIndex);
 
             /* Build the menu */
             theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);

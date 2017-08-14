@@ -148,7 +148,7 @@ public class Payee
         super(pList, pValues);
 
         /* Store the PayeeType */
-        Object myValue = pValues.getValue(FIELD_PAYEETYPE);
+        final Object myValue = pValues.getValue(FIELD_PAYEETYPE);
         if (myValue instanceof Integer) {
             setValueType((Integer) myValue);
         } else if (myValue instanceof String) {
@@ -200,7 +200,7 @@ public class Payee
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -307,7 +307,7 @@ public class Payee
      * @return the categoryTypeId
      */
     public Integer getPayeeTypeId() {
-        PayeeType myType = getPayeeType();
+        final PayeeType myType = getPayeeType();
         return (myType == null)
                                 ? null
                                 : myType.getId();
@@ -318,7 +318,7 @@ public class Payee
      * @return the payeeTypeName
      */
     public String getPayeeTypeName() {
-        PayeeType myType = getPayeeType();
+        final PayeeType myType = getPayeeType();
         return (myType == null)
                                 ? null
                                 : myType.getName();
@@ -329,7 +329,7 @@ public class Payee
      * @return the payeeTypeClass
      */
     public PayeeTypeClass getPayeeTypeClass() {
-        PayeeType myType = getPayeeType();
+        final PayeeType myType = getPayeeType();
         return (myType == null)
                                 ? null
                                 : myType.getPayeeClass();
@@ -465,7 +465,7 @@ public class Payee
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
+        final AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -503,7 +503,7 @@ public class Payee
      */
     @Override
     public boolean isHidden() {
-        PayeeTypeClass myClass = this.getPayeeTypeClass();
+        final PayeeTypeClass myClass = this.getPayeeTypeClass();
         return myClass != null
                && myClass.isHiddenType();
     }
@@ -525,12 +525,12 @@ public class Payee
      */
     private PayeeType getDefaultPayeeType() {
         /* Access payee types */
-        PayeeTypeList myTypes = getDataSet().getPayeeTypes();
+        final PayeeTypeList myTypes = getDataSet().getPayeeTypes();
 
         /* loop through the payee types */
-        Iterator<PayeeType> myIterator = myTypes.iterator();
+        final Iterator<PayeeType> myIterator = myTypes.iterator();
         while (myIterator.hasNext()) {
-            PayeeType myType = myIterator.next();
+            final PayeeType myType = myIterator.next();
 
             /* Ignore deleted and singular types */
             if (!myType.isDeleted() && !myType.getPayeeClass().isSingular()) {
@@ -557,7 +557,7 @@ public class Payee
         if ((iDiff == 0)
             && (pThat instanceof Payee)) {
             /* Check the payee type */
-            Payee myThat = (Payee) pThat;
+            final Payee myThat = (Payee) pThat;
             iDiff = MetisDifference.compareObject(getPayeeType(), myThat.getPayeeType());
             if (iDiff == 0) {
                 /* Check the underlying base */
@@ -575,7 +575,7 @@ public class Payee
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_PAYEETYPE, myData.getPayeeTypes());
     }
 
@@ -697,8 +697,8 @@ public class Payee
 
     @Override
     public void validate() {
-        PayeeList myList = getList();
-        PayeeType myPayeeType = getPayeeType();
+        final PayeeList myList = getList();
+        final PayeeType myPayeeType = getPayeeType();
 
         /* Validate base components */
         super.validate();
@@ -708,7 +708,7 @@ public class Payee
             addError(ERROR_MISSING, FIELD_PAYEETYPE);
         } else {
             /* Access the class */
-            PayeeTypeClass myClass = myPayeeType.getPayeeClass();
+            final PayeeTypeClass myClass = myPayeeType.getPayeeClass();
 
             /* PayeeType must be enabled */
             if (!myPayeeType.getEnabled()) {
@@ -718,7 +718,7 @@ public class Payee
             /* If the PayeeType is singular */
             if (myClass.isSingular()) {
                 /* Count the elements of this class */
-                PayeeDataMap myMap = myList.getDataMap();
+                final PayeeDataMap myMap = myList.getDataMap();
                 if (!myMap.validSingularCount(myClass)) {
                     addError(ERROR_MULT, FIELD_PAYEETYPE);
                 }
@@ -748,7 +748,7 @@ public class Payee
         if (!(pPayee instanceof Payee)) {
             return false;
         }
-        Payee myPayee = (Payee) pPayee;
+        final Payee myPayee = (Payee) pPayee;
 
         /* Store the current detail into history */
         pushHistory();
@@ -767,8 +767,8 @@ public class Payee
 
     @Override
     public void adjustMapForItem() {
-        PayeeList myList = getList();
-        PayeeDataMap myMap = myList.getDataMap();
+        final PayeeList myList = getList();
+        final PayeeDataMap myMap = myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -785,12 +785,12 @@ public class Payee
         /**
          * The PayeeInfo List.
          */
-        private PayeeInfoList theInfoList = null;
+        private PayeeInfoList theInfoList;
 
         /**
          * The AccountInfoType list.
          */
-        private AccountInfoTypeList theInfoTypeList = null;
+        private AccountInfoTypeList theInfoTypeList;
 
         /**
          * Construct an empty CORE Payee list.
@@ -852,7 +852,7 @@ public class Payee
 
         @Override
         protected PayeeList getEmptyList(final ListStyle pStyle) {
-            PayeeList myList = new PayeeList(this);
+            final PayeeList myList = new PayeeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -863,20 +863,20 @@ public class Payee
          */
         public PayeeList deriveEditList() {
             /* Build an empty List */
-            PayeeList myList = getEmptyList(ListStyle.EDIT);
+            final PayeeList myList = getEmptyList(ListStyle.EDIT);
             myList.ensureMap();
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
 
             /* Create info List */
-            PayeeInfoList myPayeeInfo = getPayeeInfo();
+            final PayeeInfoList myPayeeInfo = getPayeeInfo();
             myList.theInfoList = myPayeeInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the payees */
-            Iterator<Payee> myIterator = iterator();
+            final Iterator<Payee> myIterator = iterator();
             while (myIterator.hasNext()) {
-                Payee myCurr = myIterator.next();
+                final Payee myCurr = myIterator.next();
 
                 /* Ignore deleted payees */
                 if (myCurr.isDeleted()) {
@@ -884,7 +884,7 @@ public class Payee
                 }
 
                 /* Build the new linked payee and add it to the list */
-                Payee myPayee = new Payee(myList, myCurr);
+                final Payee myPayee = new Payee(myList, myCurr);
                 myList.append(myPayee);
 
                 /* Adjust the map */
@@ -925,7 +925,7 @@ public class Payee
                 throw new UnsupportedOperationException();
             }
 
-            Payee myPayee = new Payee(this, (Payee) pPayee);
+            final Payee myPayee = new Payee(this, (Payee) pPayee);
             add(myPayee);
             return myPayee;
         }
@@ -936,7 +936,7 @@ public class Payee
          */
         @Override
         public Payee addNewItem() {
-            Payee myPayee = new Payee(this);
+            final Payee myPayee = new Payee(this);
             add(myPayee);
             return myPayee;
         }
@@ -954,7 +954,7 @@ public class Payee
         @Override
         public Payee addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the payee */
-            Payee myPayee = new Payee(this, pValues);
+            final Payee myPayee = new Payee(this, pValues);
 
             /* Check that this PayeeId has not been previously added */
             if (!isIdUnique(myPayee.getId())) {
@@ -968,12 +968,12 @@ public class Payee
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPayee);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myPayee);
                     theInfoList.addValuesItem(myValues);
                 }
             }
@@ -1068,11 +1068,11 @@ public class Payee
         @Override
         public void adjustForItem(final Payee pItem) {
             /* If the class is singular */
-            PayeeTypeClass myClass = pItem.getPayeeTypeClass();
+            final PayeeTypeClass myClass = pItem.getPayeeTypeClass();
             if (myClass.isSingular()) {
                 /* Adjust category count */
-                Integer myId = myClass.getClassId();
-                Integer myCount = thePayeeCountMap.get(myId);
+                final Integer myId = myClass.getClassId();
+                final Integer myCount = thePayeeCountMap.get(myId);
                 if (myCount == null) {
                     thePayeeCountMap.put(myId, ONE);
                 } else {
@@ -1129,7 +1129,7 @@ public class Payee
          * @return true/false
          */
         public boolean validSingularCount(final PayeeTypeClass pClass) {
-            Integer myResult = thePayeeCountMap.get(pClass.getClassId());
+            final Integer myResult = thePayeeCountMap.get(pClass.getClassId());
             return ONE.equals(myResult);
         }
     }

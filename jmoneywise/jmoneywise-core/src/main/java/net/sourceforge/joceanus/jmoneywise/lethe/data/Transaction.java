@@ -180,16 +180,16 @@ public class Transaction
         super(pList, pValues);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
             /* Store the Date */
-            Object myValue = pValues.getValue(FIELD_DATE);
+            final Object myValue = pValues.getValue(FIELD_DATE);
             if (myValue instanceof TethysDate) {
                 setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDate((String) myValue));
             }
             /* Catch Exceptions */
@@ -233,7 +233,7 @@ public class Transaction
         }
 
         /* Handle infoSet fields */
-        TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
+        final TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if ((theInfoSet != null) && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
         }
@@ -265,7 +265,7 @@ public class Transaction
      */
     private void setValueDate(final TethysDate pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
-        MoneyWiseTaxFactory myFactory = getDataSet().getTaxFactory();
+        final MoneyWiseTaxFactory myFactory = getDataSet().getTaxFactory();
         setValueTaxYear(myFactory.findTaxYearForDate(pValue));
     }
 
@@ -576,7 +576,7 @@ public class Transaction
     @Override
     public MetisDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
-        TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
+        final TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
@@ -606,7 +606,7 @@ public class Transaction
         }
 
         /* Check ReturnedCash Account */
-        TransactionAsset myReturnedCash = getReturnedCashAccount();
+        final TransactionAsset myReturnedCash = getReturnedCashAccount();
         return (myReturnedCash != null) && myReturnedCash.isClosed();
     }
 
@@ -644,7 +644,7 @@ public class Transaction
         }
 
         /* If the dates differ */
-        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        final int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -679,12 +679,12 @@ public class Transaction
      */
     @Override
     public void validate() {
-        TethysDate myDate = getDate();
-        TransactionAsset myAccount = getAccount();
-        TransactionAsset myPartner = getPartner();
-        TransactionCategory myCategory = getCategory();
-        TethysUnits myAccountUnits = getAccountDeltaUnits();
-        TethysUnits myPartnerUnits = getPartnerDeltaUnits();
+        final TethysDate myDate = getDate();
+        final TransactionAsset myAccount = getAccount();
+        final TransactionAsset myPartner = getPartner();
+        final TransactionCategory myCategory = getCategory();
+        final TethysUnits myAccountUnits = getAccountDeltaUnits();
+        final TethysUnits myPartnerUnits = getPartnerDeltaUnits();
 
         /* Header is always valid */
         if (isHeader()) {
@@ -693,7 +693,7 @@ public class Transaction
         }
 
         /* Determine date range to check for */
-        TethysDateRange myRange = getDataSet().getDateRange();
+        final TethysDateRange myRange = getDataSet().getDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -729,10 +729,10 @@ public class Transaction
      */
     protected Deposit getDefaultReturnedCashAccount() {
         /* loop through the deposits */
-        DepositList myDeposits = getDataSet().getDeposits();
-        Iterator<Deposit> myIterator = myDeposits.iterator();
+        final DepositList myDeposits = getDataSet().getDeposits();
+        final Iterator<Deposit> myIterator = myDeposits.iterator();
         while (myIterator.hasNext()) {
-            Deposit myDeposit = myIterator.next();
+            final Deposit myDeposit = myIterator.next();
 
             /* Use if not deleted or closed */
             if (!myDeposit.isDeleted() && !myDeposit.isClosed()) {
@@ -749,8 +749,8 @@ public class Transaction
      * @return the calculated tax credit
      */
     public final TethysMoney calculateTaxCredit() {
-        MoneyWiseTaxCredit myTax = getTaxYear();
-        TethysMoney myCredit = getTaxCredit();
+        final MoneyWiseTaxCredit myTax = getTaxYear();
+        final TethysMoney myCredit = getTaxCredit();
 
         /* Ignore unless tax credit is null/zero */
         if (myCredit != null
@@ -766,9 +766,9 @@ public class Transaction
         }
 
         /* Determine the tax credit rate */
-        TethysRate myRate = isInterest()
-                                         ? myTax.getTaxCreditRateForInterest()
-                                         : myTax.getTaxCreditRateForDividend();
+        final TethysRate myRate = isInterest()
+                                               ? myTax.getTaxCreditRateForInterest()
+                                               : myTax.getTaxCreditRateForDividend();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -974,14 +974,14 @@ public class Transaction
      */
     public final boolean hasTransactionTag(final TransactionTag pTag) {
         /* Access iterator and return false if we have none */
-        Iterator<TransactionInfo> myIterator = tagIterator();
+        final Iterator<TransactionInfo> myIterator = tagIterator();
         if (myIterator == null) {
             return false;
         }
 
         /* Loop through the tags */
         while (myIterator.hasNext()) {
-            TransactionInfo myInfo = myIterator.next();
+            final TransactionInfo myInfo = myIterator.next();
 
             /* Check for presence */
             if (!myInfo.isDeleted()
@@ -1031,7 +1031,7 @@ public class Transaction
         if (!(pTrans instanceof Transaction)) {
             return false;
         }
-        Transaction myTrans = (Transaction) pTrans;
+        final Transaction myTrans = (Transaction) pTrans;
 
         /* Store the current detail into history */
         pushHistory();
@@ -1054,8 +1054,8 @@ public class Transaction
         super.flipAssets();
 
         /* Flip deltas */
-        TethysUnits myActDelta = getAccountDeltaUnits();
-        TethysUnits myPartDelta = getPartnerDeltaUnits();
+        final TethysUnits myActDelta = getAccountDeltaUnits();
+        final TethysUnits myPartDelta = getPartnerDeltaUnits();
         setAccountDeltaUnits(myPartDelta);
         setPartnerDeltaUnits(myActDelta);
 
@@ -1159,7 +1159,7 @@ public class Transaction
 
         @Override
         protected TransactionList getEmptyList(final ListStyle pStyle) {
-            TransactionList myList = new TransactionList(this);
+            final TransactionList myList = new TransactionList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -1172,7 +1172,7 @@ public class Transaction
         @Override
         public Transaction addCopyItem(final DataItem<?> pItem) {
             if (pItem instanceof Transaction) {
-                Transaction myTrans = new Transaction(this, (Transaction) pItem);
+                final Transaction myTrans = new Transaction(this, (Transaction) pItem);
                 add(myTrans);
                 return myTrans;
             }
@@ -1186,11 +1186,11 @@ public class Transaction
         @Override
         public Transaction addNewItem() {
             /* Create a new Transaction */
-            Transaction myTrans = new Transaction(this);
+            final Transaction myTrans = new Transaction(this);
 
             /* Set the Date as the start of the range */
             TethysDate myDate = new TethysDate();
-            TethysDateRange myRange = getDataSet().getDateRange();
+            final TethysDateRange myRange = getDataSet().getDateRange();
             if (myRange.compareTo(myDate) != 0) {
                 myDate = myRange.getStart();
             }
@@ -1204,7 +1204,7 @@ public class Transaction
         @Override
         public Transaction addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the transaction */
-            Transaction myTrans = new Transaction(this, pValues);
+            final Transaction myTrans = new Transaction(this, pValues);
 
             /* Check that this TransId has not been previously added */
             if (!isIdUnique(myTrans.getId())) {
@@ -1218,12 +1218,12 @@ public class Transaction
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {
                 /* Loop through the items */
-                Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
+                final Iterator<InfoItem<MoneyWiseDataType>> myIterator = pValues.infoIterator();
                 while (myIterator.hasNext()) {
-                    InfoItem<MoneyWiseDataType> myItem = myIterator.next();
+                    final InfoItem<MoneyWiseDataType> myItem = myIterator.next();
 
                     /* Build info */
-                    DataValues<MoneyWiseDataType> myValues = myItem.getValues(myTrans);
+                    final DataValues<MoneyWiseDataType> myValues = myItem.getValues(myTrans);
                     getTransactionInfo().addValuesItem(myValues);
                 }
             }
@@ -1241,7 +1241,7 @@ public class Transaction
         @Override
         public void postProcessOnLoad() throws OceanusException {
             /* Resolve links and sort the data */
-            resolveDataSetLinks();
+            super.resolveDataSetLinks();
             reSort();
         }
 

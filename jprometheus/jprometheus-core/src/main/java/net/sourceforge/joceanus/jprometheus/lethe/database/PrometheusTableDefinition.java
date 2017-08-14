@@ -566,9 +566,8 @@ public class PrometheusTableDefinition {
      * Update values.
      * @param pStmt the statement
      * @throws SQLException on error
-     * @throws OceanusException on error
      */
-    protected void updateValues(final PreparedStatement pStmt) throws SQLException, OceanusException {
+    protected void updateValues(final PreparedStatement pStmt) throws SQLException {
         PrometheusColumnDefinition myId = null;
 
         /* Store the Statement */

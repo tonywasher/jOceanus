@@ -101,7 +101,7 @@ public class TransactionInfo
         /* Protect against exceptions */
         try {
             /* Resolve links */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
             resolveDataLink(FIELD_INFOTYPE, myData.getTransInfoTypes());
             resolveDataLink(FIELD_OWNER, myData.getTransactions());
 
@@ -109,7 +109,7 @@ public class TransactionInfo
             setValue(pValues.getValue(FIELD_VALUE));
 
             /* Access the TransactionInfoSet and register this data */
-            TransactionInfoSet mySet = getOwner().getInfoSet();
+            final TransactionInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
 
             /* Resolve any link value */
@@ -190,7 +190,7 @@ public class TransactionInfo
 
     @Override
     public String getLinkName() {
-        DataItem<?> myItem = getLink(DataItem.class);
+        final DataItem<?> myItem = getLink(DataItem.class);
         if (myItem instanceof Deposit) {
             return ((Deposit) myItem).getName();
         }
@@ -221,7 +221,7 @@ public class TransactionInfo
     @Override
     public void deRegister() {
         /* Access the TransactionInfoSet and register this value */
-        TransactionInfoSet mySet = getOwner().getInfoSet();
+        final TransactionInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -248,7 +248,7 @@ public class TransactionInfo
         }
 
         /* Compare the Info Types */
-        TransactionInfoType myType = getInfoType();
+        final TransactionInfoType myType = getInfoType();
         iDiff = myType.compareTo(pThat.getInfoType());
         if (iDiff != 0) {
             return iDiff;
@@ -273,7 +273,7 @@ public class TransactionInfo
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_INFOTYPE, myData.getTransInfoTypes());
         resolveDataLink(FIELD_OWNER, myData.getTransactions());
 
@@ -281,7 +281,7 @@ public class TransactionInfo
         resolveLink();
 
         /* Access the TransactionInfoSet and register this data */
-        TransactionInfoSet mySet = getOwner().getInfoSet();
+        final TransactionInfoSet mySet = getOwner().getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -291,12 +291,12 @@ public class TransactionInfo
      */
     private void resolveLink() throws OceanusException {
         /* If we have a link */
-        TransactionInfoType myType = getInfoType();
+        final TransactionInfoType myType = getInfoType();
         if (myType.isLink()) {
             /* Access data */
-            MoneyWiseData myData = getDataSet();
-            MetisValueSet myValues = getValueSet();
-            Object myLinkId = myValues.getValue(FIELD_VALUE);
+            final MoneyWiseData myData = getDataSet();
+            final MetisValueSet myValues = getValueSet();
+            final Object myLinkId = myValues.getValue(FIELD_VALUE);
 
             /* Switch on link type */
             switch (myType.getInfoClass()) {
@@ -331,7 +331,7 @@ public class TransactionInfo
         }
 
         /* Access as TransactionInfo */
-        TransactionInfo myTransInfo = (TransactionInfo) pTransInfo;
+        final TransactionInfo myTransInfo = (TransactionInfo) pTransInfo;
 
         /* Store the current detail into history */
         pushHistory();
@@ -424,7 +424,7 @@ public class TransactionInfo
 
         @Override
         public TransactionInfoList getEmptyList(final ListStyle pStyle) {
-            TransactionInfoList myList = new TransactionInfoList(this);
+            final TransactionInfoList myList = new TransactionInfoList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -436,7 +436,7 @@ public class TransactionInfo
                 throw new UnsupportedOperationException();
             }
 
-            TransactionInfo myInfo = new TransactionInfo(this, (TransactionInfo) pItem);
+            final TransactionInfo myInfo = new TransactionInfo(this, (TransactionInfo) pItem);
             add(myInfo);
             return myInfo;
         }
@@ -450,7 +450,7 @@ public class TransactionInfo
         protected TransactionInfo addNewItem(final Transaction pOwner,
                                              final TransactionInfoType pInfoType) {
             /* Allocate the new entry and add to list */
-            TransactionInfo myInfo = new TransactionInfo(this, pOwner, pInfoType);
+            final TransactionInfo myInfo = new TransactionInfo(this, pOwner, pInfoType);
             append(myInfo);
 
             /* return it */
@@ -468,23 +468,23 @@ public class TransactionInfo
             }
 
             /* Access the data set */
-            MoneyWiseData myData = getDataSet();
+            final MoneyWiseData myData = getDataSet();
 
             /* Look up the Info Type */
-            TransactionInfoType myInfoType = myData.getTransInfoTypes().findItemByClass(pInfoClass);
+            final TransactionInfoType myInfoType = myData.getTransInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new MoneyWiseDataException(pTransaction, ERROR_BADINFOCLASS + " [" + pInfoClass + "]");
             }
 
             /* Create the values */
-            DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionInfo.OBJECT_NAME);
+            final DataValues<MoneyWiseDataType> myValues = new DataValues<>(TransactionInfo.OBJECT_NAME);
             myValues.addValue(FIELD_ID, pId);
             myValues.addValue(FIELD_INFOTYPE, myInfoType);
             myValues.addValue(FIELD_OWNER, pTransaction);
             myValues.addValue(FIELD_VALUE, pValue);
 
             /* Create a new Transaction Info */
-            TransactionInfo myInfo = new TransactionInfo(this, myValues);
+            final TransactionInfo myInfo = new TransactionInfo(this, myValues);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -499,7 +499,7 @@ public class TransactionInfo
         @Override
         public TransactionInfo addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the info */
-            TransactionInfo myInfo = new TransactionInfo(this, pValues);
+            final TransactionInfo myInfo = new TransactionInfo(this, pValues);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -520,9 +520,9 @@ public class TransactionInfo
          */
         public void resolveValueLinks() throws OceanusException {
             /* Loop through the Info items */
-            Iterator<TransactionInfo> myIterator = iterator();
+            final Iterator<TransactionInfo> myIterator = iterator();
             while (myIterator.hasNext()) {
-                TransactionInfo myCurr = myIterator.next();
+                final TransactionInfo myCurr = myIterator.next();
 
                 /* If this is an infoItem */
                 if (myCurr.getInfoType().isLink()) {
@@ -538,7 +538,7 @@ public class TransactionInfo
             validateOnLoad();
 
             /* Validate the Transactions */
-            TransactionList myTrans = getDataSet().getTransactions();
+            final TransactionList myTrans = getDataSet().getTransactions();
             myTrans.validateOnLoad();
         }
     }

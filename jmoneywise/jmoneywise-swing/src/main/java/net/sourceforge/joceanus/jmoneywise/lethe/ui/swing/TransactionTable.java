@@ -361,8 +361,8 @@ public class TransactionTable
         setFieldMgr(theFieldMgr);
 
         /* Access the GUI Factory */
-        TethysSwingGuiFactory myFactory = theView.getGuiFactory();
-        MetisViewerManager myViewer = theView.getViewerManager();
+        final TethysSwingGuiFactory myFactory = theView.getGuiFactory();
+        final MetisViewerManager myViewer = theView.getViewerManager();
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet<>(theView, MoneyWiseDataType.class);
@@ -370,8 +370,8 @@ public class TransactionTable
         theBuilder = new TransactionBuilder(theUpdateSet);
 
         /* Create the top level viewer entry for this view */
-        MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
-        MetisViewerEntry myRegister = myViewer.newEntry(mySection, NLS_DATAENTRY);
+        final MetisViewerEntry mySection = pView.getViewerEntry(PrometheusViewerEntryId.VIEW);
+        final MetisViewerEntry myRegister = myViewer.newEntry(mySection, NLS_DATAENTRY);
         theViewerFilter = myViewer.newEntry(myRegister, NLS_FILTERDATAENTRY);
         theViewerAnalysis = myViewer.newEntry(myRegister, NLS_TRANSDATAENTRY);
         theViewerAnalysis.setTreeObject(theUpdateSet);
@@ -398,11 +398,11 @@ public class TransactionTable
 
         /* Create the data column model and declare it */
         theColumns = new AnalysisColumnModel(this);
-        JTable myTable = getTable();
+        final JTable myTable = getTable();
         myTable.setColumnModel(theColumns);
 
         /* Create the header panel */
-        TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
+        final TethysSwingBorderPaneManager myHeader = myFactory.newBorderPane();
         myHeader.setCentre(theSelect);
         myHeader.setNorth(theError);
         myHeader.setEast(theActionButtons);
@@ -522,8 +522,8 @@ public class TransactionTable
     @Override
     public void notifyChanges() {
         /* Determine whether we have updates */
-        boolean hasUpdates = hasUpdates();
-        boolean isItemEditing = theActiveTrans.isEditing();
+        final boolean hasUpdates = hasUpdates();
+        final boolean isItemEditing = theActiveTrans.isEditing();
 
         /* Update the table buttons */
         theActionButtons.setEnabled(true);
@@ -541,7 +541,7 @@ public class TransactionTable
     @Override
     public void setEnabled(final boolean bEnable) {
         /* Ensure that we are disabled whilst editing */
-        boolean myEnable = bEnable && !isItemEditing();
+        final boolean myEnable = bEnable && !isItemEditing();
         super.setEnabled(myEnable);
         theSelect.setEnabled(myEnable);
         theNewButton.setEnabled(myEnable);
@@ -642,7 +642,7 @@ public class TransactionTable
      */
     private void handleErrorPane() {
         /* Determine whether we have an error */
-        boolean isError = theError.hasError();
+        final boolean isError = theError.hasError();
 
         /* Hide selection panel on error */
         theSelect.setVisible(!isError);
@@ -682,7 +682,7 @@ public class TransactionTable
                                                          : AnalysisColumnSet.BALANCE);
 
         /* Set the selection */
-        TethysDateRange myRange = theSelect.getRange();
+        final TethysDateRange myRange = theSelect.getRange();
         if (MetisDifference.isEqual(myRange, theRange)) {
             /* Handle a simple filter change */
             theModel.fireNewDataEvents();
@@ -788,7 +788,7 @@ public class TransactionTable
          */
         private void addNewItem() {
             /* Create the new transaction */
-            Transaction myTrans = theFilter.buildNewTransaction(theBuilder);
+            final Transaction myTrans = theFilter.buildNewTransaction(theBuilder);
 
             /* If we have one available */
             if (myTrans != null) {
@@ -1051,36 +1051,36 @@ public class TransactionTable
             super(pTable);
 
             /* Create the relevant formatters */
-            MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            MetisFieldIconButtonCellEditor<AssetDirection> myDirectionIconEditor = theFieldMgr.allocateIconButtonCellEditor(AssetDirection.class);
-            MetisFieldIconButtonCellEditor<Boolean> myReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            MetisFieldListButtonCellEditor<TransactionTag> myTagEditor = theFieldMgr.allocateScrollListButtonCellEditor(TransactionTag.class);
-            MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            MetisFieldIntegerCellEditor myIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
-            MetisFieldMoneyCellEditor myMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
-            MetisFieldUnitsCellEditor myUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
-            MetisFieldDilutionCellEditor myDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
-            MetisFieldScrollButtonCellEditor<TransactionAsset> myAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
-            MetisFieldScrollButtonCellEditor<TransactionAsset> myPartnerEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
-            MetisFieldScrollButtonCellEditor<TransactionAsset> myReturnedEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
-            MetisFieldScrollButtonCellEditor<TransactionCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
-            MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
-            MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            MetisFieldIntegerCellRenderer myIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
-            MetisFieldIconButtonCellRenderer<AssetDirection> myDirectionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(AssetDirection.class);
-            MetisFieldIconButtonCellRenderer<Boolean> myReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            final MetisFieldIconButtonCellEditor<AssetDirection> myDirectionIconEditor = theFieldMgr.allocateIconButtonCellEditor(AssetDirection.class);
+            final MetisFieldIconButtonCellEditor<Boolean> myReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
+            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldListButtonCellEditor<TransactionTag> myTagEditor = theFieldMgr.allocateScrollListButtonCellEditor(TransactionTag.class);
+            final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
+            final MetisFieldIntegerCellEditor myIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
+            final MetisFieldMoneyCellEditor myMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
+            final MetisFieldUnitsCellEditor myUnitsEditor = theFieldMgr.allocateUnitsCellEditor();
+            final MetisFieldDilutionCellEditor myDilutionEditor = theFieldMgr.allocateDilutionCellEditor();
+            final MetisFieldScrollButtonCellEditor<TransactionAsset> myAccountEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
+            final MetisFieldScrollButtonCellEditor<TransactionAsset> myPartnerEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
+            final MetisFieldScrollButtonCellEditor<TransactionAsset> myReturnedEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionAsset.class);
+            final MetisFieldScrollButtonCellEditor<TransactionCategory> myCategoryEditor = theFieldMgr.allocateScrollButtonCellEditor(TransactionCategory.class);
+            final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            final MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            final MetisFieldIntegerCellRenderer myIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
+            final MetisFieldIconButtonCellRenderer<AssetDirection> myDirectionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(AssetDirection.class);
+            final MetisFieldIconButtonCellRenderer<Boolean> myReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
+            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
 
             /* Configure the iconButtons */
-            Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
+            final Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
             myReconciledIconEditor.setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)));
             myReconciledIconRenderer.setIconMapSet(r -> myRecMapSets.get(determineReconciledState(r)));
-            Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
+            final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
             myDirectionIconEditor.setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)));
             myDirectionIconRenderer.setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)));
-            TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -1159,7 +1159,7 @@ public class TransactionTable
          * @return the state
          */
         private boolean determineReconciledState(final int pRowIndex) {
-            Transaction myTrans = theTransactions.get(pRowIndex);
+            final Transaction myTrans = theTransactions.get(pRowIndex);
             return myTrans.isLocked();
         }
 
@@ -1169,7 +1169,7 @@ public class TransactionTable
          * @return the state
          */
         private boolean determineDirectionState(final int pRowIndex) {
-            Transaction myTrans = theTransactions.get(pRowIndex);
+            final Transaction myTrans = theTransactions.get(pRowIndex);
             return !myTrans.isReconciled();
         }
 
@@ -1645,7 +1645,7 @@ public class TransactionTable
         private void buildAccountMenu(final Integer pRowIndex,
                                       final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
             /* Record active item */
-            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
+            final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveTrans.buildAccountMenu(pMenu, myTrans);
@@ -1659,7 +1659,7 @@ public class TransactionTable
         private void buildPartnerMenu(final Integer pRowIndex,
                                       final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
             /* Record active item */
-            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
+            final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveTrans.buildPartnerMenu(pMenu, myTrans);
@@ -1673,7 +1673,7 @@ public class TransactionTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<TransactionCategory, Icon> pMenu) {
             /* Record active item */
-            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
+            final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveTrans.buildCategoryMenu(pMenu, myTrans);
@@ -1687,7 +1687,7 @@ public class TransactionTable
         private void buildReturnedMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
             /* Record active item */
-            Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
+            final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveTrans.buildReturnedAccountMenu(pMenu, myTrans);

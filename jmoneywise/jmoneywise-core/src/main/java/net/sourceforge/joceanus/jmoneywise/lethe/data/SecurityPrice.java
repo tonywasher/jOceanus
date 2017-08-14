@@ -130,7 +130,7 @@ public class SecurityPrice
         super(pList, pValues);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Protect against exceptions */
         try {
@@ -139,7 +139,7 @@ public class SecurityPrice
             if (myValue instanceof TethysDate) {
                 setValueDate((TethysDate) myValue);
             } else if (myValue instanceof String) {
-                TethysDateFormatter myParser = myFormatter.getDateFormatter();
+                final TethysDateFormatter myParser = myFormatter.getDateFormatter();
                 setValueDate(myParser.parseDate((String) myValue));
             }
 
@@ -158,7 +158,7 @@ public class SecurityPrice
             } else if (myValue instanceof byte[]) {
                 setValuePrice((byte[]) myValue);
             } else if (myValue instanceof String) {
-                String myString = (String) myValue;
+                final String myString = (String) myValue;
                 setValuePrice(myString);
                 setValuePrice(myFormatter.parseValue(myString, TethysPrice.class));
             }
@@ -201,16 +201,16 @@ public class SecurityPrice
     @Override
     public String formatObject() {
         /* Access Key Values */
-        MetisEncryptedValueSet myValues = getValueSet();
-        Object mySecurity = myValues.getValue(FIELD_SECURITY);
-        Object myDate = myValues.getValue(FIELD_DATE);
-        Object myPrice = myValues.getValue(FIELD_PRICE);
+        final MetisEncryptedValueSet myValues = getValueSet();
+        final Object mySecurity = myValues.getValue(FIELD_SECURITY);
+        final Object myDate = myValues.getValue(FIELD_DATE);
+        final Object myPrice = myValues.getValue(FIELD_PRICE);
 
         /* Access formatter */
-        MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
+        final MetisDataFormatter myFormatter = getDataSet().getDataFormatter();
 
         /* Create string builder */
-        StringBuilder myBuilder = new StringBuilder();
+        final StringBuilder myBuilder = new StringBuilder();
         myBuilder.append(myFormatter.formatObject(mySecurity));
         myBuilder.append(": ");
         myBuilder.append(myFormatter.formatObject(myPrice));
@@ -266,7 +266,7 @@ public class SecurityPrice
      * @return the securityId
      */
     public Integer getSecurityId() {
-        Security mySecurity = getSecurity();
+        final Security mySecurity = getSecurity();
         return (mySecurity == null)
                                     ? null
                                     : mySecurity.getId();
@@ -277,7 +277,7 @@ public class SecurityPrice
      * @return the securityName
      */
     public String getSecurityName() {
-        Security mySecurity = getSecurity();
+        final Security mySecurity = getSecurity();
         return (mySecurity == null)
                                     ? null
                                     : mySecurity.getName();
@@ -450,7 +450,7 @@ public class SecurityPrice
         super.resolveDataSetLinks();
 
         /* Resolve data links */
-        MoneyWiseData myData = getDataSet();
+        final MoneyWiseData myData = getDataSet();
         resolveDataLink(FIELD_SECURITY, myData.getSecurities());
     }
 
@@ -461,7 +461,7 @@ public class SecurityPrice
      */
     protected void resolveUpdateSetLinks(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
         /* Resolve parent within list */
-        SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
+        final SecurityList mySecurities = pUpdateSet.getDataList(MoneyWiseDataType.SECURITY, SecurityList.class);
         resolveDataLink(FIELD_SECURITY, mySecurities);
     }
 
@@ -470,11 +470,11 @@ public class SecurityPrice
      */
     @Override
     public void validate() {
-        Security mySecurity = getSecurity();
-        TethysDate myDate = getDate();
-        TethysPrice myPrice = getPrice();
-        SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
-        MoneyWiseData mySet = getDataSet();
+        final Security mySecurity = getSecurity();
+        final TethysDate myDate = getDate();
+        final TethysPrice myPrice = getPrice();
+        final SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
+        final MoneyWiseData mySet = getDataSet();
 
         /* The security must be non-null */
         if (mySecurity == null) {
@@ -488,7 +488,7 @@ public class SecurityPrice
             /* else date is non-null */
         } else {
             /* Date must be unique for this security */
-            SecurityPriceDataMap<? extends SecurityPrice> myMap = myList.getDataMap();
+            final SecurityPriceDataMap<? extends SecurityPrice> myMap = myList.getDataMap();
             if (!myMap.validPriceCount(this)) {
                 addError(ERROR_DUPLICATE, FIELD_DATE);
             }
@@ -508,9 +508,9 @@ public class SecurityPrice
             addError(ERROR_NEGATIVE, FIELD_PRICE);
         } else {
             /* Ensure that currency is correct */
-            AssetCurrency myCurrency = mySecurity == null
-                                                          ? null
-                                                          : mySecurity.getAssetCurrency();
+            final AssetCurrency myCurrency = mySecurity == null
+                                                                ? null
+                                                                : mySecurity.getAssetCurrency();
             if ((myCurrency != null)
                 && !myPrice.getCurrency().equals(myCurrency.getCurrency())) {
                 addError(ERROR_CURRENCY, FIELD_PRICE);
@@ -566,7 +566,7 @@ public class SecurityPrice
         if (!(pPrice instanceof SecurityPrice)) {
             return false;
         }
-        SecurityPrice myPrice = (SecurityPrice) pPrice;
+        final SecurityPrice myPrice = (SecurityPrice) pPrice;
 
         /* Store the current detail into history */
         pushHistory();
@@ -588,8 +588,8 @@ public class SecurityPrice
     @Override
     @SuppressWarnings("unchecked")
     public void adjustMapForItem() {
-        SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
-        SecurityPriceDataMap<SecurityPrice> myMap = (SecurityPriceDataMap<SecurityPrice>) myList.getDataMap();
+        final SecurityPriceBaseList<? extends SecurityPrice> myList = getList();
+        final SecurityPriceDataMap<SecurityPrice> myMap = (SecurityPriceDataMap<SecurityPrice>) myList.getDataMap();
         myMap.adjustForItem(this);
     }
 
@@ -680,7 +680,7 @@ public class SecurityPrice
 
         @Override
         protected SecurityPriceList getEmptyList(final ListStyle pStyle) {
-            SecurityPriceList myList = new SecurityPriceList(this);
+            final SecurityPriceList myList = new SecurityPriceList(this);
             myList.setStyle(pStyle);
             return myList;
         }
@@ -693,7 +693,7 @@ public class SecurityPrice
         @Override
         public SecurityPrice addCopyItem(final DataItem<?> pPrice) {
             if (pPrice instanceof SecurityPrice) {
-                SecurityPrice myPrice = new SecurityPrice(this, (SecurityPrice) pPrice);
+                final SecurityPrice myPrice = new SecurityPrice(this, (SecurityPrice) pPrice);
                 add(myPrice);
                 return myPrice;
             } else {
@@ -713,7 +713,7 @@ public class SecurityPrice
         @Override
         public SecurityPrice addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the price */
-            SecurityPrice myPrice = new SecurityPrice(this, pValues);
+            final SecurityPrice myPrice = new SecurityPrice(this, pValues);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
@@ -802,7 +802,7 @@ public class SecurityPrice
         @Override
         public void adjustForItem(final T pItem) {
             /* Access the Security Id */
-            Security mySecurity = pItem.getSecurity();
+            final Security mySecurity = pItem.getSecurity();
             if (mySecurity == null) {
                 return;
             }
@@ -815,8 +815,8 @@ public class SecurityPrice
             }
 
             /* Adjust price count */
-            TethysDate myDate = pItem.getDate();
-            Integer myCount = myMap.get(myDate);
+            final TethysDate myDate = pItem.getDate();
+            final Integer myCount = myMap.get(myDate);
             if (myCount == null) {
                 myMap.put(myDate, DataInstanceMap.ONE);
             } else {
@@ -841,13 +841,13 @@ public class SecurityPrice
          */
         public boolean validPriceCount(final SecurityPrice pItem) {
             /* Access the Details */
-            Security mySecurity = pItem.getSecurity();
-            TethysDate myDate = pItem.getDate();
+            final Security mySecurity = pItem.getSecurity();
+            final TethysDate myDate = pItem.getDate();
 
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
             if (myMap != null) {
-                Integer myResult = myMap.get(myDate);
+                final Integer myResult = myMap.get(myDate);
                 return DataInstanceMap.ONE.equals(myResult);
             }
             return false;
@@ -862,7 +862,7 @@ public class SecurityPrice
         public boolean availableDate(final Security pSecurity,
                                      final TethysDate pDate) {
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(pSecurity);
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.get(pSecurity);
             return myMap == null
                    || myMap.get(pDate) == null;
         }
@@ -876,15 +876,15 @@ public class SecurityPrice
         public TethysPrice getPriceForDate(final AssetBase<?> pSecurity,
                                            final TethysDate pDate) {
             /* Access as security */
-            Security mySecurity = Security.class.cast(pSecurity);
+            final Security mySecurity = Security.class.cast(pSecurity);
 
             /* Access list for security */
-            PriceList myList = theMapOfPrices.get(mySecurity);
+            final PriceList myList = theMapOfPrices.get(mySecurity);
             if (myList != null) {
                 /* Loop through the prices */
-                ListIterator<SecurityPrice> myIterator = myList.listIterator();
+                final ListIterator<SecurityPrice> myIterator = myList.listIterator();
                 while (myIterator.hasNext()) {
-                    SecurityPrice myCurr = myIterator.next();
+                    final SecurityPrice myCurr = myIterator.next();
 
                     /* Return this price if this is earlier or equal to the the date */
                     if (pDate.compareTo(myCurr.getDate()) >= 0) {
@@ -894,7 +894,7 @@ public class SecurityPrice
             }
 
             /* return single unit price */
-            Currency myCurrency = mySecurity.getCurrency();
+            final Currency myCurrency = mySecurity.getCurrency();
             return TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
         }
 
@@ -907,22 +907,22 @@ public class SecurityPrice
         public TethysPrice[] getPricesForRange(final Security pSecurity,
                                                final TethysDateRange pRange) {
             /* Set price */
-            Currency myCurrency = pSecurity.getCurrency();
+            final Currency myCurrency = pSecurity.getCurrency();
             TethysPrice myFirst = TethysPrice.getWholeUnits(DataInstanceMap.ONE, myCurrency);
             TethysPrice myLatest = myFirst;
-            TethysDate myStart = pRange.getStart();
+            final TethysDate myStart = pRange.getStart();
 
             /* Access list for security */
-            PriceList myList = theMapOfPrices.get(pSecurity);
+            final PriceList myList = theMapOfPrices.get(pSecurity);
             if (myList != null) {
                 /* Loop through the prices */
-                ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
+                final ListIterator<SecurityPrice> myIterator = myList.listIterator(myList.size());
                 while (myIterator.hasPrevious()) {
-                    SecurityPrice myCurr = myIterator.previous();
+                    final SecurityPrice myCurr = myIterator.previous();
 
                     /* Check for the range of the date */
-                    TethysDate myDate = myCurr.getDate();
-                    int iComp = pRange.compareTo(myDate);
+                    final TethysDate myDate = myCurr.getDate();
+                    final int iComp = pRange.compareTo(myDate);
 
                     /* If this is later than the range we are finished */
                     if (iComp < 0) {
@@ -952,7 +952,7 @@ public class SecurityPrice
          */
         public ListIterator<SecurityPrice> priceIterator(final Security pSecurity) {
             /* Access list for currency */
-            PriceList myList = theMapOfPrices.get(pSecurity);
+            final PriceList myList = theMapOfPrices.get(pSecurity);
             return (myList != null)
                                     ? myList.listIterator(myList.size())
                                     : null;

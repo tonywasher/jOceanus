@@ -167,10 +167,10 @@ public class TransactionPanel
         theFieldSet = getFieldSet();
 
         /* Build the main panel */
-        JPanel myMainPanel = buildMainPanel(pFactory);
+        final JPanel myMainPanel = buildMainPanel(pFactory);
 
         /* Create a tabbedPane */
-        JTabbedPane myTabs = new JTabbedPane();
+        final JTabbedPane myTabs = new JTabbedPane();
 
         /* Build the info panel */
         JPanel myPanel = buildInfoPanel(pFactory);
@@ -201,15 +201,15 @@ public class TransactionPanel
      */
     private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField myAmount = pFactory.newStringField();
+        final TethysSwingStringTextField myAmount = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingDateButtonManager myDateButton = pFactory.newDateButton();
-        TethysSwingScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton();
-        TethysSwingScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton();
-        TethysSwingIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
-        TethysSwingIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
+        final TethysSwingDateButtonManager myDateButton = pFactory.newDateButton();
+        final TethysSwingScrollButtonManager<TransactionAsset> myAccountButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<TransactionAsset> myPartnerButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<TransactionCategory> myCategoryButton = pFactory.newScrollButton();
+        final TethysSwingIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
+        final TethysSwingIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
 
         /* restrict the fields */
         restrictField(myDateButton, Transaction.DESCLEN);
@@ -230,10 +230,10 @@ public class TransactionPanel
         theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
         /* Create the main panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(Transaction.FIELD_DATE, myPanel);
         theFieldSet.addFieldToPanel(Transaction.FIELD_ACCOUNT, myPanel);
@@ -249,9 +249,9 @@ public class TransactionPanel
         myAccountButton.setMenuConfigurator(c -> buildAccountMenu(c, getItem()));
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
         myPartnerButton.setMenuConfigurator(c -> buildPartnerMenu(c, getItem()));
-        Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
+        final Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
         myReconciledButton.setIconMapSet(() -> myRecMapSets.get(theReconciledState));
-        Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
+        final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
         myDirectionButton.setIconMapSet(() -> myDirMapSets.get(theDirectionState));
 
         /* Return the new panel */
@@ -265,16 +265,16 @@ public class TransactionPanel
      */
     private JPanel buildInfoPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField myAmount = pFactory.newStringField();
-        TethysSwingStringTextField myRate = pFactory.newStringField();
-        TethysSwingStringTextField myComments = pFactory.newStringField();
-        TethysSwingStringTextField myReference = pFactory.newStringField();
+        final TethysSwingStringTextField myAmount = pFactory.newStringField();
+        final TethysSwingStringTextField myRate = pFactory.newStringField();
+        final TethysSwingStringTextField myComments = pFactory.newStringField();
+        final TethysSwingStringTextField myReference = pFactory.newStringField();
 
         /* Create the buttons */
         // TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
 
         /* Restrict the fields */
-        int myWidth = Transaction.DESCLEN >> 1;
+        final int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myAmount, myWidth);
         restrictField(myRate, myWidth);
         restrictField(myComments, myWidth);
@@ -290,10 +290,10 @@ public class TransactionPanel
         // myTagButton);
 
         /* Create the Info panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the info panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), myPanel);
@@ -314,15 +314,15 @@ public class TransactionPanel
      */
     private JPanel buildTaxPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
-        TethysSwingStringTextField myForeignTaxCredit = pFactory.newStringField();
-        TethysSwingStringTextField myNatIns = pFactory.newStringField();
-        TethysSwingStringTextField myBenefit = pFactory.newStringField();
-        TethysSwingStringTextField myWithheld = pFactory.newStringField();
-        TethysSwingStringTextField myYears = pFactory.newStringField();
+        final TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
+        final TethysSwingStringTextField myForeignTaxCredit = pFactory.newStringField();
+        final TethysSwingStringTextField myNatIns = pFactory.newStringField();
+        final TethysSwingStringTextField myBenefit = pFactory.newStringField();
+        final TethysSwingStringTextField myWithheld = pFactory.newStringField();
+        final TethysSwingStringTextField myYears = pFactory.newStringField();
 
         /* Restrict the fields */
-        int myWidth = Transaction.DESCLEN >> 1;
+        final int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myTaxCredit, myWidth);
         restrictField(myForeignTaxCredit, myWidth);
         restrictField(myNatIns, myWidth);
@@ -339,10 +339,10 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), MetisDataType.MONEY, myForeignTaxCredit);
 
         /* Create the Tax panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the Tax panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), myPanel);
@@ -363,18 +363,18 @@ public class TransactionPanel
      */
     private JPanel buildSecuritiesPanel(final TethysSwingGuiFactory pFactory) {
         /* Allocate fields */
-        TethysSwingStringTextField myAccountUnits = pFactory.newStringField();
-        TethysSwingStringTextField myPartnerUnits = pFactory.newStringField();
-        TethysSwingStringTextField myCommission = pFactory.newStringField();
-        TethysSwingStringTextField myPrice = pFactory.newStringField();
-        TethysSwingStringTextField myDilution = pFactory.newStringField();
-        TethysSwingStringTextField myReturnedCash = pFactory.newStringField();
+        final TethysSwingStringTextField myAccountUnits = pFactory.newStringField();
+        final TethysSwingStringTextField myPartnerUnits = pFactory.newStringField();
+        final TethysSwingStringTextField myCommission = pFactory.newStringField();
+        final TethysSwingStringTextField myPrice = pFactory.newStringField();
+        final TethysSwingStringTextField myDilution = pFactory.newStringField();
+        final TethysSwingStringTextField myReturnedCash = pFactory.newStringField();
 
         /* Create the buttons */
-        TethysSwingScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
+        final TethysSwingScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
 
         /* Restrict the fields */
-        int myWidth = Transaction.DESCLEN >> 1;
+        final int myWidth = Transaction.DESCLEN >> 1;
         restrictField(myAccountUnits, myWidth);
         restrictField(myPartnerUnits, myWidth);
         restrictField(myPrice, myWidth);
@@ -393,10 +393,10 @@ public class TransactionPanel
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), MetisDataType.MONEY, myReturnedCash);
 
         /* Create the Tax panel */
-        TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
 
         /* Layout the tax panel */
-        SpringLayout mySpring = new SpringLayout();
+        final SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), myPanel);
@@ -417,9 +417,9 @@ public class TransactionPanel
     @Override
     public void refreshData() {
         /* If we have an item */
-        Transaction myItem = getItem();
+        final Transaction myItem = getItem();
         if (myItem != null) {
-            TransactionList myTrans = getDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
+            final TransactionList myTrans = getDataList(MoneyWiseDataType.TRANSACTION, TransactionList.class);
             setItem(myTrans.findItemById(myItem.getId()));
         }
 
@@ -458,10 +458,10 @@ public class TransactionPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the item */
-        Transaction myTrans = getItem();
-        boolean bIsReconciled = myTrans.isReconciled();
-        boolean bIsLocked = myTrans.isLocked();
-        Currency myCurrency = myTrans.getAccount().getCurrency();
+        final Transaction myTrans = getItem();
+        final boolean bIsReconciled = myTrans.isReconciled();
+        final boolean bIsLocked = myTrans.isLocked();
+        final Currency myCurrency = myTrans.getAccount().getCurrency();
 
         /* Determine whether the comments field should be visible */
         boolean bShowField = isEditable || myTrans.getComments() != null;
@@ -588,15 +588,15 @@ public class TransactionPanel
         theFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the reconciled field should be visible */
-        boolean bShowReconciled = isEditable || bIsReconciled;
+        final boolean bShowReconciled = isEditable || bIsReconciled;
         theReconciledState = !bIsLocked;
         theDirectionState = !bIsReconciled;
         theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
 
         /* Determine basic editing */
-        boolean canEdit = isEditable && !bIsReconciled;
-        boolean needsNullAmount = myTrans.needsNullAmount();
+        final boolean canEdit = isEditable && !bIsReconciled;
+        final boolean needsNullAmount = myTrans.needsNullAmount();
         theFieldSet.setEditable(Transaction.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
         theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, canEdit);
         theFieldSet.setEditable(Transaction.FIELD_PARTNER, canEdit);
@@ -619,7 +619,7 @@ public class TransactionPanel
     public static boolean isEditableField(final Transaction pTrans,
                                           final TransactionInfoClass pField) {
         /* Access the infoSet */
-        TransactionInfoSet myInfoSet = pTrans.getInfoSet();
+        final TransactionInfoSet myInfoSet = pTrans.getInfoSet();
 
         /* If the transaction is reconciled */
         if (pTrans.isReconciled()) {
@@ -628,15 +628,15 @@ public class TransactionPanel
         }
 
         /* Check whether the field is available */
-        MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
+        final MetisFieldRequired isRequired = myInfoSet.isClassRequired(pField);
         return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
-        MetisField myField = pUpdate.getField();
-        Transaction myTrans = getItem();
+        final MetisField myField = pUpdate.getField();
+        final Transaction myTrans = getItem();
 
         /* Process updates */
         if (myField.equals(Transaction.FIELD_DATE)) {
@@ -732,20 +732,20 @@ public class TransactionPanel
     @Override
     protected void declareGoToItems(final boolean pUpdates) {
         /* Access the item */
-        Transaction myItem = getItem();
+        final Transaction myItem = getItem();
 
         /* Access the analysis and the relevant filters */
-        Analysis myAnalysis = theAnalysisSelect.getAnalysis();
-        TransactionFilters myFilters = new TransactionFilters(myAnalysis, myItem);
+        final Analysis myAnalysis = theAnalysisSelect.getAnalysis();
+        final TransactionFilters myFilters = new TransactionFilters(myAnalysis, myItem);
 
         /* Remove the current filter */
-        AnalysisFilter<?, ?> myCurrent = theAnalysisSelect.getFilter();
+        final AnalysisFilter<?, ?> myCurrent = theAnalysisSelect.getFilter();
         myFilters.remove(myCurrent);
 
         /* Loop through the filters */
-        Iterator<AnalysisFilter<?, ?>> myIterator = myFilters.iterator();
+        final Iterator<AnalysisFilter<?, ?>> myIterator = myFilters.iterator();
         while (myIterator.hasNext()) {
-            AnalysisFilter<?, ?> myFilter = myIterator.next();
+            final AnalysisFilter<?, ?> myFilter = myIterator.next();
 
             /* declare it */
             declareGoToFilter(myFilter);
@@ -768,7 +768,7 @@ public class TransactionPanel
     private void buildAssetGoTo(final TransactionAsset pAsset) {
         if (pAsset instanceof SecurityHolding) {
             /* Build menu Items for Portfolio and Security */
-            SecurityHolding myHolding = (SecurityHolding) pAsset;
+            final SecurityHolding myHolding = (SecurityHolding) pAsset;
             declareGoToItem(myHolding.getPortfolio());
             declareGoToItem(myHolding.getSecurity());
         } else if (pAsset instanceof AssetBase<?>) {
@@ -785,11 +785,11 @@ public class TransactionPanel
         /* If this is a security holding */
         if (pAsset instanceof SecurityHolding) {
             /* declare holding via map */
-            SecurityHolding myHolding = (SecurityHolding) pAsset;
-            Portfolio myPortfolio = myHolding.getPortfolio();
-            Security mySecurity = myHolding.getSecurity();
-            MoneyWiseData myData = myPortfolio.getDataSet();
-            SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+            final SecurityHolding myHolding = (SecurityHolding) pAsset;
+            final Portfolio myPortfolio = myHolding.getPortfolio();
+            final Security mySecurity = myHolding.getSecurity();
+            final MoneyWiseData myData = myPortfolio.getDataSet();
+            final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
             return myMap.declareHolding(myPortfolio, mySecurity);
         }
 
@@ -847,18 +847,18 @@ public class TransactionPanel
                                                                 final boolean pIsAccount,
                                                                 final Transaction pTrans) {
         /* Record active item */
-        TransactionAsset myAccount = pTrans.getAccount();
-        TransactionCategory myCategory = pTrans.getCategory();
-        TransactionAsset myCurr = pIsAccount
-                                             ? myAccount
-                                             : pTrans.getPartner();
+        final TransactionAsset myAccount = pTrans.getAccount();
+        final TransactionCategory myCategory = pTrans.getCategory();
+        final TransactionAsset myCurr = pIsAccount
+                                                   ? myAccount
+                                                   : pTrans.getPartner();
         TethysScrollMenuItem<TransactionAsset> myActive = null;
         TethysScrollSubMenu<TransactionAsset, Icon> myMenu = null;
 
         /* Loop through the available values */
-        Iterator<T> myIterator = pList.iterator();
+        final Iterator<T> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
-            T myAsset = myIterator.next();
+            final T myAsset = myIterator.next();
 
             /* Only process non-deleted/non-closed items */
             boolean bIgnore = myAsset.isDeleted() || myAsset.isClosed();
@@ -878,7 +878,7 @@ public class TransactionPanel
             }
 
             /* Create a new MenuItem and add it to the popUp */
-            TethysScrollMenuItem<TransactionAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
+            final TethysScrollMenuItem<TransactionAsset> myItem = myMenu.getSubMenu().addItem(myAsset);
 
             /* If this is the active category */
             if (myAsset.equals(myCurr)) {
@@ -903,23 +903,23 @@ public class TransactionPanel
                                          final boolean pIsAccount,
                                          final Transaction pTrans) {
         /* Record active item */
-        TransactionAsset myAccount = pTrans.getAccount();
-        TransactionCategory myCategory = pTrans.getCategory();
-        TransactionAsset myCurr = pIsAccount
-                                             ? myAccount
-                                             : pTrans.getPartner();
+        final TransactionAsset myAccount = pTrans.getAccount();
+        final TransactionCategory myCategory = pTrans.getCategory();
+        final TransactionAsset myCurr = pIsAccount
+                                                   ? myAccount
+                                                   : pTrans.getPartner();
         TethysScrollMenuItem<TransactionAsset> myActive = null;
         TethysScrollSubMenu<TransactionAsset, Icon> myMenu = null;
 
         /* Access Portfolios and Holdings Map */
-        MoneyWiseData myData = pTrans.getDataSet();
-        PortfolioList myPortfolios = myData.getPortfolios();
-        SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
+        final MoneyWiseData myData = pTrans.getDataSet();
+        final PortfolioList myPortfolios = myData.getPortfolios();
+        final SecurityHoldingMap myMap = myData.getSecurityHoldingsMap();
 
         /* Loop through the Portfolios */
-        Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
+        final Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
-            Portfolio myPortfolio = myPortIterator.next();
+            final Portfolio myPortfolio = myPortIterator.next();
             TethysScrollSubMenu<TransactionAsset, Icon> myCoreMenu = null;
 
             /* Ignore deleted or closed */
@@ -928,20 +928,20 @@ public class TransactionPanel
             }
 
             /* Look for existing and new holdings */
-            Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
-            Iterator<SecurityHolding> myNewIterator = myMap.newIterator(myPortfolio);
+            final Iterator<SecurityHolding> myExistIterator = myMap.existingIterator(myPortfolio);
+            final Iterator<SecurityHolding> myNewIterator = myMap.newIterator(myPortfolio);
             if ((myExistIterator != null) || (myNewIterator != null)) {
                 /* If there are existing elements */
                 if (myExistIterator != null) {
                     /* Loop through them */
                     while (myExistIterator.hasNext()) {
-                        SecurityHolding myHolding = myExistIterator.next();
-                        Security mySecurity = myHolding.getSecurity();
+                        final SecurityHolding myHolding = myExistIterator.next();
+                        final Security mySecurity = myHolding.getSecurity();
 
                         /* Check whether the asset is allowable for the owner */
-                        boolean bIgnore = !(pIsAccount
-                                                       ? TransactionValidator.isValidAccount(myHolding)
-                                                       : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                        final boolean bIgnore = !(pIsAccount
+                                                             ? TransactionValidator.isValidAccount(myHolding)
+                                                             : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -957,7 +957,7 @@ public class TransactionPanel
                         }
 
                         /* Add the item to the menu */
-                        TethysScrollMenuItem<TransactionAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
+                        final TethysScrollMenuItem<TransactionAsset> myItem = myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
 
                         /* If this is the active holding */
                         if (mySecurity.equals(myCurr)) {
@@ -972,13 +972,13 @@ public class TransactionPanel
                     /* Loop through them */
                     TethysScrollSubMenu<TransactionAsset, Icon> mySubMenu = null;
                     while (myNewIterator.hasNext()) {
-                        SecurityHolding myHolding = myNewIterator.next();
-                        Security mySecurity = myHolding.getSecurity();
+                        final SecurityHolding myHolding = myNewIterator.next();
+                        final Security mySecurity = myHolding.getSecurity();
 
                         /* Check whether the asset is allowable for the owner */
-                        boolean bIgnore = !(pIsAccount
-                                                       ? TransactionValidator.isValidAccount(myHolding)
-                                                       : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
+                        final boolean bIgnore = !(pIsAccount
+                                                             ? TransactionValidator.isValidAccount(myHolding)
+                                                             : TransactionValidator.isValidPartner(myAccount, myCategory, myHolding));
                         if (bIgnore) {
                             continue;
                         }
@@ -1021,24 +1021,24 @@ public class TransactionPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        TransactionAsset myAccount = pTrans.getAccount();
-        TransactionCategory myCurr = pTrans.getCategory();
+        final TransactionAsset myAccount = pTrans.getAccount();
+        final TransactionCategory myCurr = pTrans.getCategory();
         TethysScrollMenuItem<TransactionCategory> myActive = null;
         TethysScrollMenuItem<TransactionCategory> myItem;
 
         /* Create a simple map for top-level categories */
-        Map<String, TethysScrollSubMenu<TransactionCategory, Icon>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<TransactionCategory, Icon>> myMap = new HashMap<>();
 
         /* Access Categories */
-        TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
+        final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Loop through the available category values */
-        Iterator<TransactionCategory> myIterator = myCategories.iterator();
+        final Iterator<TransactionCategory> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
-            TransactionCategory myCategory = myIterator.next();
+            final TransactionCategory myCategory = myIterator.next();
 
             /* Only process non-deleted low-level items */
-            TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+            final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
             boolean bIgnore = myCategory.isDeleted() || myClass.canParentCategory();
 
             /* Check whether the category is allowable for the owner */
@@ -1048,11 +1048,11 @@ public class TransactionPanel
             }
 
             /* Determine parent */
-            TransactionCategory myParent = myCategory.getParentCategory();
+            final TransactionCategory myParent = myCategory.getParentCategory();
 
             /* If we have a parent */
             if (myParent != null) {
-                String myParentName = myParent.getName();
+                final String myParentName = myParent.getName();
                 TethysScrollSubMenu<TransactionCategory, Icon> myMenu = myMap.get(myParentName);
 
                 /* If this is a new subMenu */
@@ -1094,25 +1094,25 @@ public class TransactionPanel
         pMenu.removeAllItems();
 
         /* Record active item */
-        TransactionAsset myCurr = pTrans.getReturnedCashAccount();
+        final TransactionAsset myCurr = pTrans.getReturnedCashAccount();
         TethysScrollMenuItem<TransactionAsset> myActive = null;
 
         /* Access Deposits */
-        DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
+        final DepositList myDeposits = getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
 
         /* Loop through the Portfolios */
-        Iterator<Deposit> myIterator = myDeposits.iterator();
+        final Iterator<Deposit> myIterator = myDeposits.iterator();
         while (myIterator.hasNext()) {
-            Deposit myDeposit = myIterator.next();
+            final Deposit myDeposit = myIterator.next();
 
             /* Ignore deleted or closed */
-            boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
+            final boolean bIgnore = myDeposit.isDeleted() || myDeposit.isClosed();
             if (bIgnore) {
                 continue;
             }
 
             /* Create a new action for the account */
-            TethysScrollMenuItem<TransactionAsset> myItem = pMenu.addItem(myDeposit);
+            final TethysScrollMenuItem<TransactionAsset> myItem = pMenu.addItem(myDeposit);
 
             /* If this is the active returned account */
             if (myDeposit.equals(myCurr)) {
@@ -1134,15 +1134,15 @@ public class TransactionPanel
      */
     public TethysItemList<TransactionTag> buildTagList(final Transaction pTrans) {
         /* Create a new itemList */
-        TethysItemList<TransactionTag> myList = new TethysItemList<>();
+        final TethysItemList<TransactionTag> myList = new TethysItemList<>();
 
         /* Access TransactionTags */
-        TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+        final TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
 
         /* Loop through the tags */
-        Iterator<TransactionTag> myTagIterator = myTags.iterator();
+        final Iterator<TransactionTag> myTagIterator = myTags.iterator();
         while (myTagIterator.hasNext()) {
-            TransactionTag myTag = myTagIterator.next();
+            final TransactionTag myTag = myTagIterator.next();
 
             /* If the tag is not deleted */
             if (!myTag.isDeleted()) {
@@ -1152,16 +1152,16 @@ public class TransactionPanel
         }
 
         /* Access tag iterator */
-        Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+        final Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
         if (myIterator != null) {
             /* Loop through the TransactionTags */
             while (myIterator.hasNext()) {
-                TransactionInfo myInfo = myIterator.next();
+                final TransactionInfo myInfo = myIterator.next();
 
                 /* If the item is not deleted */
                 if (!myInfo.isDeleted()) {
                     /* Access the tag and set as active */
-                    TransactionTag myTag = myInfo.getTransactionTag();
+                    final TransactionTag myTag = myInfo.getTransactionTag();
                     myList.selectItem(myTag);
                 }
             }

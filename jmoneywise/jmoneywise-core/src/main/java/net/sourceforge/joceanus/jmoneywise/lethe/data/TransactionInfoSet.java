@@ -90,7 +90,7 @@ public class TransactionInfoSet
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
-        TransactionInfoClass myClass = getClassForField(pField);
+        final TransactionInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -105,7 +105,7 @@ public class TransactionInfoSet
      * @return the value to set
      */
     private Object getInfoSetValue(final TransactionInfoClass pInfoClass) {
-        Object myValue;
+        final Object myValue;
 
         switch (pInfoClass) {
             case RETURNEDCASHACCOUNT:
@@ -164,7 +164,7 @@ public class TransactionInfoSet
      */
     public Deposit getDeposit(final TransactionInfoClass pInfoClass) {
         /* Access existing entry */
-        TransactionInfo myValue = getInfo(pInfoClass);
+        final TransactionInfo myValue = getInfo(pInfoClass);
 
         /* If we have no entry, return null */
         if (myValue == null) {
@@ -181,7 +181,7 @@ public class TransactionInfoSet
      * @return the status
      */
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
-        TransactionInfoClass myClass = getClassForField(pField);
+        final TransactionInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED
                                : isClassRequired(myClass);
@@ -190,18 +190,18 @@ public class TransactionInfoSet
     @Override
     public MetisFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
-        Transaction myTransaction = getOwner();
-        TransactionAsset myAccount = myTransaction.getAccount();
-        TransactionAsset myPartner = myTransaction.getPartner();
-        AssetDirection myDir = myTransaction.getDirection();
-        TransactionCategory myCategory = myTransaction.getCategory();
-        MoneyWiseTaxCredit myYear = myTransaction.getTaxYear();
+        final Transaction myTransaction = getOwner();
+        final TransactionAsset myAccount = myTransaction.getAccount();
+        final TransactionAsset myPartner = myTransaction.getPartner();
+        final AssetDirection myDir = myTransaction.getDirection();
+        final TransactionCategory myCategory = myTransaction.getCategory();
+        final MoneyWiseTaxCredit myYear = myTransaction.getTaxYear();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
-        TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
+        final TransactionCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Switch on class */
         switch (pClass) {
@@ -471,8 +471,8 @@ public class TransactionInfoSet
         }
 
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
-        AssetCurrency myCurrency = pAccount.getAssetCurrency();
-        AssetCurrency myPartnerCurrency = pPartner.getAssetCurrency();
+        final AssetCurrency myCurrency = pAccount.getAssetCurrency();
+        final AssetCurrency myPartnerCurrency = pPartner.getAssetCurrency();
         if ((myCurrency == null) || (myPartnerCurrency == null)) {
             return MetisFieldRequired.NOTALLOWED;
         }
@@ -563,23 +563,23 @@ public class TransactionInfoSet
      */
     protected void validate() {
         /* Access details about the Transaction */
-        Transaction myTransaction = getOwner();
-        TransactionAsset myAccount = myTransaction.getAccount();
-        TransactionAsset myPartner = myTransaction.getPartner();
-        AssetDirection myDir = myTransaction.getDirection();
-        TransactionCategoryClass myCatClass = myTransaction.getCategoryClass();
-        Currency myCurrency = myAccount.getCurrency();
+        final Transaction myTransaction = getOwner();
+        final TransactionAsset myAccount = myTransaction.getAccount();
+        final TransactionAsset myPartner = myTransaction.getPartner();
+        final AssetDirection myDir = myTransaction.getDirection();
+        final TransactionCategoryClass myCatClass = myTransaction.getCategoryClass();
+        final Currency myCurrency = myAccount.getCurrency();
 
         /* Loop through the classes */
         for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
             /* Access info for class */
-            boolean isExisting = isExisting(myClass);
-            TransactionInfo myInfo = myClass.isLinkSet()
-                                                         ? null
-                                                         : getInfo(myClass);
+            final boolean isExisting = isExisting(myClass);
+            final TransactionInfo myInfo = myClass.isLinkSet()
+                                                               ? null
+                                                               : getInfo(myClass);
 
             /* Determine requirements for class */
-            MetisFieldRequired myState = isClassRequired(myClass);
+            final MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
@@ -603,7 +603,7 @@ public class TransactionInfoSet
             switch (myClass) {
                 case QUALIFYYEARS:
                     /* Check value */
-                    Integer myYears = myInfo.getValue(Integer.class);
+                    final Integer myYears = myInfo.getValue(Integer.class);
                     if (myYears == 0) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (myYears < 0) {
@@ -661,10 +661,10 @@ public class TransactionInfoSet
                     break;
                 case ACCOUNTDELTAUNITS:
                 case PARTNERDELTAUNITS:
-                    MetisFieldRequired isRequired = myClass == TransactionInfoClass.ACCOUNTDELTAUNITS
-                                                                                                      ? isAccountUnitsPositive(myDir, myCatClass)
-                                                                                                      : isPartnerUnitsPositive(myDir, myCatClass);
-                    TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
+                    final MetisFieldRequired isRequired = myClass == TransactionInfoClass.ACCOUNTDELTAUNITS
+                                                                                                            ? isAccountUnitsPositive(myDir, myCatClass)
+                                                                                                            : isPartnerUnitsPositive(myDir, myCatClass);
+                    final TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
                     if (myUnits.isZero()) {
                         myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
                     } else if (myUnits.isPositive() && isRequired.notAllowed()) {
@@ -675,7 +675,7 @@ public class TransactionInfoSet
                     break;
                 case DILUTION:
                     /* Check range */
-                    TethysDilution myDilution = myInfo.getValue(TethysDilution.class);
+                    final TethysDilution myDilution = myInfo.getValue(TethysDilution.class);
                     if (myDilution.outOfRange()) {
                         myTransaction.addError(DataItem.ERROR_RANGE, getFieldForClass(myClass));
                     }
@@ -683,7 +683,7 @@ public class TransactionInfoSet
                 case REFERENCE:
                 case COMMENTS:
                     /* Check length */
-                    String myValue = myInfo.getValue(String.class);
+                    final String myValue = myInfo.getValue(String.class);
                     if (myValue.length() > myClass.getMaximumLength()) {
                         myTransaction.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }

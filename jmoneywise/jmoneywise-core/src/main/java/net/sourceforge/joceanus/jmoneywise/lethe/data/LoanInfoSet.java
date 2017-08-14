@@ -79,7 +79,7 @@ public class LoanInfoSet
     @Override
     public Object getFieldValue(final MetisField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -95,7 +95,7 @@ public class LoanInfoSet
      */
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
         /* Return the value */
-        Object myValue = getField(pInfoClass);
+        final Object myValue = getField(pInfoClass);
         return (myValue != null)
                                  ? myValue
                                  : MetisFieldValue.SKIP;
@@ -136,7 +136,7 @@ public class LoanInfoSet
      * @return the status
      */
     public MetisFieldRequired isFieldRequired(final MetisField pField) {
-        AccountInfoClass myClass = getClassForField(pField);
+        final AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                                ? MetisFieldRequired.NOTALLOWED
                                : isClassRequired(myClass);
@@ -145,8 +145,8 @@ public class LoanInfoSet
     @Override
     public MetisFieldRequired isClassRequired(final AccountInfoClass pClass) {
         /* Access details about the Loan */
-        Loan myLoan = getOwner();
-        LoanCategory myCategory = myLoan.getCategory();
+        final Loan myLoan = getOwner();
+        final LoanCategory myCategory = myLoan.getCategory();
 
         /* If we have no Category, no class is allowed */
         if (myCategory == null) {
@@ -185,16 +185,16 @@ public class LoanInfoSet
      */
     protected void validate() {
         /* Access details about the Loan */
-        Loan myLoan = getOwner();
+        final Loan myLoan = getOwner();
 
         /* Loop through the classes */
         for (AccountInfoClass myClass : AccountInfoClass.values()) {
             /* Access info for class */
-            LoanInfo myInfo = getInfo(myClass);
-            boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+            final LoanInfo myInfo = getInfo(myClass);
+            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
 
             /* Determine requirements for class */
-            MetisFieldRequired myState = isClassRequired(myClass);
+            final MetisFieldRequired myState = isClassRequired(myClass);
 
             /* If the field is missing */
             if (!isExisting) {
@@ -215,7 +215,7 @@ public class LoanInfoSet
             switch (myClass) {
                 case OPENINGBALANCE:
                     /* Access data */
-                    TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
+                    final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
                     if (!myBalance.getCurrency().equals(myLoan.getCurrency())) {
                         myLoan.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
                     }
@@ -225,7 +225,7 @@ public class LoanInfoSet
                 case NOTES:
                 case REFERENCE:
                     /* Access data */
-                    char[] myArray = myInfo.getValue(char[].class);
+                    final char[] myArray = myInfo.getValue(char[].class);
                     if (myArray.length > myClass.getMaximumLength()) {
                         myLoan.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
