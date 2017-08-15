@@ -613,7 +613,7 @@ public class DataValues<E extends Enum<E>> {
             theName = myClass.toString();
             theId = pInfo.getId();
             theValue = myClass.isLink()
-                                        ? pInfo.getLink(DataItem.class)
+                                        ? pInfo.getLink()
                                         : pInfo.getValue(Object.class);
         }
 

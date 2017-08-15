@@ -860,7 +860,7 @@ public class DepositCategoryTable
         private void buildCategoryTypeMenu(final Integer pRowIndex,
                                            final TethysScrollMenu<DepositCategoryType, Icon> pMenu) {
             /* Record active item */
-            final DepositCategory myCategory = theCategories.get(pRowIndex);
+            final DepositCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);

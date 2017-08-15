@@ -832,7 +832,7 @@ public class LoanTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            final Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, myLoan);
@@ -846,7 +846,7 @@ public class LoanTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<LoanCategory, Icon> pMenu) {
             /* Record active item */
-            final Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCategoryMenu(pMenu, myLoan);
@@ -860,7 +860,7 @@ public class LoanTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            final Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myLoan);
@@ -872,7 +872,7 @@ public class LoanTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            final Loan myLoan = theLoans.get(pRowIndex);
+            final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
             return myLoan.isClosed() || !myLoan.isRelevant();
         }
     }

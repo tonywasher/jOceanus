@@ -827,7 +827,7 @@ public class PortfolioTable
         private void buildTypeMenu(final Integer pRowIndex,
                                    final TethysScrollMenu<PortfolioType, Icon> pMenu) {
             /* Record active item */
-            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildTypeMenu(pMenu, myPortfolio);
@@ -841,7 +841,7 @@ public class PortfolioTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, myPortfolio);
@@ -855,7 +855,7 @@ public class PortfolioTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myPortfolio);
@@ -867,7 +867,7 @@ public class PortfolioTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            final Portfolio myPortfolio = thePortfolios.get(pRowIndex);
+            final Portfolio myPortfolio = theModel.getItemAtIndex(pRowIndex);
             return myPortfolio.isClosed() || !myPortfolio.isRelevant();
         }
     }

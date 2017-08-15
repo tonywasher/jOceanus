@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.lethe.field;
 
 import java.util.Currency;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
@@ -555,12 +556,13 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
          */
         public void processValue(final TethysEvent<TethysUIEvent> pValue) {
             /* Record new value */
-            setValue(pValue);
+            setValue(pValue.getDetails(List.class));
         }
 
+        @SuppressWarnings("unchecked")
         @Override
-        public I getValue() {
-            return null;
+        public List<I> getValue() {
+            return (List<I>) super.getValue();
         }
     }
 

@@ -392,7 +392,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
         }
 
         @Override
-        public void setDeemedCurrency(Supplier<Currency> pSupplier) {
+        public void setDeemedCurrency(final Supplier<Currency> pSupplier) {
             ((TethysCurrencyEditField<T, N, I>) getEditField()).setDeemedCurrency(pSupplier);
         }
     }

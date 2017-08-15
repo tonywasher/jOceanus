@@ -779,7 +779,7 @@ public class PayeeTable
         private void buildPayeeTypeMenu(final Integer pRowIndex,
                                         final TethysScrollMenu<PayeeType, Icon> pMenu) {
             /* Record active item */
-            final Payee myPayee = thePayees.get(pRowIndex);
+            final Payee myPayee = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildPayeeTypeMenu(pMenu, myPayee);
@@ -791,7 +791,7 @@ public class PayeeTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            final Payee myPayee = thePayees.get(pRowIndex);
+            final Payee myPayee = theModel.getItemAtIndex(pRowIndex);
             return myPayee.isClosed() || !myPayee.isRelevant();
         }
     }

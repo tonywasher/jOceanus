@@ -38,7 +38,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
@@ -1106,20 +1105,20 @@ public class QIFBuilder {
         /* Create return value */
         List<QIFClass> myList = null;
 
-        /* Obtain the iterator for the transaction */
-        final Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
+        /* Obtain the tags for the transaction */
+        final List<TransactionTag> myTags = pTrans.getTransactionTags();
 
         /* If we have tags */
-        if (myIterator != null) {
+        if (myTags != null) {
             /* Allocate the list */
             myList = new ArrayList<>();
 
-            /* Loop through the classes */
+            /* Loop through the tags */
+            final Iterator<TransactionTag> myIterator = myTags.iterator();
             while (myIterator.hasNext()) {
-                final TransactionInfo myInfo = myIterator.next();
+                final TransactionTag myTag = myIterator.next();
 
                 /* Access the transaction tag */
-                final TransactionTag myTag = myInfo.getTransactionTag();
                 final QIFClass myClass = theFile.registerClass(myTag);
 
                 /* Add to the list */

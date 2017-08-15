@@ -847,7 +847,7 @@ public class SecurityTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            final Security mySecurity = theSecurities.get(pRowIndex);
+            final Security mySecurity = theModel.getItemAtIndex(pRowIndex);
             return mySecurity.isClosed() || !mySecurity.isRelevant();
         }
 
@@ -859,7 +859,7 @@ public class SecurityTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            final Security mySecurity = theSecurities.get(pRowIndex);
+            final Security mySecurity = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, mySecurity);
@@ -873,7 +873,7 @@ public class SecurityTable
         private void buildTypeMenu(final Integer pRowIndex,
                                    final TethysScrollMenu<SecurityType, Icon> pMenu) {
             /* Record active item */
-            final Security mySecurity = theSecurities.get(pRowIndex);
+            final Security mySecurity = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildSecTypeMenu(pMenu, mySecurity);
@@ -887,7 +887,7 @@ public class SecurityTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            final Security mySecurity = theSecurities.get(pRowIndex);
+            final Security mySecurity = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, mySecurity);

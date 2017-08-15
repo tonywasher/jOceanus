@@ -866,7 +866,7 @@ public class TransactionCategoryTable
         private void buildCategoryTypeMenu(final Integer pRowIndex,
                                            final TethysScrollMenu<TransactionCategoryType, Icon> pMenu) {
             /* Record active item */
-            final TransactionCategory myCategory = theCategories.get(pRowIndex);
+            final TransactionCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);

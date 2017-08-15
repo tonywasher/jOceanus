@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.EnumMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Spliterator;
@@ -194,6 +195,26 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     /**
+     * Obtain the list iterator for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the iterator
+     */
+    public List<?> getListValue(final S pInfoClass) {
+        /* Reject if not called for LinkSet */
+        if (!pInfoClass.isLinkSet()) {
+            throw new UnsupportedOperationException();
+        }
+
+        /* Access existing entry */
+        final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+
+        /* Return list if it is available */
+        return mySet == null
+                             ? null
+                             : mySet.getActive();
+    }
+
+    /**
      * Is there active values for the infoClass?
      * @param pInfoClass the info class
      * @return true/false
@@ -251,46 +272,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     /**
-     * Obtain the link iterator for the infoClass.
-     * @param pInfoClass the Info Class
-     * @return the iterator
-     */
-    public Iterator<T> linkIterator(final S pInfoClass) {
-        /* Reject if not called for LinkSet */
-        if (!pInfoClass.isLinkSet()) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* Access existing entry */
-        final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
-
-        /* Return iterator if it is useful */
-        return (mySet == null)
-                               ? null
-                               : mySet.iterator();
-    }
-
-    /**
-     * Obtain the nameList for the infoClass.
-     * @param pInfoClass the Info Class
-     * @return the portfolio
-     */
-    public String getNameList(final S pInfoClass) {
-        /* Reject if not called for LinkSet */
-        if (!pInfoClass.isLinkSet()) {
-            throw new UnsupportedOperationException();
-        }
-
-        /* Access existing entry */
-        final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
-
-        /* Return iterator if it is useful */
-        return (mySet == null)
-                               ? null
-                               : mySet.getNameList();
-    }
-
-    /**
      * link the value for the the infoClass.
      * @param pInfoClass the Info Class
      * @param pLink the link value
@@ -343,31 +324,49 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     /**
-     * clear the value for the infoClass.
+     * set the list value for the infoClass.
      * @param pInfoClass the Info Class
-     * @param pLink the link value
+     * @param pLinks the links value
+     * @throws OceanusException on error
      */
-    public void clearValue(final S pInfoClass,
-                           final DataItem<E> pLink) {
+    public void setListValue(final S pInfoClass,
+                             final List<? extends DataItem<E>> pLinks) throws OceanusException {
         /* Reject if not called for LinkSet */
         if (!pInfoClass.isLinkSet()) {
             throw new UnsupportedOperationException();
         }
 
         /* Access existing set */
-        final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
+        DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
 
-        /* If we have a set */
-        if (mySet != null) {
-            /* Locate the link */
-            final T myItem = mySet.getItemForValue(pLink);
-
-            /* If it exists and is not deleted */
-            if ((myItem != null)
-                && !myItem.isDeleted()) {
-                /* Delete the value */
-                myItem.setDeleted(true);
+        /* If we now have no selected values */
+        if (pLinks == null) {
+            /* If we have a set */
+            if (mySet != null) {
+                /* Clear all values in linkSet */
+                mySet.clearAllLinks();
             }
+
+            /* Else we have selected values */
+        } else {
+            /* If we do not currently have a set */
+            if (mySet == null) {
+                /* Obtain infoType */
+                final I myInfoType = theTypeList.findItemByClass(pInfoClass);
+
+                /* Allocate the new set */
+                mySet = new DataInfoLinkSet<>(theInfoList, theOwner, myInfoType);
+
+                /* Add to the map */
+                theMap.put(pInfoClass, mySet);
+            }
+
+            /* Clear out unnecessary links */
+            mySet.clearUnnecessaryLinks(pLinks);
+
+            /* Add new links */
+            mySet.addNewLinks(pLinks);
+            mySet.sortLinks();
         }
     }
 
@@ -544,6 +543,29 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         } else {
             /* Remove from the map */
             theMap.remove(myClass);
+        }
+    }
+
+    /**
+     * deRegister Info.
+     * @param pInfo the info to deRegister
+     */
+    public void rewindInfoLinkSet(final T pInfo) {
+        /* Obtain the existing Map value */
+        final S myClass = pInfo.getInfoClass();
+
+        /* If this is an instance of a LinkSet */
+        if (myClass.isLinkSet()) {
+            /* Access existing entry */
+            final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(myClass);
+            if (mySet != null) {
+                /* reSort the links */
+                mySet.sortLinks();
+            }
+
+            /* illegal operation */
+        } else {
+            throw new UnsupportedOperationException();
         }
     }
 

@@ -316,7 +316,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * @param pClass the class of the link
      * @return the Link
      */
-    public <X extends DataItem<?>> X getLink(final Class<X> pClass) {
+    public <X extends DataItem<E>> X getLink(final Class<X> pClass) {
         return getLink(getValueSet(), pClass);
     }
 
@@ -332,7 +332,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
      * Obtain Link.
      * @return the Link
      */
-    protected Object getLink() {
+    protected DataItem<E> getLink() {
         return getLink(getValueSet());
     }
 
@@ -423,12 +423,13 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
     /**
      * Obtain Associated Link.
      * @param <X> the link type
+     * @param <E> the data type enum class
      * @param pValueSet the valueSet
      * @param pClass the class of the link
      * @return the Link
      */
-    public static <X extends DataItem<?>> X getLink(final MetisValueSet pValueSet,
-                                                    final Class<X> pClass) {
+    public static <X extends DataItem<E>, E extends Enum<E>> X getLink(final MetisValueSet pValueSet,
+                                                                       final Class<X> pClass) {
         return pValueSet.isDeletion()
                                       ? null
                                       : pValueSet.getValue(FIELD_LINK, pClass);
@@ -436,11 +437,13 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
 
     /**
      * Obtain Associated Link.
+     * @param <E> the data type enum class
      * @param pValueSet the valueSet
      * @return the Link
      */
-    protected static Object getLink(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_LINK, Object.class);
+    @SuppressWarnings("unchecked")
+    protected static <E extends Enum<E>> DataItem<E> getLink(final MetisValueSet pValueSet) {
+        return (DataItem<E>) pValueSet.getValue(FIELD_LINK, DataItem.class);
     }
 
     /**
@@ -921,6 +924,24 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         if (!hasErrors()) {
             setValidEdit();
         }
+    }
+
+    @Override
+    public void rewindToVersion(final int pVersion) {
+        /* Do the actual rewind */
+        super.rewindToVersion(pVersion);
+
+        /* If this is a linkSet type */
+        if (getInfoClass().isLinkSet()) {
+            /* Note the rewind */
+            rewindInfoLinkSet();
+        }
+    }
+
+    /**
+     * rewind any infoSet links.
+     */
+    public void rewindInfoLinkSet() {
     }
 
     /**

@@ -704,7 +704,7 @@ public class SpotPricesTable
          */
         private Currency determineCurrency(final Integer pRowIndex) {
             /* Update to allow correct currency */
-            final SpotSecurityPrice myPrice = thePrices.get(pRowIndex);
+            final SpotSecurityPrice myPrice = theModel.getItemAtIndex(pRowIndex);
             final Security mySecurity = myPrice.getSecurity();
             final AssetCurrency myCurrency = mySecurity.getAssetCurrency();
             return myCurrency.getCurrency();

@@ -114,7 +114,7 @@ public class TransactionInfoSet
                 break;
             case TRANSTAG:
                 /* Access InfoSetList */
-                myValue = getInfoLinkSet(pInfoClass);
+                myValue = getListValue(pInfoClass);
                 break;
             default:
                 /* Access value of object */

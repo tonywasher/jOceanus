@@ -35,7 +35,6 @@ import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -459,20 +458,14 @@ public final class TransactionTagBucket
          * @param pIterator the transaction tag iterator
          */
         protected void processTransaction(final Transaction pTrans,
-                                          final Iterator<TransactionInfo> pIterator) {
+                                          final Iterator<TransactionTag> pIterator) {
             /* Loop through the tags */
             while (pIterator.hasNext()) {
-                final TransactionInfo myInfo = pIterator.next();
+                final TransactionTag myTag = pIterator.next();
 
-                /* if the item is not deleted */
-                if (!myInfo.isDeleted()) {
-                    /* Access details */
-                    final TransactionTag myTag = myInfo.getTransactionTag();
-
-                    /* Obtain the bucket and process the transaction */
-                    final TransactionTagBucket myBucket = getBucket(myTag);
-                    myBucket.processTransaction(pTrans);
-                }
+                /* Obtain the bucket and process the transaction */
+                final TransactionTagBucket myBucket = getBucket(myTag);
+                myBucket.processTransaction(pTrans);
             }
         }
     }

@@ -309,6 +309,16 @@ public enum PrometheusDataResource implements TethysResourceId {
     DATAINFO_LINK("DataInfo.Link"),
 
     /**
+     * DataInfo ActiveSet.
+     */
+    DATAINFO_ACTIVE("DataInfo.Active"),
+
+    /**
+     * DataInfo LinkSet.
+     */
+    DATAINFO_LINKSET("DataInfo.LinkSet"),
+
+    /**
      * DataInfo Bad Type Error.
      */
     DATAINFO_ERROR_TYPE("DataInfo.Error.Type"),

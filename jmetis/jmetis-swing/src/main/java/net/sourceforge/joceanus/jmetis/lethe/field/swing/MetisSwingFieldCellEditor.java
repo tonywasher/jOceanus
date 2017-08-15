@@ -29,6 +29,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Currency;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -551,6 +552,14 @@ public final class MetisSwingFieldCellEditor {
                 theValue = theButton.getValue();
                 stopCellEditing();
             });
+        }
+
+        /**
+         * Set Selectable list.
+         * @param pSupplier the selectable supplier
+         */
+        public void setSelectables(final Function<Integer, Iterator<T>> pSupplier) {
+            theButton.setSelectables(() -> pSupplier.apply(thePoint.y));
         }
 
         /**

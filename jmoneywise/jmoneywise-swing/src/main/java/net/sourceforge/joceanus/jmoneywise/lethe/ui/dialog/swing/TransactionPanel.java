@@ -23,9 +23,11 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -64,10 +66,8 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory.TransactionCategoryList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfoSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionValidator;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
@@ -81,7 +81,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
@@ -90,6 +89,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
@@ -271,7 +271,7 @@ public class TransactionPanel
         final TethysSwingStringTextField myReference = pFactory.newStringField();
 
         /* Create the buttons */
-        // TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
+        final TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
 
         /* Restrict the fields */
         final int myWidth = Transaction.DESCLEN >> 1;
@@ -279,15 +279,14 @@ public class TransactionPanel
         restrictField(myRate, myWidth);
         restrictField(myComments, myWidth);
         restrictField(myReference, myWidth);
-        // restrictField(myTagButton, myWidth);
+        restrictField(myTagButton, myWidth);
 
         /* Build the FieldSet */
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
         theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
-        // theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG),
-        // myTagButton);
+        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myTagButton);
 
         /* Create the Info panel */
         final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
@@ -299,9 +298,11 @@ public class TransactionPanel
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);
         theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), myPanel);
-        // theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG),
-        // myPanel);
+        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myPanel);
         TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Configure the tag button */
+        myTagButton.setSelectables(this::buildTransactionTags);
 
         /* Return the new panel */
         return myPanel;
@@ -472,7 +473,7 @@ public class TransactionPanel
         theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), bShowField);
 
         /* Determine whether the tags field should be visible */
-        bShowField = isEditable || myTrans.tagIterator() != null;
+        bShowField = isEditable || myTrans.getTransactionTags() != null;
         theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
 
         /* Determine whether the partnerAmount field should be visible */
@@ -632,6 +633,7 @@ public class TransactionPanel
         return !isRequired.equals(MetisFieldRequired.NOTALLOWED);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void updateField(final MetisFieldUpdate pUpdate) throws OceanusException {
         /* Access the field */
@@ -674,9 +676,9 @@ public class TransactionPanel
                 case REFERENCE:
                     myTrans.setReference(pUpdate.getString());
                     break;
-                // case TRANSTAG:
-                // updateTag(myTrans, pUpdate.getEvent());
-                // break;
+                case TRANSTAG:
+                    myTrans.setTransactionTags((List<TransactionTag>) pUpdate.getValue(List.class));
+                    break;
                 case PARTNERAMOUNT:
                     myTrans.setPartnerAmount(pUpdate.getMoney());
                     break;
@@ -1128,46 +1130,25 @@ public class TransactionPanel
     }
 
     /**
-     * Create TagItemList.
-     * @param pTrans the transaction to build for
-     * @return the itemList
+     * Build the possible TransactionTag list.
+     * @return the transaction tag iterator
      */
-    public TethysItemList<TransactionTag> buildTagList(final Transaction pTrans) {
-        /* Create a new itemList */
-        final TethysItemList<TransactionTag> myList = new TethysItemList<>();
+    public Iterator<TransactionTag> buildTransactionTags() {
+        /* Create a list */
+        final List<TransactionTag> myList = new ArrayList<>();
 
-        /* Access TransactionTags */
-        final TransactionTagList myTags = getDataList(MoneyWiseDataType.TRANSTAG, TransactionTagList.class);
+        /* Loop through the TransactionTagss */
+        final Iterator<TransactionTag> myIterator = getItem().getDataSet().getTransactionTags().iterator();
+        while (myIterator.hasNext()) {
+            final TransactionTag myTag = myIterator.next();
 
-        /* Loop through the tags */
-        final Iterator<TransactionTag> myTagIterator = myTags.iterator();
-        while (myTagIterator.hasNext()) {
-            final TransactionTag myTag = myTagIterator.next();
-
-            /* If the tag is not deleted */
+            /* Add to list if available */
             if (!myTag.isDeleted()) {
-                /* Add item to the tag list */
-                myList.setSelectableItem(myTag);
+                myList.add(myTag);
             }
         }
 
-        /* Access tag iterator */
-        final Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
-        if (myIterator != null) {
-            /* Loop through the TransactionTags */
-            while (myIterator.hasNext()) {
-                final TransactionInfo myInfo = myIterator.next();
-
-                /* If the item is not deleted */
-                if (!myInfo.isDeleted()) {
-                    /* Access the tag and set as active */
-                    final TransactionTag myTag = myInfo.getTransactionTag();
-                    myList.selectItem(myTag);
-                }
-            }
-        }
-
-        /* return the item list */
-        return myList;
+        /* Return the iterator */
+        return myList.iterator();
     }
 }

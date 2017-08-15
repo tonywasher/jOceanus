@@ -347,7 +347,7 @@ public abstract class MetisToolkit<N, I> {
      */
     public static void cleanUpFile(final File pFile) {
         try {
-            Path myPath = pFile.toPath();
+            final Path myPath = pFile.toPath();
             Files.delete(myPath);
         } catch (IOException e) {
             LOGGER.error("Failed to delete File", e);

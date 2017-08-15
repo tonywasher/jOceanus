@@ -23,6 +23,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -559,9 +560,6 @@ public class TransactionTable
         if (theTransactions != null) {
             /* Create the header */
             theHeader = new AnalysisHeader(theTransactions);
-
-            /* Update the column editors */
-            // theColumns.refreshData();
 
             /* Notify panel of refresh */
             theActiveTrans.refreshData();
@@ -1138,6 +1136,9 @@ public class TransactionTable
             myCategoryEditor.setMenuConfigurator(this::buildCategoryMenu);
             myPartnerEditor.setMenuConfigurator(this::buildPartnerMenu);
             myReturnedEditor.setMenuConfigurator(this::buildReturnedMenu);
+
+            /* Configure the tag editor */
+            myTagEditor.setSelectables(c -> theActiveTrans.buildTransactionTags());
         }
 
         /**
@@ -1159,7 +1160,7 @@ public class TransactionTable
          * @return the state
          */
         private boolean determineReconciledState(final int pRowIndex) {
-            final Transaction myTrans = theTransactions.get(pRowIndex);
+            final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
             return myTrans.isLocked();
         }
 
@@ -1169,17 +1170,9 @@ public class TransactionTable
          * @return the state
          */
         private boolean determineDirectionState(final int pRowIndex) {
-            final Transaction myTrans = theTransactions.get(pRowIndex);
+            final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
             return !myTrans.isReconciled();
         }
-
-        /**
-         * RefreshData.
-         */
-        // private void refreshData() {
-        // /* Update details for the tag menu */
-        // theActiveTrans.updateTagMenuBuilder(theTagEditor.getMenuBuilder());
-        // }
 
         /**
          * Obtain column name.
@@ -1272,7 +1265,7 @@ public class TransactionTable
                 case COLUMN_REF:
                     return pTrans.getReference();
                 case COLUMN_TAGS:
-                    return pTrans.getTagNameList();
+                    return pTrans.getTransactionTags();
                 case COLUMN_ACCOUNTUNITS:
                     return pTrans.getAccountDeltaUnits();
                 case COLUMN_PARTNERUNITS:
@@ -1338,6 +1331,7 @@ public class TransactionTable
          * @param pValue the value to set
          * @throws OceanusException on error
          */
+        @SuppressWarnings("unchecked")
         private void setItemValue(final Transaction pItem,
                                   final int pColIndex,
                                   final Object pValue) throws OceanusException {
@@ -1412,9 +1406,9 @@ public class TransactionTable
                 case COLUMN_ACTION:
                     pItem.setDeleted(true);
                     break;
-                // case COLUMN_TAGS:
-                // theActiveTrans.updateTag(pItem, (TethysEvent<TethysUIEvent>) pValue);
-                // break;
+                case COLUMN_TAGS:
+                    pItem.setTransactionTags((List<TransactionTag>) pValue);
+                    break;
                 default:
                     break;
             }
@@ -1692,21 +1686,6 @@ public class TransactionTable
             /* Build the menu */
             theActiveTrans.buildReturnedAccountMenu(pMenu, myTrans);
         }
-
-        /**
-         * Build the popUpMenu for tags.
-         */
-        // private void buildTagMenu() {
-        /* Access details */
-        // JScrollListMenuBuilder<TransactionTag> myBuilder = theTagEditor.getMenuBuilder();
-
-        /* Record active item */
-        // Point myCell = theTagEditor.getPoint();
-        // Transaction myTrans = theModel.getItemAtIndex(myCell.y);
-
-        /* Build the menu */
-        // theActiveTrans.buildTagMenu(myBuilder, myTrans);
-        // }
     }
 
     /**

@@ -108,12 +108,12 @@ public class TransactionInfo
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
 
+            /* Resolve any link value */
+            resolveLink();
+
             /* Access the TransactionInfoSet and register this data */
             final TransactionInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
-
-            /* Resolve any link value */
-            resolveLink();
 
         } catch (OceanusException e) {
             /* Pass on exception */
@@ -190,7 +190,7 @@ public class TransactionInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink(DataItem.class);
+        final DataItem<?> myItem = getLink();
         if (myItem instanceof Deposit) {
             return ((Deposit) myItem).getName();
         }
@@ -223,6 +223,13 @@ public class TransactionInfo
         /* Access the TransactionInfoSet and register this value */
         final TransactionInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
+    }
+
+    @Override
+    public void rewindInfoLinkSet() {
+        /* Access the TransactionInfoSet and reWind this value */
+        final TransactionInfoSet mySet = getOwner().getInfoSet();
+        mySet.rewindInfoLinkSet(this);
     }
 
     /**
@@ -340,7 +347,7 @@ public class TransactionInfo
         if (!MetisDifference.isEqual(getField(), myTransInfo.getField())) {
             setValueValue(myTransInfo.getField());
             if (getInfoType().isLink()) {
-                setValueLink(myTransInfo.getLink(DataItem.class));
+                setValueLink(myTransInfo.getLink());
             }
         }
 

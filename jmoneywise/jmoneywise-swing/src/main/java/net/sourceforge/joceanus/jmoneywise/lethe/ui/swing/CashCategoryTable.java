@@ -861,7 +861,7 @@ public class CashCategoryTable
         private void buildCategoryTypeMenu(final Integer pRowIndex,
                                            final TethysScrollMenu<CashCategoryType, Icon> pMenu) {
             /* Record active item */
-            final CashCategory myCategory = theCategories.get(pRowIndex);
+            final CashCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);

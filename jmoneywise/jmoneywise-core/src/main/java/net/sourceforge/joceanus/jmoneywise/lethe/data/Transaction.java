@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
@@ -470,22 +471,13 @@ public class Transaction
     }
 
     /**
-     * Obtain the nameList for Transaction tags.
-     * @return the list (or null if no tags)
+     * Obtain the Transaction tagList.
+     * @return the list of transaction tags
      */
-    public String getTagNameList() {
+    @SuppressWarnings("unchecked")
+    public List<TransactionTag> getTransactionTags() {
         return hasInfoSet
-                          ? theInfoSet.getNameList(TransactionInfoClass.TRANSTAG)
-                          : null;
-    }
-
-    /**
-     * Obtain the iterator for Transaction tags.
-     * @return the iterator (or null if no tags)
-     */
-    public Iterator<TransactionInfo> tagIterator() {
-        return hasInfoSet
-                          ? theInfoSet.linkIterator(TransactionInfoClass.TRANSTAG)
+                          ? (List<TransactionTag>) theInfoSet.getListValue(TransactionInfoClass.TRANSTAG)
                           : null;
     }
 
@@ -938,60 +930,18 @@ public class Transaction
     }
 
     /**
-     * Set a transaction tag.
-     * @param pTag the tag
+     * Set the transaction tags.
+     * @param pTags the tags
      * @throws OceanusException on error
      */
-    public final void setTransactionTag(final TransactionTag pTag) throws OceanusException {
+    public final void setTransactionTags(final List<TransactionTag> pTags) throws OceanusException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
             throw new MoneyWiseLogicException(ERROR_BADINFOSET);
         }
 
         /* Link the value */
-        theInfoSet.linkValue(TransactionInfoClass.TRANSTAG, pTag);
-    }
-
-    /**
-     * Clear a transaction tag.
-     * @param pTag the tag
-     * @throws OceanusException on error
-     */
-    public final void clearTransactionTag(final TransactionTag pTag) throws OceanusException {
-        /* Reject if there is no infoSet */
-        if (!hasInfoSet) {
-            throw new MoneyWiseLogicException(ERROR_BADINFOSET);
-        }
-
-        /* Link the value */
-        theInfoSet.clearValue(TransactionInfoClass.TRANSTAG, pTag);
-    }
-
-    /**
-     * Does the transaction have this transaction tag.
-     * @param pTag the tag
-     * @return true/false
-     */
-    public final boolean hasTransactionTag(final TransactionTag pTag) {
-        /* Access iterator and return false if we have none */
-        final Iterator<TransactionInfo> myIterator = tagIterator();
-        if (myIterator == null) {
-            return false;
-        }
-
-        /* Loop through the tags */
-        while (myIterator.hasNext()) {
-            final TransactionInfo myInfo = myIterator.next();
-
-            /* Check for presence */
-            if (!myInfo.isDeleted()
-                && pTag.equals(myInfo.getTransactionTag())) {
-                return true;
-            }
-        }
-
-        /* We do not have the tag */
-        return false;
+        theInfoSet.setListValue(TransactionInfoClass.TRANSTAG, pTags);
     }
 
     /**

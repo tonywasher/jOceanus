@@ -63,7 +63,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction.TransactionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
@@ -402,10 +402,10 @@ public class TransactionAnalyser
         final MoneyWiseTaxCredit myYear = pTrans.getTaxYear();
 
         /* Look for tags */
-        final Iterator<TransactionInfo> myIterator = pTrans.tagIterator();
-        if (myIterator != null) {
+        final List<TransactionTag> myTags = pTrans.getTransactionTags();
+        if (myTags != null) {
             /* Process the transaction tags */
-            theTagBuckets.processTransaction(pTrans, myIterator);
+            theTagBuckets.processTransaction(pTrans, myTags.iterator());
         }
 
         /* If the event relates to a security item, split out the workings */

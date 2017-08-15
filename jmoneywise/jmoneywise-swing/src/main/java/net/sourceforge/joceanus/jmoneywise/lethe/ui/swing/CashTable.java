@@ -648,7 +648,7 @@ public class CashTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<CashCategory, Icon> pMenu) {
             /* Determine active item */
-            final Cash myCash = theCash.get(pRowIndex);
+            final Cash myCash = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCategoryMenu(pMenu, myCash);
@@ -662,7 +662,7 @@ public class CashTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Determine active item */
-            final Cash myCash = theCash.get(pRowIndex);
+            final Cash myCash = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myCash);

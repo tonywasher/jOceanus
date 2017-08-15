@@ -106,12 +106,12 @@ public class SecurityInfo
             /* Set the value */
             setValue(pValues.getValue(FIELD_VALUE));
 
+            /* Resolve any link value */
+            resolveLink();
+
             /* Access the SecurityInfoSet and register this data */
             final SecurityInfoSet mySet = getOwner().getInfoSet();
             mySet.registerInfo(this);
-
-            /* Resolve any link value */
-            resolveLink();
 
         } catch (OceanusException e) {
             /* Pass on exception */
@@ -188,7 +188,7 @@ public class SecurityInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink(DataItem.class);
+        final DataItem<?> myItem = getLink();
         if (myItem instanceof Region) {
             return ((Region) myItem).getName();
         }

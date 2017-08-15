@@ -860,7 +860,7 @@ public class LoanCategoryTable
         private void buildCategoryTypeMenu(final Integer pRowIndex,
                                            final TethysScrollMenu<LoanCategoryType, Icon> pMenu) {
             /* Record active item */
-            final LoanCategory myCategory = theCategories.get(pRowIndex);
+            final LoanCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveCategory.buildCategoryTypeMenu(pMenu, myCategory);

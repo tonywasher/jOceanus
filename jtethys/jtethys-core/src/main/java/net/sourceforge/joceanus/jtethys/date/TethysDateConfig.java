@@ -177,7 +177,7 @@ public class TethysDateConfig
      * @return true/false
      */
     public boolean isAllowed(final int pDay) {
-        TethysDate myDate = new TethysDate(theMonth);
+        final TethysDate myDate = new TethysDate(theMonth);
         myDate.adjustDay(pDay - 1);
         return theAllowed.test(myDate);
     }

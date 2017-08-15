@@ -843,7 +843,7 @@ public class DepositTable
          * @return the state
          */
         private boolean determineClosedState(final int pRowIndex) {
-            final Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theModel.getItemAtIndex(pRowIndex);
             return myDeposit.isClosed() || !myDeposit.isRelevant();
         }
 
@@ -855,7 +855,7 @@ public class DepositTable
         private void buildParentMenu(final Integer pRowIndex,
                                      final TethysScrollMenu<Payee, Icon> pMenu) {
             /* Record active item */
-            final Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildParentMenu(pMenu, myDeposit);
@@ -869,7 +869,7 @@ public class DepositTable
         private void buildCategoryMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<DepositCategory, Icon> pMenu) {
             /* Record active item */
-            final Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCategoryMenu(pMenu, myDeposit);
@@ -883,7 +883,7 @@ public class DepositTable
         private void buildCurrencyMenu(final Integer pRowIndex,
                                        final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
             /* Record active item */
-            final Deposit myDeposit = theDeposits.get(pRowIndex);
+            final Deposit myDeposit = theModel.getItemAtIndex(pRowIndex);
 
             /* Build the menu */
             theActiveAccount.buildCurrencyMenu(pMenu, myDeposit);

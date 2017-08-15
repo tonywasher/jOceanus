@@ -190,7 +190,7 @@ public class CashInfo
 
     @Override
     public String getLinkName() {
-        final DataItem<?> myItem = getLink(DataItem.class);
+        final DataItem<?> myItem = getLink();
         if (myItem instanceof Payee) {
             return ((Payee) myItem).getName();
         }
@@ -327,7 +327,7 @@ public class CashInfo
         if (!MetisDifference.isEqual(getField(), myInfo.getField())) {
             setValueValue(myInfo.getField());
             if (getInfoType().isLink()) {
-                setValueLink(myInfo.getLink(DataItem.class));
+                setValueLink(myInfo.getLink());
             }
         }
 

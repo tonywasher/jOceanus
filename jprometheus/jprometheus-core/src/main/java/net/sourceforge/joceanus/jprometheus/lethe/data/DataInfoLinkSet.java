@@ -22,14 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 
 /**
  * Representation of an set of DataInfo links for a DataItem.
@@ -49,22 +53,32 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * Item separator.
      */
-    public static final String ITEM_SEP = ",";
+    public static final String ITEM_SEP = TethysListButtonManager.ITEM_SEP;
 
     /**
      * The local fields.
      */
-    private final MetisFields theLocalFields = new MetisFields(DataInfoLinkSet.class.getSimpleName());
+    private static final MetisFields FIELD_DEFS = new MetisFields(DataInfoLinkSet.class.getSimpleName());
 
     /**
-     * The number of fields.
+     * The Active LinkSet.
      */
-    private int theNumFields;
+    private static final MetisField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_ACTIVE.getValue());
 
     /**
-     * List of items.
+     * The LinkSet.
      */
-    private final DataList<T, E> theLinks;
+    private static final MetisField FIELD_LINKSET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAINFO_LINKSET.getValue());
+
+    /**
+     * List of active items.
+     */
+    private final MetisInfoSetValueList theActive;
+
+    /**
+     * List of underlying items.
+     */
+    private final DataList<T, E> theLinkSet;
 
     /**
      * The owner.
@@ -98,8 +112,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         theInfoType = pInfoType;
         theInfoList = pList;
 
-        /* Allocate the list */
-        theLinks = pList.getEmptyList(pList.getStyle());
+        /* Allocate the lists */
+        theActive = new MetisInfoSetValueList();
+        theLinkSet = pList.getEmptyList(pList.getStyle());
     }
 
     /**
@@ -119,38 +134,34 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
 
             /* Add a copy item */
             final T myNew = pList.addCopyItem(myLink);
-            theLinks.append(myNew);
-            theLocalFields.declareIndexField(theInfoType.getName());
-            theNumFields++;
+            theLinkSet.append(myNew);
         }
+
+        /* build active links */
+        buildActiveLinks();
     }
 
     @Override
     public MetisFields getDataFields() {
-        return theLocalFields == null
-                                      ? DataInfo.FIELD_DEFS
-                                      : theLocalFields;
+        return FIELD_DEFS;
     }
 
     @Override
     public Object getFieldValue(final MetisField pField) {
-        /* Handle out of range */
-        final int iIndex = pField.getIndex();
-        if ((iIndex < 0)
-            || iIndex >= theNumFields) {
-            return MetisFieldValue.UNKNOWN;
+        if (FIELD_ACTIVE.equals(pField)) {
+            return theActive;
         }
-        if (iIndex >= theLinks.size()) {
-            return MetisFieldValue.SKIP;
+        if (FIELD_LINKSET.equals(pField)) {
+            return theLinkSet;
         }
 
-        /* Access the element */
-        return theLinks.get(iIndex);
+        /* Unknown */
+        return MetisFieldValue.UNKNOWN;
     }
 
     @Override
     public String formatObject() {
-        return getNameList();
+        return theActive.toString();
     }
 
     @Override
@@ -169,11 +180,21 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     /**
+     * Obtain Active Links.
+     * @return the Owner
+     */
+    public List<Object> getActive() {
+        return theActive.isEmpty()
+                                   ? null
+                                   : theActive;
+    }
+
+    /**
      * Is the link list empty?
      * @return true/false
      */
     public boolean isEmpty() {
-        return theLinks.isEmpty();
+        return theLinkSet.isEmpty();
     }
 
     /**
@@ -188,14 +209,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
             splitItem(pItem);
 
             /* Add the item to the list */
-            theLinks.append(pItem);
-
-            /* If we need an additional field */
-            if (theLinks.size() > theNumFields) {
-                /* Allocate it */
-                theLocalFields.declareIndexField(theInfoType.getName());
-                theNumFields++;
-            }
+            theLinkSet.append(pItem);
+            sortLinks();
         }
     }
 
@@ -237,7 +252,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         /* If the item is already linked */
         if (isItemLinked(pItem)) {
             /* Remove the item from the list */
-            theLinks.remove(pItem);
+            theLinkSet.remove(pItem);
+            sortLinks();
         }
     }
 
@@ -247,7 +263,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @return true/false
      */
     public boolean isItemLinked(final T pItem) {
-        return theLinks.indexOf(pItem) != -1;
+        return theLinkSet.indexOf(pItem) != -1;
     }
 
     /**
@@ -258,7 +274,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     public T getItemForValue(final DataItem<E> pValue) {
         /* Loop through the list */
         T myItem = null;
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
@@ -274,24 +290,93 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     /**
+     * Clear all the links.
+     */
+    public void clearAllLinks() {
+        /* For each existing value */
+        final Iterator<T> myIterator = theLinkSet.iterator();
+        while (myIterator.hasNext()) {
+            final T myLink = myIterator.next();
+
+            /* If the value is active */
+            if (!myLink.isDeleted()) {
+                /* Set the value as deleted */
+                myLink.setDeleted(true);
+            }
+        }
+
+        /* Clear the active links */
+        theActive.clear();
+    }
+
+    /**
+     * Add/restore all required links.
+     * @param pActive the active items
+     * @throws OceanusException on error
+     */
+    public void addNewLinks(final List<? extends DataItem<E>> pActive) throws OceanusException {
+        /* For each existing value */
+        final Iterator<? extends DataItem<E>> myIterator = pActive.iterator();
+        while (myIterator.hasNext()) {
+            final DataItem<E> myItem = myIterator.next();
+
+            /* Link the item if it is not currently selected */
+            if (!theActive.contains(myItem)) {
+                /* If we have never had such a link */
+                T myLink = getItemForValue(myItem);
+                if (myLink == null) {
+                    /* Create the new item */
+                    myLink = theInfoList.addNewItem(theOwner, theInfoType);
+                    myLink.setValue(myItem);
+                    myLink.setValueLink(myItem);
+                    myLink.setNewVersion();
+                    theLinkSet.append(myLink);
+
+                    /* else restore the value */
+                } else {
+                    myLink.setDeleted(false);
+                }
+            }
+        }
+    }
+
+    /**
+     * Clear all unnecessary links.
+     * @param pActive the active items
+     */
+    public void clearUnnecessaryLinks(final List<? extends DataItem<E>> pActive) {
+        /* For each existing link */
+        final Iterator<T> myIterator = theLinkSet.iterator();
+        while (myIterator.hasNext()) {
+            final T myLink = myIterator.next();
+            final DataItem<E> myItem = myLink.getLink();
+
+            /* Link the item if it is not currently selected */
+            if (!myLink.isDeleted()
+                && !pActive.contains(myItem)) {
+                myLink.setDeleted(true);
+            }
+        }
+    }
+
+    /**
      * Sort the list.
      */
     protected void sortLinks() {
         /* Sort using natural comparison */
-        theLinks.reSort();
+        theLinkSet.reSort();
+        buildActiveLinks();
     }
 
     /**
-     * Obtain the name list.
-     * @return the name list
+     * Build the active links.
      */
-    protected String getNameList() {
-        /* Create the string builder */
-        final StringBuilder myBuilder = new StringBuilder();
-        boolean isFirst = true;
+    private void buildActiveLinks() {
+        /* Clear the list */
+        theActive.clear();
 
         /* Loop through the list */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
@@ -300,19 +385,9 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
                 continue;
             }
 
-            /* If this is not the first item */
-            if (!isFirst) {
-                /* add separator */
-                myBuilder.append(ITEM_SEP);
-            }
-
-            /* Append the name */
-            myBuilder.append(myLink.getLinkName());
-            isFirst = false;
+            /* Add to the list */
+            theActive.add(myLink.getLink());
         }
-
-        /* Return the list */
-        return myBuilder.toString();
     }
 
     /**
@@ -321,12 +396,13 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      */
     public MetisDifference fieldChanged() {
         /* Loop through the list */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
             /* Notify if the item has changed */
-            if (myLink.hasHistory()) {
+            if (myLink.hasHistory()
+                || myLink.getOriginalValues().getVersion() > 0) {
                 return MetisDifference.DIFFERENT;
             }
         }
@@ -338,7 +414,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public boolean hasHistory() {
         /* Loop through the list */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
@@ -355,7 +431,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     @Override
     public void pushHistory() {
         /* Loop through the list */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
@@ -462,17 +538,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
             return;
         }
 
-        /* For each existing value */
-        final Iterator<T> myIterator = theLinks.iterator();
-        while (myIterator.hasNext()) {
-            final T myLink = myIterator.next();
-
-            /* If the value is active */
-            if (!myLink.isDeleted()) {
-                /* Set the value as deleted */
-                myLink.setDeleted(true);
-            }
-        }
+        /* Clear all the links */
+        clearAllLinks();
     }
 
     /**
@@ -490,7 +557,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         /* For each existing value */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
@@ -505,29 +572,38 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
                 myLink.setDeleted(false);
             }
         }
+
+        /* build the active links */
+        buildActiveLinks();
     }
 
     @Override
     public void touchUnderlyingItems() {
         /* Loop through the list */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
-            /* Touch the underlying items */
-            myLink.touchUnderlyingItems();
+            /* If the link is not deleted */
+            if (!myLink.isDeleted()) {
+                /* Touch the underlying items */
+                myLink.touchUnderlyingItems();
+            }
         }
     }
 
     @Override
     public void touchOnUpdate() {
         /* Loop through the list */
-        final Iterator<T> myIterator = theLinks.iterator();
+        final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
             final T myLink = myIterator.next();
 
-            /* Touch the underlying items */
-            myLink.touchOnUpdate();
+            /* If the link is not deleted */
+            if (!myLink.isDeleted()) {
+                /* Touch the underlying items */
+                myLink.touchOnUpdate();
+            }
         }
     }
 
@@ -536,11 +612,59 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * @return the iterator
      */
     public Iterator<T> iterator() {
-        return theLinks.iterator();
+        return theLinkSet.iterator();
     }
 
     @Override
     public int compareTo(final DataInfo<T, O, I, S, E> pThat) {
         return getInfoType().compareTo(pThat.getInfoType());
+    }
+
+    /**
+     * Value List.
+     */
+    public static final class MetisInfoSetValueList extends ArrayList<Object> implements MetisDataFormat {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -2400385873494004968L;
+
+        /**
+         * Constructor.
+         */
+        protected MetisInfoSetValueList() {
+            super();
+        }
+
+        @Override
+        public String toString() {
+            /* Create the string builder */
+            final StringBuilder myBuilder = new StringBuilder();
+            boolean isFirst = true;
+
+            /* Loop through the list */
+            final Iterator<?> myIterator = super.iterator();
+            while (myIterator.hasNext()) {
+                final Object myLink = myIterator.next();
+
+                /* If this is not the first item */
+                if (!isFirst) {
+                    /* add separator */
+                    myBuilder.append(ITEM_SEP);
+                }
+
+                /* Append the name */
+                myBuilder.append(myLink.toString());
+                isFirst = false;
+            }
+
+            /* Return the list */
+            return myBuilder.toString();
+        }
+
+        @Override
+        public String formatObject() {
+            return toString();
+        }
     }
 }

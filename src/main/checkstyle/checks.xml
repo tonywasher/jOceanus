@@ -190,7 +190,9 @@
             <module name="FinalParameters"/>
             <module name="TodoComment"/>
             <module name="UpperEll"/>
-    
+            <module name="ExplicitInitialization"/>
+            <module name="FinalLocalVariable"/>
+            <module name="DefaultComesLast"/>  
         </module>
     
     </module>
