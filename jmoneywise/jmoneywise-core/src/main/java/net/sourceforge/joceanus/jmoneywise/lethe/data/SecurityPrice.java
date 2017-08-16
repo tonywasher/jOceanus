@@ -479,6 +479,10 @@ public class SecurityPrice
         /* The security must be non-null */
         if (mySecurity == null) {
             addError(ERROR_MISSING, FIELD_SECURITY);
+
+            /* The security must not be an option */
+        } else if (mySecurity.getSecurityTypeClass().isOption()) {
+            addError("Options are priced by the underlying stock", FIELD_SECURITY);
         }
 
         /* The date must be non-null */

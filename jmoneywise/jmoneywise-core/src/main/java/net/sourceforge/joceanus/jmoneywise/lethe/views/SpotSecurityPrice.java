@@ -90,6 +90,11 @@ public final class SpotSecurityPrice
     private TethysPrice thePrevPrice;
 
     /**
+     * isDisabled.
+     */
+    private boolean isDisabled;
+
+    /**
      * Constructor for a new SpotPrice where no price data exists.
      * @param pList the Spot Price List
      * @param pSecurity the price for the date
@@ -99,7 +104,6 @@ public final class SpotSecurityPrice
         super(pList);
 
         /* Store base values */
-        setDate(pList.theDate);
         setSecurity(pSecurity);
     }
 
@@ -128,6 +132,14 @@ public final class SpotSecurityPrice
     }
 
     /**
+     * Set previous price.
+     * @param pPrice the price
+     */
+    protected void setPrevPrice(final TethysPrice pPrice) {
+        thePrevPrice = pPrice;
+    }
+
+    /**
      * Obtain previous date.
      * @return the date.
      */
@@ -135,9 +147,25 @@ public final class SpotSecurityPrice
         return thePrevDate;
     }
 
+    /**
+     * Set previous date.
+     * @param pDate the date
+     */
+    protected void setPrevDate(final TethysDate pDate) {
+        thePrevDate = pDate;
+    }
+
     @Override
     public boolean isDisabled() {
-        return getSecurity().isClosed();
+        return isDisabled;
+    }
+
+    /**
+     * Set disabled.
+     * @param pDisabled the flag
+     */
+    protected void setDisabled(final boolean pDisabled) {
+        isDisabled = pDisabled;
     }
 
     /**
@@ -292,10 +320,16 @@ public final class SpotSecurityPrice
                 final SecurityBucket mySecBucket = mySecIterator.next();
                 final Security mySecurity = mySecBucket.getSecurity();
 
+                /* Ignore Options */
+                if (mySecurity.getSecurityTypeClass().isOption()) {
+                    continue;
+                }
+
                 /* Create a SpotPrice entry */
                 final SpotSecurityPrice mySpot = new SpotSecurityPrice(this, mySecurity);
                 mySpot.setId(mySecurity.getId());
                 mySpot.setDate(myDate);
+                mySpot.setDisabled(!mySecBucket.isActive());
                 add(mySpot);
             }
 
@@ -309,8 +343,10 @@ public final class SpotSecurityPrice
             while (myIterator.hasPrevious()) {
                 final SecurityPrice myPrice = myIterator.previous();
 
-                /* Ignore deleted prices */
-                if (myPrice.isDeleted()) {
+                /* Access the Spot Price and ignore if not relevant/deleted */
+                final Security mySecurity = myPrice.getSecurity();
+                final SpotSecurityPrice mySpot = findItemById(mySecurity.getId());
+                if (mySpot == null || myPrice.isDeleted()) {
                     continue;
                 }
 
@@ -324,13 +360,6 @@ public final class SpotSecurityPrice
                     break;
                 }
 
-                /* Access the Spot Price and ignore if not relevant */
-                final Security mySecurity = myPrice.getSecurity();
-                final SpotSecurityPrice mySpot = findItemById(mySecurity.getId());
-                if (mySpot == null) {
-                    continue;
-                }
-
                 /* If we are exactly the date */
                 if (iDiff == 0) {
                     /* Set price */
@@ -342,8 +371,8 @@ public final class SpotSecurityPrice
                     /* else we are a previous date */
                 } else {
                     /* Set previous date and value */
-                    mySpot.thePrevDate = myPrice.getDate();
-                    mySpot.thePrevPrice = myPrice.getPrice();
+                    mySpot.setPrevDate(myPrice.getDate());
+                    mySpot.setPrevPrice(myPrice.getPrice());
 
                     /* Record the latest previous date */
                     thePrev = myPrice.getDate();

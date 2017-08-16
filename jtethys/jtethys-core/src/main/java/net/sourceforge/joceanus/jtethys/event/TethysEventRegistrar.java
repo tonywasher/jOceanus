@@ -67,7 +67,7 @@ public class TethysEventRegistrar<E extends Enum<E>> {
     /**
      * The Next registrationId.
      */
-    private AtomicInteger theNextRegId = new AtomicInteger();
+    private final AtomicInteger theNextRegId = new AtomicInteger();
 
     /**
      * Constructor.

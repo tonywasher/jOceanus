@@ -23,6 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -241,7 +244,7 @@ public class SecurityPriceTable
     }
 
     /**
-     * Add a new price for a new security.
+     * Add a new price for a security.
      * @param pSecurity the security
      * @throws OceanusException on error
      */
@@ -251,10 +254,36 @@ public class SecurityPriceTable
 
         /* Set the item value */
         myPrice.setSecurity(pSecurity);
-        myPrice.setDate(new TethysDate());
         myPrice.setPrice(TethysPrice.getWholeUnits(1, pSecurity.getCurrency()));
 
+        /* Access iterator and skip the header */
+        final Iterator<ViewSecurityPrice> myIterator = theModel.viewIterator();
+        if (myIterator.hasNext()) {
+            myIterator.next();
+        }
+
+        /* Assume that we can use todays date */
+        TethysDate myDate = new TethysDate();
+
+        /* Access the last price */
+        final SecurityPrice myLast = myIterator.hasNext()
+                                                          ? myIterator.next()
+                                                          : null;
+
+        /* If we have a most recent price */
+        if (myLast != null) {
+            /* Obtain the date that is one after the latest date used */
+            final TethysDate myNew = new TethysDate(myLast.getDate());
+            myNew.adjustDay(1);
+
+            /* Use the latest of the two dates */
+            if (myDate.compareTo(myNew) < 0) {
+                myDate = myNew;
+            }
+        }
+
         /* Add to the list */
+        myPrice.setDate(myDate);
         myPrice.setNewVersion();
         thePrices.append(myPrice);
 
@@ -399,8 +428,9 @@ public class SecurityPriceTable
                 return;
             }
 
-            /* notify of the changes */
-            theModel.fireNewDataEvents();
+            /* notify that the row has been inserted */
+            final int myRow = theModel.getRowCount() - 1;
+            theModel.fireTableRowsInserted(myRow, myRow);
 
             /* Shift display to line */
             selectRowWithScroll(1);
@@ -494,15 +524,17 @@ public class SecurityPriceTable
             setColumns();
 
             /* Add configurator */
-            myDateEditor.setDateConfigurator((r, c) -> handleDateEvent(c));
+            myDateEditor.setDateConfigurator(this::handleDateEvent);
             myPriceEditor.setDeemedCurrency(r -> theSecurity.getCurrency());
         }
 
         /**
          * handle Date event.
+         * @param pRowIndex the rowIndex
          * @param pConfig the dateConfig
          */
-        private void handleDateEvent(final TethysDateConfig pConfig) {
+        private void handleDateEvent(final Integer pRowIndex,
+                                     final TethysDateConfig pConfig) {
             /* Adjust the range */
             pConfig.setEarliestDate(theRange == null
                                                      ? null
@@ -510,6 +542,29 @@ public class SecurityPriceTable
             pConfig.setLatestDate(theRange == null
                                                    ? null
                                                    : theRange.getEnd());
+
+            /* Access the current price */
+            final SecurityPrice myCurrPrice = theModel.getItemAtIndex(pRowIndex);
+
+            /* Loop through the viewable items */
+            final List<TethysDate> myActive = new ArrayList<>();
+            final Iterator<ViewSecurityPrice> myIterator = theModel.viewIterator();
+            while (myIterator.hasNext()) {
+                final SecurityPrice myPrice = myIterator.next();
+
+                /* Ignore the header and the current row */
+                if (myPrice instanceof PriceHeader
+                    || myPrice.equals(myCurrPrice)) {
+                    continue;
+                }
+
+                /* Add the date to the list */
+                final TethysDate myDate = myPrice.getDate();
+                myActive.add(myDate);
+            }
+
+            /* Set the allowed dates */
+            pConfig.setAllowed(d -> !myActive.contains(d));
         }
 
         /**
@@ -636,7 +691,7 @@ public class SecurityPriceTable
             switch (pColIndex) {
                 case COLUMN_DATE:
                 case COLUMN_PRICE:
-                    return isEditable;
+                    return isEditable && !pItem.isHeader();
                 case COLUMN_DILUTION:
                 case COLUMN_DILUTEDPRICE:
                     return false;

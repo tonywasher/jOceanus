@@ -254,9 +254,9 @@ public final class TransactionCategoryBucket
      * @return the name
      */
     public String getName() {
-        return (theCategory == null)
-                                     ? NAME_TOTALS
-                                     : theCategory.getName();
+        return theCategory == null
+                                   ? NAME_TOTALS
+                                   : theCategory.getName();
     }
 
     @Override

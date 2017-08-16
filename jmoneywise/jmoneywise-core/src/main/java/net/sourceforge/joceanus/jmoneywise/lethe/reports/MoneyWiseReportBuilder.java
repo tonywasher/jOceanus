@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 
 /**
@@ -84,10 +85,12 @@ public class MoneyWiseReportBuilder {
      * Build a report of the appropriate type.
      * @param pAnalysis the analysis
      * @param pType the report type
+     * @param pSecurity the security
      * @return the Web document
      */
     public Document createReport(final Analysis pAnalysis,
-                                 final MoneyWiseReportType pType) {
+                                 final MoneyWiseReportType pType,
+                                 final SecurityBucket pSecurity) {
         /* Access existing report */
         MetisReportBase<Analysis, AnalysisFilter<?, ?>> myReport = theReportMap.get(pType);
 
@@ -119,6 +122,9 @@ public class MoneyWiseReportBuilder {
                 case TAXCALC:
                     myReport = new MoneyWiseReportTaxCalculation(theManager);
                     break;
+                case ASSETGAINS:
+                    myReport = new MoneyWiseReportAssetGains(theManager);
+                    break;
                 case CAPITALGAINS:
                     myReport = new MoneyWiseReportCapitalGains(theManager);
                     break;
@@ -128,6 +134,11 @@ public class MoneyWiseReportBuilder {
 
             /* Store allocated report */
             theReportMap.put(pType, myReport);
+        }
+
+        /* If the report requires the security */
+        if (myReport instanceof MoneyWiseReportCapitalGains) {
+            ((MoneyWiseReportCapitalGains) myReport).setSecurity(pSecurity);
         }
 
         /* Set up the report */

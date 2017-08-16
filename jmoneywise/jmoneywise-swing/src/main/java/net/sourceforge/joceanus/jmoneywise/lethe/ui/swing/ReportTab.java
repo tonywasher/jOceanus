@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportBuilder;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
@@ -46,6 +47,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSelect.StatementSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseReportSelect;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
+import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;
@@ -268,8 +270,7 @@ public class ReportTab
         final MoneyWiseReportType myReportType = theSelect.getReportType();
         final TethysDateRange myRange = theSelect.getDateRange();
         final AnalysisManager myManager = theView.getAnalysisManager();
-        final Document myDoc;
-        final Analysis myAnalysis;
+        final SecurityBucket mySecurity = theSelect.getSecurity();
 
         /* set lockDown of selection */
         theSelect.setEnabled(true);
@@ -279,30 +280,14 @@ public class ReportTab
             return;
         }
 
-        /* Switch on report type */
-        switch (myReportType) {
-            case NETWORTH:
-            case PORTFOLIO:
-            case ASSETGAINS:
-            case CAPITALGAINS:
-                myAnalysis = myManager.getAnalysis(myRange.getEnd());
-                theSelect.setAnalysis(myAnalysis);
-                myDoc = theBuilder.createReport(myAnalysis, myReportType);
-                break;
+        /* Access the appropriate analysis */
+        final Analysis myAnalysis = myReportType.isPointInTime()
+                                                                 ? myManager.getAnalysis(myRange.getEnd())
+                                                                 : myManager.getAnalysis(myRange);
 
-            case BALANCESHEET:
-            case CASHFLOW:
-            case INCOMEEXPENSE:
-            case MARKETGROWTH:
-            case TAXBASIS:
-            case TAXCALC:
-                myAnalysis = myManager.getAnalysis(myRange);
-                myDoc = theBuilder.createReport(myAnalysis, myReportType);
-                break;
-
-            default:
-                return;
-        }
+        /* Record analysis and build report */
+        theSelect.setAnalysis(myAnalysis);
+        final Document myDoc = theBuilder.createReport(myAnalysis, myReportType, mySecurity);
 
         /* Declare to debugger */
         theSpotEntry.setObject(myAnalysis);
@@ -335,13 +320,24 @@ public class ReportTab
      * @param pEvent the event
      */
     private void handleGoToRequest(final TethysEvent<MetisReportEvent> pEvent) {
-        /* Create the details of the report */
-        final TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
+        /* Access the filter */
         final AnalysisFilter<?, ?> myFilter = pEvent.getDetails(AnalysisFilter.class);
-        final StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
 
-        /* Request the action */
-        theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent<>(MoneyWiseGoToId.STATEMENT, myStatement));
+        /* If we are currently showing Asset Gains */
+        if (MoneyWiseReportType.ASSETGAINS.equals(theSelect.getReportType())) {
+            /* Select the capital gains report */
+            final SecurityBucket myBucket = ((SecurityFilter) myFilter).getBucket();
+            theSelect.setSecurity(myBucket);
+
+            /* else we are selecting a statement */
+        } else {
+            /* Create the details of the report */
+            final TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
+            final StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
+
+            /* Request the action */
+            theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent<>(MoneyWiseGoToId.STATEMENT, myStatement));
+        }
     }
 
     /**

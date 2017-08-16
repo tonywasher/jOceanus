@@ -156,11 +156,6 @@ public class MoneyWiseSpotPricesSelect<N, I>
     private SpotPricesState theSavePoint;
 
     /**
-     * Do we show closed accounts.
-     */
-    private boolean doShowClosed;
-
-    /**
      * Are we refreshing data?
      */
     private boolean refreshingData;
@@ -184,7 +179,6 @@ public class MoneyWiseSpotPricesSelect<N, I>
 
         /* Create the check box */
         theShowClosed = pFactory.newCheckBox(NLS_CLOSED);
-        theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
         theDateButton = pFactory.newDateButton();
@@ -279,9 +273,9 @@ public class MoneyWiseSpotPricesSelect<N, I>
      */
     public final Portfolio getPortfolio() {
         final PortfolioBucket myBucket = theState.getPortfolio();
-        return (myBucket == null)
-                                  ? null
-                                  : myBucket.getPortfolio();
+        return myBucket == null
+                                ? null
+                                : myBucket.getPortfolio();
     }
 
     /**
@@ -289,7 +283,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
      * @return the date
      */
     public boolean getShowClosed() {
-        return doShowClosed;
+        return theState.showClosed();
     }
 
     /**
@@ -313,17 +307,10 @@ public class MoneyWiseSpotPricesSelect<N, I>
         /* Obtain the current portfolio */
         PortfolioBucket myPortfolio = theState.getPortfolio();
 
-        /* If we have a selected Portfolio */
-        if (myPortfolio != null) {
-            /* Look for the equivalent bucket */
-            myPortfolio = thePortfolios.findItemById(myPortfolio.getOrderedId());
-        }
-
-        /* If we do not have an active portfolio and the list is non-empty */
-        if ((myPortfolio == null) && (!thePortfolios.isEmpty())) {
-            /* Access the first portfolio */
-            myPortfolio = getFirstPortfolio();
-        }
+        /* Switch to portfolio in this analysis */
+        myPortfolio = myPortfolio != null
+                                          ? thePortfolios.getMatchingPortfolio(myPortfolio.getPortfolio())
+                                          : thePortfolios.getDefaultPortfolio();
 
         /* Set the portfolio */
         theState.setPortfolio(myPortfolio);
@@ -331,18 +318,6 @@ public class MoneyWiseSpotPricesSelect<N, I>
 
         /* Note that we have finished refreshing data */
         refreshingData = false;
-    }
-
-    /**
-     * Obtain first portfolio.
-     * @return the first portfolio
-     */
-    private PortfolioBucket getFirstPortfolio() {
-        /* Loop through the available account values */
-        final Iterator<PortfolioBucket> myIterator = thePortfolios.iterator();
-        return myIterator.hasNext()
-                                    ? myIterator.next()
-                                    : null;
     }
 
     /**
@@ -369,6 +344,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
         theDateButton.setEnabled(bEnabled);
         thePortButton.setEnabled(bEnabled);
         theDownloadButton.setEnabled(bEnabled);
+        theShowClosed.setEnabled(bEnabled);
     }
 
     @Override
@@ -422,6 +398,12 @@ public class MoneyWiseSpotPricesSelect<N, I>
         while (myIterator.hasNext()) {
             final PortfolioBucket myBucket = myIterator.next();
 
+            /* Skip if the portfolio is closed and we are not showing closed accounts */
+            if (!myBucket.isActive()
+                && !theState.showClosed()) {
+                continue;
+            }
+
             /* Create a new MenuItem and add it to the popUp */
             final TethysScrollMenuItem<PortfolioBucket> myItem = thePortMenu.addItem(myBucket);
 
@@ -464,7 +446,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
      */
     private void handleNewClosed() {
         if (!refreshingData) {
-            doShowClosed = theShowClosed.isSelected();
+            theState.setShowClosed(theShowClosed.isSelected());
             theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
         }
     }
@@ -494,6 +476,11 @@ public class MoneyWiseSpotPricesSelect<N, I>
         private TethysDate thePrevDate;
 
         /**
+         * showClosed.
+         */
+        private boolean showClosed;
+
+        /**
          * Constructor.
          */
         private SpotPricesState() {
@@ -513,6 +500,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
             if (pState.getPrevDate() != null) {
                 thePrevDate = new TethysDate(pState.getPrevDate());
             }
+            showClosed = pState.showClosed();
         }
 
         /**
@@ -545,6 +533,14 @@ public class MoneyWiseSpotPricesSelect<N, I>
          */
         private TethysDate getPrevDate() {
             return thePrevDate;
+        }
+
+        /**
+         * Get the showClosed flag.
+         * @return the showClosed
+         */
+        private boolean showClosed() {
+            return showClosed;
         }
 
         /**
@@ -595,6 +591,16 @@ public class MoneyWiseSpotPricesSelect<N, I>
         }
 
         /**
+         * Set showClosed.
+         * @param pShowClosed true/false
+         */
+        private void setShowClosed(final boolean pShowClosed) {
+            /* Set flag */
+            showClosed = pShowClosed;
+            applyState();
+        }
+
+        /**
          * Set Adjacent dates.
          * @param pPrev the previous Date
          * @param pNext the next Date
@@ -617,10 +623,12 @@ public class MoneyWiseSpotPricesSelect<N, I>
             setEnabled(true);
             theDateButton.setSelectedDate(theDate);
             thePortButton.setValue(thePortfolio);
+            theShowClosed.setSelected(showClosed);
 
             /* Determine whether we are todays date */
             final boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
-            theDownloadButton.setVisible(isToday);
+            final boolean isActive = thePortfolio != null && thePortfolio.isActive();
+            theDownloadButton.setVisible(isToday && isActive);
         }
     }
 }

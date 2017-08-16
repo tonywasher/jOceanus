@@ -350,9 +350,9 @@ public class TethysSwingTableSorter<T>
         final int iNumRows = theDataControl.length;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0)
-            || (pFirstRow > iNumRows)
-            || (pFirstRow > pEndRow)) {
+        if (pFirstRow < 0
+            || pFirstRow > iNumRows
+            || pFirstRow > pEndRow) {
             throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 

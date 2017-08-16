@@ -759,14 +759,16 @@ public class MoneyWiseReportNetWorth
             }
 
             /* Access bucket name */
-            final String myName = myBucket.getName();
+            final String myName = myBucket.getSecurityName();
+            String myFullName = myBucket.getDecoratedName();
+            myFullName = myFullName.replace(':', '-');
 
             /* Access values */
             final SecurityValues myValues = myBucket.getValues();
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myName);
+            theBuilder.makeFilterLinkCell(myTable, myFullName, myName);
             theBuilder.makeValueCell(myTable, myValues.getUnitsValue(SecurityAttribute.UNITS));
             theBuilder.makeValueCell(myTable, myValues.getPriceValue(SecurityAttribute.PRICE));
 
@@ -783,7 +785,7 @@ public class MoneyWiseReportNetWorth
             }
 
             /* Record the filter */
-            setFilterForId(myName, myBucket);
+            setFilterForId(myFullName, myBucket);
         }
 
         /* Return the table */

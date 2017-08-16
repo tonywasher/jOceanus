@@ -463,7 +463,9 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      */
     protected T[] cacheSelectedRows() {
         /* Determine the selected rows */
-        final int[] mySelected = theTable.getSelectedRows();
+        int[] mySelected = theTable.getRowCount() == 0
+                                                       ? new int[0]
+                                                       : theTable.getSelectedRows();
 
         /* Create a row array relating to the selections */
         @SuppressWarnings("unchecked")
@@ -526,7 +528,9 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
                 final int myRowNo = theTable.convertRowIndexToView(theList.indexOf(myRow));
 
                 /* Select the row */
-                theTable.addRowSelectionInterval(myRowNo, myRowNo);
+                if (myRowNo != -1) {
+                    theTable.addRowSelectionInterval(myRowNo, myRowNo);
+                }
             }
         }
     }

@@ -163,7 +163,7 @@ public final class TethysDataConverter {
         final StringBuilder myValue = new StringBuilder(2 * pBytes.length);
 
         /* For each byte in the value */
-        for (Byte b : pBytes) {
+        for (final byte b : pBytes) {
             /* Access the byte as an unsigned integer */
             int myInt = (int) b;
             if (myInt < 0) {
@@ -249,7 +249,7 @@ public final class TethysDataConverter {
         final int myLen = pHexString.length();
 
         /* Check that it has an even length */
-        if ((myLen % 2) != 0) {
+        if (myLen % 2 != 0) {
             throw new TethysDataException(ERROR_HEXLEN
                                           + pHexString);
         }
@@ -306,23 +306,23 @@ public final class TethysDataConverter {
         /* Access the length of the hex string */
         String myHexString = pHexString;
         int myLen = myHexString.length();
-        long myValue = 0;
 
         /* handle negative values */
-        final boolean isNegative = (myLen > 0)
-                                   && (myHexString.charAt(0) == '-');
+        final boolean isNegative = myLen > 0
+                                   && myHexString.charAt(0) == '-';
         if (isNegative) {
             myHexString = myHexString.substring(1);
             myLen--;
         }
 
         /* Check that it has an even length */
-        if ((myLen % 2) != 0) {
+        if (myLen % 2 != 0) {
             throw new TethysDataException(ERROR_HEXLEN
                                           + pHexString);
         }
 
         /* Loop through the string */
+        long myValue = 0;
         for (int i = 0; i < myLen; i++) {
             /* Access the next character */
             final char myChar = myHexString.charAt(i);
@@ -579,12 +579,12 @@ public final class TethysDataConverter {
         while (myIn < myLen) {
             /* Access input triplet */
             myTriplet[0] = pBytes[myIn++];
-            myTriplet[1] = (myIn < myLen)
-                                          ? pBytes[myIn++]
-                                          : 0;
-            myTriplet[2] = (myIn < myLen)
-                                          ? pBytes[myIn++]
-                                          : 0;
+            myTriplet[1] = myIn < myLen
+                                        ? pBytes[myIn++]
+                                        : 0;
+            myTriplet[2] = myIn < myLen
+                                        ? pBytes[myIn++]
+                                        : 0;
 
             /* Convert to base64 */
             myBuilder.append(BASE64_ENCODE[(myTriplet[0] >> BASE64_SHIFT1)

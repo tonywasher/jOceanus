@@ -736,7 +736,9 @@ public class MoneyWiseReportBalanceSheet
             final SecurityBucket myBucket = myIterator.next();
 
             /* Access bucket name */
-            final String myName = myBucket.getName();
+            final String myName = myBucket.getSecurityName();
+            String myFullName = myBucket.getDecoratedName();
+            myFullName = myFullName.replace(':', '-');
 
             /* Access values */
             final SecurityValues myValues = myBucket.getValues();
@@ -744,7 +746,7 @@ public class MoneyWiseReportBalanceSheet
 
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myName);
+            theBuilder.makeFilterLinkCell(myTable, myFullName, myName);
 
             /* Handle foreign accounts */
             if (isForeign) {
@@ -764,7 +766,7 @@ public class MoneyWiseReportBalanceSheet
             theBuilder.makeValueCell(myTable, myValues.getMoneyValue(SecurityAttribute.VALUEDELTA));
 
             /* Record the filter */
-            setFilterForId(myName, myBucket);
+            setFilterForId(myFullName, myBucket);
         }
 
         /* Return the table */

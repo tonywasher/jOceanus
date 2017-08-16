@@ -225,9 +225,9 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         mySecurity = mySecurity != null
                                         ? thePortfolios.getMatchingSecurityHolding(mySecurity.getSecurityHolding())
                                         : thePortfolios.getDefaultSecurityHolding();
-        final PortfolioBucket myPortfolio = (mySecurity != null)
-                                                                 ? thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio())
-                                                                 : thePortfolios.getDefaultPortfolio();
+        final PortfolioBucket myPortfolio = mySecurity != null
+                                                               ? thePortfolios.getMatchingPortfolio(mySecurity.getPortfolio())
+                                                               : thePortfolios.getDefaultPortfolio();
 
         /* Set the security */
         theState.setTheSecurity(myPortfolio, mySecurity);
@@ -328,7 +328,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
             final SecurityBucket myBucket = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
-            final TethysScrollMenuItem<SecurityBucket> myItem = theSecurityMenu.addItem(myBucket);
+            final TethysScrollMenuItem<SecurityBucket> myItem = theSecurityMenu.addItem(myBucket, myBucket.getSecurityName());
 
             /* If this is the active bucket */
             if (myBucket.equals(myCurr)) {
@@ -466,7 +466,9 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theSecButton.setValue(theSecurity);
+            theSecButton.setValue(theSecurity, theSecurity == null
+                                                                   ? null
+                                                                   : theSecurity.getSecurityName());
             thePortButton.setValue(thePortfolio);
         }
     }

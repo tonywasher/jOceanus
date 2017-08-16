@@ -157,6 +157,8 @@ public class MoneyWiseReportSelect<N, I>
         thePanel.addNode(myRepLabel);
         thePanel.addNode(theReportButton);
         thePanel.addSpacer();
+        thePanel.addNode(theHoldingButton);
+        thePanel.addSpacer();
         thePanel.addNode(theRangeSelect);
         thePanel.addSpacer();
         thePanel.addNode(thePrintButton);
@@ -201,6 +203,14 @@ public class MoneyWiseReportSelect<N, I>
      */
     public TethysDateRange getDateRange() {
         return theState.getRange();
+    }
+
+    /**
+     * Obtain the securityBucket.
+     * @return the security
+     */
+    public SecurityBucket getSecurity() {
+        return theState.getSecurity();
     }
 
     /**
@@ -261,7 +271,7 @@ public class MoneyWiseReportSelect<N, I>
                 final SecurityBucket myBucket = myIterator.next();
 
                 /* Add menuItem */
-                final TethysScrollMenuItem<SecurityBucket> myItem = myMenu.getSubMenu().addItem(myBucket);
+                final TethysScrollMenuItem<SecurityBucket> myItem = myMenu.getSubMenu().addItem(myBucket, myBucket.getSecurityName());
 
                 /* Record active item */
                 if (myBucket.equals(mySecurity)) {
@@ -323,6 +333,19 @@ public class MoneyWiseReportSelect<N, I>
     }
 
     /**
+     * Set security.
+     * @param pSecurity the security.
+     */
+    public void setSecurity(final SecurityBucket pSecurity) {
+        /* Set the selected security */
+        theState.setSecurity(pSecurity);
+        theState.setType(MoneyWiseReportType.CAPITALGAINS);
+
+        /* Notify that the state has changed */
+        theEventManager.fireEvent(PrometheusDataEvent.SELECTIONCHANGED);
+    }
+
+    /**
      * Create SavePoint.
      */
     public void createSavePoint() {
@@ -345,6 +368,7 @@ public class MoneyWiseReportSelect<N, I>
     public void setEnabled(final boolean bEnable) {
         theRangeSelect.setEnabled(bEnable);
         theReportButton.setEnabled(bEnable);
+        theHoldingButton.setEnabled(bEnable);
         thePrintButton.setEnabled(bEnable);
         theSaveButton.setEnabled(bEnable);
     }
@@ -510,7 +534,8 @@ public class MoneyWiseReportSelect<N, I>
             /* Adjust the flag */
             if (pSecurities != hasSecurities) {
                 hasSecurities = pSecurities;
-                if (!hasSecurities && theType.needSecurities()) {
+                if (!hasSecurities
+                    && theType.needSecurities()) {
                     theType = MoneyWiseReportType.getDefault();
                 }
             }
@@ -532,6 +557,7 @@ public class MoneyWiseReportSelect<N, I>
         private boolean setSecurity(final SecurityBucket pSecurity) {
             if (!pSecurity.equals(theSecurity)) {
                 theSecurity = pSecurity;
+                applyState();
                 return true;
             }
             return false;
@@ -545,8 +571,8 @@ public class MoneyWiseReportSelect<N, I>
         private boolean setType(final MoneyWiseReportType pType) {
             if (!pType.equals(theType)) {
                 /* Are we currently point in time */
-                final boolean isPointInTime = (theType != null)
-                                              && (theType.isPointInTime());
+                final boolean isPointInTime = theType != null
+                                              && theType.isPointInTime();
 
                 /* Store the new type */
                 theType = pType;
@@ -578,10 +604,11 @@ public class MoneyWiseReportSelect<N, I>
         private void applyState() {
             /* Adjust the lock-down */
             setEnabled(true);
-            theReportButton.setFixedText((theType == null)
-                                                           ? null
-                                                           : theType.toString());
+            theReportButton.setFixedText(theType == null
+                                                         ? null
+                                                         : theType.toString());
             theHoldingButton.setValue(theSecurity);
+            theHoldingButton.setVisible(MoneyWiseReportType.CAPITALGAINS.equals(theType));
         }
     }
 }

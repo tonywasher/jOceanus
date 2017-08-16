@@ -23,7 +23,9 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -240,6 +242,67 @@ public class DepositRateTable
     }
 
     /**
+     * Add a new rate for a deposit.
+     * @param pDeposit the deposit
+     * @throws OceanusException on error
+     */
+    protected void addNewRate(final Deposit pDeposit) throws OceanusException {
+        /* Create the new rate */
+        final DepositRate myRate = new DepositRate(theRates);
+
+        /* Set the item value */
+        myRate.setDeposit(pDeposit);
+        myRate.setRate(TethysRate.getWholePercentage(0));
+
+        /* Access iterator and skip the header */
+        final Iterator<DepositRate> myIterator = theModel.viewIterator();
+        if (myIterator.hasNext()) {
+            myIterator.next();
+        }
+
+        /* Access the last rate and look to see whether we have a null date */
+        final DepositRate myLast = myIterator.hasNext()
+                                                        ? myIterator.next()
+                                                        : null;
+        final boolean hasNullDate = myLast != null && myLast.getEndDate() == null;
+
+        /* If we have a null date in the last element */
+        if (hasNullDate) {
+            /* Access the previous element */
+            final DepositRate myLatest = myIterator.hasNext()
+                                                              ? myIterator.next()
+                                                              : null;
+
+            /* Assume that we can use todays date */
+            TethysDate myDate = new TethysDate();
+            if (myLatest != null) {
+                /* Obtain the date that is one after the latest date used */
+                final TethysDate myNew = new TethysDate(myLatest.getEndDate());
+                myNew.adjustDay(1);
+
+                /* Use the latest of the two dates */
+                if (myDate.compareTo(myNew) < 0) {
+                    myDate = myNew;
+                }
+            }
+
+            /* Adjust the last date */
+            myLast.pushHistory();
+            myLast.setNewVersion();
+            myLast.setEndDate(myDate);
+        }
+
+        /* Add the new item */
+        myRate.setNewVersion();
+        theRates.append(myRate);
+
+        /*
+         * Don't validate the rate yet. We need to take care such that we can only add a new price
+         * when there is a slot available, and that we validate the entire list after an update
+         */
+    }
+
+    /**
      * JTable Data Model.
      */
     private final class DepositRateTableModel
@@ -281,7 +344,7 @@ public class DepositRateTable
         @Override
         public boolean isCellEditable(final DepositRate pItem,
                                       final int pColIndex) {
-            return theColumns.isCellEditable(pColIndex);
+            return theColumns.isCellEditable(pItem, pColIndex);
         }
 
         @Override
@@ -341,14 +404,10 @@ public class DepositRateTable
          * New item.
          */
         private void addNewItem() {
-            /* Create the new rate */
-            final DepositRate myRate = new DepositRate(theRates);
-
             /* Protect against Exceptions */
             try {
-                /* Set the item value */
-                myRate.setDeposit(theDeposit);
-                myRate.setRate(TethysRate.getWholePercentage(0));
+                /* Add a new rate */
+                addNewRate(theDeposit);
 
                 /* Handle Exceptions */
             } catch (OceanusException e) {
@@ -360,29 +419,9 @@ public class DepositRateTable
                 return;
             }
 
-            /* Obtain latest element */
-            final Iterator<DepositRate> myIterator = theModel.viewIterator();
-            myIterator.next();
-            final DepositRate myLatest = myIterator.hasNext()
-                                                              ? myIterator.next()
-                                                              : null;
-
-            /* If we have a latest element with no date */
-            if (myLatest != null
-                && myLatest.getEndDate() == null) {
-                /* Update date to todays date. */
-                myLatest.pushHistory();
-                myLatest.setNewVersion();
-                myLatest.setEndDate(new TethysDate());
-            }
-
-            /* Add the new item */
-            myRate.setNewVersion();
-            theRates.append(myRate);
-
-            /* Validate the new item and notify of the changes */
-            // myRate.validate();
-            theModel.fireNewDataEvents();
+            /* notify that the row has been inserted */
+            final int myRow = theModel.getRowCount() - 1;
+            theModel.fireTableRowsInserted(myRow, myRow);
 
             /* Shift display to line */
             selectRowWithScroll(1);
@@ -469,13 +508,38 @@ public class DepositRateTable
         private void handleDateEvent(final Integer pRowIndex,
                                      final TethysDateConfig pConfig) {
             /* Determine whether this is the latest entry */
-            final int i = getTable().convertRowIndexToView(pRowIndex);
-            final boolean bAllowNull = i == 1;
+            final int myCurrRow = getTable().convertRowIndexToView(pRowIndex);
+            final DepositRate myCurrRate = theModel.getItemAtIndex(pRowIndex);
+            final boolean bAllowNull = myCurrRow == 1;
             pConfig.setAllowNullDateSelection(bAllowNull);
+
+            /* Set earliest date */
             pConfig.setEarliestDate(theRange == null
                                                      ? null
                                                      : theRange.getStart());
             pConfig.setLatestDate(null);
+
+            /* Loop through the viewable items */
+            final List<TethysDate> myActive = new ArrayList<>();
+            final Iterator<DepositRate> myIterator = theModel.viewIterator();
+            while (myIterator.hasNext()) {
+                final DepositRate myRate = myIterator.next();
+
+                /* Ignore the header and the current row */
+                if (myRate instanceof RateHeader
+                    || myRate.equals(myCurrRate)) {
+                    continue;
+                }
+
+                /* Add the date to the list */
+                final TethysDate myDate = myRate.getEndDate();
+                if (myDate != null) {
+                    myActive.add(myDate);
+                }
+            }
+
+            /* Set the allowed dates */
+            pConfig.setAllowed(d -> !myActive.contains(d));
         }
 
         /**
@@ -579,14 +643,17 @@ public class DepositRateTable
 
         /**
          * Is the cell editable?
+         * @param pRate the rate
          * @param pColIndex the column index
          * @return true/false
          */
-        private boolean isCellEditable(final int pColIndex) {
+        private boolean isCellEditable(final DepositRate pRate,
+                                       final int pColIndex) {
             switch (pColIndex) {
                 case COLUMN_RATE:
                 case COLUMN_BONUS:
                 case COLUMN_ENDDATE:
+                    return isEditable && !pRate.isHeader();
                 case COLUMN_ACTION:
                     return isEditable;
                 default:

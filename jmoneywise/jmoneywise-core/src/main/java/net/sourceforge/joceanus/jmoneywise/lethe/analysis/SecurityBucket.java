@@ -317,7 +317,7 @@ public final class SecurityBucket
 
     @Override
     public String formatObject() {
-        return getName();
+        return getDecoratedName();
     }
 
     @Override
@@ -329,7 +329,7 @@ public final class SecurityBucket
      * Obtain the name.
      * @return the name
      */
-    public String getName() {
+    public String getSecurityName() {
         return theSecurity.getName();
     }
 

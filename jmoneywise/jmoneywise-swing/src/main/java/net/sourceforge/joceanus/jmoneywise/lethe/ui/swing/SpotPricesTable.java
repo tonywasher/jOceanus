@@ -326,7 +326,8 @@ public class SpotPricesTable
         thePortfolio = pPortfolio;
 
         /* If selection is valid */
-        if ((theDate != null) && (thePortfolio != null)) {
+        if (theDate != null
+            && thePortfolio != null) {
             /* Create the new list */
             thePrices = new SpotSecurityList<>(theView, pPortfolio, pDate);
 
@@ -421,7 +422,8 @@ public class SpotPricesTable
         final TethysDate myDate = theSelect.getDate();
 
         /* If the selection differs */
-        if (!MetisDifference.isEqual(theDate, myDate) || !MetisDifference.isEqual(thePortfolio, myPortfolio)) {
+        if (!MetisDifference.isEqual(theDate, myDate)
+            || !MetisDifference.isEqual(thePortfolio, myPortfolio)) {
             /* Set selection */
             setSelection(myPortfolio, myDate);
 

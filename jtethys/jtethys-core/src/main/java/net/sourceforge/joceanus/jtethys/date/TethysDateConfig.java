@@ -186,7 +186,7 @@ public class TethysDateConfig
      * Set the Locale.
      * @param pLocale the Locale
      */
-    public void setLocale(final Locale pLocale) {
+    public final void setLocale(final Locale pLocale) {
         /* Store locale */
         theLocale = pLocale;
 
@@ -218,7 +218,7 @@ public class TethysDateConfig
     /**
      * Rebuild names.
      */
-    protected void rebuildNames() {
+    protected final void rebuildNames() {
         /* Fire event */
         theEventManager.fireEvent(TethysDateEvent.FORMATCHANGED);
     }
@@ -238,8 +238,8 @@ public class TethysDateConfig
             theEarliest = pEarliest;
 
             /* If we have a latest date, reset if necessary */
-            if ((theLatest != null)
-                && (theLatest.compareTo(theEarliest) < 0)) {
+            if (theLatest != null
+                && theLatest.compareTo(theEarliest) < 0) {
                 theLatest = theEarliest;
             }
         }
@@ -260,8 +260,8 @@ public class TethysDateConfig
             theLatest = pLatest;
 
             /* If we have an earliest date, reset if necessary */
-            if ((theEarliest != null)
-                && (theLatest.compareTo(theEarliest) < 0)) {
+            if (theEarliest != null
+                && theLatest.compareTo(theEarliest) < 0) {
                 theEarliest = theLatest;
             }
         }
@@ -373,8 +373,8 @@ public class TethysDateConfig
      */
     public void previousYear() {
         theMonth.adjustYear(-1);
-        if ((theEarliest != null)
-            && (theMonth.compareTo(theEarliest) < 0)) {
+        if (theEarliest != null
+            && theMonth.compareTo(theEarliest) < 0) {
             theMonth = new TethysDate(theEarliest);
             theMonth.startCalendarMonth();
         }
@@ -385,8 +385,8 @@ public class TethysDateConfig
      */
     public void nextYear() {
         theMonth.adjustYear(1);
-        if ((theLatest != null)
-            && (theMonth.compareTo(theLatest) > 0)) {
+        if (theLatest != null
+            && theMonth.compareTo(theLatest) > 0) {
             theMonth = new TethysDate(theLatest);
             theMonth.startCalendarMonth();
         }
@@ -436,14 +436,14 @@ public class TethysDateConfig
         }
 
         /* Move to start date if we are earlier */
-        if ((theEarliest != null)
-            && (myDate.compareTo(theEarliest) < 0)) {
+        if (theEarliest != null
+            && myDate.compareTo(theEarliest) < 0) {
             myDate = theEarliest;
         }
 
         /* Move to end date if we are later */
-        if ((theLatest != null)
-            && (myDate.compareTo(theLatest) > 0)) {
+        if (theLatest != null
+            && myDate.compareTo(theLatest) > 0) {
             myDate = theLatest;
         }
 
