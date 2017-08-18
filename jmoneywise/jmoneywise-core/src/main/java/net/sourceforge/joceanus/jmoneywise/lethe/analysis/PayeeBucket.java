@@ -24,9 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -877,8 +879,7 @@ public final class PayeeBucket
      * PayeeBucket list class.
      */
     public static class PayeeBucketList
-            extends MetisOrderedIdList<Integer, PayeeBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<PayeeBucket> {
 
         /**
          * Local Report fields.
@@ -906,6 +907,11 @@ public final class PayeeBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, PayeeBucket> theList;
+
+        /**
          * The data.
          */
         private final MoneyWiseData theData;
@@ -921,10 +927,10 @@ public final class PayeeBucket
          */
         protected PayeeBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(PayeeBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(PayeeBucket.class);
         }
 
         /**
@@ -937,13 +943,10 @@ public final class PayeeBucket
                                   final PayeeBucketList pBase,
                                   final TethysDate pDate) {
             /* Initialise class */
-            super(PayeeBucket.class);
-            theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
-            theTotals = allocateTotalsBucket();
+            this(pAnalysis);
 
             /* Loop through the buckets */
-            final Iterator<PayeeBucket> myIterator = pBase.listIterator();
+            final Iterator<PayeeBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final PayeeBucket myCurr = myIterator.next();
 
@@ -953,7 +956,7 @@ public final class PayeeBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -968,13 +971,10 @@ public final class PayeeBucket
                                   final PayeeBucketList pBase,
                                   final TethysDateRange pRange) {
             /* Initialise class */
-            super(PayeeBucket.class);
-            theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
-            theTotals = allocateTotalsBucket();
+            this(pAnalysis);
 
             /* Loop through the buckets */
-            final Iterator<PayeeBucket> myIterator = pBase.listIterator();
+            final Iterator<PayeeBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final PayeeBucket myCurr = myIterator.next();
 
@@ -985,7 +985,7 @@ public final class PayeeBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base and add to the list */
                     myBucket.adjustToBase();
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -993,6 +993,11 @@ public final class PayeeBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<PayeeBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -1012,6 +1017,16 @@ public final class PayeeBucket
                 return theTotals;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public PayeeBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -1054,7 +1069,7 @@ public final class PayeeBucket
                 myItem = new PayeeBucket(theAnalysis, myPayee);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -1095,7 +1110,7 @@ public final class PayeeBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : theList.get(0);
         }
 
         /**
@@ -1103,7 +1118,7 @@ public final class PayeeBucket
          */
         protected void produceTotals() {
             /* Loop through the buckets */
-            final Iterator<PayeeBucket> myIterator = listIterator();
+            final Iterator<PayeeBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
                 final PayeeBucket myCurr = myIterator.next();
 

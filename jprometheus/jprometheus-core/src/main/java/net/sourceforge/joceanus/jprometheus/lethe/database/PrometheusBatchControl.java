@@ -29,6 +29,7 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.
@@ -180,7 +181,7 @@ public class PrometheusBatchControl {
          */
         private void commitBatch() {
             /* Access the iterator */
-            final ListIterator<?> myIterator = theTable.getList().listIterator();
+            final Iterator<?> myIterator = theTable.getList().iterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
@@ -203,7 +204,8 @@ public class PrometheusBatchControl {
          */
         private void commitDeleteBatch() {
             /* Access the iterator */
-            final ListIterator<?> myIterator = theTable.getList().listIterator();
+            final DataList<?, ?> myList = theTable.getList();
+            final ListIterator<?> myIterator = myList.listIterator(myList.size());
 
             /* Loop through the list */
             while (myIterator.hasPrevious()) {

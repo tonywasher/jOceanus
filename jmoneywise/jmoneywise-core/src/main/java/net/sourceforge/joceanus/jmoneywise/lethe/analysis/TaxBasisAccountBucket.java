@@ -24,14 +24,16 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
+import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
@@ -221,8 +223,7 @@ public final class TaxBasisAccountBucket
      * TaxBasisAccountBucketList class.
      */
     public static class TaxBasisAccountBucketList
-            extends MetisOrderedList<TaxBasisAccountBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<TaxBasisAccountBucket> {
         /**
          * Local Report fields.
          */
@@ -247,6 +248,11 @@ public final class TaxBasisAccountBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, TaxBasisAccountBucket> theList;
+
+        /**
          * Parent.
          */
         private final TaxBasisBucket theParent;
@@ -263,10 +269,10 @@ public final class TaxBasisAccountBucket
          */
         protected TaxBasisAccountBucketList(final Analysis pAnalysis,
                                             final TaxBasisBucket pParent) {
-            super(TaxBasisAccountBucket.class);
             theAnalysis = pAnalysis;
             theParent = pParent;
             theMap = new HashMap<>();
+            theList = new MetisOrderedIdList<>(TaxBasisAccountBucket.class);
         }
 
         /**
@@ -281,13 +287,10 @@ public final class TaxBasisAccountBucket
                                             final TaxBasisAccountBucketList pBase,
                                             final TethysDate pDate) {
             /* Initialise class */
-            super(TaxBasisAccountBucket.class);
-            theAnalysis = pAnalysis;
-            theParent = pParent;
-            theMap = new HashMap<>();
+            this(pAnalysis, pParent);
 
             /* Loop through the buckets */
-            final Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisAccountBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TaxBasisAccountBucket myCurr = myIterator.next();
 
@@ -297,7 +300,7 @@ public final class TaxBasisAccountBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    add(myBucket);
+                    theList.add(myBucket);
                     theMap.put(deriveAssetKey(myBucket), myBucket);
                 }
             }
@@ -315,13 +318,10 @@ public final class TaxBasisAccountBucket
                                             final TaxBasisAccountBucketList pBase,
                                             final TethysDateRange pRange) {
             /* Initialise class */
-            super(TaxBasisAccountBucket.class);
-            theAnalysis = pAnalysis;
-            theParent = pParent;
-            theMap = new HashMap<>();
+            this(pAnalysis, pParent);
 
             /* Loop through the buckets */
-            final Iterator<TaxBasisAccountBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisAccountBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TaxBasisAccountBucket myCurr = myIterator.next();
 
@@ -334,7 +334,7 @@ public final class TaxBasisAccountBucket
                     myBucket.adjustToBase();
 
                     /* Add to list and to map */
-                    add(myBucket);
+                    theList.add(myBucket);
                     theMap.put(deriveAssetKey(myBucket), myBucket);
                 }
             }
@@ -343,6 +343,11 @@ public final class TaxBasisAccountBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<TaxBasisAccountBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -359,6 +364,16 @@ public final class TaxBasisAccountBucket
                 return theAnalysis;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public TaxBasisAccountBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -431,7 +446,7 @@ public final class TaxBasisAccountBucket
                 myItem = new TaxBasisAccountBucket(theAnalysis, theParent, pAccount);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
                 theMap.put(myKey, myItem);
             }
 

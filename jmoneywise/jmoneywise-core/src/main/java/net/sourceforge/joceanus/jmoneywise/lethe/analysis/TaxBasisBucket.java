@@ -24,10 +24,12 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -887,8 +889,7 @@ public class TaxBasisBucket
      * TaxBasisBucketList class.
      */
     public static class TaxBasisBucketList
-            extends MetisOrderedIdList<Integer, TaxBasisBucket>
-            implements MetisDataContents, MoneyWiseTaxSource {
+            implements MetisDataContents, MoneyWiseTaxSource, MetisDataList<TaxBasisBucket> {
         /**
          * Local Report fields.
          */
@@ -920,6 +921,11 @@ public class TaxBasisBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, TaxBasisBucket> theList;
+
+        /**
          * The data.
          */
         private final MoneyWiseData theData;
@@ -939,11 +945,11 @@ public class TaxBasisBucket
          * @param pAnalysis the analysis
          */
         protected TaxBasisBucketList(final Analysis pAnalysis) {
-            super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theCharges = new MoneyWiseChargeableGainSliceList();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(TaxBasisBucket.class);
         }
 
         /**
@@ -956,14 +962,14 @@ public class TaxBasisBucket
                                      final TaxBasisBucketList pBase,
                                      final TethysDate pDate) {
             /* Initialise class */
-            super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theCharges = new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange());
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(TaxBasisBucket.class);
 
             /* Loop through the buckets */
-            final Iterator<TaxBasisBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TaxBasisBucket myCurr = myIterator.next();
 
@@ -973,7 +979,7 @@ public class TaxBasisBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    add(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -988,14 +994,14 @@ public class TaxBasisBucket
                                      final TaxBasisBucketList pBase,
                                      final TethysDateRange pRange) {
             /* Initialise class */
-            super(TaxBasisBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theCharges = new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange());
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(TaxBasisBucket.class);
 
             /* Loop through the buckets */
-            final Iterator<TaxBasisBucket> myIterator = pBase.listIterator();
+            final Iterator<TaxBasisBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TaxBasisBucket myCurr = myIterator.next();
 
@@ -1006,7 +1012,7 @@ public class TaxBasisBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
-                    add(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -1014,6 +1020,11 @@ public class TaxBasisBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<TaxBasisBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -1038,6 +1049,16 @@ public class TaxBasisBucket
                 return theTotals;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public TaxBasisBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -1081,7 +1102,7 @@ public class TaxBasisBucket
                 myItem = new TaxBasisBucket(theAnalysis, myBasis);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -1128,7 +1149,7 @@ public class TaxBasisBucket
             /* Return the first basis in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : theList.get(0);
         }
 
         /**
@@ -1325,7 +1346,7 @@ public class TaxBasisBucket
          */
         protected void prune() {
             /* Loop through the buckets */
-            final Iterator<TaxBasisBucket> myIterator = listIterator();
+            final Iterator<TaxBasisBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
                 final TaxBasisBucket myCurr = myIterator.next();
 

@@ -293,7 +293,7 @@ public final class SpotExchangeRate
             setBase(myRates);
 
             /* Loop through the rates */
-            final ListIterator<ExchangeRate> myIterator = myRates.listIterator();
+            final ListIterator<ExchangeRate> myIterator = myRates.listIterator(myRates.size());
             while (myIterator.hasPrevious()) {
                 final ExchangeRate myRate = myIterator.previous();
 

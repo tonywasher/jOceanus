@@ -24,9 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -963,7 +965,7 @@ public final class SecurityBucket
          */
         public boolean isActive() {
             final TethysUnits myUnits = getUnitsValue(SecurityAttribute.UNITS);
-            return (myUnits != null) && (myUnits.isNonZero());
+            return myUnits != null && myUnits.isNonZero();
         }
     }
 
@@ -971,8 +973,7 @@ public final class SecurityBucket
      * SecurityBucket list class.
      */
     public static class SecurityBucketList
-            extends MetisOrderedIdList<Integer, SecurityBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<SecurityBucket> {
 
         /**
          * Local Report fields.
@@ -995,12 +996,17 @@ public final class SecurityBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, SecurityBucket> theList;
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
         protected SecurityBucketList(final Analysis pAnalysis) {
-            super(SecurityBucket.class);
             theAnalysis = pAnalysis;
+            theList = new MetisOrderedIdList<>(SecurityBucket.class);
         }
 
         /**
@@ -1011,8 +1017,7 @@ public final class SecurityBucket
         protected SecurityBucketList(final Analysis pAnalysis,
                                      final SecurityBucketList pBase) {
             /* Initialise class */
-            super(SecurityBucket.class);
-            theAnalysis = pAnalysis;
+            this(pAnalysis);
 
             /* Loop through the buckets */
             final Iterator<SecurityBucket> myIterator = pBase.iterator();
@@ -1028,7 +1033,7 @@ public final class SecurityBucket
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -1043,8 +1048,7 @@ public final class SecurityBucket
                                      final SecurityBucketList pBase,
                                      final TethysDate pDate) {
             /* Initialise class */
-            super(SecurityBucket.class);
-            theAnalysis = pAnalysis;
+            this(pAnalysis);
 
             /* Loop through the buckets */
             final Iterator<SecurityBucket> myIterator = pBase.iterator();
@@ -1060,7 +1064,7 @@ public final class SecurityBucket
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -1075,8 +1079,7 @@ public final class SecurityBucket
                                      final SecurityBucketList pBase,
                                      final TethysDateRange pRange) {
             /* Initialise class */
-            super(SecurityBucket.class);
-            theAnalysis = pAnalysis;
+            this(pAnalysis);
 
             /* Loop through the buckets */
             final Iterator<SecurityBucket> myIterator = pBase.iterator();
@@ -1090,7 +1093,7 @@ public final class SecurityBucket
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -1098,6 +1101,11 @@ public final class SecurityBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<SecurityBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -1117,6 +1125,16 @@ public final class SecurityBucket
         }
 
         /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public SecurityBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
+        }
+
+        /**
          * Obtain the SecurityBucket for a given security holding.
          * @param pHolding the security holding
          * @return the bucket
@@ -1132,7 +1150,7 @@ public final class SecurityBucket
                 myItem = new SecurityBucket(theAnalysis, pHolding);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */

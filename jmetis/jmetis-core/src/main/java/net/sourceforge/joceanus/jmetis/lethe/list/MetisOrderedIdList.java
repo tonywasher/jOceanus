@@ -100,8 +100,8 @@ public class MetisOrderedIdList<I, T extends Comparable<? super T> & MetisOrdere
      * @param pClass the class of the sortedItem
      * @param pIndex the index.
      */
-    protected MetisOrderedIdList(final Class<T> pClass,
-                                 final MetisOrderedIdIndex<I, T> pIndex) {
+    public MetisOrderedIdList(final Class<T> pClass,
+                              final MetisOrderedIdIndex<I, T> pIndex) {
         super(pClass, pIndex);
     }
 

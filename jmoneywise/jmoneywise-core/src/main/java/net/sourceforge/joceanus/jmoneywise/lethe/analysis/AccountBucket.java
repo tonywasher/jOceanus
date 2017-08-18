@@ -25,9 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -887,8 +889,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param <T> the account data type
      */
     public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T>>
-            extends MetisOrderedIdList<Integer, B>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<B> {
         /**
          * Local Report fields.
          */
@@ -910,6 +911,11 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, B> theList;
+
+        /**
          * Construct a top-level List.
          * @param pClass the bucket class
          * @param pAnalysis the analysis
@@ -917,8 +923,13 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected AccountBucketList(final Class<B> pClass,
                                     final Analysis pAnalysis) {
             /* Initialise class */
-            super(pClass);
             theAnalysis = pAnalysis;
+            theList = new MetisOrderedIdList<>(pClass);
+        }
+
+        @Override
+        public List<B> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -961,7 +972,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* add to list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -992,7 +1003,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -1014,7 +1025,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected void constructFromBase(final AccountBucketList<B, T> pBase,
                                          final TethysDateRange pRange) {
             /* Loop through the buckets */
-            final Iterator<B> myIterator = pBase.listIterator();
+            final Iterator<B> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final B myCurr = myIterator.next();
 
@@ -1024,9 +1035,19 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public B findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -1053,7 +1074,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 myItem = newBucket(pAccount);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */

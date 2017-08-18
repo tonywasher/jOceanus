@@ -24,9 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -770,8 +772,7 @@ public final class TransactionCategoryBucket
      * TransactionCategoryBucket list class.
      */
     public static final class TransactionCategoryBucketList
-            extends MetisOrderedIdList<Integer, TransactionCategoryBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<TransactionCategoryBucket> {
 
         /**
          * Local Report fields.
@@ -797,6 +798,11 @@ public final class TransactionCategoryBucket
          * The analysis.
          */
         private final Analysis theAnalysis;
+
+        /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, TransactionCategoryBucket> theList;
 
         /**
          * The data.
@@ -859,10 +865,10 @@ public final class TransactionCategoryBucket
          */
         protected TransactionCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(TransactionCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
 
             /* Access taxBasis list */
             theTaxBasis = theAnalysis.getTaxBasis();
@@ -889,10 +895,10 @@ public final class TransactionCategoryBucket
                                                 final TransactionCategoryBucketList pBase,
                                                 final TethysDate pDate) {
             /* Initialise class */
-            super(TransactionCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -906,7 +912,7 @@ public final class TransactionCategoryBucket
             theCapitalGains = null;
 
             /* Loop through the buckets */
-            final Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionCategoryBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TransactionCategoryBucket myCurr = myIterator.next();
 
@@ -916,7 +922,7 @@ public final class TransactionCategoryBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    add(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -931,10 +937,10 @@ public final class TransactionCategoryBucket
                                                 final TransactionCategoryBucketList pBase,
                                                 final TethysDateRange pRange) {
             /* Initialise class */
-            super(TransactionCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -948,7 +954,7 @@ public final class TransactionCategoryBucket
             theCapitalGains = null;
 
             /* Loop through the buckets */
-            final Iterator<TransactionCategoryBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionCategoryBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TransactionCategoryBucket myCurr = myIterator.next();
 
@@ -959,7 +965,7 @@ public final class TransactionCategoryBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
-                    add(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -967,6 +973,11 @@ public final class TransactionCategoryBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<TransactionCategoryBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -986,6 +997,16 @@ public final class TransactionCategoryBucket
                 return theTotals;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public TransactionCategoryBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -1025,7 +1046,7 @@ public final class TransactionCategoryBucket
                 myItem = new TransactionCategoryBucket(theAnalysis, pCategory);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -1066,7 +1087,7 @@ public final class TransactionCategoryBucket
             /* Return the first category in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : theList.get(0);
         }
 
         /**
@@ -1191,7 +1212,7 @@ public final class TransactionCategoryBucket
             final MetisOrderedIdList<Integer, TransactionCategoryBucket> myTotals = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
 
             /* Loop through the buckets */
-            Iterator<TransactionCategoryBucket> myIterator = listIterator();
+            Iterator<TransactionCategoryBucket> myIterator = iterator();
             while (myIterator.hasNext()) {
                 final TransactionCategoryBucket myCurr = myIterator.next();
 
@@ -1232,7 +1253,7 @@ public final class TransactionCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                add(myCurr);
+                theList.add(myCurr);
             }
 
             /* Calculate delta for the totals */

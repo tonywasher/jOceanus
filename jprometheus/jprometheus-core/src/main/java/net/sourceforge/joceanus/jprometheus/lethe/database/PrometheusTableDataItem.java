@@ -587,7 +587,7 @@ public abstract class PrometheusTableDataItem<T extends DataItem<E> & Comparable
             prepareStatement(myDelete);
 
             /* Access the iterator */
-            final ListIterator<T> myIterator = theList.listIterator();
+            final ListIterator<T> myIterator = theList.listIterator(theList.size());
 
             /* Loop through the list in reverse order */
             while (myIterator.hasPrevious()) {

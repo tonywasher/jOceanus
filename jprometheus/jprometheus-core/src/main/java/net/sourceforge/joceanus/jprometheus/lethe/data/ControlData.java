@@ -312,7 +312,9 @@ public class ControlData
          * @return the control data
          */
         public ControlData getControl() {
-            return peekFirst();
+            return isEmpty()
+                             ? null
+                             : get(0);
         }
 
         @Override

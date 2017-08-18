@@ -22,7 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+import java.util.List;
+
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -34,8 +37,7 @@ import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
  * @param <E> the data type enum class
  */
 public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends MetisOrderedIdList<Integer, T>
-        implements MetisDataContents {
+        implements MetisDataContents, MetisDataList<T> {
     /**
      * Local Report fields.
      */
@@ -45,6 +47,11 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
      * Parent field id.
      */
     public static final MetisField FIELD_PARENT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
+
+    /**
+     * The list.
+     */
+    private final MetisOrderedIdList<Integer, T> theList;
 
     /**
      * Parent Event.
@@ -58,11 +65,9 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
      */
     public DataGroup(final T pParent,
                      final Class<T> pClass) {
-        /* Call super-constructor */
-        super(pClass);
-
         /* Store parameter */
         theParent = pParent;
+        theList = new MetisOrderedIdList<>(pClass);
     }
 
     @Override
@@ -76,6 +81,11 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     @Override
     public String formatObject() {
         return getDataFields().getName() + "(" + size() + ")";
+    }
+
+    @Override
+    public List<T> getUnderlyingList() {
+        return theList;
     }
 
     /**
@@ -92,6 +102,6 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
      */
     public void registerChild(final T pChild) {
         /* Add the child to the list */
-        add(pChild);
+        theList.add(pChild);
     }
 }

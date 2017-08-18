@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import java.util.List;
-
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDeletable;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataUpdatable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
@@ -46,7 +45,7 @@ public interface PrometheusTableItem extends MetisOrderedIdItem<Integer>, MetisD
      * Table List interface.
      * @param <T> the item type
      */
-    interface PrometheusTableList<T extends PrometheusTableItem> extends List<T> {
+    interface PrometheusTableList<T extends PrometheusTableItem> extends MetisDataList<T> {
         /**
          * Is the list is Locked.
          * @return <code>true/false</code>
@@ -60,5 +59,32 @@ public interface PrometheusTableItem extends MetisOrderedIdItem<Integer>, MetisD
          * @return the class
          */
         Class<T> getBaseClass();
+
+        /**
+         * Obtain the item at the specified position in the list.
+         * @param pIndex the index of the item
+         * @return the item
+         */
+        default T get(final int pIndex) {
+            return getUnderlyingList().get(pIndex);
+        }
+
+        /**
+         * Remove the item from the list.
+         * @param pItem the item to remove
+         * @return was the item originally in the list?
+         */
+        default boolean remove(final Object pItem) {
+            return getUnderlyingList().remove(pItem);
+        }
+
+        /**
+         * Obtain the index of the item in the list.
+         * @param pItem the item to find
+         * @return the index or -1 if the item is not in the list
+         */
+        default int indexOf(final Object pItem) {
+            return getUnderlyingList().indexOf(pItem);
+        }
     }
 }

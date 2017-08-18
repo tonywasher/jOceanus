@@ -236,7 +236,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * @return the data list
      */
     public List<T> getList() {
-        return theList;
+        return theList.getUnderlyingList();
     }
 
     /**

@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -88,9 +90,9 @@ public final class CashCategoryBucket
 
     @Override
     public String getName() {
-        return (theCategory == null)
-                                     ? NAME_TOTALS
-                                     : theCategory.getName();
+        return theCategory == null
+                                   ? NAME_TOTALS
+                                   : theCategory.getName();
     }
 
     @Override
@@ -145,8 +147,7 @@ public final class CashCategoryBucket
      * CashCategoryBucket list class.
      */
     public static final class CashCategoryBucketList
-            extends MetisOrderedIdList<Integer, CashCategoryBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<CashCategoryBucket> {
         /**
          * Local Report fields.
          */
@@ -173,6 +174,11 @@ public final class CashCategoryBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, CashCategoryBucket> theList;
+
+        /**
          * The currency.
          */
         private final AssetCurrency theCurrency;
@@ -193,15 +199,20 @@ public final class CashCategoryBucket
          */
         protected CashCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(CashCategoryBucket.class);
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(CashCategoryBucket.class);
         }
 
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<CashCategoryBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -221,6 +232,16 @@ public final class CashCategoryBucket
                 return theTotals;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public CashCategoryBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -263,7 +284,7 @@ public final class CashCategoryBucket
                 myItem = new CashCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -372,7 +393,7 @@ public final class CashCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                add(myCurr);
+                theList.add(myCurr);
             }
 
             /* Calculate delta for the totals */

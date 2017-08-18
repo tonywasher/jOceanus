@@ -24,9 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -709,8 +711,7 @@ public final class PortfolioBucket
      * PortfolioBucket list class.
      */
     public static final class PortfolioBucketList
-            extends MetisOrderedIdList<Integer, PortfolioBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<PortfolioBucket> {
         /**
          * Local Report fields.
          */
@@ -737,6 +738,11 @@ public final class PortfolioBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, PortfolioBucket> theList;
+
+        /**
          * The totals.
          */
         private final PortfolioBucket theTotals;
@@ -757,9 +763,9 @@ public final class PortfolioBucket
          */
         protected PortfolioBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(PortfolioBucket.class);
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(PortfolioBucket.class);
         }
 
         /**
@@ -770,9 +776,7 @@ public final class PortfolioBucket
         protected PortfolioBucketList(final Analysis pAnalysis,
                                       final PortfolioBucketList pBase) {
             /* Initialise class */
-            super(PortfolioBucket.class);
-            theAnalysis = pAnalysis;
-            theTotals = allocateTotalsBucket();
+            this(pAnalysis);
 
             /* Loop through the buckets */
             final Iterator<PortfolioBucket> myIterator = pBase.iterator();
@@ -785,7 +789,7 @@ public final class PortfolioBucket
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -800,9 +804,7 @@ public final class PortfolioBucket
                                       final PortfolioBucketList pBase,
                                       final TethysDate pDate) {
             /* Initialise class */
-            super(PortfolioBucket.class);
-            theAnalysis = pAnalysis;
-            theTotals = allocateTotalsBucket();
+            this(pAnalysis);
 
             /* Loop through the buckets */
             final Iterator<PortfolioBucket> myIterator = pBase.iterator();
@@ -815,7 +817,7 @@ public final class PortfolioBucket
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -830,9 +832,7 @@ public final class PortfolioBucket
                                       final PortfolioBucketList pBase,
                                       final TethysDateRange pRange) {
             /* Initialise class */
-            super(PortfolioBucket.class);
-            theAnalysis = pAnalysis;
-            theTotals = allocateTotalsBucket();
+            this(pAnalysis);
 
             /* Loop through the buckets */
             final Iterator<PortfolioBucket> myIterator = pBase.iterator();
@@ -845,7 +845,7 @@ public final class PortfolioBucket
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Add to the list */
-                    append(myBucket);
+                    theList.append(myBucket);
                 }
             }
         }
@@ -853,6 +853,11 @@ public final class PortfolioBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<PortfolioBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -899,6 +904,16 @@ public final class PortfolioBucket
         }
 
         /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public PortfolioBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
+        }
+
+        /**
          * Obtain the PortfolioBucket for a given portfolio.
          * @param pPortfolio the portfolio
          * @return the bucket
@@ -913,7 +928,7 @@ public final class PortfolioBucket
                 myItem = new PortfolioBucket(theAnalysis, pPortfolio);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -984,7 +999,7 @@ public final class PortfolioBucket
             /* Return the first portfolio in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : theList.get(0);
         }
 
         /**

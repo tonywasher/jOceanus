@@ -419,7 +419,7 @@ public final class DepositBucket
             /* Return the first deposit in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : getUnderlyingList().get(0);
         }
 
         /**

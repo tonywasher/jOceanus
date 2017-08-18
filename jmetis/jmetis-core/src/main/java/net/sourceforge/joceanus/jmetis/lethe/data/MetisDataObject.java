@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.lethe.data;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -159,6 +161,23 @@ public final class MetisDataObject {
          * @return the list
          */
         List<T> getUnderlyingList();
+
+        /**
+         * Obtain the list iterator.
+         * @return the iterator
+         */
+        default Iterator<T> iterator() {
+            return getUnderlyingList().iterator();
+        }
+
+        /**
+         * Obtain the list iterator.
+         * @param pIndex the list position
+         * @return the iterator
+         */
+        default ListIterator<T> listIterator(final int pIndex) {
+            return getUnderlyingList().listIterator(pIndex);
+        }
 
         /**
          * Is the map empty?.

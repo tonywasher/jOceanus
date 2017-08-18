@@ -266,7 +266,7 @@ public class ViewSecurityPrice
             theDilutions = pView.getDilutions();
 
             /* Loop through the list */
-            final Iterator<SecurityPrice> myIterator = myPrices.listIterator();
+            final Iterator<SecurityPrice> myIterator = myPrices.iterator();
             while (myIterator.hasNext()) {
                 final SecurityPrice myCurr = myIterator.next();
 

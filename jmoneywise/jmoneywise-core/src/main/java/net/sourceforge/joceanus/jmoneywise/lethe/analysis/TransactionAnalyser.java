@@ -232,7 +232,7 @@ public class TransactionAnalyser
 
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
-        final Iterator<Transaction> myIterator = myTrans.listIterator();
+        final Iterator<Transaction> myIterator = myTrans.iterator();
         while (myIterator.hasNext()) {
             final Transaction myCurr = myIterator.next();
 

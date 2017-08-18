@@ -339,7 +339,7 @@ public final class SpotSecurityPrice
             setBase(myPrices);
 
             /* Loop through the prices */
-            final ListIterator<SecurityPrice> myIterator = myPrices.listIterator();
+            final ListIterator<SecurityPrice> myIterator = myPrices.listIterator(myPrices.size());
             while (myIterator.hasPrevious()) {
                 final SecurityPrice myPrice = myIterator.previous();
 

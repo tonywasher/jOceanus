@@ -225,7 +225,7 @@ public final class CashBucket
             /* Return the first cash in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : getUnderlyingList().get(0);
         }
 
         /**

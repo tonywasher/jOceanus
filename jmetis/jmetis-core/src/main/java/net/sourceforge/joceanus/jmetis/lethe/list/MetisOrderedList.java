@@ -195,7 +195,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
      * obtain index.
      * @return the index
      */
-    protected MetisOrderedIndex<T> getIndex() {
+    public MetisOrderedIndex<T> getIndex() {
         return theIndexMap;
     }
 
@@ -406,8 +406,13 @@ public class MetisOrderedList<T extends Comparable<? super T>>
             throw new IndexOutOfBoundsException();
         }
 
+        /* Handle end of list as start of list */
+        if (iIndex == size()) {
+            return listIterator(0);
+        }
+
         /* Reject if the index is too large */
-        if (iIndex >= size()) {
+        if (iIndex > size()) {
             throw new IndexOutOfBoundsException();
         }
 

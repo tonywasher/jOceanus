@@ -23,11 +23,13 @@
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -790,8 +792,7 @@ public final class ControlKey
      * DataKeySetResource.
      */
     private static final class DataKeySetResource
-            extends MetisOrderedIdList<Integer, DataKeySet>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<DataKeySet> {
         /**
          * Local Report fields.
          */
@@ -803,6 +804,11 @@ public final class ControlKey
         public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, DataKeySet> theList;
+
+        /**
          * Iterator.
          */
         private Iterator<DataKeySet> theIterator;
@@ -810,13 +816,18 @@ public final class ControlKey
         /**
          * Constructor.
          */
-        private DataKeySetResource() {
-            super(DataKeySet.class);
+        protected DataKeySetResource() {
+            theList = new MetisOrderedIdList<>(DataKeySet.class);
         }
 
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<DataKeySet> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -838,9 +849,9 @@ public final class ControlKey
          */
         private void registerKeySet(final DataKeySet pKeySet) {
             /* If this is first registration */
-            if (!contains(pKeySet)) {
+            if (!theList.contains(pKeySet)) {
                 /* Add the KeySet */
-                append(pKeySet);
+                theList.append(pKeySet);
 
                 /* Reset any iterator */
                 if (theIterator != null) {

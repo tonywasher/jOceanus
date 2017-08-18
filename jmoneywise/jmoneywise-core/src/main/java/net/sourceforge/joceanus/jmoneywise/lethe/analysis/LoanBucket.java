@@ -360,7 +360,7 @@ public final class LoanBucket
             /* Return the first loan in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : getUnderlyingList().get(0);
         }
 
         /**

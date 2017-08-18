@@ -862,7 +862,7 @@ public class Schedule
             final ScheduleList myList = getEmptyList(ListStyle.EDIT);
 
             /* Loop through the Schedule */
-            final Iterator<Schedule> myIterator = listIterator();
+            final Iterator<Schedule> myIterator = iterator();
             while (myIterator.hasNext()) {
                 final Schedule myCurr = myIterator.next();
 

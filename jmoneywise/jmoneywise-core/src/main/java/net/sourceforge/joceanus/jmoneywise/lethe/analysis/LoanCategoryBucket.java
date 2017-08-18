@@ -23,8 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -145,8 +147,7 @@ public final class LoanCategoryBucket
      * LoanCategoryBucket list class.
      */
     public static final class LoanCategoryBucketList
-            extends MetisOrderedIdList<Integer, LoanCategoryBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<LoanCategoryBucket> {
         /**
          * Local Report fields.
          */
@@ -173,6 +174,11 @@ public final class LoanCategoryBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, LoanCategoryBucket> theList;
+
+        /**
          * The currency.
          */
         private final AssetCurrency theCurrency;
@@ -193,15 +199,20 @@ public final class LoanCategoryBucket
          */
         protected LoanCategoryBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(LoanCategoryBucket.class);
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
+            theList = new MetisOrderedIdList<>(LoanCategoryBucket.class);
         }
 
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<LoanCategoryBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -221,6 +232,16 @@ public final class LoanCategoryBucket
                 return theTotals;
             }
             return MetisFieldValue.UNKNOWN;
+        }
+
+        /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public LoanCategoryBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
         }
 
         /**
@@ -263,7 +284,7 @@ public final class LoanCategoryBucket
                 myItem = new LoanCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -372,7 +393,7 @@ public final class LoanCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                add(myCurr);
+                theList.add(myCurr);
             }
 
             /* Calculate delta for the totals */

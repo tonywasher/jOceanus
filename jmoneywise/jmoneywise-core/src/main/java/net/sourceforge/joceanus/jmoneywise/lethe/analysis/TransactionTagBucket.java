@@ -24,9 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -296,8 +298,7 @@ public final class TransactionTagBucket
      * TransactionTagBucketList class.
      */
     public static class TransactionTagBucketList
-            extends MetisOrderedIdList<Integer, TransactionTagBucket>
-            implements MetisDataContents {
+            implements MetisDataContents, MetisDataList<TransactionTagBucket> {
         /**
          * Local Report fields.
          */
@@ -319,12 +320,17 @@ public final class TransactionTagBucket
         private final Analysis theAnalysis;
 
         /**
+         * The list.
+         */
+        private final MetisOrderedIdList<Integer, TransactionTagBucket> theList;
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
         protected TransactionTagBucketList(final Analysis pAnalysis) {
-            super(TransactionTagBucket.class);
             theAnalysis = pAnalysis;
+            theList = new MetisOrderedIdList<>(TransactionTagBucket.class);
         }
 
         /**
@@ -337,11 +343,10 @@ public final class TransactionTagBucket
                                            final TransactionTagBucketList pBase,
                                            final TethysDate pDate) {
             /* Initialise class */
-            super(TransactionTagBucket.class);
-            theAnalysis = pAnalysis;
+            this(pAnalysis);
 
             /* Loop through the buckets */
-            final Iterator<TransactionTagBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionTagBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TransactionTagBucket myCurr = myIterator.next();
 
@@ -351,7 +356,7 @@ public final class TransactionTagBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
-                    add(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -366,11 +371,10 @@ public final class TransactionTagBucket
                                            final TransactionTagBucketList pBase,
                                            final TethysDateRange pRange) {
             /* Initialise class */
-            super(TransactionTagBucket.class);
-            theAnalysis = pAnalysis;
+            this(pAnalysis);
 
             /* Loop through the buckets */
-            final Iterator<TransactionTagBucket> myIterator = pBase.listIterator();
+            final Iterator<TransactionTagBucket> myIterator = pBase.iterator();
             while (myIterator.hasNext()) {
                 final TransactionTagBucket myCurr = myIterator.next();
 
@@ -380,7 +384,7 @@ public final class TransactionTagBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
-                    add(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -388,6 +392,11 @@ public final class TransactionTagBucket
         @Override
         public MetisFields getDataFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public List<TransactionTagBucket> getUnderlyingList() {
+            return theList;
         }
 
         @Override
@@ -407,6 +416,16 @@ public final class TransactionTagBucket
         }
 
         /**
+         * Obtain item by id.
+         * @param pId the id to lookup
+         * @return the item (or null if not present)
+         */
+        public TransactionTagBucket findItemById(final Integer pId) {
+            /* Return results */
+            return theList.findItemById(pId);
+        }
+
+        /**
          * Obtain the TransTagBucket for a given transaction tag.
          * @param pTag the transaction tag
          * @return the bucket
@@ -421,7 +440,7 @@ public final class TransactionTagBucket
                 myItem = new TransactionTagBucket(theAnalysis, pTag);
 
                 /* Add to the list */
-                add(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -449,7 +468,7 @@ public final class TransactionTagBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                              ? null
-                             : get(0);
+                             : theList.get(0);
         }
 
         /**

@@ -23,9 +23,11 @@
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
@@ -47,8 +49,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        extends MetisOrderedIdList<Integer, T>
-        implements MetisDataContents, PrometheusTableList<T> {
+        implements MetisDataContents, MetisDataList<T>, PrometheusTableList<T> {
     /**
      * DataList interface.
      * @param <E> the data type enum class
@@ -132,6 +133,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     private final MetisFields theFields;
 
     /**
+     * The list.
+     */
+    private final MetisOrderedIdList<Integer, T> theList;
+
+    /**
      * The style of the list.
      */
     private ListStyle theStyle = ListStyle.CORE;
@@ -192,12 +198,14 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                        final DataSet<?, ?> pDataSet,
                        final E pItemType,
                        final ListStyle pStyle) {
-        super(pBaseClass, new IdManager<T, E>(pDataSet.getGranularity()));
         theStyle = pStyle;
         theItemType = pItemType;
         theDataSet = pDataSet;
         theGranularity = pDataSet.getGranularity();
         theGeneration = pDataSet.getGeneration();
+
+        /* Create the list */
+        theList = new MetisOrderedIdList<>(pBaseClass, new IdManager<T, E>(pDataSet.getGranularity()));
         theMgr = getManagerIndex();
 
         /* Declare fields (allowing for subclasses) */
@@ -209,14 +217,16 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @param pSource the list to clone
      */
     protected DataList(final DataList<T, E> pSource) {
-        super(pSource.getBaseClass(), new IdManager<T, E>(pSource.getGranularity()));
         theStyle = ListStyle.COPY;
         theItemType = pSource.getItemType();
-        theMgr = getManagerIndex();
         theBase = pSource;
         theDataSet = pSource.getDataSet();
         theGranularity = pSource.getGranularity();
         theGeneration = pSource.getGeneration();
+
+        /* Create the list */
+        theList = new MetisOrderedIdList<>(pSource.getBaseClass(), new IdManager<T, E>(theGranularity));
+        theMgr = getManagerIndex();
 
         /* Declare fields (allowing for subclasses) */
         theFields = declareFields();
@@ -225,6 +235,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     @Override
     public MetisFields getDataFields() {
         return theFields;
+    }
+
+    @Override
+    public List<T> getUnderlyingList() {
+        return theList;
     }
 
     /**
@@ -284,6 +299,49 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             return theItemType;
         }
         return MetisFieldValue.UNKNOWN;
+    }
+
+    /**
+     * Add item to list in sort order.
+     * @param pItem the item to add
+     * @return true if the item was added to the list
+     */
+    public boolean add(final T pItem) {
+        return theList.add(pItem);
+    }
+
+    /**
+     * Add item to list at the end of the list.
+     * @param pItem the item to add
+     * @return true if the item was added to the list
+     */
+    public boolean append(final T pItem) {
+        return theList.append(pItem);
+    }
+
+    /**
+     * reSort the list.
+     * @return did the list order change?
+     */
+    public boolean reSort() {
+        return theList.reSort();
+    }
+
+    /**
+     * Obtain the class of objects in this sorted list.
+     * @return should we skip hidden elements
+     */
+    public Class<T> getBaseClass() {
+        return theList.getBaseClass();
+    }
+
+    /**
+     * Obtain item by id.
+     * @param pId the id to lookup
+     * @return the item (or null if not present)
+     */
+    public T findItemById(final Integer pId) {
+        return theList.findItemById(pId);
     }
 
     /**
@@ -456,7 +514,16 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     @SuppressWarnings("unchecked")
     private IdManager<T, E> getManagerIndex() {
-        return (IdManager<T, E>) super.getIndex();
+        return (IdManager<T, E>) theList.getIndex();
+    }
+
+    /**
+     * Obtain an Id Map of the list.
+     * @return the Id map.
+     */
+    public Map<Integer, T> getIdMap() {
+        /* Return the map */
+        return theList.getIdMap();
     }
 
     /**
@@ -851,7 +918,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public void postProcessOnLoad() throws OceanusException {
         /* Default action is to resolve links and then sort */
         resolveDataSetLinks();
-        reSort();
+        theList.reSort();
 
         /* Map the data */
         mapData();
@@ -960,7 +1027,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void rewindToVersion(final int pVersion) {
         /* Loop through the elements */
-        final MetisOrderedListIterator<T> myIterator = listIterator();
+        final MetisOrderedListIterator<T> myIterator = theList.listIterator();
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
 
@@ -989,7 +1056,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
         /* ReSort the list unless we are an edit list */
         if (theStyle != ListStyle.EDIT) {
-            reSort();
+            theList.reSort();
         }
     }
 
@@ -999,7 +1066,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void condenseHistory(final int pNewVersion) {
         /* Loop through the elements */
-        final MetisOrderedListIterator<T> myIterator = listIterator();
+        final MetisOrderedListIterator<T> myIterator = theList.listIterator();
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
 
