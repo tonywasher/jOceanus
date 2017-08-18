@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSheetEncrypted;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 
 /**
  * SheetDataItem extension for Transaction.
@@ -413,7 +414,20 @@ public class SheetTransaction
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
+
+        /* If we have a TagList */
+        if (myTagList != null) {
+            /* Process any separated items */
+            int iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
+            while (iIndex != -1) {
+                myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList.substring(0, iIndex));
+                myTagList = myTagList.substring(iIndex + 1);
+                iIndex = myTagList.indexOf(TethysListButtonManager.ITEM_SEP);
+            }
+
+            /* Process the single remaining item */
+            myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TRANSTAG, myTagList);
+        }
 
         /* Continue */
         return true;

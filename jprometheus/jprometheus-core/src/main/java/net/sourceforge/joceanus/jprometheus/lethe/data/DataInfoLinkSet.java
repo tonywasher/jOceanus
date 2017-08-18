@@ -205,43 +205,10 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     public void linkItem(final T pItem) throws OceanusException {
         /* If the item is not already linked */
         if (!isItemLinked(pItem)) {
-            /* Perform any necessary splits on the item */
-            splitItem(pItem);
-
             /* Add the item to the list */
             theLinkSet.append(pItem);
             sortLinks();
         }
-    }
-
-    /**
-     * Split multi-name item.
-     * @param pItem the item to split
-     * @throws OceanusException on error
-     */
-    private void splitItem(final T pItem) throws OceanusException {
-        /* Ignore if this is not a load of a string */
-        final Object myValue = pItem.getLink();
-        if (!(myValue instanceof String)) {
-            return;
-        }
-
-        /* Ignore if this is not a load of a combined list */
-        final String myString = (String) myValue;
-        final int iIndex = myString.indexOf(ITEM_SEP);
-        if (iIndex == -1) {
-            return;
-        }
-
-        /* Adjust the existing value */
-        pItem.setValueLink(myString.substring(0, iIndex));
-
-        /* Create the new item */
-        final T myItem = theInfoList.addNewItem(theOwner, theInfoType);
-        myItem.setValueLink(myString.substring(iIndex + 1));
-
-        /* Link the new item */
-        linkItem(myItem);
     }
 
     /**
