@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
@@ -32,9 +31,6 @@ import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -86,23 +82,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a Transaction.
  */
 public class TransactionPanel
         extends MoneyWiseItemPanel<Transaction> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<Transaction> theFieldSet;
-
     /**
      * Info Tab Title.
      */
@@ -163,35 +152,20 @@ public class TransactionPanel
         theAnalysisSelect = pAnalysisSelect;
         theBuilder = pBuilder;
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-
         /* Build the main panel */
-        final JPanel myMainPanel = buildMainPanel(pFactory);
-
-        /* Create a tabbedPane */
-        final JTabbedPane myTabs = new JTabbedPane();
+        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
 
         /* Build the info panel */
-        JPanel myPanel = buildInfoPanel(pFactory);
-        myTabs.add(TAB_INFO, myPanel);
+        buildInfoPanel(pFactory);
 
         /* Build the tax panel */
-        myPanel = buildTaxPanel(pFactory);
-        myTabs.add(TAB_TAXES, myPanel);
+        buildTaxPanel(pFactory);
 
-        /* Build the tax panel */
-        myPanel = buildSecuritiesPanel(pFactory);
-        myTabs.add(TAB_SECURITIES, myPanel);
+        /* Build the securities panel */
+        buildSecuritiesPanel(pFactory);
 
-        /* Layout the main panel */
-        myPanel = getMainPanel();
-        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        myPanel.add(myMainPanel);
-        myPanel.add(myTabs);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
     }
 
     /**
@@ -199,7 +173,10 @@ public class TransactionPanel
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+    private MoneyWiseDataPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Transaction.DESCLEN);
+
         /* Allocate fields */
         final TethysSwingStringTextField myAmount = pFactory.newStringField();
 
@@ -211,38 +188,17 @@ public class TransactionPanel
         final TethysSwingIconButtonManager<Boolean> myReconciledButton = pFactory.newIconButton();
         final TethysSwingIconButtonManager<AssetDirection> myDirectionButton = pFactory.newIconButton();
 
-        /* restrict the fields */
-        restrictField(myDateButton, Transaction.DESCLEN);
-        restrictField(myAccountButton, Transaction.DESCLEN);
-        restrictField(myCategoryButton, Transaction.DESCLEN);
-        restrictField(myDirectionButton, Transaction.DESCLEN);
-        restrictField(myPartnerButton, Transaction.DESCLEN);
-        restrictField(myAmount, Transaction.DESCLEN);
-        restrictField(myReconciledButton, Transaction.DESCLEN);
-
-        /* Declare fields */
-        theFieldSet.addFieldElement(Transaction.FIELD_DATE, myDateButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_ACCOUNT, TransactionAsset.class, myAccountButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_CATEGORY, TransactionCategory.class, myCategoryButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_PARTNER, TransactionAsset.class, myPartnerButton);
-        theFieldSet.addFieldElement(Transaction.FIELD_AMOUNT, MetisDataType.MONEY, myAmount);
-        theFieldSet.addFieldElement(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
-
-        /* Create the main panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        /* Assign the fields to the panel */
+        myPanel.addField(Transaction.FIELD_DATE, myDateButton);
+        myPanel.addField(Transaction.FIELD_ACCOUNT, TransactionAsset.class, myAccountButton);
+        myPanel.addField(Transaction.FIELD_CATEGORY, TransactionCategory.class, myCategoryButton);
+        myPanel.addField(Transaction.FIELD_DIRECTION, AssetDirection.class, myDirectionButton);
+        myPanel.addField(Transaction.FIELD_PARTNER, TransactionAsset.class, myPartnerButton);
+        myPanel.addField(Transaction.FIELD_AMOUNT, MetisDataType.MONEY, myAmount);
+        myPanel.addField(Transaction.FIELD_RECONCILED, Boolean.class, myReconciledButton);
 
         /* Layout the panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_DATE, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_ACCOUNT, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_CATEGORY, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_DIRECTION, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_PARTNER, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_AMOUNT, myPanel);
-        theFieldSet.addFieldToPanel(Transaction.FIELD_RECONCILED, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.compactPanel();
 
         /* Configure the menuBuilders */
         myDateButton.setDateConfigurator(this::handleDateConfig);
@@ -261,9 +217,11 @@ public class TransactionPanel
     /**
      * Build info subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildInfoPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildInfoPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_INFO, Transaction.DESCLEN >> 1);
+
         /* Allocate fields */
         final TethysSwingStringTextField myAmount = pFactory.newStringField();
         final TethysSwingStringTextField myRate = pFactory.newStringField();
@@ -273,47 +231,28 @@ public class TransactionPanel
         /* Create the buttons */
         final TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
 
-        /* Restrict the fields */
-        final int myWidth = Transaction.DESCLEN >> 1;
-        restrictField(myAmount, myWidth);
-        restrictField(myRate, myWidth);
-        restrictField(myComments, myWidth);
-        restrictField(myReference, myWidth);
-        restrictField(myTagButton, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myTagButton);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myTagButton);
-
-        /* Create the Info panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the info panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        /* Layout the panel */
+        myTab.compactPanel();
 
         /* Configure the tag button */
         myTagButton.setSelectables(this::buildTransactionTags);
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
      * Build tax subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildTaxPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildTaxPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_TAXES, Transaction.DESCLEN >> 1);
+
         /* Allocate fields */
         final TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
         final TethysSwingStringTextField myForeignTaxCredit = pFactory.newStringField();
@@ -322,47 +261,26 @@ public class TransactionPanel
         final TethysSwingStringTextField myWithheld = pFactory.newStringField();
         final TethysSwingStringTextField myYears = pFactory.newStringField();
 
-        /* Restrict the fields */
-        final int myWidth = Transaction.DESCLEN >> 1;
-        restrictField(myTaxCredit, myWidth);
-        restrictField(myForeignTaxCredit, myWidth);
-        restrictField(myNatIns, myWidth);
-        restrictField(myBenefit, myWidth);
-        restrictField(myWithheld, myWidth);
-        restrictField(myYears, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), MetisDataType.MONEY, myNatIns);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), MetisDataType.MONEY, myForeignTaxCredit);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), MetisDataType.MONEY, myNatIns);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), MetisDataType.MONEY, myForeignTaxCredit);
-
-        /* Create the Tax panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the Tax panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     /**
      * Build securities subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildSecuritiesPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildSecuritiesPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_SECURITIES, Transaction.DESCLEN >> 1);
+
         /* Allocate fields */
         final TethysSwingStringTextField myAccountUnits = pFactory.newStringField();
         final TethysSwingStringTextField myPartnerUnits = pFactory.newStringField();
@@ -374,45 +292,20 @@ public class TransactionPanel
         /* Create the buttons */
         final TethysSwingScrollButtonManager<TransactionAsset> myReturnedAccountButton = pFactory.newScrollButton();
 
-        /* Restrict the fields */
-        final int myWidth = Transaction.DESCLEN >> 1;
-        restrictField(myAccountUnits, myWidth);
-        restrictField(myPartnerUnits, myWidth);
-        restrictField(myPrice, myWidth);
-        restrictField(myCommission, myWidth);
-        restrictField(myDilution, myWidth);
-        restrictField(myReturnedCash, myWidth);
-        restrictField(myReturnedAccountButton, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), MetisDataType.UNITS, myPartnerUnits);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE), MetisDataType.PRICE, myPrice);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION), MetisDataType.MONEY, myCommission);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class, myReturnedAccountButton);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), MetisDataType.MONEY, myReturnedCash);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), MetisDataType.UNITS, myAccountUnits);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), MetisDataType.UNITS, myPartnerUnits);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE), MetisDataType.PRICE, myPrice);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION), MetisDataType.MONEY, myCommission);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), MetisDataType.DILUTION, myDilution);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), TransactionAsset.class, myReturnedAccountButton);
-        theFieldSet.addFieldElement(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), MetisDataType.MONEY, myReturnedCash);
-
-        /* Create the Tax panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the tax panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT), myPanel);
-        theFieldSet.addFieldToPanel(TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        /* Layout the panel */
+        myTab.compactPanel();
 
         /* Configure the menuBuilders */
         myReturnedAccountButton.setMenuConfigurator(c -> buildReturnedAccountMenu(c, getItem()));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     @Override
@@ -458,6 +351,9 @@ public class TransactionPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<Transaction> myFieldSet = getFieldSet();
+
         /* Access the item */
         final Transaction myTrans = getItem();
         final boolean bIsReconciled = myTrans.isReconciled();
@@ -466,146 +362,146 @@ public class TransactionPanel
 
         /* Determine whether the comments field should be visible */
         boolean bShowField = isEditable || myTrans.getComments() != null;
-        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), bShowField);
+        myFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), bShowField);
 
         /* Determine whether the reference field should be visible */
         bShowField = isEditable || myTrans.getReference() != null;
-        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), bShowField);
+        myFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), bShowField);
 
         /* Determine whether the tags field should be visible */
         bShowField = isEditable || myTrans.getTransactionTags() != null;
-        theFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
+        myFieldSet.setVisibility(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), bShowField);
 
         /* Determine whether the partnerAmount field should be visible */
         MetisField myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT);
         boolean bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERAMOUNT);
         bShowField = bEditField || myTrans.getPartnerAmount() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myTrans.getPartner().getCurrency());
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myTrans.getPartner().getCurrency());
 
         /* Determine whether the exchangeRate field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.XCHANGERATE);
         bShowField = bEditField || myTrans.getExchangeRate() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the taxCredit field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
         bShowField = bEditField || myTrans.getTaxCredit() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the taxCredit field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.FOREIGNTAXCREDIT);
         bShowField = bEditField || myTrans.getForeignTaxCredit() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the natIns field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.NATINSURANCE);
         bShowField = bEditField || myTrans.getNatInsurance() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the benefit field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DEEMEDBENEFIT);
         bShowField = bEditField || myTrans.getDeemedBenefit() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the donation field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.WITHHELD);
         bShowField = bEditField || myTrans.getWithheld() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the account units field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.ACCOUNTDELTAUNITS);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS);
         bShowField = bEditField || myTrans.getAccountDeltaUnits() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the partnerDeltaUnits field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PARTNERDELTAUNITS);
         bShowField = bEditField || myTrans.getPartnerDeltaUnits() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the price field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.PRICE);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.PRICE);
         bShowField = bEditField || myTrans.getPrice() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the commission field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMISSION);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.COMMISSION);
         bShowField = bEditField || myTrans.getCommission() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the dilution field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.DILUTION);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.DILUTION);
         bShowField = bEditField || myTrans.getDilution() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the returnedAccount field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASHACCOUNT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT);
         bShowField = bEditField || myTrans.getReturnedCashAccount() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the returnedCash field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.RETURNEDCASH);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.RETURNEDCASH);
         bShowField = bEditField || myTrans.getReturnedCash() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the years field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.QUALIFYYEARS);
         bShowField = bEditField || myTrans.getYears() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the reconciled field should be visible */
         final boolean bShowReconciled = isEditable || bIsReconciled;
         theReconciledState = !bIsLocked;
         theDirectionState = !bIsReconciled;
-        theFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
-        theFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
+        myFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
+        myFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
 
         /* Determine basic editing */
         final boolean canEdit = isEditable && !bIsReconciled;
         final boolean needsNullAmount = myTrans.needsNullAmount();
-        theFieldSet.setEditable(Transaction.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
-        theFieldSet.setEditable(Transaction.FIELD_ACCOUNT, canEdit);
-        theFieldSet.setEditable(Transaction.FIELD_PARTNER, canEdit);
-        theFieldSet.setEditable(Transaction.FIELD_CATEGORY, canEdit);
-        theFieldSet.setEditable(Transaction.FIELD_DATE, canEdit);
-        theFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !needsNullAmount);
-        theFieldSet.setVisibility(Transaction.FIELD_AMOUNT, !needsNullAmount);
-        theFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
+        myFieldSet.setEditable(Transaction.FIELD_DIRECTION, canEdit && myTrans.canSwitchDirection());
+        myFieldSet.setEditable(Transaction.FIELD_ACCOUNT, canEdit);
+        myFieldSet.setEditable(Transaction.FIELD_PARTNER, canEdit);
+        myFieldSet.setEditable(Transaction.FIELD_CATEGORY, canEdit);
+        myFieldSet.setEditable(Transaction.FIELD_DATE, canEdit);
+        myFieldSet.setEditable(Transaction.FIELD_AMOUNT, canEdit && !needsNullAmount);
+        myFieldSet.setVisibility(Transaction.FIELD_AMOUNT, !needsNullAmount);
+        myFieldSet.setAssumedCurrency(Transaction.FIELD_AMOUNT, myCurrency);
 
         /* Set the range for the dateButton */
         theRange = theBuilder.getRange();

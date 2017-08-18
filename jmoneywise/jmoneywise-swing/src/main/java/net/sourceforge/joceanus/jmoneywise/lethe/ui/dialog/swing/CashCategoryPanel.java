@@ -26,8 +26,6 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -48,18 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a CashCategory.
  */
 public class CashCategoryPanel
         extends MoneyWiseItemPanel<CashCategory> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<CashCategory> theFieldSet;
-
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -74,6 +66,9 @@ public class CashCategoryPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(CashCategory.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField mySubName = pFactory.newStringField();
@@ -83,34 +78,15 @@ public class CashCategoryPanel
         final TethysSwingScrollButtonManager<CashCategoryType> myTypeButton = pFactory.newScrollButton();
         final TethysSwingScrollButtonManager<CashCategory> myParentButton = pFactory.newScrollButton();
 
-        /* restrict the fields */
-        restrictField(myName, CashCategory.NAMELEN);
-        restrictField(mySubName, CashCategory.NAMELEN);
-        restrictField(myDesc, CashCategory.NAMELEN);
-        restrictField(myTypeButton, CashCategory.NAMELEN);
-        restrictField(myParentButton, CashCategory.NAMELEN);
+        /* Assign the fields to the panel */
+        myPanel.addField(CashCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(CashCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        myPanel.addField(CashCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(CashCategory.FIELD_CATTYPE, CashCategoryType.class, myTypeButton);
+        myPanel.addField(CashCategory.FIELD_PARENT, CashCategory.class, myParentButton);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(CashCategory.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        theFieldSet.addFieldElement(CashCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(CashCategory.FIELD_CATTYPE, CashCategoryType.class, myTypeButton);
-        theFieldSet.addFieldElement(CashCategory.FIELD_PARENT, CashCategory.class, myParentButton);
-
-        /* Layout the main panel */
-        final JPanel myPanel = getMainPanel();
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_SUBCAT, myPanel);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_CATTYPE, myPanel);
-        theFieldSet.addFieldToPanel(CashCategory.FIELD_PARENT, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -132,6 +108,9 @@ public class CashCategoryPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<CashCategory> myFieldSet = getFieldSet();
+
         /* Determine whether parent/full-name fields are visible */
         final CashCategory myCategory = getItem();
         final CashCategoryType myType = myCategory.getCategoryType();
@@ -139,21 +118,21 @@ public class CashCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        theFieldSet.setVisibility(CashCategory.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(CashCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(CashCategory.FIELD_PARENT, !isParent);
-        theFieldSet.setVisibility(CashCategory.FIELD_SUBCAT, !isParent);
+        myFieldSet.setVisibility(CashCategory.FIELD_PARENT, !isParent);
+        myFieldSet.setVisibility(CashCategory.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
 
         /* We cannot change a parent category type */
         canEdit &= !isParent;
-        theFieldSet.setEditable(CashCategory.FIELD_CATTYPE, canEdit);
+        myFieldSet.setEditable(CashCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(CashCategory.FIELD_NAME, isEditable && isParent);
+        myFieldSet.setEditable(CashCategory.FIELD_NAME, isEditable && isParent);
     }
 
     @Override

@@ -253,6 +253,14 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     }
 
     /**
+     * is the element visible?
+     * @return true/false.
+     */
+    protected boolean isVisible() {
+        return isVisible;
+    }
+
+    /**
      * Set visible.
      * @param setVisible true/false
      */

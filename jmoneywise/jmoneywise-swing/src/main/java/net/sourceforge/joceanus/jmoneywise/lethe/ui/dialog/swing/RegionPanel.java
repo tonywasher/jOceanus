@@ -24,8 +24,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -40,18 +38,12 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a Region.
  */
 public class RegionPanel
         extends MoneyWiseItemPanel<Region> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<Region> theFieldSet;
-
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -66,29 +58,19 @@ public class RegionPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Region.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField myDesc = pFactory.newStringField();
 
-        /* restrict the fields */
-        restrictField(myName, Region.NAMELEN);
-        restrictField(myDesc, Region.NAMELEN);
+        /* Assign the fields to the panel */
+        myPanel.addField(Region.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(Region.FIELD_DESC, MetisDataType.STRING, myDesc);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(Region.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(Region.FIELD_DESC, MetisDataType.STRING, myDesc);
-
-        /* Layout the main panel */
-        final JPanel myPanel = getMainPanel();
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Region.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(Region.FIELD_DESC, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
     }
 
     @Override
@@ -106,9 +88,12 @@ public class RegionPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<Region> myFieldSet = getFieldSet();
+
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;
-        theFieldSet.setVisibility(Region.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(Region.FIELD_DESC, bShowDesc);
     }
 
     @Override

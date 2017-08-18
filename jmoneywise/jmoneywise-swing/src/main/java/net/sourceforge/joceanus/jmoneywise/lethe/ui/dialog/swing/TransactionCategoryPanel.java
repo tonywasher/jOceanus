@@ -26,8 +26,6 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -48,18 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Dialog to display/edit/create a TransactionCategory.
  */
 public class TransactionCategoryPanel
         extends MoneyWiseItemPanel<TransactionCategory> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<TransactionCategory> theFieldSet;
-
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -74,6 +66,9 @@ public class TransactionCategoryPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(TransactionCategory.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField mySubName = pFactory.newStringField();
@@ -83,34 +78,15 @@ public class TransactionCategoryPanel
         final TethysSwingScrollButtonManager<TransactionCategoryType> myTypeButton = pFactory.newScrollButton();
         final TethysSwingScrollButtonManager<TransactionCategory> myParentButton = pFactory.newScrollButton();
 
-        /* restrict the fields */
-        restrictField(myName, TransactionCategory.NAMELEN);
-        restrictField(mySubName, TransactionCategory.NAMELEN);
-        restrictField(myDesc, TransactionCategory.NAMELEN);
-        restrictField(myTypeButton, TransactionCategory.NAMELEN);
-        restrictField(myParentButton, TransactionCategory.NAMELEN);
+        /* Assign the fields to the panel */
+        myPanel.addField(TransactionCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(TransactionCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        myPanel.addField(TransactionCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, myTypeButton);
+        myPanel.addField(TransactionCategory.FIELD_PARENT, TransactionCategory.class, myParentButton);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_CATTYPE, TransactionCategoryType.class, myTypeButton);
-        theFieldSet.addFieldElement(TransactionCategory.FIELD_PARENT, TransactionCategory.class, myParentButton);
-
-        /* Layout the main panel */
-        final JPanel myPanel = getMainPanel();
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_SUBCAT, myPanel);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_CATTYPE, myPanel);
-        theFieldSet.addFieldToPanel(TransactionCategory.FIELD_PARENT, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -132,6 +108,9 @@ public class TransactionCategoryPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<TransactionCategory> myFieldSet = getFieldSet();
+
         /* Determine whether parent/full-name fields are visible */
         final TransactionCategory myCategory = getItem();
         final TransactionCategoryType myType = myCategory.getCategoryType();
@@ -140,18 +119,18 @@ public class TransactionCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        theFieldSet.setVisibility(TransactionCategory.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(TransactionCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(TransactionCategory.FIELD_PARENT, showParent);
-        theFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
+        myFieldSet.setVisibility(TransactionCategory.FIELD_PARENT, showParent);
+        myFieldSet.setVisibility(TransactionCategory.FIELD_SUBCAT, showParent);
 
         /* Category type cannot be changed if the item is active */
         final boolean canEdit = isEditable && !myCategory.isActive() && myCurrType.isChangeable();
-        theFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
+        myFieldSet.setEditable(TransactionCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(TransactionCategory.FIELD_NAME, isEditable && !showParent);
+        myFieldSet.setEditable(TransactionCategory.FIELD_NAME, isEditable && !showParent);
     }
 
     @Override

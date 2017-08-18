@@ -25,8 +25,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -327,16 +325,9 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Layout the panel.
      */
     protected void layoutPanel() {
-        /* Wrap the grid */
-        final JPanel myBox = new TethysSwingEnablePanel();
-        myBox.setLayout(new BoxLayout(myBox, BoxLayout.Y_AXIS));
-        myBox.add(Box.createVerticalGlue());
-        myBox.add(theMainPanel);
-        myBox.add(Box.createVerticalGlue());
-
         /* Layout the panel */
         thePanel.add(theItemActions.getNode(), BorderLayout.LINE_START);
-        thePanel.add(myBox, BorderLayout.CENTER);
+        thePanel.add(theMainPanel, BorderLayout.CENTER);
         thePanel.add(theEditActions.getNode(), BorderLayout.LINE_END);
 
         /* Set visibility */

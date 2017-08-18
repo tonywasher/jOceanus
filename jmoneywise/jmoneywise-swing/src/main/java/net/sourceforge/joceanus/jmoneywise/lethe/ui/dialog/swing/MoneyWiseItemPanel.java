@@ -22,15 +22,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.SpringLayout;
 
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -45,10 +54,19 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataItemPanel;
+import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * MoneyWise Data Item Panel.
@@ -70,6 +88,16 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * The Filter GoToMenuMap.
      */
     private final List<AnalysisFilter<?, ?>> theGoToFilterList;
+
+    /**
+     * The Tab Panel.
+     */
+    private JTabbedPane theTabPane;
+
+    /**
+     * The tabs.
+     */
+    private List<MoneyWiseTab> theTabs;
 
     /**
      * Constructor.
@@ -231,6 +259,484 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
             /* Build the item */
             final PrometheusGoToEvent<MoneyWiseGoToId> myEvent = createGoToEvent(myId, myStatement);
             myMenu.getSubMenu().addItem(myEvent, myFilter.getName());
+        }
+    }
+
+    /**
+     * Define panel.
+     * @param pPanel the main panel
+     */
+    protected void defineMainPanel(final MoneyWiseDataPanel pPanel) {
+        /* Access the mainPanel */
+        final JPanel myPanel = getMainPanel();
+
+        /* Compact the panel */
+        pPanel.compactPanel();
+
+        /* If there is a tabbedPane */
+        if (theTabPane != null) {
+            /* Layout the main panel */
+            myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
+            myPanel.add(pPanel.getPanel());
+            myPanel.add(theTabPane);
+
+            /* else single panel */
+        } else {
+            myPanel.setLayout(new BorderLayout());
+            myPanel.add(pPanel.getPanel(), BorderLayout.CENTER);
+        }
+
+        /* Layout the panel */
+        layoutPanel();
+    }
+
+    /**
+     * Define a tab item.
+     * @param pTab the tabItem
+     */
+    protected void defineTabItem(final MoneyWiseTab pTab) {
+        /* Make sure that the tabPane exists */
+        if (theTabPane == null) {
+            theTabPane = new JTabbedPane();
+            theTabs = new ArrayList<>();
+        }
+
+        /* Define the tab */
+        theTabPane.add(pTab.getName(), pTab.getPanel());
+        theTabs.add(pTab);
+    }
+
+    @Override
+    public void setEditable(final boolean isEditable) {
+        /* Handle standard processing */
+        super.setEditable(isEditable);
+
+        /* If we have a selected item and tabs */
+        if (getItem() != null
+            && theTabs != null) {
+            /* set the tab visibility */
+            setTabVisibility();
+        }
+    }
+
+    /**
+     * Set the visibility of the tab.
+     */
+    private void setTabVisibility() {
+        /* Loop through the tabs */
+        int myVisible = 0;
+        for (MoneyWiseTab myTab : theTabs) {
+            /* Determine whether the visibility flags */
+            final boolean isVisible = myTab.isVisible();
+            final boolean requireVisible = myTab.requireVisible();
+
+            /* If nothing is visible */
+            if (!requireVisible) {
+                /* If the tab is currently visible */
+                if (isVisible) {
+                    /* Remove tab and clear flag */
+                    theTabPane.remove(myTab.getPanel());
+                    myTab.setVisible(false);
+                }
+
+                /* else we should be visible */
+            } else {
+                /* If we are not currently visible */
+                if (!isVisible) {
+                    /* Add at correct place */
+                    theTabPane.add(myTab.getPanel(), myTab.getName(), myVisible);
+                    myTab.setVisible(true);
+                }
+
+                /* Increment visible tab count */
+                myVisible++;
+            }
+        }
+    }
+
+    /**
+     * Panel interface.
+     */
+    private interface MoneyWisePanel {
+        /**
+         * Obtain the panel.
+         * @return the panel
+         */
+        JComponent getPanel();
+    }
+
+    /**
+     * Standard Panel.
+     */
+    protected class MoneyWiseDataPanel
+            implements MoneyWisePanel {
+        /**
+         * The field width.
+         */
+        private final int theWidth;
+
+        /**
+         * The box.
+         */
+        private final TethysSwingEnablePanel theBox;
+
+        /**
+         * The panel.
+         */
+        private final TethysSwingEnablePanel thePanel;
+
+        /**
+         * The layout.
+         */
+        private final SpringLayout theSpring;
+
+        /**
+         * Constructor.
+         * @param pWidth the field width
+         */
+        protected MoneyWiseDataPanel(final int pWidth) {
+            /* Store the parameters */
+            theWidth = pWidth;
+
+            /* Create the panel */
+            thePanel = new TethysSwingEnablePanel();
+
+            /* Layout the panel */
+            theSpring = new SpringLayout();
+            thePanel.setLayout(theSpring);
+
+            /* Wrap the grid */
+            theBox = new TethysSwingEnablePanel();
+            theBox.setLayout(new BoxLayout(theBox, BoxLayout.Y_AXIS));
+            theBox.add(Box.createVerticalGlue());
+            theBox.add(thePanel);
+            theBox.add(Box.createVerticalGlue());
+        }
+
+        @Override
+        public JComponent getPanel() {
+            return theBox;
+        }
+
+        /**
+         * Remove Glue.
+         */
+        private void removeGlue() {
+            if (theBox.getComponentCount() > 1) {
+                theBox.remove(0);
+                theBox.remove(1);
+            }
+        }
+
+        /**
+         * Add text field.
+         * @param pField the field.
+         * @param pType the dataType
+         * @param pControl the control
+         */
+        protected void addField(final MetisField pField,
+                                final MetisDataType pType,
+                                final TethysSwingStringTextField pControl) {
+            /* Add to the fieldSet */
+            getFieldSet().addFieldElement(pField, pType, pControl);
+
+            /* Restrict the control */
+            restrictField(pControl, theWidth);
+
+            /* Add the field to panel */
+            addField(pField);
+        }
+
+        /**
+         * Add scrollPane field.
+         * @param pField the field.
+         * @param pType the dataType
+         * @param pControl the control
+         */
+        protected void addField(final MetisField pField,
+                                final MetisDataType pType,
+                                final TethysSwingScrollPaneManager pControl) {
+            /* Add to the fieldSet */
+            getFieldSet().addFieldElement(pField, pType, pControl);
+
+            /* Add the field to panel */
+            addField(pField);
+
+            /* Remove Glue */
+            removeGlue();
+        }
+
+        /**
+         * Add date field.
+         * @param pField the field.
+         * @param pControl the control
+         */
+        protected void addField(final MetisField pField,
+                                final TethysSwingDateButtonManager pControl) {
+            /* Add to the fieldSet */
+            getFieldSet().addFieldElement(pField, pControl);
+
+            /* Restrict the control */
+            restrictField(pControl, theWidth);
+
+            /* Add the field to panel */
+            addField(pField);
+        }
+
+        /**
+         * Add scroll field.
+         * @param <I> the value type
+         * @param pField the field.
+         * @param pClazz the class of the value
+         * @param pControl the control
+         */
+        protected <I> void addField(final MetisField pField,
+                                    final Class<I> pClazz,
+                                    final TethysSwingScrollButtonManager<I> pControl) {
+            /* Add to the fieldSet */
+            getFieldSet().addFieldElement(pField, pClazz, pControl);
+
+            /* Restrict the control */
+            restrictField(pControl, theWidth);
+
+            /* Add the field to panel */
+            addField(pField);
+        }
+
+        /**
+         * Add icon field.
+         * @param <I> the value type
+         * @param pField the field.
+         * @param pClazz the class of the value
+         * @param pControl the control
+         */
+        protected <I> void addField(final MetisField pField,
+                                    final Class<I> pClazz,
+                                    final TethysSwingIconButtonManager<I> pControl) {
+            /* Add to the fieldSet */
+            getFieldSet().addFieldElement(pField, pClazz, pControl);
+
+            /* Restrict the control */
+            restrictField(pControl, theWidth);
+
+            /* Add the field to panel */
+            addField(pField);
+        }
+
+        /**
+         * Add icon field.
+         * @param <I> the value type
+         * @param pField the field.
+         * @param pControl the control
+         */
+        protected <I extends Comparable<I>> void addField(final MetisField pField,
+                                                          final TethysSwingListButtonManager<I> pControl) {
+            /* Add to the fieldSet */
+            getFieldSet().addFieldElement(pField, pControl);
+
+            /* Restrict the control */
+            restrictField(pControl, theWidth);
+
+            /* Add the field to panel */
+            addField(pField);
+        }
+
+        /**
+         * Add field.
+         * @param pField the field.
+         */
+        protected void addField(final MetisField pField) {
+            /* Add the field to the panel */
+            getFieldSet().addFieldToPanel(pField, thePanel);
+        }
+
+        /**
+         * Compact panel.
+         */
+        protected void compactPanel() {
+            TethysSwingSpringUtilities.makeCompactGrid(thePanel, theSpring, thePanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        }
+    }
+
+    /**
+     * Tab interface.
+     */
+    private interface MoneyWiseTab
+            extends MoneyWisePanel {
+        /**
+         * Is the tab currently visible?
+         * @return true/false
+         */
+        boolean isVisible();
+
+        /**
+         * Set the tab visibility status.
+         * @param pVisible true/false
+         */
+        void setVisible(boolean pVisible);
+
+        /**
+         * Should the tab be visible?
+         * @return true/false
+         */
+        boolean requireVisible();
+
+        /**
+         * Obtain the name of the tab.
+         * @return the name
+         */
+        String getName();
+    }
+
+    /**
+     * Standard Tab Item.
+     */
+    protected class MoneyWiseDataTabItem
+            extends MoneyWiseDataPanel
+            implements MoneyWiseTab {
+        /**
+         * The name.
+         */
+        private final String theName;
+
+        /**
+         * The fields.
+         */
+        private final List<MetisField> theFields;
+
+        /**
+         * isVisible.
+         */
+        private boolean isVisible;
+
+        /**
+         * Constructor.
+         * @param pName the name of the tab.
+         * @param pWidth the field width
+         */
+        protected MoneyWiseDataTabItem(final String pName,
+                                       final int pWidth) {
+            /* Initialise super-class */
+            super(pWidth);
+
+            /* Store parameters */
+            theName = pName;
+
+            /* Create the list */
+            theFields = new ArrayList<>();
+
+            /* Initialise flags */
+            isVisible = true;
+
+            /* Add the panel to the tabbedPane */
+            defineTabItem(this);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return isVisible;
+        }
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+            isVisible = pVisible;
+        }
+
+        @Override
+        public boolean requireVisible() {
+            return getFieldSet().isAnyFieldVisible(theFields);
+        }
+
+        @Override
+        public String getName() {
+            return theName;
+        }
+
+        @Override
+        protected void addField(final MetisField pField) {
+            /* Add the field to the panel */
+            super.addField(pField);
+
+            /* Add the field to the list of fields */
+            theFields.add(pField);
+        }
+    }
+
+    /**
+     * Table Tab Item.
+     */
+    protected class MoneyWiseDataTabTable
+            implements MoneyWiseTab {
+        /**
+         * The name.
+         */
+        private final String theName;
+
+        /**
+         * The table.
+         */
+        private final PrometheusDataTable<?, MoneyWiseDataType> theTable;
+
+        /**
+         * isVisible.
+         */
+        private boolean isVisible;
+
+        /**
+         * requireVisible.
+         */
+        private boolean requireVisible;
+
+        /**
+         * Constructor.
+         * @param pName the name of the tab.
+         * @param pTable the table
+         */
+        protected MoneyWiseDataTabTable(final String pName,
+                                        final PrometheusDataTable<?, MoneyWiseDataType> pTable) {
+            /* Store parameters */
+            theName = pName;
+            theTable = pTable;
+
+            /* Initialise flags */
+            isVisible = true;
+            requireVisible = true;
+
+            /* Add the panel to the tabbedPane */
+            defineTabItem(this);
+        }
+
+        @Override
+        public boolean isVisible() {
+            return isVisible;
+        }
+
+        @Override
+        public boolean requireVisible() {
+            return requireVisible;
+        }
+
+        @Override
+        public String getName() {
+            return theName;
+        }
+
+        @Override
+        public JComponent getPanel() {
+            return theTable.getNode();
+        }
+
+        @Override
+        public void setVisible(final boolean pVisible) {
+            isVisible = pVisible;
+        }
+
+        /**
+         * Require this table to be visible or not.
+         * @param pVisible true/false
+         */
+        protected void setRequireVisible(final boolean pVisible) {
+            requireVisible = pVisible;
         }
     }
 }

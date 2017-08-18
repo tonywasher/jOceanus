@@ -22,16 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -61,12 +57,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
@@ -80,14 +74,14 @@ public class DepositPanel
     private static final String TAB_RATES = MoneyWiseUIResource.DEPOSITPANEL_TAB_RATES.getValue();
 
     /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<Deposit> theFieldSet;
-
-    /**
      * DepositRate Table.
      */
     private final DepositRateTable theRates;
+
+    /**
+     * Table tab item.
+     */
+    private final MoneyWiseDataTabTable theRatesTab;
 
     /**
      * The Closed State.
@@ -108,35 +102,21 @@ public class DepositPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-
         /* Build the main panel */
-        final JPanel myMainPanel = buildMainPanel(pFactory);
-
-        /* Create a tabbedPane */
-        final JTabbedPane myTabs = new JTabbedPane();
+        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel(pFactory);
-        myTabs.add(TAB_DETAILS, myPanel);
+        buildXtrasPanel(pFactory);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel(pFactory);
-        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+        buildNotesPanel(pFactory);
 
         /* Create the DepositRates table */
         theRates = new DepositRateTable(pFactory, pFieldMgr, getUpdateSet(), pError);
-        myTabs.add(TAB_RATES, theRates.getNode());
+        theRatesTab = new MoneyWiseDataTabTable(TAB_RATES, theRates);
 
-        /* Layout the main panel */
-        myPanel = getMainPanel();
-        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        myPanel.add(myMainPanel);
-        myPanel.add(myTabs);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
 
         /* Create the listeners */
         theRates.getEventRegistrar().addEventListener(e -> {
@@ -150,7 +130,10 @@ public class DepositPanel
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+    private MoneyWiseDataPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Deposit.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField myDesc = pFactory.newStringField();
@@ -161,35 +144,16 @@ public class DepositPanel
         final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
-        /* restrict the fields */
-        restrictField(myName, Deposit.NAMELEN);
-        restrictField(myDesc, Deposit.NAMELEN);
-        restrictField(myCategoryButton, Deposit.NAMELEN);
-        restrictField(myCurrencyButton, Deposit.NAMELEN);
-        restrictField(myParentButton, Deposit.NAMELEN);
-        restrictField(myClosedButton, Deposit.NAMELEN);
-
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(Deposit.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(Deposit.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Deposit.FIELD_CATEGORY, DepositCategory.class, myCategoryButton);
-        theFieldSet.addFieldElement(Deposit.FIELD_PARENT, Payee.class, myParentButton);
-        theFieldSet.addFieldElement(Deposit.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        theFieldSet.addFieldElement(Deposit.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Create the main panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        /* Assign the fields to the panel */
+        myPanel.addField(Deposit.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(Deposit.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(Deposit.FIELD_CATEGORY, DepositCategory.class, myCategoryButton);
+        myPanel.addField(Deposit.FIELD_PARENT, Payee.class, myParentButton);
+        myPanel.addField(Deposit.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
+        myPanel.addField(Deposit.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Layout the panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_CATEGORY, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_PARENT, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_CURRENCY, myPanel);
-        theFieldSet.addFieldToPanel(Deposit.FIELD_CLOSED, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.compactPanel();
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
@@ -205,9 +169,11 @@ public class DepositPanel
     /**
      * Build extras subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, Deposit.NAMELEN >> 1);
+
         /* Allocate fields */
         final TethysSwingDateButtonManager myMaturity = pFactory.newDateButton();
         final TethysSwingStringTextField mySortCode = pFactory.newStringField();
@@ -215,63 +181,35 @@ public class DepositPanel
         final TethysSwingStringTextField myReference = pFactory.newStringField();
         final TethysSwingStringTextField myOpening = pFactory.newStringField();
 
-        /* Restrict the fields */
-        final int myWidth = Deposit.NAMELEN >> 1;
-        restrictField(myMaturity, myWidth);
-        restrictField(mySortCode, myWidth);
-        restrictField(myAccount, myWidth);
-        restrictField(myReference, myWidth);
-        restrictField(myOpening, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myMaturity);
+        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myMaturity);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
-
-        /* Create the extras panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the extras panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY), myPanel);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     /**
      * Build Notes subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), Deposit.NAMELEN);
+
         /* Allocate fields */
         final TethysSwingTextArea myNotes = pFactory.newTextArea();
         final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        /* Assign the fields to the panel */
+        myTab.addField(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
-        /* Create the notes panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the notes panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     @Override
@@ -292,6 +230,9 @@ public class DepositPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<Deposit> myFieldSet = getFieldSet();
+
         /* Access the item */
         final Deposit myDeposit = getItem();
         final boolean bIsClosed = myDeposit.isClosed();
@@ -301,49 +242,52 @@ public class DepositPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        theFieldSet.setVisibility(Deposit.FIELD_CLOSED, bShowClosed);
+        myFieldSet.setVisibility(Deposit.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed
                                               ? !myDeposit.getParent().isClosed()
                                               : !bIsRelevant;
-        theFieldSet.setEditable(Deposit.FIELD_CLOSED, isEditable && bEditClosed);
+        myFieldSet.setEditable(Deposit.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myDeposit.getDesc() != null;
-        theFieldSet.setVisibility(Deposit.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(Deposit.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myDeposit.getSortCode() != null;
-        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
         final boolean bShowAccount = isEditable || myDeposit.getAccount() != null;
-        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
         final boolean bShowReference = isEditable || myDeposit.getReference() != null;
-        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         final boolean bHasOpening = myDeposit.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
         final MetisField myOpeningField = DepositInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
-        theFieldSet.setVisibility(myOpeningField, bShowOpening);
+        myFieldSet.setVisibility(myOpeningField, bShowOpening);
         final boolean bShowNotes = isEditable || myDeposit.getNotes() != null;
-        theFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        myFieldSet.setVisibility(DepositInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Maturity is only visible if the item is a bond */
         final boolean bShowMaturity = DepositCategoryClass.BOND.equals(myDeposit.getCategoryClass());
         final MetisField myMaturityField = DepositInfoSet.getFieldForClass(AccountInfoClass.MATURITY);
-        theFieldSet.setVisibility(myMaturityField, bShowMaturity);
-        theFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
+        myFieldSet.setVisibility(myMaturityField, bShowMaturity);
+        myFieldSet.setEditable(myMaturityField, isEditable && !bIsClosed);
 
         /* Category, Currency, and OpeningBalance cannot be changed if the item is active */
-        theFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
-        theFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
-        theFieldSet.setEditable(myOpeningField, bIsChangeable);
+        myFieldSet.setEditable(Deposit.FIELD_CATEGORY, bIsChangeable);
+        myFieldSet.setEditable(Deposit.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
+        myFieldSet.setEditable(myOpeningField, bIsChangeable);
 
         /* Set currency for opening balance */
-        theFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getCurrency());
+        myFieldSet.setAssumedCurrency(myOpeningField, myDeposit.getCurrency());
 
         /* Set editable value for parent */
-        theFieldSet.setEditable(Deposit.FIELD_PARENT, isEditable && !bIsClosed);
+        myFieldSet.setEditable(Deposit.FIELD_PARENT, isEditable && !bIsClosed);
+
+        /* Set the table visibility */
+        theRatesTab.setRequireVisible(isEditable || !theRates.isViewEmpty());
     }
 
     @Override

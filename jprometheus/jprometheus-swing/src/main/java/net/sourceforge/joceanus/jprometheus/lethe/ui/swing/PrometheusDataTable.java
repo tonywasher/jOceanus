@@ -463,9 +463,9 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      */
     protected T[] cacheSelectedRows() {
         /* Determine the selected rows */
-        int[] mySelected = theTable.getRowCount() == 0
-                                                       ? new int[0]
-                                                       : theTable.getSelectedRows();
+        final int[] mySelected = theTable.getRowCount() == 0
+                                                             ? new int[0]
+                                                             : theTable.getSelectedRows();
 
         /* Create a row array relating to the selections */
         @SuppressWarnings("unchecked")

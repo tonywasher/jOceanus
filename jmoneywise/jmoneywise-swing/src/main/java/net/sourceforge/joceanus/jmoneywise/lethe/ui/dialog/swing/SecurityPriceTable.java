@@ -220,6 +220,14 @@ public class SecurityPriceTable
     }
 
     /**
+     * is the table empty?
+     * @return true/false
+     */
+    protected boolean isViewEmpty() {
+        return getTable().getRowCount() == 0;
+    }
+
+    /**
      * Refresh data.
      */
     protected void refreshData() {

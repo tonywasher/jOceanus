@@ -26,8 +26,6 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -48,18 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a LoanCategory.
  */
 public class LoanCategoryPanel
         extends MoneyWiseItemPanel<LoanCategory> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<LoanCategory> theFieldSet;
-
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -74,6 +66,9 @@ public class LoanCategoryPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(LoanCategory.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField mySubName = pFactory.newStringField();
@@ -83,34 +78,15 @@ public class LoanCategoryPanel
         final TethysSwingScrollButtonManager<LoanCategoryType> myTypeButton = pFactory.newScrollButton();
         final TethysSwingScrollButtonManager<LoanCategory> myParentButton = pFactory.newScrollButton();
 
-        /* restrict the fields */
-        restrictField(myName, LoanCategory.NAMELEN);
-        restrictField(mySubName, LoanCategory.NAMELEN);
-        restrictField(myDesc, LoanCategory.NAMELEN);
-        restrictField(myTypeButton, LoanCategory.NAMELEN);
-        restrictField(myParentButton, LoanCategory.NAMELEN);
+        /* Assign the fields to the panel */
+        myPanel.addField(LoanCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(LoanCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        myPanel.addField(LoanCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(LoanCategory.FIELD_CATTYPE, LoanCategoryType.class, myTypeButton);
+        myPanel.addField(LoanCategory.FIELD_PARENT, LoanCategory.class, myParentButton);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(LoanCategory.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_CATTYPE, LoanCategoryType.class, myTypeButton);
-        theFieldSet.addFieldElement(LoanCategory.FIELD_PARENT, LoanCategory.class, myParentButton);
-
-        /* Layout the main panel */
-        final JPanel myPanel = getMainPanel();
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_SUBCAT, myPanel);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_CATTYPE, myPanel);
-        theFieldSet.addFieldToPanel(LoanCategory.FIELD_PARENT, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -132,6 +108,9 @@ public class LoanCategoryPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<LoanCategory> myFieldSet = getFieldSet();
+
         /* Determine whether parent/full-name fields are visible */
         final LoanCategory myCategory = getItem();
         final LoanCategoryType myType = myCategory.getCategoryType();
@@ -139,21 +118,21 @@ public class LoanCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        theFieldSet.setVisibility(LoanCategory.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(LoanCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(LoanCategory.FIELD_PARENT, !isParent);
-        theFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, !isParent);
+        myFieldSet.setVisibility(LoanCategory.FIELD_PARENT, !isParent);
+        myFieldSet.setVisibility(LoanCategory.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
 
         /* We cannot change a parent category type */
         canEdit &= !isParent;
-        theFieldSet.setEditable(LoanCategory.FIELD_CATTYPE, canEdit);
+        myFieldSet.setEditable(LoanCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(LoanCategory.FIELD_NAME, isEditable && isParent);
+        myFieldSet.setEditable(LoanCategory.FIELD_NAME, isEditable && isParent);
     }
 
     @Override

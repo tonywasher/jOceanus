@@ -22,15 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import java.awt.GridLayout;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -56,12 +52,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
@@ -69,11 +63,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
  */
 public class PortfolioPanel
         extends MoneyWiseItemPanel<Portfolio> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<Portfolio> theFieldSet;
-
     /**
      * The Closed State.
      */
@@ -93,31 +82,17 @@ public class PortfolioPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-
         /* Build the main panel */
-        final JPanel myMainPanel = buildMainPanel(pFactory);
-
-        /* Create a tabbedPane */
-        final JTabbedPane myTabs = new JTabbedPane();
+        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel(pFactory);
-        myTabs.add(TAB_DETAILS, myPanel);
+        buildXtrasPanel(pFactory);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel(pFactory);
-        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+        buildNotesPanel(pFactory);
 
-        /* Layout the main panel */
-        myPanel = getMainPanel();
-        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        myPanel.add(myMainPanel);
-        myPanel.add(myTabs);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
     }
 
     /**
@@ -125,7 +100,10 @@ public class PortfolioPanel
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+    private MoneyWiseDataPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Portfolio.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField myDesc = pFactory.newStringField();
@@ -136,35 +114,16 @@ public class PortfolioPanel
         final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
-        /* restrict the fields */
-        restrictField(myName, Portfolio.NAMELEN);
-        restrictField(myDesc, Portfolio.NAMELEN);
-        restrictField(myTypeButton, Portfolio.NAMELEN);
-        restrictField(myParentButton, Portfolio.NAMELEN);
-        restrictField(myCurrencyButton, Portfolio.NAMELEN);
-        restrictField(myClosedButton, Portfolio.NAMELEN);
-
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(Portfolio.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(Portfolio.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Portfolio.FIELD_PORTTYPE, PortfolioType.class, myTypeButton);
-        theFieldSet.addFieldElement(Portfolio.FIELD_PARENT, Payee.class, myParentButton);
-        theFieldSet.addFieldElement(Portfolio.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        theFieldSet.addFieldElement(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Create the main panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        /* Assign the fields to the panel */
+        myPanel.addField(Portfolio.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(Portfolio.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(Portfolio.FIELD_PORTTYPE, PortfolioType.class, myTypeButton);
+        myPanel.addField(Portfolio.FIELD_PARENT, Payee.class, myParentButton);
+        myPanel.addField(Portfolio.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
+        myPanel.addField(Portfolio.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Layout the panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_PORTTYPE, myPanel);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_PARENT, myPanel);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_CURRENCY, myPanel);
-        theFieldSet.addFieldToPanel(Portfolio.FIELD_CLOSED, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.compactPanel();
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildTypeMenu(c, getItem()));
@@ -180,9 +139,11 @@ public class PortfolioPanel
     /**
      * Build extras subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, Portfolio.NAMELEN >> 1);
+
         /* Allocate fields */
         final TethysSwingStringTextField mySortCode = pFactory.newStringField();
         final TethysSwingStringTextField myAccount = pFactory.newStringField();
@@ -192,69 +153,36 @@ public class PortfolioPanel
         final TethysSwingStringTextField myUserId = pFactory.newStringField();
         final TethysSwingStringTextField myPassWord = pFactory.newStringField();
 
-        /* Restrict the fields */
-        final int myWidth = Portfolio.NAMELEN >> 1;
-        restrictField(mySortCode, myWidth);
-        restrictField(myAccount, myWidth);
-        restrictField(myReference, myWidth);
-        restrictField(myWebSite, myWidth);
-        restrictField(myCustNo, myWidth);
-        restrictField(myUserId, myWidth);
-        restrictField(myPassWord, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), MetisDataType.CHARARRAY, myWebSite);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), MetisDataType.CHARARRAY, myCustNo);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), MetisDataType.CHARARRAY, myUserId);
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), MetisDataType.CHARARRAY, mySortCode);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), MetisDataType.CHARARRAY, myAccount);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), MetisDataType.CHARARRAY, myReference);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), MetisDataType.CHARARRAY, myWebSite);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), MetisDataType.CHARARRAY, myCustNo);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), MetisDataType.CHARARRAY, myUserId);
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), MetisDataType.CHARARRAY, myPassWord);
-
-        /* Create the extras panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the extras panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), myPanel);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), myPanel);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), myPanel);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), myPanel);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), myPanel);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), myPanel);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     /**
      * Build Notes subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), Portfolio.NAMELEN);
+
         /* Allocate fields */
         final TethysSwingTextArea myNotes = pFactory.newTextArea();
         final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
-
-        /* Create the notes panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the notes panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Assign the fields to the panel */
+        myTab.addField(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     @Override
@@ -272,6 +200,9 @@ public class PortfolioPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<Portfolio> myFieldSet = getFieldSet();
+
         /* Access the item */
         final Portfolio myPortfolio = getItem();
         final boolean bIsClosed = myPortfolio.isClosed();
@@ -281,42 +212,42 @@ public class PortfolioPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        theFieldSet.setVisibility(Portfolio.FIELD_CLOSED, bShowClosed);
+        myFieldSet.setVisibility(Portfolio.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed || !bIsRelevant;
-        theFieldSet.setEditable(Portfolio.FIELD_CLOSED, isEditable && bEditClosed);
+        myFieldSet.setEditable(Portfolio.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myPortfolio.getDesc() != null;
-        theFieldSet.setVisibility(Portfolio.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(Portfolio.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowSortCode = isEditable || myPortfolio.getSortCode() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.SORTCODE), bShowSortCode);
         final boolean bShowAccount = isEditable || myPortfolio.getAccount() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.ACCOUNT), bShowAccount);
         final boolean bShowReference = isEditable || myPortfolio.getReference() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.REFERENCE), bShowReference);
         final boolean bShowWebSite = isEditable || myPortfolio.getWebSite() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.WEBSITE), bShowWebSite);
         final boolean bShowCustNo = isEditable || myPortfolio.getCustNo() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.CUSTOMERNO), bShowCustNo);
         final boolean bShowUserId = isEditable || myPortfolio.getUserId() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.USERID), bShowUserId);
         final boolean bShowPasswd = isEditable || myPortfolio.getPassword() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.PASSWORD), bShowPasswd);
         final boolean bShowNotes = isEditable || myPortfolio.getNotes() != null;
-        theFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        myFieldSet.setVisibility(PortfolioInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Type, Parent and Currency status cannot be changed if the item is active */
-        theFieldSet.setEditable(Portfolio.FIELD_PORTTYPE, bIsChangeable);
-        theFieldSet.setEditable(Portfolio.FIELD_PARENT, bIsChangeable);
-        theFieldSet.setEditable(Portfolio.FIELD_CURRENCY, bIsChangeable);
+        myFieldSet.setEditable(Portfolio.FIELD_PORTTYPE, bIsChangeable);
+        myFieldSet.setEditable(Portfolio.FIELD_PARENT, bIsChangeable);
+        myFieldSet.setEditable(Portfolio.FIELD_CURRENCY, bIsChangeable);
 
         /* Set editable value for parent */
-        theFieldSet.setEditable(Portfolio.FIELD_PARENT, isEditable && !bIsClosed);
+        myFieldSet.setEditable(Portfolio.FIELD_PARENT, isEditable && !bIsClosed);
     }
 
     @Override

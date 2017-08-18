@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmetis.lethe.field.swing;
 
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
@@ -197,6 +199,29 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
             /* Set the visibility of the element */
             myEl.setVisibility(setVisible);
         }
+    }
+
+    /**
+     * Are any of these fields visible?
+     * @param pFields the list of fields
+     * @return true/false.
+     */
+    public boolean isAnyFieldVisible(final List<MetisField> pFields) {
+        /* Loop through the fields */
+        final Iterator<MetisField> myIterator = pFields.iterator();
+        while (myIterator.hasNext()) {
+            final MetisField myField = myIterator.next();
+
+            /* Determine if the element is visible */
+            final MetisFieldElement<T> myEl = theMap.get(myField);
+            if (myEl != null
+                && myEl.isVisible()) {
+                return true;
+            }
+        }
+
+        /* None of the fields are visible */
+        return false;
     }
 
     /**

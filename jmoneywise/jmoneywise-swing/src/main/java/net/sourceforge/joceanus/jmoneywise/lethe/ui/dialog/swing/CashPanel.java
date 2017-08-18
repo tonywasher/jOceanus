@@ -22,16 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -62,12 +58,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
@@ -75,11 +69,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
  */
 public class CashPanel
         extends MoneyWiseItemPanel<Cash> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<Cash> theFieldSet;
-
     /**
      * The Closed State.
      */
@@ -99,31 +88,17 @@ public class CashPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-
         /* Build the main panel */
-        final JPanel myMainPanel = buildMainPanel(pFactory);
-
-        /* Create a tabbedPane */
-        final JTabbedPane myTabs = new JTabbedPane();
+        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
 
         /* Build the detail panel */
-        JPanel myPanel = buildXtrasPanel(pFactory);
-        myTabs.add(TAB_DETAILS, myPanel);
+        buildXtrasPanel(pFactory);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel(pFactory);
-        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+        buildNotesPanel(pFactory);
 
-        /* Layout the main panel */
-        myPanel = getMainPanel();
-        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        myPanel.add(myMainPanel);
-        myPanel.add(myTabs);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
     }
 
     /**
@@ -131,7 +106,10 @@ public class CashPanel
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+    private MoneyWiseDataPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Cash.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField myDesc = pFactory.newStringField();
@@ -141,32 +119,15 @@ public class CashPanel
         final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
-        /* restrict the fields */
-        restrictField(myName, Cash.NAMELEN);
-        restrictField(myDesc, Cash.NAMELEN);
-        restrictField(myCategoryButton, Cash.NAMELEN);
-        restrictField(myCurrencyButton, Cash.NAMELEN);
-        restrictField(myClosedButton, Cash.NAMELEN);
-
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(Cash.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(Cash.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Cash.FIELD_CATEGORY, CashCategory.class, myCategoryButton);
-        theFieldSet.addFieldElement(Cash.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        theFieldSet.addFieldElement(Cash.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Create the main panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        /* Assign the fields to the panel */
+        myPanel.addField(Cash.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(Cash.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(Cash.FIELD_CATEGORY, CashCategory.class, myCategoryButton);
+        myPanel.addField(Cash.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
+        myPanel.addField(Cash.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Layout the panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Cash.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(Cash.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(Cash.FIELD_CATEGORY, myPanel);
-        theFieldSet.addFieldToPanel(Cash.FIELD_CURRENCY, myPanel);
-        theFieldSet.addFieldToPanel(Cash.FIELD_CLOSED, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.compactPanel();
 
         /* Configure the menuBuilders */
         myCategoryButton.setMenuConfigurator(c -> buildCategoryMenu(c, getItem()));
@@ -181,9 +142,11 @@ public class CashPanel
     /**
      * Build extras subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildXtrasPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, Cash.NAMELEN >> 1);
+
         /* Allocate fields */
         final TethysSwingStringTextField myOpening = pFactory.newStringField();
 
@@ -191,61 +154,37 @@ public class CashPanel
         final TethysSwingScrollButtonManager<TransactionCategory> myAutoExpenseButton = pFactory.newScrollButton();
         final TethysSwingScrollButtonManager<Payee> myAutoPayeeButton = pFactory.newScrollButton();
 
-        /* restrict the fields */
-        final int myWidth = Cash.NAMELEN >> 1;
-        restrictField(myAutoExpenseButton, myWidth);
-        restrictField(myAutoPayeeButton, myWidth);
-        restrictField(myOpening, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, myAutoPayeeButton);
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), TransactionCategory.class, myAutoExpenseButton);
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), Payee.class, myAutoPayeeButton);
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), MetisDataType.MONEY, myOpening);
-
-        /* Create the extras panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the extras panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), myPanel);
-        theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), myPanel);
-        theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        /* Layout the panel */
+        myTab.compactPanel();
 
         /* Configure the menuBuilders */
         myAutoExpenseButton.setMenuConfigurator(c -> buildAutoExpenseMenu(c, getItem()));
         myAutoPayeeButton.setMenuConfigurator(c -> buildAutoPayeeMenu(c, getItem()));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
      * Build Notes subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), Cash.NAMELEN);
+
         /* Allocate fields */
         final TethysSwingTextArea myNotes = pFactory.newTextArea();
         final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        /* Assign the fields to the panel */
+        myTab.addField(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
-        /* Create the notes panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the notes panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     @Override
@@ -263,6 +202,9 @@ public class CashPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<Cash> myFieldSet = getFieldSet();
+
         /* Access the item */
         final Cash myCash = getItem();
         final boolean bIsClosed = myCash.isClosed();
@@ -273,41 +215,45 @@ public class CashPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        theFieldSet.setVisibility(Cash.FIELD_CLOSED, bShowClosed);
+        myFieldSet.setVisibility(Cash.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed || !bIsRelevant;
-        theFieldSet.setEditable(Cash.FIELD_CLOSED, isEditable && bEditClosed);
+        myFieldSet.setEditable(Cash.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCash.getDesc() != null;
-        theFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(Cash.FIELD_DESC, bShowDesc);
 
         /* AutoExpense/Payee is hidden unless we are autoExpense */
         final MetisField myAutoExpenseField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE);
         final MetisField myAutoPayeeField = CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE);
-        theFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
-        theFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
+        myFieldSet.setVisibility(myAutoExpenseField, isAutoExpense);
+        myFieldSet.setVisibility(myAutoPayeeField, isAutoExpense);
 
         /* OpeningBalance is hidden if we are autoExpense */
         final MetisField myOpeningField = CashInfoSet.getFieldForClass(AccountInfoClass.OPENINGBALANCE);
         final boolean bHasOpening = myCash.getOpeningBalance() != null;
         final boolean bShowOpening = bIsChangeable || bHasOpening;
-        theFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
+        myFieldSet.setVisibility(myOpeningField, !isAutoExpense && bShowOpening);
+
+        /* Determine whether to show notes */
+        final boolean bShowNotes = isEditable || myCash.getNotes() != null;
+        myFieldSet.setVisibility(CashInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Category/Currency cannot be changed if the item is active */
-        theFieldSet.setEditable(Cash.FIELD_CATEGORY, bIsChangeable);
-        theFieldSet.setEditable(Cash.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
+        myFieldSet.setEditable(Cash.FIELD_CATEGORY, bIsChangeable);
+        myFieldSet.setEditable(Cash.FIELD_CURRENCY, bIsChangeable && !bHasOpening);
 
         /* AutoExpense/Payee cannot be changed for closed item */
         final boolean canEdit = isEditable && !bIsClosed;
-        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
-        theFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
+        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOEXPENSE), canEdit);
+        myFieldSet.setEditable(CashInfoSet.getFieldForClass(AccountInfoClass.AUTOPAYEE), canEdit);
 
         /* Set currency for opening balance */
         if (!isAutoExpense) {
-            theFieldSet.setAssumedCurrency(myOpeningField, myCash.getCurrency());
+            myFieldSet.setAssumedCurrency(myOpeningField, myCash.getCurrency());
         }
     }
 

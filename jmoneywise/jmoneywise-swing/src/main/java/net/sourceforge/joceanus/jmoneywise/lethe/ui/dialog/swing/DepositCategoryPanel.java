@@ -26,8 +26,6 @@ import java.util.Iterator;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -48,18 +46,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 
 /**
  * Panel to display/edit/create a DepositCategory.
  */
 public class DepositCategoryPanel
         extends MoneyWiseItemPanel<DepositCategory> {
-    /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<DepositCategory> theFieldSet;
-
     /**
      * Constructor.
      * @param pFactory the GUI factory
@@ -74,6 +66,9 @@ public class DepositCategoryPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(DepositCategory.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField mySubName = pFactory.newStringField();
@@ -83,34 +78,15 @@ public class DepositCategoryPanel
         final TethysSwingScrollButtonManager<DepositCategoryType> myTypeButton = pFactory.newScrollButton();
         final TethysSwingScrollButtonManager<DepositCategory> myParentButton = pFactory.newScrollButton();
 
-        /* restrict the fields */
-        restrictField(myName, DepositCategory.NAMELEN);
-        restrictField(mySubName, DepositCategory.NAMELEN);
-        restrictField(myDesc, DepositCategory.NAMELEN);
-        restrictField(myTypeButton, DepositCategory.NAMELEN);
-        restrictField(myParentButton, DepositCategory.NAMELEN);
+        /* Assign the fields to the panel */
+        myPanel.addField(DepositCategory.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(DepositCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
+        myPanel.addField(DepositCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class, myTypeButton);
+        myPanel.addField(DepositCategory.FIELD_PARENT, DepositCategory.class, myParentButton);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-        theFieldSet.addFieldElement(DepositCategory.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_SUBCAT, MetisDataType.STRING, mySubName);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_CATTYPE, DepositCategoryType.class, myTypeButton);
-        theFieldSet.addFieldElement(DepositCategory.FIELD_PARENT, DepositCategory.class, myParentButton);
-
-        /* Layout the main panel */
-        final JPanel myPanel = getMainPanel();
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_SUBCAT, myPanel);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_CATTYPE, myPanel);
-        theFieldSet.addFieldToPanel(DepositCategory.FIELD_PARENT, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildCategoryTypeMenu(c, getItem()));
@@ -132,6 +108,9 @@ public class DepositCategoryPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<DepositCategory> myFieldSet = getFieldSet();
+
         /* Determine whether parent/full-name fields are visible */
         final DepositCategory myCategory = getItem();
         final DepositCategoryType myType = myCategory.getCategoryType();
@@ -139,21 +118,21 @@ public class DepositCategoryPanel
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || myCategory.getDesc() != null;
-        theFieldSet.setVisibility(DepositCategory.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(DepositCategory.FIELD_DESC, bShowDesc);
 
         /* Set visibility */
-        theFieldSet.setVisibility(DepositCategory.FIELD_PARENT, !isParent);
-        theFieldSet.setVisibility(DepositCategory.FIELD_SUBCAT, !isParent);
+        myFieldSet.setVisibility(DepositCategory.FIELD_PARENT, !isParent);
+        myFieldSet.setVisibility(DepositCategory.FIELD_SUBCAT, !isParent);
 
         /* If the category is active then we cannot change the category type */
         boolean canEdit = isEditable && !myCategory.isActive();
 
         /* We cannot change a parent category type */
         canEdit &= !isParent;
-        theFieldSet.setEditable(DepositCategory.FIELD_CATTYPE, canEdit);
+        myFieldSet.setEditable(DepositCategory.FIELD_CATTYPE, canEdit);
 
         /* If the category is not a parent then we cannot edit the full name */
-        theFieldSet.setEditable(DepositCategory.FIELD_NAME, isEditable && isParent);
+        myFieldSet.setEditable(DepositCategory.FIELD_NAME, isEditable && isParent);
     }
 
     @Override

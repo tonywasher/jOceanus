@@ -22,16 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import java.awt.GridLayout;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SpringLayout;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -48,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Region.RegionList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityInfoSet;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
@@ -64,12 +59,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSpringUtilities;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 
 /**
@@ -78,24 +71,19 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
 public class SecurityPanel
         extends MoneyWiseItemPanel<Security> {
     /**
-     * Info Tab Title.
-     */
-    private static final String TAB_INFO = MoneyWiseUIResource.TRANSPANEL_TAB_INFO.getValue();
-
-    /**
      * Prices Tab Title.
      */
     private static final String TAB_PRICES = MoneyWiseUIResource.SECURITYPANEL_TAB_PRICES.getValue();
 
     /**
-     * The Field Set.
-     */
-    private final MetisFieldSet<Security> theFieldSet;
-
-    /**
      * SecurityPrice Table.
      */
     private final SecurityPriceTable thePrices;
+
+    /**
+     * Table tab item.
+     */
+    private final MoneyWiseDataTabTable thePricesTab;
 
     /**
      * The Closed State.
@@ -118,35 +106,21 @@ public class SecurityPanel
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
-        /* Build the FieldSet */
-        theFieldSet = getFieldSet();
-
         /* Build the main panel */
-        final JPanel myMainPanel = buildMainPanel(pFactory);
-
-        /* Create a tabbedPane */
-        final JTabbedPane myTabs = new JTabbedPane();
+        final MoneyWiseDataPanel myPanel = buildMainPanel(pFactory);
 
         /* Build the info panel */
-        JPanel myPanel = buildInfoPanel(pFactory);
-        myTabs.add(TAB_INFO, myPanel);
+        buildInfoPanel(pFactory);
 
         /* Build the notes panel */
-        myPanel = buildNotesPanel(pFactory);
-        myTabs.add(AccountInfoClass.NOTES.toString(), myPanel);
+        buildNotesPanel(pFactory);
 
         /* Create the SecurityPrices table */
         thePrices = new SecurityPriceTable(pView, pFieldMgr, getUpdateSet(), pError);
-        myTabs.add(TAB_PRICES, thePrices.getNode());
+        thePricesTab = new MoneyWiseDataTabTable(TAB_PRICES, thePrices);
 
-        /* Layout the main panel */
-        myPanel = getMainPanel();
-        myPanel.setLayout(new GridLayout(1, 2, PADDING_SIZE, PADDING_SIZE));
-        myPanel.add(myMainPanel);
-        myPanel.add(myTabs);
-
-        /* Layout the panel */
-        layoutPanel();
+        /* Define the panel */
+        defineMainPanel(myPanel);
 
         /* Create the listener */
         thePrices.getEventRegistrar().addEventListener(e -> {
@@ -160,11 +134,13 @@ public class SecurityPanel
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private JPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+    private MoneyWiseDataPanel buildMainPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataPanel myPanel = new MoneyWiseDataPanel(Security.NAMELEN);
+
         /* Create the text fields */
         final TethysSwingStringTextField myName = pFactory.newStringField();
         final TethysSwingStringTextField myDesc = pFactory.newStringField();
-        final TethysSwingStringTextField mySymbol = pFactory.newStringField();
 
         /* Create the buttons */
         final TethysSwingScrollButtonManager<SecurityType> myTypeButton = pFactory.newScrollButton();
@@ -172,36 +148,16 @@ public class SecurityPanel
         final TethysSwingScrollButtonManager<AssetCurrency> myCurrencyButton = pFactory.newScrollButton();
         final TethysSwingIconButtonManager<Boolean> myClosedButton = pFactory.newIconButton();
 
-        /* restrict the fields */
-        restrictField(myName, Security.NAMELEN);
-        restrictField(myDesc, Security.NAMELEN);
-        restrictField(mySymbol, Security.NAMELEN);
-        restrictField(myTypeButton, Security.NAMELEN);
-        restrictField(myCurrencyButton, Security.NAMELEN);
-        restrictField(myParentButton, Security.NAMELEN);
-        restrictField(myClosedButton, Security.NAMELEN);
-
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(Security.FIELD_NAME, MetisDataType.STRING, myName);
-        theFieldSet.addFieldElement(Security.FIELD_DESC, MetisDataType.STRING, myDesc);
-        theFieldSet.addFieldElement(Security.FIELD_SECTYPE, SecurityType.class, myTypeButton);
-        theFieldSet.addFieldElement(Security.FIELD_PARENT, Payee.class, myParentButton);
-        theFieldSet.addFieldElement(Security.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
-        theFieldSet.addFieldElement(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
-
-        /* Create the main panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
+        /* Assign the fields to the panel */
+        myPanel.addField(Security.FIELD_NAME, MetisDataType.STRING, myName);
+        myPanel.addField(Security.FIELD_DESC, MetisDataType.STRING, myDesc);
+        myPanel.addField(Security.FIELD_SECTYPE, SecurityType.class, myTypeButton);
+        myPanel.addField(Security.FIELD_PARENT, Payee.class, myParentButton);
+        myPanel.addField(Security.FIELD_CURRENCY, AssetCurrency.class, myCurrencyButton);
+        myPanel.addField(Security.FIELD_CLOSED, Boolean.class, myClosedButton);
 
         /* Layout the panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(Security.FIELD_NAME, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_DESC, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_SECTYPE, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_PARENT, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_CURRENCY, myPanel);
-        theFieldSet.addFieldToPanel(Security.FIELD_CLOSED, myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        myPanel.compactPanel();
 
         /* Configure the menuBuilders */
         myTypeButton.setMenuConfigurator(c -> buildSecTypeMenu(c, getItem()));
@@ -217,9 +173,11 @@ public class SecurityPanel
     /**
      * Build info subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildInfoPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildInfoPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(TAB_DETAILS, Security.NAMELEN >> 1);
+
         /* Allocate fields */
         final TethysSwingStringTextField mySymbol = pFactory.newStringField();
         final TethysSwingStringTextField myPrice = pFactory.newStringField();
@@ -228,64 +186,38 @@ public class SecurityPanel
         final TethysSwingScrollButtonManager<Region> myRegionButton = pFactory.newScrollButton();
         final TethysSwingScrollButtonManager<Security> myStockButton = pFactory.newScrollButton();
 
-        /* Restrict the fields */
-        final int myWidth = Transaction.DESCLEN >> 1;
-        restrictField(mySymbol, myWidth);
-        restrictField(myPrice, myWidth);
-        restrictField(myRegionButton, myWidth);
-        restrictField(myStockButton, myWidth);
+        /* Assign the fields to the panel */
+        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);
+        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, myRegionButton);
+        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, myStockButton);
+        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), MetisDataType.STRING, mySymbol);
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), Region.class, myRegionButton);
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), Security.class, myStockButton);
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), MetisDataType.PRICE, myPrice);
-
-        /* Create the Info panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the info panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL), myPanel);
-        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION), myPanel);
-        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK), myPanel);
-        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+        /* Layout the panel */
+        myTab.compactPanel();
 
         /* Configure the menuBuilders */
         myRegionButton.setMenuConfigurator(c -> buildRegionMenu(c, getItem()));
         myStockButton.setMenuConfigurator(c -> buildStockMenu(c, getItem()));
-
-        /* Return the new panel */
-        return myPanel;
     }
 
     /**
      * Build Notes subPanel.
      * @param pFactory the GUI factory
-     * @return the panel
      */
-    private JPanel buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+    private void buildNotesPanel(final TethysSwingGuiFactory pFactory) {
+        /* Create a new panel */
+        final MoneyWiseDataTabItem myTab = new MoneyWiseDataTabItem(AccountInfoClass.NOTES.toString(), Security.NAMELEN);
+
         /* Allocate fields */
         final TethysSwingTextArea myNotes = pFactory.newTextArea();
         final TethysSwingScrollPaneManager myScroll = pFactory.newScrollPane();
         myScroll.setContent(myNotes);
 
-        /* Build the FieldSet */
-        theFieldSet.addFieldElement(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
+        /* Assign the fields to the panel */
+        myTab.addField(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), MetisDataType.CHARARRAY, myScroll);
 
-        /* Create the notes panel */
-        final TethysSwingEnablePanel myPanel = new TethysSwingEnablePanel();
-
-        /* Layout the notes panel */
-        final SpringLayout mySpring = new SpringLayout();
-        myPanel.setLayout(mySpring);
-        theFieldSet.addFieldToPanel(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), myPanel);
-        TethysSwingSpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Return the new panel */
-        return myPanel;
+        /* Layout the panel */
+        myTab.compactPanel();
     }
 
     @Override
@@ -306,6 +238,9 @@ public class SecurityPanel
 
     @Override
     protected void adjustFields(final boolean isEditable) {
+        /* Access the fieldSet */
+        final MetisFieldSet<Security> myFieldSet = getFieldSet();
+
         /* Access the item */
         final Security mySecurity = getItem();
         final boolean bIsClosed = mySecurity.isClosed();
@@ -315,58 +250,63 @@ public class SecurityPanel
 
         /* Determine whether the closed button should be visible */
         final boolean bShowClosed = bIsClosed || (bIsActive && !bIsRelevant);
-        theFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
+        myFieldSet.setVisibility(Security.FIELD_CLOSED, bShowClosed);
 
         /* Determine the state of the closed button */
         final boolean bEditClosed = bIsClosed
                                               ? !mySecurity.getParent().isClosed()
                                               : !bIsRelevant;
-        theFieldSet.setEditable(Security.FIELD_CLOSED, isEditable && bEditClosed);
+        myFieldSet.setEditable(Security.FIELD_CLOSED, isEditable && bEditClosed);
         theClosedState = bEditClosed;
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || mySecurity.getDesc() != null;
-        theFieldSet.setVisibility(Security.FIELD_DESC, bShowDesc);
+        myFieldSet.setVisibility(Security.FIELD_DESC, bShowDesc);
 
         /* Determine whether the account details should be visible */
         final boolean bShowNotes = isEditable || mySecurity.getNotes() != null;
-        theFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
+        myFieldSet.setVisibility(SecurityInfoSet.getFieldForClass(AccountInfoClass.NOTES), bShowNotes);
 
         /* Determine whether the symbol field should be visible */
         MetisField myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL);
         boolean bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.SYMBOL);
         boolean bShowField = bEditField || mySecurity.getSymbol() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the region field should be visible */
         myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.REGION);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.REGION);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the stock field should be visible */
         myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.UNDERLYINGSTOCK);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.UNDERLYINGSTOCK);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
 
         /* Determine whether the price field should be visible */
         myField = SecurityInfoSet.getFieldForClass(AccountInfoClass.OPTIONPRICE);
         bEditField = isEditable && isEditableField(mySecurity, AccountInfoClass.OPTIONPRICE);
         bShowField = bEditField || mySecurity.getRegion() != null;
-        theFieldSet.setVisibility(myField, bShowField);
-        theFieldSet.setEditable(myField, bEditField);
-        theFieldSet.setAssumedCurrency(myField, myCurrency);
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Security type and currency cannot be changed if the item is active */
-        theFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
-        theFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
+        myFieldSet.setEditable(Security.FIELD_SECTYPE, isEditable && !bIsActive);
+        myFieldSet.setEditable(Security.FIELD_CURRENCY, isEditable && !bIsActive);
 
         /* Set editable value for parent */
-        theFieldSet.setEditable(Security.FIELD_PARENT, isEditable && !bIsClosed);
+        myFieldSet.setEditable(Security.FIELD_PARENT, isEditable && !bIsClosed);
+
+        /* Set the table visibility */
+        boolean bShowPrices = mySecurity.isSecurityClass(SecurityTypeClass.STOCKOPTION);
+        bShowPrices &= isEditable || !thePrices.isViewEmpty();
+        thePricesTab.setRequireVisible(bShowPrices);
     }
 
     /**

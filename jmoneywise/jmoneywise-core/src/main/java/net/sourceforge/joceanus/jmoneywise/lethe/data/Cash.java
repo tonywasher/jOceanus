@@ -879,10 +879,22 @@ public class Cash
                 /* Build the new linked cash and add it to the list */
                 final Cash myCash = new Cash(myList, myCurr);
                 myList.append(myCash);
+
+                /* Adjust the map */
+                myCash.adjustMapForItem();
             }
 
             /* Return the list */
             return myList;
+        }
+
+        /**
+         * Set map.
+         * @param pMap the map
+         */
+        @Override
+        protected void setDataMap(final DataMapItem<Cash, MoneyWiseDataType> pMap) {
+            super.setDataMap(pMap);
         }
 
         @Override
