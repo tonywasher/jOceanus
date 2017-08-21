@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -48,9 +49,9 @@ public final class GordianKeySet {
     private final GordianFactory theFactory;
 
     /**
-     * Map of KeyType to symKey.
+     * Map of KeySpec to symKey.
      */
-    private final Map<GordianSymKeyType, GordianKey<GordianSymKeyType>> theSymKeyMap;
+    private final Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> theSymKeyMap;
 
     /**
      * Map of KeyType to streamKey.
@@ -71,7 +72,7 @@ public final class GordianKeySet {
         theFactory = pFactory;
 
         /* Create maps */
-        theSymKeyMap = new EnumMap<>(GordianSymKeyType.class);
+        theSymKeyMap = new HashMap<>();
         theStreamKeyMap = new EnumMap<>(GordianStreamKeyType.class);
 
         /* Create the cipher */
@@ -90,7 +91,7 @@ public final class GordianKeySet {
      * Obtain the symKeySet.
      * @return the keySet
      */
-    protected Map<GordianSymKeyType, GordianKey<GordianSymKeyType>> getSymKeyMap() {
+    protected Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
 
@@ -275,8 +276,8 @@ public final class GordianKeySet {
      * @param pKey the key
      * @throws OceanusException on error
      */
-    public void declareSymKey(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        declareKey(pKey, theFactory.supportedKeySetSymKeyTypes(), theSymKeyMap);
+    public void declareSymKey(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+        declareKey(pKey, theFactory.supportedKeySetSymKeySpecs(), theSymKeyMap);
     }
 
     /**
@@ -336,7 +337,8 @@ public final class GordianKeySet {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key and add to map */
-                theSymKeyMap.put(myType, generateKey(myType, pSecret, pInitVector));
+                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
+                theSymKeyMap.put(mySpec, generateKey(mySpec, pSecret, pInitVector));
             }
         }
 

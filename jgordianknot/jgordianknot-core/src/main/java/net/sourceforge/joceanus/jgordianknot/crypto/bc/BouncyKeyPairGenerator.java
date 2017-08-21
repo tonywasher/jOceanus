@@ -619,7 +619,7 @@ public abstract class BouncyKeyPairGenerator
             final GordianSPHINCSKeyType myKeyType = pKeySpec.getSPHINCSType();
             final ASN1ObjectIdentifier myId = GordianSPHINCSKeyType.SHA3.equals(myKeyType)
                                                                                            ? NISTObjectIdentifiers.id_sha3_256
-                                                                                           : NISTObjectIdentifiers.id_sha256;
+                                                                                           : NISTObjectIdentifiers.id_sha512_256;
             theAlgorithmId = new AlgorithmIdentifier(PQCObjectIdentifiers.sphincs256,
                     new SPHINCS256KeyParams(new AlgorithmIdentifier(myId)));
 

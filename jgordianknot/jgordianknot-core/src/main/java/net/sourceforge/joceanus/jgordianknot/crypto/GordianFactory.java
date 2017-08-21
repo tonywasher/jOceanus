@@ -316,6 +316,22 @@ public abstract class GordianFactory {
     public abstract Predicate<GordianDigestType> supportedDigestTypes();
 
     /**
+     * Obtain predicate for supported KeyHash digests.
+     * @return the predicate
+     */
+    public Predicate<GordianDigestType> supportedKeySetDigestTypes() {
+        return supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
+    }
+
+    /**
+     * Obtain predicate for supported external digests.
+     * @return the predicate
+     */
+    public Predicate<GordianDigestType> supportedExternalDigestTypes() {
+        return supportedHMacDigestTypes().and(GordianDigestType::isExternalHashDigest);
+    }
+
+    /**
      * generate random GordianMac.
      * @return the new MAC
      * @throws OceanusException on error
@@ -373,38 +389,22 @@ public abstract class GordianFactory {
     public abstract Predicate<GordianDigestType> supportedHMacDigestTypes();
 
     /**
-     * Obtain predicate for supported poly1305 symKeyTypes.
+     * Obtain predicate for supported poly1305 symKeySpecs.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> supportedPoly1305SymKeyTypes();
+    public abstract Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs();
 
     /**
-     * Obtain predicate for supported gMac symKeyTypes.
+     * Obtain predicate for supported gMac symKeySpecs.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> supportedGMacSymKeyTypes();
+    public abstract Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs();
 
     /**
      * Obtain predicate for supported cMac symKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> supportedCMacSymKeyTypes();
-
-    /**
-     * Obtain predicate for supported KeyHash digests.
-     * @return the predicate
-     */
-    public Predicate<GordianDigestType> supportedKeySetDigestTypes() {
-        return supportedHMacDigestTypes().and(GordianDigestType::isCombinedHashDigest);
-    }
-
-    /**
-     * Obtain predicate for supported external digests.
-     * @return the predicate
-     */
-    public Predicate<GordianDigestType> supportedExternalDigestTypes() {
-        return supportedHMacDigestTypes().and(GordianDigestType::isExternalHashDigest);
-    }
+    public abstract Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs();
 
     /**
      * obtain GordianKeyGenerator.
@@ -428,12 +428,12 @@ public abstract class GordianFactory {
      * @return the new key
      * @throws OceanusException on error
      */
-    public GordianKey<GordianSymKeyType> generateRandomSymKey() throws OceanusException {
+    public GordianKey<GordianSymKeySpec> generateRandomSymKey() throws OceanusException {
         /* Determine a random keyType */
         final GordianSymKeyType myType = getIdManager().generateRandomSymKeyType();
 
         /* Generate a random key */
-        final GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = getKeyGenerator(new GordianSymKeySpec(myType));
         return myGenerator.generateKey();
     }
 
@@ -442,17 +442,17 @@ public abstract class GordianFactory {
      * @return the list of keys
      * @throws OceanusException on error
      */
-    public List<GordianKey<GordianSymKeyType>> generateRandomSymKeyList() throws OceanusException {
+    public List<GordianKey<GordianSymKeySpec>> generateRandomSymKeyList() throws OceanusException {
         /* Determine a random set of keyType */
         final int myCount = getNumCipherSteps();
-        final GordianSymKeyType[] myTypes = getIdManager().generateRandomSymKeyTypes(myCount);
+        final GordianSymKeyType[] myTypes = getIdManager().generateRandomKeySetSymKeyTypes(myCount);
 
         /* Loop through the keys */
-        final List<GordianKey<GordianSymKeyType>> myKeyList = new ArrayList<>();
+        final List<GordianKey<GordianSymKeySpec>> myKeyList = new ArrayList<>();
         for (int i = 0; i < myCount; i++) {
             /* Generate a random key */
             final GordianSymKeyType myType = myTypes[i];
-            final GordianKeyGenerator<GordianSymKeyType> myGenerator = getKeyGenerator(myType);
+            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = getKeyGenerator(new GordianSymKeySpec(myType));
             myKeyList.add(myGenerator.generateKey());
         }
 
@@ -466,7 +466,15 @@ public abstract class GordianFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    public abstract GordianCipher<GordianSymKeyType> createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
+    public abstract GordianCipher<GordianSymKeySpec> createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
+
+    /**
+     * Obtain predicate for supported digestSpecs.
+     * @return the predicate
+     */
+    public Predicate<GordianSymKeySpec> supportedSymKeySpecs() {
+        return this::validSymKeySpec;
+    }
 
     /**
      * Obtain predicate for supported SymKeyTypes.
@@ -479,6 +487,14 @@ public abstract class GordianFactory {
      * @return the predicate
      */
     public abstract Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes();
+
+    /**
+     * Obtain predicate for supported poly1305 symKeySpecs.
+     * @return the predicate
+     */
+    public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs() {
+        return p -> supportedKeySetSymKeyTypes().test(p.getSymKeyType()) && p.getBlockLength() == GordianLength.LEN_128;
+    }
 
     /**
      * create GordianAADCipher.
@@ -534,18 +550,18 @@ public abstract class GordianFactory {
 
     /**
      * create GordianWrapCipher.
-     * @param pKeyType the KeyType
+     * @param pKeySpec the KeySpec
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    protected abstract GordianWrapCipher createWrapCipher(GordianSymKeyType pKeyType) throws OceanusException;
+    protected abstract GordianWrapCipher createWrapCipher(GordianSymKeySpec pKeySpec) throws OceanusException;
 
     /**
      * Create a wrapCipher.
      * @param pBlockCipher the underlying block cipher
      * @return the wrapCipher
      */
-    protected GordianWrapCipher createWrapCipher(final GordianCipher<GordianSymKeyType> pBlockCipher) {
+    protected GordianWrapCipher createWrapCipher(final GordianCipher<GordianSymKeySpec> pBlockCipher) {
         return new GordianWrapCipher(this, pBlockCipher);
     }
 
@@ -676,7 +692,7 @@ public abstract class GordianFactory {
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    private boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
+    protected boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Access details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myStateLen = pDigestSpec.getStateLength();
@@ -711,7 +727,7 @@ public abstract class GordianFactory {
         /* Access details */
         final GordianMacType myType = pMacSpec.getMacType();
         final GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
-        final GordianSymKeyType mySymKey = pMacSpec.getKeyType();
+        final GordianSymKeySpec mySymSpec = pMacSpec.getKeySpec();
 
         /* Check that the macType is supported */
         if (!supportedMacTypes().test(myType)) {
@@ -723,19 +739,49 @@ public abstract class GordianFactory {
             case HMAC:
                 return supportedHMacDigestSpecs().test(mySpec);
             case GMAC:
-                return supportedGMacSymKeyTypes().test(mySymKey);
+                return supportedGMacSymKeySpecs().test(mySymSpec);
             case CMAC:
-                return supportedCMacSymKeyTypes().test(mySymKey);
+                return supportedCMacSymKeySpecs().test(mySymSpec);
             case POLY1305:
-                return supportedPoly1305SymKeyTypes().test(mySymKey);
+                return supportedPoly1305SymKeySpecs().test(mySymSpec);
             case SKEIN:
                 return supportedDigestSpecs().test(mySpec)
                        && GordianDigestType.SKEIN.equals(mySpec.getDigestType());
+            case KUPYNA:
+                return supportedDigestSpecs().test(mySpec)
+                       && GordianDigestType.KUPYNA.equals(mySpec.getDigestType());
+            case KALYNA:
+                return false;
+            /**
+             * TODO KalynaMac not currently usable! return validSymKeySpec(mySymSpec) &&
+             * GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType());
+             */
             case VMPC:
                 return true;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Check SymKeySpec.
+     * @param pSymKeySpec the symKeySpec
+     * @return true/false
+     */
+    protected boolean validSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
+        /* Access details */
+        final GordianSymKeyType myType = pSymKeySpec.getSymKeyType();
+        final GordianLength myLen = pSymKeySpec.getBlockLength();
+
+        /* Reject restrictedSpecs where the block length is too large */
+        if (isRestricted
+            && myLen.getLength() > GordianLength.LEN_128.getLength()) {
+            return false;
+        }
+
+        /* Check validity */
+        return supportedSymKeyTypes().test(myType)
+               && myType.isLengthValid(myLen);
     }
 
     /**

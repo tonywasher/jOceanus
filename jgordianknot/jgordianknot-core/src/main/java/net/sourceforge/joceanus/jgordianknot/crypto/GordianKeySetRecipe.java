@@ -33,12 +33,12 @@ public final class GordianKeySetRecipe {
     /**
      * Recipe length (Integer).
      */
-    protected static final int RECIPELEN = Integer.BYTES;
+    public static final int RECIPELEN = Integer.BYTES;
 
     /**
      * Initialisation Vector size (128/8).
      */
-    private static final int IVSIZE = GordianFactory.IVSIZE;
+    public static final int IVSIZE = GordianFactory.IVSIZE;
 
     /**
      * Margins.
@@ -205,7 +205,7 @@ public final class GordianKeySetRecipe {
          * Construct the parameters from random.
          * @param pFactory the factory
          */
-        private GordianKeySetParameters(final GordianFactory pFactory) {
+        protected GordianKeySetParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
             final SecureRandom myRandom = pFactory.getRandom();
@@ -222,7 +222,8 @@ public final class GordianKeySetRecipe {
             /* Generate recipe and derive parameters */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            mySeed = myManager.deriveSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.convertRecipe(mySeed);
+            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
             mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
             myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
         }
@@ -233,9 +234,9 @@ public final class GordianKeySetRecipe {
          * @param pRecipe the recipe bytes
          * @param pInitVector the initVector
          */
-        private GordianKeySetParameters(final GordianFactory pFactory,
-                                        final byte[] pRecipe,
-                                        final byte[] pInitVector) {
+        protected GordianKeySetParameters(final GordianFactory pFactory,
+                                          final byte[] pRecipe,
+                                          final byte[] pInitVector) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
 
@@ -250,7 +251,8 @@ public final class GordianKeySetRecipe {
 
             /* derive parameters */
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            mySeed = myManager.deriveSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
+            mySeed = myManager.convertRecipe(mySeed);
+            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
             mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
             myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
         }

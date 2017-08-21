@@ -134,7 +134,7 @@ public abstract class GordianKeyPairGenerator {
      * @throws OceanusException on error
      */
     public byte[] securePrivateKey(final GordianKeyPair pKeyPair,
-                                   final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+                                   final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         if (pKeyPair.isPublicOnly()) {
             throw new GordianDataException("No private key");
         }
@@ -175,7 +175,7 @@ public abstract class GordianKeyPairGenerator {
      */
     public GordianKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKeySpec,
                                         final byte[] pSecuredPrivateKey,
-                                        final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+                                        final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         final GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
         final PKCS8EncodedKeySpec myKeySpec = myCipher.deriveKeySpec(pKey, pSecuredPrivateKey);
         return deriveKeyPair(pPublicKeySpec, myKeySpec);

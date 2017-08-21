@@ -35,10 +35,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -150,13 +151,13 @@ public final class GordianStreamManager {
         myCurrent = new GordianMacOutputStream(myMac, myCurrent);
 
         /* Generate a list of encryption types */
-        final List<GordianKey<GordianSymKeyType>> mySymKeys = myFactory.generateRandomSymKeyList();
+        final List<GordianKey<GordianSymKeySpec>> mySymKeys = myFactory.generateRandomSymKeyList();
         boolean bFirst = true;
 
         /* For each encryption key */
-        final Iterator<GordianKey<GordianSymKeyType>> myIterator = mySymKeys.iterator();
+        final Iterator<GordianKey<GordianSymKeySpec>> myIterator = mySymKeys.iterator();
         while (myIterator.hasNext()) {
-            final GordianKey<GordianSymKeyType> myKey = myIterator.next();
+            final GordianKey<GordianSymKeySpec> myKey = myIterator.next();
             final boolean bLast = !myIterator.hasNext();
 
             /* Determine mode and padding */
@@ -164,7 +165,7 @@ public final class GordianStreamManager {
             if (!bFirst) {
                 if (bLast) {
                     myPadding = GordianPadding.ISO7816D4;
-                } else if (!myKey.getKeyType().isStdBlock()) {
+                } else if (myKey.getKeyType().getBlockLength() != GordianLength.LEN_128) {
                     myPadding = GordianPadding.CTS;
                 }
             }
@@ -173,9 +174,9 @@ public final class GordianStreamManager {
                                                        : GordianSymCipherSpec.ecb(myKey.getKeyType(), myPadding);
 
             /* Build the cipher stream */
-            final GordianCipher<GordianSymKeyType> mySymCipher = myFactory.createSymKeyCipher(mySpec);
+            final GordianCipher<GordianSymKeySpec> mySymCipher = myFactory.createSymKeyCipher(mySpec);
             mySymCipher.initCipher(myKey);
-            myCurrent = new GordianCipherOutputStream<GordianSymKeyType>(mySymCipher, myCurrent);
+            myCurrent = new GordianCipherOutputStream<GordianSymKeySpec>(mySymCipher, myCurrent);
 
             /* Note that this is no longer the first */
             bFirst = false;

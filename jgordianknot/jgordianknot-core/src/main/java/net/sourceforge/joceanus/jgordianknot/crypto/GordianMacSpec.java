@@ -49,7 +49,7 @@ public final class GordianMacSpec {
     /**
      * The SymKey Type.
      */
-    private final GordianSymKeyType theKeyType;
+    private final GordianSymKeySpec theKeySpec;
 
     /**
      * The String name.
@@ -66,20 +66,20 @@ public final class GordianMacSpec {
         /* Store parameters */
         theMacType = pMacType;
         theDigestSpec = pDigestSpec;
-        theKeyType = null;
+        theKeySpec = null;
     }
 
     /**
      * gMac/Poly1305 Constructor.
      * @param pMacType the macType
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      */
     protected GordianMacSpec(final GordianMacType pMacType,
-                             final GordianSymKeyType pKeyType) {
+                             final GordianSymKeySpec pKeySpec) {
         /* Store parameters */
         theMacType = pMacType;
         theDigestSpec = null;
-        theKeyType = pKeyType;
+        theKeySpec = pKeySpec;
     }
 
     /**
@@ -89,7 +89,7 @@ public final class GordianMacSpec {
     protected GordianMacSpec(final GordianMacType pMacType) {
         theMacType = pMacType;
         theDigestSpec = null;
-        theKeyType = null;
+        theKeySpec = null;
     }
 
     /**
@@ -112,29 +112,37 @@ public final class GordianMacSpec {
 
     /**
      * Create gMacSpec.
-     * @param pSymKeyType the symKeyType
+     * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec gMac(final GordianSymKeyType pSymKeyType) {
-        return new GordianMacSpec(GordianMacType.GMAC, pSymKeyType);
+    public static GordianMacSpec gMac(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianMacSpec(GordianMacType.GMAC, pSymKeySpec);
     }
 
     /**
      * Create cMacSpec.
-     * @param pSymKeyType the symKeyType
+     * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec cMac(final GordianSymKeyType pSymKeyType) {
-        return new GordianMacSpec(GordianMacType.CMAC, pSymKeyType);
+    public static GordianMacSpec cMac(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianMacSpec(GordianMacType.CMAC, pSymKeySpec);
     }
 
     /**
      * Create poly1305MacSpec.
-     * @param pSymKeyType the symKeyType
+     * @param pSymKeySpec the symKeySpec
      * @return the MacSpec
      */
-    public static GordianMacSpec poly1305Mac(final GordianSymKeyType pSymKeyType) {
-        return new GordianMacSpec(GordianMacType.POLY1305, pSymKeyType);
+    public static GordianMacSpec poly1305Mac(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianMacSpec(GordianMacType.POLY1305, pSymKeySpec);
+    }
+
+    /**
+     * Create skeinMacSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec skeinMac() {
+        return GordianMacSpec.skeinMac(GordianDigestType.SKEIN.getDefaultLength());
     }
 
     /**
@@ -171,6 +179,42 @@ public final class GordianMacSpec {
     }
 
     /**
+     * Create kalynaMacSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec kalynaMac() {
+        return GordianMacSpec.kalynaMac(GordianSymKeyType.KALYNA.getDefaultLength());
+    }
+
+    /**
+     * Create kalynaMacSpec.
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec kalynaMac(final GordianLength pLength) {
+        final GordianSymKeySpec mySpec = GordianSymKeySpec.kalyna(pLength);
+        return new GordianMacSpec(GordianMacType.KALYNA, mySpec);
+    }
+
+    /**
+     * Create kupynaMacSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec kupynaMac() {
+        return GordianMacSpec.skeinMac(GordianDigestType.KUPYNA.getDefaultLength());
+    }
+
+    /**
+     * Create kupynaMacSpec.
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec kupynaMac(final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpec.kupyna(pLength);
+        return new GordianMacSpec(GordianMacType.KUPYNA, mySpec);
+    }
+
+    /**
      * Create vmpcMacSpec.
      * @return the MacSpec
      */
@@ -198,8 +242,8 @@ public final class GordianMacSpec {
      * Obtain SymKey Type.
      * @return the KeyType
      */
-    public GordianSymKeyType getKeyType() {
-        return theKeyType;
+    public GordianSymKeySpec getKeySpec() {
+        return theKeySpec;
     }
 
     @Override
@@ -208,18 +252,34 @@ public final class GordianMacSpec {
         if (theName == null) {
             /* Load the name */
             theName = theMacType.toString();
-            if (theDigestSpec != null) {
-                theName += SEP + (GordianMacType.SKEIN.equals(theMacType)
-                                                                          ? theDigestSpec.getStateLength().getLength()
-                                                                            + SEP + theDigestSpec.getDigestLength().getLength()
-                                                                          : theDigestSpec.toString());
-            } else if (theKeyType != null) {
-                theName += SEP + theKeyType.toString();
+            switch (theMacType) {
+                case HMAC:
+                    theName += SEP + theDigestSpec.toString();
+                    break;
+                case SKEIN:
+                    theName += SEP + theDigestSpec.getStateLength().getLength()
+                               + SEP + theDigestSpec.getDigestLength().getLength();
+                    break;
+                case GMAC:
+                case CMAC:
+                case POLY1305:
+                    theName += SEP + theKeySpec.toString();
+                    break;
+                case KUPYNA:
+                    theName += SEP + theDigestSpec.getDigestLength().getLength();
+                    break;
+                case KALYNA:
+                    theName += SEP + theKeySpec.getBlockLength().getLength();
+                    break;
+                case VMPC:
+                default:
+                    break;
             }
         }
 
         /* return the name */
         return theName;
+
     }
 
     @Override
@@ -249,8 +309,8 @@ public final class GordianMacSpec {
         if (theDigestSpec != null) {
             return theDigestSpec.equals(myThat.getDigestSpec());
         }
-        if (theKeyType != null) {
-            return theKeyType.equals(myThat.getKeyType());
+        if (theKeySpec != null) {
+            return theKeySpec.equals(myThat.getKeySpec());
         }
         return true;
     }
@@ -261,8 +321,8 @@ public final class GordianMacSpec {
         if (theDigestSpec != null) {
             hashCode += theDigestSpec.hashCode();
         }
-        if (theKeyType != null) {
-            hashCode += theKeyType.ordinal();
+        if (theKeySpec != null) {
+            hashCode += theKeySpec.hashCode();
         }
         return hashCode;
     }
@@ -281,10 +341,10 @@ public final class GordianMacSpec {
         }
 
         /* For each SymKey */
-        for (GordianSymKeyType mySymKeyType : GordianSymKeyType.values()) {
-            myList.add(GordianMacSpec.gMac(mySymKeyType));
-            myList.add(GordianMacSpec.cMac(mySymKeyType));
-            myList.add(GordianMacSpec.poly1305Mac(mySymKeyType));
+        for (GordianSymKeySpec mySymKeySpec : GordianSymKeySpec.listAll()) {
+            myList.add(GordianMacSpec.gMac(mySymKeySpec));
+            myList.add(GordianMacSpec.cMac(mySymKeySpec));
+            myList.add(GordianMacSpec.poly1305Mac(mySymKeySpec));
         }
 
         /* For each length */
@@ -297,6 +357,16 @@ public final class GordianMacSpec {
 
         /* Add vmpcMac */
         myList.add(GordianMacSpec.vmpcMac());
+
+        /* Add kalynaMac */
+        for (GordianLength myLength : GordianSymKeyType.KALYNA.getSupportedLengths()) {
+            myList.add(GordianMacSpec.kalynaMac(myLength));
+        }
+
+        /* Add kupynaMac */
+        for (GordianLength myLength : GordianDigestType.KUPYNA.getSupportedLengths()) {
+            myList.add(GordianMacSpec.kupynaMac(myLength));
+        }
 
         /* Return the list */
         return myList;

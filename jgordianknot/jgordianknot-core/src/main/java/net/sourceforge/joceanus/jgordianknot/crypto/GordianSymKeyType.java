@@ -29,112 +29,117 @@ public enum GordianSymKeyType {
     /**
      * AES.
      */
-    AES(128),
+    AES(GordianLength.LEN_128),
 
     /**
      * TwoFish.
      */
-    TWOFISH(128),
+    TWOFISH(GordianLength.LEN_128),
 
     /**
      * Serpent.
      */
-    SERPENT(128),
+    SERPENT(GordianLength.LEN_128),
 
     /**
      * CAMELLIA.
      */
-    CAMELLIA(128),
+    CAMELLIA(GordianLength.LEN_128),
 
     /**
      * RC6.
      */
-    RC6(128),
+    RC6(GordianLength.LEN_128),
 
     /**
      * CAST6.
      */
-    CAST6(128),
+    CAST6(GordianLength.LEN_128),
 
     /**
      * ThreeFish.
      */
-    THREEFISH(256),
+    THREEFISH(GordianLength.LEN_256),
 
     /**
      * ARIA.
      */
-    ARIA(128),
+    ARIA(GordianLength.LEN_128),
 
     /**
      * SM4.
      */
-    SM4(128),
+    SM4(GordianLength.LEN_128),
 
     /**
      * NoeKeon.
      */
-    NOEKEON(128),
+    NOEKEON(GordianLength.LEN_128),
 
     /**
      * SEED.
      */
-    SEED(128),
+    SEED(GordianLength.LEN_128),
 
     /**
      * SkipJack.
      */
-    SKIPJACK(64),
+    SKIPJACK(GordianLength.LEN_64),
 
     /**
      * IDEA.
      */
-    IDEA(64),
+    IDEA(GordianLength.LEN_64),
 
     /**
      * TEA.
      */
-    TEA(64),
+    TEA(GordianLength.LEN_64),
 
     /**
      * XTEA.
      */
-    XTEA(64),
+    XTEA(GordianLength.LEN_64),
 
     /**
      * DESede.
      */
-    DESEDE(64),
+    DESEDE(GordianLength.LEN_64),
 
     /**
      * DESede.
      */
-    CAST5(64),
+    CAST5(GordianLength.LEN_64),
 
     /**
      * RC2.
      */
-    RC2(64),
+    RC2(GordianLength.LEN_64),
 
     /**
      * RC5.
      */
-    RC5(64),
+    RC5(GordianLength.LEN_64),
 
     /**
      * Blowfish.
      */
-    BLOWFISH(64);
+    BLOWFISH(GordianLength.LEN_64),
 
     /**
-     * The Standard IV length.
+     * Kalyna.
      */
-    private static final int STDIVLEN = 128;
+    KALYNA(GordianLength.LEN_128, GordianLength.LEN_256),
 
     /**
-     * The IV Length.
+     * GOST.
      */
-    private final int theIVLen;
+    GOST(GordianLength.LEN_64);
+
+    /**
+     * The Supported lengths.
+     */
+    private final GordianLength[] theLengths;
 
     /**
      * The String name.
@@ -143,18 +148,10 @@ public enum GordianSymKeyType {
 
     /**
      * Constructor.
-     * @param pIVLen the IV length
+     * @param pLengths the valid lengths
      */
-    GordianSymKeyType(final int pIVLen) {
-        theIVLen = pIVLen;
-    }
-
-    /**
-     * Obtain the IV Length.
-     * @return the IV length.
-     */
-    public int getIVLength() {
-        return theIVLen / Byte.SIZE;
+    GordianSymKeyType(final GordianLength... pLengths) {
+        theLengths = pLengths;
     }
 
     @Override
@@ -170,19 +167,41 @@ public enum GordianSymKeyType {
     }
 
     /**
-     * Does this KeyType use a standard block size?
-     * @return true/false
+     * Obtain default length.
+     * @return the default length
      */
-    public boolean isStdBlock() {
-        return theIVLen == STDIVLEN;
+    public GordianLength getDefaultLength() {
+        return theLengths[0];
     }
 
     /**
-     * Does this KeyType use a short block size?
+     * Obtain supported lengths.
+     * @return the supported lengths (first is default)
+     */
+    public GordianLength[] getSupportedLengths() {
+        return theLengths;
+    }
+
+    /**
+     * is length valid?
+     * @param pLength the length
      * @return true/false
      */
-    public boolean isShortBlock() {
-        return theIVLen < STDIVLEN;
+    public boolean isLengthValid(final GordianLength pLength) {
+        for (GordianLength myLength : theLengths) {
+            if (myLength.equals(pLength)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Does this KeyType have multiple lengths?
+     * @return true/false
+     */
+    public boolean hasMultipleLengths() {
+        return theLengths.length > 1;
     }
 
     /**
@@ -193,6 +212,7 @@ public enum GordianSymKeyType {
     public boolean validForRestriction(final boolean pRestricted) {
         switch (this) {
             case THREEFISH:
+            case GOST:
                 return !pRestricted;
             case SM4:
             case SEED:

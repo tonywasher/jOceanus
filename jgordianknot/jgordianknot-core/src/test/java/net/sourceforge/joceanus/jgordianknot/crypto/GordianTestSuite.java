@@ -130,7 +130,7 @@ public class GordianTestSuite {
         GordianFactory myFactory = myKeySet.getFactory();
 
         /* Create new symmetric key and stream Key */
-        GordianKey<GordianSymKeyType> mySym = myFactory.generateRandomSymKey();
+        GordianKey<GordianSymKeySpec> mySym = myFactory.generateRandomSymKey();
         GordianKey<GordianStreamKeyType> myStream = myFactory.generateRandomStreamKey();
 
         /* Secure the keys */
@@ -237,7 +237,7 @@ public class GordianTestSuite {
         }
 
         /* Derive the keys */
-        GordianKey<GordianSymKeyType> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
+        GordianKey<GordianSymKeySpec> mySym1 = myKeySet1.deriveKey(mySymSafe, mySym.getKeyType());
         GordianKey<GordianStreamKeyType> myStm1 = myKeySet1.deriveKey(myStreamSafe, myStream.getKeyType());
 
         /* Check the keys are the same */

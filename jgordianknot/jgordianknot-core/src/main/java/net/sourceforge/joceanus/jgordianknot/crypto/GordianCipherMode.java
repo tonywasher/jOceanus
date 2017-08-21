@@ -102,6 +102,37 @@ public enum GordianCipherMode {
     }
 
     /**
+     * Can we work on a short block?
+     * @return true/false
+     */
+    public boolean allowShortBlock() {
+        switch (this) {
+            case CCM:
+            case GCM:
+            case OCB:
+            case SIC:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Does the mode require a standard block?
+     * @return true/false
+     */
+    public boolean needsStdBlock() {
+        switch (this) {
+            case CCM:
+            case GCM:
+            case OCB:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Does the mode need an IV?
      * @return true/false
      */

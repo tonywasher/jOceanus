@@ -92,7 +92,7 @@ public abstract class GordianCipherSpec<T> {
      * The SymCipherSpec class.
      */
     public static class GordianSymCipherSpec
-            extends GordianCipherSpec<GordianSymKeyType> {
+            extends GordianCipherSpec<GordianSymKeySpec> {
         /**
          * The Separator.
          */
@@ -115,101 +115,101 @@ public abstract class GordianCipherSpec<T> {
 
         /**
          * Constructor.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @param pMode the mode
          * @param pPadding the padding
          */
-        protected GordianSymCipherSpec(final GordianSymKeyType pKeyType,
+        protected GordianSymCipherSpec(final GordianSymKeySpec pKeySpec,
                                        final GordianCipherMode pMode,
                                        final GordianPadding pPadding) {
-            super(pKeyType);
+            super(pKeySpec);
             theMode = pMode;
             thePadding = pPadding;
         }
 
         /**
          * Create an ECB symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @param pPadding the padding
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec ecb(final GordianSymKeyType pKeyType,
+        public static GordianSymCipherSpec ecb(final GordianSymKeySpec pKeySpec,
                                                final GordianPadding pPadding) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.ECB, pPadding);
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.ECB, pPadding);
         }
 
         /**
          * Create a CBC symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @param pPadding the padding
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec cbc(final GordianSymKeyType pKeyType,
+        public static GordianSymCipherSpec cbc(final GordianSymKeySpec pKeySpec,
                                                final GordianPadding pPadding) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.CBC, pPadding);
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CBC, pPadding);
         }
 
         /**
          * Create a CFB symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec cfb(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.CFB, GordianPadding.NONE);
+        public static GordianSymCipherSpec cfb(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CFB, GordianPadding.NONE);
         }
 
         /**
          * Create a OFB symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec ofb(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.OFB, GordianPadding.NONE);
+        public static GordianSymCipherSpec ofb(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OFB, GordianPadding.NONE);
         }
 
         /**
          * Create a SIC symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec sic(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.SIC, GordianPadding.NONE);
+        public static GordianSymCipherSpec sic(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.SIC, GordianPadding.NONE);
         }
 
         /**
          * Create a CCM symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec ccm(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.CCM, GordianPadding.NONE);
+        public static GordianSymCipherSpec ccm(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.CCM, GordianPadding.NONE);
         }
 
         /**
          * Create a GCM symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec gcm(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.GCM, GordianPadding.NONE);
+        public static GordianSymCipherSpec gcm(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCM, GordianPadding.NONE);
         }
 
         /**
          * Create an EAX symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec eax(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.EAX, GordianPadding.NONE);
+        public static GordianSymCipherSpec eax(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.EAX, GordianPadding.NONE);
         }
 
         /**
          * Create an OCB symKey cipherSpec.
-         * @param pKeyType the keyType
+         * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
-        public static GordianSymCipherSpec ocb(final GordianSymKeyType pKeyType) {
-            return new GordianSymCipherSpec(pKeyType, GordianCipherMode.OCB, GordianPadding.NONE);
+        public static GordianSymCipherSpec ocb(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OCB, GordianPadding.NONE);
         }
 
         /**
@@ -234,6 +234,14 @@ public abstract class GordianCipherSpec<T> {
         }
 
         /**
+         * Obtain the blockLength.
+         * @return the blockLength
+         */
+        public int getBlockLength() {
+            return getKeyType().getBlockLength().getLength();
+        }
+
+        /**
          * Is this an AAD mode?
          * @return true/false
          */
@@ -253,9 +261,18 @@ public abstract class GordianCipherSpec<T> {
                 return false;
             }
 
-            /* Reject SIC for ciphers with small blockSizes */
-            if (GordianCipherMode.SIC.equals(theMode)
-                && getKeyType().isShortBlock()) {
+            /* Determine whether we have a short block length */
+            final int myLen = getKeyType().getBlockLength().getLength();
+            final boolean shortBlock = myLen < GordianLength.LEN_128.getLength();
+            final boolean stdBlock = myLen == GordianLength.LEN_128.getLength();
+
+            /* Reject modes which do not allow short blocks */
+            if (shortBlock && !theMode.allowShortBlock()) {
+                return false;
+            }
+
+            /* Reject modes which do not allow non-standard blocks */
+            if (!stdBlock && theMode.needsStdBlock()) {
                 return false;
             }
 
@@ -274,7 +291,7 @@ public abstract class GordianCipherSpec<T> {
                 if (theMode != null) {
                     theName += SEP + theMode.toString();
                 }
-                if (thePadding != null) {
+                if (thePadding != null && !GordianPadding.NONE.equals(thePadding)) {
                     theName += SEP + thePadding.toString();
                 }
             }

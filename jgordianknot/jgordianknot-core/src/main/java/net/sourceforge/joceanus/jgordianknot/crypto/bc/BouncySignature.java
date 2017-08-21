@@ -57,6 +57,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
@@ -545,9 +546,16 @@ public final class BouncySignature {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
+            /* Access the SPHINCS keyType */
+            final GordianSPHINCSKeyType myKeyType = pPrivateKey.getKeySpec().getSPHINCSType();
+
             /* Create the internal digests */
-            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
-            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
+            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                                                                 ? GordianDigestSpec.sha3(GordianLength.LEN_256)
+                                                                                                                 : GordianDigestSpec.sha2(GordianLength.LEN_256, true));
+            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                                                                ? GordianDigestSpec.sha3(GordianLength.LEN_512)
+                                                                                                                : GordianDigestSpec.sha2(GordianLength.LEN_512));
 
             /* Create the signer */
             theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());
@@ -587,9 +595,16 @@ public final class BouncySignature {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
+            /* Access the SPHINCS keyType */
+            final GordianSPHINCSKeyType myKeyType = pPublicKey.getKeySpec().getSPHINCSType();
+
             /* Create the internal digests */
-            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_256));
-            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianDigestSpec.sha3(GordianLength.LEN_512));
+            final BouncyDigest myTreeDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                                                                 ? GordianDigestSpec.sha3(GordianLength.LEN_256)
+                                                                                                                 : GordianDigestSpec.sha2(GordianLength.LEN_256, true));
+            final BouncyDigest myMsgDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
+                                                                                                                ? GordianDigestSpec.sha3(GordianLength.LEN_512)
+                                                                                                                : GordianDigestSpec.sha2(GordianLength.LEN_512));
 
             /* Create the signer */
             theSigner = new SPHINCS256Signer(myTreeDigest.getDigest(), myMsgDigest.getDigest());

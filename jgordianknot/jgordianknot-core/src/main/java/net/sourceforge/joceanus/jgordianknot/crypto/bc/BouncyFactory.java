@@ -33,9 +33,12 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.digests.Blake2bDigest;
+import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_512Digest;
+import org.bouncycastle.crypto.digests.MD2Digest;
+import org.bouncycastle.crypto.digests.MD4Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.RIPEMD128Digest;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
@@ -48,6 +51,7 @@ import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHA512tDigest;
+import org.bouncycastle.crypto.digests.SHAKEDigest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.digests.SkeinDigest;
 import org.bouncycastle.crypto.digests.TigerDigest;
@@ -61,6 +65,8 @@ import org.bouncycastle.crypto.engines.CamelliaEngine;
 import org.bouncycastle.crypto.engines.ChaCha7539Engine;
 import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.engines.DESedeEngine;
+import org.bouncycastle.crypto.engines.DSTU7624Engine;
+import org.bouncycastle.crypto.engines.GOST28147Engine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
 import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
@@ -85,8 +91,11 @@ import org.bouncycastle.crypto.engines.XTEAEngine;
 import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CMac;
+import org.bouncycastle.crypto.macs.DSTU7564Mac;
+import org.bouncycastle.crypto.macs.DSTU7624Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.macs.KGMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
@@ -96,7 +105,11 @@ import org.bouncycastle.crypto.modes.CCMBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.modes.CTSBlockCipher;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;
+import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
+import org.bouncycastle.crypto.modes.GOFBBlockCipher;
+import org.bouncycastle.crypto.modes.KCCMBlockCipher;
+import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.modes.OCBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
@@ -126,6 +139,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
@@ -178,11 +192,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public final class BouncyFactory
         extends GordianFactory {
     /**
-     * ThreeFish block size.
-     */
-    protected static final int THREEFISH_BLOCK = 256;
-
-    /**
      * Predicate for all digestTypes.
      */
     private static final Predicate<GordianDigestType> PREDICATE_DIGESTS;
@@ -208,9 +217,9 @@ public final class BouncyFactory
     private final Predicate<GordianSymKeyType> theSymPredicate;
 
     /**
-     * Predicate for all standard symKeyTypes.
+     * Predicate for all keySet symKeyTypes.
      */
-    private final Predicate<GordianSymKeyType> theStdSymPredicate;
+    private final Predicate<GordianSymKeyType> theKeySetSymPredicate;
 
     /**
      * Cache for KeyGenerators.
@@ -256,7 +265,7 @@ public final class BouncyFactory
         /* Generate the predicates */
         final boolean isRestricted = pParameters.useRestricted();
         theSymPredicate = generateSymKeyPredicate(isRestricted);
-        theStdSymPredicate = generateStdSymKeyPredicate(isRestricted);
+        theKeySetSymPredicate = generateKeySetSymKeyPredicate(isRestricted);
         theStreamPredicate = generateStreamKeyPredicate(isRestricted);
 
         /* Create the keyGenerator cache */
@@ -284,7 +293,7 @@ public final class BouncyFactory
 
     @Override
     public BouncyDigest createDigest(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        /* Check validity of DigestType */
+        /* Check validity of DigestSpec */
         if (!supportedDigestSpecs().test(pDigestSpec)) {
             throw new GordianDataException(getInvalidText(pDigestSpec));
         }
@@ -306,6 +315,12 @@ public final class BouncyFactory
 
     @Override
     public BouncyMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
+        /* Check validity of MacSpec */
+        if (!supportedMacSpecs().test(pMacSpec)) {
+            throw new GordianDataException(getInvalidText(pMacSpec));
+        }
+
+        /* Create Mac */
         final Mac myBCMac = getBCMac(pMacSpec);
         return new BouncyMac(this, pMacSpec, myBCMac);
     }
@@ -316,18 +331,22 @@ public final class BouncyFactory
     }
 
     @Override
-    public Predicate<GordianSymKeyType> supportedGMacSymKeyTypes() {
-        return theStdSymPredicate;
+    public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
+        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
+                    && supportedSymKeySpecs().test(p);
     }
 
     @Override
-    public Predicate<GordianSymKeyType> supportedCMacSymKeyTypes() {
-        return theSymPredicate;
+    public Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
+        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
+                    && supportedSymKeySpecs().test(p);
     }
 
     @Override
-    public Predicate<GordianSymKeyType> supportedPoly1305SymKeyTypes() {
-        return theStdSymPredicate;
+    public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
+        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
+                    && supportedSymKeySpecs().test(p)
+                    && p.getBlockLength() == GordianLength.LEN_128;
     }
 
     @Override
@@ -362,8 +381,8 @@ public final class BouncyFactory
     @Override
     public BouncySymKeyCipher createSymKeyCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        final GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!supportedSymKeyTypes().test(myKeyType)) {
+        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
+        if (!supportedSymKeySpecs().test(myKeySpec)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -380,8 +399,8 @@ public final class BouncyFactory
     @Override
     public BouncyAADCipher createAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of SymKey */
-        final GordianSymKeyType myKeyType = pCipherSpec.getKeyType();
-        if (!supportedSymKeyTypes().test(myKeyType)) {
+        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
+        if (!supportedSymKeySpecs().test(myKeySpec)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -402,7 +421,7 @@ public final class BouncyFactory
 
     @Override
     public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
-        return theStdSymPredicate;
+        return theKeySetSymPredicate;
     }
 
     @Override
@@ -424,14 +443,15 @@ public final class BouncyFactory
     }
 
     @Override
-    protected GordianWrapCipher createWrapCipher(final GordianSymKeyType pKeyType) throws OceanusException {
+    protected GordianWrapCipher createWrapCipher(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Check validity of SymKey */
-        if (!supportedSymKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
+        final GordianSymKeyType myKeyType = pKeySpec.getSymKeyType();
+        if (!supportedSymKeyTypes().test(myKeyType)) {
+            throw new GordianDataException(getInvalidText(pKeySpec));
         }
 
         /* Create the cipher */
-        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeyType, GordianPadding.NONE);
+        final GordianSymCipherSpec mySpec = GordianSymCipherSpec.ecb(pKeySpec, GordianPadding.NONE);
         final BouncySymKeyCipher myBCCipher = createSymKeyCipher(mySpec);
         return createWrapCipher(myBCCipher);
     }
@@ -530,10 +550,14 @@ public final class BouncyFactory
                 return getSkeinDigest(pDigestSpec.getStateLength(), myLen);
             case SHA3:
                 return getSHA3Digest(myLen);
+            case SHAKE:
+                return new SHAKEDigest(pDigestSpec.getStateLength().getLength());
             case BLAKE:
                 return getBlake2bDigest(myLen);
             case STREEBOG:
                 return getStreebogDigest(myLen);
+            case KUPYNA:
+                return getKupynaDigest(myLen);
             case GOST:
                 return new GOST3411Digest();
             case TIGER:
@@ -546,6 +570,10 @@ public final class BouncyFactory
                 return new SHA1Digest();
             case MD5:
                 return new MD5Digest();
+            case MD4:
+                return new MD4Digest();
+            case MD2:
+                return new MD2Digest();
             default:
                 throw new GordianDataException(getInvalidText(pDigestSpec.toString()));
         }
@@ -614,6 +642,15 @@ public final class BouncyFactory
     }
 
     /**
+     * Create the BouncyCastle Kupyna digest.
+     * @param pLength the digest length
+     * @return the digest
+     */
+    private static Digest getKupynaDigest(final GordianLength pLength) {
+        return new DSTU7564Digest(pLength.getLength());
+    }
+
+    /**
      * Create the BouncyCastle skeinDigest.
      * @param pStateLength the state length
      * @param pLength the digest length
@@ -646,13 +683,17 @@ public final class BouncyFactory
             case HMAC:
                 return getBCHMac(pMacSpec.getDigestSpec());
             case GMAC:
-                return getBCGMac(pMacSpec.getKeyType());
+                return getBCGMac(pMacSpec.getKeySpec());
             case CMAC:
-                return getBCCMac(pMacSpec.getKeyType());
+                return getBCCMac(pMacSpec.getKeySpec());
             case POLY1305:
-                return getBCPoly1305Mac(pMacSpec.getKeyType());
+                return getBCPoly1305Mac(pMacSpec.getKeySpec());
             case SKEIN:
                 return getBCSkeinMac(pMacSpec.getDigestSpec());
+            case KALYNA:
+                return getBCKalynaMac(pMacSpec.getKeySpec());
+            case KUPYNA:
+                return getBCKupynaMac(pMacSpec.getDigestSpec());
             case VMPC:
                 return getBCVMPCMac();
             default:
@@ -673,32 +714,34 @@ public final class BouncyFactory
 
     /**
      * Create the BouncyCastle GMac.
-     * @param pSymKeyType the SymKeyType
+     * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      * @throws OceanusException on error
      */
-    private Mac getBCGMac(final GordianSymKeyType pSymKeyType) throws OceanusException {
-        return new GMac(new GCMBlockCipher(getBCStdSymEngine(pSymKeyType)));
+    private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+        return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
+                                                                            ? new KGMac(new KGCMBlockCipher(getBCSymEngine(pSymKeySpec)))
+                                                                            : new GMac(new GCMBlockCipher(getBCSymEngine(pSymKeySpec)));
     }
 
     /**
      * Create the BouncyCastle CMac.
-     * @param pSymKeyType the SymKeyType
+     * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      * @throws OceanusException on error
      */
-    private static Mac getBCCMac(final GordianSymKeyType pSymKeyType) throws OceanusException {
-        return new CMac(getBCSymEngine(pSymKeyType));
+    private static Mac getBCCMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+        return new CMac(getBCSymEngine(pSymKeySpec));
     }
 
     /**
      * Create the BouncyCastle Poly1305Mac.
-     * @param pSymKeyType the SymKeyType
+     * @param pSymKeySpec the SymKeySpec
      * @return the MAC
      * @throws OceanusException on error
      */
-    private Mac getBCPoly1305Mac(final GordianSymKeyType pSymKeyType) throws OceanusException {
-        return new Poly1305(getBCStdSymEngine(pSymKeyType));
+    private static Mac getBCPoly1305Mac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+        return new Poly1305(getBCSymEngine(pSymKeySpec));
     }
 
     /**
@@ -708,6 +751,25 @@ public final class BouncyFactory
      */
     private static Mac getBCSkeinMac(final GordianDigestSpec pSpec) {
         return new SkeinMac(pSpec.getStateLength().getLength(), pSpec.getDigestLength().getLength());
+    }
+
+    /**
+     * Create the BouncyCastle KalynaMac.
+     * @param pSymKeySpec the SymKeySpec
+     * @return the MAC
+     */
+    private static Mac getBCKalynaMac(final GordianSymKeySpec pSymKeySpec) {
+        final GordianLength myLen = pSymKeySpec.getBlockLength();
+        return new DSTU7624Mac(myLen.getLength(), myLen.getLength());
+    }
+
+    /**
+     * Create the BouncyCastle kupynaMac.
+     * @param pSpec the digestSpec
+     * @return the MAC
+     */
+    private static Mac getBCKupynaMac(final GordianDigestSpec pSpec) {
+        return new DSTU7564Mac(pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -765,28 +827,13 @@ public final class BouncyFactory
     }
 
     /**
-     * Create the BouncyCastle Standard Cipher Engine.
-     * @param pKeyType the SymKeyType
-     * @return the Engine
-     * @throws OceanusException on error
-     */
-    private BlockCipher getBCStdSymEngine(final GordianSymKeyType pKeyType) throws OceanusException {
-        /* Check validity of SymKey */
-        if (!supportedKeySetSymKeyTypes().test(pKeyType)) {
-            throw new GordianDataException(getInvalidText(pKeyType));
-        }
-
-        return getBCSymEngine(pKeyType);
-    }
-
-    /**
      * Create the BouncyCastle Cipher Engine.
-     * @param pKeyType the SymKeyType
+     * @param pKeySpec the SymKeySpec
      * @return the Engine
      * @throws OceanusException on error
      */
-    private static BlockCipher getBCSymEngine(final GordianSymKeyType pKeyType) throws OceanusException {
-        switch (pKeyType) {
+    private static BlockCipher getBCSymEngine(final GordianSymKeySpec pKeySpec) throws OceanusException {
+        switch (pKeySpec.getSymKeyType()) {
             case AES:
                 return new AESEngine();
             case SERPENT:
@@ -802,7 +849,9 @@ public final class BouncyFactory
             case ARIA:
                 return new ARIAEngine();
             case THREEFISH:
-                return new ThreefishEngine(THREEFISH_BLOCK);
+                return new ThreefishEngine(pKeySpec.getBlockLength().getLength());
+            case KALYNA:
+                return new DSTU7624Engine(pKeySpec.getBlockLength().getLength());
             case SM4:
                 return new SM4Engine();
             case NOEKEON:
@@ -827,8 +876,10 @@ public final class BouncyFactory
                 return new CAST5Engine();
             case DESEDE:
                 return new DESedeEngine();
+            case GOST:
+                return new GOST28147Engine();
             default:
-                throw new GordianDataException(getInvalidText(pKeyType));
+                throw new GordianDataException(getInvalidText(pKeySpec));
         }
     }
 
@@ -849,9 +900,13 @@ public final class BouncyFactory
             case SIC:
                 return new SICBlockCipher(pEngine);
             case CFB:
-                return new CFBBlockCipher(pEngine, pEngine.getBlockSize());
+                return pEngine instanceof GOST28147Engine
+                                                          ? new GCFBBlockCipher(pEngine)
+                                                          : new CFBBlockCipher(pEngine, pEngine.getBlockSize());
             case OFB:
-                return new OFBBlockCipher(pEngine, pEngine.getBlockSize());
+                return pEngine instanceof GOST28147Engine
+                                                          ? new GOFBBlockCipher(pEngine)
+                                                          : new OFBBlockCipher(pEngine, pEngine.getBlockSize());
             default:
                 throw new GordianDataException(getInvalidText(pMode));
         }
@@ -864,16 +919,21 @@ public final class BouncyFactory
      * @throws OceanusException on error
      */
     private static AEADBlockCipher getBCAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
-        final GordianSymKeyType myType = pCipherSpec.getKeyType();
+        final GordianSymKeySpec mySpec = pCipherSpec.getKeyType();
+        final GordianSymKeyType myType = mySpec.getSymKeyType();
         switch (pCipherSpec.getCipherMode()) {
             case EAX:
-                return new EAXBlockCipher(getBCSymEngine(myType));
+                return new EAXBlockCipher(getBCSymEngine(mySpec));
             case CCM:
-                return new CCMBlockCipher(getBCSymEngine(myType));
+                return GordianSymKeyType.KALYNA.equals(myType)
+                                                               ? new KCCMBlockCipher(getBCSymEngine(mySpec))
+                                                               : new CCMBlockCipher(getBCSymEngine(mySpec));
             case GCM:
-                return new GCMBlockCipher(getBCSymEngine(myType));
+                return GordianSymKeyType.KALYNA.equals(myType)
+                                                               ? new KGCMBlockCipher(getBCSymEngine(mySpec))
+                                                               : new GCMBlockCipher(getBCSymEngine(mySpec));
             case OCB:
-                return new OCBBlockCipher(getBCSymEngine(myType), getBCSymEngine(myType));
+                return new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
             default:
                 throw new GordianDataException(getInvalidText(pCipherSpec));
         }
@@ -1073,8 +1133,8 @@ public final class BouncyFactory
      * @param pRestricted are keys restricted?
      * @return the predicate
      */
-    private static Predicate<GordianSymKeyType> generateStdSymKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted) && p.isStdBlock();
+    private static Predicate<GordianSymKeyType> generateKeySetSymKeyPredicate(final boolean pRestricted) {
+        return p -> p.validForRestriction(pRestricted) && p.isLengthValid(GordianLength.LEN_128);
     }
 
     /**
@@ -1104,7 +1164,7 @@ public final class BouncyFactory
      */
     private static int determineMaximumCipherSteps(final boolean pRestricted) {
         /* generate the predicate */
-        final Predicate<GordianSymKeyType> myFilter = generateStdSymKeyPredicate(pRestricted);
+        final Predicate<GordianSymKeyType> myFilter = generateKeySetSymKeyPredicate(pRestricted);
 
         /* Count valid values */
         int myCount = 0;

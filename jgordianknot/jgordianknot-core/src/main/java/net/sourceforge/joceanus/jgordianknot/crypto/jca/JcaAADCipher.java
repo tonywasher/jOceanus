@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAADCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -64,12 +64,12 @@ public class JcaAADCipher
     }
 
     @Override
-    public JcaKey<GordianSymKeyType> getKey() {
-        return (JcaKey<GordianSymKeyType>) super.getKey();
+    public JcaKey<GordianSymKeySpec> getKey() {
+        return (JcaKey<GordianSymKeySpec>) super.getKey();
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+    public void initCipher(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         /* Create a random IV */
         final byte[] myIV = new byte[AADIVLEN];
         getRandom().nextBytes(myIV);
@@ -79,11 +79,11 @@ public class JcaAADCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeyType> pKey,
+    public void initCipher(final GordianKey<GordianSymKeySpec> pKey,
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        final JcaKey<GordianSymKeyType> myJcaKey = JcaKey.accessKey(pKey);
+        final JcaKey<GordianSymKeySpec> myJcaKey = JcaKey.accessKey(pKey);
         checkValidKey(pKey);
 
         /* Access details */

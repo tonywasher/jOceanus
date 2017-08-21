@@ -270,18 +270,18 @@ public final class GordianKeySetHash {
             myPassBytes = TethysDataConverter.charsToByteArray(pPassword);
 
             /* Create the primeMac */
-            GordianMacSpec mySpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
-            final GordianMac myPrimeMac = theFactory.createMac(mySpec);
+            GordianMacSpec myMacSpec = GordianMacSpec.hMac(theRecipe.getPrimeDigest());
+            final GordianMac myPrimeMac = theFactory.createMac(myMacSpec);
             myPrimeMac.initMac(myPassBytes);
 
             /* Create the alternateMac */
-            mySpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
-            final GordianMac myAlternateMac = theFactory.createMac(mySpec);
+            myMacSpec = GordianMacSpec.hMac(theRecipe.getAlternateDigest());
+            final GordianMac myAlternateMac = theFactory.createMac(myMacSpec);
             myAlternateMac.initMac(myPassBytes);
 
             /* Create the secretMac */
-            mySpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
-            final GordianMac mySecretMac = theFactory.createMac(mySpec);
+            myMacSpec = GordianMacSpec.hMac(theRecipe.getSecretDigest());
+            final GordianMac mySecretMac = theFactory.createMac(myMacSpec);
             mySecretMac.initMac(myPassBytes);
 
             /* Initialise hash bytes and counter */
@@ -293,7 +293,8 @@ public final class GordianKeySetHash {
             final byte[] mySecretHash = new byte[mySecretMac.getMacSize()];
 
             /* Access final digest */
-            final GordianDigest myDigest = theFactory.createDigest(theFactory.getDefaultDigest());
+            final GordianDigestSpec myDigestSpec = new GordianDigestSpec(theRecipe.getExternalDigest(), GordianLength.LEN_512);
+            final GordianDigest myDigest = theFactory.createDigest(myDigestSpec);
 
             /* Initialise the hash input values as the salt bytes */
             final byte[] mySaltBytes = theRecipe.getInitVector();

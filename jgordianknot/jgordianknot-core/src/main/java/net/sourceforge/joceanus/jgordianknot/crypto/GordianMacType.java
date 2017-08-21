@@ -52,6 +52,16 @@ public enum GordianMacType {
     SKEIN,
 
     /**
+     * Kalyna.
+     */
+    KALYNA,
+
+    /**
+     * Kupyna.
+     */
+    KUPYNA,
+
+    /**
      * VMPC.
      */
     VMPC;

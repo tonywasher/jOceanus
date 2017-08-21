@@ -128,6 +128,15 @@ public class GordianSignatureSpec {
     }
 
     /**
+     * Create xmssSpec.
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec xmss(final GordianDigestSpec pDigestSpec) {
+        return new GordianSignatureSpec(GordianAsymKeyType.XMSS, pDigestSpec);
+    }
+
+    /**
      * Obtain the AsymKeyType.
      * @return the asymKeyType.
      */

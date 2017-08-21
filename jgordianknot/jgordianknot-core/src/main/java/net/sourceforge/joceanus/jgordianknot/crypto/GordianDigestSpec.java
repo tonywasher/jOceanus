@@ -91,8 +91,24 @@ public class GordianDigestSpec {
     }
 
     /**
+     * Create Md2DigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec md2() {
+        return new GordianDigestSpec(GordianDigestType.MD2);
+    }
+
+    /**
+     * Create Md4DigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec md4() {
+        return new GordianDigestSpec(GordianDigestType.MD4);
+    }
+
+    /**
      * Create Md5DigestSpec.
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec md5() {
         return new GordianDigestSpec(GordianDigestType.MD5);
@@ -100,7 +116,7 @@ public class GordianDigestSpec {
 
     /**
      * Create Sha1DigestSpec.
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec sha1() {
         return new GordianDigestSpec(GordianDigestType.SHA1);
@@ -108,7 +124,7 @@ public class GordianDigestSpec {
 
     /**
      * Create sm3DigestSpec.
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec sm3() {
         return new GordianDigestSpec(GordianDigestType.SM3);
@@ -116,7 +132,7 @@ public class GordianDigestSpec {
 
     /**
      * Create WhirlpoolDigestSpec.
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec whirlpool() {
         return new GordianDigestSpec(GordianDigestType.WHIRLPOOL);
@@ -124,7 +140,7 @@ public class GordianDigestSpec {
 
     /**
      * Create TigerDigestSpec.
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec tiger() {
         return new GordianDigestSpec(GordianDigestType.TIGER);
@@ -133,7 +149,7 @@ public class GordianDigestSpec {
     /**
      * Create sha2DigestSpec.
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec sha2(final GordianLength pLength) {
         return sha2(pLength, false);
@@ -143,7 +159,7 @@ public class GordianDigestSpec {
      * Create sha2DigestSpec.
      * @param pLength the length
      * @param useExtended use extended state
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec sha2(final GordianLength pLength,
                                          final boolean useExtended) {
@@ -155,7 +171,7 @@ public class GordianDigestSpec {
     /**
      * Create sha3DigestSpec.
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec sha3(final GordianLength pLength) {
         return new GordianDigestSpec(GordianDigestType.SHA3, pLength);
@@ -164,7 +180,7 @@ public class GordianDigestSpec {
     /**
      * Create blakeDigestSpec.
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec blake(final GordianLength pLength) {
         return new GordianDigestSpec(GordianDigestType.BLAKE, pLength);
@@ -173,7 +189,7 @@ public class GordianDigestSpec {
     /**
      * Create gostDigestSpec.
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec gost(final GordianLength pLength) {
         return new GordianDigestSpec(GordianDigestType.GOST, pLength);
@@ -182,7 +198,7 @@ public class GordianDigestSpec {
     /**
      * Create skeinDigestSpec.
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec skein(final GordianLength pLength) {
         return skein(pLength, false);
@@ -192,7 +208,7 @@ public class GordianDigestSpec {
      * Create skeinDigestSpec.
      * @param pLength the length
      * @param useExtended use extended state
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec skein(final GordianLength pLength,
                                           final boolean useExtended) {
@@ -205,7 +221,7 @@ public class GordianDigestSpec {
      * Create skeinDigestSpec.
      * @param pStateLength the state length
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     protected static GordianDigestSpec skein(final GordianLength pStateLength,
                                              final GordianLength pLength) {
@@ -215,10 +231,28 @@ public class GordianDigestSpec {
     /**
      * Create sha2DigestSpec.
      * @param pLength the length
-     * @return the MacSpec
+     * @return the DigestSpec
      */
     public static GordianDigestSpec ripemd(final GordianLength pLength) {
         return new GordianDigestSpec(GordianDigestType.RIPEMD, pLength);
+    }
+
+    /**
+     * Create shakeDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec shake(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.SHAKE, pLength);
+    }
+
+    /**
+     * Create shakeDigestSpec.
+     * @param pLength the length
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec kupyna(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.KUPYNA, pLength);
     }
 
     /**
@@ -245,16 +279,43 @@ public class GordianDigestSpec {
         return theLength;
     }
 
+    /**
+     * Is this a hybrid state.
+     * @return true/false
+     */
+    public boolean isHybrid() {
+        return theStateLength != null && theStateLength != theLength;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
             theName = theDigestType.toString();
-            if (theStateLength != null) {
-                theName += SEP + Integer.toString(theStateLength.getLength());
+            switch (theDigestType) {
+                case SHA2:
+                    if (theStateLength != null) {
+                        theName += SEP + Integer.toString(theStateLength.getLength());
+                    }
+                    theName += SEP + Integer.toString(theLength.getLength());
+                    break;
+                case SHAKE:
+                    if (theStateLength != theLength) {
+                        theName += SEP + Integer.toString(theStateLength.getLength());
+                    }
+                    theName += SEP + Integer.toString(theLength.getLength());
+                    break;
+                case SKEIN:
+                    theName += SEP + Integer.toString(theStateLength.getLength());
+                    theName += SEP + Integer.toString(theLength.getLength());
+                    break;
+                default:
+                    if (theDigestType.getSupportedLengths().length > 1) {
+                        theName += SEP + Integer.toString(theLength.getLength());
+                    }
+                    break;
             }
-            theName += SEP + Integer.toString(theLength.getLength());
         }
 
         /* return the name */

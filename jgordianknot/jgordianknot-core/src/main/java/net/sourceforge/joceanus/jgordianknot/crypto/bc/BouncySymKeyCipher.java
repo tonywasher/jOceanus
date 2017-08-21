@@ -33,14 +33,14 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Cipher for BouncyCastle Symmetric Ciphers.
  */
 public final class BouncySymKeyCipher
-        extends GordianCipher<GordianSymKeyType> {
+        extends GordianCipher<GordianSymKeySpec> {
     /**
      * Cipher.
      */
@@ -60,8 +60,8 @@ public final class BouncySymKeyCipher
     }
 
     @Override
-    public BouncyKey<GordianSymKeyType> getKey() {
-        return (BouncyKey<GordianSymKeyType>) super.getKey();
+    public BouncyKey<GordianSymKeySpec> getKey() {
+        return (BouncyKey<GordianSymKeySpec>) super.getKey();
     }
 
     @Override
@@ -78,7 +78,7 @@ public final class BouncySymKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+    public void initCipher(final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         /* IV bytes */
         byte[] myIV = null;
 
@@ -95,11 +95,11 @@ public final class BouncySymKeyCipher
     }
 
     @Override
-    public void initCipher(final GordianKey<GordianSymKeyType> pKey,
+    public void initCipher(final GordianKey<GordianSymKeySpec> pKey,
                            final byte[] pIV,
                            final boolean pEncrypt) throws OceanusException {
         /* Access and validate the key */
-        final BouncyKey<GordianSymKeyType> myKey = BouncyKey.accessKey(pKey);
+        final BouncyKey<GordianSymKeySpec> myKey = BouncyKey.accessKey(pKey);
         checkValidKey(pKey);
         final boolean useIV = needsIV();
 

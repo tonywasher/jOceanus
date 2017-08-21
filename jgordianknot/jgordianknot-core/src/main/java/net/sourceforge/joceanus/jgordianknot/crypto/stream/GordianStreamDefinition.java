@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -301,17 +301,17 @@ public final class GordianStreamDefinition {
                                                final InputStream pCurrent) throws OceanusException {
         /* Parse the TypeId */
         final GordianSymCipherSpec mySpec = pKeySet.deriveTypeFromExternalId(theTypeId, GordianSymCipherSpec.class);
-        final GordianSymKeyType myType = mySpec.getKeyType();
+        final GordianSymKeySpec myKeySpec = mySpec.getKeyType();
 
         /* Generate the Cipher */
         final GordianFactory myFactory = pKeySet.getFactory();
-        final GordianCipher<GordianSymKeyType> myCipher = myFactory.createSymKeyCipher(mySpec);
-        final GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(myType);
-        final GordianKey<GordianSymKeyType> myKey = myGenerator.deriveKey(theTypeDefinition, pKeySet);
+        final GordianCipher<GordianSymKeySpec> myCipher = myFactory.createSymKeyCipher(mySpec);
+        final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(myKeySpec);
+        final GordianKey<GordianSymKeySpec> myKey = myGenerator.deriveKey(theTypeDefinition, pKeySet);
         myCipher.initCipher(myKey, theInitVector, false);
 
         /* Create the stream */
-        return new GordianCipherInputStream<GordianSymKeyType>(myCipher, pCurrent);
+        return new GordianCipherInputStream<GordianSymKeySpec>(myCipher, pCurrent);
     }
 
     /**

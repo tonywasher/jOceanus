@@ -153,7 +153,7 @@ public abstract class GordianKeyGenerator<T> {
      * @throws OceanusException on error
      */
     public byte[] secureKey(final GordianKey<?> pKeyToSecure,
-                            final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+                            final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         final GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
         return myCipher.secureKey(pKey, pKeyToSecure);
     }
@@ -178,7 +178,7 @@ public abstract class GordianKeyGenerator<T> {
      * @throws OceanusException on error
      */
     public GordianKey<T> deriveKey(final byte[] pSecuredKey,
-                                   final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+                                   final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         final GordianWrapCipher myCipher = theFactory.createWrapCipher(pKey.getKeyType());
         return myCipher.deriveKey(pKey, pSecuredKey, theKeyType);
     }

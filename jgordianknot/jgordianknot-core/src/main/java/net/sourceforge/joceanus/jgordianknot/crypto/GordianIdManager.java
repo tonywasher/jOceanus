@@ -62,6 +62,11 @@ public class GordianIdManager {
     private static final int LOC_DIGEST = 17;
 
     /**
+     * The External Digest personalisation location.
+     */
+    private static final int LOC_XDIGEST = 17;
+
+    /**
      * The KeySet Digest personalisation location.
      */
     private static final int LOC_KEYSETDIGEST = 19;
@@ -80,6 +85,11 @@ public class GordianIdManager {
      * The Cipher personalisation location.
      */
     private static final int LOC_CIPHER = 29;
+
+    /**
+     * The Recipe personalisation location.
+     */
+    private static final int LOC_RECIPE = 37;
 
     /**
      * The SecureRandom.
@@ -127,6 +137,11 @@ public class GordianIdManager {
     private final GordianDigestType[] theDigests;
 
     /**
+     * The list of external Digests.
+     */
+    private final GordianDigestType[] theExternalDigests;
+
+    /**
      * The list of keySetDigests.
      */
     private final GordianDigestType[] theKeySetDigests;
@@ -140,6 +155,11 @@ public class GordianIdManager {
      * The list of MACs.
      */
     private final GordianMacType[] theMacs;
+
+    /**
+     * The recipe mask.
+     */
+    private final int theRecipeMask;
 
     /**
      * Constructor.
@@ -156,12 +176,16 @@ public class GordianIdManager {
         theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeyTypes());
         theKeySetStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_KEYSETSTREAM, pFactory.supportedKeySetStreamKeyTypes());
         theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigestTypes());
+        theExternalDigests = shuffleTypes(GordianDigestType.values(), LOC_XDIGEST, pFactory.supportedExternalDigestTypes());
         theKeySetDigests = shuffleTypes(GordianDigestType.values(), LOC_KEYSETDIGEST, pFactory.supportedKeySetDigestTypes());
         theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigestTypes());
         theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacTypes());
 
         /* Determine the cipher indentation */
         theCipherIndent = getPersonalisedByte(LOC_CIPHER) & TethysDataConverter.NYBBLE_MASK;
+
+        /* Obtain the recipe mask */
+        theRecipeMask = getPersonalisedInteger(LOC_RECIPE);
     }
 
     /**
@@ -170,6 +194,15 @@ public class GordianIdManager {
      */
     protected int getCipherIndentation() {
         return theCipherIndent;
+    }
+
+    /**
+     * Convert the recipe.
+     * @param pRecipe the recipe
+     * @return the converted recipe
+     */
+    protected int convertRecipe(final int pRecipe) {
+        return pRecipe ^ theRecipeMask;
     }
 
     /**
@@ -193,10 +226,10 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain random standard SymKeyType.
+     * Obtain random keySet SymKeyType.
      * @return the random symKeyType
      */
-    private GordianSymKeyType generateRandomStdSymKeyType() {
+    private GordianSymKeyType generateRandomKeySetSymKeyType() {
         /* Determine a random symKey */
         final GordianSymKeyType[] mySymKey = getRandomTypes(theKeySetSymKeys, 1);
 
@@ -205,35 +238,54 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain set of random SymKeyTypes.
+     * Obtain set of random keySet SymKeyTypes.
      * @param pCount the count
      * @return the random symKeyTypes
      */
-    protected GordianSymKeyType[] generateRandomSymKeyTypes(final int pCount) {
+    protected GordianSymKeyType[] generateRandomKeySetSymKeyTypes(final int pCount) {
         /* Determine random symKeyTypes */
         return getRandomTypes(theKeySetSymKeys, pCount);
     }
 
     /**
-     * Derive set of standard SymKeyTypes from seed.
+     * Derive set of keySet SymKeyTypes from seed.
      * @param pSeed the seed
      * @param pKeyTypes the array of symKeyTypes to be filled in
      * @return the remaining seed
      */
-    protected int deriveSymKeyTypesFromSeed(final int pSeed,
-                                            final GordianSymKeyType[] pKeyTypes) {
+    protected int deriveKeySetSymKeyTypesFromSeed(final int pSeed,
+                                                  final GordianSymKeyType[] pKeyTypes) {
         return getSeededTypes(theKeySetSymKeys, pKeyTypes, pSeed);
     }
 
     /**
-     * Obtain symKeyType from external SymKeyId.
+     * Obtain symKeySpec from external SymKeySpecId.
      * @param pExternalId the external id
-     * @return the symKeyType
+     * @return the symKeySpec
      * @throws OceanusException on error
      */
-    private GordianSymKeyType deriveSymKeyTypeFromExternalId(final long pExternalId) throws OceanusException {
+    private GordianSymKeySpec deriveSymKeySpecFromExternalId(final long pExternalId) throws OceanusException {
         final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-        return deriveSymKeyTypeFromEncodedId(myEncoded);
+        return deriveSymKeySpecFromEncodedId(myEncoded);
+    }
+
+    /**
+     * Obtain digestSpec from encodedId.
+     * @param pEncodedId the encoded id
+     * @return the digestSpec
+     * @throws OceanusException on error
+     */
+    private GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
+        /* Isolate id Components */
+        final int myId = pEncodedId & TethysDataConverter.BYTE_MASK;
+        final int myLenCode = pEncodedId >> TethysDataConverter.BYTE_SHIFT;
+
+        /* Translate components */
+        final GordianSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);
+        final GordianLength myLength = deriveLengthFromEncodedId(myLenCode);
+
+        /* Create SymKeySpec */
+        return new GordianSymKeySpec(myType, myLength);
     }
 
     /**
@@ -248,13 +300,26 @@ public class GordianIdManager {
 
     /**
      * Obtain external SymKeyId.
-     * @param pKey the symKeyType
+     * @param pKeySpec the symKeySpec
      * @return the external id
      * @throws OceanusException on error
      */
-    private long deriveExternalIdFromSymKeyType(final GordianSymKeyType pKey) throws OceanusException {
-        final int myEncoded = deriveEncodedIdFromSymKeyType(pKey);
+    private long deriveExternalIdFromSymKeySpec(final GordianSymKeySpec pKeySpec) throws OceanusException {
+        final int myEncoded = deriveEncodedIdFromSymKeySpec(pKeySpec);
         return TethysDataConverter.knuthEncode(myEncoded);
+    }
+
+    /**
+     * Obtain encoded SymKeySpecId.
+     * @param pSymKeySpec the digestSpec
+     * @return the encoded id
+     * @throws OceanusException on error
+     */
+    private int deriveEncodedIdFromSymKeySpec(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+        int myCode = deriveEncodedIdFromSymKeyType(pSymKeySpec.getSymKeyType());
+        final int myLenCode = deriveEncodedIdFromLength(pSymKeySpec.getBlockLength());
+        myCode += myLenCode << TethysDataConverter.BYTE_SHIFT;
+        return myCode;
     }
 
     /**
@@ -357,19 +422,7 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain random keyHashDigestType.
-     * @return the random digestType
-     */
-    protected GordianDigestType generateRandomKeyHashDigestType() {
-        /* Determine a random digestType */
-        final GordianDigestType[] myDigest = getRandomTypes(theKeySetDigests, 1);
-
-        /* Return the single digestType */
-        return myDigest[0];
-    }
-
-    /**
-     * Derive set of standard keyHashDigestTypes from seed.
+     * Derive set of keyHashDigestTypes from seed.
      * @param pSeed the seed
      * @param pDigestTypes the array of digestTypes to be filled in
      * @return the remaining seed
@@ -377,6 +430,17 @@ public class GordianIdManager {
     protected int deriveKeyHashDigestTypesFromSeed(final int pSeed,
                                                    final GordianDigestType[] pDigestTypes) {
         return getSeededTypes(theKeySetDigests, pDigestTypes, pSeed);
+    }
+
+    /**
+     * Derive set of standard externalDigestTypes from seed.
+     * @param pSeed the seed
+     * @param pDigestTypes the array of digestTypes to be filled in
+     * @return the remaining seed
+     */
+    protected int deriveExternalDigestTypesFromSeed(final int pSeed,
+                                                    final GordianDigestType[] pDigestTypes) {
+        return getSeededTypes(theExternalDigests, pDigestTypes, pSeed);
     }
 
     /**
@@ -398,8 +462,8 @@ public class GordianIdManager {
      */
     private GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        final int myId = pEncodedId & TethysDataConverter.NYBBLE_MASK;
-        int myLenCode = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myId = pEncodedId & TethysDataConverter.BYTE_MASK;
+        int myLenCode = pEncodedId >> TethysDataConverter.BYTE_SHIFT;
         final int myStateCode = myLenCode >> TethysDataConverter.NYBBLE_SHIFT;
         myLenCode &= TethysDataConverter.NYBBLE_MASK;
 
@@ -439,7 +503,7 @@ public class GordianIdManager {
                                         : deriveEncodedIdFromLength(myState);
         myLenCode <<= TethysDataConverter.NYBBLE_SHIFT;
         myLenCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
-        myCode += myLenCode << TethysDataConverter.NYBBLE_SHIFT;
+        myCode += myLenCode << TethysDataConverter.BYTE_SHIFT;
         return myCode;
     }
 
@@ -476,10 +540,14 @@ public class GordianIdManager {
             case POLY1305:
             case GMAC:
             case CMAC:
-                final GordianSymKeyType mySymType = generateRandomStdSymKeyType();
-                return new GordianMacSpec(myMacType, mySymType);
+                final GordianSymKeyType mySymType = generateRandomKeySetSymKeyType();
+                return new GordianMacSpec(myMacType, new GordianSymKeySpec(mySymType));
             case SKEIN:
-                return GordianMacSpec.skeinMac(GordianLength.LEN_512);
+                return GordianMacSpec.skeinMac();
+            case KUPYNA:
+                return GordianMacSpec.kupynaMac();
+            case KALYNA:
+                return GordianMacSpec.kalynaMac();
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -521,10 +589,14 @@ public class GordianIdManager {
             case GMAC:
             case CMAC:
             case POLY1305:
-                return new GordianMacSpec(myMacType, deriveSymKeyTypeFromEncodedId(myCode));
+            case KALYNA:
+                return new GordianMacSpec(myMacType, deriveSymKeySpecFromEncodedId(myCode));
             case SKEIN:
-                final GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myCode);
+                GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.skeinMac(mySpec.getStateLength(), mySpec.getDigestLength());
+            case KUPYNA:
+                mySpec = deriveDigestSpecFromEncodedId(myCode);
+                return GordianMacSpec.kupynaMac(mySpec.getDigestLength());
             default:
                 return new GordianMacSpec(myMacType);
         }
@@ -545,12 +617,14 @@ public class GordianIdManager {
         switch (myMacType) {
             case HMAC:
             case SKEIN:
+            case KUPYNA:
                 myCode += deriveEncodedIdFromDigestSpec(pMacSpec.getDigestSpec()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             case GMAC:
             case CMAC:
             case POLY1305:
-                myCode += deriveEncodedIdFromSymKeyType(pMacSpec.getKeyType()) << TethysDataConverter.NYBBLE_SHIFT;
+            case KALYNA:
+                myCode += deriveEncodedIdFromSymKeySpec(pMacSpec.getKeySpec()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;
             default:
                 break;
@@ -591,18 +665,18 @@ public class GordianIdManager {
         final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
 
         /* Isolate id Components */
-        final int myId = myEncoded & TethysDataConverter.NYBBLE_MASK;
-        int myModeCode = myEncoded >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myId = myEncoded & TethysDataConverter.BYTE_MASK;
+        int myModeCode = myEncoded >> TethysDataConverter.BYTE_SHIFT;
         final int myPaddingCode = myModeCode >> TethysDataConverter.NYBBLE_SHIFT;
         myModeCode &= TethysDataConverter.NYBBLE_MASK;
 
         /* Determine KeyType */
-        final GordianSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);
+        final GordianSymKeySpec mySpec = deriveSymKeySpecFromEncodedId(myId);
         final GordianCipherMode myMode = deriveCipherModeFromEncodedId(myModeCode);
         final GordianPadding myPadding = derivePaddingFromEncodedId(myPaddingCode);
 
         /* Switch on the MacType */
-        return new GordianSymCipherSpec(myType, myMode, myPadding);
+        return new GordianSymCipherSpec(mySpec, myMode, myPadding);
     }
 
     /**
@@ -631,8 +705,8 @@ public class GordianIdManager {
         int myCode = deriveEncodedIdFromPadding(pCipherSpec.getPadding());
         myCode <<= TethysDataConverter.NYBBLE_SHIFT;
         myCode += deriveEncodedIdFromCipherMode(pCipherSpec.getCipherMode());
-        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
-        myCode += deriveEncodedIdFromSymKeyType(pCipherSpec.getKeyType());
+        myCode <<= TethysDataConverter.BYTE_SHIFT;
+        myCode += deriveEncodedIdFromSymKeySpec(pCipherSpec.getKeyType());
 
         /* Return the code */
         return TethysDataConverter.knuthEncode(myCode);
@@ -749,8 +823,8 @@ public class GordianIdManager {
         if (GordianMacSpec.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveMacSpecFromExternalId(pId));
         }
-        if (GordianSymKeyType.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveSymKeyTypeFromExternalId(pId));
+        if (GordianSymKeySpec.class.equals(pTypeClass)) {
+            return pTypeClass.cast(deriveSymKeySpecFromExternalId(pId));
         }
         if (GordianStreamKeyType.class.equals(pTypeClass)) {
             return pTypeClass.cast(deriveStreamKeyTypeFromExternalId(pId));
@@ -778,8 +852,8 @@ public class GordianIdManager {
         if (GordianMacSpec.class.isInstance(pType)) {
             return deriveExternalIdFromMacSpec((GordianMacSpec) pType);
         }
-        if (GordianSymKeyType.class.isInstance(pType)) {
-            return deriveExternalIdFromSymKeyType((GordianSymKeyType) pType);
+        if (GordianSymKeySpec.class.isInstance(pType)) {
+            return deriveExternalIdFromSymKeySpec((GordianSymKeySpec) pType);
         }
         if (GordianStreamKeyType.class.isInstance(pType)) {
             return deriveExternalIdFromStreamKeyType((GordianStreamKeyType) pType);
@@ -980,17 +1054,30 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain integer from personalisation.
+     * Obtain mask from personalisation.
      * @param pOffSet the offset within the array
      * @return the result
      */
-    private int getPersonalisedInteger(final int pOffSet) {
+    private int getPersonalisedMask(final int pOffSet) {
         /* Loop to obtain the personalised byte */
         int myVal = 0;
         for (int i = 0, myOffSet = pOffSet; i < Integer.BYTES; i++, myOffSet++) {
             myVal <<= Byte.SIZE;
             myVal |= getPersonalisedByte(myOffSet);
         }
+
+        /* Return the value */
+        return myVal;
+    }
+
+    /**
+     * Obtain integer from personalisation.
+     * @param pOffSet the offset within the array
+     * @return the result
+     */
+    private int getPersonalisedInteger(final int pOffSet) {
+        /* Loop to obtain the personalised byte */
+        final int myVal = getPersonalisedMask(pOffSet);
 
         /* Ensure that the value is positive */
         return myVal < 0

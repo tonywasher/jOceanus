@@ -34,7 +34,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * Number of digests.
      */
-    private static final int NUM_DIGESTS = 3;
+    public static final int NUM_DIGESTS = 3;
 
     /**
      * Recipe length (Integer).
@@ -49,7 +49,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * InitVector length.
      */
-    protected static final int INITVECTORLEN = 32;
+    public static final int INITVECTORLEN = 32;
 
     /**
      * The Recipe.
@@ -153,6 +153,14 @@ public final class GordianKeySetHashRecipe {
     }
 
     /**
+     * Obtain the External Digest type.
+     * @return the digest type
+     */
+    protected GordianDigestType getExternalDigest() {
+        return theParams.getExternalDigest();
+    }
+
+    /**
      * Obtain the Adjustment.
      * @return the adjustment
      */
@@ -224,9 +232,14 @@ public final class GordianKeySetHashRecipe {
         private final byte[] theRecipe;
 
         /**
-         * The Digest types.
+         * The hMac types.
          */
         private final GordianDigestType[] theDigests;
+
+        /**
+         * The external Digest types.
+         */
+        private final GordianDigestType[] theExternalDigest;
 
         /**
          * The Adjustment.
@@ -237,16 +250,21 @@ public final class GordianKeySetHashRecipe {
          * Construct the parameters from random.
          * @param pFactory the factory
          */
-        private HashParameters(final GordianFactory pFactory) {
+        protected HashParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
             final SecureRandom myRandom = pFactory.getRandom();
 
+            /* Allocate the arrays */
+            theExternalDigest = new GordianDigestType[1];
+            theDigests = new GordianDigestType[NUM_DIGESTS];
+
             /* Generate recipe and derive digestTypes */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            theDigests = new GordianDigestType[NUM_DIGESTS];
+            mySeed = myManager.convertRecipe(mySeed);
             mySeed = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigests);
+            mySeed = myManager.deriveExternalDigestTypesFromSeed(mySeed, theExternalDigest);
 
             /* Derive random adjustment value */
             theAdjust = mySeed & TethysDataConverter.NYBBLE_MASK;
@@ -257,16 +275,21 @@ public final class GordianKeySetHashRecipe {
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
          */
-        private HashParameters(final GordianFactory pFactory,
-                               final byte[] pRecipe) {
+        protected HashParameters(final GordianFactory pFactory,
+                                 final byte[] pRecipe) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
+
+            /* Allocate the arrays */
+            theExternalDigest = new GordianDigestType[1];
+            theDigests = new GordianDigestType[NUM_DIGESTS];
 
             /* Store recipe and derive symKeyTypes */
             theRecipe = pRecipe;
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            theDigests = new GordianDigestType[NUM_DIGESTS];
+            mySeed = myManager.convertRecipe(mySeed);
             mySeed = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigests);
+            mySeed = myManager.deriveExternalDigestTypesFromSeed(mySeed, theExternalDigest);
 
             /* Derive random adjustment value */
             theAdjust = mySeed & TethysDataConverter.NYBBLE_MASK;
@@ -302,6 +325,14 @@ public final class GordianKeySetHashRecipe {
          */
         public GordianDigestType getSecretDigest() {
             return theDigests[2];
+        }
+
+        /**
+         * Obtain the external Digest type.
+         * @return the digest type
+         */
+        public GordianDigestType getExternalDigest() {
+            return theExternalDigest[0];
         }
 
         /**

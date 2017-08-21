@@ -41,7 +41,7 @@ public final class GordianAsymKeySpec {
     /**
      * The SubKeyType.
      */
-    private final Enum<?> theSubKeyType;
+    private final Object theSubKeyType;
 
     /**
      * The String name.
@@ -54,7 +54,7 @@ public final class GordianAsymKeySpec {
      * @param pSubKeyType the subKeyType
      */
     private GordianAsymKeySpec(final GordianAsymKeyType pKeyType,
-                               final Enum<?> pSubKeyType) {
+                               final Object pSubKeyType) {
         theKeyType = pKeyType;
         theSubKeyType = pSubKeyType;
     }
@@ -139,6 +139,15 @@ public final class GordianAsymKeySpec {
     }
 
     /**
+     * Create xmssKey.
+     * @param pKeySpec the xmss keyType
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec xmss(final GordianXMSSKeySpec pKeySpec) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, pKeySpec);
+    }
+
+    /**
      * Obtain the keyType.
      * @return the keyType.
      */
@@ -212,6 +221,16 @@ public final class GordianAsymKeySpec {
         return theSubKeyType instanceof GordianMcElieceKeyType
                                                                ? (GordianMcElieceKeyType) theSubKeyType
                                                                : null;
+    }
+
+    /**
+     * Obtain the XMSS keySpec.
+     * @return the keySpec.
+     */
+    public GordianXMSSKeySpec getXMSSKeySpec() {
+        return theSubKeyType instanceof GordianXMSSKeySpec
+                                                           ? (GordianXMSSKeySpec) theSubKeyType
+                                                           : null;
     }
 
     @Override

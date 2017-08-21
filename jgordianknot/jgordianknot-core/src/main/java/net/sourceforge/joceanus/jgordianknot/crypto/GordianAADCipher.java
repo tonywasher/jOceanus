@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * GordianKnot base for AAD Cipher.
  */
 public abstract class GordianAADCipher
-        extends GordianCipher<GordianSymKeyType> {
+        extends GordianCipher<GordianSymKeySpec> {
     /**
      * The IV length.
      */

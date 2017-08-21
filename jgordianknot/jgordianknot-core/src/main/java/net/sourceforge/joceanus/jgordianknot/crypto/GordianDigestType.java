@@ -47,7 +47,7 @@ public enum GordianDigestType {
     RIPEMD(GordianLength.LEN_320, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_256),
 
     /**
-     * GOST.
+     * GOST2012.
      */
     STREEBOG(GordianLength.LEN_512, GordianLength.LEN_256),
 
@@ -62,9 +62,19 @@ public enum GordianDigestType {
     SHA3(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
 
     /**
+     * SHAKE.
+     */
+    SHAKE(GordianLength.LEN_256, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_384, GordianLength.LEN_512),
+
+    /**
      * Skein.
      */
     SKEIN(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384, GordianLength.LEN_1024),
+
+    /**
+     * Kupyna.
+     */
+    KUPYNA(GordianLength.LEN_512, GordianLength.LEN_256, GordianLength.LEN_384),
 
     /**
      * SM3.
@@ -84,7 +94,17 @@ public enum GordianDigestType {
     /**
      * MD5.
      */
-    MD5(GordianLength.LEN_128);
+    MD5(GordianLength.LEN_128),
+
+    /**
+     * MD4.
+     */
+    MD4(GordianLength.LEN_128),
+
+    /**
+     * MD2.
+     */
+    MD2(GordianLength.LEN_128);
 
     /**
      * The Supported lengths.
@@ -158,6 +178,9 @@ public enum GordianDigestType {
             case SHA2:
                 return pStateLength == null
                        || pStateLength.equals(pLength.getSha2ExtendedState());
+            case SHAKE:
+                return pStateLength != null
+                       && pStateLength.equals(pLength.getSHAKEState());
             case SKEIN:
                 return pStateLength != null
                        && (pStateLength.equals(pLength.getSkeinState())
@@ -168,14 +191,19 @@ public enum GordianDigestType {
     }
 
     /**
-     * Does this digest have an extended state for this length?
+     * Does this digest have a state for this length?
      * @param pLength the length
      * @return true/false
      */
     public GordianLength getStateForLength(final GordianLength pLength) {
-        return GordianDigestType.SKEIN.equals(this)
-                                                    ? pLength.getSkeinState()
-                                                    : null;
+        switch (this) {
+            case SKEIN:
+                return pLength.getSkeinState();
+            case SHAKE:
+                return pLength.getSHAKEState();
+            default:
+                return null;
+        }
     }
 
     /**

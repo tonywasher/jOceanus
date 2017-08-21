@@ -26,7 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGeneratorCache;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 
 /**
  * Cache for Jca BouncyCastle Classes.
@@ -41,8 +41,8 @@ public class JcaKeyGeneratorCache
      */
     @SuppressWarnings("unchecked")
     protected <T> JcaKeyGenerator<T> getCachedKeyGenerator(final T pKeyType) {
-        if (pKeyType instanceof GordianSymKeyType) {
-            return (JcaKeyGenerator<T>) getCachedSymKeyGenerator((GordianSymKeyType) pKeyType);
+        if (pKeyType instanceof GordianSymKeySpec) {
+            return (JcaKeyGenerator<T>) getCachedSymKeyGenerator((GordianSymKeySpec) pKeyType);
         }
         if (pKeyType instanceof GordianStreamKeyType) {
             return (JcaKeyGenerator<T>) getCachedStreamKeyGenerator((GordianStreamKeyType) pKeyType);
@@ -66,8 +66,8 @@ public class JcaKeyGeneratorCache
     @SuppressWarnings("unchecked")
     protected <T> void cacheKeyGenerator(final JcaKeyGenerator<T> pGenerator) {
         final T myKeyType = pGenerator.getKeyType();
-        if (myKeyType instanceof GordianSymKeyType) {
-            addToSymKeyCache((JcaKeyGenerator<GordianSymKeyType>) pGenerator);
+        if (myKeyType instanceof GordianSymKeySpec) {
+            addToSymKeyCache((JcaKeyGenerator<GordianSymKeySpec>) pGenerator);
         } else if (myKeyType instanceof GordianStreamKeyType) {
             addToStreamKeyCache((JcaKeyGenerator<GordianStreamKeyType>) pGenerator);
         } else if (myKeyType instanceof GordianMacSpec) {

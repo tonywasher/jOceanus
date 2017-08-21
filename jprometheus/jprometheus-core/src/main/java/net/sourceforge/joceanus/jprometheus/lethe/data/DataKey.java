@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
@@ -251,8 +252,9 @@ public class DataKey
 
             /* Create the new key */
             final GordianFactory myFactory = myKeySet.getFactory();
-            final GordianKeyGenerator<GordianSymKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
-            final GordianKey<GordianSymKeyType> myKey = myGenerator.generateKey();
+            final GordianSymKeySpec myKeySpec = new GordianSymKeySpec(pKeyType);
+            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(myKeySpec);
+            final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
             setValueDataKey(myKey);
 
             /* Store its secured keyDef */
@@ -408,7 +410,7 @@ public class DataKey
      * Get the SymKey.
      * @return the symKey
      */
-    protected GordianKey<GordianSymKeyType> getSymKey() {
+    protected GordianKey<GordianSymKeySpec> getSymKey() {
         return getSymKey(getValueSet());
     }
 
@@ -511,9 +513,9 @@ public class DataKey
      * @return the symKey
      */
     @SuppressWarnings("unchecked")
-    protected static GordianKey<GordianSymKeyType> getSymKey(final MetisValueSet pValueSet) {
+    protected static GordianKey<GordianSymKeySpec> getSymKey(final MetisValueSet pValueSet) {
         return isSymKey(pValueSet)
-                                   ? (GordianKey<GordianSymKeyType>) getDataKey(pValueSet)
+                                   ? (GordianKey<GordianSymKeySpec>) getDataKey(pValueSet)
                                    : null;
     }
 

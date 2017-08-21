@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.Xof;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
@@ -43,6 +44,11 @@ public final class BouncyDigest
     private final Digest theDigest;
 
     /**
+     * Xof.
+     */
+    private final Xof theXof;
+
+    /**
      * Constructor.
      * @param pDigestSpec the digestSpec
      * @param pDigest the digest
@@ -51,6 +57,10 @@ public final class BouncyDigest
                            final Digest pDigest) {
         theDigestSpec = pDigestSpec;
         theDigest = pDigest;
+        theXof = theDigest instanceof Xof
+                 && pDigestSpec.isHybrid()
+                                           ? (Xof) theDigest
+                                           : null;
     }
 
     @Override
@@ -68,7 +78,7 @@ public final class BouncyDigest
 
     @Override
     public int getDigestSize() {
-        return theDigest.getDigestSize();
+        return theDigestSpec.getDigestLength().getByteLength();
     }
 
     @Override
@@ -96,13 +106,15 @@ public final class BouncyDigest
     @Override
     public byte[] finish() {
         final byte[] myResult = new byte[getDigestSize()];
-        theDigest.doFinal(myResult, 0);
+        finish(myResult, 0);
         return myResult;
     }
 
     @Override
     public int finish(final byte[] pBuffer,
                       final int pOffset) {
-        return theDigest.doFinal(pBuffer, pOffset);
+        return theXof == null
+                              ? theDigest.doFinal(pBuffer, pOffset)
+                              : theXof.doFinal(pBuffer, pOffset, getDigestSize());
     }
 }

@@ -174,12 +174,18 @@ public final class JcaDigest
                 return getSHA3Algorithm(myLen);
             case BLAKE:
                 return getBlake2bAlgorithm(myLen);
+            case KUPYNA:
+                return getKupynaAlgorithm(myLen);
+            case SHAKE:
+                return getSHAKEAlgorithm(pDigestSpec.getStateLength());
             case GOST:
                 return "GOST3411";
             case WHIRLPOOL:
             case TIGER:
             case SHA1:
             case MD5:
+            case MD4:
+            case MD2:
             case SM3:
                 return myType.name();
             default:
@@ -222,6 +228,23 @@ public final class JcaDigest
             case LEN_512:
             default:
                 return "BLAKE2B-512";
+        }
+    }
+
+    /**
+     * Determine the Kupyna algorithm.
+     * @param pLength the digest length
+     * @return the name
+     */
+    private static String getKupynaAlgorithm(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_256:
+                return "DSTU7564-256";
+            case LEN_384:
+                return "DSTU7564-384";
+            case LEN_512:
+            default:
+                return "DSTU7564-512";
         }
     }
 
@@ -273,6 +296,16 @@ public final class JcaDigest
     }
 
     /**
+     * Determine the SHAKE algorithm.
+     * @param pState the stateLength
+     * @return the name
+     */
+    private static String getSHAKEAlgorithm(final GordianLength pState) {
+        /* Determine SHAKE digest */
+        return "SHAKE" + pState.getLength();
+    }
+
+    /**
      * Determine the Skein algorithm.
      * @param pSpec the digestSpec
      * @return the namet
@@ -309,6 +342,8 @@ public final class JcaDigest
         switch (pDigestType) {
             case SM3:
             case BLAKE:
+            case KUPYNA:
+            case SHAKE:
                 return false;
             default:
                 return true;

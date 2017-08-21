@@ -27,6 +27,16 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
  */
 public enum GordianLength {
     /**
+     * 64 bits.
+     */
+    LEN_64(64),
+
+    /**
+     * 96 bits.
+     */
+    LEN_96(96),
+
+    /**
      * 128 bits.
      */
     LEN_128(128),
@@ -93,6 +103,14 @@ public enum GordianLength {
     }
 
     /**
+     * Obtain the length (in bytes).
+     * @return the length
+     */
+    public int getByteLength() {
+        return theLength / Byte.SIZE;
+    }
+
+    /**
      * Obtain the standard skeinState length.
      * @return the length (null if not supported)
      */
@@ -128,6 +146,25 @@ public enum GordianLength {
             case LEN_224:
             case LEN_256:
                 return LEN_512;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the standard shakeState length.
+     * @return the length (null if not supported)
+     */
+    public GordianLength getSHAKEState() {
+        switch (this) {
+            case LEN_256:
+            case LEN_384:
+            case LEN_512:
+                return LEN_256;
+            case LEN_128:
+            case LEN_160:
+            case LEN_224:
+                return LEN_128;
             default:
                 return null;
         }

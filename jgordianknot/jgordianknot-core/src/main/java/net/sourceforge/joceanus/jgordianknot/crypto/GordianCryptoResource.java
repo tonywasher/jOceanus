@@ -79,6 +79,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     DIGEST_SHA3("digest.SHA3"),
 
     /**
+     * Digest SHAKE.
+     */
+    DIGEST_SHAKE("digest.SHAKE"),
+
+    /**
      * Digest Skein.
      */
     DIGEST_SKEIN("digest.SKEIN"),
@@ -94,6 +99,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     DIGEST_BLAKE("digest.BLAKE"),
 
     /**
+     * Digest Kupyna.
+     */
+    DIGEST_KUPYNA("digest.KUPYNA"),
+
+    /**
      * Digest SHA.
      */
     DIGEST_SHA1("digest.SHA1"),
@@ -102,6 +112,16 @@ public enum GordianCryptoResource implements TethysResourceId {
      * Digest MD5.
      */
     DIGEST_MD5("digest.MD5"),
+
+    /**
+     * Digest MD4.
+     */
+    DIGEST_MD4("digest.MD4"),
+
+    /**
+     * Digest MD2.
+     */
+    DIGEST_MD2("digest.MD2"),
 
     /**
      * MAC HMAC.
@@ -127,6 +147,16 @@ public enum GordianCryptoResource implements TethysResourceId {
      * MAC SKEIN.
      */
     MAC_SKEIN("mac.SKEIN"),
+
+    /**
+     * MAC KALYNA.
+     */
+    MAC_KALYNA("mac.KALYNA"),
+
+    /**
+     * MAC SKEIN.
+     */
+    MAC_KUPYNA("mac.KUPYNA"),
 
     /**
      * MAC VMPC.
@@ -222,6 +252,16 @@ public enum GordianCryptoResource implements TethysResourceId {
      * SymKey Blowfish.
      */
     SYMKEY_BLOWFISH("symKey.BlowFish"),
+
+    /**
+     * SymKey GOST.
+     */
+    SYMKEY_GOST("symKey.GOST"),
+
+    /**
+     * SymKey Kalyna.
+     */
+    SYMKEY_KALYNA("symKey.Kalyna"),
 
     /**
      * SymKey SkipJack.
@@ -383,11 +423,15 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianDigestType.STREEBOG, DIGEST_STREEBOG);
         myMap.put(GordianDigestType.GOST, DIGEST_GOST);
         myMap.put(GordianDigestType.SHA3, DIGEST_SHA3);
+        myMap.put(GordianDigestType.SHAKE, DIGEST_SHAKE);
         myMap.put(GordianDigestType.SKEIN, DIGEST_SKEIN);
         myMap.put(GordianDigestType.SM3, DIGEST_SM3);
         myMap.put(GordianDigestType.BLAKE, DIGEST_BLAKE);
+        myMap.put(GordianDigestType.KUPYNA, DIGEST_KUPYNA);
         myMap.put(GordianDigestType.SHA1, DIGEST_SHA1);
         myMap.put(GordianDigestType.MD5, DIGEST_MD5);
+        myMap.put(GordianDigestType.MD4, DIGEST_MD4);
+        myMap.put(GordianDigestType.MD2, DIGEST_MD2);
         return myMap;
     }
 
@@ -412,6 +456,8 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianMacType.CMAC, MAC_CMAC);
         myMap.put(GordianMacType.POLY1305, MAC_POLY);
         myMap.put(GordianMacType.SKEIN, MAC_SKEIN);
+        myMap.put(GordianMacType.KALYNA, MAC_KALYNA);
+        myMap.put(GordianMacType.KUPYNA, MAC_KUPYNA);
         myMap.put(GordianMacType.VMPC, MAC_VMPC);
         return myMap;
     }
@@ -452,6 +498,8 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.SKIPJACK, SYMKEY_SKIPJACK);
         myMap.put(GordianSymKeyType.BLOWFISH, SYMKEY_BLOWFISH);
         myMap.put(GordianSymKeyType.DESEDE, SYMKEY_DESEDE);
+        myMap.put(GordianSymKeyType.GOST, SYMKEY_GOST);
+        myMap.put(GordianSymKeyType.KALYNA, SYMKEY_KALYNA);
         return myMap;
     }
 

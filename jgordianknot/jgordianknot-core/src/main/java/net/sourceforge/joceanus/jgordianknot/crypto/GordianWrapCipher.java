@@ -66,7 +66,7 @@ public class GordianWrapCipher {
     /**
      * Underlying cipher.
      */
-    private final GordianCipher<GordianSymKeyType> theCipher;
+    private final GordianCipher<GordianSymKeySpec> theCipher;
 
     /**
      * The block size.
@@ -79,17 +79,17 @@ public class GordianWrapCipher {
      * @param pCipher the underlying cipher
      */
     protected GordianWrapCipher(final GordianFactory pFactory,
-                                final GordianCipher<GordianSymKeyType> pCipher) {
+                                final GordianCipher<GordianSymKeySpec> pCipher) {
         theFactory = pFactory;
         theCipher = pCipher;
-        theBlockLen = getKeyType().getIVLength() >> 1;
+        theBlockLen = getKeySpec().getBlockLength().getByteLength() >> 1;
     }
 
     /**
      * Obtain the keyType.
      * @return the keyType
      */
-    protected GordianSymKeyType getKeyType() {
+    protected GordianSymKeySpec getKeySpec() {
         return theCipher.getKeyType();
     }
 
@@ -108,7 +108,7 @@ public class GordianWrapCipher {
      * @return the securedKey
      * @throws OceanusException on error
      */
-    protected byte[] secureKey(final GordianKey<GordianSymKeyType> pKey,
+    protected byte[] secureKey(final GordianKey<GordianSymKeySpec> pKey,
                                final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Secure the bytes */
         return secureBytes(pKey, pKeyToSecure.getKeyBytes());
@@ -123,7 +123,7 @@ public class GordianWrapCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
-    protected <T> GordianKey<T> deriveKey(final GordianKey<GordianSymKeyType> pKey,
+    protected <T> GordianKey<T> deriveKey(final GordianKey<GordianSymKeySpec> pKey,
                                           final byte[] pSecuredKey,
                                           final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
@@ -141,7 +141,7 @@ public class GordianWrapCipher {
      * @return the wrapped bytes
      * @throws OceanusException on error
      */
-    protected byte[] securePrivateKey(final GordianKey<GordianSymKeyType> pKey,
+    protected byte[] securePrivateKey(final GordianKey<GordianSymKeySpec> pKey,
                                       final GordianKeyPair pKeyPairToSecure) throws OceanusException {
         /* Access the KeyPair Generator */
         final GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
@@ -156,7 +156,7 @@ public class GordianWrapCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
-    protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeyType> pKey,
+    protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeySpec> pKey,
                                                 final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Derive the keySpec */
         final byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
@@ -170,7 +170,7 @@ public class GordianWrapCipher {
      * @return the secured bytes
      * @throws OceanusException on error
      */
-    protected byte[] secureBytes(final GordianKey<GordianSymKeyType> pKey,
+    protected byte[] secureBytes(final GordianKey<GordianSymKeySpec> pKey,
                                  final byte[] pBytesToSecure) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
@@ -245,7 +245,7 @@ public class GordianWrapCipher {
      * @return the derived bytes
      * @throws OceanusException on error
      */
-    protected byte[] deriveBytes(final GordianKey<GordianSymKeyType> pKey,
+    protected byte[] deriveBytes(final GordianKey<GordianSymKeySpec> pKey,
                                  final byte[] pSecuredBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
@@ -338,27 +338,5 @@ public class GordianWrapCipher {
         return (pIndex + 1) % INTEGRITY_MODULO < 2
                                                    ? INTEGRITY_VALUE1
                                                    : INTEGRITY_VALUE2;
-    }
-
-    /**
-     * Determine the default initVector for a key.
-     * @param pKey the key
-     * @return the initVector
-     * @throws OceanusException on error
-     */
-    protected byte[] getDefaultInitVector(final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
-        /* Create the MAC and standard data */
-        final GordianMacSpec myMacSpec = GordianMacSpec.hMac(theFactory.getDefaultDigest());
-        final GordianMac myMac = theFactory.createMac(myMacSpec);
-        myMac.initMac(pKey.convertToKeyType(myMacSpec));
-
-        /* Update using personalisation */
-        final byte[] myIV = myMac.finish(theFactory.getPersonalisation());
-
-        /* Return appropriate length of data */
-        final int myLen = getKeyType().getIVLength();
-        return myIV.length > myLen
-                                   ? Arrays.copyOf(myIV, myLen)
-                                   : myIV;
     }
 }

@@ -74,6 +74,12 @@ public class GordianTestAlgorithms {
      */
     private void checkAlgorithms(final boolean pRestricted,
                                  final GordianFactoryType pType) throws OceanusException {
+        /* Determine test name */
+        String myTestName = pType.toString() + "-" + (pRestricted
+                                                                  ? "Restricted"
+                                                                  : "Unlimited");
+        System.out.println(myTestName);
+
         /* Create new Security Generator */
         GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
@@ -83,19 +89,24 @@ public class GordianTestAlgorithms {
         /* Access predicates */
         Predicate<GordianDigestSpec> myDigestPredicate = myFactory.supportedDigestSpecs();
         Predicate<GordianMacSpec> myMacPredicate = myFactory.supportedMacSpecs();
-        Predicate<GordianSymKeyType> mySymKeyPredicate = myFactory.supportedSymKeyTypes();
+        Predicate<GordianSymKeySpec> mySymKeyPredicate = myFactory.supportedSymKeySpecs();
         Predicate<GordianStreamKeyType> myStreamKeyPredicate = myFactory.supportedStreamKeyTypes();
 
         /* Loop through the digests */
+        System.out.println(" Digests");
         for (GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
             /* If the digest is supported */
             if (myDigestPredicate.test(mySpec)) {
                 /* Create the digest */
-                myFactory.createDigest(mySpec);
+                System.out.println("  " + mySpec.toString());
+                GordianDigest myDigest = myFactory.createDigest(mySpec);
+                myDigest.update("MacInput".getBytes());
+                myDigest.finish();
             }
         }
 
         /* Loop through the macs */
+        System.out.println(" Macs");
         for (GordianMacSpec mySpec : GordianMacSpec.listAll()) {
             /* If the mac is supported */
             if (myMacPredicate.test(mySpec)) {
@@ -103,25 +114,32 @@ public class GordianTestAlgorithms {
                 GordianMac myMac = myFactory.createMac(mySpec);
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(mySpec);
                 GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
+                System.out.println("  " + mySpec.toString());
                 myMac.initMac(myKey);
+                myMac.update("MacInput".getBytes());
+                myMac.finish();
             }
         }
 
-        /* Create instance of each symmetric key */
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (mySymKeyPredicate.test(myType)) {
-                GordianKeyGenerator<GordianSymKeyType> mySymGenerator = myFactory.getKeyGenerator(myType);
-                GordianKey<GordianSymKeyType> mySymKey = mySymGenerator.generateKey();
+        /* Create instance of each symmetric keySpec */
+        System.out.println(" SymKeys");
+        for (GordianSymKeySpec mySpec : GordianSymKeySpec.listAll()) {
+            if (mySymKeyPredicate.test(mySpec)) {
+                GordianKeyGenerator<GordianSymKeySpec> mySymGenerator = myFactory.getKeyGenerator(mySpec);
+                GordianKey<GordianSymKeySpec> mySymKey = mySymGenerator.generateKey();
+                System.out.println("  " + mySpec.toString());
                 checkCipherModes(myFactory, mySymKey);
             }
         }
 
         /* Create instance of each stream key */
+        System.out.println(" StreamKeys");
         for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
             if (myStreamKeyPredicate.test(myType)) {
                 GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
                 GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
                 GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(myType));
+                System.out.println("  " + myType.toString());
                 myCipher.initCipher(myStreamKey);
             }
         }
@@ -134,13 +152,8 @@ public class GordianTestAlgorithms {
      * @throws OceanusException on error
      */
     private void checkCipherModes(final GordianFactory pFactory,
-                                  final GordianKey<GordianSymKeyType> pKey) throws OceanusException {
+                                  final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
         for (GordianCipherMode myMode : GordianCipherMode.values()) {
-            /* Ignore SIC for short block */
-            if (pKey.getKeyType().isShortBlock()
-                && GordianCipherMode.SIC.equals(myMode)) {
-                continue;
-            }
             checkCipherPadding(pFactory, pKey, myMode);
         }
     }
@@ -153,7 +166,7 @@ public class GordianTestAlgorithms {
      * @throws OceanusException on error
      */
     private void checkCipherPadding(final GordianFactory pFactory,
-                                    final GordianKey<GordianSymKeyType> pKey,
+                                    final GordianKey<GordianSymKeySpec> pKey,
                                     final GordianCipherMode pMode) throws OceanusException {
         if (pMode.hasPadding()) {
             for (GordianPadding myPadding : GordianPadding.values()) {
@@ -161,7 +174,7 @@ public class GordianTestAlgorithms {
             }
         } else if (!pMode.isAAD()) {
             checkCipher(pFactory, pKey, pMode, GordianPadding.NONE);
-        } else if (pKey.getKeyType().isStdBlock()) {
+        } else {
             checkAADCipher(pFactory, pKey, pMode);
         }
     }
@@ -175,11 +188,15 @@ public class GordianTestAlgorithms {
      * @throws OceanusException on error
      */
     private void checkCipher(final GordianFactory pFactory,
-                             final GordianKey<GordianSymKeyType> pKey,
+                             final GordianKey<GordianSymKeySpec> pKey,
                              final GordianCipherMode pMode,
                              final GordianPadding pPadding) throws OceanusException {
-        GordianCipher<GordianSymKeyType> myCipher = pFactory.createSymKeyCipher(new GordianSymCipherSpec(pKey.getKeyType(), pMode, pPadding));
-        myCipher.initCipher(pKey);
+        GordianSymCipherSpec mySpec = new GordianSymCipherSpec(pKey.getKeyType(), pMode, pPadding);
+        if (mySpec.validate(false)) {
+            System.out.println("   " + mySpec.toString());
+            GordianCipher<GordianSymKeySpec> myCipher = pFactory.createSymKeyCipher(mySpec);
+            myCipher.initCipher(pKey);
+        }
     }
 
     /**
@@ -190,10 +207,14 @@ public class GordianTestAlgorithms {
      * @throws OceanusException on error
      */
     private void checkAADCipher(final GordianFactory pFactory,
-                                final GordianKey<GordianSymKeyType> pKey,
+                                final GordianKey<GordianSymKeySpec> pKey,
                                 final GordianCipherMode pMode) throws OceanusException {
-        GordianAADCipher myCipher = pFactory.createAADCipher(new GordianSymCipherSpec(pKey.getKeyType(), pMode, GordianPadding.NONE));
-        myCipher.initCipher(pKey);
+        GordianSymCipherSpec mySpec = new GordianSymCipherSpec(pKey.getKeyType(), pMode, GordianPadding.NONE);
+        if (mySpec.validate(true)) {
+            System.out.println("   " + mySpec.toString());
+            GordianAADCipher myCipher = pFactory.createAADCipher(mySpec);
+            myCipher.initCipher(pKey);
+        }
     }
 
     /**
