@@ -38,7 +38,7 @@ public final class GordianKeySetRecipe {
     /**
      * Initialisation Vector size (128/8).
      */
-    public static final int IVSIZE = GordianFactory.IVSIZE;
+    public static final int IVSIZE = GordianLength.LEN_128.getByteLength();
 
     /**
      * Margins.
@@ -208,6 +208,7 @@ public final class GordianKeySetRecipe {
         protected GordianKeySetParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
             final SecureRandom myRandom = pFactory.getRandom();
 
             /* Allocate the initVector */
@@ -222,7 +223,7 @@ public final class GordianKeySetRecipe {
             /* Generate recipe and derive parameters */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            mySeed = myManager.convertRecipe(mySeed);
+            mySeed = myPersonal.convertRecipe(mySeed);
             mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
             mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
             myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
@@ -239,6 +240,7 @@ public final class GordianKeySetRecipe {
                                           final byte[] pInitVector) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
             /* Store recipe and initVector */
             theRecipe = pRecipe;
@@ -251,7 +253,7 @@ public final class GordianKeySetRecipe {
 
             /* derive parameters */
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            mySeed = myManager.convertRecipe(mySeed);
+            mySeed = myPersonal.convertRecipe(mySeed);
             mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
             mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
             myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);

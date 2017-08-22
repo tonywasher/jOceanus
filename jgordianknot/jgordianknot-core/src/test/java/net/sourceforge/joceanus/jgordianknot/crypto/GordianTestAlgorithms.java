@@ -235,14 +235,13 @@ public class GordianTestAlgorithms {
 
         Security.addProvider(new BouncyCastleProvider());
         Security.addProvider(new BouncyCastlePQCProvider());
-        Provider[] providers = Security.getProviders();
 
-        for (int i = 0; i != providers.length; i++) {
-            if (!providers[i].getName().equals("BC")
-                && !providers[i].getName().equals("BCPQC")) {
+        for (Provider myProvider : Security.getProviders()) {
+            if (!"BC".equals(myProvider.getName())
+                && !"BCPQC".equals(myProvider.getName())) {
                 continue;
             }
-            Iterator<Object> it = providers[i].keySet().iterator();
+            Iterator<Object> it = myProvider.keySet().iterator();
             while (it.hasNext()) {
                 String entry = (String) it.next();
                 if (entry.startsWith("Alg.Alias.")) {

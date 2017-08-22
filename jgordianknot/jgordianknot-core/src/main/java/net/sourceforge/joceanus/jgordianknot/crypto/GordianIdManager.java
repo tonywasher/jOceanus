@@ -87,24 +87,14 @@ public class GordianIdManager {
     private static final int LOC_CIPHER = 29;
 
     /**
-     * The Recipe personalisation location.
-     */
-    private static final int LOC_RECIPE = 37;
-
-    /**
      * The SecureRandom.
      */
     private SecureRandom theRandom;
 
     /**
-     * The personalisation hash.
+     * The personalisation.
      */
-    private final byte[] thePersonalisation;
-
-    /**
-     * The personalisation length.
-     */
-    private final int thePersonalLen;
+    private final GordianPersonalisation thePersonalisation;
 
     /**
      * The cipherSet indent.
@@ -157,18 +147,12 @@ public class GordianIdManager {
     private final GordianMacType[] theMacs;
 
     /**
-     * The recipe mask.
-     */
-    private final int theRecipeMask;
-
-    /**
      * Constructor.
      * @param pFactory the security factory
      */
     protected GordianIdManager(final GordianFactory pFactory) {
         /* Access personalisation */
         thePersonalisation = pFactory.getPersonalisation();
-        thePersonalLen = thePersonalisation.length;
 
         /* Create shuffled and filtered lists */
         theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM, pFactory.supportedSymKeyTypes());
@@ -182,10 +166,7 @@ public class GordianIdManager {
         theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacTypes());
 
         /* Determine the cipher indentation */
-        theCipherIndent = getPersonalisedByte(LOC_CIPHER) & TethysDataConverter.NYBBLE_MASK;
-
-        /* Obtain the recipe mask */
-        theRecipeMask = getPersonalisedInteger(LOC_RECIPE);
+        theCipherIndent = thePersonalisation.getPersonalisedByte(LOC_CIPHER) & TethysDataConverter.NYBBLE_MASK;
     }
 
     /**
@@ -194,15 +175,6 @@ public class GordianIdManager {
      */
     protected int getCipherIndentation() {
         return theCipherIndent;
-    }
-
-    /**
-     * Convert the recipe.
-     * @param pRecipe the recipe
-     * @return the converted recipe
-     */
-    protected int convertRecipe(final int pRecipe) {
-        return pRecipe ^ theRecipeMask;
     }
 
     /**
@@ -925,7 +897,7 @@ public class GordianIdManager {
         final E[] myTypes = Arrays.copyOf(pTypes, myNumTypes);
 
         /* Obtain the personalised integer */
-        int mySeed = getPersonalisedInteger(pIndex);
+        int mySeed = thePersonalisation.getPersonalisedInteger(pIndex);
 
         /* Loop through the types */
         int myNumAvailable = 0;
@@ -1051,50 +1023,5 @@ public class GordianIdManager {
 
         /* Return the results */
         return mySeed;
-    }
-
-    /**
-     * Obtain mask from personalisation.
-     * @param pOffSet the offset within the array
-     * @return the result
-     */
-    private int getPersonalisedMask(final int pOffSet) {
-        /* Loop to obtain the personalised byte */
-        int myVal = 0;
-        for (int i = 0, myOffSet = pOffSet; i < Integer.BYTES; i++, myOffSet++) {
-            myVal <<= Byte.SIZE;
-            myVal |= getPersonalisedByte(myOffSet);
-        }
-
-        /* Return the value */
-        return myVal;
-    }
-
-    /**
-     * Obtain integer from personalisation.
-     * @param pOffSet the offset within the array
-     * @return the result
-     */
-    private int getPersonalisedInteger(final int pOffSet) {
-        /* Loop to obtain the personalised byte */
-        final int myVal = getPersonalisedMask(pOffSet);
-
-        /* Ensure that the value is positive */
-        return myVal < 0
-                         ? -myVal
-                         : myVal;
-    }
-
-    /**
-     * Obtain byte from personalisation.
-     * @param pOffSet the offset within the array
-     * @return the result
-     */
-    private int getPersonalisedByte(final int pOffSet) {
-        int myOffSet = pOffSet;
-        if (myOffSet >= thePersonalLen) {
-            myOffSet %= thePersonalLen;
-        }
-        return thePersonalisation[myOffSet] & TethysDataConverter.BYTE_MASK;
     }
 }

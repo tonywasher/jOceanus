@@ -31,18 +31,13 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianSecureRandom;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * GordianKnot base for Factory.
  */
 public abstract class GordianFactory {
-    /**
-     * The Base personalisation.
-     */
-    private static final String BASE_PERSONAL = "jG0rd1anKn0t";
-
     /**
      * The Hash Prime.
      */
@@ -51,22 +46,17 @@ public abstract class GordianFactory {
     /**
      * Restricted key length.
      */
-    private static final int SMALL_KEYLEN = 128;
+    private static final int SMALL_KEYLEN = GordianLength.LEN_128.getLength();
 
     /**
      * Unlimited key length.
      */
-    protected static final int BIG_KEYLEN = 256;
-
-    /**
-     * Initialisation Vector size (128/8).
-     */
-    protected static final int IVSIZE = 16;
+    protected static final int BIG_KEYLEN = GordianLength.LEN_256.getLength();
 
     /**
      * The number of seed bytes.
      */
-    private static final int SEED_SIZE = 32;
+    private static final int SEED_SIZE = GordianLength.LEN_256.getByteLength();
 
     /**
      * Parameters.
@@ -81,12 +71,12 @@ public abstract class GordianFactory {
     /**
      * Personalisation.
      */
-    private final byte[] thePersonalisation;
+    private final GordianPersonalisation thePersonalisation;
 
     /**
      * SecureRandom instance.
      */
-    private SecureRandom theRandom;
+    private GordianSecureRandom theRandom;
 
     /**
      * The Id Manager.
@@ -104,13 +94,7 @@ public abstract class GordianFactory {
         isRestricted = theParameters.useRestricted();
 
         /* Calculate personalisation bytes */
-        final char[] myPhrase = theParameters.getSecurityPhrase();
-        final GordianDigest myDigest = createDigest(getDefaultDigest());
-        myDigest.update(TethysDataConverter.stringToByteArray(BASE_PERSONAL));
-        if (myPhrase != null) {
-            myDigest.update(TethysDataConverter.charsToByteArray(myPhrase));
-        }
-        thePersonalisation = myDigest.finish();
+        thePersonalisation = new GordianPersonalisation(this, theParameters);
     }
 
     /**
@@ -119,22 +103,6 @@ public abstract class GordianFactory {
      */
     public boolean isRestricted() {
         return isRestricted;
-    }
-
-    /**
-     * Obtain Default Digest.
-     * @return the default digest
-     */
-    protected GordianDigestSpec getDefaultDigest() {
-        return new GordianDigestSpec(theParameters.getBaseHashAlgorithm());
-    }
-
-    /**
-     * Obtain Default SP800.
-     * @return the default SP800
-     */
-    protected GordianSP800Type getDefaultSP800() {
-        return theParameters.getSP800Type();
     }
 
     /**
@@ -157,7 +125,7 @@ public abstract class GordianFactory {
      * Obtain the secureRandom instance.
      * @return the secureRandom instance
      */
-    protected SecureRandom getRandom() {
+    protected GordianSecureRandom getRandom() {
         return theRandom;
     }
 
@@ -176,23 +144,36 @@ public abstract class GordianFactory {
      * Obtain the personalisation bytes.
      * @return the personalisation
      */
-    protected byte[] getPersonalisation() {
+    protected GordianPersonalisation getPersonalisation() {
         return thePersonalisation;
     }
 
     /**
-     * Obtain the default randomSpec.
-     * @return the default randomSpec
+     * Create a random randomSpec.
+     * @param pRandom the random generator
+     * @return the randomSpec
      */
-    protected GordianRandomSpec defaultRandomSpec() {
-        return new GordianRandomSpec(getDefaultSP800(), getDefaultDigest());
+    public GordianRandomSpec generateRandomSpec(final SecureRandom pRandom) {
+        /* Determine the type of random generator */
+        final GordianSP800Type myType = pRandom.nextBoolean()
+                                                              ? GordianSP800Type.HMAC
+                                                              : GordianSP800Type.HASH;
+
+        /* Access the digestTypes */
+        final GordianDigestType[] myDigestTypes = GordianDigestType.values();
+        for (;;) {
+            final int myInt = pRandom.nextInt(myDigestTypes.length);
+            if (supportedHMacDigestTypes().test(myDigestTypes[myInt])) {
+                return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]));
+            }
+        }
     }
 
     /**
      * Set the secureRandom instance.
      * @param pRandom the secureRandom instance
      */
-    protected void setSecureRandom(final SecureRandom pRandom) {
+    protected void setSecureRandom(final GordianSecureRandom pRandom) {
         theRandom = pRandom;
         getIdManager().setSecureRandom(pRandom);
     }
@@ -204,6 +185,7 @@ public abstract class GordianFactory {
         /* Generate and apply the new seed */
         final byte[] mySeed = theRandom.generateSeed(SEED_SIZE);
         theRandom.setSeed(mySeed);
+        theRandom.reseed(null);
     }
 
     /**
@@ -273,7 +255,7 @@ public abstract class GordianFactory {
      * @return the new SecureRandom
      * @throws OceanusException on error
      */
-    public abstract SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
+    public abstract GordianSecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported randomSpecs.

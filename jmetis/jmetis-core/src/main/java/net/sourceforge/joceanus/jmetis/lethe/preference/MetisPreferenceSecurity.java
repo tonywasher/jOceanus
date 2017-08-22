@@ -28,12 +28,10 @@ import java.net.UnknownHostException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSP800Type;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -144,16 +142,6 @@ public class MetisPreferenceSecurity {
          * Restricted Keys.
          */
         RESTRICTED("RestrictedKeys", MetisPreferenceResource.SECPREF_RESTRICTED),
-
-        /**
-         * Hash Algorithm.
-         */
-        HASHTYPE("HashType", MetisPreferenceResource.SECPREF_HASH),
-
-        /**
-         * SP800 Type.
-         */
-        SP800("SP800Type", MetisPreferenceResource.SECPREF_SP800),
 
         /**
          * Cipher Steps.
@@ -282,8 +270,6 @@ public class MetisPreferenceSecurity {
 
             /* Set other parameters */
             myParms.setFactoryType(getEnumValue(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class));
-            myParms.setBaseHashAlgorithm(getEnumValue(MetisSecurityPreferenceKey.HASHTYPE, GordianDigestType.class));
-            myParms.setSP800Type(getEnumValue(MetisSecurityPreferenceKey.SP800, GordianSP800Type.class));
             myParms.setNumCipherSteps(getIntegerValue(MetisSecurityPreferenceKey.CIPHERSTEPS));
             myParms.setNumIterations(getIntegerValue(MetisSecurityPreferenceKey.HASHITERATIONS));
             myParms.setSecurityPhrase(getCharArrayValue(MetisSecurityPreferenceKey.SECURITYPHRASE));
@@ -296,8 +282,6 @@ public class MetisPreferenceSecurity {
         protected void definePreferences() throws OceanusException {
             defineEnumPreference(MetisSecurityPreferenceKey.FACTORY, GordianFactoryType.class);
             defineBooleanPreference(MetisSecurityPreferenceKey.RESTRICTED);
-            defineEnumPreference(MetisSecurityPreferenceKey.HASHTYPE, GordianDigestType.class);
-            defineEnumPreference(MetisSecurityPreferenceKey.SP800, GordianSP800Type.class);
             defineIntegerPreference(MetisSecurityPreferenceKey.CIPHERSTEPS);
             defineIntegerPreference(MetisSecurityPreferenceKey.HASHITERATIONS);
             defineCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);
@@ -317,21 +301,6 @@ public class MetisPreferenceSecurity {
             if (!myRestrictPref.isAvailable()) {
                 myRestrictPref.setValue(GordianParameters.DEFAULT_RESTRICTED);
             }
-
-            /* Make sure that the sp800 is specified */
-            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianSP800Type> mySP800Pref = getEnumPreference(MetisSecurityPreferenceKey.SP800, GordianSP800Type.class);
-            if (!mySP800Pref.isAvailable()) {
-                mySP800Pref.setValue(GordianParameters.DEFAULT_SP800);
-            }
-
-            /* Make sure that the hash is specified */
-            final MetisEnumPreference<MetisSecurityPreferenceKey, GordianDigestType> myHashPref = getEnumPreference(MetisSecurityPreferenceKey.HASHTYPE, GordianDigestType.class);
-            if (!myHashPref.isAvailable()) {
-                myHashPref.setValue(GordianParameters.DEFAULT_HASHALGO);
-            }
-
-            /* Set appropriate filter */
-            myHashPref.setFilter(GordianHashManager.getDigestPredicate(myFactPref.getValue()).and(GordianDigestType::isExternalHashDigest));
 
             /* Make sure that the security phrase is specified */
             final MetisCharArrayPreference<MetisSecurityPreferenceKey> myPhrasePref = getCharArrayPreference(MetisSecurityPreferenceKey.SECURITYPHRASE);

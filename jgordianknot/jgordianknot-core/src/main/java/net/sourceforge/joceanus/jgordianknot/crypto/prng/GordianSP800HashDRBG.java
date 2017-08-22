@@ -42,7 +42,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.sp800;
+package net.sourceforge.joceanus.jgordianknot.crypto.prng;
 
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
@@ -55,9 +55,9 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * Implementation of HashSP800DRBG based on the BouncyCastle Code.
  * <p>
- * This implementation is modified so that it accepts any JCE MessageDigest.
+ * This implementation is modified so that it accepts any GordianDigest.
  */
-public final class SP800HashDRBG
+public final class GordianSP800HashDRBG
         implements SP80090DRBG {
     /**
      * The bit shift.
@@ -125,10 +125,10 @@ public final class SP800HashDRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    protected SP800HashDRBG(final GordianDigest pDigest,
-                            final EntropySource pEntropy,
-                            final byte[] pSecurityBytes,
-                            final byte[] pInitVector) {
+    protected GordianSP800HashDRBG(final GordianDigest pDigest,
+                                   final EntropySource pEntropy,
+                                   final byte[] pSecurityBytes,
+                                   final byte[] pInitVector) {
         /* Store digest and entropy source */
         theDigest = pDigest;
         theEntropy = pEntropy;
@@ -169,13 +169,13 @@ public final class SP800HashDRBG
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
         final int myNumBits = pOutput.length << BIT_SHIFT;
-        if (myNumBits > SP800Factory.MAX_BITS_REQUEST) {
+        if (myNumBits > GordianRandomFactory.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                                               + SP800Factory.MAX_BITS_REQUEST);
+                                               + GordianRandomFactory.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(SP800Factory.RESEED_MAX)) {
+        if (theReseedCounter.compareLimit(GordianRandomFactory.RESEED_MAX)) {
             return -1;
         }
 

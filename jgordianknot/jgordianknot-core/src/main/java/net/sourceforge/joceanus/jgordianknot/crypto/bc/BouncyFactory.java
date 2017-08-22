@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
-import java.security.SecureRandom;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -183,7 +182,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRai
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyRainbowValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncySPHINCSSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncySPHINCSValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.sp800.SP800Factory;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianSecureRandom;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -229,7 +229,7 @@ public final class BouncyFactory
     /**
      * SP800 Factory.
      */
-    private final SP800Factory theSP800Factory;
+    private final GordianRandomFactory theSP800Factory;
 
     /**
      * Static Constructor.
@@ -237,7 +237,7 @@ public final class BouncyFactory
     static {
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
-        PREDICATE_MACS = p -> true;
+        PREDICATE_MACS = p -> p != GordianMacType.KALYNA;
 
         /* Calculate max cipher Steps */
         MAX_CIPHER_STEPS = new int[2];
@@ -272,16 +272,16 @@ public final class BouncyFactory
         theGeneratorCache = new BouncyKeyGeneratorCache();
 
         /* Create the SP800 Factory */
-        theSP800Factory = new SP800Factory();
-        theSP800Factory.setSecurityBytes(getPersonalisation());
+        theSP800Factory = new GordianRandomFactory();
 
         /* Create the SecureRandom instance */
-        final SecureRandom myRandom = createRandom(defaultRandomSpec());
+        final GordianSecureRandom myRandom = createRandom(theSP800Factory.generateRandomSpec(this));
         setSecureRandom(myRandom);
+        theGeneratorCache.resetCache();
     }
 
     @Override
-    public SecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+    public GordianSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
         /* Check validity of randomSpec */
         if (!supportedRandomSpecs().test(pRandomSpec)) {
             throw new GordianDataException(getInvalidText(pRandomSpec));
@@ -516,7 +516,7 @@ public final class BouncyFactory
      * @return the secureRandom
      * @throws OceanusException on error
      */
-    private SecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+    private GordianSecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
         final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
         switch (pRandomSpec.getRandomType()) {
             case HASH:

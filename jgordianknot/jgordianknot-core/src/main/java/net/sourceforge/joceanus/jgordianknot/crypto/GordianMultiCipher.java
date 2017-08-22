@@ -564,10 +564,11 @@ public final class GordianMultiCipher {
         final GordianKey<GordianMacSpec> myMacKey = pKey.convertToKeyType(myMac.getMacSpec());
         myMac.initMac(myMacKey);
 
-        /* Update using IV and then personalisation */
+        /* Update using personalisation and then IV */
+        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
+        myPersonal.updateMac(myMac);
         myMac.update(TethysDataConverter.stringToByteArray(pKey.getKeyType().toString()));
-        myMac.update(pVector);
-        final byte[] myIV = myMac.finish(theFactory.getPersonalisation());
+        final byte[] myIV = myMac.finish(pVector);
 
         /* Return appropriate length of data */
         return myIV.length > pIVLen

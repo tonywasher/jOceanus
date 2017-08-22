@@ -261,10 +261,13 @@ public final class GordianKeySetHash {
         /* Protect against exceptions */
         try {
             /* Obtain configuration details */
-            final byte[] mySeed = theFactory.getPersonalisation();
+            final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
             final int iIterations = theFactory.getNumIterations();
             final int iFinal = theRecipe.getAdjustment()
                                + iIterations;
+
+            /* Create a byte array of the iterations */
+            final byte[] myLoops = TethysDataConverter.integerToByteArray(iFinal);
 
             /* Convert password to bytes */
             myPassBytes = TethysDataConverter.charsToByteArray(pPassword);
@@ -302,10 +305,15 @@ public final class GordianKeySetHash {
             byte[] myAlternateInput = mySaltBytes;
             byte[] mySecretInput = mySaltBytes;
 
-            /* Update each Hash with the seed */
-            myPrimeMac.update(mySeed);
-            myAlternateMac.update(mySeed);
-            mySecretMac.update(mySeed);
+            /* Update each Hash with the personalisation */
+            myPersonal.updateMac(myPrimeMac);
+            myPersonal.updateMac(myAlternateMac);
+            myPersonal.updateMac(mySecretMac);
+
+            /* Update each Hash with the loops */
+            myPrimeMac.update(myLoops);
+            myAlternateMac.update(myLoops);
+            mySecretMac.update(myLoops);
 
             /* Loop through the iterations */
             for (int iPass = 0; iPass < iFinal; iPass++) {

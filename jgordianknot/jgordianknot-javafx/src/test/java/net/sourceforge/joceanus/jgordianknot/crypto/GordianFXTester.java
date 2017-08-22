@@ -22,15 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.util.List;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestAlgorithms;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianFXHashManager;
@@ -75,21 +74,24 @@ public class GordianFXTester
 
     /**
      * Constructor.
-     * @param pArg the parameter
+     * @param pArgs the parameters
      * @throws OceanusException on error
      */
-    public void runTests(final String pArg) throws OceanusException {
-        if (pArg != null) {
+    public void runTests(final List<String> pArgs) throws OceanusException {
+        if (!pArgs.isEmpty()) {
+            /* Access the argument */
+            String myArg = pArgs.get(0);
+
             /* handle check algorithms */
-            if ("check".equals(pArg)) {
+            if ("check".equals(myArg)) {
                 theTests.checkAlgorithms();
 
                 /* handle test security */
-            } else if ("test".equals(pArg)) {
+            } else if ("test".equals(myArg)) {
                 theTests.testSecurity();
 
                 /* handle zip file creation */
-            } else if ("zip".equals(pArg)) {
+            } else if ("zip".equals(myArg)) {
                 theTests.testZipFile();
             }
         } else {
@@ -115,11 +117,14 @@ public class GordianFXTester
         pStage.show();
         theGuiFactory.setStage(pStage);
 
+        Parameters myParams = getParameters();
+        List<String> myArgs = myParams.getRaw();
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 try {
-                    runTests("test");
+                    runTests(myArgs);
                 } catch (Exception e) {
                     System.out.println("Help");
                     e.printStackTrace();

@@ -42,31 +42,36 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.sp800;
+package net.sourceforge.joceanus.jgordianknot.crypto.prng;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Arrays;
 
 import org.bouncycastle.crypto.prng.BasicEntropySourceProvider;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropySourceProvider;
-import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Builder class for SP800 DRBG SecureRandom instances, based on the BouncyCastle Code.
  */
-public final class SP800Factory {
+public final class GordianRandomFactory {
     /**
      * The number of entropy bits required.
      */
     private static final int NUM_ENTROPY_BITS_REQUIRED = 256;
+
+    /**
+     * The number of entropy bits required.
+     */
+    private static final int NUM_ENTROPY_BYTES_REQUIRED = NUM_ENTROPY_BITS_REQUIRED / Byte.SIZE;
 
     /**
      * The power of 2 for RESEED calculation.
@@ -104,11 +109,6 @@ public final class SP800Factory {
     private final EntropySourceProvider theEntropyProvider;
 
     /**
-     * The Security Bytes.
-     */
-    private byte[] theSecurityBytes;
-
-    /**
      * Basic constructor, creates a builder using an EntropySourceProvider based on the default
      * SecureRandom with predictionResistant set to false.
      * <p>
@@ -117,8 +117,8 @@ public final class SP800Factory {
      * </p>
      * @throws OceanusException on error
      */
-    public SP800Factory() throws OceanusException {
-        this(getStrongRandom(), false);
+    public GordianRandomFactory() throws OceanusException {
+        this(null, false);
     }
 
     /**
@@ -130,26 +130,17 @@ public final class SP800Factory {
      * </p>
      * @param pEntropySource the entropy source
      * @param isPredictionResistant is the random generator to be prediction resistant?
+     * @throws OceanusException on error
      */
-    public SP800Factory(final SecureRandom pEntropySource,
-                        final boolean isPredictionResistant) {
-        /* Store parameters and create an entropy provider */
-        theRandom = pEntropySource;
-        theEntropyProvider = new BasicEntropySourceProvider(theRandom, isPredictionResistant);
-    }
+    public GordianRandomFactory(final SecureRandom pEntropySource,
+                               final boolean isPredictionResistant) throws OceanusException {
+        /* If the EntropySource is null use StrongRandom */
+        theRandom = pEntropySource == null
+                                           ? getStrongRandom()
+                                           : pEntropySource;
 
-    /**
-     * Create a builder which makes creates the SecureRandom objects from a specified entropy source
-     * provider.
-     * <p>
-     * <b>Note:</b> If this constructor is used any calls to setSeed() in the resulting SecureRandom
-     * will be ignored.
-     * </p>
-     * @param pEntropy the provider of entropy
-     */
-    public SP800Factory(final EntropySourceProvider pEntropy) {
-        theRandom = null;
-        theEntropyProvider = pEntropy;
+        /* Store parameters and create an entropy provider */
+        theEntropyProvider = new BasicEntropySourceProvider(theRandom, isPredictionResistant);
     }
 
     /**
@@ -161,12 +152,21 @@ public final class SP800Factory {
     }
 
     /**
+     * Create a random randomSpec.
+     * @param pFactory the factory
+     * @return the randomSpec
+     */
+    public GordianRandomSpec generateRandomSpec(final GordianFactory pFactory) {
+        return pFactory.generateRandomSpec(theRandom);
+    }
+
+    /**
      * Access the strong Secure Random.
      * @return the secure random
      * @throws OceanusException on error
      */
     private static synchronized SecureRandom getStrongRandom() throws OceanusException {
-        /* If we have not yet created the string entropy */
+        /* If we have not yet created the strong entropy */
         if (theStrongEntropy == null) {
             /* Protect against exceptions */
             try {
@@ -187,21 +187,24 @@ public final class SP800Factory {
     }
 
     /**
-     * Set the personalisation string for DRBG SecureRandoms created by this builder.
-     * @param pSecurityBytes the personalisation string for the underlying DRBG.
-     */
-    public void setSecurityBytes(final byte[] pSecurityBytes) {
-        theSecurityBytes = (pSecurityBytes == null)
-                                                    ? null
-                                                    : Arrays.copyOf(pSecurityBytes, pSecurityBytes.length);
-    }
-
-    /**
-     * Create a default initVector.
+     * Create a personalisation Vector.
      * @return initVector.
      */
-    private static byte[] defaultInitVector() {
-        return TethysDataConverter.longToByteArray(System.currentTimeMillis());
+    private byte[] defaultPersonalisation() {
+        /* Create the source arrays */
+        final byte[] myThread = TethysDataConverter.longToByteArray(Thread.currentThread().getId());
+        final byte[] myTime = TethysDataConverter.longToByteArray(System.currentTimeMillis());
+        final byte[] mySeed = new byte[NUM_ENTROPY_BYTES_REQUIRED];
+        theRandom.nextBytes(mySeed);
+
+        /* Create the final initVector */
+        final byte[] myVector = new byte[myThread.length + myTime.length + mySeed.length];
+        System.arraycopy(mySeed, 0, myVector, 0, mySeed.length);
+        System.arraycopy(myThread, 0, myVector, mySeed.length, myThread.length);
+        System.arraycopy(myTime, 0, myVector, mySeed.length + myThread.length, myTime.length);
+
+        /* return it */
+        return myVector;
     }
 
     /**
@@ -211,9 +214,9 @@ public final class SP800Factory {
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a Hash DRBG.
      */
-    public SP800SecureRandom buildHash(final GordianDigest pDigest,
-                                       final boolean isPredictionResistant) {
-        return buildHash(pDigest, defaultInitVector(), isPredictionResistant);
+    public GordianSecureRandom buildHash(final GordianDigest pDigest,
+                                         final boolean isPredictionResistant) {
+        return buildHash(pDigest, null, isPredictionResistant);
     }
 
     /**
@@ -224,136 +227,51 @@ public final class SP800Factory {
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a Hash DRBG.
      */
-    public SP800SecureRandom buildHash(final GordianDigest pDigest,
-                                       final byte[] pInitVector,
-                                       final boolean isPredictionResistant) {
-        /* Build DRBG */
-        final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        final SP800HashDRBG myProvider = new SP800HashDRBG(pDigest, myEntropy, theSecurityBytes, pInitVector);
-        return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
-    }
-
-    /**
-     * Build a SecureRandom based on a SP 800-90A HMAC DRBG.
-     * @param hMac HMAC algorithm to use in the DRBG underneath the SecureRandom.
-     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
-     * SecureRandom should re-seed on each request for bytes.
-     * @return a SecureRandom supported by a HMAC DRBG.
-     */
-    public SP800SecureRandom buildHMAC(final GordianMac hMac,
-                                       final boolean isPredictionResistant) {
-        return buildHMAC(hMac, defaultInitVector(), isPredictionResistant);
-    }
-
-    /**
-     * Build a SecureRandom based on a SP 800-90A HMAC DRBG.
-     * @param hMac HMAC algorithm to use in the DRBG underneath the SecureRandom.
-     * @param pInitVector nonce value to use in DRBG construction.
-     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
-     * SecureRandom should re-seed on each request for bytes.
-     * @return a SecureRandom supported by a HMAC DRBG.
-     */
-    public SP800SecureRandom buildHMAC(final GordianMac hMac,
-                                       final byte[] pInitVector,
-                                       final boolean isPredictionResistant) {
+    public GordianSecureRandom buildHash(final GordianDigest pDigest,
+                                         final byte[] pInitVector,
+                                         final boolean isPredictionResistant) {
         /* Create initVector if required */
         final byte[] myInit = pInitVector == null
-                                                  ? TethysDataConverter.longToByteArray(System.currentTimeMillis())
+                                                  ? theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED)
                                                   : pInitVector;
 
         /* Build DRBG */
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
-        final SP800HMacDRBG myProvider = new SP800HMacDRBG(hMac, myEntropy, theSecurityBytes, myInit);
-        return new SP800SecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
+        final GordianSP800HashDRBG myProvider = new GordianSP800HashDRBG(pDigest, myEntropy, defaultPersonalisation(), myInit);
+        return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 
     /**
-     * SecureRandom wrapper class.
+     * Build a SecureRandom based on a SP 800-90A HMAC DRBG.
+     * @param hMac HMAC algorithm to use in the DRBG underneath the SecureRandom.
+     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
+     * SecureRandom should re-seed on each request for bytes.
+     * @return a SecureRandom supported by a HMAC DRBG.
      */
-    protected static final class SP800SecureRandom
-            extends
-            SecureRandom {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 781744191004794480L;
+    public GordianSecureRandom buildHMAC(final GordianMac hMac,
+                                         final boolean isPredictionResistant) {
+        return buildHMAC(hMac, null, isPredictionResistant);
+    }
 
-        /**
-         * The Basic Secure Random instance.
-         */
-        private final SecureRandom theRandom;
+    /**
+     * Build a SecureRandom based on a SP 800-90A HMAC DRBG.
+     * @param hMac HMAC algorithm to use in the DRBG underneath the SecureRandom.
+     * @param pInitVector nonce value to use in DRBG construction.
+     * @param isPredictionResistant specify whether the underlying DRBG in the resulting
+     * SecureRandom should re-seed on each request for bytes.
+     * @return a SecureRandom supported by a HMAC DRBG.
+     */
+    public GordianSecureRandom buildHMAC(final GordianMac hMac,
+                                         final byte[] pInitVector,
+                                         final boolean isPredictionResistant) {
+        /* Create initVector if required */
+        final byte[] myInit = pInitVector == null
+                                                  ? theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED)
+                                                  : pInitVector;
 
-        /**
-         * The DRBG generator.
-         */
-        private final transient SP80090DRBG theGenerator;
-
-        /**
-         * The DRBG provider.
-         */
-        private final transient EntropySource theEntropy;
-
-        /**
-         * Is this instance prediction resistant?
-         */
-        private final boolean predictionResistant;
-
-        /**
-         * Constructor.
-         * @param pGenerator the random generator
-         * @param pRandom the secure random instance
-         * @param pEntropy the entropy source
-         * @param isPredictionResistant true/false
-         */
-        private SP800SecureRandom(final SP80090DRBG pGenerator,
-                                  final SecureRandom pRandom,
-                                  final EntropySource pEntropy,
-                                  final boolean isPredictionResistant) {
-            /* Store parameters */
-            theGenerator = pGenerator;
-            theRandom = pRandom;
-            theEntropy = pEntropy;
-            predictionResistant = isPredictionResistant;
-        }
-
-        @Override
-        public void setSeed(final byte[] seed) {
-            synchronized (this) {
-                /* Ensure that the random generator is seeded if it exists */
-                if (theRandom != null) {
-                    theRandom.setSeed(seed);
-                }
-            }
-        }
-
-        @Override
-        public void setSeed(final long seed) {
-            synchronized (this) {
-                /* this will happen when SecureRandom() is created */
-                if (theRandom != null) {
-                    theRandom.setSeed(seed);
-                }
-            }
-        }
-
-        @Override
-        public void nextBytes(final byte[] bytes) {
-            synchronized (this) {
-                /* Generate, checking for reSeed request */
-                if (theGenerator.generate(bytes, null, predictionResistant) < 0) {
-                    /* ReSeed and regenerate */
-                    theGenerator.reseed(theEntropy.getEntropy());
-                    theGenerator.generate(bytes, null, predictionResistant);
-                }
-            }
-        }
-
-        @Override
-        public byte[] generateSeed(final int numBytes) {
-            /* Generate a new seed */
-            final byte[] bytes = new byte[numBytes];
-            nextBytes(bytes);
-            return bytes;
-        }
+        /* Build DRBG */
+        final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
+        final GordianSP800HMacDRBG myProvider = new GordianSP800HMacDRBG(hMac, myEntropy, defaultPersonalisation(), myInit);
+        return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 }

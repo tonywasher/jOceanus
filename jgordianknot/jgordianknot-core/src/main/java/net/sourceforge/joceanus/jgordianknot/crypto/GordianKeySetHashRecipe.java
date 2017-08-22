@@ -49,7 +49,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * InitVector length.
      */
-    public static final int INITVECTORLEN = 32;
+    public static final int INITVECTORLEN = GordianLength.LEN_256.getByteLength();
 
     /**
      * The Recipe.
@@ -253,6 +253,7 @@ public final class GordianKeySetHashRecipe {
         protected HashParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
             final SecureRandom myRandom = pFactory.getRandom();
 
             /* Allocate the arrays */
@@ -262,7 +263,7 @@ public final class GordianKeySetHashRecipe {
             /* Generate recipe and derive digestTypes */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
-            mySeed = myManager.convertRecipe(mySeed);
+            mySeed = myPersonal.convertRecipe(mySeed);
             mySeed = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigests);
             mySeed = myManager.deriveExternalDigestTypesFromSeed(mySeed, theExternalDigest);
 
@@ -279,6 +280,7 @@ public final class GordianKeySetHashRecipe {
                                  final byte[] pRecipe) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
+            final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
             /* Allocate the arrays */
             theExternalDigest = new GordianDigestType[1];
@@ -287,7 +289,7 @@ public final class GordianKeySetHashRecipe {
             /* Store recipe and derive symKeyTypes */
             theRecipe = pRecipe;
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
-            mySeed = myManager.convertRecipe(mySeed);
+            mySeed = myPersonal.convertRecipe(mySeed);
             mySeed = myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theDigests);
             mySeed = myManager.deriveExternalDigestTypesFromSeed(mySeed, theExternalDigest);
 

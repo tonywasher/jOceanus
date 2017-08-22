@@ -127,4 +127,14 @@ public abstract class GordianKeyGeneratorCache {
     protected void addToKeyPairCache(final GordianKeyPairGenerator pGenerator) {
         theKeyPairCache.put(pGenerator.getKeySpec(), pGenerator);
     }
+
+    /**
+     * Reset the cache.
+     */
+    public void resetCache() {
+        theSymKeyCache.clear();
+        theStreamKeyCache.clear();
+        theMacKeyCache.clear();
+        theKeyPairCache.clear();
+    }
 }

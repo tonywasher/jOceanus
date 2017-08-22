@@ -137,17 +137,17 @@ public class GordianTestSuite {
         byte[] mySymSafe = myKeySet.secureKey(mySym);
         byte[] myStreamSafe = myKeySet.secureKey(myStream);
 
-        /* Encrypt some bytes */
+        /* Encrypt short block */
         String myTest1 = "TestString";
         byte[] myBytes = TethysDataConverter.stringToByteArray(myTest1);
         byte[] myEncrypt1 = myKeySet.encryptBytes(myBytes);
 
-        /* Encrypt some more bytes */
+        /* Encrypt full block */
         String myTest2 = "TestString123456";
         myBytes = TethysDataConverter.stringToByteArray(myTest2);
         byte[] myEncrypt2 = myKeySet.encryptBytes(myBytes);
 
-        /* Encrypt some more bytes */
+        /* Encrypt some multi-block */
         String myTest3 = "TestString1234567";
         myBytes = TethysDataConverter.stringToByteArray(myTest3);
         byte[] myEncrypt3 = myKeySet.encryptBytes(myBytes);

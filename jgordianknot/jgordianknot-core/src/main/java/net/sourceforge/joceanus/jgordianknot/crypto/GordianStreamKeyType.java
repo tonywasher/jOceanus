@@ -29,52 +29,52 @@ public enum GordianStreamKeyType {
     /**
      * XSalsa20.
      */
-    XSALSA20(24),
+    XSALSA20(GordianLength.LEN_192),
 
     /**
      * Salsa20.
      */
-    SALSA20(8),
+    SALSA20(GordianLength.LEN_64),
 
     /**
      * HC.
      */
-    HC(16),
+    HC(GordianLength.LEN_128),
 
     /**
      * ChaCha.
      */
-    CHACHA(8),
+    CHACHA(GordianLength.LEN_64),
 
     /**
      * ChaCha7539.
      */
-    CHACHA7539(12),
+    CHACHA7539(GordianLength.LEN_96),
 
     /**
      * VMPC.
      */
-    VMPC(16),
+    VMPC(GordianLength.LEN_128),
 
     /**
      * ISAAC.
      */
-    ISAAC(0),
+    ISAAC(null),
 
     /**
      * RC4.
      */
-    RC4(0),
+    RC4(null),
 
     /**
      * Grain.
      */
-    GRAIN(12);
+    GRAIN(GordianLength.LEN_96);
 
     /**
      * The IV Length.
      */
-    private final int theIVLen;
+    private final GordianLength theIVLen;
 
     /**
      * The String name.
@@ -85,7 +85,7 @@ public enum GordianStreamKeyType {
      * Constructor.
      * @param pIVLen the IV length
      */
-    GordianStreamKeyType(final int pIVLen) {
+    GordianStreamKeyType(final GordianLength pIVLen) {
         theIVLen = pIVLen;
     }
 
@@ -94,7 +94,9 @@ public enum GordianStreamKeyType {
      * @return the IV length.
      */
     public int getIVLength() {
-        return theIVLen;
+        return theIVLen == null
+                                ? 0
+                                : theIVLen.getByteLength();
     }
 
     @Override

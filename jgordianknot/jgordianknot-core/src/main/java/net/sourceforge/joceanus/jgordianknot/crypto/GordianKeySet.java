@@ -41,7 +41,7 @@ public final class GordianKeySet {
     /**
      * Initialisation Vector size.
      */
-    private static final int IVSIZE = GordianFactory.IVSIZE;
+    private static final int IVSIZE = GordianKeySetRecipe.IVSIZE;
 
     /**
      * The factory.

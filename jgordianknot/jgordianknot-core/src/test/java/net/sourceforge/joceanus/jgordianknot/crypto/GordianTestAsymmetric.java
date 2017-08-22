@@ -296,7 +296,7 @@ public class GordianTestAsymmetric {
         private void checkKEMS() throws OceanusException {
             /* Access the Exchange predicate */
             BiPredicate<GordianKeyPair, GordianDigestSpec> myXchgPredicate = theFactory.supportedKeyExchanges();
-            GordianDigestSpec mySpec = theFactory.getDefaultDigest();
+            GordianDigestSpec mySpec = GordianDigestSpec.whirlpool();
 
             /* If we can perform keyExchange */
             if (myXchgPredicate.test(thePair, mySpec)) {

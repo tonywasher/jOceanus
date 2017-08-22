@@ -39,16 +39,6 @@ public class GordianParameters {
     public static final GordianFactoryType DEFAULT_FACTORY = GordianFactoryType.BC;
 
     /**
-     * Default SP800 Algorithm.
-     */
-    public static final GordianSP800Type DEFAULT_SP800 = GordianSP800Type.HASH;
-
-    /**
-     * Default Hash Algorithm.
-     */
-    public static final GordianDigestType DEFAULT_HASHALGO = GordianDigestType.SHA3;
-
-    /**
      * Minimum Cipher Steps.
      */
     public static final Integer MINIMUM_CIPHER_STEPS = 2;
@@ -89,16 +79,6 @@ public class GordianParameters {
     private GordianFactoryType theFactoryType;
 
     /**
-     * The SP800 Type.
-     */
-    private GordianSP800Type theSP800Type;
-
-    /**
-     * The Base Hash algorithm.
-     */
-    private GordianDigestType theHashAlgorithm;
-
-    /**
      * The Number of cipher steps.
      */
     private int theCipherSteps;
@@ -129,8 +109,6 @@ public class GordianParameters {
         /* Store parameters */
         useRestricted = pRestricted;
         theFactoryType = DEFAULT_FACTORY;
-        theSP800Type = DEFAULT_SP800;
-        theHashAlgorithm = DEFAULT_HASHALGO;
         theCipherSteps = DEFAULT_CIPHER_STEPS;
         theIterations = DEFAULT_HASH_ITERATIONS;
         theSecurityPhrase = null;
@@ -150,22 +128,6 @@ public class GordianParameters {
      */
     public GordianFactoryType getFactoryType() {
         return theFactoryType;
-    }
-
-    /**
-     * Access the SP800 type.
-     * @return the SP800 type
-     */
-    public GordianSP800Type getSP800Type() {
-        return theSP800Type;
-    }
-
-    /**
-     * Access the base hash algorithm.
-     * @return the hash algorithm
-     */
-    public GordianDigestType getBaseHashAlgorithm() {
-        return theHashAlgorithm;
     }
 
     /**
@@ -198,22 +160,6 @@ public class GordianParameters {
      */
     public void setFactoryType(final GordianFactoryType pType) {
         theFactoryType = pType;
-    }
-
-    /**
-     * Set SP800 type.
-     * @param pType the SP800 type
-     */
-    public void setSP800Type(final GordianSP800Type pType) {
-        theSP800Type = pType;
-    }
-
-    /**
-     * Set base hash algorithm.
-     * @param pHashAlgo the algorithm
-     */
-    public void setBaseHashAlgorithm(final GordianDigestType pHashAlgo) {
-        theHashAlgorithm = pHashAlgo;
     }
 
     /**
@@ -268,14 +214,12 @@ public class GordianParameters {
         final GordianParameters myThat = (GordianParameters) pThat;
 
         /* Check Differences */
-        if ((theCipherSteps != myThat.getNumCipherSteps())
-            || (useRestricted != myThat.useRestricted())
-            || (theIterations != myThat.getNumHashIterations())) {
+        if (theCipherSteps != myThat.getNumCipherSteps()
+            || useRestricted != myThat.useRestricted()
+            || theIterations != myThat.getNumHashIterations()) {
             return false;
         }
-        if ((theHashAlgorithm != myThat.getBaseHashAlgorithm())
-            || (theFactoryType != myThat.getFactoryType())
-            || (theSP800Type != myThat.getSP800Type())) {
+        if (theFactoryType != myThat.getFactoryType()) {
             return false;
         }
 
@@ -301,16 +245,12 @@ public class GordianParameters {
         myCode *= myPrime;
 
         /* Calculate hash from types */
-        myCode += theHashAlgorithm.hashCode();
-        myCode *= myPrime;
         myCode += theFactoryType.hashCode();
-        myCode *= myPrime;
-        myCode += theSP800Type.hashCode();
         myCode *= myPrime;
 
         /* Calculate hash from phrase */
-        return myCode + ((theSecurityPhrase == null)
-                                                     ? 0
-                                                     : Arrays.hashCode(theSecurityPhrase));
+        return myCode + (theSecurityPhrase == null
+                                                   ? 0
+                                                   : Arrays.hashCode(theSecurityPhrase));
     }
 }

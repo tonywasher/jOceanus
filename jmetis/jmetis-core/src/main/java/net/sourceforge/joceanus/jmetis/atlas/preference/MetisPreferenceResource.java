@@ -174,16 +174,6 @@ public enum MetisPreferenceResource implements TethysResourceId {
     SECPREF_RESTRICTED("secpref.restricted"),
 
     /**
-     * SecurityPreference HashType.
-     */
-    SECPREF_HASH("secpref.hash"),
-
-    /**
-     * SecurityPreference Factory.
-     */
-    SECPREF_SP800("secpref.sp800"),
-
-    /**
      * SecurityPreference Cipher Steps.
      */
     SECPREF_CIPHERSTEPS("secpref.ciphersteps"),

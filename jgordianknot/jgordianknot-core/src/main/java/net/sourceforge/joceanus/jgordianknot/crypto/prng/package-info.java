@@ -23,4 +23,4 @@
 /**
  * Provides SP800 SecureRandom implementations.
  */
-package net.sourceforge.joceanus.jgordianknot.crypto.sp800;
+package net.sourceforge.joceanus.jgordianknot.crypto.prng;
