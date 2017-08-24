@@ -34,6 +34,7 @@
         <dt>v1.5.1-b4</dt> <dd>Adjust security algorithms</dd>
         <dt>v1.5.2-b1</dt> <dd>Split into new (atlas) and old (lethe) branches</dd>
         <dt>v1.5.2-b2</dt> <dd>Revamp table support</dd>
+        <dt>v1.5.2-b3</dt> <dd>New security algorithms, improve ListButton usage</dd>
       </dl>
     </section>
   </body>
