@@ -434,8 +434,8 @@ public abstract class CoeusTotals
         }
 
         /* If this is a money value */
-        if ((myPrevious instanceof TethysMoney)
-            && (myDecimal instanceof TethysMoney)) {
+        if (myPrevious instanceof TethysMoney
+            && myDecimal instanceof TethysMoney) {
             final TethysMoney myResult = new TethysMoney((TethysMoney) myDecimal);
             myResult.subtractAmount((TethysMoney) myPrevious);
             return myResult;

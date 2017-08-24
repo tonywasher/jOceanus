@@ -280,7 +280,7 @@ public class MoneyWiseReportMarketGrowth
      * Check portfolio growth calculation.
      * @param pBucket the portfolio bucket
      */
-    private void checkPortfolioGrowth(final PortfolioBucket pBucket) {
+    private static void checkPortfolioGrowth(final PortfolioBucket pBucket) {
         /* Check market profit */
         final SecurityValues myValues = pBucket.getValues();
         final TethysMoney myAdjust = myValues.getMoneyValue(SecurityAttribute.GROWTHADJUST);
@@ -307,7 +307,7 @@ public class MoneyWiseReportMarketGrowth
      * Check security portfolio profit calculation.
      * @param pBucket the security bucket
      */
-    private void checkSecurityGrowth(final SecurityBucket pBucket) {
+    private static void checkSecurityGrowth(final SecurityBucket pBucket) {
         /* Check market profit */
         final SecurityValues myValues = pBucket.getValues();
         final SecurityValues myBaseValues = pBucket.getBaseValues();

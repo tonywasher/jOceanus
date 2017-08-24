@@ -277,6 +277,7 @@ public class ReportTab
 
         /* Skip if we have no analysis */
         if (myManager.isIdle()) {
+            theHTMLPane.setHTMLContent("", "");
             return;
         }
 

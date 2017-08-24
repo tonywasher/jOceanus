@@ -318,9 +318,9 @@ public class GordianSymKeySpec {
         final List<GordianSymKeySpec> myList = new ArrayList<>();
 
         /* For each symKey type */
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* For each length */
-            for (GordianLength myLength : myType.getSupportedLengths()) {
+            for (final GordianLength myLength : myType.getSupportedLengths()) {
                 myList.add(new GordianSymKeySpec(myType, myLength));
             }
         }

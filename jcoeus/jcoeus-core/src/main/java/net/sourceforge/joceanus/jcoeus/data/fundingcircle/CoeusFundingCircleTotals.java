@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * FundingCircle Transaction Totals.
  */
-public class CoeusFundingCircleTotals
+public final class CoeusFundingCircleTotals
         extends CoeusTotals {
     /**
      * Report fields.

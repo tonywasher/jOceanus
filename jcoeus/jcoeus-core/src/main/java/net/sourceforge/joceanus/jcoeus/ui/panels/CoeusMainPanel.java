@@ -55,11 +55,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  */
 public abstract class CoeusMainPanel<N, I> {
     /**
-     * The Market Cache.
-     */
-    private final CoeusMarketCache theMarketCache;
-
-    /**
      * The Totals Table.
      */
     private final CoeusStatementTable<N, I> theTotalsTable;
@@ -100,19 +95,19 @@ public abstract class CoeusMainPanel<N, I> {
         final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
         /* Create the Cache */
-        theMarketCache = new CoeusMarketCache(pToolkit);
+        final CoeusMarketCache myMarketCache = new CoeusMarketCache(pToolkit);
 
         /* Create the viewer entry for the cache */
         final MetisViewerManager myDataMgr = pToolkit.getViewerManager();
         final MetisViewerEntry mySection = myDataMgr.getStandardEntry(MetisViewerStandardEntry.VIEW);
         final MetisViewerEntry myEntry = myDataMgr.newEntry(mySection, CoeusResource.DATA_MARKETCACHE.getValue());
-        myEntry.setObject(theMarketCache);
+        myEntry.setObject(myMarketCache);
 
         /* Create the Tabbed Pane */
         theTabs = myFactory.newTabPane();
 
         /* Create the report panel */
-        final CoeusReportPanel<N, I> myReports = new CoeusReportPanel<>(pToolkit, theMarketCache);
+        final CoeusReportPanel<N, I> myReports = new CoeusReportPanel<>(pToolkit, myMarketCache);
         theTabs.addTabItem(CoeusUIResource.TAB_REPORTS.getValue(), myReports);
 
         /* Listen to filter requests */
@@ -120,7 +115,7 @@ public abstract class CoeusMainPanel<N, I> {
         myRegistrar.addEventListener(CoeusDataEvent.GOTOSTATEMENT, this::handleGoToEvent);
 
         /* Create the totals table */
-        theTotalsTable = new CoeusStatementTable<>(pToolkit, theMarketCache);
+        theTotalsTable = new CoeusStatementTable<>(pToolkit, myMarketCache);
         theTotalsTab = theTabs.addTabItem(CoeusUIResource.TAB_STATEMENTS.getValue(), theTotalsTable);
 
         /* Create the Preferences Tab */
@@ -147,7 +142,7 @@ public abstract class CoeusMainPanel<N, I> {
         /* Create the loader */
         final CoeusDataLoader myLoader = new CoeusDataLoader(pToolkit);
         final CoeusMarketSet myMarketSet = myLoader.loadData();
-        theMarketCache.declareMarketSet(myMarketSet);
+        myMarketCache.declareMarketSet(myMarketSet);
     }
 
     /**

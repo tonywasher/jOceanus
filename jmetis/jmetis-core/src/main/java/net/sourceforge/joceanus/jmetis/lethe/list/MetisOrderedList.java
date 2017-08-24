@@ -408,7 +408,7 @@ public class MetisOrderedList<T extends Comparable<? super T>>
 
         /* Handle end of list as start of list */
         if (iIndex == size()) {
-            return listIterator(0);
+            return listIterator();
         }
 
         /* Reject if the index is too large */

@@ -182,7 +182,7 @@ public class GordianWrapCipher {
 
         /* Calculate padding length */
         final int myTrueLen;
-        if ((myDataLen % theBlockLen) == 0) {
+        if (myDataLen % theBlockLen == 0) {
             myTrueLen = myDataLen;
         } else {
             myNumBlocks++;
@@ -257,7 +257,7 @@ public class GordianWrapCipher {
                                 / theBlockLen;
 
         /* Data must be a multiple of BlockLength */
-        if ((myNumBlocks * theBlockLen) != myDataLen) {
+        if (myNumBlocks * theBlockLen != myDataLen) {
             throw new GordianDataException("Invalid data length");
         }
 

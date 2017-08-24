@@ -41,7 +41,7 @@ public final class GordianKeySet {
     /**
      * Initialisation Vector size.
      */
-    private static final int IVSIZE = GordianKeySetRecipe.IVSIZE;
+    private static final int BLOCKLEN = GordianLength.LEN_128.getByteLength();
 
     /**
      * The factory.
@@ -109,9 +109,9 @@ public final class GordianKeySet {
      * @return the length of encrypted data
      */
     public static int getEncryptionLength(final int pDataLength) {
-        final int iBlocks = 1 + ((pDataLength - 1) % IVSIZE);
+        final int iBlocks = 1 + ((pDataLength - 1) % BLOCKLEN);
         return iBlocks
-               * IVSIZE;
+               * BLOCKLEN;
     }
 
     /**
@@ -119,7 +119,7 @@ public final class GordianKeySet {
      * @return the encryption overhead
      */
     public static int getEncryptionOverhead() {
-        return IVSIZE + GordianKeySetRecipe.RECIPELEN;
+        return GordianKeySetRecipe.SALTLEN + GordianKeySetRecipe.RECIPELEN;
     }
 
     /**
@@ -128,7 +128,7 @@ public final class GordianKeySet {
      * @return the keyWrap expansion
      */
     public static int getKeyWrapExpansion(final int pNumSteps) {
-        final int myExpansion = (IVSIZE * pNumSteps) >> 1;
+        final int myExpansion = (BLOCKLEN * pNumSteps) >> 1;
         return myExpansion + getEncryptionOverhead();
     }
 

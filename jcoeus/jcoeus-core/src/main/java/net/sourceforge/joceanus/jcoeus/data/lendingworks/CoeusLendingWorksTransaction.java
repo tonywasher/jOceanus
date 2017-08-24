@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 /**
  * LendingWorks Transaction.
  */
-public class CoeusLendingWorksTransaction
+public final class CoeusLendingWorksTransaction
         extends CoeusTransaction {
     /**
      * Report fields.
@@ -78,7 +78,7 @@ public class CoeusLendingWorksTransaction
     /**
      * ZERO for BadDebt/CashBack.
      */
-    protected static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusLendingWorksMarket.DECIMAL_SIZE);
+    static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusLendingWorksMarket.DECIMAL_SIZE);
 
     /**
      * Date of transaction.
@@ -191,8 +191,8 @@ public class CoeusLendingWorksTransaction
 
         /* Check that capital is only changed on a loan */
         if (theLoanBook.isNonZero()
-            && (theLoan == null
-                && !CoeusTransactionType.CAPITALLOAN.equals(theTransType))) {
+            && theLoan == null
+            && !CoeusTransactionType.CAPITALLOAN.equals(theTransType)) {
             throw new CoeusDataException(this, "Capital changed on non-loan");
         }
     }

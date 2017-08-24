@@ -276,16 +276,14 @@ public class CoeusMarketAnnual
      * @param pDate the date
      * @return the history
      */
-    public CoeusHistory getMonthlyHistory(final Month pDate) {
+    public final CoeusHistory getMonthlyHistory(final Month pDate) {
         return theMonthlyHistories.get(pDate);
     }
 
     @Override
     public String toString() {
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(theMarket.toString());
-        myBuilder.append('@');
-        myBuilder.append(theDate);
+        myBuilder.append(theMarket).append('@').append(theDate);
         return myBuilder.toString();
     }
 

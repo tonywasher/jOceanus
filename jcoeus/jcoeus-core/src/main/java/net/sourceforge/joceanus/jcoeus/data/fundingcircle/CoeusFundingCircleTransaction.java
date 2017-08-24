@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * FundingCircle transaction.
  */
-public class CoeusFundingCircleTransaction
+public final class CoeusFundingCircleTransaction
         extends CoeusTransaction {
     /**
      * Report fields.
@@ -126,7 +126,7 @@ public class CoeusFundingCircleTransaction
     /**
      * ZERO for BadDebt/CashBack.
      */
-    protected static final TethysMoney ZERO_MONEY = new TethysMoney();
+    static final TethysMoney ZERO_MONEY = new TethysMoney();
 
     /**
      * Date of transaction.

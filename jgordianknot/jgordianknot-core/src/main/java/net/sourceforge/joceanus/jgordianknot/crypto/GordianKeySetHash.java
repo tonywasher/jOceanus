@@ -43,7 +43,7 @@ public final class GordianKeySetHash {
     /**
      * Hash size for password hash.
      */
-    public static final int HASHSIZE = 100;
+    public static final int HASHLEN = GordianKeySetHashRecipe.HASHLEN;
 
     /**
      * Hash Recipe.
@@ -354,7 +354,7 @@ public final class GordianKeySetHash {
             final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
 
             /* Check whether the HashBytes is too large */
-            if (myHashBytes.length > HASHSIZE) {
+            if (myHashBytes.length > HASHLEN) {
                 throw new GordianDataException("Password Hash too large: "
                                                + myHashBytes.length);
             }

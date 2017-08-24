@@ -50,6 +50,11 @@ public class CoeusZopaLoanBookItem
     private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaLoanBookItem.class);
 
     /**
+     * Builder buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
      * Loan Id Field Id.
      */
     private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
@@ -422,32 +427,32 @@ public class CoeusZopaLoanBookItem
         }
 
         /* Look for A risk */
-        if (pRisk.startsWith("A")) {
+        if (pRisk.charAt(0) == 'A') {
             return CoeusLoanRisk.A;
         }
 
         /* Look for B risk */
-        if (pRisk.startsWith("B")) {
+        if (pRisk.charAt(0) == 'B') {
             return CoeusLoanRisk.B;
         }
 
         /* Look for C risk */
-        if (pRisk.startsWith("C")) {
+        if (pRisk.charAt(0) == 'C') {
             return CoeusLoanRisk.C;
         }
 
         /* Look for D risk */
-        if (pRisk.startsWith("D")) {
+        if (pRisk.charAt(0) == 'D') {
             return CoeusLoanRisk.D;
         }
 
         /* Look for E risk */
-        if (pRisk.startsWith("E")) {
+        if (pRisk.charAt(0) == 'E') {
             return CoeusLoanRisk.E;
         }
 
         /* Look for S risk */
-        if (pRisk.startsWith("S")) {
+        if (pRisk.charAt(0) == 'S') {
             return CoeusLoanRisk.S;
         }
 
@@ -501,15 +506,10 @@ public class CoeusZopaLoanBookItem
 
     @Override
     public String toString() {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(theLoanId);
-        myBuilder.append(' ');
-        myBuilder.append(theStatus.toString());
-        myBuilder.append(",B=");
-        myBuilder.append(theBalance.toString());
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        myBuilder.append(theLoanId).append(' ').append(theStatus).append(",B=").append(theBalance);
         if (theMissing.isNonZero()) {
-            myBuilder.append(",M=");
-            myBuilder.append(theMissing.toString());
+            myBuilder.append(",M=").append(theMissing);
         }
         return myBuilder.toString();
     }

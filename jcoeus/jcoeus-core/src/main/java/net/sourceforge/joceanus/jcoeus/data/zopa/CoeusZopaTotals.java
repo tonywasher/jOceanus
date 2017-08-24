@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 /**
  * Zopa Transaction Totals.
  */
-public class CoeusZopaTotals
+public final class CoeusZopaTotals
         extends CoeusTotals {
     /**
      * Report fields.

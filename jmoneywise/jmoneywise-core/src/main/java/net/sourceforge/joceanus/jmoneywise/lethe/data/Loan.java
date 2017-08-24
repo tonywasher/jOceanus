@@ -753,9 +753,8 @@ public class Loan
     /**
      * Set a new parent.
      * @param pParent the parent
-     * @throws OceanusException on error
      */
-    public void setParent(final Payee pParent) throws OceanusException {
+    public void setParent(final Payee pParent) {
         setValueParent(pParent);
     }
 

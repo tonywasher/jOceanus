@@ -150,8 +150,8 @@ public class CoeusMarketCache
 
         /* Obtain the snapShot */
         CoeusMarketSnapShot mySnapShot = myMap.get(pDate);
-        if ((mySnapShot == null)
-            && (theMarketSet != null)) {
+        if (mySnapShot == null
+            && theMarketSet != null) {
             mySnapShot = theMarketSet.getSnapshot(pProvider, pDate);
             myMap.put(pDate, mySnapShot);
         }
@@ -177,8 +177,8 @@ public class CoeusMarketCache
 
         /* Obtain the annual */
         CoeusMarketAnnual myAnnual = myMap.get(pDate);
-        if ((myAnnual == null)
-            && (theMarketSet != null)) {
+        if (myAnnual == null
+            && theMarketSet != null) {
             myAnnual = theMarketSet.getAnnual(pProvider, theCalendar, pDate);
             myMap.put(pDate, myAnnual);
         }

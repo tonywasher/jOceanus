@@ -42,19 +42,29 @@ public final class GordianKeySetHashRecipe {
     private static final int RECIPELEN = Integer.BYTES;
 
     /**
+     * Salt length.
+     */
+    private static final int SALTLEN = GordianLength.LEN_256.getByteLength();
+
+    /**
+     * HashSize.
+     */
+    protected static final int HASHLEN = RECIPELEN + SALTLEN + GordianLength.LEN_512.getByteLength();
+
+    /**
      * Hash margins.
      */
     private static final int HASH_MARGIN = 4;
 
     /**
-     * InitVector length.
-     */
-    public static final int INITVECTORLEN = GordianLength.LEN_256.getByteLength();
-
-    /**
      * The Recipe.
      */
     private final byte[] theRecipe;
+
+    /**
+     * The Salt.
+     */
+    private final byte[] theSalt;
 
     /**
      * The Initialisation Vector.
@@ -79,9 +89,13 @@ public final class GordianKeySetHashRecipe {
         /* Access the secureRandom */
         final SecureRandom myRandom = pFactory.getRandom();
 
-        /* Create the Initialisation vector */
-        theInitVector = new byte[INITVECTORLEN];
-        myRandom.nextBytes(theInitVector);
+        /* Create the Salt vector */
+        theSalt = new byte[SALTLEN];
+        myRandom.nextBytes(theSalt);
+
+        /* Calculate the initVector */
+        final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
+        theInitVector = myPersonal.adjustIV(theSalt);
 
         /* Allocate new set of parameters */
         theParams = new HashParameters(pFactory);
@@ -102,11 +116,11 @@ public final class GordianKeySetHashRecipe {
         final int myLen = pExternal.length;
         final int myHashLen = myLen
                               - RECIPELEN
-                              - INITVECTORLEN;
+                              - SALTLEN;
 
         /* Create the byte arrays */
         theRecipe = new byte[RECIPELEN];
-        theInitVector = new byte[INITVECTORLEN];
+        theSalt = new byte[SALTLEN];
         theHash = new byte[myHashLen];
 
         /* Determine offset position */
@@ -118,11 +132,15 @@ public final class GordianKeySetHashRecipe {
         System.arraycopy(pExternal, 0, theHash, 0, myOffSet);
         System.arraycopy(pExternal, myOffSet, theRecipe, 0, RECIPELEN);
         System.arraycopy(pExternal, myOffSet
-                                    + RECIPELEN, theInitVector, 0, INITVECTORLEN);
+                                    + RECIPELEN, theSalt, 0, SALTLEN);
         System.arraycopy(pExternal, myOffSet
                                     + RECIPELEN
-                                    + INITVECTORLEN, theHash, myOffSet, myHashLen
-                                                                        - myOffSet);
+                                    + SALTLEN, theHash, myOffSet, myHashLen
+                                                                  - myOffSet);
+
+        /* Calculate the initVector */
+        final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
+        theInitVector = myPersonal.adjustIV(theSalt);
 
         /* Allocate new set of parameters */
         theParams = new HashParameters(pFactory, theRecipe);
@@ -199,7 +217,7 @@ public final class GordianKeySetHashRecipe {
         /* Allocate the new buffer */
         final int myHashLen = pHash.length;
         final int myLen = RECIPELEN
-                          + INITVECTORLEN
+                          + SALTLEN
                           + myHashLen;
         final byte[] myBuffer = new byte[myLen];
 
@@ -211,12 +229,12 @@ public final class GordianKeySetHashRecipe {
         /* Copy Data into buffer */
         System.arraycopy(pHash, 0, myBuffer, 0, myOffSet);
         System.arraycopy(theRecipe, 0, myBuffer, myOffSet, RECIPELEN);
-        System.arraycopy(theInitVector, 0, myBuffer, myOffSet
-                                                     + RECIPELEN, INITVECTORLEN);
+        System.arraycopy(theSalt, 0, myBuffer, myOffSet
+                                               + RECIPELEN, SALTLEN);
         System.arraycopy(pHash, myOffSet, myBuffer, myOffSet
                                                     + RECIPELEN
-                                                    + INITVECTORLEN, myHashLen
-                                                                     - myOffSet);
+                                                    + SALTLEN, myHashLen
+                                                               - myOffSet);
 
         /* return the external format */
         return myBuffer;

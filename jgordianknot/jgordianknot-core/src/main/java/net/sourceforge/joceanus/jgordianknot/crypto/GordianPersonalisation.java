@@ -49,17 +49,17 @@ public class GordianPersonalisation {
     /**
      * Personalisation bytes.
      */
-    private final byte[][] thePersonalisation;
+    private final byte[] thePersonalisation;
+
+    /**
+     * InitVector bytes.
+     */
+    private final byte[] theInitVector;
 
     /**
      * The personalisation length.
      */
     private final int thePersonalLen;
-
-    /**
-     * The number of hashes.
-     */
-    private final int theNumHashes;
 
     /**
      * The recipe mask.
@@ -75,9 +75,10 @@ public class GordianPersonalisation {
     protected GordianPersonalisation(final GordianFactory pFactory,
                                      final GordianParameters pParameters) throws OceanusException {
         /* Calculate personalisation bytes */
-        thePersonalisation = personalise(pFactory, pParameters);
-        theNumHashes = thePersonalisation.length - 1;
-        thePersonalLen = HASH_LEN.getByteLength();
+        final byte[][] myArrays = personalise(pFactory, pParameters);
+        thePersonalisation = myArrays[0];
+        theInitVector = myArrays[1];
+        thePersonalLen = thePersonalisation.length;
 
         /* Obtain the recipe mask */
         theRecipeMask = getPersonalisedInteger(LOC_RECIPE);
@@ -89,14 +90,14 @@ public class GordianPersonalisation {
      * @return the digests
      * @throws OceanusException on error
      */
-    protected GordianDigest[] determineDigests(final GordianFactory pFactory) throws OceanusException {
+    private static GordianDigest[] determineDigests(final GordianFactory pFactory) throws OceanusException {
         /* Initialise variables */
         final GordianDigestType[] myTypes = GordianDigestType.values();
         final GordianDigest[] myDigests = new GordianDigest[myTypes.length];
         int myLen = 0;
 
         /* Loop through the digestTypes */
-        for (GordianDigestType myType : GordianDigestType.values()) {
+        for (final GordianDigestType myType : GordianDigestType.values()) {
             /* Add the digest if it is relevant */
             if (pFactory.supportedExternalDigestTypes().test(myType)) {
                 myDigests[myLen++] = pFactory.createDigest(new GordianDigestSpec(myType, HASH_LEN));
@@ -114,11 +115,11 @@ public class GordianPersonalisation {
      * @return the hashes
      * @throws OceanusException on error
      */
-    protected byte[][] personalise(final GordianFactory pFactory,
-                                   final GordianParameters pParameters) throws OceanusException {
+    private static byte[][] personalise(final GordianFactory pFactory,
+                                        final GordianParameters pParameters) throws OceanusException {
         /* Determine the digests */
         final GordianDigest[] myDigests = determineDigests(pFactory);
-        final byte[][] myHashes = new byte[myDigests.length + 1][];
+        final byte[][] myHashes = new byte[myDigests.length][];
 
         /* Obtain configuration */
         final char[] myPhrase = pParameters.getSecurityPhrase();
@@ -128,8 +129,7 @@ public class GordianPersonalisation {
                                                       : TethysDataConverter.charsToByteArray(myPhrase);
 
         /* Initialise hashes */
-        final byte[] myResults = new byte[HASH_LEN.getByteLength()];
-        myHashes[myDigests.length] = myResults;
+        final byte[] myConfig = new byte[HASH_LEN.getByteLength()];
         for (int i = 0; i < myDigests.length; i++) {
             /* Initialise the digests */
             final GordianDigest myDigest = myDigests[i];
@@ -140,11 +140,11 @@ public class GordianPersonalisation {
 
             /* Finish the update and store the buffer */
             final byte[] myResult = myDigest.finish();
-            TethysDataConverter.buildHashResult(myResults, myResult);
+            TethysDataConverter.buildHashResult(myConfig, myResult);
             myHashes[i] = myResult;
         }
 
-        /* Loop several times */
+        /* Loop several times to cross-fertilise */
         for (int i = 0; i < myDigests.length; i++) {
             /* Update all the digests */
             for (int j = 0; j < myDigests.length; j++) {
@@ -161,12 +161,28 @@ public class GordianPersonalisation {
                 final GordianDigest myDigest = myDigests[j];
                 final byte[] myResult = myHashes[j];
                 myDigest.finish(myResult, 0);
-                TethysDataConverter.buildHashResult(myResults, myResult);
+                TethysDataConverter.buildHashResult(myConfig, myResult);
             }
         }
 
+        /* Finally build the initVector mask */
+        final byte[] myInitVec = new byte[HASH_LEN.getByteLength()];
+        for (int i = 0; i < myDigests.length; i++) {
+            TethysDataConverter.buildHashResult(myConfig, myHashes[i]);
+        }
+
         /* Return the array */
-        return myHashes;
+        return new byte[][]
+        { myConfig, myInitVec };
+    }
+
+    /**
+     * Adjust an IV.
+     * @param pIV the input IV
+     * @return the adjusted IV
+     */
+    protected byte[] adjustIV(final byte[] pIV) {
+        return TethysDataConverter.combineHashes(pIV, theInitVector);
     }
 
     /**
@@ -174,9 +190,8 @@ public class GordianPersonalisation {
      * @param pMac the MAC
      */
     protected void updateMac(final GordianMac pMac) {
-        for (byte[] myArray : thePersonalisation) {
-            pMac.update(myArray);
-        }
+        pMac.update(thePersonalisation);
+        pMac.update(theInitVector);
     }
 
     /**
@@ -230,6 +245,6 @@ public class GordianPersonalisation {
         if (myOffSet >= thePersonalLen) {
             myOffSet %= thePersonalLen;
         }
-        return thePersonalisation[theNumHashes][myOffSet] & TethysDataConverter.BYTE_MASK;
+        return thePersonalisation[myOffSet] & TethysDataConverter.BYTE_MASK;
     }
 }

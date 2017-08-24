@@ -206,8 +206,8 @@ public class CoeusReportAnnual
             /* Create the new filter */
             final CoeusFilterDefinition myDef = (CoeusFilterDefinition) pSource;
             final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theMarket, theMarket.getDate());
-            myFilter.setMonth(myDef.theMonth);
-            myFilter.setTotalSet(myDef.theTotalSet);
+            myFilter.setMonth(myDef.getMonth());
+            myFilter.setTotalSet(myDef.getTotalSet());
             return myFilter;
         }
         return null;
@@ -237,17 +237,33 @@ public class CoeusReportAnnual
          * @param pTotalSet the totalSet
          * @param pMonth the month
          */
-        private CoeusFilterDefinition(final CoeusTotalSet pTotalSet,
-                                      final Month pMonth) {
+        CoeusFilterDefinition(final CoeusTotalSet pTotalSet,
+                              final Month pMonth) {
             theTotalSet = pTotalSet;
             theMonth = pMonth;
+        }
+
+        /**
+         * Obtain totalSet.
+         * @return the totalSet
+         */
+        CoeusTotalSet getTotalSet() {
+            return theTotalSet;
+        }
+
+        /**
+         * Obtain month.
+         * @return the month
+         */
+        Month getMonth() {
+            return theMonth;
         }
 
         /**
          * Obtain filter id.
          * @return the filterId
          */
-        private String getFilterId() {
+        String getFilterId() {
             final StringBuilder myBuilder = new StringBuilder("total");
             myBuilder.append(theTotalSet.toString());
             if (theMonth != null) {

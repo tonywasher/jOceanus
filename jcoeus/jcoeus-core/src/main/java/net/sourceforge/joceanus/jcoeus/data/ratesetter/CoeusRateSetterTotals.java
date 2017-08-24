@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 /**
  * RateSetter Transaction Totals.
  */
-public class CoeusRateSetterTotals
+public final class CoeusRateSetterTotals
         extends CoeusTotals {
     /**
      * Report fields.

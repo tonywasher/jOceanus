@@ -70,11 +70,6 @@ public class CoeusReportPanel<N, I>
     private final TethysEventManager<CoeusDataEvent> theEventManager;
 
     /**
-     * The Toolkit.
-     */
-    private final MetisToolkit<N, I> theToolkit;
-
-    /**
      * The MarketCache.
      */
     private final CoeusMarketCache theCache;
@@ -123,7 +118,6 @@ public class CoeusReportPanel<N, I>
     public CoeusReportPanel(final MetisToolkit<N, I> pToolkit,
                             final CoeusMarketCache pCache) throws OceanusException {
         /* Store the parameters */
-        theToolkit = pToolkit;
         theCache = pCache;
 
         /* Access the GUI factory */
@@ -155,7 +149,7 @@ public class CoeusReportPanel<N, I>
         theSelect = new CoeusReportSelect<>(myFactory, theCache.getCalendar());
 
         /* Create the error panel for this view */
-        theError = theToolkit.newErrorPanel(myReport);
+        theError = pToolkit.newErrorPanel(myReport);
 
         /* Create a scroll pane */
         final TethysScrollPaneManager<N, I> myHTMLScroll = myFactory.newScrollPane();
@@ -249,12 +243,6 @@ public class CoeusReportPanel<N, I>
      * @throws OceanusException on error
      */
     private void buildReport() throws OceanusException {
-        /* Access the values from the selection */
-        final CoeusReportType myReportType = theSelect.getReportType();
-        final CoeusMarketProvider myProvider = theSelect.getProvider();
-        final TethysDate myDate = theSelect.getDate();
-        final Document myDoc;
-
         /* set lockDown of selection */
         theSelect.setEnabled(true);
 
@@ -262,6 +250,12 @@ public class CoeusReportPanel<N, I>
         if (theCache.isIdle()) {
             return;
         }
+
+        /* Access the values from the selection */
+        final CoeusReportType myReportType = theSelect.getReportType();
+        final CoeusMarketProvider myProvider = theSelect.getProvider();
+        final TethysDate myDate = theSelect.getDate();
+        final Document myDoc;
 
         /* Switch on report type */
         switch (myReportType) {

@@ -33,12 +33,12 @@ public final class GordianKeySetRecipe {
     /**
      * Recipe length (Integer).
      */
-    public static final int RECIPELEN = Integer.BYTES;
+    protected static final int RECIPELEN = Integer.BYTES;
 
     /**
-     * Initialisation Vector size (128/8).
+     * Salt length.
      */
-    public static final int IVSIZE = GordianLength.LEN_128.getByteLength();
+    protected static final int SALTLEN = GordianLength.LEN_128.getByteLength();
 
     /**
      * Margins.
@@ -83,11 +83,11 @@ public final class GordianKeySetRecipe {
         final int myLen = pExternal.length;
         final int myDataLen = myLen
                               - myRecipeLen
-                              - IVSIZE;
+                              - SALTLEN;
 
         /* Allocate buffers */
         theRecipe = new byte[myRecipeLen];
-        final byte[] myInitVector = new byte[IVSIZE];
+        final byte[] mySalt = new byte[SALTLEN];
         theBytes = new byte[myDataLen];
 
         /* Determine offset position */
@@ -97,14 +97,14 @@ public final class GordianKeySetRecipe {
         System.arraycopy(pExternal, 0, theBytes, 0, myOffSet);
         System.arraycopy(pExternal, myOffSet, theRecipe, 0, myRecipeLen);
         System.arraycopy(pExternal, myOffSet
-                                    + myRecipeLen, myInitVector, 0, IVSIZE);
-        myRecipeLen += IVSIZE;
+                                    + myRecipeLen, mySalt, 0, SALTLEN);
+        myRecipeLen += SALTLEN;
         System.arraycopy(pExternal, myOffSet
                                     + myRecipeLen, theBytes, myOffSet, myDataLen
                                                                        - myOffSet);
 
         /* Allocate new set of parameters */
-        theParams = new GordianKeySetParameters(pFactory, theRecipe, myInitVector);
+        theParams = new GordianKeySetParameters(pFactory, theRecipe, mySalt);
     }
 
     /**
@@ -150,7 +150,7 @@ public final class GordianKeySetRecipe {
         int myRecipeLen = RECIPELEN;
         final int myDataLen = pData.length;
         final int myLen = myRecipeLen
-                          + myDataLen + IVSIZE;
+                          + myDataLen + SALTLEN;
 
         /* Allocate the buffer */
         final byte[] myBuffer = new byte[myLen];
@@ -161,9 +161,9 @@ public final class GordianKeySetRecipe {
         /* Copy Data into buffer */
         System.arraycopy(pData, 0, myBuffer, 0, myOffSet);
         System.arraycopy(theRecipe, 0, myBuffer, myOffSet, myRecipeLen);
-        System.arraycopy(theParams.getInitVector(), 0, myBuffer, myOffSet
-                                                                 + myRecipeLen, IVSIZE);
-        myRecipeLen += IVSIZE;
+        System.arraycopy(theParams.getSalt(), 0, myBuffer, myOffSet
+                                                           + myRecipeLen, SALTLEN);
+        myRecipeLen += SALTLEN;
         System.arraycopy(pData, myOffSet, myBuffer, myOffSet
                                                     + myRecipeLen, myDataLen
                                                                    - myOffSet);
@@ -182,11 +182,6 @@ public final class GordianKeySetRecipe {
         private final byte[] theRecipe;
 
         /**
-         * The hMac.
-         */
-        private final GordianDigestType[] theHMacType;
-
-        /**
          * The StreamKey.
          */
         private final GordianStreamKeyType[] theStreamKeyType;
@@ -195,6 +190,11 @@ public final class GordianKeySetRecipe {
          * The SymKeySet.
          */
         private final GordianSymKeyType[] theSymKeyTypes;
+
+        /**
+         * The Salt.
+         */
+        private final byte[] theSalt;
 
         /**
          * The Initialisation Vector.
@@ -212,11 +212,13 @@ public final class GordianKeySetRecipe {
             final SecureRandom myRandom = pFactory.getRandom();
 
             /* Allocate the initVector */
-            theInitVector = new byte[IVSIZE];
-            myRandom.nextBytes(theInitVector);
+            theSalt = new byte[SALTLEN];
+            myRandom.nextBytes(theSalt);
+
+            /* Calculate the initVector */
+            theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
-            theHMacType = new GordianDigestType[1];
             theStreamKeyType = new GordianStreamKeyType[1];
             theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
 
@@ -225,29 +227,30 @@ public final class GordianKeySetRecipe {
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
             mySeed = myPersonal.convertRecipe(mySeed);
             mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
-            mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
-            myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
+            myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
         }
 
         /**
          * Construct the parameters from recipe.
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
-         * @param pInitVector the initVector
+         * @param pSalt the salt
          */
         protected GordianKeySetParameters(final GordianFactory pFactory,
                                           final byte[] pRecipe,
-                                          final byte[] pInitVector) {
+                                          final byte[] pSalt) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
 
-            /* Store recipe and initVector */
+            /* Store recipe and salt */
             theRecipe = pRecipe;
-            theInitVector = pInitVector;
+            theSalt = pSalt;
+
+            /* Calculate the initVector */
+            theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
-            theHMacType = new GordianDigestType[1];
             theStreamKeyType = new GordianStreamKeyType[1];
             theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
 
@@ -255,16 +258,15 @@ public final class GordianKeySetRecipe {
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
             mySeed = myPersonal.convertRecipe(mySeed);
             mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
-            mySeed = myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
-            myManager.deriveKeyHashDigestTypesFromSeed(mySeed, theHMacType);
+            myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
         }
 
         /**
-         * Obtain the hMac Type.
-         * @return the hMacType
+         * Obtain the salt.
+         * @return the salt
          */
-        protected GordianDigestType getHMacType() {
-            return theHMacType[0];
+        protected byte[] getSalt() {
+            return theSalt;
         }
 
         /**

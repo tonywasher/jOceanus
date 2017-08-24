@@ -50,6 +50,11 @@ public class CoeusRateSetterLoanBookItem
     private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusRateSetterLoanBookItem.class);
 
     /**
+     * Builder buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
+
+    /**
      * Loan Id Field Id.
      */
     private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
@@ -225,12 +230,8 @@ public class CoeusRateSetterLoanBookItem
 
     @Override
     public String toString() {
-        final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(theLoanId);
-        myBuilder.append(' ');
-        myBuilder.append(theStatus.toString());
-        myBuilder.append(' ');
-        myBuilder.append(theBalance.toString());
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        myBuilder.append(theLoanId).append(' ').append(theStatus).append(' ').append(theBalance);
         return myBuilder.toString();
     }
 

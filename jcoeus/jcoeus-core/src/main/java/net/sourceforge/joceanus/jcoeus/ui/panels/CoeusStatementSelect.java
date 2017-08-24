@@ -288,7 +288,7 @@ public class CoeusStatementSelect<N, I>
         final CoeusMarketProvider myProvider = theState.getProvider();
 
         /* Loop through the totals */
-        for (CoeusTotalSet myTotals : CoeusTotalSet.values()) {
+        for (final CoeusTotalSet myTotals : CoeusTotalSet.values()) {
             /* If the totalSet is supported */
             if (myProvider.supportsTotalSet(myTotals)) {
                 /* Create a new MenuItem for the totalSet */
@@ -309,7 +309,7 @@ public class CoeusStatementSelect<N, I>
         pMenu.addItem(null, NLS_ALL);
 
         /* Loop through the months */
-        for (Month myMonth : Month.values()) {
+        for (final Month myMonth : Month.values()) {
             /* If the month is available */
             if (theState.availableMonth(myMonth)) {
                 /* Create a new MenuItem for the month */
@@ -341,7 +341,7 @@ public class CoeusStatementSelect<N, I>
         final TethysScrollMenu<CoeusMarketProvider, ?> myBuilder = theMarketButton.getMenu();
 
         /* Loop through the markets */
-        for (CoeusMarketProvider myMarket : CoeusMarketProvider.values()) {
+        for (final CoeusMarketProvider myMarket : CoeusMarketProvider.values()) {
             /* Create a new MenuItem for the market */
             myBuilder.addItem(myMarket);
         }
@@ -355,7 +355,7 @@ public class CoeusStatementSelect<N, I>
         final TethysScrollMenu<CoeusMarketType, ?> myBuilder = theMarketTypeButton.getMenu();
 
         /* Loop through the marketTypes */
-        for (CoeusMarketType myType : CoeusMarketType.values()) {
+        for (final CoeusMarketType myType : CoeusMarketType.values()) {
             /* Create a new MenuItem for the marketType */
             myBuilder.addItem(myType);
         }
@@ -526,14 +526,14 @@ public class CoeusStatementSelect<N, I>
         /**
          * Constructor.
          */
-        private FilterState() {
+        FilterState() {
         }
 
         /**
          * Constructor.
          * @param pState state to copy from
          */
-        private FilterState(final FilterState pState) {
+        FilterState(final FilterState pState) {
             setFilter(pState.getFilter());
         }
 
@@ -541,7 +541,7 @@ public class CoeusStatementSelect<N, I>
          * Set Filter.
          * @param pFilter the filter to set
          */
-        private void setFilter(final CoeusFilter pFilter) {
+        void setFilter(final CoeusFilter pFilter) {
             theFilter = pFilter;
             theProvider = theFilter == null
                                             ? null
@@ -567,7 +567,7 @@ public class CoeusStatementSelect<N, I>
          * Obtain the filter.
          * @return the market
          */
-        private CoeusFilter getFilter() {
+        CoeusFilter getFilter() {
             return theFilter;
         }
 
@@ -575,7 +575,7 @@ public class CoeusStatementSelect<N, I>
          * Obtain the selected market provider.
          * @return the market
          */
-        private CoeusMarketProvider getProvider() {
+        CoeusMarketProvider getProvider() {
             return theProvider;
         }
 
@@ -584,7 +584,7 @@ public class CoeusStatementSelect<N, I>
          * @param pDate the date
          * @return true/false did a change occur
          */
-        private boolean setDate(final TethysDate pDate) {
+        boolean setDate(final TethysDate pDate) {
             /* Obtain the date and adjust it */
             final TethysDate myDate = pDate == null
                                                     ? null
@@ -603,7 +603,7 @@ public class CoeusStatementSelect<N, I>
          * @param pProvider the new market
          * @return true/false did a change occur
          */
-        private boolean setProvider(final CoeusMarketProvider pProvider) {
+        boolean setProvider(final CoeusMarketProvider pProvider) {
             if (!pProvider.equals(theProvider)) {
                 /* Store the new provider */
                 theProvider = pProvider;
@@ -617,7 +617,7 @@ public class CoeusStatementSelect<N, I>
          * @param pType the new marketType
          * @return true/false did a change occur
          */
-        private boolean setMarketType(final CoeusMarketType pType) {
+        boolean setMarketType(final CoeusMarketType pType) {
             if (!pType.equals(theMarketType)) {
                 /* Store the new marketType */
                 theMarketType = pType;
@@ -632,7 +632,7 @@ public class CoeusStatementSelect<N, I>
          * @param pTotals the new totalSet
          * @return true/false did a change occur
          */
-        private boolean setTotalSet(final CoeusTotalSet pTotals) {
+        boolean setTotalSet(final CoeusTotalSet pTotals) {
             if (!pTotals.equals(theTotalSet)) {
                 /* Adjust the filter */
                 theTotalSet = pTotals;
@@ -649,7 +649,7 @@ public class CoeusStatementSelect<N, I>
          * @param pLoan the new loan
          * @return true/false did a change occur
          */
-        private boolean setLoan(final CoeusLoan pLoan) {
+        boolean setLoan(final CoeusLoan pLoan) {
             if (!MetisDataDifference.isEqual(pLoan, theLoan)) {
                 /* Adjust the filter */
                 theLoan = pLoan;
@@ -666,7 +666,7 @@ public class CoeusStatementSelect<N, I>
          * @param pMonth the new month
          * @return true/false did a change occur
          */
-        private boolean setMonth(final Month pMonth) {
+        boolean setMonth(final Month pMonth) {
             if (!MetisDataDifference.isEqual(pMonth, theMonth)) {
                 /* Adjust the filter */
                 theMonth = pMonth;
@@ -681,7 +681,7 @@ public class CoeusStatementSelect<N, I>
         /**
          * Apply the State.
          */
-        private void applyState() {
+        void applyState() {
             /* Set standard values */
             theTotalsButton.setValue(theTotalSet);
             theMarketButton.setValue(theProvider);
@@ -708,7 +708,7 @@ public class CoeusStatementSelect<N, I>
          * Allocate new filter.
          * @return true/false did an allocation occur
          */
-        private boolean allocateNewFilter() {
+        boolean allocateNewFilter() {
             /* If there is an empty cache then no change */
             if (theCache.isIdle()) {
                 return false;
@@ -732,7 +732,7 @@ public class CoeusStatementSelect<N, I>
         /**
          * Allocate new annual filter.
          */
-        private void allocateNewAnnualFilter() {
+        void allocateNewAnnualFilter() {
             final TethysDate myAnnualDate = theCalendar.getEndOfYear(theSelectedDate);
             final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theCache.getAnnual(theProvider, myAnnualDate), theSelectedDate);
             if (theMonth != null
@@ -749,7 +749,7 @@ public class CoeusStatementSelect<N, I>
          * @param pMonth the month
          * @return true/false
          */
-        private boolean availableMonth(final Month pMonth) {
+        boolean availableMonth(final Month pMonth) {
             return theFilter instanceof CoeusAnnualFilter
                    && ((CoeusAnnualFilter) theFilter).availableMonth(pMonth);
         }
@@ -757,7 +757,7 @@ public class CoeusStatementSelect<N, I>
         /**
          * Allocate new snapShot filter.
          */
-        private void allocateNewSnapShotFilter() {
+        void allocateNewSnapShotFilter() {
             final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theCache.getSnapShot(theProvider, theSelectedDate));
             if (theLoan != null
                 && !myFilter.availableLoan(theLoan)) {
@@ -772,7 +772,7 @@ public class CoeusStatementSelect<N, I>
          * Build loans menu.
          * @param pBuilder the menu builder
          */
-        private void buildLoansMenu(final TethysScrollMenu<CoeusLoan, ?> pBuilder) {
+        void buildLoansMenu(final TethysScrollMenu<CoeusLoan, ?> pBuilder) {
             /* Only perform for snapShots */
             if (!(theFilter instanceof CoeusSnapShotFilter)) {
                 return;

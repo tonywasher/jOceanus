@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 /**
  * SP800 Random Generator types.
  */
-public enum GordianSP800Type {
+public enum GordianRandomType {
     /**
      * Hash based SP800 PRNG.
      */

@@ -155,9 +155,9 @@ public abstract class GordianFactory {
      */
     public GordianRandomSpec generateRandomSpec(final SecureRandom pRandom) {
         /* Determine the type of random generator */
-        final GordianSP800Type myType = pRandom.nextBoolean()
-                                                              ? GordianSP800Type.HMAC
-                                                              : GordianSP800Type.HASH;
+        final GordianRandomType myType = pRandom.nextBoolean()
+                                                              ? GordianRandomType.HMAC
+                                                              : GordianRandomType.HASH;
 
         /* Access the digestTypes */
         final GordianDigestType[] myDigestTypes = GordianDigestType.values();
@@ -660,11 +660,11 @@ public abstract class GordianFactory {
      */
     private boolean validRandomSpec(final GordianRandomSpec pRandomSpec) {
         /* Access details */
-        final GordianSP800Type myType = pRandomSpec.getRandomType();
+        final GordianRandomType myType = pRandomSpec.getRandomType();
         final GordianDigestSpec mySpec = pRandomSpec.getDigestSpec();
 
         /* Check that the randomType is supported */
-        return GordianSP800Type.HASH.equals(myType)
+        return GordianRandomType.HASH.equals(myType)
                                                     ? validDigestSpec(mySpec)
                                                     : validHMacSpec(mySpec);
     }

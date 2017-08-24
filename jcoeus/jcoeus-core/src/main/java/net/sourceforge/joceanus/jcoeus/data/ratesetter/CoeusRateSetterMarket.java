@@ -125,7 +125,7 @@ public class CoeusRateSetterMarket
             final CoeusRateSetterTransaction myTrans = myIterator.previous();
 
             /* If we have a loan offer */
-            if ((myTrans.getLoan() == null)
+            if (myTrans.getLoan() == null
                 && CoeusTransactionType.CAPITALLOAN.equals(myTrans.getTransType())) {
                 /* Add to set of initial loans for later resolution */
                 theRepairer.recordInitialLoan(myTrans);

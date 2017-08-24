@@ -63,7 +63,7 @@ public final class ControlKey
     /**
      * KeySetHash Length.
      */
-    public static final int HASHLEN = GordianKeySetHash.HASHSIZE;
+    public static final int HASHLEN = GordianKeySetHash.HASHLEN;
 
     /**
      * Report fields.

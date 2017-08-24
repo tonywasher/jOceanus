@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 /**
  * Zopa transaction.
  */
-public class CoeusZopaTransaction
+public final class CoeusZopaTransaction
         extends CoeusTransaction {
     /**
      * Report fields.
@@ -112,6 +112,11 @@ public class CoeusZopaTransaction
      * CashBack prefix.
      */
     private static final String PFIX_CASHBACK = "Cashback Promotion";
+
+    /**
+     * Wrongly Priced.
+     */
+    private static final String PFIX_BADPRICE = "Bought wrongly priced loans";
 
     /**
      * ZERO for BadDebt/CashBack.
@@ -521,7 +526,8 @@ public class CoeusZopaTransaction
         }
 
         /* If the description is CashBack */
-        if (PFIX_CASHBACK.equals(theDesc)) {
+        if (PFIX_CASHBACK.equals(theDesc)
+            || PFIX_BADPRICE.equals(theDesc)) {
             return CoeusTransactionType.CASHBACK;
         }
 

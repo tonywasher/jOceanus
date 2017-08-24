@@ -316,6 +316,7 @@ public class MoneyWiseReportSelect<N, I>
 
         /* If we have an existing security bucket */
         SecurityBucket mySecurity = theState.getSecurity();
+
         /* If we have a selected Security */
         if (mySecurity != null) {
             /* Look for the equivalent bucket */

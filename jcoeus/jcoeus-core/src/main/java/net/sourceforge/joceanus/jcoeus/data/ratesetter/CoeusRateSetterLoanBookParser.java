@@ -164,14 +164,14 @@ public class CoeusRateSetterLoanBookParser {
             listChildElements(myBody, "tr", myRows);
 
             /* Loop through the rows */
-            for (Element myRow : myRows) {
+            for (final Element myRow : myRows) {
                 /* Ignore if this is a summary row */
                 if (!myRow.hasClass("rsTableSummaryRow")) {
                     /* Obtain the cells */
                     listChildElements(myRow, "td", myCells);
 
                     /* Skip if this is the final empty cell */
-                    if ((myCells.size() == 1)
+                    if (myCells.size() == 1
                         && myCells.get(0).hasClass("rsTableFinalEmptyCell")) {
                         continue;
                     }
@@ -200,7 +200,7 @@ public class CoeusRateSetterLoanBookParser {
         pList.clear();
 
         /* Loop through the childNodes */
-        for (Node myNode : pElement.childNodes()) {
+        for (final Node myNode : pElement.childNodes()) {
             /* If this is an element */
             if (myNode instanceof Element) {
                 /* If it is a required child */
@@ -223,7 +223,7 @@ public class CoeusRateSetterLoanBookParser {
         final Element myRow = pElement.select("tr").first();
 
         /* Loop through the childNodes */
-        for (Node myNode : myRow.childNodes()) {
+        for (final Node myNode : myRow.childNodes()) {
             /* If this is an element */
             if (myNode instanceof Element) {
                 /* If it is a required child */

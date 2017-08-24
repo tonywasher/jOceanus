@@ -33,6 +33,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
@@ -77,6 +78,7 @@ public class GordianFXPasswordDialog
 
         /* Initialise the stage */
         theStage = new Stage();
+        theStage.initStyle(StageStyle.UTILITY);
         theStage.initModality(Modality.WINDOW_MODAL);
         theStage.initOwner(pFactory.getStage());
         theStage.setTitle(pTitle);

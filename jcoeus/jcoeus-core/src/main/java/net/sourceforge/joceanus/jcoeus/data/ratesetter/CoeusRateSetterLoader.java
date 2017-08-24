@@ -131,7 +131,7 @@ public class CoeusRateSetterLoader {
 
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, STMT_MASK)) {
-            for (Path myFile : myStream) {
+            for (final Path myFile : myStream) {
                 /* Parse the file name */
                 final String myName = myFile.getFileName().toString();
                 String myBase = myName.substring(0, myName.length() - CSV_SUFFIX.length());
@@ -152,7 +152,7 @@ public class CoeusRateSetterLoader {
         }
 
         /* Sort and return the list */
-        myList.sort((p, q) -> p.theDate - q.theDate);
+        myList.sort((p, q) -> p.getDate() - q.getDate());
         return myList;
     }
 
@@ -168,7 +168,7 @@ public class CoeusRateSetterLoader {
 
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, LOAN_MASK)) {
-            for (Path myFile : myStream) {
+            for (final Path myFile : myStream) {
                 /* Parse the file name */
                 final String myName = myFile.getFileName().toString();
                 String myBase = myName.substring(0, myName.length() - HTML_SUFFIX.length());
@@ -188,7 +188,7 @@ public class CoeusRateSetterLoader {
         }
 
         /* Sort and return the list */
-        myList.sort((p, q) -> p.theDate - q.theDate);
+        myList.sort((p, q) -> p.getDate() - q.getDate());
         return myList;
     }
 
@@ -205,15 +205,15 @@ public class CoeusRateSetterLoader {
         myMarket.parseLoanBook(theBasePath.resolve(LOANBOOK + HTML_SUFFIX));
 
         /* Loop through the closed loans */
-        for (FileRecord myLoans : listClosedLoans()) {
+        for (final FileRecord myLoans : listClosedLoans()) {
             /* Parse the loans */
-            myMarket.parseLoanBook(myLoans.theFile);
+            myMarket.parseLoanBook(myLoans.getFile());
         }
 
         /* Loop through the statements */
-        for (FileRecord myStatement : listStatements()) {
+        for (final FileRecord myStatement : listStatements()) {
             /* Parse the statement */
-            myMarket.parseStatement(myStatement.theFile);
+            myMarket.parseStatement(myStatement.getFile());
         }
 
         /* Return the market */
@@ -239,10 +239,26 @@ public class CoeusRateSetterLoader {
          * @param pDate the date
          * @param pFile the file
          */
-        private FileRecord(final int pDate,
-                           final Path pFile) {
+        FileRecord(final int pDate,
+                   final Path pFile) {
             theDate = pDate;
             theFile = pFile;
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        int getDate() {
+            return theDate;
+        }
+
+        /**
+         * Obtain the file.
+         * @return the file
+         */
+        Path getFile() {
+            return theFile;
         }
     }
 }

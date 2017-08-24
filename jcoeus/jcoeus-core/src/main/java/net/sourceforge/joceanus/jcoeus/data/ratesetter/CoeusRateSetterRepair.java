@@ -182,7 +182,7 @@ public class CoeusRateSetterRepair {
                     doLoop = false;
 
                     /* If we have a matching loan */
-                } else if ((myDays >= -pNumDays)
+                } else if (myDays >= -pNumDays
                            && myLent.equals(myTrans.getLoanBook())) {
                     /* Match and remove them */
                     myTrans.setLoan(myLoan);
@@ -240,7 +240,7 @@ public class CoeusRateSetterRepair {
             /* If we have matched the amount */
             if (myLoanAmount.equals(myTrans.getLoanBook())) {
                 /* Loop through the loans */
-                for (CoeusRateSetterLoan myLoan : myLoans) {
+                for (final CoeusRateSetterLoan myLoan : myLoans) {
                     /* Create a new transaction based on the loan */
                     final CoeusRateSetterTransaction myNewTran = new CoeusRateSetterTransaction(myTrans, myLoan);
                     theMarket.addTheTransaction(myNewTran);

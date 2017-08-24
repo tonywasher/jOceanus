@@ -116,7 +116,7 @@ public class CoeusZopaLoader {
 
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, MASK)) {
-            for (Path myFile : myStream) {
+            for (final Path myFile : myStream) {
                 /* Parse the file name */
                 final String myName = myFile.getFileName().toString();
                 String myBase = myName.substring(0, myName.length() - SUFFIX.length());
@@ -136,7 +136,7 @@ public class CoeusZopaLoader {
         }
 
         /* Sort and return the list */
-        myList.sort((p, q) -> p.theDate - q.theDate);
+        myList.sort((p, q) -> p.getDate() - q.getDate());
         return myList;
     }
 
@@ -156,9 +156,9 @@ public class CoeusZopaLoader {
         myMarket.parseBadDebtBook(theBasePath.resolve(DEBTBOOK + SUFFIX));
 
         /* Loop through the statements */
-        for (StatementRecord myStatement : listStatements()) {
+        for (final StatementRecord myStatement : listStatements()) {
             /* Parse the statement */
-            myMarket.parseStatement(myStatement.theStatement);
+            myMarket.parseStatement(myStatement.getStatement());
         }
 
         /* Return the market */
@@ -184,10 +184,26 @@ public class CoeusZopaLoader {
          * @param pDate the date
          * @param pStatement the statement
          */
-        private StatementRecord(final int pDate,
-                                final Path pStatement) {
+        StatementRecord(final int pDate,
+                        final Path pStatement) {
             theDate = pDate;
             theStatement = pStatement;
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        int getDate() {
+            return theDate;
+        }
+
+        /**
+         * Obtain the statement.
+         * @return the statement
+         */
+        Path getStatement() {
+            return theStatement;
         }
     }
 }

@@ -200,9 +200,8 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * Add link to Item.
      * @param pItem the item to link to
-     * @throws OceanusException on error
      */
-    public void linkItem(final T pItem) throws OceanusException {
+    public void linkItem(final T pItem) {
         /* If the item is not already linked */
         if (!isItemLinked(pItem)) {
             /* Add the item to the list */

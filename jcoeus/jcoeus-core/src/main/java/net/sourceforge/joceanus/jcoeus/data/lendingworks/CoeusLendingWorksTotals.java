@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 /**
  * LendingWorks Transaction Totals.
  */
-public class CoeusLendingWorksTotals
+public final class CoeusLendingWorksTotals
         extends CoeusTotals {
     /**
      * Report fields.

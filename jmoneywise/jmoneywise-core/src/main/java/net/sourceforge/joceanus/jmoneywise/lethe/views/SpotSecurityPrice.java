@@ -311,6 +311,9 @@ public final class SpotSecurityPrice
             final Analysis myAnalysis = myManager.getAnalysis();
             final PortfolioBucketList myPortfolios = myAnalysis.getPortfolios();
             final PortfolioBucket myBucket = myPortfolios.findItemById(thePortfolio.getId());
+            if (myBucket == null) {
+                return;
+            }
             final SecurityBucketList mySecurities = myBucket.getSecurities();
 
             /* Loop through the Securities */

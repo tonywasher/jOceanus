@@ -241,7 +241,7 @@ public class MoneyWiseReportPortfolioView
      * Check portfolio profit calculation.
      * @param pBucket the portfolio bucket
      */
-    private void checkPortfolioProfit(final PortfolioBucket pBucket) {
+    private static void checkPortfolioProfit(final PortfolioBucket pBucket) {
         final SecurityValues myValues = pBucket.getValues();
         final TethysMoney myCalcProfit = pBucket.getNonCashValue(false);
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));
@@ -258,7 +258,7 @@ public class MoneyWiseReportPortfolioView
      * Check security portfolio profit calculation.
      * @param pBucket the security bucket
      */
-    private void checkSecurityProfit(final SecurityBucket pBucket) {
+    private static void checkSecurityProfit(final SecurityBucket pBucket) {
         final SecurityValues myValues = pBucket.getValues();
         final TethysMoney myCalcProfit = new TethysMoney(myValues.getMoneyValue(SecurityAttribute.VALUATION));
         myCalcProfit.subtractAmount(myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST));

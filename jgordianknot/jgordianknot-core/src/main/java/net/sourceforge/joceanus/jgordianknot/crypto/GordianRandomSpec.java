@@ -36,7 +36,7 @@ public class GordianRandomSpec {
     /**
      * The RandomType.
      */
-    private final GordianSP800Type theRandomType;
+    private final GordianRandomType theRandomType;
 
     /**
      * The DigestSpec.
@@ -53,7 +53,7 @@ public class GordianRandomSpec {
      * @param pRandomType the randomType
      * @param pDigestSpec the digestSpec
      */
-    protected GordianRandomSpec(final GordianSP800Type pRandomType,
+    protected GordianRandomSpec(final GordianRandomType pRandomType,
                                 final GordianDigestSpec pDigestSpec) {
         theRandomType = pRandomType;
         theDigestSpec = pDigestSpec;
@@ -65,7 +65,7 @@ public class GordianRandomSpec {
      * @return the RandomSpec
      */
     public static GordianRandomSpec hash(final GordianDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianSP800Type.HASH, pDigest);
+        return new GordianRandomSpec(GordianRandomType.HASH, pDigest);
     }
 
     /**
@@ -74,14 +74,14 @@ public class GordianRandomSpec {
      * @return the RandomSpec
      */
     public static GordianRandomSpec hMac(final GordianDigestSpec pDigest) {
-        return new GordianRandomSpec(GordianSP800Type.HMAC, pDigest);
+        return new GordianRandomSpec(GordianRandomType.HMAC, pDigest);
     }
 
     /**
      * Obtain the randomType.
      * @return the randomType.
      */
-    public GordianSP800Type getRandomType() {
+    public GordianRandomType getRandomType() {
         return theRandomType;
     }
 

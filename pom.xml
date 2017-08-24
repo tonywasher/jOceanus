@@ -73,7 +73,7 @@
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
     <appLibDir/>
-    <BouncyCastleVersion>1.57</BouncyCastleVersion>
+    <BouncyCastleVersion>1.58</BouncyCastleVersion>
     <SvnKitVersion>1.9.0</SvnKitVersion>
     <JGitVersion>4.8.0.201706111038-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>

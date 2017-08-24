@@ -84,10 +84,9 @@ public class View<N, I>
      * Constructor.
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
-     * @throws OceanusException on error
      */
     public View(final JOceanusUtilitySet<N, I> pUtilitySet,
-                final MoneyWiseTaxFactory pTaxFactory) throws OceanusException {
+                final MoneyWiseTaxFactory pTaxFactory) {
         /* Call super-constructor */
         super(pUtilitySet);
 

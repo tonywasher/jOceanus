@@ -244,8 +244,8 @@ public class CoeusRateSetterTransaction
 
         /* Check that capital is only changed on a loan */
         if (theLoanBook.isNonZero()
-            && (theLoan == null
-                && !CoeusTransactionType.CAPITALLOAN.equals(theTransType))) {
+            && theLoan == null
+            && !CoeusTransactionType.CAPITALLOAN.equals(theTransType)) {
             throw new CoeusDataException(this, "Capital changed on non-loan");
         }
     }

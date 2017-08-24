@@ -158,7 +158,7 @@ public class CoeusStatementTable<N, I>
         theCalculator.setTotalSet(myFilter.getTotalSet());
 
         /* Show or hide the loan column */
-        final boolean showLoan = (!(myFilter instanceof CoeusSnapShotFilter))
+        final boolean showLoan = !(myFilter instanceof CoeusSnapShotFilter)
                                  || ((CoeusSnapShotFilter) myFilter).getLoan() == null;
 
         theLoanColumn.setVisible(showLoan);

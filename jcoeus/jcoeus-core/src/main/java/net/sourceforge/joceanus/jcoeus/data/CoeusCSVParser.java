@@ -202,7 +202,7 @@ public abstract class CoeusCSVParser {
                 final int myCount = countQuotes(myBuilder);
 
                 /* If we have an even number of quotes, then we have a full line */
-                if ((myCount % 2) == 0) {
+                if (myCount % 2 == 0) {
                     /* Parse the line and clear the buffer */
                     final List<String> myFields = parseLine(myBuilder);
                     myBuilder.setLength(0);
@@ -273,7 +273,7 @@ public abstract class CoeusCSVParser {
 
                 /* If we are outside quotes and have found a comma */
             } else if (!inQuotes
-                       && (myChar == COMMA_CHAR)) {
+                       && myChar == COMMA_CHAR) {
                 /* Add the value to the list */
                 myFields.add(theBuilder.toString());
                 theBuilder.setLength(0);
