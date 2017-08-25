@@ -156,8 +156,8 @@ public abstract class GordianFactory {
     public GordianRandomSpec generateRandomSpec(final SecureRandom pRandom) {
         /* Determine the type of random generator */
         final GordianRandomType myType = pRandom.nextBoolean()
-                                                              ? GordianRandomType.HMAC
-                                                              : GordianRandomType.HASH;
+                                                               ? GordianRandomType.HMAC
+                                                               : GordianRandomType.HASH;
 
         /* Access the digestTypes */
         final GordianDigestType[] myDigestTypes = GordianDigestType.values();
@@ -665,8 +665,8 @@ public abstract class GordianFactory {
 
         /* Check that the randomType is supported */
         return GordianRandomType.HASH.equals(myType)
-                                                    ? validDigestSpec(mySpec)
-                                                    : validHMacSpec(mySpec);
+                                                     ? validDigestSpec(mySpec)
+                                                     : validHMacSpec(mySpec);
     }
 
     /**
@@ -735,7 +735,7 @@ public abstract class GordianFactory {
             case KALYNA:
                 return false;
             /**
-             * TODO KalynaMac not currently usable! return validSymKeySpec(mySymSpec) &&
+             * KalynaMac not currently usable! return validSymKeySpec(mySymSpec) &&
              * GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType());
              */
             case VMPC:

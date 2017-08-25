@@ -97,11 +97,9 @@ public class GordianTestAlgorithms {
         for (GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
             /* If the digest is supported */
             if (myDigestPredicate.test(mySpec)) {
-                /* Create the digest */
-                System.out.println("  " + mySpec.toString());
+                /* Create and profile the digest */
                 GordianDigest myDigest = myFactory.createDigest(mySpec);
-                myDigest.update("MacInput".getBytes());
-                myDigest.finish();
+                profileDigest(myDigest);
             }
         }
 
@@ -114,10 +112,7 @@ public class GordianTestAlgorithms {
                 GordianMac myMac = myFactory.createMac(mySpec);
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(mySpec);
                 GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
-                System.out.println("  " + mySpec.toString());
-                myMac.initMac(myKey);
-                myMac.update("MacInput".getBytes());
-                myMac.finish();
+                profileMac(myMac, myKey);
             }
         }
 
@@ -143,6 +138,41 @@ public class GordianTestAlgorithms {
                 myCipher.initCipher(myStreamKey);
             }
         }
+    }
+
+    /**
+     * Profile digest.
+     * @param pDigest the digest to profile
+     */
+    private void profileDigest(final GordianDigest pDigest) {
+        byte[] myBytes = "MacInput".getBytes();
+        long myStart = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            pDigest.update(myBytes);
+            pDigest.finish();
+        }
+        long myElapsed = System.nanoTime() - myStart;
+        myElapsed /= 100000;
+        System.out.println("  " + pDigest.getDigestSpec().toString() + ":" + myElapsed);
+    }
+
+    /**
+     * Profile digest.
+     * @param pMac the Mac to profile
+     * @throws OceanusException on error
+     */
+    private void profileMac(final GordianMac pMac,
+                            final GordianKey<GordianMacSpec> pKey) throws OceanusException {
+        byte[] myBytes = "MacInput".getBytes();
+        long myStart = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            pMac.initMac(pKey);
+            pMac.update(myBytes);
+            pMac.finish();
+        }
+        long myElapsed = System.nanoTime() - myStart;
+        myElapsed /= 100000;
+        System.out.println("  " + pMac.getMacSpec().toString() + ":" + myElapsed);
     }
 
     /**

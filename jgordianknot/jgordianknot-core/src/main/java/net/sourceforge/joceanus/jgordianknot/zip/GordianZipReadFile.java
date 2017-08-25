@@ -102,8 +102,8 @@ public class GordianZipReadFile {
                 myEntry = myHdrStream.getNextEntry();
 
                 /* If this is EOF or a header record break the loop */
-                if ((myEntry == null)
-                    || (myEntry.getExtra() != null)) {
+                if (myEntry == null
+                    || myEntry.getExtra() != null) {
                     break;
                 }
 
@@ -241,19 +241,22 @@ public class GordianZipReadFile {
      * @return the input stream
      * @throws OceanusException on error
      */
-    @SuppressWarnings("resource")
     public InputStream getInputStream(final GordianZipFileEntry pFile) throws OceanusException {
+        /* Declare control variables */
+        ZipInputStream myZipFile = null;
+        InputStream myResult = null;
+
+        /* Check that entry belongs to this zip file */
+        if (!pFile.getParent().equals(theContents)) {
+            throw new GordianDataException("File does not belong to Zip file");
+        }
+
         /* Protect against exceptions */
         try {
-            /* Check that entry belongs to this zip file */
-            if (!pFile.getParent().equals(theContents)) {
-                throw new GordianDataException("File does not belong to Zip file");
-            }
-
             /* Open the zip file for reading */
             final FileInputStream myInFile = new FileInputStream(theZipFile);
             final BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            final ZipInputStream myZipFile = new ZipInputStream(myInBuffer);
+            myZipFile = new ZipInputStream(myInBuffer);
 
             /* Access the name of the file entry */
             final String myName = pFile.getZipName();
@@ -265,8 +268,8 @@ public class GordianZipReadFile {
                 myEntry = myZipFile.getNextEntry();
 
                 /* Break if we reached EOF or found the correct entry */
-                if ((myEntry == null)
-                    || (myEntry.getName().compareTo(myName) == 0)) {
+                if (myEntry == null
+                    || myEntry.getName().compareTo(myName) == 0) {
                     break;
                 }
             }
@@ -278,24 +281,31 @@ public class GordianZipReadFile {
                                                + pFile.getFileName());
             }
 
-            /* Note the current input stream */
-            InputStream myCurrent = myZipFile;
-
             /* If the file is encrypted */
             if (isEncrypted()) {
                 /* Create a StreamManager */
                 final GordianStreamManager myManager = new GordianStreamManager(theKeySet);
 
                 /* Build input stream */
-                myCurrent = myManager.buildInputStream(pFile.buildInputList(), myCurrent);
+                myResult = myManager.buildInputStream(pFile.buildInputList(), myZipFile);
+
+                /* Else we are already OK */
+            } else {
+                myResult = myZipFile;
             }
 
             /* return the new stream */
-            return myCurrent;
+            return myResult;
 
             /* Catch exceptions */
         } catch (IOException e) {
             throw new GordianIOException("Exception creating new Input stream", e);
+
+        } finally {
+            /* Close the ZipFile on error */
+            if (myZipFile != null && myResult == null) {
+                GordianStreamManager.cleanUpInputStream(myZipFile);
+            }
         }
     }
 }

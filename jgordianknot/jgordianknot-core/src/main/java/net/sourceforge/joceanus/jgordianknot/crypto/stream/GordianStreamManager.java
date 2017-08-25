@@ -22,11 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
@@ -46,6 +50,16 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Stream Manager.
  */
 public final class GordianStreamManager {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(GordianStreamManager.class);
+
+    /**
+     * Close error.
+     */
+    private static final String ERROR_CLOSE = "Failed to close stream";
+
     /**
      * The keySet.
      */
@@ -197,5 +211,29 @@ public final class GordianStreamManager {
 
         /* Return the stream */
         return myCurrent;
+    }
+
+    /**
+     * Close an inputStream on error exit.
+     * @param pStream the file to delete
+     */
+    public static void cleanUpInputStream(final InputStream pStream) {
+        try {
+            pStream.close();
+        } catch (IOException e) {
+            LOGGER.error(ERROR_CLOSE, e);
+        }
+    }
+
+    /**
+     * Close an outputStream on error exit.
+     * @param pStream the file to delete
+     */
+    public static void cleanUpOutputStream(final OutputStream pStream) {
+        try {
+            pStream.close();
+        } catch (IOException e) {
+            LOGGER.error(ERROR_CLOSE, e);
+        }
     }
 }

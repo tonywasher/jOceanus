@@ -249,8 +249,8 @@ public class GordianIdManager {
      */
     private GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        final int myId = pEncodedId & TethysDataConverter.BYTE_MASK;
-        final int myLenCode = pEncodedId >> TethysDataConverter.BYTE_SHIFT;
+        final int myLenCode = pEncodedId & TethysDataConverter.NYBBLE_MASK;
+        final int myId = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
 
         /* Translate components */
         final GordianSymKeyType myType = deriveSymKeyTypeFromEncodedId(myId);
@@ -289,8 +289,8 @@ public class GordianIdManager {
      */
     private int deriveEncodedIdFromSymKeySpec(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
         int myCode = deriveEncodedIdFromSymKeyType(pSymKeySpec.getSymKeyType());
-        final int myLenCode = deriveEncodedIdFromLength(pSymKeySpec.getBlockLength());
-        myCode += myLenCode << TethysDataConverter.BYTE_SHIFT;
+        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode += deriveEncodedIdFromLength(pSymKeySpec.getBlockLength());
         return myCode;
     }
 
@@ -434,10 +434,10 @@ public class GordianIdManager {
      */
     private GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        final int myId = pEncodedId & TethysDataConverter.BYTE_MASK;
-        int myLenCode = pEncodedId >> TethysDataConverter.BYTE_SHIFT;
-        final int myStateCode = myLenCode >> TethysDataConverter.NYBBLE_SHIFT;
-        myLenCode &= TethysDataConverter.NYBBLE_MASK;
+        final int myLenCode = pEncodedId & TethysDataConverter.NYBBLE_MASK;
+        final int myCode = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myStateCode = myCode & TethysDataConverter.NYBBLE_MASK;
+        final int myId = myCode >> TethysDataConverter.NYBBLE_SHIFT;
 
         /* Translate components */
         final GordianDigestType myType = deriveDigestTypeFromEncodedId(myId);
@@ -470,12 +470,12 @@ public class GordianIdManager {
     private int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
         int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
         final GordianLength myState = pDigestSpec.getStateLength();
-        int myLenCode = myState == null
-                                        ? 0
-                                        : deriveEncodedIdFromLength(myState);
-        myLenCode <<= TethysDataConverter.NYBBLE_SHIFT;
-        myLenCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
-        myCode += myLenCode << TethysDataConverter.BYTE_SHIFT;
+        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode += myState == null
+                                  ? 0
+                                  : deriveEncodedIdFromLength(myState);
+        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode += deriveEncodedIdFromLength(pDigestSpec.getDigestLength());
         return myCode;
     }
 
@@ -637,10 +637,10 @@ public class GordianIdManager {
         final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
 
         /* Isolate id Components */
-        final int myId = myEncoded & TethysDataConverter.BYTE_MASK;
-        int myModeCode = myEncoded >> TethysDataConverter.BYTE_SHIFT;
-        final int myPaddingCode = myModeCode >> TethysDataConverter.NYBBLE_SHIFT;
-        myModeCode &= TethysDataConverter.NYBBLE_MASK;
+        final int myPaddingCode = myEncoded & TethysDataConverter.NYBBLE_MASK;
+        final int myCode = myEncoded >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myModeCode = myCode & TethysDataConverter.NYBBLE_MASK;
+        final int myId = myCode >> TethysDataConverter.NYBBLE_SHIFT;
 
         /* Determine KeyType */
         final GordianSymKeySpec mySpec = deriveSymKeySpecFromEncodedId(myId);
@@ -674,11 +674,11 @@ public class GordianIdManager {
      */
     private long deriveExternalIdFromCipherSpec(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Derive the encoded id */
-        int myCode = deriveEncodedIdFromPadding(pCipherSpec.getPadding());
+        int myCode = deriveEncodedIdFromSymKeySpec(pCipherSpec.getKeyType());
         myCode <<= TethysDataConverter.NYBBLE_SHIFT;
         myCode += deriveEncodedIdFromCipherMode(pCipherSpec.getCipherMode());
-        myCode <<= TethysDataConverter.BYTE_SHIFT;
-        myCode += deriveEncodedIdFromSymKeySpec(pCipherSpec.getKeyType());
+        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode += deriveEncodedIdFromPadding(pCipherSpec.getPadding());
 
         /* Return the code */
         return TethysDataConverter.knuthEncode(myCode);

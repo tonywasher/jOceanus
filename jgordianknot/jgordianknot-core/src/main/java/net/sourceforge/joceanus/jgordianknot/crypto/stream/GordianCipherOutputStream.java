@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -74,7 +74,7 @@ public class GordianCipherOutputStream<T>
      * @return true/false
      */
     public boolean isSymKeyStream() {
-        return theCipher.getKeyType() instanceof GordianSymKeyType;
+        return theCipher.getKeyType() instanceof GordianSymKeySpec;
     }
 
     /**

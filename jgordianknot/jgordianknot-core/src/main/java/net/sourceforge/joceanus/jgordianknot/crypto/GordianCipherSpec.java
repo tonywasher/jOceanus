@@ -319,7 +319,7 @@ public abstract class GordianCipherSpec<T> {
             final GordianSymCipherSpec myThat = (GordianSymCipherSpec) pThat;
 
             /* Check KeyType */
-            if (getKeyType() != myThat.getKeyType()) {
+            if (!getKeyType().equals(myThat.getKeyType())) {
                 return false;
             }
 
