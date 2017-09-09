@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
@@ -66,11 +67,6 @@ public abstract class CoeusCSVParser {
     private final String[] theHeaders;
 
     /**
-     * StringBuilder.
-     */
-    private final StringBuilder theBuilder;
-
-    /**
      * Date Parser.
      */
     private final TethysDateFormatter theDateParser;
@@ -93,10 +89,7 @@ public abstract class CoeusCSVParser {
     protected CoeusCSVParser(final MetisDataFormatter pFormatter,
                              final String[] pHeaders) {
         /* Store the headers */
-        theHeaders = pHeaders;
-
-        /* Create the string builder */
-        theBuilder = new StringBuilder();
+        theHeaders = Arrays.copyOf(pHeaders, pHeaders.length);
 
         /* Access the formatters */
         theDateParser = pFormatter.getDateFormatter();
@@ -239,14 +232,14 @@ public abstract class CoeusCSVParser {
      * @param pLine the line to parse
      * @return the list of fields
      */
-    private List<String> parseLine(final StringBuilder pLine) {
+    private static List<String> parseLine(final StringBuilder pLine) {
+        /* Create a StringBuilder for the line */
+        final StringBuilder myBuilder = new StringBuilder();
+
         /* Initialise variables */
         final List<String> myFields = new ArrayList<>();
         boolean inQuotes = false;
         boolean maybeQuote = false;
-
-        /* Reset the builder */
-        theBuilder.setLength(0);
 
         /* Loop through the Line */
         int iIndex = 0;
@@ -260,7 +253,7 @@ public abstract class CoeusCSVParser {
                 /* If this is an escaped quote */
                 if (maybeQuote) {
                     /* Copy to field and reset state */
-                    theBuilder.append(myChar);
+                    myBuilder.append(myChar);
                     maybeQuote = false;
                     inQuotes = true;
 
@@ -275,14 +268,14 @@ public abstract class CoeusCSVParser {
             } else if (!inQuotes
                        && myChar == COMMA_CHAR) {
                 /* Add the value to the list */
-                myFields.add(theBuilder.toString());
-                theBuilder.setLength(0);
+                myFields.add(myBuilder.toString());
+                myBuilder.setLength(0);
                 maybeQuote = false;
 
                 /* else its a valid character */
             } else {
                 /* Copy to field */
-                theBuilder.append(myChar);
+                myBuilder.append(myChar);
                 maybeQuote = false;
             }
 
@@ -291,7 +284,9 @@ public abstract class CoeusCSVParser {
         }
 
         /* Add the final value to the list */
-        myFields.add(theBuilder.toString());
+        myFields.add(myBuilder.toString());
+
+        /* Return the fields */
         return myFields;
     }
 

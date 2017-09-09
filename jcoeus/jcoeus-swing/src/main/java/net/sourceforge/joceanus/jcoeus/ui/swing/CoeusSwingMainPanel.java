@@ -89,6 +89,16 @@ public class CoeusSwingMainPanel
         return (TethysSwingMenuBarManager) super.getMenuBar();
     }
 
+    @Override
+    public void handleAppClose() {
+        /* Pass call on */
+        super.handleAppClose();
+
+        /* Dispose of the frame */
+        theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        theFrame.dispose();
+    }
+
     /**
      * Window Close Adapter.
      */
@@ -98,10 +108,6 @@ public class CoeusSwingMainPanel
         public void windowClosing(final WindowEvent evt) {
             /* Close child windows */
             handleAppClose();
-
-            /* Dispose of the frame */
-            theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            theFrame.dispose();
         }
     }
 }

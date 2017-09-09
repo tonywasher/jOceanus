@@ -132,8 +132,14 @@ public class CoeusRateSetterLoader {
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, STMT_MASK)) {
             for (final Path myFile : myStream) {
+                /* Skip null entries */
+                final Path myFileName = myFile.getFileName();
+                if (myFileName == null) {
+                    continue;
+                }
+
                 /* Parse the file name */
-                final String myName = myFile.getFileName().toString();
+                final String myName = myFileName.toString();
                 String myBase = myName.substring(0, myName.length() - CSV_SUFFIX.length());
                 myBase = myBase.substring(STMT_PREFIX.length());
                 final TemporalAccessor myTA = myFormatter.parse(myBase);
@@ -169,8 +175,14 @@ public class CoeusRateSetterLoader {
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, LOAN_MASK)) {
             for (final Path myFile : myStream) {
+                /* Skip null entries */
+                final Path myFileName = myFile.getFileName();
+                if (myFileName == null) {
+                    continue;
+                }
+
                 /* Parse the file name */
-                final String myName = myFile.getFileName().toString();
+                final String myName = myFileName.toString();
                 String myBase = myName.substring(0, myName.length() - HTML_SUFFIX.length());
                 myBase = myBase.substring(LOAN_PREFIX.length());
                 final TemporalAccessor myTA = myFormatter.parse(myBase);

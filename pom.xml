@@ -79,16 +79,36 @@
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20170516</JSONVersion>
     <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
-    <MySQLVersion>5.1.43</MySQLVersion>
+    <MySQLVersion>5.1.44</MySQLVersion>
     <PostGreSQLVersion>42.1.4.jre7</PostGreSQLVersion>
     <ApachePOIVersion>3.16</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
-    <LOG4JVersion>2.8.2</LOG4JVersion>
+    <LOG4JVersion>2.9.0</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
+    <CheckStyleVersion>8.2</CheckStyleVersion>
+    <PMDVersion>5.8.1</PMDVersion>
+    <CleanPluginVersion>3.0.0</CleanPluginVersion>
+    <InstallPluginVersion>2.5.2</InstallPluginVersion>
+    <SitePluginVersion>3.6</SitePluginVersion>
+    <DeployPluginVersion>2.8.2</DeployPluginVersion>
+    <EnforcerPluginVersion>3.0.0-M1</EnforcerPluginVersion>
+    <CompilerPluginVersion>3.7.0</CompilerPluginVersion>
+    <ShadePluginVersion>3.1.0</ShadePluginVersion>
+    <DependencyPluginVersion>3.0.1</DependencyPluginVersion>
+    <SurefirePluginVersion>2.20</SurefirePluginVersion>
+    <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
+    <JarPluginVersion>3.0.2</JarPluginVersion>
+    <ProjectInfoPluginVersion>2.9</ProjectInfoPluginVersion>
+    <JxrPluginVersion>2.5</JxrPluginVersion>
+    <JavaDocPluginVersion>3.0.0-M1</JavaDocPluginVersion>
+    <SonarQubePluginVersion>3.3.0.603</SonarQubePluginVersion>
+    <CheckStylePluginVersion>2.17</CheckStylePluginVersion>
+    <PMDPluginVersion>3.8</PMDPluginVersion>
+    <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
   </properties>
   <build>
     <resources>
@@ -101,7 +121,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>${EnforcerPluginVersion}</version>
         <executions>
           <execution>
             <id>enforce-maven</id>
@@ -124,7 +144,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.2</version>
+        <version>${CompilerPluginVersion}</version>
         <configuration>
           <source>${JavaVersion}</source>
           <target>${JavaVersion}</target>
@@ -134,7 +154,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.20</version>
+        <version>${SurefirePluginVersion}</version>
         <configuration>
           <skipTests>true</skipTests>
         </configuration>
@@ -142,7 +162,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.4</version>
+        <version>${BuildNumberPluginVersion}</version>
         <executions>
           <execution>
             <phase>validate</phase>
@@ -161,29 +181,29 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
+        <version>${CheckStylePluginVersion}</version>
         <dependencies>
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>8.1</version>
+            <version>${CheckStyleVersion}</version>
           </dependency>
         </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.8</version>
+        <version>${PMDPluginVersion}</version>
         <dependencies>
           <dependency>
             <groupId>net.sourceforge.pmd</groupId>
             <artifactId>pmd-core</artifactId>
-            <version>5.8.1</version>
+            <version>${PMDVersion}</version>
           </dependency>
           <dependency>
             <groupId>net.sourceforge.pmd</groupId>
             <artifactId>pmd-java</artifactId>
-            <version>5.8.1</version>
+            <version>${PMDVersion}</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -198,18 +218,38 @@
           </excludes>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-clean-plugin</artifactId>
+        <version>${CleanPluginVersion}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>${InstallPluginVersion}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${SitePluginVersion}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>${DeployPluginVersion}</version>
+      </plugin>
     </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.3.0.603</version>
+          <version>${SonarQubePluginVersion}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${DependencyPluginVersion}</version>
           <executions>
             <execution>
               <id>copy-installed</id>
@@ -244,7 +284,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>${ShadePluginVersion}</version>
           <configuration>
             <finalName>${project.artifactId}-${project.version}-uber</finalName>
           </configuration>
@@ -260,7 +300,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>${JarPluginVersion}</version>
           <executions>
             <execution>
               <goals>
@@ -292,12 +332,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.9</version>
+        <version>${ProjectInfoPluginVersion}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
+        <version>${CheckStylePluginVersion}</version>
         <configuration>
           <configLocation>src/main/checkstyle/checks.xml</configLocation>
         </configuration>
@@ -305,7 +345,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.8</version>
+        <version>${PMDPluginVersion}</version>
         <configuration>
           <rulesets>
             <ruleset>src/main/pmd/pmd.xml</ruleset>
@@ -321,7 +361,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.5</version>
+        <version>${JxrPluginVersion}</version>
         <configuration>
           <linkJavadoc>true</linkJavadoc>
           <aggregate>true</aggregate>
@@ -333,7 +373,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.0-M1</version>
+        <version>${JavaDocPluginVersion}</version>
         <configuration>
           <show>public</show>
           <aggregate>true</aggregate>
@@ -344,7 +384,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>3.0.4</version>
+        <version>${FindBugsPluginVersion}</version>
       </plugin>
     </plugins>
   </reporting>

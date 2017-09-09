@@ -305,24 +305,16 @@ public class CoeusZopaMarket
     public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_MISSINGBOOK.equals(pField)) {
-            return theMissingLoanBook.isZero()
-                                               ? MetisDataFieldValue.SKIP
-                                               : theMissingLoanBook;
+            return skipZero(theMissingLoanBook);
         }
         if (FIELD_MISSINGCAPITAL.equals(pField)) {
-            return theMissingCapital.isZero()
-                                              ? MetisDataFieldValue.SKIP
-                                              : theMissingCapital;
+            return skipZero(theMissingCapital);
         }
         if (FIELD_MISSINGINTEREST.equals(pField)) {
-            return theMissingInterest.isZero()
-                                               ? MetisDataFieldValue.SKIP
-                                               : theMissingInterest;
+            return skipZero(theMissingInterest);
         }
         if (FIELD_ZOMBIELOANS.equals(pField)) {
-            return theZombieLoans.isZero()
-                                           ? MetisDataFieldValue.SKIP
-                                           : theZombieLoans;
+            return skipZero(theZombieLoans);
         }
         if (FIELD_INTERESTINGLOANS.equals(pField)) {
             return theInterestingLoans.isEmpty()

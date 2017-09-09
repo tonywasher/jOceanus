@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Loan Market.
@@ -348,6 +349,39 @@ public abstract class CoeusMarket
      */
     protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
+    }
+
+    /**
+     * Skip zero value.
+     * @param pValue the value
+     * @return the value if non-zero, else SKIP
+     */
+    public static Object skipZero(final TethysDecimal pValue) {
+        return pValue.isZero()
+                               ? MetisDataFieldValue.SKIP
+                               : pValue;
+    }
+
+    /**
+     * Skip empty list.
+     * @param pList the list
+     * @return the list if non-empty, else SKIP
+     */
+    public static Object skipEmpty(final List<?> pList) {
+        return pList.isEmpty()
+                               ? MetisDataFieldValue.SKIP
+                               : pList;
+    }
+
+    /**
+     * Skip null value.
+     * @param pValue the value
+     * @return the list if non-empty, else SKIP
+     */
+    public static Object skipNull(final Object pValue) {
+        return pValue == null
+                              ? MetisDataFieldValue.SKIP
+                              : pValue;
     }
 
     @Override

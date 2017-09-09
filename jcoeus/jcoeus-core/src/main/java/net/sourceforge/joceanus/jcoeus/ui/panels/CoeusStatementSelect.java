@@ -23,20 +23,15 @@
 package net.sourceforge.joceanus.jcoeus.ui.panels;
 
 import java.time.Month;
-import java.util.Iterator;
 
-import net.sourceforge.joceanus.jcoeus.data.CoeusCalendar;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketType;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
-import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusAnnualFilter;
-import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusUIResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -56,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class CoeusStatementSelect<N, I>
+public final class CoeusStatementSelect<N, I>
         implements TethysEventProvider<CoeusDataEvent>, TethysNode<N> {
     /**
      * Text for Market Label.
@@ -144,19 +139,14 @@ public class CoeusStatementSelect<N, I>
     private final TethysCardPaneManager<N, I, TethysBoxPaneManager<N, I>> theCardPane;
 
     /**
-     * Calendar.
-     */
-    private CoeusCalendar theCalendar;
-
-    /**
      * Current state.
      */
-    private FilterState theState;
+    private CoeusStatementState theState;
 
     /**
      * Saved state.
      */
-    private FilterState theSavePoint;
+    private CoeusStatementState theSavePoint;
 
     /**
      * Constructor.
@@ -167,7 +157,6 @@ public class CoeusStatementSelect<N, I>
                                 final CoeusMarketCache pCache) {
         /* Store parameters */
         theCache = pCache;
-        theCalendar = pCache.getCalendar();
 
         /* Create the totals button */
         theTotalsButton = pFactory.newScrollButton();
@@ -190,7 +179,7 @@ public class CoeusStatementSelect<N, I>
         theDateButton = pFactory.newDateButton();
 
         /* Create initial state */
-        theState = new FilterState();
+        theState = new CoeusStatementState(this, pCache.getCalendar());
 
         /* Create the labels */
         final TethysLabel<N, I> myTotLabel = pFactory.newLabel(NLS_TOTALS);
@@ -236,7 +225,7 @@ public class CoeusStatementSelect<N, I>
         theState.setMarketType(CoeusMarketType.SNAPSHOT);
         theState.setDate(new TethysDate());
         theState.setTotalSet(CoeusTotalSet.LOANBOOK);
-        theState.applyState();
+        applyState();
 
         /* Add the listeners */
         theTotalsButton.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> handleNewTotalSet());
@@ -274,6 +263,22 @@ public class CoeusStatementSelect<N, I>
      */
     public CoeusFilter getFilter() {
         return theState.getFilter();
+    }
+
+    /**
+     * Obtain the cache.
+     * @return the cache
+     */
+    CoeusMarketCache getCache() {
+        return theCache;
+    }
+
+    /**
+     * Set new MarketType.
+     * @param pType the new marketType
+     */
+    void setMarketType(final CoeusMarketType pType) {
+        theCardPane.selectCard(pType.toString());
     }
 
     /**
@@ -366,7 +371,7 @@ public class CoeusStatementSelect<N, I>
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new FilterState(theState);
+        theSavePoint = new CoeusStatementState(theState);
     }
 
     /**
@@ -374,10 +379,10 @@ public class CoeusStatementSelect<N, I>
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new FilterState(theSavePoint);
+        theState = new CoeusStatementState(theSavePoint);
 
         /* Apply the state */
-        theState.applyState();
+        applyState();
     }
 
     @Override
@@ -472,319 +477,46 @@ public class CoeusStatementSelect<N, I>
      */
     public void setFilter(final CoeusFilter pFilter) {
         theState.setFilter(pFilter);
-        theState.applyState();
+        applyState();
     }
 
     /**
      * Refresh the view.
      */
     private void refreshView() {
-        theCalendar = theCache.getCalendar();
+        theState.setCalendar(theCache.getCalendar());
         theState.allocateNewFilter();
         fireSelectionChanged();
     }
 
     /**
-     * SavePoint values.
+     * Apply the State.
      */
-    private final class FilterState {
-        /**
-         * The filter.
-         */
-        private CoeusFilter theFilter;
+    void applyState() {
+        /* Set standard values */
+        theTotalsButton.setValue(theState.getTotalSet());
+        theMarketButton.setValue(theState.getProvider());
+        theDateButton.setSelectedDate(theState.getSelectedDate());
 
-        /**
-         * The marketProvider.
-         */
-        private CoeusMarketProvider theProvider;
+        /* Handle MarketType */
+        final CoeusMarketType myType = theState.getMarketType();
+        theMarketTypeButton.setValue(myType);
+        theCardPane.selectCard(myType.toString());
 
-        /**
-         * The marketType.
-         */
-        private CoeusMarketType theMarketType;
-
-        /**
-         * The selectedDate.
-         */
-        private TethysDate theSelectedDate;
-
-        /**
-         * The loan.
-         */
-        private CoeusLoan theLoan;
-
-        /**
-         * The month.
-         */
-        private Month theMonth;
-
-        /**
-         * The totalSet.
-         */
-        private CoeusTotalSet theTotalSet;
-
-        /**
-         * Constructor.
-         */
-        FilterState() {
+        /* Handle month */
+        final Month myMonth = theState.getMonth();
+        if (myMonth == null) {
+            theMonthButton.setValue(null, NLS_ALL);
+        } else {
+            theMonthButton.setValue(myMonth);
         }
 
-        /**
-         * Constructor.
-         * @param pState state to copy from
-         */
-        FilterState(final FilterState pState) {
-            setFilter(pState.getFilter());
-        }
-
-        /**
-         * Set Filter.
-         * @param pFilter the filter to set
-         */
-        void setFilter(final CoeusFilter pFilter) {
-            theFilter = pFilter;
-            theProvider = theFilter == null
-                                            ? null
-                                            : theFilter.getProvider();
-            theMarketType = theFilter == null
-                                              ? null
-                                              : theFilter.getMarketType();
-            theSelectedDate = theFilter == null
-                                                ? null
-                                                : theFilter.getSelectedDate();
-            theTotalSet = theFilter == null
-                                            ? null
-                                            : theFilter.getTotalSet();
-            if (pFilter instanceof CoeusAnnualFilter) {
-                theMonth = ((CoeusAnnualFilter) pFilter).getMonth();
-            }
-            if (pFilter instanceof CoeusSnapShotFilter) {
-                theLoan = ((CoeusSnapShotFilter) pFilter).getLoan();
-            }
-        }
-
-        /**
-         * Obtain the filter.
-         * @return the market
-         */
-        CoeusFilter getFilter() {
-            return theFilter;
-        }
-
-        /**
-         * Obtain the selected market provider.
-         * @return the market
-         */
-        CoeusMarketProvider getProvider() {
-            return theProvider;
-        }
-
-        /**
-         * Set new Date.
-         * @param pDate the date
-         * @return true/false did a change occur
-         */
-        boolean setDate(final TethysDate pDate) {
-            /* Obtain the date and adjust it */
-            final TethysDate myDate = pDate == null
-                                                    ? null
-                                                    : new TethysDate(pDate);
-
-            /* Record any change and report change */
-            if (!MetisDataDifference.isEqual(pDate, theSelectedDate)) {
-                theSelectedDate = myDate;
-                return allocateNewFilter();
-            }
-            return false;
-        }
-
-        /**
-         * Set new MarketProvider.
-         * @param pProvider the new market
-         * @return true/false did a change occur
-         */
-        boolean setProvider(final CoeusMarketProvider pProvider) {
-            if (!pProvider.equals(theProvider)) {
-                /* Store the new provider */
-                theProvider = pProvider;
-                return allocateNewFilter();
-            }
-            return false;
-        }
-
-        /**
-         * Set new MarketType.
-         * @param pType the new marketType
-         * @return true/false did a change occur
-         */
-        boolean setMarketType(final CoeusMarketType pType) {
-            if (!pType.equals(theMarketType)) {
-                /* Store the new marketType */
-                theMarketType = pType;
-                theCardPane.selectCard(theMarketType.toString());
-                return allocateNewFilter();
-            }
-            return false;
-        }
-
-        /**
-         * Set new TotalSet.
-         * @param pTotals the new totalSet
-         * @return true/false did a change occur
-         */
-        boolean setTotalSet(final CoeusTotalSet pTotals) {
-            if (!pTotals.equals(theTotalSet)) {
-                /* Adjust the filter */
-                theTotalSet = pTotals;
-                if (theFilter != null) {
-                    theFilter.setTotalSet(pTotals);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Set new Loan.
-         * @param pLoan the new loan
-         * @return true/false did a change occur
-         */
-        boolean setLoan(final CoeusLoan pLoan) {
-            if (!MetisDataDifference.isEqual(pLoan, theLoan)) {
-                /* Adjust the filter */
-                theLoan = pLoan;
-                if (theFilter instanceof CoeusSnapShotFilter) {
-                    ((CoeusSnapShotFilter) theFilter).setLoan(pLoan);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Set new Month.
-         * @param pMonth the new month
-         * @return true/false did a change occur
-         */
-        boolean setMonth(final Month pMonth) {
-            if (!MetisDataDifference.isEqual(pMonth, theMonth)) {
-                /* Adjust the filter */
-                theMonth = pMonth;
-                if (theFilter instanceof CoeusAnnualFilter) {
-                    ((CoeusAnnualFilter) theFilter).setMonth(pMonth);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Apply the State.
-         */
-        void applyState() {
-            /* Set standard values */
-            theTotalsButton.setValue(theTotalSet);
-            theMarketButton.setValue(theProvider);
-            theMarketTypeButton.setValue(theMarketType);
-            theDateButton.setSelectedDate(theSelectedDate);
-            theCardPane.selectCard(theMarketType.toString());
-
-            /* Handle month */
-            if (theMonth == null) {
-                theMonthButton.setValue(null, NLS_ALL);
-            } else {
-                theMonthButton.setValue(theMonth);
-            }
-
-            /* Handle loan */
-            if (theLoan == null) {
-                theLoanButton.setValue(null, NLS_ALL);
-            } else {
-                theLoanButton.setValue(theLoan);
-            }
-        }
-
-        /**
-         * Allocate new filter.
-         * @return true/false did an allocation occur
-         */
-        boolean allocateNewFilter() {
-            /* If there is an empty cache then no change */
-            if (theCache.isIdle()) {
-                return false;
-            }
-
-            /* Switch on market type */
-            switch (theMarketType) {
-                case ANNUAL:
-                    allocateNewAnnualFilter();
-                    return true;
-
-                case SNAPSHOT:
-                    allocateNewSnapShotFilter();
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        /**
-         * Allocate new annual filter.
-         */
-        void allocateNewAnnualFilter() {
-            final TethysDate myAnnualDate = theCalendar.getEndOfYear(theSelectedDate);
-            final CoeusAnnualFilter myFilter = new CoeusAnnualFilter(theCache.getAnnual(theProvider, myAnnualDate), theSelectedDate);
-            if (theMonth != null
-                && !myFilter.availableMonth(theMonth)) {
-                theMonth = null;
-            }
-            myFilter.setMonth(theMonth);
-            myFilter.setTotalSet(theTotalSet);
-            theFilter = myFilter;
-        }
-
-        /**
-         * available month?
-         * @param pMonth the month
-         * @return true/false
-         */
-        boolean availableMonth(final Month pMonth) {
-            return theFilter instanceof CoeusAnnualFilter
-                   && ((CoeusAnnualFilter) theFilter).availableMonth(pMonth);
-        }
-
-        /**
-         * Allocate new snapShot filter.
-         */
-        void allocateNewSnapShotFilter() {
-            final CoeusSnapShotFilter myFilter = new CoeusSnapShotFilter(theCache.getSnapShot(theProvider, theSelectedDate));
-            if (theLoan != null
-                && !myFilter.availableLoan(theLoan)) {
-                theLoan = null;
-            }
-            myFilter.setLoan(theLoan);
-            myFilter.setTotalSet(theTotalSet);
-            theFilter = myFilter;
-        }
-
-        /**
-         * Build loans menu.
-         * @param pBuilder the menu builder
-         */
-        void buildLoansMenu(final TethysScrollMenu<CoeusLoan, ?> pBuilder) {
-            /* Only perform for snapShots */
-            if (!(theFilter instanceof CoeusSnapShotFilter)) {
-                return;
-            }
-
-            /* Loop through the loans */
-            final Iterator<CoeusLoan> myIterator = ((CoeusSnapShotFilter) theFilter).loanIterator();
-            while (myIterator.hasNext()) {
-                final CoeusLoan myLoan = myIterator.next();
-                /* Create a new MenuItem for the loan */
-                pBuilder.addItem(myLoan);
-            }
+        /* Handle loan */
+        final CoeusLoan myLoan = theState.getLoan();
+        if (myLoan == null) {
+            theLoanButton.setValue(null, NLS_ALL);
+        } else {
+            theLoanButton.setValue(myLoan);
         }
     }
 }

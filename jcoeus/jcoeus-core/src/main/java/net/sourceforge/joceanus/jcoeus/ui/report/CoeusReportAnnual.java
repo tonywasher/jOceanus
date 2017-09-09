@@ -141,7 +141,7 @@ public class CoeusReportAnnual
             }
         }
 
-        /* Create the row */
+        /* Create the totals row */
         final CoeusTotals myTotals = theMarket.getHistory().getTotals();
         theBuilder.startRow(myTable);
         theBuilder.makeTotalCell(myTable, "Totals");

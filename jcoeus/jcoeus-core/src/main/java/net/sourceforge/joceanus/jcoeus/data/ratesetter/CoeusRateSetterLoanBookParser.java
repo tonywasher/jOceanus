@@ -64,11 +64,6 @@ public class CoeusRateSetterLoanBookParser {
     private final TethysDecimalParser theDecimalParser;
 
     /**
-     * StringBuilder.
-     */
-    private final StringBuilder theBuilder;
-
-    /**
      * Constructor.
      * @param pFormatter the formatter
      */
@@ -79,9 +74,6 @@ public class CoeusRateSetterLoanBookParser {
         /* Access the formatters */
         theDateParser = pFormatter.getDateFormatter();
         theDecimalParser = pFormatter.getDecimalParser();
-
-        /* create the string builder */
-        theBuilder = new StringBuilder();
     }
 
     /**
@@ -219,7 +211,7 @@ public class CoeusRateSetterLoanBookParser {
      */
     protected String childElementText(final Element pElement) {
         /* Reset string builder */
-        theBuilder.setLength(0);
+        final StringBuilder myBuilder = new StringBuilder();
         final Element myRow = pElement.select("tr").first();
 
         /* Loop through the childNodes */
@@ -229,12 +221,12 @@ public class CoeusRateSetterLoanBookParser {
                 /* If it is a required child */
                 final Element myChild = (Element) myNode;
                 if ("td".equals(myNode.nodeName())) {
-                    theBuilder.append(myChild.text());
+                    myBuilder.append(myChild.text());
                 }
             }
         }
 
         /* return the accumulated text */
-        return theBuilder.toString();
+        return myBuilder.toString();
     }
 }

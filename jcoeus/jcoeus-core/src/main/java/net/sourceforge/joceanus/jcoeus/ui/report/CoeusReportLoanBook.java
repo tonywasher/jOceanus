@@ -125,9 +125,30 @@ public class CoeusReportLoanBook
         final Element myBody = theBuilder.startReport();
         theBuilder.makeTitle(myBody, "Loan Book for " + theMarket.getMarket().getProvider().toString(), theFormatter.formatObject(myDate));
 
+        /* report on active loans */
+        reportOnActiveLoans(myBody);
+
+        /* If we have badDebt */
+        if (theMarket.hasBadDebt()) {
+            /* report on badDebt */
+            reportOnBadDebt(myBody);
+        }
+
+        /* report on closed loans */
+        reportOnClosedLoans(myBody);
+
+        /* Return the document */
+        return theBuilder.getDocument();
+    }
+
+    /**
+     * create active loans report segment.
+     * @param pBody the body element
+     */
+    public void reportOnActiveLoans(final Element pBody) {
         /* Initialise the active Loan table */
-        theBuilder.makeSubTitle(myBody, "Active Loans");
-        MetisHTMLTable myTable = theBuilder.startTable(myBody);
+        theBuilder.makeSubTitle(pBody, "Active Loans");
+        final MetisHTMLTable myTable = theBuilder.startTable(pBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_LOANID);
         theBuilder.makeTitleCell(myTable, TEXT_STARTDATE);
@@ -136,7 +157,7 @@ public class CoeusReportLoanBook
         theBuilder.makeTitleCell(myTable, TEXT_OUTSTANDING);
 
         /* Loop through the loans */
-        Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
+        final Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
         while (myIterator.hasNext()) {
             final CoeusLoan myLoan = myIterator.next();
 
@@ -160,60 +181,69 @@ public class CoeusReportLoanBook
             /* Record the filter */
             setFilterForId(myId, myLoan);
         }
+    }
 
-        /* If we have badDebt */
-        if (theMarket.hasBadDebt()) {
-            /* Initialise the badDebt Loan table */
-            theBuilder.makeSubTitle(myBody, "BadDebt Loans");
-            myTable = theBuilder.startTable(myBody);
-            theBuilder.startTotalRow(myTable);
-            theBuilder.makeTitleCell(myTable, TEXT_LOANID);
-            theBuilder.makeTitleCell(myTable, TEXT_INITIALLOAN);
-            theBuilder.makeTitleCell(myTable, TEXT_BADDEBTDATE);
-            theBuilder.makeTitleCell(myTable, TEXT_BADDEBT);
-            theBuilder.makeTitleCell(myTable, TEXT_RECOVERED);
-            theBuilder.makeTitleCell(myTable, TEXT_LASTDATE);
-            theBuilder.makeTitleCell(myTable, TEXT_OUTSTANDING);
+    /**
+     * create badDebt loans report segment.
+     * @param pBody the body element
+     */
+    public void reportOnBadDebt(final Element pBody) {
+        /* Initialise the badDebt Loan table */
+        theBuilder.makeSubTitle(pBody, "BadDebt Loans");
+        final MetisHTMLTable myTable = theBuilder.startTable(pBody);
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTitleCell(myTable, TEXT_LOANID);
+        theBuilder.makeTitleCell(myTable, TEXT_INITIALLOAN);
+        theBuilder.makeTitleCell(myTable, TEXT_BADDEBTDATE);
+        theBuilder.makeTitleCell(myTable, TEXT_BADDEBT);
+        theBuilder.makeTitleCell(myTable, TEXT_RECOVERED);
+        theBuilder.makeTitleCell(myTable, TEXT_LASTDATE);
+        theBuilder.makeTitleCell(myTable, TEXT_OUTSTANDING);
 
-            /* Loop through the loans */
-            myIterator = theMarket.loanIterator();
-            while (myIterator.hasNext()) {
-                final CoeusLoan myLoan = myIterator.next();
+        /* Loop through the loans */
+        final Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
+        while (myIterator.hasNext()) {
+            final CoeusLoan myLoan = myIterator.next();
 
-                /* Skip if loan is not badDebt */
-                if (!CoeusLoanStatus.BADDEBT.equals(myLoan.getStatus())) {
-                    continue;
-                }
-
-                /* Access details */
-                final String myId = myLoan.getLoanId();
-                final CoeusTotals myTotals = myLoan.getTotals();
-
-                /* Create the row */
-                theBuilder.startRow(myTable);
-                theBuilder.makeFilterLinkCell(myTable, myId);
-                theBuilder.makeValueCell(myTable, myLoan.getInitialLoan());
-                theBuilder.makeValueCell(myTable, myLoan.getBadDebtDate());
-                theBuilder.makeValueCell(myTable, myTotals.getBadDebt());
-                theBuilder.makeValueCell(myTable, myTotals.getRecovered());
-                theBuilder.makeValueCell(myTable, myLoan.getLastDate());
-                theBuilder.makeValueCell(myTable, myTotals.getLosses());
-
-                /* Record the filter */
-                setFilterForId(myId, myLoan);
+            /* Skip if loan is not badDebt */
+            if (!CoeusLoanStatus.BADDEBT.equals(myLoan.getStatus())) {
+                continue;
             }
-        }
 
+            /* Access details */
+            final String myId = myLoan.getLoanId();
+            final CoeusTotals myTotals = myLoan.getTotals();
+
+            /* Create the row */
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myId);
+            theBuilder.makeValueCell(myTable, myLoan.getInitialLoan());
+            theBuilder.makeValueCell(myTable, myLoan.getBadDebtDate());
+            theBuilder.makeValueCell(myTable, myTotals.getBadDebt());
+            theBuilder.makeValueCell(myTable, myTotals.getRecovered());
+            theBuilder.makeValueCell(myTable, myLoan.getLastDate());
+            theBuilder.makeValueCell(myTable, myTotals.getLosses());
+
+            /* Record the filter */
+            setFilterForId(myId, myLoan);
+        }
+    }
+
+    /**
+     * create closed loans report segment.
+     * @param pBody the body element
+     */
+    public void reportOnClosedLoans(final Element pBody) {
         /* Initialise the closed Loan table */
-        theBuilder.makeSubTitle(myBody, "Closed Loans");
-        myTable = theBuilder.startTable(myBody);
+        theBuilder.makeSubTitle(pBody, "Closed Loans");
+        final MetisHTMLTable myTable = theBuilder.startTable(pBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable, TEXT_LOANID);
         theBuilder.makeTitleCell(myTable, TEXT_INITIALLOAN);
         theBuilder.makeTitleCell(myTable, TEXT_LASTDATE);
 
         /* Loop through the loans */
-        myIterator = theMarket.loanIterator();
+        final Iterator<CoeusLoan> myIterator = theMarket.loanIterator();
         while (myIterator.hasNext()) {
             final CoeusLoan myLoan = myIterator.next();
 
@@ -234,9 +264,6 @@ public class CoeusReportLoanBook
             /* Record the filter */
             setFilterForId(myId, myLoan);
         }
-
-        /* Return the document */
-        return theBuilder.getDocument();
     }
 
     @Override

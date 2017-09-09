@@ -122,8 +122,14 @@ public class CoeusFundingCircleLoader {
         /* Loop through statement file in the directory */
         try (DirectoryStream<Path> myStream = Files.newDirectoryStream(theBasePath, MASK)) {
             for (final Path myFile : myStream) {
+                /* Skip null entries */
+                final Path myFileName = myFile.getFileName();
+                if (myFileName == null) {
+                    continue;
+                }
+
                 /* Parse the file name */
-                final String myName = myFile.getFileName().toString();
+                final String myName = myFileName.toString();
                 String myBase = myName.substring(0, myName.length() - SUFFIX.length());
                 myBase = myBase.substring(PREFIX.length());
                 final TemporalAccessor myTA = myFormatter.parse(myBase);

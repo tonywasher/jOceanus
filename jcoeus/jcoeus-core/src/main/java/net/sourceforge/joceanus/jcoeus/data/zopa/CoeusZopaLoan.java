@@ -268,17 +268,17 @@ public class CoeusZopaLoan
 
     @Override
     public String toString() {
-        String myID = super.toString();
+        final StringBuilder myBuilder = new StringBuilder(super.toString());
         if (theMissingCapital.isNonZero()) {
-            myID = "M:" + myID;
+            myBuilder.insert(0, "M:");
         }
         if (theMissingInterest.isNonZero()) {
-            myID = "I:" + myID;
+            myBuilder.insert(0, "I:");
         }
         if (isZombie) {
-            myID = "Z:" + myID;
+            myBuilder.insert(0, "Z:");
         }
-        return myID;
+        return myBuilder.toString();
     }
 
     @Override

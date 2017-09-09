@@ -121,7 +121,7 @@ public final class CoeusZopaTransaction
     /**
      * ZERO for BadDebt/CashBack.
      */
-    protected static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+    static final TethysDecimal ZERO_MONEY = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
 
     /**
      * Date of transaction.

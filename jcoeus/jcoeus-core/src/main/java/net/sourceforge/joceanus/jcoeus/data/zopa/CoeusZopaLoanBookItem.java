@@ -28,6 +28,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
+import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
@@ -550,9 +551,7 @@ public class CoeusZopaLoanBookItem
             return theInterest;
         }
         if (FIELD_MISSING.equals(pField)) {
-            return theMissing.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : theMissing;
+            return CoeusMarket.skipZero(theMissing);
         }
 
         /* Not recognised */

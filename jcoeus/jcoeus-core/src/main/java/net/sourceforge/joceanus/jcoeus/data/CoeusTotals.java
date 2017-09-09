@@ -551,15 +551,10 @@ public abstract class CoeusTotals
             return theMarket;
         }
         if (FIELD_LOAN.equals(pField)) {
-            final CoeusLoan myLoan = getLoan();
-            return myLoan == null
-                                  ? MetisDataFieldValue.SKIP
-                                  : myLoan;
+            return CoeusMarket.skipNull(getLoan());
         }
         if (FIELD_DATE.equals(pField)) {
-            return theDate == null
-                                   ? MetisDataFieldValue.SKIP
-                                   : theDate;
+            return CoeusMarket.skipNull(theDate);
         }
         if (FIELD_DESC.equals(pField)) {
             return getDescription();
@@ -570,105 +565,55 @@ public abstract class CoeusTotals
                                           : theTransaction.getTransType();
         }
         if (FIELD_TRANSACTION.equals(pField)) {
-            return theTransaction == null
-                                          ? MetisDataFieldValue.SKIP
-                                          : theTransaction;
+            return CoeusMarket.skipNull(theTransaction);
         }
         if (FIELD_ASSETVALUE.equals(pField)) {
-            final TethysDecimal myValue = getAssetValue();
-            return myValue.isZero()
-                                    ? MetisDataFieldValue.SKIP
-                                    : myValue;
+            return CoeusMarket.skipZero(getAssetValue());
         }
         if (FIELD_HOLDING.equals(pField)) {
-            final TethysDecimal myHolding = getHolding();
-            return myHolding.isZero()
-                                      ? MetisDataFieldValue.SKIP
-                                      : myHolding;
+            return CoeusMarket.skipZero(getHolding());
         }
         if (FIELD_LOANBOOK.equals(pField)) {
-            final TethysDecimal myLoanBook = getLoanBook();
-            return myLoanBook.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myLoanBook;
+            return CoeusMarket.skipZero(getLoanBook());
         }
         if (FIELD_SOURCEVALUE.equals(pField)) {
-            final TethysDecimal myValue = getSourceValue();
-            return myValue.isZero()
-                                    ? MetisDataFieldValue.SKIP
-                                    : myValue;
+            return CoeusMarket.skipZero(getSourceValue());
         }
         if (FIELD_INVESTED.equals(pField)) {
-            final TethysDecimal myInvested = getInvested();
-            return myInvested.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myInvested;
+            return CoeusMarket.skipZero(getInvested());
         }
         if (FIELD_EARNINGS.equals(pField)) {
-            final TethysDecimal myEarnings = getEarnings();
-            return myEarnings.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myEarnings;
+            return CoeusMarket.skipZero(getEarnings());
         }
         if (FIELD_TAXEARNINGS.equals(pField)) {
-            final TethysDecimal myEarnings = getTaxableEarnings();
-            return myEarnings.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myEarnings;
+            return CoeusMarket.skipZero(getTaxableEarnings());
         }
         if (FIELD_INTEREST.equals(pField)) {
-            final TethysDecimal myInterest = getInterest();
-            return myInterest.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myInterest;
+            return CoeusMarket.skipZero(getInterest());
         }
         if (FIELD_NETTINTEREST.equals(pField)) {
-            final TethysDecimal myInterest = getNettInterest();
-            return myInterest.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myInterest;
+            return CoeusMarket.skipZero(getNettInterest());
         }
         if (FIELD_BADDEBTINTEREST.equals(pField)) {
-            final TethysDecimal myInterest = getBadDebtInterest();
-            return myInterest.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myInterest;
+            return CoeusMarket.skipZero(getBadDebtInterest());
         }
         if (FIELD_BADDEBTCAPITAL.equals(pField)) {
-            final TethysDecimal myCapital = getBadDebtCapital();
-            return myCapital.isZero()
-                                      ? MetisDataFieldValue.SKIP
-                                      : myCapital;
+            return CoeusMarket.skipZero(getBadDebtCapital());
         }
         if (FIELD_FEES.equals(pField)) {
-            final TethysDecimal myFees = getFees();
-            return myFees.isZero()
-                                   ? MetisDataFieldValue.SKIP
-                                   : myFees;
+            return CoeusMarket.skipZero(getFees());
         }
         if (FIELD_CASHBACK.equals(pField)) {
-            final TethysDecimal myCashBack = getCashBack();
-            return myCashBack.isZero()
-                                       ? MetisDataFieldValue.SKIP
-                                       : myCashBack;
+            return CoeusMarket.skipZero(getCashBack());
         }
         if (FIELD_LOSSES.equals(pField)) {
-            final TethysDecimal myLosses = getEarnings();
-            return myLosses.isZero()
-                                     ? MetisDataFieldValue.SKIP
-                                     : myLosses;
+            return CoeusMarket.skipZero(getLosses());
         }
         if (FIELD_BADDEBT.equals(pField)) {
-            final TethysDecimal myBadDebt = getBadDebt();
-            return myBadDebt.isZero()
-                                      ? MetisDataFieldValue.SKIP
-                                      : myBadDebt;
+            return CoeusMarket.skipZero(getBadDebt());
         }
         if (FIELD_RECOVERED.equals(pField)) {
-            final TethysDecimal myRecovered = getRecovered();
-            return myRecovered.isZero()
-                                        ? MetisDataFieldValue.SKIP
-                                        : myRecovered;
+            return CoeusMarket.skipZero(getRecovered());
         }
 
         /* Not recognised */
