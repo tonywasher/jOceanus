@@ -290,7 +290,7 @@ public class TethysFXHTMLManager
     public void printIt() {
         /* Prepare to print the webPage */
         final PrinterJob job = PrinterJob.createPrinterJob();
-        if ((job != null)
+        if (job != null
             && job.showPrintDialog(theFactory.getStage())) {
             /* Access printer and determine orientation */
             final Printer myPrinter = job.getPrinter();

@@ -211,7 +211,7 @@ public class TethysFXEditUIExample
         theGuiFactory = new TethysFXGuiFactory();
 
         /* Access formatters */
-        TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
+        final TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
         theDecimalFormatter = myFormatter.getDecimalFormatter();
         theDateFormatter = myFormatter.getDateFormatter();
 
@@ -252,11 +252,11 @@ public class TethysFXEditUIExample
     @Override
     public void start(final Stage pStage) {
         /* Create the panel */
-        Node myMain = buildPanel();
+        final Node myMain = buildPanel();
 
         /* Create scene */
-        BorderPane myPane = new BorderPane();
-        Scene myScene = new Scene(myPane);
+        final BorderPane myPane = new BorderPane();
+        final Scene myScene = new Scene(myPane);
         theGuiFactory.registerScene(myScene);
         myPane.setCenter(myMain);
         pStage.setTitle("JavaFXEdit Demo");
@@ -270,16 +270,16 @@ public class TethysFXEditUIExample
      */
     private Node buildPanel() {
         /* Create a GridPane for the fields */
-        TethysFXGridPaneManager myPane = buildFieldPane();
+        final TethysFXGridPaneManager myPane = buildFieldPane();
 
         /* Create a BoxPane for the buttons */
-        TethysFXBoxPaneManager myControls = buildControlPane();
+        final TethysFXBoxPaneManager myControls = buildControlPane();
 
         /* Create a GridPane for the results */
-        TethysFXGridPaneManager myResults = buildResultsPane();
+        final TethysFXGridPaneManager myResults = buildResultsPane();
 
         /* Create borderPane for the window */
-        TethysFXBoxPaneManager myMain = theGuiFactory.newVBoxPane();
+        final TethysFXBoxPaneManager myMain = theGuiFactory.newVBoxPane();
         myControls.setBorderTitle("Controls");
         myMain.addNode(myControls);
         myPane.setBorderTitle("FieldArea");
@@ -299,7 +299,7 @@ public class TethysFXEditUIExample
      */
     private TethysFXGridPaneManager buildFieldPane() {
         /* Create a GridPane for the fields */
-        TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Create String field line */
         TethysFXLabel myLabel = theGuiFactory.newLabel("String:");
@@ -470,7 +470,7 @@ public class TethysFXEditUIExample
         myGrid.addCell(theIconField);
         myGrid.allowCellGrowth(theIconField);
         myGrid.newRow();
-        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theIconField.setIconMapSet(() -> myMapSet);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(Boolean.FALSE);
@@ -485,7 +485,7 @@ public class TethysFXEditUIExample
      */
     private TethysFXGridPaneManager buildResultsPane() {
         /* Create a GridPane for the results */
-        TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Build the grid */
         TethysFXLabel myLabel = theGuiFactory.newLabel("Source:");
@@ -516,7 +516,7 @@ public class TethysFXEditUIExample
      */
     private TethysFXBoxPaneManager buildControlPane() {
         /* Create Toggle button for edit mode */
-        TethysFXButton myEditButton = theGuiFactory.newButton();
+        final TethysFXButton myEditButton = theGuiFactory.newButton();
         myEditButton.setText("Edit");
         myEditButton.getEventRegistrar().addEventListener(e -> {
             if (!isEditing) {
@@ -530,9 +530,9 @@ public class TethysFXEditUIExample
         });
 
         /* Create ScrollButton button for currency */
-        TethysFXScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
-        TethysFXScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
-        Currency myDefault = Currency.getInstance("GBP");
+        final TethysFXScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
+        final TethysFXScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
+        final Currency myDefault = Currency.getInstance("GBP");
         myMenu.addItem(myDefault, "Pounds");
         myMenu.addItem(Currency.getInstance("USD"), "Dollars");
         myMenu.addItem(Currency.getInstance("JPY"), "Yen");
@@ -541,7 +541,7 @@ public class TethysFXEditUIExample
         myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
         /* Create an HBox for buttons */
-        TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        final TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
         myBox.addNode(myEditButton);
         myBox.addSpacer();
         myBox.addNode(myCurrencyMgr);
@@ -594,7 +594,7 @@ public class TethysFXEditUIExample
     private void processActionEvent(final TethysFXDataTextField<?> pField,
                                     final TethysEvent<TethysUIEvent> pEvent) {
         /* Determine source */
-        String mySource = pField.getClass().getSimpleName();
+        final String mySource = pField.getClass().getSimpleName();
 
         /* Switch on action */
         switch (pEvent.getEventId()) {

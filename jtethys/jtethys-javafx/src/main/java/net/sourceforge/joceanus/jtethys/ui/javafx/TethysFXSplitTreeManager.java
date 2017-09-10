@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
  * Split Manager, hosting a Tree and HTML in a split window.
  * @param <T> the item type
  */
-public class TethysFXSplitTreeManager<T>
+public final class TethysFXSplitTreeManager<T>
         extends TethysSplitTreeManager<T, Node, Node> {
     /**
      * Split pane.

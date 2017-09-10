@@ -105,12 +105,12 @@ public class TethysFXHelpWindow
         /**
          * The Stage.
          */
-        private Stage theStage;
+        private final Stage theStage;
 
         /**
          * Constructor.
          */
-        private HelpDialog() {
+        HelpDialog() {
             /* Create the stage */
             theStage = new Stage();
 

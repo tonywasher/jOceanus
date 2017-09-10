@@ -195,7 +195,7 @@ public class TethysFXBoxPaneManager
          * Constructor.
          * @param pExpand true/false
          */
-        private TethysFXSpacer(final boolean pExpand) {
+        TethysFXSpacer(final boolean pExpand) {
             theRegion = new Region();
             theRegion.setPrefWidth(getGap());
             theRegion.setPrefHeight(getGap());

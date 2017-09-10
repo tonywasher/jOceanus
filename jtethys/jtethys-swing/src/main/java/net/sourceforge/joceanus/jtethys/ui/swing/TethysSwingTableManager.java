@@ -77,9 +77,9 @@ public class TethysSwingTableManager<C, R>
     private final JTable theTable;
 
     /**
-     * The Columns.
+     * The ColumnModel.
      */
-    private final TableColumnModel theColumns;
+    private final TableColumnModel theColumnModel;
 
     /**
      * The ColumnList.
@@ -118,7 +118,7 @@ public class TethysSwingTableManager<C, R>
         theColumnList = new ArrayList<>();
         theModel = new TethysSwingTableModel();
         theTable = new JTable(theModel);
-        theColumns = theTable.getColumnModel();
+        theColumnModel = theTable.getColumnModel();
         theCellFactory = new TethysSwingTableCellFactory<>(pFactory);
         theSorter = new TethysSwingTableSorter<>(theModel);
         theTable.setRowSorter(theSorter);
@@ -194,13 +194,53 @@ public class TethysSwingTableManager<C, R>
     }
 
     /**
+     * Obtain the columnList.
+     * @return the columnModel
+     */
+    List<R> getItems() {
+        return theItems;
+    }
+
+    /**
+     * Obtain the columnList.
+     * @return the columnModel
+     */
+    List<TethysSwingTableColumn<?, C, R>> getColumnList() {
+        return theColumnList;
+    }
+
+    /**
+     * Obtain the columnModel.
+     * @return the columnModel
+     */
+    TableColumnModel getColumnModel() {
+        return theColumnModel;
+    }
+
+    /**
+     * Obtain the cell factory.
+     * @return the cell factory
+     */
+    TethysSwingTableCellFactory<C, R> getCellFactory() {
+        return theCellFactory;
+    }
+
+    /**
+     * Obtain the sorter.
+     * @return the sorter
+     */
+    TethysSwingTableSorter<R> getSorter() {
+        return theSorter;
+    }
+
+    /**
      * Obtain the column for the model index.
      * @param pIndex the index of the column
      * @return the table column
      */
-    private TethysSwingTableColumn<?, C, R> getIndexedColumn(final int pIndex) {
-        if ((pIndex < 0)
-            || (pIndex > theColumnList.size())) {
+    TethysSwingTableColumn<?, C, R> getIndexedColumn(final int pIndex) {
+        if (pIndex < 0
+            || pIndex > theColumnList.size()) {
             throw new IllegalArgumentException();
         }
         return theColumnList.get(pIndex);
@@ -211,12 +251,12 @@ public class TethysSwingTableManager<C, R>
      * @param pIndex the index of the column
      * @return the table column
      */
-    private R getIndexedRow(final int pIndex) {
+    R getIndexedRow(final int pIndex) {
         if (theItems == null) {
             return null;
         }
-        if ((pIndex < 0)
-            || (pIndex > theItems.size())) {
+        if (pIndex < 0
+            || pIndex > theItems.size()) {
             throw new IllegalArgumentException();
         }
         return theItems.get(pIndex);
@@ -372,14 +412,14 @@ public class TethysSwingTableManager<C, R>
 
         @Override
         public int getRowCount() {
-            return theItems == null
-                                    ? 0
-                                    : theItems.size();
+            return getItems() == null
+                                      ? 0
+                                      : getItems().size();
         }
 
         @Override
         public int getColumnCount() {
-            return theColumnList.size();
+            return getColumnList().size();
         }
 
         @Override
@@ -410,7 +450,7 @@ public class TethysSwingTableManager<C, R>
         public void fireTableCellUpdated(final int pRowIndex,
                                          final int pColIndex) {
             super.fireTableCellUpdated(pRowIndex, pColIndex);
-            theSorter.reportMappingChanged();
+            getSorter().reportMappingChanged();
         }
 
         /**
@@ -458,13 +498,13 @@ public class TethysSwingTableManager<C, R>
             super(pTable, pId, pType);
 
             /* Determine the model index of the column */
-            final int myIndex = pTable.theColumnList.size();
+            final int myIndex = pTable.getColumnList().size();
 
             /* Create the column and add to the table */
             theColumn = new TableColumn(myIndex);
             theColumn.setHeaderValue(pId);
-            pTable.theColumns.addColumn(theColumn);
-            pTable.theColumnList.add(this);
+            pTable.getColumnModel().addColumn(theColumn);
+            pTable.getColumnList().add(this);
 
             /* Configure the column */
             setColumnWidth(getCellType().getDefaultWidth());
@@ -499,7 +539,7 @@ public class TethysSwingTableManager<C, R>
         @Override
         protected void attachToTable() {
             /* Add the column to the end of the list */
-            final TableColumnModel myColumns = getTable().theColumns;
+            final TableColumnModel myColumns = getTable().getColumnModel();
             myColumns.addColumn(theColumn);
 
             /* Determine the intended new index and current index */
@@ -514,7 +554,7 @@ public class TethysSwingTableManager<C, R>
 
         @Override
         protected void detachFromTable() {
-            getTable().theColumns.removeColumn(theColumn);
+            getTable().getColumnModel().removeColumn(theColumn);
         }
 
         /**
@@ -522,7 +562,7 @@ public class TethysSwingTableManager<C, R>
          * @param pIndex the row index
          * @return true/false
          */
-        private boolean isCellEditable(final int pIndex) {
+        boolean isCellEditable(final int pIndex) {
             return theCell.isCellEditable(pIndex);
         }
 
@@ -531,7 +571,7 @@ public class TethysSwingTableManager<C, R>
          * @param pIndex the row index
          * @return the value
          */
-        private T getCellValue(final int pIndex) {
+        T getCellValue(final int pIndex) {
             theCell.setActiveRow(pIndex);
             return theValueFactory.apply(theCell.getActiveRow());
         }
@@ -541,8 +581,8 @@ public class TethysSwingTableManager<C, R>
          * @param pIndex the row index
          * @param pValue the new value
          */
-        private void setCellValue(final int pIndex,
-                                  final Object pValue) {
+        void setCellValue(final int pIndex,
+                          final Object pValue) {
             /* Set the active row */
             theCell.setActiveRow(pIndex);
 
@@ -635,7 +675,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableStringColumn(final TethysSwingTableManager<C, R> pTable,
                                                final C pId) {
             super(pTable, pId, TethysFieldType.STRING);
-            declareCell(getTable().theCellFactory.stringCell(this));
+            declareCell(getTable().getCellFactory().stringCell(this));
         }
     }
 
@@ -654,7 +694,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableCharArrayColumn(final TethysSwingTableManager<C, R> pTable,
                                                   final C pId) {
             super(pTable, pId, TethysFieldType.CHARARRAY);
-            declareCell(getTable().theCellFactory.charArrayCell(this));
+            declareCell(getTable().getCellFactory().charArrayCell(this));
         }
     }
 
@@ -673,7 +713,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableShortColumn(final TethysSwingTableManager<C, R> pTable,
                                               final C pId) {
             super(pTable, pId, TethysFieldType.SHORT);
-            declareCell(getTable().theCellFactory.shortCell(this));
+            declareCell(getTable().getCellFactory().shortCell(this));
         }
     }
 
@@ -692,7 +732,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableIntegerColumn(final TethysSwingTableManager<C, R> pTable,
                                                 final C pId) {
             super(pTable, pId, TethysFieldType.INTEGER);
-            declareCell(getTable().theCellFactory.integerCell(this));
+            declareCell(getTable().getCellFactory().integerCell(this));
         }
     }
 
@@ -711,7 +751,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableLongColumn(final TethysSwingTableManager<C, R> pTable,
                                              final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
-            declareCell(getTable().theCellFactory.longCell(this));
+            declareCell(getTable().getCellFactory().longCell(this));
         }
     }
 
@@ -736,7 +776,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableRawDecimalColumn(final TethysSwingTableManager<C, R> pTable,
                                                    final C pId) {
             super(pTable, pId, TethysFieldType.DECIMAL);
-            declareCell(getTable().theCellFactory.rawDecimalCell(this));
+            declareCell(getTable().getCellFactory().rawDecimalCell(this));
             theSupplier = p -> TethysRawDecimalEditConverter.DEFAULT_DECIMALS;
         }
 
@@ -775,7 +815,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableMoneyColumn(final TethysSwingTableManager<C, R> pTable,
                                               final C pId) {
             super(pTable, pId, TethysFieldType.MONEY);
-            declareCell(getTable().theCellFactory.moneyCell(this));
+            declareCell(getTable().getCellFactory().moneyCell(this));
             theSupplier = p -> null;
         }
 
@@ -814,7 +854,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTablePriceColumn(final TethysSwingTableManager<C, R> pTable,
                                               final C pId) {
             super(pTable, pId, TethysFieldType.PRICE);
-            declareCell(getTable().theCellFactory.priceCell(this));
+            declareCell(getTable().getCellFactory().priceCell(this));
             theSupplier = p -> null;
         }
 
@@ -847,7 +887,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableRateColumn(final TethysSwingTableManager<C, R> pTable,
                                              final C pId) {
             super(pTable, pId, TethysFieldType.RATE);
-            declareCell(getTable().theCellFactory.rateCell(this));
+            declareCell(getTable().getCellFactory().rateCell(this));
         }
     }
 
@@ -866,7 +906,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableUnitsColumn(final TethysSwingTableManager<C, R> pTable,
                                               final C pId) {
             super(pTable, pId, TethysFieldType.UNITS);
-            declareCell(getTable().theCellFactory.unitsCell(this));
+            declareCell(getTable().getCellFactory().unitsCell(this));
         }
     }
 
@@ -885,7 +925,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableDilutionColumn(final TethysSwingTableManager<C, R> pTable,
                                                  final C pId) {
             super(pTable, pId, TethysFieldType.DILUTION);
-            declareCell(getTable().theCellFactory.dilutionCell(this));
+            declareCell(getTable().getCellFactory().dilutionCell(this));
         }
     }
 
@@ -904,7 +944,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableRatioColumn(final TethysSwingTableManager<C, R> pTable,
                                               final C pId) {
             super(pTable, pId, TethysFieldType.RATIO);
-            declareCell(getTable().theCellFactory.ratioCell(this));
+            declareCell(getTable().getCellFactory().ratioCell(this));
         }
     }
 
@@ -929,7 +969,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableDilutedPriceColumn(final TethysSwingTableManager<C, R> pTable,
                                                      final C pId) {
             super(pTable, pId, TethysFieldType.DILUTEDPRICE);
-            declareCell(getTable().theCellFactory.dilutedPriceCell(this));
+            declareCell(getTable().getCellFactory().dilutedPriceCell(this));
             theSupplier = p -> null;
         }
 
@@ -968,7 +1008,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableDateColumn(final TethysSwingTableManager<C, R> pTable,
                                              final C pId) {
             super(pTable, pId, TethysFieldType.DATE);
-            declareCell(getTable().theCellFactory.dateCell(this));
+            declareCell(getTable().getCellFactory().dateCell(this));
             theConfigurator = (r, c) -> {
             };
         }
@@ -1011,7 +1051,7 @@ public class TethysSwingTableManager<C, R>
                                                final C pId,
                                                final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.SCROLL);
-            declareCell(getTable().theCellFactory.scrollCell(this, pClass));
+            declareCell(getTable().getCellFactory().scrollCell(this, pClass));
             theConfigurator = (r, c) -> {
             };
         }
@@ -1052,7 +1092,7 @@ public class TethysSwingTableManager<C, R>
         protected TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
                                              final C pId) {
             super(pTable, pId, TethysFieldType.LIST);
-            declareCell(getTable().theCellFactory.listCell(this));
+            declareCell(getTable().getCellFactory().listCell(this));
             theSelectables = r -> Collections.emptyIterator();
         }
 
@@ -1094,7 +1134,7 @@ public class TethysSwingTableManager<C, R>
                                              final C pId,
                                              final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.ICON);
-            declareCell(getTable().theCellFactory.iconCell(this, pClass));
+            declareCell(getTable().getCellFactory().iconCell(this, pClass));
             theSupplier = p -> null;
         }
 

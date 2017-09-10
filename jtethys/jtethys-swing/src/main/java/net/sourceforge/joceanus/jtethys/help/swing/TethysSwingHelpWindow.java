@@ -89,7 +89,7 @@ public class TethysSwingHelpWindow
         }
 
         /* Make sure that the dialog is showing */
-        theDialog.showDialog();
+        theDialog.showDialog(theBaseFrame);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class TethysSwingHelpWindow
         /**
          * Constructor.
          */
-        private HelpDialog() {
+        HelpDialog() {
             /* Create the frame */
             theFrame = new JFrame();
 
@@ -139,17 +139,18 @@ public class TethysSwingHelpWindow
             theFrame.pack();
 
             /* Change visibility of tree when hiding */
-            theFrame.addWindowListener(new HelpWindowAdapter());
+            theFrame.addWindowListener(new HelpWindowAdapter(theFrame));
         }
 
         /**
          * show the dialog.
+         * @param pBaseFrame the base frame
          */
-        private void showDialog() {
+        void showDialog(final JFrame pBaseFrame) {
             /* If the dialog is not currently showing */
             if (!theFrame.isShowing()) {
                 /* Set the relative location */
-                theFrame.setLocationRelativeTo(theBaseFrame);
+                theFrame.setLocationRelativeTo(pBaseFrame);
 
                 /* Set the tree as visible */
                 getTreeManager().setVisible(true);
@@ -173,7 +174,7 @@ public class TethysSwingHelpWindow
         /**
          * Close the dialog.
          */
-        private void closeDialog() {
+        void closeDialog() {
             /* close the dialog */
             theFrame.dispose();
         }
@@ -183,6 +184,19 @@ public class TethysSwingHelpWindow
          */
         private class HelpWindowAdapter
                 extends WindowAdapter {
+            /**
+             * The frame.
+             */
+            private final JFrame theFrame;
+
+            /**
+             * Constructor.
+             * @param pFrame the frame
+             */
+            HelpWindowAdapter(final JFrame pFrame) {
+                theFrame = pFrame;
+            }
+
             @Override
             public void windowClosing(final WindowEvent e) {
                 handleWindowClosing();

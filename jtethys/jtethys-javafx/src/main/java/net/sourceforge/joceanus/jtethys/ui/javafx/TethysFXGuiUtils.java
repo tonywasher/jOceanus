@@ -132,9 +132,9 @@ public final class TethysFXGuiUtils {
      * @param pNode the node
      * @return the titled pane
      */
-    protected static Pane getBorderedPane(final String pTitle,
-                                          final Integer pPadding,
-                                          final Node pNode) {
+    static Pane getBorderedPane(final String pTitle,
+                                final Integer pPadding,
+                                final Node pNode) {
         /* Access the Node */
         final Pane myPane;
         if (!(pNode instanceof Pane)) {
@@ -150,8 +150,8 @@ public final class TethysFXGuiUtils {
         }
 
         /* Return the pane if we have no title or padding */
-        if ((pTitle == null)
-            && (pPadding == null)) {
+        if (pTitle == null
+            && pPadding == null) {
             return myPane;
         }
 
@@ -190,9 +190,9 @@ public final class TethysFXGuiUtils {
      * @param pSize the size of the dialog
      * @return the (adjusted) rectangle
      */
-    protected static Point2D obtainDisplayPoint(final Node pAnchor,
-                                                final Point2D pLocation,
-                                                final Dimension2D pSize) {
+    static Point2D obtainDisplayPoint(final Node pAnchor,
+                                      final Point2D pLocation,
+                                      final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
         final Screen myScreen = getScreenForNode(pAnchor);
 
@@ -215,9 +215,9 @@ public final class TethysFXGuiUtils {
      * @param pSize the size of the dialog
      * @return the (adjusted) rectangle
      */
-    protected static Point2D obtainDisplayPoint(final Node pAnchor,
-                                                final Side pSide,
-                                                final Dimension2D pSize) {
+    static Point2D obtainDisplayPoint(final Node pAnchor,
+                                      final Side pSide,
+                                      final Dimension2D pSize) {
         /* First of all determine the display screen for the anchor node */
         final Screen myScreen = getScreenForNode(pAnchor);
 

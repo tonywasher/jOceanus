@@ -166,6 +166,22 @@ public class TethysFXTableManager<C, R>
     }
 
     /**
+     * Obtain the columns.
+     * @return the columns
+     */
+    ObservableList<TableColumn<R, ?>> getColumns() {
+        return theColumns;
+    }
+
+    /**
+     * Obtain the cell factory.
+     * @return the cell factory
+     */
+    TethysFXTableCellFactory<C, R> getCellFactory() {
+        return theCellFactory;
+    }
+
+    /**
      * Set the table items.
      * @param pItems the items
      */
@@ -228,7 +244,7 @@ public class TethysFXTableManager<C, R>
      */
     protected boolean isEditLocked() {
         return !isEditable()
-               || (theActiveCell != null && theActiveCell.isCellInError());
+               || theActiveCell != null && theActiveCell.isCellInError();
     }
 
     @Override
@@ -345,12 +361,20 @@ public class TethysFXTableManager<C, R>
 
             /* Create the column and add to the table */
             theColumn = new TableColumn<>(getName());
-            pTable.theColumns.add(theColumn);
+            pTable.getColumns().add(theColumn);
 
             /* Configure the column */
             theColumn.setSortable(false);
             theColumn.setEditable(true);
             setColumnWidth(getCellType().getDefaultWidth());
+        }
+
+        /**
+         * Obtain the cell factory.
+         * @return the cell factory
+         */
+        TethysFXTableCellFactory<C, R> getCellFactory() {
+            return getTable().getCellFactory();
         }
 
         /**
@@ -452,7 +476,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableStringColumn(final TethysFXTableManager<C, R> pTable,
                                             final C pId) {
             super(pTable, pId, TethysFieldType.STRING);
-            declareCellFactory(getTable().theCellFactory.stringCellFactory(this));
+            declareCellFactory(super.getCellFactory().stringCellFactory(this));
         }
     }
 
@@ -471,7 +495,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableCharArrayColumn(final TethysFXTableManager<C, R> pTable,
                                                final C pId) {
             super(pTable, pId, TethysFieldType.CHARARRAY);
-            declareCellFactory(getTable().theCellFactory.charArrayCellFactory(this));
+            declareCellFactory(super.getCellFactory().charArrayCellFactory(this));
         }
     }
 
@@ -490,7 +514,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableShortColumn(final TethysFXTableManager<C, R> pTable,
                                            final C pId) {
             super(pTable, pId, TethysFieldType.SHORT);
-            declareCellFactory(getTable().theCellFactory.shortCellFactory(this));
+            declareCellFactory(super.getCellFactory().shortCellFactory(this));
         }
     }
 
@@ -509,7 +533,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableIntegerColumn(final TethysFXTableManager<C, R> pTable,
                                              final C pId) {
             super(pTable, pId, TethysFieldType.INTEGER);
-            declareCellFactory(getTable().theCellFactory.integerCellFactory(this));
+            declareCellFactory(super.getCellFactory().integerCellFactory(this));
         }
     }
 
@@ -528,7 +552,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableLongColumn(final TethysFXTableManager<C, R> pTable,
                                           final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
-            declareCellFactory(getTable().theCellFactory.longCellFactory(this));
+            declareCellFactory(super.getCellFactory().longCellFactory(this));
         }
     }
 
@@ -553,7 +577,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableRawDecimalColumn(final TethysFXTableManager<C, R> pTable,
                                                 final C pId) {
             super(pTable, pId, TethysFieldType.DECIMAL);
-            declareCellFactory(getTable().theCellFactory.rawDecimalCellFactory(this));
+            declareCellFactory(super.getCellFactory().rawDecimalCellFactory(this));
             theSupplier = p -> TethysRawDecimalEditConverter.DEFAULT_DECIMALS;
         }
 
@@ -592,7 +616,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableMoneyColumn(final TethysFXTableManager<C, R> pTable,
                                            final C pId) {
             super(pTable, pId, TethysFieldType.MONEY);
-            declareCellFactory(getTable().theCellFactory.moneyCellFactory(this));
+            declareCellFactory(super.getCellFactory().moneyCellFactory(this));
             theSupplier = p -> null;
         }
 
@@ -631,7 +655,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTablePriceColumn(final TethysFXTableManager<C, R> pTable,
                                            final C pId) {
             super(pTable, pId, TethysFieldType.PRICE);
-            declareCellFactory(getTable().theCellFactory.priceCellFactory(this));
+            declareCellFactory(super.getCellFactory().priceCellFactory(this));
             theSupplier = p -> null;
         }
 
@@ -664,7 +688,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableRateColumn(final TethysFXTableManager<C, R> pTable,
                                           final C pId) {
             super(pTable, pId, TethysFieldType.RATE);
-            declareCellFactory(getTable().theCellFactory.rateCellFactory(this));
+            declareCellFactory(super.getCellFactory().rateCellFactory(this));
         }
     }
 
@@ -683,7 +707,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableUnitsColumn(final TethysFXTableManager<C, R> pTable,
                                            final C pId) {
             super(pTable, pId, TethysFieldType.UNITS);
-            declareCellFactory(getTable().theCellFactory.unitsCellFactory(this));
+            declareCellFactory(super.getCellFactory().unitsCellFactory(this));
         }
     }
 
@@ -702,7 +726,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableDilutionColumn(final TethysFXTableManager<C, R> pTable,
                                               final C pId) {
             super(pTable, pId, TethysFieldType.DILUTION);
-            declareCellFactory(getTable().theCellFactory.dilutionCellFactory(this));
+            declareCellFactory(super.getCellFactory().dilutionCellFactory(this));
         }
     }
 
@@ -721,7 +745,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableRatioColumn(final TethysFXTableManager<C, R> pTable,
                                            final C pId) {
             super(pTable, pId, TethysFieldType.RATIO);
-            declareCellFactory(getTable().theCellFactory.ratioCellFactory(this));
+            declareCellFactory(super.getCellFactory().ratioCellFactory(this));
         }
     }
 
@@ -746,7 +770,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableDilutedPriceColumn(final TethysFXTableManager<C, R> pTable,
                                                   final C pId) {
             super(pTable, pId, TethysFieldType.DILUTEDPRICE);
-            declareCellFactory(getTable().theCellFactory.dilutedPriceCellFactory(this));
+            declareCellFactory(super.getCellFactory().dilutedPriceCellFactory(this));
             theSupplier = p -> null;
         }
 
@@ -785,7 +809,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableDateColumn(final TethysFXTableManager<C, R> pTable,
                                           final C pId) {
             super(pTable, pId, TethysFieldType.DATE);
-            declareCellFactory(getTable().theCellFactory.dateCellFactory(this));
+            declareCellFactory(super.getCellFactory().dateCellFactory(this));
             theConfigurator = (r, c) -> {
             };
         }
@@ -828,7 +852,7 @@ public class TethysFXTableManager<C, R>
                                             final C pId,
                                             final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.SCROLL);
-            declareCellFactory(getTable().theCellFactory.scrollCellFactory(this, pClass));
+            declareCellFactory(super.getCellFactory().scrollCellFactory(this, pClass));
             theConfigurator = (r, c) -> {
             };
         }
@@ -869,7 +893,7 @@ public class TethysFXTableManager<C, R>
         protected TethysFXTableListColumn(final TethysFXTableManager<C, R> pTable,
                                           final C pId) {
             super(pTable, pId, TethysFieldType.LIST);
-            declareCellFactory(getTable().theCellFactory.listCellFactory(this));
+            declareCellFactory(super.getCellFactory().listCellFactory(this));
             theSelectables = r -> Collections.emptyIterator();
         }
 
@@ -911,7 +935,7 @@ public class TethysFXTableManager<C, R>
                                           final C pId,
                                           final Class<T> pClass) {
             super(pTable, pId, TethysFieldType.ICON);
-            declareCellFactory(getTable().theCellFactory.iconCellFactory(this, pClass));
+            declareCellFactory(super.getCellFactory().iconCellFactory(this, pClass));
             theSupplier = p -> null;
         }
 

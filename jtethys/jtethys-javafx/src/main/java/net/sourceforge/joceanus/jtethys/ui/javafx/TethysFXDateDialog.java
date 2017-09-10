@@ -56,7 +56,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * FX Date Dialog.
  */
-public class TethysFXDateDialog
+public final class TethysFXDateDialog
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * StyleSheet Name.
@@ -71,37 +71,7 @@ public class TethysFXDateDialog
     /**
      * The dialog style.
      */
-    private static final String STYLE_DIALOG = TethysFXGuiFactory.CSS_STYLE_BASE + "-datedialog";
-
-    /**
-     * ToolTip for Current Day.
-     */
-    private static final String NLS_CURRENTDAY = TethysDateResource.DIALOG_CURRENT.getValue();
-
-    /**
-     * ToolTip for Selected Day.
-     */
-    private static final String NLS_SELECTEDDAY = TethysDateResource.DIALOG_SELECTED.getValue();
-
-    /**
-     * ToolTip for Next Month.
-     */
-    private static final String NLS_NEXTMONTH = TethysDateResource.DIALOG_NEXTMONTH.getValue();
-
-    /**
-     * ToolTip for Previous Month.
-     */
-    private static final String NLS_PREVMONTH = TethysDateResource.DIALOG_PREVMONTH.getValue();
-
-    /**
-     * ToolTip for Next Year.
-     */
-    private static final String NLS_NEXTYEAR = TethysDateResource.DIALOG_NEXTYEAR.getValue();
-
-    /**
-     * ToolTip for Previous Year.
-     */
-    private static final String NLS_PREVYEAR = TethysDateResource.DIALOG_PREVYEAR.getValue();
+    static final String STYLE_DIALOG = TethysFXGuiFactory.CSS_STYLE_BASE + "-datedialog";
 
     /**
      * Null Date selection text.
@@ -191,8 +161,8 @@ public class TethysFXDateDialog
 
         /* Create the scene */
         theContainer = new BorderPane();
-        theContainer.setTop(theNavigation);
-        theContainer.setCenter(theDaysPanel);
+        theContainer.setTop(theNavigation.getHBox());
+        theContainer.setCenter(theDaysPanel.getGridPane());
         theContainer.getStyleClass().add(STYLE_DIALOG);
         final Scene myScene = new Scene(theContainer);
         final ObservableList<String> mySheets = myScene.getStylesheets();
@@ -244,7 +214,7 @@ public class TethysFXDateDialog
     /**
      * Build the month.
      */
-    private void buildMonth() {
+    void buildMonth() {
         /* Build the month */
         theNavigation.buildMonth();
         theDaysPanel.buildMonth();
@@ -254,7 +224,7 @@ public class TethysFXDateDialog
      * Set Selected Date.
      * @param pDay the Selected day
      */
-    private void setSelected(final int pDay) {
+    void setSelected(final int pDay) {
         /* Set the selected day */
         theConfig.setSelectedDay(pDay);
 
@@ -271,7 +241,7 @@ public class TethysFXDateDialog
     /**
      * Resize the dialog.
      */
-    private void reSizeDialog() {
+    void reSizeDialog() {
         theStage.sizeToScene();
     }
 
@@ -343,8 +313,27 @@ public class TethysFXDateDialog
     /**
      * Panel Navigation class allowing navigation between months.
      */
-    private static final class PanelNavigation
-            extends HBox {
+    private static final class PanelNavigation {
+        /**
+         * ToolTip for Next Month.
+         */
+        private static final String NLS_NEXTMONTH = TethysDateResource.DIALOG_NEXTMONTH.getValue();
+
+        /**
+         * ToolTip for Previous Month.
+         */
+        private static final String NLS_PREVMONTH = TethysDateResource.DIALOG_PREVMONTH.getValue();
+
+        /**
+         * ToolTip for Next Year.
+         */
+        private static final String NLS_NEXTYEAR = TethysDateResource.DIALOG_NEXTYEAR.getValue();
+
+        /**
+         * ToolTip for Previous Year.
+         */
+        private static final String NLS_PREVYEAR = TethysDateResource.DIALOG_PREVYEAR.getValue();
+
         /**
          * The button style.
          */
@@ -364,6 +353,11 @@ public class TethysFXDateDialog
          * The Date Configuration.
          */
         private final TethysDateConfig theConfig;
+
+        /**
+         * The HBox.
+         */
+        private final HBox theHBox;
 
         /**
          * The Date Label.
@@ -394,9 +388,9 @@ public class TethysFXDateDialog
          * Constructor.
          * @param pDialog the owning dialog
          */
-        private PanelNavigation(final TethysFXDateDialog pDialog) {
-            /* Set single space */
-            super(1.0);
+        PanelNavigation(final TethysFXDateDialog pDialog) {
+            /* Create the hBox with single space */
+            theHBox = new HBox(1.0);
 
             /* Record the dialog */
             theDialog = pDialog;
@@ -453,11 +447,11 @@ public class TethysFXDateDialog
             /* Create the struts */
             final Region myStrut1 = new Region();
             final Region myStrut2 = new Region();
-            setHgrow(myStrut1, Priority.ALWAYS);
-            setHgrow(myStrut2, Priority.ALWAYS);
+            HBox.setHgrow(myStrut1, Priority.ALWAYS);
+            HBox.setHgrow(myStrut2, Priority.ALWAYS);
 
             /* Add these elements into the HBox */
-            final ObservableList<Node> myChildren = getChildren();
+            final ObservableList<Node> myChildren = theHBox.getChildren();
             myChildren.add(thePrevYearButton);
             myChildren.add(thePrevMonthButton);
             myChildren.add(myStrut1);
@@ -465,6 +459,14 @@ public class TethysFXDateDialog
             myChildren.add(myStrut2);
             myChildren.add(theNextMonthButton);
             myChildren.add(theNextYearButton);
+        }
+
+        /**
+         * Obtain the hBox.
+         * @return the hBox
+         */
+        HBox getHBox() {
+            return theHBox;
         }
 
         /**
@@ -499,8 +501,7 @@ public class TethysFXDateDialog
     /**
      * Month Panel.
      */
-    private static final class PanelMonth
-            extends GridPane {
+    private static final class PanelMonth {
         /**
          * The panel style.
          */
@@ -537,6 +538,11 @@ public class TethysFXDateDialog
         private final TethysDateConfig theConfig;
 
         /**
+         * The GridPane.
+         */
+        private final GridPane theGridPane;
+
+        /**
          * The Array of Days.
          */
         private final DayOfWeek[] theDaysOfWk = new DayOfWeek[DAYS_IN_WEEK];
@@ -560,22 +566,25 @@ public class TethysFXDateDialog
          * Constructor.
          * @param pDialog the owning dialog
          */
-        private PanelMonth(final TethysFXDateDialog pDialog) {
+        PanelMonth(final TethysFXDateDialog pDialog) {
             /* Store parameters */
             theDialog = pDialog;
+
+            /* Create the gridPane */
+            theGridPane = new GridPane();
 
             /* Store the Date Configuration */
             theConfig = pDialog.getDateConfig();
 
             /* Define style of GridPane */
-            getStyleClass().add(STYLE_PANEL);
+            theGridPane.getStyleClass().add(STYLE_PANEL);
 
             /* Add the Names to the layout */
             for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
                 final Label myDay = new Label();
                 myDay.setMaxWidth(Double.MAX_VALUE);
                 theHdrs[iCol] = myDay;
-                add(myDay, iCol, 0);
+                theGridPane.add(myDay, iCol, 0);
             }
 
             /* Add the Days to the layout */
@@ -583,12 +592,20 @@ public class TethysFXDateDialog
                 for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
                     final PanelDay myDay = new PanelDay(theDialog);
                     theDays[iRow][iCol] = myDay;
-                    add(myDay, iCol, iRow + 1);
+                    theGridPane.add(myDay.getLabel(), iCol, iRow + 1);
                 }
             }
 
             /* Build the Day Names */
             buildDayNames();
+        }
+
+        /**
+         * Obtain the gridPane.
+         * @return the gridPane
+         */
+        GridPane getGridPane() {
+            return theGridPane;
         }
 
         /**
@@ -623,7 +640,7 @@ public class TethysFXDateDialog
         /**
          * Build the month.
          */
-        private void buildMonth() {
+        void buildMonth() {
             /* Obtain the active month */
             final TethysDate myCurr = new TethysDate(theConfig.getCurrentMonth());
 
@@ -710,7 +727,7 @@ public class TethysFXDateDialog
         /**
          * build Day names.
          */
-        private void buildDayNames() {
+        void buildDayNames() {
             /* Get todays date */
             final Locale myLocale = theConfig.getLocale();
             final Calendar myDate = Calendar.getInstance(myLocale);
@@ -759,7 +776,7 @@ public class TethysFXDateDialog
          */
         private void reSizeRows(final int iNumRows) {
             /* Access the children */
-            final ObservableList<Node> myNodes = getChildren();
+            final ObservableList<Node> myNodes = theGridPane.getChildren();
 
             /* Hide any visible rows that should now be hidden */
             while (iNumRows < theNumRows) {
@@ -767,9 +784,9 @@ public class TethysFXDateDialog
                 theNumRows--;
 
                 /* Loop through remaining rows */
-                for (PanelDay myDay : theDays[theNumRows]) {
+                for (final PanelDay myDay : theDays[theNumRows]) {
                     /* Remove from panel */
-                    myNodes.remove(myDay);
+                    myNodes.remove(myDay.getLabel());
                 }
             }
 
@@ -780,9 +797,9 @@ public class TethysFXDateDialog
 
                 /* Loop through remaining rows */
                 int iCol = 0;
-                for (PanelDay myDay : theDays[theNumRows - 1]) {
+                for (final PanelDay myDay : theDays[theNumRows - 1]) {
                     /* Add to panel */
-                    add(myDay, iCol++, theNumRows);
+                    theGridPane.add(myDay.getLabel(), iCol++, theNumRows);
                 }
             }
 
@@ -794,8 +811,17 @@ public class TethysFXDateDialog
     /**
      * Panel class representing a single day in the panel.
      */
-    private static final class PanelDay
-            extends Label {
+    private static final class PanelDay {
+        /**
+         * ToolTip for Current Day.
+         */
+        private static final String NLS_CURRENTDAY = TethysDateResource.DIALOG_CURRENT.getValue();
+
+        /**
+         * ToolTip for Selected Day.
+         */
+        private static final String NLS_SELECTEDDAY = TethysDateResource.DIALOG_SELECTED.getValue();
+
         /**
          * The panel style.
          */
@@ -827,6 +853,11 @@ public class TethysFXDateDialog
         private final TethysFXDateDialog theDialog;
 
         /**
+         * The Label.
+         */
+        private final Label theLabel;
+
+        /**
          * The day of the month.
          */
         private int theDay = -1;
@@ -835,25 +866,36 @@ public class TethysFXDateDialog
          * Constructor.
          * @param pDialog the owning dialog
          */
-        protected PanelDay(final TethysFXDateDialog pDialog) {
+        PanelDay(final TethysFXDateDialog pDialog) {
             /* Store parameters */
             theDialog = pDialog;
 
+            /* Create the label */
+            theLabel = new Label();
+
             /* Set width */
-            setPrefWidth(PanelMonth.WIDTH_TILE);
-            addEventHandler(MouseEvent.MOUSE_CLICKED, e -> theDialog.setSelected(theDay));
+            theLabel.setPrefWidth(PanelMonth.WIDTH_TILE);
+            theLabel.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> theDialog.setSelected(theDay));
+        }
+
+        /**
+         * Obtain the label.
+         * @return the label
+         */
+        Label getLabel() {
+            return theLabel;
         }
 
         /**
          * Reset a Day Label.
          * @param isActive true/false
          */
-        private void resetDay(final boolean isActive) {
-            setTooltip(null);
-            getStyleClass().clear();
-            getStyleClass().add(STYLE_PANEL);
+        void resetDay(final boolean isActive) {
+            theLabel.setTooltip(null);
+            theLabel.getStyleClass().clear();
+            theLabel.getStyleClass().add(STYLE_PANEL);
             if (!isActive) {
-                getStyleClass().add(STYLE_INACTIVE);
+                theLabel.getStyleClass().add(STYLE_INACTIVE);
             }
         }
 
@@ -862,43 +904,43 @@ public class TethysFXDateDialog
          * @param pDay the Day number
          * @param pSelectable is the day select-able
          */
-        private void setDay(final int pDay,
-                            final boolean pSelectable) {
+        void setDay(final int pDay,
+                    final boolean pSelectable) {
             /* Record the day */
             theDay = pDay;
 
             /* Set the text for the item */
             if (pDay > 0) {
-                setText(Integer.toString(theDay));
+                theLabel.setText(Integer.toString(theDay));
             } else {
-                setText("");
+                theLabel.setText("");
             }
 
             /* Enable/Disable the label */
-            setDisable(!pSelectable);
+            theLabel.setDisable(!pSelectable);
         }
 
         /**
          * Set weekend.
          */
-        private void setWeekend() {
-            getStyleClass().add(STYLE_WEEKEND);
+        void setWeekend() {
+            theLabel.getStyleClass().add(STYLE_WEEKEND);
         }
 
         /**
          * Set selected day.
          */
-        private void setSelected() {
-            getStyleClass().add(STYLE_SELECTED);
-            setTooltip(new Tooltip(NLS_SELECTEDDAY));
+        void setSelected() {
+            theLabel.getStyleClass().add(STYLE_SELECTED);
+            theLabel.setTooltip(new Tooltip(NLS_SELECTEDDAY));
         }
 
         /**
          * Set current day.
          */
-        private void setCurrent() {
-            getStyleClass().add(STYLE_CURRENT);
-            setTooltip(new Tooltip(NLS_CURRENTDAY));
+        void setCurrent() {
+            theLabel.getStyleClass().add(STYLE_CURRENT);
+            theLabel.setTooltip(new Tooltip(NLS_CURRENTDAY));
         }
     }
 }

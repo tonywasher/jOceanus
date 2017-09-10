@@ -70,20 +70,20 @@ public class TestSwingHelpWindow {
     /**
      * Create and show the GUI.
      */
-    private static void createAndShowGUI() {
+    static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("HelpWindow Test");
+            final JFrame myFrame = new JFrame("HelpWindow Test");
 
             /* Create the guiFactory */
-            TethysSwingGuiFactory myFactory = new TethysSwingGuiFactory();
+            final TethysSwingGuiFactory myFactory = new TethysSwingGuiFactory();
             myFactory.setFrame(myFrame);
 
             /* Create the help window */
-            TethysSwingHelpWindow myWindow = new TethysSwingHelpWindow(myFactory);
+            final TethysSwingHelpWindow myWindow = new TethysSwingHelpWindow(myFactory);
 
             /* Access the panel */
-            JPanel myPanel = buildPanel(myWindow);
+            final JPanel myPanel = buildPanel(myWindow);
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);
@@ -106,10 +106,10 @@ public class TestSwingHelpWindow {
      */
     private static JPanel buildPanel(final TethysSwingHelpWindow pWindow) {
         /* Create a button */
-        JButton myButton = new JButton("Help");
+        final JButton myButton = new JButton("Help");
 
         /* Create a BorderPane for the fields */
-        JPanel myPane = new JPanel();
+        final JPanel myPane = new JPanel();
         myPane.setLayout(new BorderLayout());
         myPane.add(myButton, BorderLayout.LINE_START);
 
@@ -139,12 +139,12 @@ public class TestSwingHelpWindow {
             super(TethysHelpModule.class, "Test Help System");
 
             /* Create accounts tree */
-            TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+            final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
             myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
             myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
 
             /* Create static tree */
-            TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+            final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
             myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
             myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
 

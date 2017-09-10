@@ -60,7 +60,7 @@ public final class TethysFXDataButtonField {
      * IconButtonField class.
      * @param <T> the data type
      */
-    public static class TethysFXIconButtonField<T>
+    public static final class TethysFXIconButtonField<T>
             extends TethysFXDataTextField<T>
             implements TethysIconButtonField<T, Node, Node> {
         /**
@@ -170,7 +170,7 @@ public final class TethysFXDataButtonField {
      * ScrollButtonField class.
      * @param <T> the data type
      */
-    public static class TethysFXScrollButtonField<T>
+    public static final class TethysFXScrollButtonField<T>
             extends TethysFXDataTextField<T>
             implements TethysScrollButtonField<T, Node, Node> {
         /**

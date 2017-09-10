@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 /**
  * Tethys FX Label.
  */
-public class TethysFXLabel
+public final class TethysFXLabel
         extends TethysLabel<Node, Node> {
     /**
      * The node.

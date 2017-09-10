@@ -84,34 +84,34 @@ public class TethysSwingDataFieldAdjust {
         final Font myFont = isNumeric
                                       ? isChanged
                                                   ? isSelected
-                                                               ? theFontSet.theBoldChangedNumeric
-                                                               : theFontSet.theChangedNumeric
+                                                               ? theFontSet.getBoldChangedNumeric()
+                                                               : theFontSet.getChangedNumeric()
                                                   : isSelected
-                                                               ? theFontSet.theBoldNumeric
-                                                               : theFontSet.theNumeric
+                                                               ? theFontSet.getBoldNumeric()
+                                                               : theFontSet.getNumeric()
                                       : isChanged
                                                   ? isSelected
-                                                               ? theFontSet.theBoldChanged
-                                                               : theFontSet.theChanged
+                                                               ? theFontSet.getBoldChanged()
+                                                               : theFontSet.getChanged()
                                                   : isSelected
-                                                               ? theFontSet.theBoldStandard
-                                                               : theFontSet.theStandard;
+                                                               ? theFontSet.getBoldStandard()
+                                                               : theFontSet.getStandard();
         myLabel.setFont(myFont);
         myControl.setFont(myFont);
 
         /* Determine the foreground */
         final Color myForeground = isChanged
-                                             ? theColorSet.theChanged
+                                             ? theColorSet.getChanged()
                                              : isDisabled
-                                                          ? theColorSet.theDisabled
-                                                          : theColorSet.theStandard;
+                                                          ? theColorSet.getDisabled()
+                                                          : theColorSet.getStandard();
         myLabel.setForeground(myForeground);
         myControl.setForeground(myForeground);
 
         /* Determine the background (don't set the control) */
         final Color myBackground = isAlternate
-                                               ? theColorSet.theZebra
-                                               : theColorSet.theBackground;
+                                               ? theColorSet.getZebra()
+                                               : theColorSet.getBackground();
         myLabel.setBackground(myBackground);
     }
 
@@ -127,14 +127,14 @@ public class TethysSwingDataFieldAdjust {
 
         /* Determine the font */
         final Font myFont = pChanged
-                                     ? theFontSet.theChanged
-                                     : theFontSet.theStandard;
+                                     ? theFontSet.getChanged()
+                                     : theFontSet.getStandard();
         myBox.setFont(myFont);
 
         /* Determine the foreground */
         final Color myForeground = pChanged
-                                            ? theColorSet.theChanged
-                                            : theColorSet.theStandard;
+                                            ? theColorSet.getChanged()
+                                            : theColorSet.getStandard();
         myBox.setForeground(myForeground);
     }
 
@@ -143,7 +143,7 @@ public class TethysSwingDataFieldAdjust {
      * @return the error colour
      */
     protected Color getErrorColor() {
-        return theColorSet.theError;
+        return theColorSet.getError();
     }
 
     /**
@@ -151,7 +151,7 @@ public class TethysSwingDataFieldAdjust {
      * @return the progress colour
      */
     protected Color getProgressColor() {
-        return theColorSet.theProgress;
+        return theColorSet.getProgress();
     }
 
     /**
@@ -210,7 +210,7 @@ public class TethysSwingDataFieldAdjust {
          * Constructor.
          * @param pValueSet the value Set
          */
-        private TethysSwingFontSet(final TethysValueSet pValueSet) {
+        TethysSwingFontSet(final TethysValueSet pValueSet) {
             /* Access values */
             final String myValueFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_STANDARD);
             final String myNumericFont = pValueSet.getValueForKey(TethysValueSet.TETHYS_FONT_NUMERIC);
@@ -229,6 +229,70 @@ public class TethysSwingDataFieldAdjust {
             theBoldNumeric = new Font(myNumericFont, Font.BOLD, myBoldPitch);
             theBoldChanged = new Font(myValueFont, Font.BOLD + Font.ITALIC, myBoldPitch);
             theBoldChangedNumeric = new Font(myNumericFont, Font.BOLD + Font.ITALIC, myBoldPitch);
+        }
+
+        /**
+         * Obtain the Standard font.
+         * @return the font
+         */
+        Font getStandard() {
+            return theStandard;
+        }
+
+        /**
+         * Obtain the Changed font.
+         * @return the font
+         */
+        Font getChanged() {
+            return theChanged;
+        }
+
+        /**
+         * Obtain the Numeric font.
+         * @return the font
+         */
+        Font getNumeric() {
+            return theNumeric;
+        }
+
+        /**
+         * Obtain the ChangedNumeric font.
+         * @return the font
+         */
+        Font getChangedNumeric() {
+            return theChangedNumeric;
+        }
+
+        /**
+         * Obtain the Bold font.
+         * @return the font
+         */
+        Font getBoldStandard() {
+            return theBoldStandard;
+        }
+
+        /**
+         * Obtain the BoldChanged font.
+         * @return the font
+         */
+        Font getBoldChanged() {
+            return theBoldChanged;
+        }
+
+        /**
+         * Obtain the BoldNumeric font.
+         * @return the font
+         */
+        Font getBoldNumeric() {
+            return theBoldNumeric;
+        }
+
+        /**
+         * Obtain the BoldChangedNumeric font.
+         * @return the font
+         */
+        Font getBoldChangedNumeric() {
+            return theBoldChangedNumeric;
         }
     }
 
@@ -275,7 +339,7 @@ public class TethysSwingDataFieldAdjust {
          * Constructor.
          * @param pValueSet the value Set
          */
-        private TethysSwingColorSet(final TethysValueSet pValueSet) {
+        TethysSwingColorSet(final TethysValueSet pValueSet) {
             theStandard = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_STANDARD));
             theChanged = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_CHANGED));
             theError = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_ERROR));
@@ -283,6 +347,62 @@ public class TethysSwingDataFieldAdjust {
             theDisabled = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_DISABLED));
             theBackground = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_BACKGROUND));
             theProgress = Color.decode(pValueSet.getValueForKey(TethysValueSet.TETHYS_COLOR_PROGRESS));
+        }
+
+        /**
+         * Obtain the Standard colour.
+         * @return the colour
+         */
+        Color getStandard() {
+            return theStandard;
+        }
+
+        /**
+         * Obtain the Changed colour.
+         * @return the colour
+         */
+        Color getChanged() {
+            return theChanged;
+        }
+
+        /**
+         * Obtain the Error colour.
+         * @return the colour
+         */
+        Color getError() {
+            return theError;
+        }
+
+        /**
+         * Obtain the Zebra colour.
+         * @return the colour
+         */
+        Color getZebra() {
+            return theZebra;
+        }
+
+        /**
+         * Obtain the Disabled colour.
+         * @return the colour
+         */
+        Color getDisabled() {
+            return theDisabled;
+        }
+
+        /**
+         * Obtain the Background colour.
+         * @return the colour
+         */
+        Color getBackground() {
+            return theBackground;
+        }
+
+        /**
+         * Obtain the Standard colour.
+         * @return the colour
+         */
+        Color getProgress() {
+            return theProgress;
         }
     }
 }

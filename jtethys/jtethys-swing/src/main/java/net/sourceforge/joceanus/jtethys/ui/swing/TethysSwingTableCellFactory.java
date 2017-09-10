@@ -367,7 +367,7 @@ public class TethysSwingTableCellFactory<C, R> {
         /**
          * Use Dialog for edit.
          */
-        protected void useDialog() {
+        protected void useDialogForEdit() {
             useDialog = true;
         }
 
@@ -426,11 +426,27 @@ public class TethysSwingTableCellFactory<C, R> {
         }
 
         /**
+         * Should we use dialog for this control?
+         * @return true/false
+         */
+        boolean useDialog() {
+            return useDialog;
+        }
+
+        /**
          * Is the active item selected?
          * @return true/false
          */
         public boolean isSelected() {
             return isSelected;
+        }
+
+        /**
+         * Set the selected indication.
+         * @param pSelected true/false
+         */
+        void setSelected(final boolean pSelected) {
+            isSelected = pSelected;
         }
 
         /**
@@ -504,14 +520,14 @@ public class TethysSwingTableCellFactory<C, R> {
              */
             protected TethysSwingTableCellEditor() {
                 /* Add listeners */
-                final TethysEventRegistrar<TethysUIEvent> myRegistrar = theEditControl.getEventRegistrar();
+                final TethysEventRegistrar<TethysUIEvent> myRegistrar = getControl().getEventRegistrar();
                 myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, e -> stopCellEditing());
                 myRegistrar.addEventListener(TethysUIEvent.EDITFOCUSLOST, e -> cancelCellEditing());
             }
 
             @Override
             public T getCellEditorValue() {
-                return theEditControl.getValue();
+                return getControl().getValue();
             }
 
             @Override
@@ -535,13 +551,13 @@ public class TethysSwingTableCellFactory<C, R> {
                         myCellLoc.height);
 
                 /* Set field value and start edit */
-                theEditControl.setValue(getCastValue(pValue));
-                theEditControl.startCellEditing(myCellLoc);
+                getControl().setValue(getCastValue(pValue));
+                getControl().startCellEditing(myCellLoc);
 
                 /* Return the field */
-                return useDialog
-                                 ? theEditControl.getLabel()
-                                 : theEditControl.getEditControl();
+                return useDialog()
+                                   ? getControl().getLabel()
+                                   : getControl().getEditControl();
             }
 
             @Override
@@ -553,11 +569,11 @@ public class TethysSwingTableCellFactory<C, R> {
 
                 /* Check the data */
                 stoppingEdit = true;
-                theEditControl.parseData();
+                getControl().parseData();
 
                 /* If there is no error */
                 boolean bComplete = false;
-                if (!theEditControl.isAttributeSet(TethysFieldAttribute.ERROR)) {
+                if (!getControl().isAttributeSet(TethysFieldAttribute.ERROR)) {
                     /* Pass call onwards */
                     bComplete = super.stopCellEditing();
 
@@ -591,7 +607,7 @@ public class TethysSwingTableCellFactory<C, R> {
                 /* Store the location */
                 final int myRowIndex = pTable.convertRowIndexToModel(pRow);
                 setActiveRow(myRowIndex);
-                isSelected = pSelected;
+                setSelected(pSelected);
 
                 /* Access table details */
                 final TethysSwingTableManager<C, R> myTable = getTable();
@@ -599,15 +615,15 @@ public class TethysSwingTableCellFactory<C, R> {
                 final R myRow = getActiveRow();
 
                 /* Set changed and disabled attributes */
-                theRenderControl.setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
-                theRenderControl.setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
-                theRenderControl.setTheAttributeState(TethysFieldAttribute.ERROR, myTable.isError(myId, myRow));
-                theRenderControl.setTheAttributeState(TethysFieldAttribute.SELECTED, pSelected);
-                theRenderControl.setTheAttributeState(TethysFieldAttribute.ALTERNATE, (pRow & 1) == 0);
+                getRenderControl().setTheAttributeState(TethysFieldAttribute.CHANGED, myTable.isChanged(myId, myRow));
+                getRenderControl().setTheAttributeState(TethysFieldAttribute.DISABLED, myTable.isDisabled(myRow));
+                getRenderControl().setTheAttributeState(TethysFieldAttribute.ERROR, myTable.isError(myId, myRow));
+                getRenderControl().setTheAttributeState(TethysFieldAttribute.SELECTED, pSelected);
+                getRenderControl().setTheAttributeState(TethysFieldAttribute.ALTERNATE, (pRow & 1) == 0);
 
                 /* Set details and stop editing */
-                theRenderControl.setValue(getCastValue(pValue));
-                theRenderControl.adjustField();
+                getRenderControl().setValue(getCastValue(pValue));
+                getRenderControl().adjustField();
 
                 /* Return the label as the render item */
                 return this;
@@ -953,7 +969,7 @@ public class TethysSwingTableCellFactory<C, R> {
         protected TethysSwingTableDateCell(final TethysSwingTableDateColumn<C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newDateField(), TethysDate.class);
-            useDialog();
+            useDialogForEdit();
             getControl().setDateConfigurator(c -> getColumn().getDateConfigurator().accept(getActiveRow(), c));
         }
 
@@ -986,7 +1002,7 @@ public class TethysSwingTableCellFactory<C, R> {
                                              final TethysSwingGuiFactory pFactory,
                                              final Class<T> pClass) {
             super(pColumn, pFactory.newScrollField(), pClass);
-            useDialog();
+            useDialogForEdit();
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
 
@@ -1017,7 +1033,7 @@ public class TethysSwingTableCellFactory<C, R> {
         protected TethysSwingTableListCell(final TethysSwingTableListColumn<T, C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory) {
             super(pColumn, pFactory.newListField());
-            useDialog();
+            useDialogForEdit();
             getControl().setSelectables(() -> getColumn().getSelectables().apply(getActiveRow()));
         }
 

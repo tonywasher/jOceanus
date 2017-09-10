@@ -110,6 +110,22 @@ public class TethysSwingTreeManager<T>
     }
 
     /**
+     * Obtain the JTree.
+     * @return the JTree
+     */
+    JTree getJTree() {
+        return theTree;
+    }
+
+    /**
+     * Obtain the treeModel.
+     * @return the model
+     */
+    DefaultTreeModel getTreeModel() {
+        return theTreeModel;
+    }
+
+    /**
      * Obtain selected item from path.
      * @param pPath the selected path
      * @return the selected item
@@ -168,7 +184,7 @@ public class TethysSwingTreeManager<T>
      * Set focused item.
      * @param pItem the item
      */
-    private void setFocusedItem(final TethysSwingTreeItem<T> pItem) {
+    void setFocusedItem(final TethysSwingTreeItem<T> pItem) {
         /* Record the item */
         theFocusedItem = pItem;
 
@@ -199,7 +215,7 @@ public class TethysSwingTreeManager<T>
          * Constructor for root item.
          * @param pTree the tree
          */
-        private TethysSwingTreeItem(final TethysSwingTreeManager<T> pTree) {
+        TethysSwingTreeItem(final TethysSwingTreeManager<T> pTree) {
             /* build underlying item */
             super(pTree);
 
@@ -246,7 +262,7 @@ public class TethysSwingTreeManager<T>
             final TethysSwingTreeItem<T> myParent = getParent();
 
             /* Access the model */
-            final DefaultTreeModel myModel = getTree().theTreeModel;
+            final DefaultTreeModel myModel = getTree().getTreeModel();
 
             /* If we are not the root */
             if (myParent != null) {
@@ -265,7 +281,7 @@ public class TethysSwingTreeManager<T>
             if (myParent == null) {
                 /* Ensure that the node is expanded */
                 final TreePath myPath = new TreePath(theNode);
-                final JTree myTree = getTree().theTree;
+                final JTree myTree = getTree().getJTree();
                 if (myTree.isCollapsed(myPath)) {
                     myTree.expandPath(myPath);
                 }
@@ -282,7 +298,7 @@ public class TethysSwingTreeManager<T>
             if (theNode != null
                 && getParent() != null) {
                 /* Remove reference */
-                getTree().theTreeModel.removeNodeFromParent(theNode);
+                getTree().getTreeModel().removeNodeFromParent(theNode);
                 theNode = null;
             }
         }
@@ -294,7 +310,7 @@ public class TethysSwingTreeManager<T>
 
             /* Obtain the parent and model */
             final TethysSwingTreeItem<T> myParent = getParent();
-            final DefaultTreeModel myModel = getTree().theTreeModel;
+            final DefaultTreeModel myModel = getTree().getTreeModel();
 
             /* Add at index in list */
             myModel.insertNodeInto(theNode, myParent.getNode(), pChildNo);
@@ -327,7 +343,7 @@ public class TethysSwingTreeManager<T>
          * Constructor.
          * @param pItem the tree item
          */
-        private TethysSwingTreeNode(final TethysSwingTreeItem<X> pItem) {
+        TethysSwingTreeNode(final TethysSwingTreeItem<X> pItem) {
             super(pItem);
         }
 

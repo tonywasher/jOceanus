@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 /**
  * Tethys Swing Label.
  */
-public class TethysSwingLabel
+public final class TethysSwingLabel
         extends TethysLabel<JComponent, Icon> {
     /**
      * The Node.
@@ -107,8 +107,19 @@ public class TethysSwingLabel
         /* If the listener has not been set */
         if (!menuListenerSet) {
             /* Set the handler */
-            theLabel.addMouseListener(new TethysLabelListener());
+            theLabel.addMouseListener(new TethysLabelListener(this));
             menuListenerSet = true;
+        }
+    }
+
+    /**
+     * Handle mouse event.
+     * @param pEvent the event
+     */
+    void handleContextMenu(final MouseEvent pEvent) {
+        if (theContextMenu != null
+            && pEvent.isPopupTrigger()) {
+            theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
         }
     }
 
@@ -201,24 +212,27 @@ public class TethysSwingLabel
      */
     private class TethysLabelListener
             extends MouseAdapter {
+        /**
+         * The label.
+         */
+        private final TethysSwingLabel theLabel;
+
+        /**
+         * Constructor.
+         * @param pLabel the label
+         */
+        TethysLabelListener(final TethysSwingLabel pLabel) {
+            theLabel = pLabel;
+        }
+
         @Override
         public void mousePressed(final MouseEvent pEvent) {
-            handleContextMenu(pEvent);
+            theLabel.handleContextMenu(pEvent);
         }
 
         @Override
         public void mouseReleased(final MouseEvent pEvent) {
-            handleContextMenu(pEvent);
-        }
-
-        /**
-         * Handle mouse event.
-         * @param pEvent the event
-         */
-        private void handleContextMenu(final MouseEvent pEvent) {
-            if ((theContextMenu != null) && (pEvent.isPopupTrigger())) {
-                theContextMenu.showMenuAtPosition(theLabel, pEvent.getX(), pEvent.getY());
-            }
+            theLabel.handleContextMenu(pEvent);
         }
     }
 }

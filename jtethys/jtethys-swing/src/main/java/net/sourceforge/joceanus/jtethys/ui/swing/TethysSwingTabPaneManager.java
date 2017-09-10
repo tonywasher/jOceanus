@@ -59,6 +59,14 @@ public class TethysSwingTabPaneManager
         return theTabPane;
     }
 
+    /**
+     * Obtain the tabPane.
+     * @return the tabPane
+     */
+    JTabbedPane getTabPane() {
+        return theTabPane;
+    }
+
     @Override
     public TethysSwingTabItem findItemByName(final String pName) {
         return (TethysSwingTabItem) super.findItemByName(pName);
@@ -139,15 +147,15 @@ public class TethysSwingTabPaneManager
          * @param pName the name of the tab
          * @param pItem the item
          */
-        protected TethysSwingTabItem(final TethysSwingTabPaneManager pPane,
-                                     final String pName,
-                                     final TethysNode<JComponent> pItem) {
+        TethysSwingTabItem(final TethysSwingTabPaneManager pPane,
+                           final String pName,
+                           final TethysNode<JComponent> pItem) {
             /* Initialise the underlying class */
             super(pPane, pName);
 
             /* Add to the TabPane */
             theNode = pItem;
-            pPane.theTabPane.addTab(pName, theNode.getNode());
+            pPane.getTabPane().addTab(pName, theNode.getNode());
         }
 
         @Override
@@ -163,27 +171,27 @@ public class TethysSwingTabPaneManager
         @Override
         protected void attachToPane() {
             final int myIndex = countPreviousVisibleSiblings();
-            getPane().theTabPane.insertTab(getName(), null, theNode.getNode(), null, myIndex);
+            getPane().getTabPane().insertTab(getName(), null, theNode.getNode(), null, myIndex);
         }
 
         @Override
         protected void detachFromPane() {
             final int myIndex = countPreviousVisibleSiblings();
-            getPane().theTabPane.remove(myIndex);
+            getPane().getTabPane().remove(myIndex);
         }
 
         @Override
         public void selectItem() {
             if (isVisible()) {
                 final int myIndex = countPreviousVisibleSiblings();
-                getPane().theTabPane.setSelectedIndex(myIndex);
+                getPane().getTabPane().setSelectedIndex(myIndex);
             }
         }
 
         @Override
         protected void enableTab(final boolean pEnabled) {
             final int myIndex = countPreviousVisibleSiblings();
-            getPane().theTabPane.setEnabledAt(myIndex, pEnabled);
+            getPane().getTabPane().setEnabledAt(myIndex, pEnabled);
             theNode.setEnabled(pEnabled);
         }
     }

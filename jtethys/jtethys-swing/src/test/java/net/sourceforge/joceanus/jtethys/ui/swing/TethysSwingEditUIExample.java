@@ -220,7 +220,7 @@ public class TethysSwingEditUIExample {
         theGuiFactory = new TethysSwingGuiFactory();
 
         /* Access formatters */
-        TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
+        final TethysDataFormatter myFormatter = theGuiFactory.getDataFormatter();
         theDecimalFormatter = myFormatter.getDecimalFormatter();
         theDateFormatter = myFormatter.getDateFormatter();
 
@@ -266,16 +266,16 @@ public class TethysSwingEditUIExample {
     /**
      * Create and show the GUI.
      */
-    private static void createAndShowGUI() {
+    static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("SwingEdit Demo");
+            final JFrame myFrame = new JFrame("SwingEdit Demo");
 
             /* Create the UI */
-            TethysSwingEditUIExample myExample = new TethysSwingEditUIExample();
+            final TethysSwingEditUIExample myExample = new TethysSwingEditUIExample();
 
             /* Build the panel */
-            JComponent myPanel = myExample.buildPanel();
+            final JComponent myPanel = myExample.buildPanel();
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);
@@ -297,16 +297,16 @@ public class TethysSwingEditUIExample {
      */
     private JComponent buildPanel() {
         /* Create a GridPane for the fields */
-        TethysSwingGridPaneManager myFields = buildFieldPane();
+        final TethysSwingGridPaneManager myFields = buildFieldPane();
 
         /* Create a ControlPane for the buttons */
-        TethysSwingBoxPaneManager myControls = buildControlPane();
+        final TethysSwingBoxPaneManager myControls = buildControlPane();
 
         /* Create a GridPane for the results */
-        TethysSwingGridPaneManager myResults = buildResultsPane();
+        final TethysSwingGridPaneManager myResults = buildResultsPane();
 
         /* Create borderPane for the window */
-        TethysSwingBoxPaneManager myMain = theGuiFactory.newVBoxPane();
+        final TethysSwingBoxPaneManager myMain = theGuiFactory.newVBoxPane();
         myControls.setBorderTitle("Controls");
         myMain.addNode(myControls);
         myFields.setBorderTitle("FieldArea");
@@ -326,7 +326,7 @@ public class TethysSwingEditUIExample {
      */
     private TethysSwingGridPaneManager buildFieldPane() {
         /* Create a GridPane for the fields */
-        TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Create String field line */
         TethysSwingLabel myLabel = theGuiFactory.newLabel("String:");
@@ -497,7 +497,7 @@ public class TethysSwingEditUIExample {
         myGrid.addCell(theIconField);
         myGrid.allowCellGrowth(theIconField);
         myGrid.newRow();
-        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theIconField.setIconMapSet(() -> myMapSet);
         theIconField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theIconField, e));
         theIconField.setValue(Boolean.FALSE);
@@ -512,7 +512,7 @@ public class TethysSwingEditUIExample {
      */
     private TethysSwingGridPaneManager buildResultsPane() {
         /* Create a GridPane for the results */
-        TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Build the grid */
         TethysSwingLabel myLabel = theGuiFactory.newLabel("Source:");
@@ -543,7 +543,7 @@ public class TethysSwingEditUIExample {
      */
     private TethysSwingBoxPaneManager buildControlPane() {
         /* Create Toggle button for edit mode */
-        TethysSwingButton myEditButton = theGuiFactory.newButton();
+        final TethysSwingButton myEditButton = theGuiFactory.newButton();
         myEditButton.setText("Edit");
         myEditButton.getEventRegistrar().addEventListener(e -> {
             if (!isEditing) {
@@ -557,9 +557,9 @@ public class TethysSwingEditUIExample {
         });
 
         /* Create ScrollButton button for currency */
-        TethysSwingScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
-        TethysSwingScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
-        Currency myDefault = Currency.getInstance("GBP");
+        final TethysSwingScrollButtonManager<Currency> myCurrencyMgr = theGuiFactory.newScrollButton();
+        final TethysSwingScrollContextMenu<Currency> myMenu = myCurrencyMgr.getMenu();
+        final Currency myDefault = Currency.getInstance("GBP");
         myMenu.addItem(myDefault, "Pounds");
         myMenu.addItem(Currency.getInstance("USD"), "Dollars");
         myMenu.addItem(Currency.getInstance("JPY"), "Yen");
@@ -568,7 +568,7 @@ public class TethysSwingEditUIExample {
         myCurrencyMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setCurrency(e.getDetails(Currency.class)));
 
         /* Create an HBox for buttons */
-        TethysSwingBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        final TethysSwingBoxPaneManager myBox = theGuiFactory.newHBoxPane();
         myBox.addNode(myEditButton);
         myBox.addSpacer();
         myBox.addNode(myCurrencyMgr);
@@ -621,7 +621,7 @@ public class TethysSwingEditUIExample {
     private void processActionEvent(final TethysSwingDataTextField<?> pField,
                                     final TethysEvent<TethysUIEvent> pEvent) {
         /* Determine source */
-        String mySource = pField.getClass().getSimpleName();
+        final String mySource = pField.getClass().getSimpleName();
 
         /* Switch on action */
         switch (pEvent.getEventId()) {

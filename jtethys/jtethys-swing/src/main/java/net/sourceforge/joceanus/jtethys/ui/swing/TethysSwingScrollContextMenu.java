@@ -78,11 +78,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
 public class TethysSwingScrollContextMenu<T>
         implements TethysScrollMenu<T, Icon>, TethysEventProvider<TethysUIEvent> {
     /**
-     * Default row size.
-     */
-    private static final int DEFAULT_ROWHEIGHT = 16;
-
-    /**
      * Background active colour.
      */
     protected static final Color COLOR_BACKGROUND = Color.decode("#add8e6");
@@ -188,7 +183,7 @@ public class TethysSwingScrollContextMenu<T>
      * Constructor.
      * @param pMaxDisplayItems the maximum number of items to display
      */
-    private TethysSwingScrollContextMenu(final int pMaxDisplayItems) {
+    TethysSwingScrollContextMenu(final int pMaxDisplayItems) {
         this(null, pMaxDisplayItems);
     }
 
@@ -196,7 +191,7 @@ public class TethysSwingScrollContextMenu<T>
      * Constructor.
      * @param pParent the parent scroll menu
      */
-    private TethysSwingScrollContextMenu(final TethysSwingScrollSubMenu<T> pParent) {
+    TethysSwingScrollContextMenu(final TethysSwingScrollSubMenu<T> pParent) {
         this(pParent, pParent.getContext().getMaxDisplayItems());
     }
 
@@ -205,8 +200,8 @@ public class TethysSwingScrollContextMenu<T>
      * @param pParent the parent scroll menu
      * @param pMaxDisplayItems the maximum number of items to display
      */
-    private TethysSwingScrollContextMenu(final TethysSwingScrollSubMenu<T> pParent,
-                                         final int pMaxDisplayItems) {
+    TethysSwingScrollContextMenu(final TethysSwingScrollSubMenu<T> pParent,
+                                 final int pMaxDisplayItems) {
         /* Check parameters */
         if (pMaxDisplayItems <= 0) {
             throw new IllegalArgumentException(TethysScrollMenuContent.ERROR_MAXITEMS);
@@ -266,7 +261,7 @@ public class TethysSwingScrollContextMenu<T>
      * Obtain the timer.
      * @return the timer
      */
-    private Timer getTimer() {
+    Timer getTimer() {
         return theTimer;
     }
 
@@ -274,7 +269,7 @@ public class TethysSwingScrollContextMenu<T>
      * Obtain the dialog.
      * @return the dialog
      */
-    private JDialog getDialog() {
+    JDialog getDialog() {
         return theDialog;
     }
 
@@ -292,7 +287,7 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /* Check state */
-        if ((theDialog != null)
+        if (theDialog != null
             && theDialog.isVisible()) {
             throw new IllegalStateException();
         }
@@ -436,7 +431,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * Close non-Modal.
      */
-    private void closeMenu() {
+    void closeMenu() {
         /* Close any children */
         closeChildren();
 
@@ -460,7 +455,7 @@ public class TethysSwingScrollContextMenu<T>
      * Create subDialog.
      * @param pOwner the owner component
      */
-    private void ensureSubDialog(final TethysSwingScrollSubMenu<T> pOwner) {
+    void ensureSubDialog(final TethysSwingScrollSubMenu<T> pOwner) {
         /* If dialog does not exist */
         if (theDialog == null) {
             /* Create the new dialog */
@@ -507,19 +502,7 @@ public class TethysSwingScrollContextMenu<T>
 
         @Override
         public void focusLost(final FocusEvent e) {
-            /* If we've lost focus to other than the active subMenu */
-            if (theActiveMenu == null) {
-                /* fire cancellation event */
-                if (theParentMenu == null) {
-                    theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
-                }
-
-                /* Close the menu hierarchy if we are currently showing */
-                if ((theDialog != null)
-                    && theDialog.isShowing()) {
-                    closeOnFocusLoss();
-                }
-            }
+            handleFocusLost();
         }
 
         @Override
@@ -555,10 +538,29 @@ public class TethysSwingScrollContextMenu<T>
     }
 
     /**
+     * Handle focus lost event.
+     */
+    void handleFocusLost() {
+        /* If we've lost focus to other than the active subMenu */
+        if (theActiveMenu == null) {
+            /* fire cancellation event */
+            if (theParentMenu == null) {
+                theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
+            }
+
+            /* Close the menu hierarchy if we are currently showing */
+            if (theDialog != null
+                && theDialog.isShowing()) {
+                closeOnFocusLoss();
+            }
+        }
+    }
+
+    /**
      * Set the selected item.
      * @param pItem the selected item
      */
-    private void setSelectedItem(final TethysSwingScrollMenuItem<T> pItem) {
+    void setSelectedItem(final TethysSwingScrollMenuItem<T> pItem) {
         /* If we are a child menu */
         if (theParentContext != null) {
             /* pass call on to parent */
@@ -591,7 +593,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * Handle escapeKey.
      */
-    private void handleEscapeKey() {
+    void handleEscapeKey() {
         /* If we are a child menu */
         if (theParentContext != null) {
             /* pass call on to parent */
@@ -610,7 +612,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * Handle enterKey.
      */
-    private void handleEnterKey() {
+    void handleEnterKey() {
         /* If we are a child menu */
         if (theActiveItem != null) {
             /* assume item is selected */
@@ -619,10 +621,17 @@ public class TethysSwingScrollContextMenu<T>
     }
 
     /**
+     * Clear active Item.
+     */
+    void clearActiveItem() {
+        theActiveItem = null;
+    }
+
+    /**
      * Handle activeItem.
      * @param pItem the item
      */
-    private void handleActiveItem(final TethysSwingScrollMenuItem<T> pItem) {
+    void handleActiveItem(final TethysSwingScrollMenuItem<T> pItem) {
         /* Close any children */
         closeChildren();
 
@@ -634,13 +643,13 @@ public class TethysSwingScrollContextMenu<T>
      * Handle activeMenu.
      * @param pMenu the menu
      */
-    private void handleActiveMenu(final TethysSwingScrollSubMenu<T> pMenu) {
+    void handleActiveMenu(final TethysSwingScrollSubMenu<T> pMenu) {
         /* Reset existing item */
         theActiveItem = null;
 
         /* Hide any existing menu that is not us */
-        if ((theActiveMenu != null)
-            && (theActiveMenu.getIndex() != pMenu.getIndex())) {
+        if (theActiveMenu != null
+            && theActiveMenu.getIndex() != pMenu.getIndex()) {
             theActiveMenu.hideMenu();
         }
 
@@ -651,7 +660,7 @@ public class TethysSwingScrollContextMenu<T>
     @Override
     public void removeAllItems() {
         /* Check state */
-        if ((theDialog != null)
+        if (theDialog != null
             && theDialog.isVisible()) {
             throw new IllegalStateException();
         }
@@ -718,7 +727,7 @@ public class TethysSwingScrollContextMenu<T>
                                            final String pName,
                                            final Icon pGraphic) {
         /* Check state */
-        if ((theDialog != null)
+        if (theDialog != null
             && theDialog.isVisible()) {
             throw new IllegalStateException();
         }
@@ -742,7 +751,7 @@ public class TethysSwingScrollContextMenu<T>
     public TethysScrollSubMenu<T, Icon> addSubMenu(final String pName,
                                                    final Icon pGraphic) {
         /* Check state */
-        if ((theDialog != null)
+        if (theDialog != null
             && theDialog.isVisible()) {
             throw new IllegalStateException();
         }
@@ -766,7 +775,7 @@ public class TethysSwingScrollContextMenu<T>
     public TethysScrollMenuToggleItem<T> addToggleItem(final T pValue,
                                                        final String pName) {
         /* Check state */
-        if ((theDialog != null)
+        if (theDialog != null
             && theDialog.isVisible()) {
             throw new IllegalStateException();
         }
@@ -783,7 +792,7 @@ public class TethysSwingScrollContextMenu<T>
     /**
      * close child menus.
      */
-    private void closeChildren() {
+    void closeChildren() {
         /* Close any active subMenu */
         if (theActiveMenu != null) {
             theActiveMenu.hideMenu();
@@ -795,7 +804,7 @@ public class TethysSwingScrollContextMenu<T>
      * Ensure item at index will be visible when displayed.
      * @param pIndex the index to show
      */
-    private void scrollToIndex(final int pIndex) {
+    void scrollToIndex(final int pIndex) {
         /* Show the index */
         showIndex(pIndex);
 
@@ -812,8 +821,8 @@ public class TethysSwingScrollContextMenu<T>
     private void showIndex(final int pIndex) {
         /* Ignore if index is out of range */
         final int myCount = theMenuItems.size();
-        if ((pIndex < 0)
-            || (pIndex >= myCount)) {
+        if (pIndex < 0
+            || pIndex >= myCount) {
             return;
         }
 
@@ -873,7 +882,7 @@ public class TethysSwingScrollContextMenu<T>
                 theDownItem.getPanel().setEnabled(true);
 
                 /* Add ALL items */
-                for (TethysSwingScrollElement myItem : theMenuItems) {
+                for (final TethysSwingScrollElement myItem : theMenuItems) {
                     /* Add the items */
                     theActiveItems.add(myItem.getPanel());
                 }
@@ -997,7 +1006,7 @@ public class TethysSwingScrollContextMenu<T>
      * request scroll.
      * @param pDelta the delta to scroll.
      */
-    private void requestScroll(final int pDelta) {
+    void requestScroll(final int pDelta) {
         /* If this is a scroll downwards */
         if (pDelta > 0) {
             /* If we can scroll downwards */
@@ -1028,6 +1037,11 @@ public class TethysSwingScrollContextMenu<T>
      * Scroll item.
      */
     public abstract static class TethysSwingScrollElement {
+        /**
+         * Default row size.
+         */
+        private static final int DEFAULT_ROWHEIGHT = 16;
+
         /**
          * The panel.
          */
@@ -1198,7 +1212,7 @@ public class TethysSwingScrollContextMenu<T>
             getPanel().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(final MouseEvent e) {
-                    theContext.handleActiveItem(TethysSwingScrollMenuItem.this);
+                    handleMouseEntered();
                     setActive(true);
                 }
 
@@ -1210,9 +1224,23 @@ public class TethysSwingScrollContextMenu<T>
                 @Override
                 public void mouseClicked(final MouseEvent e) {
                     setActive(false);
-                    theContext.setSelectedItem(TethysSwingScrollMenuItem.this);
+                    handleMouseClicked();
                 }
             });
+        }
+
+        /**
+         * handle mouseClicked.
+         */
+        void handleMouseClicked() {
+            theContext.setSelectedItem(this);
+        }
+
+        /**
+         * handle mouseEntered.
+         */
+        void handleMouseEntered() {
+            theContext.handleActiveItem(this);
         }
 
         @Override
@@ -1244,9 +1272,9 @@ public class TethysSwingScrollContextMenu<T>
          * @param pValue the value
          * @param pName the display name
          */
-        private TethysSwingScrollToggleItem(final TethysSwingScrollContextMenu<T> pContext,
-                                            final T pValue,
-                                            final String pName) {
+        TethysSwingScrollToggleItem(final TethysSwingScrollContextMenu<T> pContext,
+                                    final T pValue,
+                                    final String pName) {
             /* Call super-constructor */
             super(pContext, pValue, pName, null);
         }
@@ -1298,9 +1326,9 @@ public class TethysSwingScrollContextMenu<T>
          * @param pName the name
          * @param pGraphic the icon for the menu
          */
-        private TethysSwingScrollSubMenu(final TethysSwingScrollContextMenu<T> pContext,
-                                         final String pName,
-                                         final Icon pGraphic) {
+        TethysSwingScrollSubMenu(final TethysSwingScrollContextMenu<T> pContext,
+                                 final String pName,
+                                 final Icon pGraphic) {
             /* Call super-constructor */
             super(pName, pGraphic);
 
@@ -1320,13 +1348,7 @@ public class TethysSwingScrollContextMenu<T>
             getPanel().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(final MouseEvent e) {
-                    /* handle the active menu */
-                    theContext.handleActiveMenu(TethysSwingScrollSubMenu.this);
-                    setActive(true);
-
-                    /* Show the menu */
-                    theSubMenu.ensureSubDialog(TethysSwingScrollSubMenu.this);
-                    theSubMenu.showMenuAtPosition(getPanel(), SwingConstants.RIGHT);
+                    handleMouseEntered();
                 }
 
                 @Override
@@ -1337,10 +1359,23 @@ public class TethysSwingScrollContextMenu<T>
         }
 
         /**
+         * handle MouseEntered.
+         */
+        void handleMouseEntered() {
+            /* handle the active menu */
+            theContext.handleActiveMenu(this);
+            setActive(true);
+
+            /* Show the menu */
+            theSubMenu.ensureSubDialog(this);
+            theSubMenu.showMenuAtPosition(getPanel(), SwingConstants.RIGHT);
+        }
+
+        /**
          * Obtain the parent.
          * @return the parent
          */
-        private TethysSwingScrollContextMenu<T> getContext() {
+        TethysSwingScrollContextMenu<T> getContext() {
             return theContext;
         }
 
@@ -1353,14 +1388,14 @@ public class TethysSwingScrollContextMenu<T>
          * Obtain the index.
          * @return the index
          */
-        private int getIndex() {
+        int getIndex() {
             return theIndex;
         }
 
         /**
          * Hide the subMenu.
          */
-        private void hideMenu() {
+        void hideMenu() {
             theSubMenu.closeMenu();
         }
 
@@ -1385,7 +1420,7 @@ public class TethysSwingScrollContextMenu<T>
         /**
          * Ensure that this menu is visible immediately the context is displayed.
          */
-        private void scrollToMenu() {
+        void scrollToMenu() {
             theContext.scrollToIndex(theIndex);
         }
     }
@@ -1410,8 +1445,8 @@ public class TethysSwingScrollContextMenu<T>
          * @param pIcon the icon
          * @param pIncrement the increment
          */
-        private ScrollControl(final Icon pIcon,
-                              final int pIncrement) {
+        ScrollControl(final Icon pIcon,
+                      final int pIncrement) {
             /* Set the icon for the item */
             super(pIcon);
 
@@ -1440,7 +1475,7 @@ public class TethysSwingScrollContextMenu<T>
         /**
          * Process scroll event.
          */
-        private void processScroll() {
+        void processScroll() {
             /* Request the scroll */
             requestScroll(theIncrement);
         }
@@ -1448,7 +1483,7 @@ public class TethysSwingScrollContextMenu<T>
         /**
          * Process mouseEnter event.
          */
-        private void processMouseEnter() {
+        void processMouseEnter() {
             /* cancel any existing task */
             if (theTimerTask != null) {
                 theTimerTask.cancel();
@@ -1458,7 +1493,7 @@ public class TethysSwingScrollContextMenu<T>
             closeChildren();
 
             /* Set no active Item */
-            theActiveItem = null;
+            clearActiveItem();
             setActive(true);
 
             /* Create new timer task */
@@ -1470,14 +1505,13 @@ public class TethysSwingScrollContextMenu<T>
             };
 
             /* Schedule the task */
-            theTimer.schedule(theTimerTask, TethysScrollMenuContent.INITIAL_SCROLLDELAY, TethysScrollMenuContent.REPEAT_SCROLLDELAY);
-
+            getTimer().schedule(theTimerTask, TethysScrollMenuContent.INITIAL_SCROLLDELAY, TethysScrollMenuContent.REPEAT_SCROLLDELAY);
         }
 
         /**
          * Process mouseExit event.
          */
-        private void processMouseExit() {
+        void processMouseExit() {
             /* If the timer is stopped */
             if (theTimerTask != null) {
                 theTimerTask.cancel();

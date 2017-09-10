@@ -55,21 +55,7 @@ public class TethysSwingTableSorter<T>
     /**
      * Filtered index indicator.
      */
-    private static final int ROW_FILTERED = -1;
-
-    /**
-     * Interface for Model.
-     * @param <T> the row type
-     */
-    public interface TethysSwingTableSorterModel<T>
-            extends TableModel {
-        /**
-         * Obtain the item at the model index.
-         * @param pRowIndex the index
-         * @return the item
-         */
-        T getItemAtIndex(int pRowIndex);
-    }
+    static final int ROW_FILTERED = -1;
 
     /**
      * The model for the Filter.
@@ -110,6 +96,20 @@ public class TethysSwingTableSorter<T>
      * DataControl.
      */
     private TableRowEntry<T>[] theDataControl;
+
+    /**
+     * Interface for Model.
+     * @param <T> the row type
+     */
+    public interface TethysSwingTableSorterModel<T>
+            extends TableModel {
+        /**
+         * Obtain the item at the model index.
+         * @param pRowIndex the index
+         * @return the item
+         */
+        T getItemAtIndex(int pRowIndex);
+    }
 
     /**
      * Constructor.
@@ -194,12 +194,12 @@ public class TethysSwingTableSorter<T>
 
             /* Link sorted map */
             theSortedMap[i] = i;
-            myEntry.theSorted = i;
+            myEntry.setSorted(i);
 
             /* Note whether the row is visible */
-            myEntry.theView = includeRow(myRow)
-                                                ? iView++
-                                                : ROW_FILTERED;
+            myEntry.setView(includeRow(myRow)
+                                              ? iView++
+                                              : ROW_FILTERED);
 
             /* Record entry */
             theDataControl[i] = myEntry;
@@ -221,17 +221,17 @@ public class TethysSwingTableSorter<T>
                             final int pEndRow) {
         /* Determine model row count */
         final int iNumRows = theDataControl.length;
-        int iIndex;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0)
-            || (pEndRow >= iNumRows)
-            || (pFirstRow > pEndRow)) {
+        if (pFirstRow < 0
+            || pEndRow >= iNumRows
+            || pFirstRow > pEndRow) {
             throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
         /* Create copies of the sorted and view maps */
         boolean viewDeleted = false;
+        int iIndex;
 
         /* Loop through the rows to be deleted */
         for (int i = pFirstRow; i <= pEndRow; i++) {
@@ -239,11 +239,11 @@ public class TethysSwingTableSorter<T>
             final TableRowEntry<T> myEntry = theDataControl[i];
 
             /* Mark the sorted entry for deletion */
-            iIndex = myEntry.theSorted;
+            iIndex = myEntry.getSorted();
             theSortedMap[iIndex] = ROW_FILTERED;
 
             /* If the row is currently visible */
-            iIndex = myEntry.theView;
+            iIndex = myEntry.getView();
             if (iIndex != ROW_FILTERED) {
                 /* Mark the view entry for deletion */
                 theViewMap[iIndex] = ROW_FILTERED;
@@ -264,11 +264,11 @@ public class TethysSwingTableSorter<T>
                 final TableRowEntry<T> myEntry = theDataControl[i];
 
                 /* Adjust sorted array */
-                iIndex = myEntry.theSorted;
+                iIndex = myEntry.getSorted();
                 theSortedMap[iIndex] = i;
 
                 /* If the entry is visible */
-                iIndex = myEntry.theView;
+                iIndex = myEntry.getView();
                 if (iIndex != ROW_FILTERED) {
                     /* Repair the view reference */
                     theViewMap[iIndex] = i;
@@ -301,7 +301,7 @@ public class TethysSwingTableSorter<T>
                 if (i != iSort) {
                     /* Move entry up and fix modelToSort */
                     theSortedMap[iSort] = theSortedMap[i];
-                    theDataControl[iIndex].theSorted = iSort;
+                    theDataControl[iIndex].setSorted(iSort);
                 }
 
                 /* Increment sort count */
@@ -331,7 +331,7 @@ public class TethysSwingTableSorter<T>
                 if (i != iView) {
                     /* Move entry up and fix modelToView */
                     pMap[iView] = pMap[i];
-                    theDataControl[iIndex].theView = iView;
+                    theDataControl[iIndex].setView(iView);
                 }
 
                 /* Increment view count */
@@ -375,7 +375,7 @@ public class TethysSwingTableSorter<T>
                 final TableRowEntry<T> myEntry = theDataControl[i];
 
                 /* Adjust sorted array */
-                iIndex = myEntry.theSorted;
+                iIndex = myEntry.getSorted();
                 theSortedMap[iIndex] = i;
             }
         }
@@ -392,12 +392,12 @@ public class TethysSwingTableSorter<T>
 
             /* Link sorted array */
             theSortedMap[iSort] = i;
-            myEntry.theSorted = iSort++;
+            myEntry.setSorted(iSort++);
 
             /* Note whether the row is visible */
-            myEntry.theView = includeRow(myRow)
-                                                ? iView++
-                                                : ROW_FILTERED;
+            myEntry.setView(includeRow(myRow)
+                                              ? iView++
+                                              : ROW_FILTERED);
 
             /* Record entry */
             theDataControl[i] = myEntry;
@@ -421,9 +421,9 @@ public class TethysSwingTableSorter<T>
         final int iNumRows = theDataControl.length;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0)
-            || (pEndRow >= iNumRows)
-            || (pFirstRow > pEndRow)) {
+        if (pFirstRow < 0
+            || pEndRow >= iNumRows
+            || pFirstRow > pEndRow) {
             throw new IndexOutOfBoundsException(ERROR_RANGE);
         }
 
@@ -441,10 +441,10 @@ public class TethysSwingTableSorter<T>
             final TableRowEntry<T> myEntry = theDataControl[i];
 
             /* Determine whether we are currently visible */
-            final boolean isCurrVisible = myEntry.theView != ROW_FILTERED;
+            final boolean isCurrVisible = myEntry.getView() != ROW_FILTERED;
 
             /* Access the row */
-            final T myRow = myEntry.theRow;
+            final T myRow = myEntry.getRow();
 
             /* Determine whether we are now visible */
             final boolean isNowVisible = includeRow(myRow);
@@ -461,13 +461,13 @@ public class TethysSwingTableSorter<T>
             if (isNowVisible) {
                 /* Note newly visible row */
                 iDelta++;
-                myEntry.theView = iView++;
+                myEntry.setView(iView++);
 
                 /* else not visible */
             } else {
                 /* Note newly invisible row */
                 iDelta--;
-                myEntry.theView = ROW_FILTERED;
+                myEntry.setView(ROW_FILTERED);
             }
         }
 
@@ -489,8 +489,8 @@ public class TethysSwingTableSorter<T>
                             final int pEndRow,
                             final int pColumn) {
         /* Check valid column */
-        if ((pColumn < 0)
-            || (pColumn >= theModel.getColumnCount())) {
+        if (pColumn < 0
+            || pColumn >= theModel.getColumnCount()) {
             throw new IndexOutOfBoundsException("Invalid Column");
         }
 
@@ -517,7 +517,7 @@ public class TethysSwingTableSorter<T>
     private boolean isCorrectOrder(final int pFirst,
                                    final int pSecond) {
         final int myResult = theComparator != null
-                                                   ? theComparator.compare(theDataControl[pFirst].theRow, theDataControl[pSecond].theRow)
+                                                   ? theComparator.compare(theDataControl[pFirst].getRow(), theDataControl[pSecond].getRow())
                                                    : pFirst - pSecond;
         return myResult <= 0;
     }
@@ -525,7 +525,7 @@ public class TethysSwingTableSorter<T>
     @Override
     public int convertRowIndexToModel(final int pIndex) {
         /* Handle out of range */
-        if ((pIndex < 0) || (pIndex >= getViewRowCount())) {
+        if (pIndex < 0 || pIndex >= getViewRowCount()) {
             throw new IndexOutOfBoundsException(ERROR_INDEX);
         }
 
@@ -536,12 +536,12 @@ public class TethysSwingTableSorter<T>
     @Override
     public int convertRowIndexToView(final int pIndex) {
         /* Handle out of range */
-        if ((pIndex < 0) || (pIndex >= getModelRowCount())) {
+        if (pIndex < 0 || pIndex >= getModelRowCount()) {
             throw new IndexOutOfBoundsException(ERROR_INDEX);
         }
 
         /* Return mapping */
-        return theDataControl[pIndex].theView;
+        return theDataControl[pIndex].getView();
     }
 
     @Override
@@ -626,13 +626,13 @@ public class TethysSwingTableSorter<T>
 
                 /* Correct the link from the model to the sorted array */
                 final TableRowEntry<T> myEntry = theDataControl[iIndex];
-                myEntry.theSorted = i;
+                myEntry.setSorted(i);
 
                 /* If the row is visible */
-                if (myEntry.theView != ROW_FILTERED) {
+                if (myEntry.getView() != ROW_FILTERED) {
                     /* Correct the link from the model to the view */
                     theViewMap[iView] = iIndex;
-                    myEntry.theView = iView++;
+                    myEntry.setView(iView++);
                 }
             }
         }
@@ -648,7 +648,7 @@ public class TethysSwingTableSorter<T>
      */
     public ListIterator<T> sortIterator() {
         /* Allocate iterator */
-        return new TableIterator(theSortedMap);
+        return new TableIterator(theSortedMap, theDataControl);
     }
 
     /**
@@ -658,7 +658,7 @@ public class TethysSwingTableSorter<T>
      */
     public ListIterator<T> viewIterator() {
         /* Allocate iterator */
-        return new TableIterator(theViewMap);
+        return new TableIterator(theViewMap, theDataControl);
     }
 
     /**
@@ -669,7 +669,7 @@ public class TethysSwingTableSorter<T>
         /**
          * The actual Row.
          */
-        private T theRow;
+        private final T theRow;
 
         /**
          * The sorted index.
@@ -685,10 +685,50 @@ public class TethysSwingTableSorter<T>
          * Constructor.
          * @param pRow the row
          */
-        private TableRowEntry(final T pRow) {
+        TableRowEntry(final T pRow) {
             theRow = pRow;
             theSorted = ROW_FILTERED;
             theView = ROW_FILTERED;
+        }
+
+        /**
+         * Obtain the row.
+         * @return the row
+         */
+        T getRow() {
+            return theRow;
+        }
+
+        /**
+         * Obtain the sorted index.
+         * @return the index
+         */
+        int getSorted() {
+            return theSorted;
+        }
+
+        /**
+         * Obtain the view index.
+         * @return the index
+         */
+        int getView() {
+            return theView;
+        }
+
+        /**
+         * Set the sorted index.
+         * @param pIndex the index
+         */
+        void setSorted(final int pIndex) {
+            theSorted = pIndex;
+        }
+
+        /**
+         * Set the view index.
+         * @param pIndex the index
+         */
+        void setView(final int pIndex) {
+            theView = pIndex;
         }
     }
 
@@ -704,9 +744,14 @@ public class TethysSwingTableSorter<T>
         private final int[] theList;
 
         /**
+         * DataControl.
+         */
+        private final TableRowEntry<T>[] theDataControl;
+
+        /**
          * Size of index.
          */
-        private int theSize;
+        private final int theSize;
 
         /**
          * index before.
@@ -721,11 +766,14 @@ public class TethysSwingTableSorter<T>
         /**
          * Constructor.
          * @param pList the list to iterate over
+         * @param pDataControl the dataControl
          */
-        private TableIterator(final int[] pList) {
+        TableIterator(final int[] pList,
+                      final TableRowEntry<T>[] pDataControl) {
             /* Store the array */
             theSize = pList.length;
             theList = Arrays.copyOf(pList, theSize);
+            theDataControl = Arrays.copyOf(pDataControl, pDataControl.length);
             theBeforeIndex = -1;
             theAfterIndex = 0;
         }
@@ -750,7 +798,7 @@ public class TethysSwingTableSorter<T>
             /* Return the element */
             final int myIndex = theList[theAfterIndex++];
             theBeforeIndex++;
-            return theDataControl[myIndex].theRow;
+            return theDataControl[myIndex].getRow();
         }
 
         @Override
@@ -774,7 +822,7 @@ public class TethysSwingTableSorter<T>
             /* Return the element */
             final int myIndex = theList[theBeforeIndex--];
             theAfterIndex--;
-            return theDataControl[myIndex].theRow;
+            return theDataControl[myIndex].getRow();
         }
 
         @Override

@@ -187,7 +187,7 @@ public class TethysSwingColorPicker
             theDialog.pack();
 
             /* Create focus listener */
-            theDialog.addWindowFocusListener(new DialogFocus());
+            theDialog.addWindowFocusListener(new DialogFocus(theDialog));
         }
 
         /* Set the active colour */
@@ -218,6 +218,19 @@ public class TethysSwingColorPicker
      */
     private class DialogFocus
             extends WindowAdapter {
+        /**
+         * The dialog.
+         */
+        private final JDialog theDialog;
+
+        /**
+         * Constructor.
+         * @param pDialog the dialog
+         */
+        DialogFocus(final JDialog pDialog) {
+            theDialog = pDialog;
+        }
+
         @Override
         public void windowLostFocus(final WindowEvent e) {
             /* Hide the dialog */
@@ -247,7 +260,7 @@ public class TethysSwingColorPicker
          * Constructor.
          * @param pColor the colour.
          */
-        private TethysSwatch(final Color pColor) {
+        TethysSwatch(final Color pColor) {
             theColor = pColor;
         }
 

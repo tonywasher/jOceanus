@@ -53,11 +53,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSw
  */
 public class TethysSwingDemoFilter {
     /**
-     * New Name text.
-     */
-    private static final String NAME_NEW = "New Name";
-
-    /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingDemoFilter.class);
@@ -78,16 +73,16 @@ public class TethysSwingDemoFilter {
     /**
      * Create and show the GUI.
      */
-    private static void createAndShowGUI() {
+    static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("DataFilter Test");
+            final JFrame myFrame = new JFrame("DataFilter Test");
 
             /* Create the Test Table */
-            TestTable myTable = new TestTable();
+            final TestTable myTable = new TestTable();
 
             /* Access the panel */
-            JScrollPane myPanel = myTable.getScrollPane();
+            final JScrollPane myPanel = myTable.getScrollPane();
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);
@@ -142,7 +137,7 @@ public class TethysSwingDemoFilter {
             setModel(theModel);
 
             /* Create the filter and record it */
-            TethysSwingTableSorter<RowData> myFilter = new TethysSwingTableSorter<RowData>(theModel);
+            final TethysSwingTableSorter<RowData> myFilter = new TethysSwingTableSorter<RowData>(theModel);
             theModel.registerFilter(myFilter);
             setRowSorter(myFilter);
 
@@ -184,7 +179,7 @@ public class TethysSwingDemoFilter {
         /**
          * Name of item.
          */
-        private String theName = null;
+        private String theName;
 
         /**
          * Visible.
@@ -240,7 +235,7 @@ public class TethysSwingDemoFilter {
         @Override
         public boolean equals(final Object pThat) {
             /* Compare names */
-            return (pThat instanceof RowData)
+            return pThat instanceof RowData
                    && theName.equals(((RowData) pThat).getName());
         }
 
@@ -335,10 +330,10 @@ public class TethysSwingDemoFilter {
          */
         public void addNewRowAtEnd(final String pName) {
             /* Determine index of new item */
-            int iIndex = getRowCount();
+            final int iIndex = getRowCount();
 
             /* Create the new row and add it to the list */
-            RowData myRow = new RowData(pName);
+            final RowData myRow = new RowData(pName);
             theList.add(myRow);
 
             /* Say that we have added the row */
@@ -353,7 +348,7 @@ public class TethysSwingDemoFilter {
         public void addNewRowAtIndex(final int pIndex,
                                      final String pName) {
             /* Create the new row and add it to the list */
-            RowData myRow = new RowData(pName);
+            final RowData myRow = new RowData(pName);
             theList.add(pIndex, myRow);
 
             /* Say that we have added the row */
@@ -460,7 +455,7 @@ public class TethysSwingDemoFilter {
         public Object getValueAt(final int pRowIndex,
                                  final int pColIndex) {
             /* Access the row */
-            RowData myItem = getItemAtIndex(pRowIndex);
+            final RowData myItem = getItemAtIndex(pRowIndex);
 
             /* Switch on column */
             switch (pColIndex) {
@@ -478,7 +473,7 @@ public class TethysSwingDemoFilter {
                                final int pRowIndex,
                                final int pColIndex) {
             /* Access the row */
-            RowData myItem = getItemAtIndex(pRowIndex);
+            final RowData myItem = getItemAtIndex(pRowIndex);
 
             /* Switch on column */
             switch (pColIndex) {
@@ -504,6 +499,11 @@ public class TethysSwingDemoFilter {
     public static class TestMouse
             extends MouseAdapter
             implements ActionListener {
+        /**
+         * New Name text.
+         */
+        private static final String NAME_NEW = "New Name";
+
         /**
          * Insert new name.
          */
@@ -582,7 +582,7 @@ public class TethysSwingDemoFilter {
             /* If we can trigger a PopUp menu */
             if (e.isPopupTrigger()) {
                 /* Access the point that the mouse was clicked at */
-                Point p = new Point(e.getX(), e.getY());
+                final Point p = new Point(e.getX(), e.getY());
 
                 /* Access row and adjust for view differences */
                 int myRow = theTable.rowAtPoint(p);
@@ -591,7 +591,7 @@ public class TethysSwingDemoFilter {
                 }
 
                 /* Create the pop-up menu */
-                JPopupMenu myMenu = new JPopupMenu();
+                final JPopupMenu myMenu = new JPopupMenu();
 
                 /* Add the delete item choice */
                 JMenuItem myItem = new JMenuItem(POPUP_INSERTEND);
@@ -600,8 +600,8 @@ public class TethysSwingDemoFilter {
                 myMenu.add(myItem);
 
                 /* If the row is in bounds */
-                if ((myRow >= 0)
-                    && (myRow < theModel.getRowCount())) {
+                if (myRow >= 0
+                    && myRow < theModel.getRowCount()) {
                     /* Add the delete item choice */
                     myItem = new JMenuItem(POPUP_INSERTHERE);
                     myItem.setActionCommand(CMD_INSERT
@@ -642,7 +642,7 @@ public class TethysSwingDemoFilter {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             /* Access event details */
-            Object mySrc = evt.getSource();
+            final Object mySrc = evt.getSource();
             String myCmd = evt.getActionCommand();
 
             /* if this is an insert command */
@@ -654,7 +654,7 @@ public class TethysSwingDemoFilter {
             } else if (myCmd.startsWith(CMD_INSERT)) {
                 /* Strip the prefix */
                 myCmd = myCmd.substring(CMD_INSERT.length());
-                int myRow = Integer.parseInt(myCmd);
+                final int myRow = Integer.parseInt(myCmd);
 
                 /* Notify the table */
                 theModel.addNewRowAtIndex(myRow, NAME_NEW);
@@ -663,7 +663,7 @@ public class TethysSwingDemoFilter {
             } else if (myCmd.startsWith(CMD_DELETE)) {
                 /* Strip the prefix */
                 myCmd = myCmd.substring(CMD_DELETE.length());
-                int myRow = Integer.parseInt(myCmd);
+                final int myRow = Integer.parseInt(myCmd);
 
                 /* Notify the table */
                 theModel.deleteRow(myRow);
@@ -671,7 +671,7 @@ public class TethysSwingDemoFilter {
                 /* if this is a show all command */
             } else if (myCmd.equals(POPUP_SHOWALL)) {
                 /* Note the new criteria */
-                boolean doShowAll = ((JCheckBoxMenuItem) mySrc).isSelected();
+                final boolean doShowAll = ((JCheckBoxMenuItem) mySrc).isSelected();
 
                 /* Notify the table */
                 theModel.setShowAll(doShowAll);
@@ -679,7 +679,7 @@ public class TethysSwingDemoFilter {
                 /* if this is a sort command */
             } else if (myCmd.equals(POPUP_SORT)) {
                 /* Note the new criteria */
-                boolean doSort = ((JCheckBoxMenuItem) mySrc).isSelected();
+                final boolean doSort = ((JCheckBoxMenuItem) mySrc).isSelected();
 
                 /* Notify the table */
                 theModel.setSortItems(doSort);

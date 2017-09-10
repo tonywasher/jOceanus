@@ -37,7 +37,7 @@ public class TethysFXTreeManager<T>
     /**
      * The treeView.
      */
-    private TreeView<TethysFXTreeItem<T>> theTree;
+    private final TreeView<TethysFXTreeItem<T>> theTree;
 
     /**
      * The root.
@@ -139,7 +139,7 @@ public class TethysFXTreeManager<T>
      * Set focused item.
      * @param pItem the item
      */
-    private void setFocusedItem(final TethysFXTreeItem<T> pItem) {
+    void setFocusedItem(final TethysFXTreeItem<T> pItem) {
         /* Record the item */
         theFocusedItem = pItem;
 
@@ -190,7 +190,7 @@ public class TethysFXTreeManager<T>
          * Constructor for root item.
          * @param pTree the tree
          */
-        private TethysFXTreeItem(final TethysFXTreeManager<T> pTree) {
+        TethysFXTreeItem(final TethysFXTreeManager<T> pTree) {
             /* build underlying item */
             super(pTree);
 
@@ -227,7 +227,7 @@ public class TethysFXTreeManager<T>
          * Obtain the node.
          * @return the node
          */
-        private TethysFXTreeNode<T> getNode() {
+        TethysFXTreeNode<T> getNode() {
             return theNode;
         }
 
@@ -297,7 +297,7 @@ public class TethysFXTreeManager<T>
          * Constructor.
          * @param pItem the tree item
          */
-        private TethysFXTreeNode(final TethysFXTreeItem<X> pItem) {
+        TethysFXTreeNode(final TethysFXTreeItem<X> pItem) {
             super(pItem);
         }
 

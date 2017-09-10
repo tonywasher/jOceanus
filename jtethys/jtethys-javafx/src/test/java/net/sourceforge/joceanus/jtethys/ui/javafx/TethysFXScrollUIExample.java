@@ -172,10 +172,10 @@ public class TethysFXScrollUIExample
     @Override
     public void start(final Stage pStage) {
         /* Create a GridPane */
-        TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysFXGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Create context menu line */
-        TethysFXLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
+        final TethysFXLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
         myContextArea.setBorderTitle("ContextArea");
         myContextArea.setAlignment(TethysAlignment.CENTRE);
         theContextValue.setBorderTitle("ContextValue");
@@ -196,7 +196,7 @@ public class TethysFXScrollUIExample
         /* Add listener */
         theContextMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* If we selected a value */
-            TethysScrollMenuItem<String> mySelected = theContextMenu.getSelectedItem();
+            final TethysScrollMenuItem<String> mySelected = theContextMenu.getSelectedItem();
             if (mySelected != null) {
                 setContextValue(mySelected.getValue());
                 pStage.sizeToScene();
@@ -266,7 +266,7 @@ public class TethysFXScrollUIExample
         myGrid.addCell(theSimpleIconValue);
         myGrid.allowCellGrowth(theSimpleIconValue);
         myGrid.newRow();
-        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theSimpleIconButtonMgr.setIconMapSet(() -> myMapSet);
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
@@ -277,7 +277,7 @@ public class TethysFXScrollUIExample
         });
 
         /* Create state icon button line */
-        TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        final TethysFXBoxPaneManager myBox = theGuiFactory.newHBoxPane();
         myBox.addNode(theStateButtonMgr);
         myBox.addNode(theStateIconButtonMgr);
         myBox.setBorderTitle("StateIconButton");
@@ -289,7 +289,7 @@ public class TethysFXScrollUIExample
         myGrid.allowCellGrowth(theStateIconValue);
         myGrid.newRow();
         theHelper.buildStateButton(theStateButtonMgr);
-        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
         theStateIconButtonMgr.setIconMapSet(() -> myMap.get(theStateButtonMgr.getValue()));
         theStateIconButtonMgr.setNullMargins();
         theStateIconButtonMgr.setValue(Boolean.FALSE);
@@ -327,7 +327,7 @@ public class TethysFXScrollUIExample
         myGrid.setBorderPadding(3);
 
         /* Create scene */
-        Scene myScene = new Scene(myGrid.getNode());
+        final Scene myScene = new Scene(myGrid.getNode());
         theGuiFactory.registerScene(myScene);
         pStage.setTitle("JavaFXScroll Demo");
         pStage.setScene(myScene);

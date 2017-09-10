@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * JavaFX DateButton Manager.
  */
-public class TethysFXDateButtonManager
+public final class TethysFXDateButtonManager
         extends TethysDateButtonManager<Node, Node> {
     /**
      * The node.

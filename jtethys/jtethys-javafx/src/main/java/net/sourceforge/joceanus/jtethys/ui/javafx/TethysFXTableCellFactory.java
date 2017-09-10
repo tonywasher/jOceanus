@@ -94,11 +94,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  */
 public class TethysFXTableCellFactory<C, R> {
     /**
-     * The dummy style.
-     */
-    private static final String STYLE_DUMMY = "DummyStyle";
-
-    /**
      * The GUI Factory.
      */
     private final TethysFXGuiFactory theGuiFactory;
@@ -280,6 +275,11 @@ public class TethysFXTableCellFactory<C, R> {
     public abstract static class TethysFXTableCell<T, C, R>
             extends TableCell<R, T>
             implements TethysEventProvider<TethysUIEvent>, TethysTableCell<T, C, R, Node, Node> {
+        /**
+         * The dummy style.
+         */
+        private static final String STYLE_DUMMY = "DummyStyle";
+
         /**
          * The Column.
          */

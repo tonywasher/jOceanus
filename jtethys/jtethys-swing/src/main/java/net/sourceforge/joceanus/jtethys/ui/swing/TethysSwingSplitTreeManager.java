@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
  * Split Manager, hosting a Tree and HTML in a split window.
  * @param <T> the item type
  */
-public class TethysSwingSplitTreeManager<T>
+public final class TethysSwingSplitTreeManager<T>
         extends TethysSplitTreeManager<T, JComponent, Icon> {
     /**
      * Split pane.

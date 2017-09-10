@@ -60,10 +60,10 @@ public class TestFXHelpWindow
     @Override
     public void start(final Stage pStage) {
         /* Create the panel */
-        Node myMain = buildPanel(pStage);
+        final Node myMain = buildPanel(pStage);
 
         /* Create scene */
-        Scene myScene = new Scene(new Group());
+        final Scene myScene = new Scene(new Group());
         ((Group) myScene.getRoot()).getChildren().addAll(myMain);
         pStage.setTitle("JavaFXHelp Demo");
         pStage.setScene(myScene);
@@ -76,17 +76,17 @@ public class TestFXHelpWindow
      */
     private Node buildPanel(final Stage pStage) {
         /* Create the factory */
-        TethysFXGuiFactory myFactory = new TethysFXGuiFactory();
+        final TethysFXGuiFactory myFactory = new TethysFXGuiFactory();
         myFactory.setStage(pStage);
 
         /* Create a button */
-        Button myButton = new Button("Help");
+        final Button myButton = new Button("Help");
 
         /* Create the help window */
-        TethysFXHelpWindow myWindow = new TethysFXHelpWindow(myFactory);
+        final TethysFXHelpWindow myWindow = new TethysFXHelpWindow(myFactory);
 
         /* Create a BorderPane for the fields */
-        BorderPane myPane = new BorderPane();
+        final BorderPane myPane = new BorderPane();
         myPane.setLeft(myButton);
 
         /* Add listener for the button */
@@ -121,12 +121,12 @@ public class TestFXHelpWindow
             super(TethysHelpModule.class, "Test Help System");
 
             /* Create accounts tree */
-            TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
+            final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
             myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
             myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
 
             /* Create static tree */
-            TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
+            final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
             myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
             myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
 

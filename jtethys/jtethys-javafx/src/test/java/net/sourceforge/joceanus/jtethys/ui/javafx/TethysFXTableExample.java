@@ -65,11 +65,6 @@ public class TethysFXTableExample
     private final TethysFXGuiFactory theGuiFactory = new TethysFXGuiFactory();
 
     /**
-     * The TestData.
-     */
-    private final ObservableList<TethysFXTableItem> theData;
-
-    /**
      * The TableView.
      */
     private final TethysFXTableManager<TethysDataId, TethysFXTableItem> theTable;
@@ -87,32 +82,32 @@ public class TethysFXTableExample
         theHelper = new TethysScrollUITestHelper<>();
 
         /* Create test Data */
-        theData = FXCollections.observableArrayList(p -> new Observable[]
+        final ObservableList<TethysFXTableItem> myData = FXCollections.observableArrayList(p -> new Observable[]
         { p.nameProperty() });
-        theData.add(new TethysFXTableItem(theHelper, "Damage"));
-        theData.add(new TethysFXTableItem(theHelper, "Tony"));
-        theData.add(new TethysFXTableItem(theHelper, "Dave"));
+        myData.add(new TethysFXTableItem(theHelper, "Damage"));
+        myData.add(new TethysFXTableItem(theHelper, "Tony"));
+        myData.add(new TethysFXTableItem(theHelper, "Dave"));
 
         /* Create tableView */
         theTable = theGuiFactory.newTable();
-        theTable.setItems(theData);
+        theTable.setItems(myData);
         theTable.setRepaintRowOnCommit(true);
         theTable.setComparator((l, r) -> l.nameProperty().getValue().compareTo(r.nameProperty().getValue()));
         theTable.setOnCommit(r -> r.incrementUpdates());
 
         /* Create the name column */
-        TethysFXTableStringColumn<TethysDataId, TethysFXTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);
+        final TethysFXTableStringColumn<TethysDataId, TethysFXTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);
         myNameColumn.setCellValueFactory(p -> p.getValue().nameProperty());
         myNameColumn.setOnCommit((r, v) -> r.nameProperty().setValue(v));
         myNameColumn.setRepaintColumnOnCommit(true);
 
         /* Create the date column */
-        TethysFXTableDateColumn<TethysDataId, TethysFXTableItem> myDateColumn = theTable.declareDateColumn(TethysDataId.DATE);
+        final TethysFXTableDateColumn<TethysDataId, TethysFXTableItem> myDateColumn = theTable.declareDateColumn(TethysDataId.DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
         myDateColumn.setOnCommit((r, v) -> r.dateProperty().setValue(v));
 
         /* Create the short column */
-        TethysFXTableShortColumn<TethysDataId, TethysFXTableItem> myShortColumn = theTable.declareShortColumn(TethysDataId.SHORT);
+        final TethysFXTableShortColumn<TethysDataId, TethysFXTableItem> myShortColumn = theTable.declareShortColumn(TethysDataId.SHORT);
         myShortColumn.setCellValueFactory(p -> p.getValue().shortProperty());
         myShortColumn.setOnCommit((r, v) -> r.shortProperty().setValue(v));
         myShortColumn.setValidator((v, r) -> v < 0
@@ -120,89 +115,89 @@ public class TethysFXTableExample
                                                    : null);
 
         /* Create the integer column */
-        TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myIntColumn = theTable.declareIntegerColumn(TethysDataId.INTEGER);
+        final TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myIntColumn = theTable.declareIntegerColumn(TethysDataId.INTEGER);
         myIntColumn.setCellValueFactory(p -> p.getValue().integerProperty());
         myIntColumn.setOnCommit((r, v) -> r.integerProperty().setValue(v));
 
         /* Create the long column */
-        TethysFXTableLongColumn<TethysDataId, TethysFXTableItem> myLongColumn = theTable.declareLongColumn(TethysDataId.LONG);
+        final TethysFXTableLongColumn<TethysDataId, TethysFXTableItem> myLongColumn = theTable.declareLongColumn(TethysDataId.LONG);
         myLongColumn.setCellValueFactory(p -> p.getValue().longProperty());
         myLongColumn.setOnCommit((r, v) -> r.longProperty().setValue(v));
 
         /* Create the money column */
-        TethysFXTableMoneyColumn<TethysDataId, TethysFXTableItem> myMoneyColumn = theTable.declareMoneyColumn(TethysDataId.MONEY);
+        final TethysFXTableMoneyColumn<TethysDataId, TethysFXTableItem> myMoneyColumn = theTable.declareMoneyColumn(TethysDataId.MONEY);
         myMoneyColumn.setCellValueFactory(p -> p.getValue().moneyProperty());
         myMoneyColumn.setOnCommit((r, v) -> r.moneyProperty().setValue(v));
 
         /* Create the price column */
-        TethysFXTablePriceColumn<TethysDataId, TethysFXTableItem> myPriceColumn = theTable.declarePriceColumn(TethysDataId.PRICE);
+        final TethysFXTablePriceColumn<TethysDataId, TethysFXTableItem> myPriceColumn = theTable.declarePriceColumn(TethysDataId.PRICE);
         myPriceColumn.setCellValueFactory(p -> p.getValue().priceProperty());
         myPriceColumn.setOnCommit((r, v) -> r.priceProperty().setValue(v));
 
         /* Create the units column */
-        TethysFXTableUnitsColumn<TethysDataId, TethysFXTableItem> myUnitsColumn = theTable.declareUnitsColumn(TethysDataId.UNITS);
+        final TethysFXTableUnitsColumn<TethysDataId, TethysFXTableItem> myUnitsColumn = theTable.declareUnitsColumn(TethysDataId.UNITS);
         myUnitsColumn.setCellValueFactory(p -> p.getValue().unitsProperty());
         myUnitsColumn.setOnCommit((r, v) -> r.unitsProperty().setValue(v));
 
         /* Create the rate column */
-        TethysFXTableRateColumn<TethysDataId, TethysFXTableItem> myRateColumn = theTable.declareRateColumn(TethysDataId.RATE);
+        final TethysFXTableRateColumn<TethysDataId, TethysFXTableItem> myRateColumn = theTable.declareRateColumn(TethysDataId.RATE);
         myRateColumn.setCellValueFactory(p -> p.getValue().rateProperty());
         myRateColumn.setOnCommit((r, v) -> r.rateProperty().setValue(v));
 
         /* Create the ratio column */
-        TethysFXTableRatioColumn<TethysDataId, TethysFXTableItem> myRatioColumn = theTable.declareRatioColumn(TethysDataId.RATIO);
+        final TethysFXTableRatioColumn<TethysDataId, TethysFXTableItem> myRatioColumn = theTable.declareRatioColumn(TethysDataId.RATIO);
         myRatioColumn.setCellValueFactory(p -> p.getValue().ratioProperty());
         myRatioColumn.setOnCommit((r, v) -> r.ratioProperty().setValue(v));
 
         /* Create the dilution column */
-        TethysFXTableDilutionColumn<TethysDataId, TethysFXTableItem> myDilutionColumn = theTable.declareDilutionColumn(TethysDataId.DILUTION);
+        final TethysFXTableDilutionColumn<TethysDataId, TethysFXTableItem> myDilutionColumn = theTable.declareDilutionColumn(TethysDataId.DILUTION);
         myDilutionColumn.setCellValueFactory(p -> p.getValue().dilutionProperty());
         myDilutionColumn.setOnCommit((r, v) -> r.dilutionProperty().setValue(v));
 
         /* Create the dilutedPrice column */
-        TethysFXTableDilutedPriceColumn<TethysDataId, TethysFXTableItem> myDilutedPriceColumn = theTable.declareDilutedPriceColumn(TethysDataId.DILUTEDPRICE);
+        final TethysFXTableDilutedPriceColumn<TethysDataId, TethysFXTableItem> myDilutedPriceColumn = theTable.declareDilutedPriceColumn(TethysDataId.DILUTEDPRICE);
         myDilutedPriceColumn.setCellValueFactory(p -> p.getValue().dilutedPriceProperty());
         myDilutedPriceColumn.setOnCommit((r, v) -> r.dilutedPriceProperty().setValue(v));
 
         /* Create the boolean column */
-        TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
+        final TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
         myBoolColumn.setCellValueFactory(p -> p.getValue().booleanProperty());
         myBoolColumn.setOnCommit((r, v) -> r.booleanProperty().setValue(v));
         myBoolColumn.setName("B");
-        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         myBoolColumn.setIconMapSet(p -> myMapSet);
 
         /* Create the extra boolean column */
-        TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myXtraBoolColumn = theTable.declareIconColumn(TethysDataId.XTRABOOL, Boolean.class);
+        final TethysFXTableIconColumn<Boolean, TethysDataId, TethysFXTableItem> myXtraBoolColumn = theTable.declareIconColumn(TethysDataId.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setCellValueFactory(p -> p.getValue().xtraBooleanProperty());
         myXtraBoolColumn.setOnCommit((r, v) -> r.xtraBooleanProperty().setValue(v));
         myXtraBoolColumn.setName("X");
         myXtraBoolColumn.setCellEditable(p -> p.booleanProperty().getValue());
-        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
         myXtraBoolColumn.setIconMapSet(p -> myMap.get(p.booleanProperty().getValue()
                                                                                      ? IconState.OPEN
                                                                                      : IconState.CLOSED));
         myXtraBoolColumn.setRepaintColumnId(TethysDataId.BOOLEAN);
 
         /* Create the scroll column */
-        TethysFXTableScrollColumn<String, TethysDataId, TethysFXTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
+        final TethysFXTableScrollColumn<String, TethysDataId, TethysFXTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
         myScrollColumn.setCellValueFactory(p -> p.getValue().scrollProperty());
         myScrollColumn.setOnCommit((r, v) -> r.scrollProperty().setValue(v));
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
-        TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST);
+        final TethysFXTableListColumn<TethysListId, TethysDataId, TethysFXTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST);
         myListColumn.setCellValueFactory(p -> p.getValue().listProperty());
         myListColumn.setOnCommit((r, v) -> r.listProperty().setValue(v));
         myListColumn.setSelectables(r -> theHelper.buildSelectableList());
 
         /* Create the password column */
-        TethysFXTableCharArrayColumn<TethysDataId, TethysFXTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);
+        final TethysFXTableCharArrayColumn<TethysDataId, TethysFXTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);
         myPassColumn.setCellValueFactory(p -> p.getValue().passwordProperty());
         myPassColumn.setOnCommit((r, v) -> r.passwordProperty().setValue(v));
 
         /* Create the updates column */
-        TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
+        final TethysFXTableIntegerColumn<TethysDataId, TethysFXTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
         myUpdatesColumn.setCellValueFactory(p -> p.getValue().updatesProperty());
         myUpdatesColumn.setName("U");
         myUpdatesColumn.setEditable(false);
@@ -223,8 +218,8 @@ public class TethysFXTableExample
     @Override
     public void start(final Stage pStage) {
         /* Create scene */
-        BorderPane myPane = new BorderPane();
-        Scene myScene = new Scene(myPane);
+        final BorderPane myPane = new BorderPane();
+        final Scene myScene = new Scene(myPane);
         theGuiFactory.registerScene(myScene);
         myPane.setCenter(theTable.getNode());
         pStage.setTitle("JavaFXTable Demo");

@@ -157,7 +157,7 @@ public class TethysFXColorPicker
          * Constructor.
          * @param pColor the colour.
          */
-        private TethysSwatch(final Color pColor) {
+        TethysSwatch(final Color pColor) {
             /* Specify colours */
             setStroke(Color.BLACK);
             setFill(pColor);

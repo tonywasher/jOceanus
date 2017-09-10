@@ -105,7 +105,7 @@ public abstract class TethysFXDataTextField<T>
     /**
      * The error style class.
      */
-    private static final String STYLE_ERROR = STYLE_FIELD + "-error";
+    static final String STYLE_ERROR = STYLE_FIELD + "-error";
 
     /**
      * The alternate style class.

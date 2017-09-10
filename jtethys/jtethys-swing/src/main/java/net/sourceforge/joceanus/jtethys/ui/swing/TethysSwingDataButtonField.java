@@ -62,7 +62,7 @@ public final class TethysSwingDataButtonField {
      * IconButtonField class.
      * @param <T> the data type
      */
-    public static class TethysSwingIconButtonField<T>
+    public static final class TethysSwingIconButtonField<T>
             extends TethysSwingDataTextField<T>
             implements TethysIconButtonField<T, JComponent, Icon> {
         /**
@@ -184,7 +184,7 @@ public final class TethysSwingDataButtonField {
      * ScrollButtonField class.
      * @param <T> the data type
      */
-    public static class TethysSwingScrollButtonField<T>
+    public static final class TethysSwingScrollButtonField<T>
             extends TethysSwingDataTextField<T>
             implements TethysScrollButtonField<T, JComponent, Icon> {
         /**

@@ -95,7 +95,8 @@ public final class TethysSwingGuiUtils {
     public static JComponent addPanelBorder(final String pTitle,
                                             final Integer pPadding,
                                             final JComponent pNode) {
-        if ((pPadding == null) && (pTitle == null)) {
+        if (pPadding == null
+            && pTitle == null) {
             return pNode;
         } else {
             final JComponent myNode = new JPanel(new BorderLayout());

@@ -150,7 +150,7 @@ public class TethysSwingTableItem {
         theRatio = TethysScrollUITestHelper.RATIO_DEF;
         theDilution = TethysScrollUITestHelper.DILUTION_DEF;
         theList = pHelper.buildSelectedList();
-        theUpdates = new Integer(0);
+        theUpdates = Integer.valueOf(0);
     }
 
     /**

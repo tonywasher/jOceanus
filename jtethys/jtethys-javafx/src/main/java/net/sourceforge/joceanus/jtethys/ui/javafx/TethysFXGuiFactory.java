@@ -177,10 +177,7 @@ public class TethysFXGuiFactory
     private void addValueToBuffer(final StringBuilder pBuffer,
                                   final String pName) {
         /* Add the name */
-        pBuffer.append(pName);
-        pBuffer.append(":");
-        pBuffer.append(getValueSet().getValueForKey(pName));
-        pBuffer.append(";");
+        pBuffer.append(pName).append(':').append(getValueSet().getValueForKey(pName)).append(';');
     }
 
     /**

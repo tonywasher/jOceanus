@@ -77,6 +77,22 @@ public class TethysFXTabPaneManager
         return theNode;
     }
 
+    /**
+     * Obtain the tabPane.
+     * @return the tabPane
+     */
+    TabPane getTabPane() {
+        return theTabPane;
+    }
+
+    /**
+     * Obtain the selection model.
+     * @return the selection model
+     */
+    SingleSelectionModel<Tab> getSelectionModel() {
+        return theModel;
+    }
+
     @Override
     public void setVisible(final boolean pVisible) {
         theNode.setManaged(pVisible);
@@ -168,7 +184,7 @@ public class TethysFXTabPaneManager
             theNode = pItem;
 
             /* Add to the TabPane */
-            theTabList = getPane().theTabPane.getTabs();
+            theTabList = getPane().getTabPane().getTabs();
             theTabList.add(theTab);
         }
 
@@ -198,7 +214,7 @@ public class TethysFXTabPaneManager
         public void selectItem() {
             if (isVisible()) {
                 final int myIndex = countPreviousVisibleSiblings();
-                getPane().theModel.select(myIndex);
+                getPane().getSelectionModel().select(myIndex);
             }
         }
 

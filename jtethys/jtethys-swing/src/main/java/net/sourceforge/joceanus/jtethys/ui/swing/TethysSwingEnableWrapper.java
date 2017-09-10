@@ -34,17 +34,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 /**
  * Wrappers for simple Swing objects that enable/disable child elements.
  */
-public final class TethysSwingEnableWrapper {
-    /**
-     * Constructor.
-     */
-    protected TethysSwingEnableWrapper() {
-    }
-
+public interface TethysSwingEnableWrapper {
     /**
      * Panel Enabler Wrapper.
      */
-    public static class TethysSwingEnablePanel
+    class TethysSwingEnablePanel
             extends JPanel
             implements TethysNode<JComponent> {
         /**
@@ -83,7 +77,7 @@ public final class TethysSwingEnableWrapper {
         @Override
         public void setEnabled(final boolean bEnabled) {
             /* Loop through the registered components */
-            for (Component myComp : theList) {
+            for (final Component myComp : theList) {
                 /* Pass call on */
                 myComp.setEnabled(bEnabled);
             }

@@ -380,10 +380,7 @@ public abstract class TethysSwingDataTextField<T>
 
                 @Override
                 public void focusLost(final FocusEvent e) {
-                    processValue();
-                    if (theErrorText == null) {
-                        handleFocusLost();
-                    }
+                    handleFocusLost();
                 }
             });
 
@@ -417,7 +414,7 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Process value.
          */
-        private void processValue() {
+        void processValue() {
             /* Convert zero-length string to null */
             String myText = theTextField.getText();
             if (myText.length() == 0) {
@@ -450,7 +447,7 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Clear Error indication.
          */
-        private void clearError() {
+        void clearError() {
             /* Clear error indications */
             theTextField.setToolTipText(null);
             theErrorText = null;
@@ -473,9 +470,12 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Handle focusLost.
          */
-        private void handleFocusLost() {
-            theTextField.setText(theControl.getDisplayText());
-            haltCellEditing();
+        void handleFocusLost() {
+            processValue();
+            if (theErrorText == null) {
+                theTextField.setText(theControl.getDisplayText());
+                haltCellEditing();
+            }
         }
 
         @Override
@@ -533,7 +533,7 @@ public abstract class TethysSwingDataTextField<T>
              * handle escapeKey.
              */
             private void handleEscapeKey() {
-                theTextField.setText(theControl.getEditText());
+                resetEditText();
                 clearError();
                 haltCellEditing();
             }
@@ -550,7 +550,7 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Halt cell editing.
          */
-        private void haltCellEditing() {
+        void haltCellEditing() {
             if (isCellEditing) {
                 setEditable(false);
                 if (!theControl.parsedNewValue()) {
@@ -558,6 +558,13 @@ public abstract class TethysSwingDataTextField<T>
                 }
             }
             isCellEditing = false;
+        }
+
+        /**
+         * Reset edit text.
+         */
+        void resetEditText() {
+            theTextField.setText(theControl.getEditText());
         }
     }
 

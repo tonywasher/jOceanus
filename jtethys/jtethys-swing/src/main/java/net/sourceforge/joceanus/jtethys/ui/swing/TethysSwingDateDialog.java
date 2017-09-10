@@ -31,7 +31,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -68,63 +67,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Swing Date Dialog.
  */
-public class TethysSwingDateDialog
+public final class TethysSwingDateDialog
         implements TethysEventProvider<TethysUIEvent> {
-    /**
-     * Standard font name.
-     */
-    private static final String FONT_NAME = "Courier";
-
-    /**
-     * Standard font size.
-     */
-    private static final int FONT_SIZE = 10;
-
-    /**
-     * Standard font.
-     */
-    private static final Font FONT_STANDARD = new Font(FONT_NAME, Font.PLAIN, FONT_SIZE);
-
-    /**
-     * Inactive font.
-     */
-    private static final Font FONT_INACTIVE = new Font(FONT_NAME, Font.ITALIC, FONT_SIZE);
-
-    /**
-     * Selected font.
-     */
-    private static final Font FONT_SELECTED = new Font(FONT_NAME, Font.BOLD, FONT_SIZE);
-
-    /**
-     * ToolTip for Current Day.
-     */
-    private static final String NLS_CURRENTDAY = TethysDateResource.DIALOG_CURRENT.getValue();
-
-    /**
-     * ToolTip for Selected Day.
-     */
-    private static final String NLS_SELECTEDDAY = TethysDateResource.DIALOG_SELECTED.getValue();
-
-    /**
-     * ToolTip for Next Month.
-     */
-    private static final String NLS_NEXTMONTH = TethysDateResource.DIALOG_NEXTMONTH.getValue();
-
-    /**
-     * ToolTip for Previous Month.
-     */
-    private static final String NLS_PREVMONTH = TethysDateResource.DIALOG_PREVMONTH.getValue();
-
-    /**
-     * ToolTip for Next Year.
-     */
-    private static final String NLS_NEXTYEAR = TethysDateResource.DIALOG_NEXTYEAR.getValue();
-
-    /**
-     * ToolTip for Previous Year.
-     */
-    private static final String NLS_PREVYEAR = TethysDateResource.DIALOG_PREVYEAR.getValue();
-
     /**
      * Null Date selection text.
      */
@@ -213,8 +157,8 @@ public class TethysSwingDateDialog
         /* Set this to be the main panel */
         theContainer = new JPanel(new BorderLayout());
         theContainer.setBorder(BorderFactory.createLineBorder(Color.black));
-        theContainer.add(theNavigation, BorderLayout.NORTH);
-        theContainer.add(theDaysPanel, BorderLayout.CENTER);
+        theContainer.add(theNavigation.getPanel(), BorderLayout.NORTH);
+        theContainer.add(theDaysPanel.getPanel(), BorderLayout.CENTER);
         theDialog.setContentPane(theContainer);
         theDialog.pack();
 
@@ -262,7 +206,7 @@ public class TethysSwingDateDialog
     /**
      * Build the month.
      */
-    private void buildMonth() {
+    void buildMonth() {
         /* Build the month */
         theNavigation.buildMonth();
         theDaysPanel.buildMonth();
@@ -272,7 +216,7 @@ public class TethysSwingDateDialog
      * Set Selected Date.
      * @param pDay the Selected day
      */
-    private void setSelected(final int pDay) {
+    void setSelected(final int pDay) {
         /* Set the selected day */
         theConfig.setSelectedDay(pDay);
 
@@ -289,7 +233,7 @@ public class TethysSwingDateDialog
     /**
      * Resize the dialog.
      */
-    private void reSizeDialog() {
+    void reSizeDialog() {
         theDialog.pack();
     }
 
@@ -383,7 +327,7 @@ public class TethysSwingDateDialog
     /**
      * Close non-Modal.
      */
-    private void closeNonModal() {
+    void closeNonModal() {
         /* Hide the dialog */
         theDialog.setVisible(false);
 
@@ -428,22 +372,41 @@ public class TethysSwingDateDialog
     /**
      * PanelNavigation class allowing navigation between months.
      */
-    private static final class PanelNavigation
-            extends JPanel {
+    private static final class PanelNavigation {
         /**
-         * Serial Id.
+         * ToolTip for Next Month.
          */
-        private static final long serialVersionUID = -1190726977851862746L;
+        private static final String NLS_NEXTMONTH = TethysDateResource.DIALOG_NEXTMONTH.getValue();
+
+        /**
+         * ToolTip for Previous Month.
+         */
+        private static final String NLS_PREVMONTH = TethysDateResource.DIALOG_PREVMONTH.getValue();
+
+        /**
+         * ToolTip for Next Year.
+         */
+        private static final String NLS_NEXTYEAR = TethysDateResource.DIALOG_NEXTYEAR.getValue();
+
+        /**
+         * ToolTip for Previous Year.
+         */
+        private static final String NLS_PREVYEAR = TethysDateResource.DIALOG_PREVYEAR.getValue();
+
+        /**
+         * The Panel.
+         */
+        private final JPanel thePanel;
 
         /**
          * The owning dialog.
          */
-        private final transient TethysSwingDateDialog theDialog;
+        private final TethysSwingDateDialog theDialog;
 
         /**
          * The Date Configuration.
          */
-        private final transient TethysDateConfig theConfig;
+        private final TethysDateConfig theConfig;
 
         /**
          * The Date Label.
@@ -474,9 +437,12 @@ public class TethysSwingDateDialog
          * Constructor.
          * @param pDialog the owning dialog
          */
-        private PanelNavigation(final TethysSwingDateDialog pDialog) {
+        PanelNavigation(final TethysSwingDateDialog pDialog) {
             /* Record the dialog */
             theDialog = pDialog;
+
+            /* Create the panel */
+            thePanel = new JPanel();
 
             /* Store the Date Configuration */
             theConfig = pDialog.getConfig();
@@ -497,11 +463,22 @@ public class TethysSwingDateDialog
             thePrevYearButton.setToolTipText(NLS_PREVYEAR);
 
             /* Listen for button events */
-            final NavigateListener myListener = new NavigateListener();
-            thePrevMonthButton.addActionListener(myListener);
-            theNextMonthButton.addActionListener(myListener);
-            thePrevYearButton.addActionListener(myListener);
-            theNextYearButton.addActionListener(myListener);
+            thePrevMonthButton.addActionListener(e -> {
+                theConfig.previousMonth();
+                theDialog.buildMonth();
+            });
+            theNextMonthButton.addActionListener(e -> {
+                theConfig.nextMonth();
+                theDialog.buildMonth();
+            });
+            thePrevYearButton.addActionListener(e -> {
+                theConfig.previousYear();
+                theDialog.buildMonth();
+            });
+            theNextYearButton.addActionListener(e -> {
+                theConfig.nextYear();
+                theDialog.buildMonth();
+            });
 
             /* Restrict the margins */
             thePrevMonthButton.setMargin(new Insets(1, 1, 1, 1));
@@ -510,16 +487,24 @@ public class TethysSwingDateDialog
             theNextYearButton.setMargin(new Insets(1, 1, 1, 1));
 
             /* Add these elements into a box */
-            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-            add(thePrevYearButton);
-            add(Box.createHorizontalStrut(1));
-            add(thePrevMonthButton);
-            add(Box.createHorizontalGlue());
-            add(theDateLabel);
-            add(Box.createHorizontalGlue());
-            add(theNextMonthButton);
-            add(Box.createHorizontalStrut(1));
-            add(theNextYearButton);
+            thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.X_AXIS));
+            thePanel.add(thePrevYearButton);
+            thePanel.add(Box.createHorizontalStrut(1));
+            thePanel.add(thePrevMonthButton);
+            thePanel.add(Box.createHorizontalGlue());
+            thePanel.add(theDateLabel);
+            thePanel.add(Box.createHorizontalGlue());
+            thePanel.add(theNextMonthButton);
+            thePanel.add(Box.createHorizontalStrut(1));
+            thePanel.add(theNextYearButton);
+        }
+
+        /**
+         * Obtain the panel.
+         * @return the panel
+         */
+        JPanel getPanel() {
+            return thePanel;
         }
 
         /**
@@ -549,49 +534,12 @@ public class TethysSwingDateDialog
             theNextMonthButton.setEnabled(!TethysDateConfig.isSameMonth(myLatest, myBase));
             theNextYearButton.setEnabled(!TethysDateConfig.isSameYear(myLatest, myBase));
         }
-
-        /**
-         * Action Listener for buttons.
-         */
-        private class NavigateListener
-                implements ActionListener {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                /* Access the event source */
-                final Object src = e.getSource();
-
-                /* If the button is previous month */
-                if (thePrevMonthButton.equals(src)) {
-                    /* Adjust the month */
-                    theConfig.previousMonth();
-                    theDialog.buildMonth();
-                } else if (theNextMonthButton.equals(src)) {
-                    /* Adjust the month */
-                    theConfig.nextMonth();
-                    theDialog.buildMonth();
-                } else if (thePrevYearButton.equals(src)) {
-                    /* Adjust the month */
-                    theConfig.previousYear();
-                    theDialog.buildMonth();
-                } else if (theNextYearButton.equals(src)) {
-                    /* Adjust the month */
-                    theConfig.nextYear();
-                    theDialog.buildMonth();
-                }
-            }
-        }
     }
 
     /**
      * PanelMonth class representing the set of PanelDay labels in a month.
      */
-    private static final class PanelMonth
-            extends JPanel {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -4924971642341121199L;
-
+    private static final class PanelMonth {
         /**
          * Number of days in week.
          */
@@ -605,7 +553,7 @@ public class TethysSwingDateDialog
         /**
          * The array of days of week (in column order).
          */
-        private final transient DayOfWeek[] theDaysOfWk = new DayOfWeek[DAYS_IN_WEEK];
+        private final DayOfWeek[] theDaysOfWk = new DayOfWeek[DAYS_IN_WEEK];
 
         /**
          * The Array of Day Names.
@@ -618,14 +566,19 @@ public class TethysSwingDateDialog
         private final PanelDay[][] theDays = new PanelDay[MAX_WEEKS_IN_MONTH][DAYS_IN_WEEK];
 
         /**
+         * The Panel.
+         */
+        private final JPanel thePanel;
+
+        /**
          * The Dialog.
          */
-        private final transient TethysSwingDateDialog theDialog;
+        private final TethysSwingDateDialog theDialog;
 
         /**
          * The Date Configuration.
          */
-        private final transient TethysDateConfig theConfig;
+        private final TethysDateConfig theConfig;
 
         /**
          * The number of currently visible rows.
@@ -636,7 +589,10 @@ public class TethysSwingDateDialog
          * Constructor.
          * @param pDialog the owning dialog
          */
-        private PanelMonth(final TethysSwingDateDialog pDialog) {
+        PanelMonth(final TethysSwingDateDialog pDialog) {
+            /* Create the panel */
+            thePanel = new JPanel();
+
             /* Store the dialog */
             theDialog = pDialog;
 
@@ -647,7 +603,7 @@ public class TethysSwingDateDialog
             final GridLayout myLayout = new GridLayout();
             myLayout.setColumns(DAYS_IN_WEEK);
             myLayout.setRows(0);
-            setLayout(myLayout);
+            thePanel.setLayout(myLayout);
 
             /* Loop through the labels */
             for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
@@ -661,7 +617,7 @@ public class TethysSwingDateDialog
                 myLabel.setOpaque(true);
 
                 /* Add to the grid */
-                add(myLabel);
+                thePanel.add(myLabel);
             }
 
             /* Add the Days to the layout */
@@ -669,9 +625,17 @@ public class TethysSwingDateDialog
                 for (int iCol = 0; iCol < DAYS_IN_WEEK; iCol++) {
                     final PanelDay myDay = new PanelDay(pDialog);
                     theDays[iRow][iCol] = myDay;
-                    add(myDay);
+                    thePanel.add(myDay.getLabel());
                 }
             }
+        }
+
+        /**
+         * Obtain the panel.
+         * @return the panel
+         */
+        JPanel getPanel() {
+            return thePanel;
         }
 
         /**
@@ -685,18 +649,18 @@ public class TethysSwingDateDialog
                 theNumRows--;
 
                 /* Loop through remaining rows */
-                for (PanelDay day : theDays[theNumRows]) {
+                for (final PanelDay day : theDays[theNumRows]) {
                     /* Remove from panel */
-                    remove(day);
+                    thePanel.remove(day.getLabel());
                 }
             }
 
             /* Show any hidden rows that should now be visible */
             while (iNumRows > theNumRows) {
                 /* Loop through remaining rows */
-                for (PanelDay day : theDays[theNumRows]) {
+                for (final PanelDay day : theDays[theNumRows]) {
                     /* Add to panel */
-                    add(day);
+                    thePanel.add(day.getLabel());
                 }
 
                 /* Increment number of rows */
@@ -828,7 +792,7 @@ public class TethysSwingDateDialog
         /**
          * build Day names.
          */
-        private void buildDayNames() {
+        void buildDayNames() {
             /* Get todays date */
             final Locale myLocale = theConfig.getLocale();
             final Calendar myDate = Calendar.getInstance(myLocale);
@@ -870,18 +834,7 @@ public class TethysSwingDateDialog
     /**
      * Panel class representing a single day in the panel.
      */
-    private static final class PanelDay
-            extends JLabel {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -6287784334912236592L;
-
-        /**
-         * Owning dialog.
-         */
-        private final transient TethysSwingDateDialog theDialog;
-
+    private static final class PanelDay {
         /**
          * The standard border.
          */
@@ -896,6 +849,51 @@ public class TethysSwingDateDialog
          * The highlighted border.
          */
         private static final Border BORDER_HLT = BorderFactory.createLineBorder(Color.orange);
+
+        /**
+         * Standard font name.
+         */
+        private static final String FONT_NAME = "Courier";
+
+        /**
+         * Standard font size.
+         */
+        private static final int FONT_SIZE = 10;
+
+        /**
+         * Standard font.
+         */
+        private static final Font FONT_STANDARD = new Font(FONT_NAME, Font.PLAIN, FONT_SIZE);
+
+        /**
+         * Inactive font.
+         */
+        private static final Font FONT_INACTIVE = new Font(FONT_NAME, Font.ITALIC, FONT_SIZE);
+
+        /**
+         * Selected font.
+         */
+        private static final Font FONT_SELECTED = new Font(FONT_NAME, Font.BOLD, FONT_SIZE);
+
+        /**
+         * ToolTip for Current Day.
+         */
+        private static final String NLS_CURRENTDAY = TethysDateResource.DIALOG_CURRENT.getValue();
+
+        /**
+         * ToolTip for Selected Day.
+         */
+        private static final String NLS_SELECTEDDAY = TethysDateResource.DIALOG_SELECTED.getValue();
+
+        /**
+         * The Label.
+         */
+        private final JLabel theLabel;
+
+        /**
+         * Owning dialog.
+         */
+        private final TethysSwingDateDialog theDialog;
 
         /**
          * The Day that this Label represents.
@@ -925,7 +923,7 @@ public class TethysSwingDateDialog
         /**
          * The border.
          */
-        private transient Border theBorder;
+        private Border theBorder;
 
         /**
          * The toolTip.
@@ -936,14 +934,25 @@ public class TethysSwingDateDialog
          * Constructor.
          * @param pDialog the owning dialog
          */
-        private PanelDay(final TethysSwingDateDialog pDialog) {
+        PanelDay(final TethysSwingDateDialog pDialog) {
             /* Store the parameter */
             theDialog = pDialog;
 
+            /* Create the label */
+            theLabel = new JLabel();
+
             /* Initialise values */
-            setHorizontalAlignment(SwingConstants.CENTER);
-            setOpaque(true);
-            addMouseListener(new CalendarMouse(this));
+            theLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            theLabel.setOpaque(true);
+            theLabel.addMouseListener(new CalendarMouse());
+        }
+
+        /**
+         * Obtain the label.
+         * @return the label
+         */
+        JLabel getLabel() {
+            return theLabel;
         }
 
         /**
@@ -951,35 +960,35 @@ public class TethysSwingDateDialog
          * @param pDay the Day number
          * @param pSelectable is the day select-able
          */
-        private void setDay(final int pDay,
-                            final boolean pSelectable) {
+        void setDay(final int pDay,
+                    final boolean pSelectable) {
             /* Record the day */
             theDay = pDay;
             isSelectable = pSelectable;
 
             /* Set the text for the item */
             if (pDay > 0) {
-                setText(Integer.toString(theDay));
+                theLabel.setText(Integer.toString(theDay));
             } else {
-                setText("");
+                theLabel.setText("");
             }
 
             /* Set Characteristics */
-            setFont(theFont);
-            setForeground(theForeGround);
-            setBackground(theBackGround);
-            setBorder(theBorder);
-            setToolTipText(theToolTip);
+            theLabel.setFont(theFont);
+            theLabel.setForeground(theForeGround);
+            theLabel.setBackground(theBackGround);
+            theLabel.setBorder(theBorder);
+            theLabel.setToolTipText(theToolTip);
 
             /* Enable/Disable the label */
-            setEnabled(isSelectable);
+            theLabel.setEnabled(isSelectable);
         }
 
         /**
          * Reset a Day Label.
          * @param isActive true/false
          */
-        private void resetDay(final boolean isActive) {
+        void resetDay(final boolean isActive) {
             /* Record detail */
             theFont = isActive
                                ? FONT_STANDARD
@@ -994,7 +1003,7 @@ public class TethysSwingDateDialog
         /**
          * Set a day as a Weekend.
          */
-        private void setWeekend() {
+        void setWeekend() {
             /* Record detail */
             theForeGround = Color.red;
         }
@@ -1002,7 +1011,7 @@ public class TethysSwingDateDialog
         /**
          * Set a day as Current Day.
          */
-        private void setCurrent() {
+        void setCurrent() {
             /* Record detail */
             theForeGround = Color.blue;
             theBackGround = Color.gray;
@@ -1012,7 +1021,7 @@ public class TethysSwingDateDialog
         /**
          * Set a day as Selected Day.
          */
-        private void setSelected() {
+        void setSelected() {
             /* Record detail */
             theFont = FONT_SELECTED;
             theForeGround = Color.green.darker();
@@ -1022,46 +1031,53 @@ public class TethysSwingDateDialog
         }
 
         /**
+         * Handle mouseClicked.
+         */
+        void handleMouseClicked() {
+            /* If item is select-able */
+            if (isSelectable) {
+                theDialog.setSelected(theDay);
+            }
+        }
+
+        /**
+         * Handle mouseEntered.
+         */
+        void handleMouseEntered() {
+            /* Highlight the border of a select-able item */
+            if (isSelectable) {
+                theLabel.setBorder(BORDER_HLT);
+            }
+        }
+
+        /**
+         * Handle mouseExited.
+         */
+        void handleMouseExited() {
+            /* Reset border to standard for label that has changed */
+            if (isSelectable) {
+                theLabel.setBorder(theBorder);
+            }
+        }
+
+        /**
          * CalendarMouse.
          */
         private final class CalendarMouse
                 extends MouseAdapter {
-            /**
-             * The Day Panel.
-             */
-            private final PanelDay theOwner;
-
-            /**
-             * Constructor.
-             * @param pOwner the owning panel
-             */
-            private CalendarMouse(final PanelDay pOwner) {
-                /* Store parameters */
-                theOwner = pOwner;
-            }
-
             @Override
             public void mouseClicked(final MouseEvent e) {
-                /* If item is select-able */
-                if (isSelectable) {
-                    theDialog.setSelected(theDay);
-                }
+                handleMouseClicked();
             }
 
             @Override
             public void mouseEntered(final MouseEvent e) {
-                /* Highlight the border of a select-able item */
-                if (isSelectable) {
-                    theOwner.setBorder(BORDER_HLT);
-                }
+                handleMouseEntered();
             }
 
             @Override
             public void mouseExited(final MouseEvent e) {
-                /* Reset border to standard for label that has changed */
-                if (isSelectable) {
-                    theOwner.setBorder(theBorder);
-                }
+                handleMouseExited();
             }
         }
     }

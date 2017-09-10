@@ -187,16 +187,16 @@ public class TethysSwingScrollUIExample {
     /**
      * Create and show the GUI.
      */
-    private static void createAndShowGUI() {
+    static void createAndShowGUI() {
         try {
             /* Create the frame */
-            JFrame myFrame = new JFrame("SwingScroll Demo");
+            final JFrame myFrame = new JFrame("SwingScroll Demo");
 
             /* Create the UI */
-            TethysSwingScrollUIExample myExample = new TethysSwingScrollUIExample();
+            final TethysSwingScrollUIExample myExample = new TethysSwingScrollUIExample();
 
             /* Build the panel */
-            TethysSwingGridPaneManager myPanel = myExample.buildPanel();
+            final TethysSwingGridPaneManager myPanel = myExample.buildPanel();
 
             /* Attach the panel to the frame */
             myPanel.getNode().setOpaque(true);
@@ -217,10 +217,10 @@ public class TethysSwingScrollUIExample {
      */
     private TethysSwingGridPaneManager buildPanel() {
         /* Create a panel */
-        TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
+        final TethysSwingGridPaneManager myGrid = theGuiFactory.newGridPane();
 
         /* Create context menu line */
-        TethysSwingLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
+        final TethysSwingLabel myContextArea = theGuiFactory.newLabel("Right-click for Menu");
         myContextArea.setBorderTitle("ContextArea");
         myContextArea.setAlignment(TethysAlignment.CENTRE);
         theContextValue.setBorderTitle("ContextValue");
@@ -241,7 +241,7 @@ public class TethysSwingScrollUIExample {
         /* Add listener */
         theScrollMenu.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* If we selected a value */
-            TethysScrollMenuItem<String> mySelected = theScrollMenu.getSelectedItem();
+            final TethysScrollMenuItem<String> mySelected = theScrollMenu.getSelectedItem();
             if (mySelected != null) {
                 setContextValue(mySelected.getValue());
             }
@@ -302,7 +302,7 @@ public class TethysSwingScrollUIExample {
         myGrid.addCell(theSimpleIconValue);
         myGrid.allowCellGrowth(theSimpleIconValue);
         myGrid.newRow();
-        TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
+        final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         theSimpleIconButtonMgr.setIconMapSet(() -> myMapSet);
         theSimpleIconButtonMgr.setValue(Boolean.FALSE);
 
@@ -311,7 +311,7 @@ public class TethysSwingScrollUIExample {
                 e -> setSimpleIconValue(e.getDetails(Boolean.class)));
 
         /* Create state icon button line */
-        TethysSwingBoxPaneManager myBox = theGuiFactory.newHBoxPane();
+        final TethysSwingBoxPaneManager myBox = theGuiFactory.newHBoxPane();
         myBox.addNode(theStateButtonMgr);
         myBox.addNode(theStateIconButtonMgr);
         myBox.setBorderTitle("StateIconButton");
@@ -324,7 +324,7 @@ public class TethysSwingScrollUIExample {
         myGrid.newRow();
 
         theHelper.buildStateButton(theStateButtonMgr);
-        Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
+        final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
         theStateIconButtonMgr.setIconMapSet(() -> myMap.get(theStateButtonMgr.getValue()));
         theStateIconButtonMgr.setNullMargins();
         theStateIconButtonMgr.setValue(Boolean.FALSE);

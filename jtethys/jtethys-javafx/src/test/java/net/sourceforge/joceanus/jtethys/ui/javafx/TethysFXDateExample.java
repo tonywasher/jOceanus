@@ -51,7 +51,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  * Provides a simple application that illustrates the features of JDateDay.
  * @author Tony Washer
  */
-public class TethysFXDateExample
+public final class TethysFXDateExample
         extends Application {
     /**
      * Inset depth.
@@ -107,24 +107,6 @@ public class TethysFXDateExample
      * Fifth sample date.
      */
     private static final TethysDate DATE_FIFTH = makeDate(2018, Month.FEBRUARY, 28);
-
-    @Override
-    public void start(final Stage pStage) {
-        TethysFXGridPaneManager myGrid = makePanel();
-        Scene myScene = new Scene(myGrid.getNode());
-        theGuiFactory.registerScene(myScene);
-        pStage.setTitle("TethysDate JavaFX Demo");
-        pStage.setScene(myScene);
-        pStage.show();
-    }
-
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        launch(args);
-    }
 
     /**
      * The GUI Factory.
@@ -221,6 +203,24 @@ public class TethysFXDateExample
      */
     private final TethysFXLabel theSelectedRange = theGuiFactory.newLabel();
 
+    @Override
+    public void start(final Stage pStage) {
+        final TethysFXGridPaneManager myGrid = makePanel();
+        final Scene myScene = new Scene(myGrid.getNode());
+        theGuiFactory.registerScene(myScene);
+        pStage.setTitle("TethysDate JavaFX Demo");
+        pStage.setScene(myScene);
+        pStage.show();
+    }
+
+    /**
+     * Main function.
+     * @param args the arguments
+     */
+    public static void main(final String[] args) {
+        launch(args);
+    }
+
     /**
      * Create the panel.
      * @return the panel
@@ -231,16 +231,16 @@ public class TethysFXDateExample
         makeTable();
 
         /* Create the range panel */
-        TethysFXGridPaneManager myRange = makeRangePanel();
+        final TethysFXGridPaneManager myRange = makeRangePanel();
 
         /* Create the style panel */
-        TethysFXGridPaneManager myStyle = makeStylePanel();
+        final TethysFXGridPaneManager myStyle = makeStylePanel();
 
         /* Create the options panel */
-        TethysFXBoxPaneManager myOptions = makeOptionsPanel();
+        final TethysFXBoxPaneManager myOptions = makeOptionsPanel();
 
         /* Create the panel */
-        TethysFXGridPaneManager myPanel = theGuiFactory.newGridPane();
+        final TethysFXGridPaneManager myPanel = theGuiFactory.newGridPane();
         myPanel.setHGap(GRID_GAP);
         myPanel.setVGap(GRID_GAP);
         myPanel.setBorderPadding(INSET_DEPTH);
@@ -263,7 +263,7 @@ public class TethysFXDateExample
         myPanel.setCellAlignment(theRangeSelect, TethysAlignment.CENTRE);
         myPanel.allowCellGrowth(theRangeSelect);
         myPanel.newRow();
-        TethysFXLabel mySelRange = theGuiFactory.newLabel("SelectedRange:");
+        final TethysFXLabel mySelRange = theGuiFactory.newLabel("SelectedRange:");
         myPanel.addCell(mySelRange);
         myPanel.addCell(theSelectedRange);
         myPanel.allowCellGrowth(theSelectedRange);
@@ -281,11 +281,11 @@ public class TethysFXDateExample
         makeRangeButtons();
 
         /* Create the additional labels */
-        TethysFXLabel myStart = theGuiFactory.newLabel("Start:");
-        TethysFXLabel myEnd = theGuiFactory.newLabel("End:");
+        final TethysFXLabel myStart = theGuiFactory.newLabel("Start:");
+        final TethysFXLabel myEnd = theGuiFactory.newLabel("End:");
 
         /* Create a Range sub-panel */
-        TethysFXGridPaneManager myRange = theGuiFactory.newGridPane();
+        final TethysFXGridPaneManager myRange = theGuiFactory.newGridPane();
         myRange.setHGap(GRID_GAP);
         myRange.setVGap(GRID_GAP);
         myRange.setBorderPadding(INSET_DEPTH);
@@ -318,11 +318,11 @@ public class TethysFXDateExample
         makeFormatList();
 
         /* Create the additional labels */
-        TethysFXLabel myFormat = theGuiFactory.newLabel("Format:");
-        TethysFXLabel myLocale = theGuiFactory.newLabel("Locale:");
+        final TethysFXLabel myFormat = theGuiFactory.newLabel("Format:");
+        final TethysFXLabel myLocale = theGuiFactory.newLabel("Locale:");
 
         /* Create a Style sub-panel */
-        TethysFXGridPaneManager myStyle = theGuiFactory.newGridPane();
+        final TethysFXGridPaneManager myStyle = theGuiFactory.newGridPane();
         myStyle.setHGap(GRID_GAP);
         myStyle.setVGap(GRID_GAP);
         myStyle.setBorderPadding(INSET_DEPTH);
@@ -352,7 +352,7 @@ public class TethysFXDateExample
         makeCheckBox();
 
         /* Create an options sub-panel */
-        TethysFXBoxPaneManager myOptions = theGuiFactory.newHBoxPane();
+        final TethysFXBoxPaneManager myOptions = theGuiFactory.newHBoxPane();
         myOptions.addSpacer();
         myOptions.addNode(theNullSelect);
         myOptions.addSpacer();
@@ -370,8 +370,8 @@ public class TethysFXDateExample
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
         theLocaleList = theGuiFactory.newScrollButton();
-        TethysFXScrollContextMenu<ShortLocale> myMenu = theLocaleList.getMenu();
-        for (ShortLocale myLocale : ShortLocale.values()) {
+        final TethysFXScrollContextMenu<ShortLocale> myMenu = theLocaleList.getMenu();
+        for (final ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
             myMenu.addItem(myLocale);
         }
@@ -382,7 +382,7 @@ public class TethysFXDateExample
         /* Action selections */
         theLocaleList.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
             /* Store the new locale */
-            ShortLocale myLocale = e.getDetails(ShortLocale.class);
+            final ShortLocale myLocale = e.getDetails(ShortLocale.class);
             theLocale.setValue(myLocale.getLocale());
             showNarrowDays.setValue(myLocale.showNarrowDays());
             theTable.repaintColumn(DateItem.PROP_DATE);
@@ -395,7 +395,7 @@ public class TethysFXDateExample
     private void makeFormatList() {
         /* Create the Combo box and populate it */
         theFormatList = theGuiFactory.newScrollButton();
-        TethysFXScrollContextMenu<String> myMenu = theFormatList.getMenu();
+        final TethysFXScrollContextMenu<String> myMenu = theFormatList.getMenu();
         myMenu.addItem(DATEFORMAT_1);
         myMenu.addItem(DATEFORMAT_2);
         myMenu.addItem(DATEFORMAT_3);
@@ -420,9 +420,9 @@ public class TethysFXDateExample
         theEndDate = theGuiFactory.newDateButton();
 
         /* Initialise the values */
-        TethysDate myStart = DATE_START;
-        TethysDate myEnd = DATE_END;
-        TethysDateRange myRange = new TethysDateRange(myStart, myEnd);
+        final TethysDate myStart = DATE_START;
+        final TethysDate myEnd = DATE_END;
+        final TethysDateRange myRange = new TethysDateRange(myStart, myEnd);
 
         /* Set the values */
         theStartDate.setSelectedDate(myStart);
@@ -468,21 +468,21 @@ public class TethysFXDateExample
 
         /* Handle changes to startDate */
         theStartDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            TethysDate myDate = theStartDate.getSelectedDate();
+            final TethysDate myDate = theStartDate.getSelectedDate();
             theEndDate.setEarliestDate(myDate);
             theRangeSelect.setOverallRange(new TethysDateRange(myDate, theEndDate.getSelectedDate()));
         });
 
         /* Handle changes to endDate */
         theEndDate.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            TethysDate myDate = theEndDate.getSelectedDate();
+            final TethysDate myDate = theEndDate.getSelectedDate();
             theEndDate.setLatestDate(myDate);
             theRangeSelect.setOverallRange(new TethysDateRange(theStartDate.getEarliestDate(), myDate));
         });
 
         /* Handle changes to range */
         theRangeSelect.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            TethysDateRange myRange = theRangeSelect.getRange();
+            final TethysDateRange myRange = theRangeSelect.getRange();
             theSelectedRange.setText(theDateFormatter.formatDateRange(myRange));
         });
     }
@@ -518,7 +518,7 @@ public class TethysFXDateExample
      */
     private void makeTable() {
         /* Create the list */
-        List<DateItem> myList = new ArrayList<DateItem>();
+        final List<DateItem> myList = new ArrayList<DateItem>();
         myList.add(new DateItem(DATE_FIRST, "First Entry"));
         myList.add(new DateItem(DATE_SECOND, "Second Entry"));
         myList.add(new DateItem(DATE_THIRD, "Third Entry"));
@@ -526,11 +526,11 @@ public class TethysFXDateExample
         myList.add(new DateItem(DATE_FIFTH, "Fifth Entry"));
 
         /* Create the Observable list */
-        ObservableList<DateItem> data = FXCollections.observableArrayList(myList);
+        final ObservableList<DateItem> data = FXCollections.observableArrayList(myList);
         theTable.setItems(data);
 
         /* Create the date column */
-        TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
+        final TethysFXTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
         myDateColumn.setCellValueFactory(p -> p.getValue().dateProperty());
         myDateColumn.setOnCommit((p, v) -> p.setDate(v));
         myDateColumn.setColumnWidth(COL_DATE_WIDTH);
@@ -541,7 +541,7 @@ public class TethysFXDateExample
         });
 
         /* Create the comments column */
-        TethysFXTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
+        final TethysFXTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
         myCommentsColumn.setCellValueFactory(p -> p.getValue().commentsProperty());
         myCommentsColumn.setOnCommit((p, v) -> p.setComments(v));
         myCommentsColumn.setColumnWidth(COL_COMMENT_WIDTH);
@@ -564,20 +564,20 @@ public class TethysFXDateExample
         /**
          * Date Property.
          */
-        private SimpleObjectProperty<TethysDate> theDate = new SimpleObjectProperty<TethysDate>(this, PROP_DATE);
+        private final SimpleObjectProperty<TethysDate> theDate = new SimpleObjectProperty<TethysDate>(this, PROP_DATE);
 
         /**
          * Comments Property.
          */
-        private SimpleStringProperty theComments = new SimpleStringProperty(this, PROP_COMMENTS);
+        private final SimpleStringProperty theComments = new SimpleStringProperty(this, PROP_COMMENTS);
 
         /**
          * Constructor.
          * @param pDate the date
          * @param pComments the comments
          */
-        private DateItem(final TethysDate pDate,
-                         final String pComments) {
+        DateItem(final TethysDate pDate,
+                 final String pComments) {
             /* Store parameters */
             theDate.set(pDate);
             theComments.set(pComments);

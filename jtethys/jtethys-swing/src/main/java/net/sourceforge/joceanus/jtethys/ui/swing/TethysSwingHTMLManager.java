@@ -63,11 +63,6 @@ public class TethysSwingHTMLManager
     private final JEditorPane theEditor;
 
     /**
-     * HTMLEditorKit.
-     */
-    private final HTMLEditorKit theEditorKit;
-
-    /**
      * Base StyleSheet.
      */
     private final StyleSheet theBaseStyleSheet;
@@ -91,11 +86,11 @@ public class TethysSwingHTMLManager
         theEditor.setContentType("text/html");
 
         /* Add an editor kit to the editor */
-        theEditorKit = new HTMLEditorKit();
-        theEditor.setEditorKit(theEditorKit);
+        final HTMLEditorKit myEditorKit = new HTMLEditorKit();
+        theEditor.setEditorKit(myEditorKit);
 
         /* Create the document for the window */
-        final HTMLDocument myDoc = (HTMLDocument) theEditorKit.createDefaultDocument();
+        final HTMLDocument myDoc = (HTMLDocument) myEditorKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
         /* Obtain the base styleSheet */
@@ -170,6 +165,34 @@ public class TethysSwingHTMLManager
     }
 
     /**
+     * Handle HyperLink.
+     * @param pEvent the event
+     */
+    void handleFrameHyperLinkEvent(final HTMLFrameHyperlinkEvent pEvent) {
+        final HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
+        doc.processHTMLFrameHyperlinkEvent(pEvent);
+    }
+
+    /**
+     * Handle HyperLink.
+     * @param pEvent the event
+     */
+    void handleHyperLinkEvent(final HyperlinkEvent pEvent) {
+        final URL url = pEvent.getURL();
+        try {
+            final String myDesc = pEvent.getDescription();
+            if (url == null) {
+                /* display the new page */
+                processReference(myDesc);
+            } else {
+                theEditor.setPage(url);
+            }
+        } catch (IOException t) {
+            LOGGER.error(ERROR_STREAM, t);
+        }
+    }
+
+    /**
      * HyperLinkListener.
      */
     private class HTMLListener
@@ -182,24 +205,11 @@ public class TethysSwingHTMLManager
             }
             /* If this is a Frame hyper link event */
             if (e instanceof HTMLFrameHyperlinkEvent) {
-                final HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
-                final HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
-                doc.processHTMLFrameHyperlinkEvent(evt);
+                handleFrameHyperLinkEvent((HTMLFrameHyperlinkEvent) e);
 
                 /* else look for a URL */
             } else {
-                final URL url = e.getURL();
-                try {
-                    final String myDesc = e.getDescription();
-                    if (url == null) {
-                        /* display the new page */
-                        processReference(myDesc);
-                    } else {
-                        theEditor.setPage(e.getURL());
-                    }
-                } catch (IOException t) {
-                    LOGGER.error(ERROR_STREAM, t);
-                }
+                handleHyperLinkEvent(e);
             }
         }
     }
