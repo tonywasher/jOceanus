@@ -187,16 +187,12 @@ public class ThemisBackup {
         /* Build the underlying string */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Build the repository */
-        myBuilder.append(thePreferences.getStringValue(ThemisSvnPreferenceKey.BASE));
-
-        /* Build the prefix directory */
-        myBuilder.append(ThemisSvnRepository.SEP_URL);
-        myBuilder.append(ThemisSvnRepository.PFIX_URL);
-
-        /* Build the component directory */
-        myBuilder.append(ThemisSvnRepository.SEP_URL);
-        myBuilder.append(pName);
+        /* Build the repository URL */
+        myBuilder.append(thePreferences.getStringValue(ThemisSvnPreferenceKey.BASE))
+                .append(ThemisSvnRepository.SEP_URL)
+                .append(ThemisSvnRepository.PFIX_URL)
+                .append(ThemisSvnRepository.SEP_URL)
+                .append(pName);
 
         /* Return the path */
         return myBuilder.toString();
@@ -214,7 +210,6 @@ public class ThemisBackup {
                                   final File pBackupDir) throws OceanusException {
         /* Access the name of the repository */
         final String myName = pRepository.getName();
-        final File myEntryName = new File(DATA_NAME);
 
         /* Determine the prefix for backups */
         final String myPrefix = thePreferences.getStringValue(ThemisSvnPreferenceKey.PFIX);
@@ -265,6 +260,7 @@ public class ThemisBackup {
 
         /* Create a new password hash */
         final GordianKeySetHash myHash = pManager.newKeySetHash(myName);
+        final File myEntryName = new File(DATA_NAME);
 
         /* Protect against exceptions */
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);
@@ -315,7 +311,7 @@ public class ThemisBackup {
 
         /* Loop through the repository directories */
         int iNumStages = 0;
-        for (File myRepository : myRepo.listFiles()) {
+        for (final File myRepository : myRepo.listFiles()) {
             /* Count if its is a directory */
             if (myRepository.isDirectory()) {
                 iNumStages++;
@@ -326,7 +322,7 @@ public class ThemisBackup {
         theStatus.setNumStages(iNumStages);
 
         /* Loop through the repository directories */
-        for (File myRepository : myRepo.listFiles()) {
+        for (final File myRepository : myRepo.listFiles()) {
             /* Ignore if its is not a directory */
             if (!myRepository.isDirectory()) {
                 continue;

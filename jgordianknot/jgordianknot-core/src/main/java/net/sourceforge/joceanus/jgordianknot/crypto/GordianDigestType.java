@@ -158,7 +158,7 @@ public enum GordianDigestType {
      * @return true/false
      */
     public boolean isLengthValid(final GordianLength pLength) {
-        for (GordianLength myLength : theLengths) {
+        for (final GordianLength myLength : theLengths) {
             if (myLength.equals(pLength)) {
                 return true;
             }
@@ -217,9 +217,9 @@ public enum GordianDigestType {
                 return pLength.getSha2ExtendedState();
             case SKEIN:
                 final GordianLength myState = pLength.getSkeinExtendedState();
-                return myState != pLength
-                                          ? myState
-                                          : null;
+                return !pLength.equals(myState)
+                                                ? myState
+                                                : null;
             default:
                 return null;
         }

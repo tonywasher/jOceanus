@@ -195,7 +195,8 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
 
     @Override
     public int hashCode() {
-        return (theRepository.hashCode() * ThemisScmRepository.HASH_PRIME) + theName.hashCode();
+        return theRepository.hashCode() * ThemisScmRepository.HASH_PRIME
+               + theName.hashCode();
     }
 
     /**

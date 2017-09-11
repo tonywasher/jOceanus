@@ -64,7 +64,7 @@ public class GordianCipherInputStream<T>
          * Constructor.
          * @param pCipher the decryption cipher
          */
-        private CipherBuffer(final GordianCipher<T> pCipher) {
+        CipherBuffer(final GordianCipher<T> pCipher) {
             theCipher = pCipher;
         }
 

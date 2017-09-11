@@ -43,7 +43,7 @@ public class GordianDigestInputStream
     /**
      * The expected result.
      */
-    private byte[] theExpected;
+    private final byte[] theExpected;
 
     /**
      * Constructor.
@@ -59,7 +59,7 @@ public class GordianDigestInputStream
 
         /* Store parameters */
         theDigest = pDigest;
-        theExpected = pExpected;
+        theExpected = Arrays.copyOf(pExpected, pExpected.length);
 
         /* Create processed buffer */
         setProcessedBuffer(new DigestBuffer(this));
@@ -77,7 +77,7 @@ public class GordianDigestInputStream
      * Check result.
      * @throws OceanusException on error
      */
-    private void checkResult() throws OceanusException {
+    void checkResult() throws OceanusException {
         /* Calculate digest */
         final byte[] myResult = theDigest.finish();
 
@@ -106,7 +106,7 @@ public class GordianDigestInputStream
          * Constructor.
          * @param pStream the input stream
          */
-        private DigestBuffer(final GordianDigestInputStream pStream) {
+        DigestBuffer(final GordianDigestInputStream pStream) {
             theStream = pStream;
             theDigest = theStream.getDigest();
         }

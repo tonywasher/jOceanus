@@ -187,9 +187,9 @@ public class GordianPipedStream {
                            - theReadOffset;
 
             /* Determine how much data we can transfer */
-            iNumRead = (iNumRead <= pLength)
-                                             ? iNumRead
-                                             : pLength;
+            iNumRead = iNumRead <= pLength
+                                           ? iNumRead
+                                           : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {

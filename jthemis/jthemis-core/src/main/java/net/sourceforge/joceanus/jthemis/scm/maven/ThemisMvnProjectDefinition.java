@@ -318,7 +318,7 @@ public class ThemisMvnProjectDefinition
          * Constructor.
          * @param pName the name of the subModule
          */
-        private MvnSubModule(final String pName) {
+        MvnSubModule(final String pName) {
             theName = pName;
         }
 

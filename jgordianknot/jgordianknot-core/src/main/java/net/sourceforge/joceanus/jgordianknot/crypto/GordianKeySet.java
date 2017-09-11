@@ -91,7 +91,7 @@ public final class GordianKeySet {
      * Obtain the symKeySet.
      * @return the keySet
      */
-    protected Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
+    Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
     }
 
@@ -99,7 +99,7 @@ public final class GordianKeySet {
      * Obtain the streamKeySet.
      * @return the keySet
      */
-    protected Map<GordianStreamKeyType, GordianKey<GordianStreamKeyType>> getStreamKeyMap() {
+    Map<GordianStreamKeyType, GordianKey<GordianStreamKeyType>> getStreamKeyMap() {
         return theStreamKeyMap;
     }
 
@@ -180,7 +180,7 @@ public final class GordianKeySet {
      * @return the securedKey
      * @throws OceanusException on error
      */
-    protected byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
+    byte[] secureKey(final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Generate set of keys */
         final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -200,8 +200,8 @@ public final class GordianKeySet {
      * @return the derived key
      * @throws OceanusException on error
      */
-    protected <T> GordianKey<T> deriveKey(final byte[] pSecuredKey,
-                                          final T pKeyType) throws OceanusException {
+    <T> GordianKey<T> deriveKey(final byte[] pSecuredKey,
+                                final T pKeyType) throws OceanusException {
         /* Parse the bytes into the separate parts */
         final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredKey);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -217,7 +217,7 @@ public final class GordianKeySet {
      * @return the securedPrivateKey
      * @throws OceanusException on error
      */
-    protected byte[] securePrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
+    byte[] securePrivateKey(final GordianKeyPair pKeyPair) throws OceanusException {
         /* Generate set of keys */
         final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -235,7 +235,7 @@ public final class GordianKeySet {
      * @return the privateKeySpec
      * @throws OceanusException on error
      */
-    protected PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
+    PKCS8EncodedKeySpec derivePrivateKeySpec(final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Parse the bytes into the separate parts */
         final GordianKeySetRecipe myRecipe = new GordianKeySetRecipe(theFactory, pSecuredPrivateKey);
         final GordianKeySetParameters myParams = myRecipe.getParameters();
@@ -329,11 +329,11 @@ public final class GordianKeySet {
      * @param pInitVector the initialisation vector.
      * @throws OceanusException on error
      */
-    protected void buildFromSecret(final byte[] pSecret,
-                                   final byte[] pInitVector) throws OceanusException {
+    void buildFromSecret(final byte[] pSecret,
+                         final byte[] pInitVector) throws OceanusException {
         /* Loop through the symmetricKeys values */
         final Predicate<GordianSymKeyType> mySymPredicate = theFactory.supportedKeySetSymKeyTypes();
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             /* If this is supported for a keySet */
             if (mySymPredicate.test(myType)) {
                 /* Generate the key and add to map */
@@ -344,7 +344,7 @@ public final class GordianKeySet {
 
         /* Loop through the streamKeys values */
         final Predicate<GordianStreamKeyType> myPredicate = theFactory.supportedKeySetStreamKeyTypes();
-        for (GordianStreamKeyType myType : GordianStreamKeyType.values()) {
+        for (final GordianStreamKeyType myType : GordianStreamKeyType.values()) {
             /* If this is supported for a keySet */
             if (myPredicate.test(myType)) {
                 /* Generate the key and add to map */

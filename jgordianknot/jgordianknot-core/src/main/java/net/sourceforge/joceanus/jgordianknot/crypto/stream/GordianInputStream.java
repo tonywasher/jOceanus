@@ -118,8 +118,8 @@ public abstract class GordianInputStream
             myTotalSkipped += myNumSkipped;
 
             /* If we need further bytes, bring more data in and handle EOF */
-            if ((myNumToSkip > 0)
-                && (processMoreData() == -1)) {
+            if (myNumToSkip > 0
+                && processMoreData() == -1) {
                 return -1;
             }
         }
@@ -196,8 +196,8 @@ public abstract class GordianInputStream
         }
 
         /* If there is no data in the processed buffer, bring more data in and handle EOF */
-        if ((theProcessed.availableInBuffer() == 0)
-            && (processMoreData() == -1)) {
+        if (theProcessed.availableInBuffer() == 0
+            && processMoreData() == -1) {
             return -1;
         }
 
@@ -268,7 +268,7 @@ public abstract class GordianInputStream
          * Determine the amount of data in the buffer.
          * @return the number of data bytes in the buffer
          */
-        private int availableInBuffer() {
+        int availableInBuffer() {
             return theDataLen
                    - theReadOffset;
         }
@@ -306,7 +306,7 @@ public abstract class GordianInputStream
          * @param pBytesToSkip the number of bytes to skip
          * @return the number of bytes skipped
          */
-        private long skipBytes(final long pBytesToSkip) {
+        long skipBytes(final long pBytesToSkip) {
             /* Determine number of bytes that we can skip */
             final int myAvailable = availableInBuffer();
 
@@ -331,17 +331,17 @@ public abstract class GordianInputStream
          * @param pLength the maximum length of data to read
          * @return the actual length of data read or -1 if EOF
          */
-        private int readBytes(final byte[] pBuffer,
-                              final int pOffset,
-                              final int pLength) {
+        int readBytes(final byte[] pBuffer,
+                      final int pOffset,
+                      final int pLength) {
             /* Determine how much data we have available */
             int iNumRead = theDataLen
                            - theReadOffset;
 
             /* Determine how much data we can transfer */
-            iNumRead = (iNumRead <= pLength)
-                                             ? iNumRead
-                                             : pLength;
+            iNumRead = iNumRead <= pLength
+                                           ? iNumRead
+                                           : pLength;
 
             /* If we have data to copy */
             if (iNumRead > 0) {

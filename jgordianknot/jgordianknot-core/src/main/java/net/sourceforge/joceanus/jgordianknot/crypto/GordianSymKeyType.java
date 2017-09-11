@@ -188,7 +188,7 @@ public enum GordianSymKeyType {
      * @return true/false
      */
     public boolean isLengthValid(final GordianLength pLength) {
-        for (GordianLength myLength : theLengths) {
+        for (final GordianLength myLength : theLengths) {
             if (myLength.equals(pLength)) {
                 return true;
             }

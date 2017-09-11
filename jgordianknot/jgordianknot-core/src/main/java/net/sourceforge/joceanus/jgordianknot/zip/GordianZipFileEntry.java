@@ -93,7 +93,7 @@ public class GordianZipFileEntry {
     /**
      * The file name.
      */
-    private String theFileName;
+    private final String theFileName;
 
     /**
      * The zip name.

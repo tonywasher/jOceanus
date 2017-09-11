@@ -145,7 +145,7 @@ public final class GordianLZMAInputStream
         /**
          * Constructor.
          */
-        private DecoderService() {
+        DecoderService() {
             /* Create the decoder */
             theDecoder = new Decoder();
             theError = null;
@@ -155,7 +155,7 @@ public final class GordianLZMAInputStream
          * Check for error.
          * @throws IOException on error
          */
-        private void checkForError() throws IOException {
+        void checkForError() throws IOException {
             if (theError != null) {
                 throw theError;
             }

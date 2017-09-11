@@ -46,7 +46,7 @@ public abstract class JcaSignature
     /**
      * The Signature error.
      */
-    private static final String SIG_ERROR = "Signature error";
+    static final String SIG_ERROR = "Signature error";
 
     /**
      * The RSA PSS Algorithm.
@@ -96,12 +96,12 @@ public abstract class JcaSignature
     /**
      * The SPHINCS Signature.
      */
-    private static final String SPHINCS_ALGOBASE = "withSPHINCS256";
+    static final String SPHINCS_ALGOBASE = "withSPHINCS256";
 
     /**
      * The Rainbow Signature.
      */
-    private static final String RAINBOW_ALGOBASE = "withRainbow";
+    static final String RAINBOW_ALGOBASE = "withRainbow";
 
     /**
      * The RSA Signer.
@@ -239,8 +239,8 @@ public abstract class JcaSignature
      * @param pSignatureSpec the signatureSpec
      * @return the base
      */
-    private static String getSignatureBase(final GordianAsymKeySpec pKeySpec,
-                                           final GordianSignatureSpec pSignatureSpec) {
+    static String getSignatureBase(final GordianAsymKeySpec pKeySpec,
+                                   final GordianSignatureSpec pSignatureSpec) {
         /* Handle SM2 explicitly */
         if (GordianAsymKeyType.SM2.equals(pKeySpec.getKeyType())) {
             return EC_SM2_ALGOBASE;

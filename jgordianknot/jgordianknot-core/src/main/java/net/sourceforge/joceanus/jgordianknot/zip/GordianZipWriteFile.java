@@ -241,7 +241,7 @@ public class GordianZipWriteFile
             theFileEntry = theContents.addZipFileEntry(theFileName);
 
             /* Simply create a wrapper on the output stream */
-            theOutput = new WrapOutputStream();
+            theOutput = new WrapOutputStream(theStream);
 
             /* If we are encrypting */
             if (isEncrypted()) {
@@ -262,7 +262,7 @@ public class GordianZipWriteFile
      * Close any active output stream and record digest values.
      * @throws IOException on error
      */
-    private void closeOutputStream() throws IOException {
+    void closeOutputStream() throws IOException {
         /* Protect against exceptions */
         try {
             /* If we have an output stream */
@@ -307,8 +307,8 @@ public class GordianZipWriteFile
             /* Protect against exceptions */
             try {
                 /* If we have stored files and are encrypted */
-                if ((theFileNo > 0)
-                    && (isEncrypted())) {
+                if (theFileNo > 0
+                    && isEncrypted()) {
                     /* Create a new zipFileEntry */
                     final GordianZipFileEntry myEntry = theContents.addZipFileHeader();
                     myEntry.setHash(theHashBytes);
@@ -354,6 +354,19 @@ public class GordianZipWriteFile
      */
     private final class WrapOutputStream
             extends OutputStream {
+        /**
+         * The underlying Zip output stream.
+         */
+        private final ZipOutputStream theStream;
+
+        /**
+         * Constructor.
+         * @param pStream the ZipStream
+         */
+        WrapOutputStream(final ZipOutputStream pStream) {
+            theStream = pStream;
+        }
+
         @Override
         public void flush() throws IOException {
             theStream.flush();

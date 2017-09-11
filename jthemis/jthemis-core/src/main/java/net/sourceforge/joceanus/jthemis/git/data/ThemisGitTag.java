@@ -47,7 +47,7 @@ public final class ThemisGitTag
     /**
      * Tag References Prefix.
      */
-    protected static final String REF_TAGS = "refs/tags/";
+    static final String REF_TAGS = "refs/tags/";
 
     /**
      * Report fields.
@@ -102,8 +102,8 @@ public final class ThemisGitTag
      * @param pParent the Parent branch
      * @param pTag the tag number
      */
-    private ThemisGitTag(final ThemisGitBranch pParent,
-                         final int pTag) {
+    ThemisGitTag(final ThemisGitBranch pParent,
+                 final int pTag) {
         /* Call super constructor */
         super(pParent, pTag);
 

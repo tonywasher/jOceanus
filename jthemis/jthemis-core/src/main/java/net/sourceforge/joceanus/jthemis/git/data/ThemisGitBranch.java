@@ -49,11 +49,6 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 public final class ThemisGitBranch
         extends ThemisScmBranch<ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
     /**
-     * Branch references Prefix.
-     */
-    private static final String REF_BRANCHES = "refs/heads/";
-
-    /**
      * Master branch.
      */
     public static final String BRN_MASTER = "master";
@@ -106,10 +101,10 @@ public final class ThemisGitBranch
      * @param pMinor the minor version
      * @param pDelta the delta version
      */
-    private ThemisGitBranch(final ThemisGitComponent pParent,
-                            final int pMajor,
-                            final int pMinor,
-                            final int pDelta) {
+    ThemisGitBranch(final ThemisGitComponent pParent,
+                    final int pMajor,
+                    final int pMinor,
+                    final int pDelta) {
         /* Call super constructor */
         super(pParent, pMajor, pMinor, pDelta);
 
@@ -173,6 +168,11 @@ public final class ThemisGitBranch
      */
     public static final class GitBranchList
             extends ScmBranchList<ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+        /**
+         * Branch references Prefix.
+         */
+        private static final String REF_BRANCHES = "refs/heads/";
+
         /**
          * Report fields.
          */

@@ -63,7 +63,7 @@ public abstract class BouncyKeyEncapsulation {
     /**
      * InitVectorLength.
      */
-    private static final int INITLEN = 16;
+    static final int INITLEN = 16;
 
     /**
      * Private Constructor.
@@ -184,7 +184,7 @@ public abstract class BouncyKeyEncapsulation {
             /* Determine cipher text length */
             int myFieldSize = pPublicKey.getPublicKey().getParameters().getCurve().getFieldSize();
             myFieldSize = (myFieldSize + Byte.SIZE - 1) / Byte.SIZE;
-            final int myLen = (2 * myFieldSize) + 1;
+            final int myLen = 2 * myFieldSize + 1;
 
             /* Create cipherText */
             final byte[] myCipherText = new byte[myLen + INITLEN];
@@ -423,8 +423,8 @@ public abstract class BouncyKeyEncapsulation {
      * @param pDigest the digest
      * @return the hashed secret
      */
-    private static byte[] hashSecret(final byte[] pSecret,
-                                     final GordianDigest pDigest) {
+    static byte[] hashSecret(final byte[] pSecret,
+                             final GordianDigest pDigest) {
         pDigest.update(pSecret);
         return pDigest.finish();
     }
@@ -443,7 +443,7 @@ public abstract class BouncyKeyEncapsulation {
          * Constructor.
          * @param pDigest the security digest
          */
-        private BouncyKeyDerivation(final GordianDigest pDigest) {
+        BouncyKeyDerivation(final GordianDigest pDigest) {
             theDigest = pDigest;
         }
 
@@ -451,7 +451,7 @@ public abstract class BouncyKeyEncapsulation {
          * Obtain the key length.
          * @return the keyLen
          */
-        private int getKeyLen() {
+        int getKeyLen() {
             return theDigest.getDigestSize();
         }
 

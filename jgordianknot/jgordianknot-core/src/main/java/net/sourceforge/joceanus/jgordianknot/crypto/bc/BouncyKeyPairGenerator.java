@@ -158,12 +158,12 @@ public abstract class BouncyKeyPairGenerator
     /**
      * Parsing error.
      */
-    private static final String ERROR_PARSE = "Failed to parse encoding";
+    static final String ERROR_PARSE = "Failed to parse encoding";
 
     /**
      * Prime certainty.
      */
-    private static final int PRIME_CERTAINTY = 128;
+    static final int PRIME_CERTAINTY = 128;
 
     /**
      * Constructor.
@@ -188,7 +188,7 @@ public abstract class BouncyKeyPairGenerator
         /**
          * Generator.
          */
-        private RSAKeyPairGenerator theGenerator;
+        private final RSAKeyPairGenerator theGenerator;
 
         /**
          * Constructor.

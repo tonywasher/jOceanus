@@ -63,7 +63,7 @@ public final class GordianStreamManager {
     /**
      * The keySet.
      */
-    private GordianKeySet theKeySet;
+    private final GordianKeySet theKeySet;
 
     /**
      * Constructor.

@@ -103,7 +103,7 @@ public enum GordianAsymKeyType {
      * @return true/false
      */
     public boolean isSignatureAvailable(final GordianSignatureType pSignature) {
-        for (GordianSignatureType myType : theSignatures) {
+        for (final GordianSignatureType myType : theSignatures) {
             if (myType.equals(pSignature)) {
                 return true;
             }

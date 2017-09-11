@@ -72,7 +72,7 @@ public final class BouncyDigest
      * Obtain Underlying Digest.
      * @return the underlying digest
      */
-    protected Digest getDigest() {
+    Digest getDigest() {
         return theDigest;
     }
 

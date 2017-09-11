@@ -183,7 +183,8 @@ public class ThemisGitRepository
 
     @Override
     public int hashCode() {
-        return (theBase.hashCode() * HASH_PRIME) + super.hashCode();
+        return theBase.hashCode() * HASH_PRIME
+               + super.hashCode();
     }
 
     @Override
@@ -229,9 +230,9 @@ public class ThemisGitRepository
         try {
             /* StringBuilder */
             final StringBuilder myPathBuilder = new StringBuilder();
-            myPathBuilder.append(theBase);
-            myPathBuilder.append(File.separatorChar);
-            myPathBuilder.append(pName);
+            myPathBuilder.append(theBase)
+                    .append(File.separatorChar)
+                    .append(pName);
             final String myRepoPath = myPathBuilder.toString();
 
             /* Make sure that the path is deleted */

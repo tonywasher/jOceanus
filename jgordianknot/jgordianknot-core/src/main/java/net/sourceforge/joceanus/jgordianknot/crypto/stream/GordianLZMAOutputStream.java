@@ -150,7 +150,7 @@ public final class GordianLZMAOutputStream
         /**
          * Constructor.
          */
-        private EncoderService() {
+        EncoderService() {
             /* Create the encoder */
             theEncoder = new Encoder();
             theError = null;
@@ -160,7 +160,7 @@ public final class GordianLZMAOutputStream
          * Check for error.
          * @throws IOException on error
          */
-        private void checkForError() throws IOException {
+        void checkForError() throws IOException {
             if (theError != null) {
                 throw theError;
             }

@@ -104,6 +104,11 @@ public final class GordianSP800HashDRBG
     private final EntropySource theEntropy;
 
     /**
+     * The ReSeed Counter.
+     */
+    private final GordianByteArrayInteger theReseedCounter;
+
+    /**
      * The Variable Hash.
      */
     private GordianByteArrayInteger theV;
@@ -112,11 +117,6 @@ public final class GordianSP800HashDRBG
      * The Constant Hash.
      */
     private GordianByteArrayInteger theC;
-
-    /**
-     * The ReSeed Counter.
-     */
-    private GordianByteArrayInteger theReseedCounter;
 
     /**
      * Construct a SP800-90A Hash DRBG.

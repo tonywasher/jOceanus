@@ -52,7 +52,7 @@ public class ThemisJiraProject
     /**
      * Group role name.
      */
-    private static final String TYPE_ATLASSIAN_GROUP_ROLE = "atlassian-group-role-actor";
+    static final String TYPE_ATLASSIAN_GROUP_ROLE = "atlassian-group-role-actor";
 
     /**
      * Server.
@@ -145,6 +145,14 @@ public class ThemisJiraProject
             /* Pass the exception on */
             throw new ThemisIOException("Failed to parse project", e);
         }
+    }
+
+    /**
+     * Get the server.
+     * @return the server
+     */
+    ThemisJiraServer getServer() {
+        return theServer;
     }
 
     /**
@@ -379,14 +387,14 @@ public class ThemisJiraProject
          * @param pComponent the underlying component
          * @throws OceanusException on error
          */
-        private JiraComponent(final JSONObject pComponent) throws OceanusException {
+        JiraComponent(final JSONObject pComponent) throws OceanusException {
             /* Access the details */
             super(pComponent);
 
             /* Protect against exceptions */
             try {
                 /* Access the details */
-                theLead = theServer.getUser(pComponent.getString("leadUserName"));
+                theLead = getServer().getUser(pComponent.getString("leadUserName"));
 
             } catch (JSONException e) {
                 /* Pass the exception on */
@@ -428,7 +436,7 @@ public class ThemisJiraProject
          * @param pVersion the underlying version
          * @throws OceanusException on error
          */
-        private JiraVersion(final JSONObject pVersion) throws OceanusException {
+        JiraVersion(final JSONObject pVersion) throws OceanusException {
             /* Access the details */
             super(pVersion);
 
@@ -485,7 +493,7 @@ public class ThemisJiraProject
          * @param pRole the underlying role
          * @throws OceanusException on error
          */
-        private JiraProjectRole(final JSONObject pRole) throws OceanusException {
+        JiraProjectRole(final JSONObject pRole) throws OceanusException {
             /* Access the details */
             super(pRole);
 
@@ -541,7 +549,7 @@ public class ThemisJiraProject
          * @param pActor the underlying role
          * @throws OceanusException on error
          */
-        private JiraRoleActor(final JSONObject pActor) throws OceanusException {
+        JiraRoleActor(final JSONObject pActor) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Access the details */
@@ -551,8 +559,8 @@ public class ThemisJiraProject
                 /* Resolve the actor */
                 final String myType = pActor.getString("type");
                 theActor = myType.equals(TYPE_ATLASSIAN_GROUP_ROLE)
-                                                                    ? theServer.getGroup(theName)
-                                                                    : theServer.getUser(theName);
+                                                                    ? getServer().getGroup(theName)
+                                                                    : getServer().getUser(theName);
             } catch (JSONException e) {
                 /* Pass the exception on */
                 throw new ThemisIOException("Failed to parse roleActor", e);
@@ -588,9 +596,9 @@ public class ThemisJiraProject
          * @return the user
          */
         public Object getActorUser() {
-            return (theActor instanceof JiraUser)
-                                                  ? (JiraUser) theActor
-                                                  : null;
+            return theActor instanceof JiraUser
+                                                ? (JiraUser) theActor
+                                                : null;
         }
 
         /**
@@ -598,9 +606,9 @@ public class ThemisJiraProject
          * @return the group
          */
         public Object getActorGroup() {
-            return (theActor instanceof JiraGroup)
-                                                   ? (JiraGroup) theActor
-                                                   : null;
+            return theActor instanceof JiraGroup
+                                                 ? (JiraGroup) theActor
+                                                 : null;
         }
     }
 }

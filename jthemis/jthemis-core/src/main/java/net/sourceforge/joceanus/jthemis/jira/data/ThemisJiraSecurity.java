@@ -70,6 +70,14 @@ public class ThemisJiraSecurity {
     }
 
     /**
+     * Get the client.
+     * @return the client
+     */
+    ThemisHTTPJiraClient getClient() {
+        return theClient;
+    }
+
+    /**
      * Obtain User.
      * @param pName the name of the user
      * @return the User
@@ -147,7 +155,7 @@ public class ThemisJiraSecurity {
          * @param pUser the underlying user
          * @throws OceanusException on error
          */
-        private JiraUser(final JSONObject pUser) throws OceanusException {
+        JiraUser(final JSONObject pUser) throws OceanusException {
             /* Parse base details */
             super(pUser);
 
@@ -194,7 +202,7 @@ public class ThemisJiraSecurity {
                 /* Protect against exceptions */
                 try {
                     /* Access the users */
-                    final JSONObject mySelf = theClient.getUserGroups(getName());
+                    final JSONObject mySelf = getClient().getUserGroups(getName());
                     final JSONObject myGroups = mySelf.getJSONObject("groups");
                     final JSONArray myItems = myGroups.getJSONArray("items");
                     final int myNumGroups = myGroups.getInt("size");
@@ -239,7 +247,7 @@ public class ThemisJiraSecurity {
          * @param pGroup the base group object
          * @throws OceanusException on error
          */
-        private JiraGroup(final JSONObject pGroup) throws OceanusException {
+        JiraGroup(final JSONObject pGroup) throws OceanusException {
             /* Parse base details */
             super(pGroup);
 
@@ -259,7 +267,7 @@ public class ThemisJiraSecurity {
                 /* Protect against exceptions */
                 try {
                     /* Access the users */
-                    final JSONObject mySelf = theClient.getGroupUsers(getName());
+                    final JSONObject mySelf = getClient().getGroupUsers(getName());
                     final JSONObject myUsers = mySelf.getJSONObject("users");
                     final JSONArray myItems = myUsers.getJSONArray("items");
                     final int myNumUsers = myUsers.getInt("size");

@@ -215,7 +215,8 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
 
     @Override
     public int hashCode() {
-        return (theBranch.hashCode() * ThemisScmRepository.HASH_PRIME) + theTag;
+        return theBranch.hashCode() * ThemisScmRepository.HASH_PRIME
+               + theTag;
     }
 
     /**

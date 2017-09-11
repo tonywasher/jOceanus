@@ -715,7 +715,7 @@ public class GordianIdManager {
      */
     private static GordianCipherMode deriveCipherModeFromEncodedId(final int pEncodedId) throws OceanusException {
         final int myId = pEncodedId - 1;
-        for (GordianCipherMode myMode : GordianCipherMode.values()) {
+        for (final GordianCipherMode myMode : GordianCipherMode.values()) {
             if (myMode.ordinal() == myId) {
                 return myMode;
             }
@@ -740,7 +740,7 @@ public class GordianIdManager {
      */
     private static GordianPadding derivePaddingFromEncodedId(final int pEncodedId) throws OceanusException {
         final int myId = pEncodedId - 1;
-        for (GordianPadding myPadding : GordianPadding.values()) {
+        for (final GordianPadding myPadding : GordianPadding.values()) {
             if (myPadding.ordinal() == myId) {
                 return myPadding;
             }
@@ -765,7 +765,7 @@ public class GordianIdManager {
      */
     private static GordianLength deriveLengthFromEncodedId(final int pEncodedId) throws OceanusException {
         final int myId = pEncodedId - 1;
-        for (GordianLength myLength : GordianLength.values()) {
+        for (final GordianLength myLength : GordianLength.values()) {
             if (myLength.ordinal() == myId) {
                 return myLength;
             }
@@ -869,8 +869,8 @@ public class GordianIdManager {
                                                                  final E[] pTypes) throws OceanusException {
         /* If the item is in range */
         final int myNumTypes = pTypes.length;
-        if ((pId >= 0)
-            && (pId < myNumTypes)) {
+        if (pId >= 0
+            && pId < myNumTypes) {
             return pTypes[pId];
         }
 
@@ -977,9 +977,9 @@ public class GordianIdManager {
         final E[] mySelection = Arrays.copyOf(pTypes, myTotalTypes);
 
         /* Ensure that seed is positive */
-        int mySeed = (pSeed < 0)
-                                 ? -pSeed
-                                 : pSeed;
+        int mySeed = pSeed < 0
+                               ? -pSeed
+                               : pSeed;
 
         /* Loop through the types */
         int myNumSelected = 0;

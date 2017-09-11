@@ -521,11 +521,11 @@ public final class JcaFactory
      */
     private static Cipher getJavaCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(getSymKeyAlgorithm(pCipherSpec.getKeyType()));
-        myBuilder.append(ALGO_SEP);
-        myBuilder.append(getCipherModeAlgorithm(pCipherSpec));
-        myBuilder.append(ALGO_SEP);
-        myBuilder.append(getPaddingAlgorithm(pCipherSpec.getPadding()));
+        myBuilder.append(getSymKeyAlgorithm(pCipherSpec.getKeyType()))
+                .append(ALGO_SEP)
+                .append(getCipherModeAlgorithm(pCipherSpec))
+                .append(ALGO_SEP)
+                .append(getPaddingAlgorithm(pCipherSpec.getPadding()));
         return getJavaCipher(myBuilder.toString());
     }
 
@@ -730,10 +730,10 @@ public final class JcaFactory
         final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
         final String myState = Integer.toString(pSpec.getStateLength().getLength());
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Skein-MAC-");
-        myBuilder.append(myState);
-        myBuilder.append("-");
-        myBuilder.append(myLen);
+        myBuilder.append("Skein-MAC-")
+                .append(myState)
+                .append('-')
+                .append(myLen);
         return myBuilder.toString();
     }
 
@@ -1034,7 +1034,7 @@ public final class JcaFactory
 
         /* Count valid values */
         int myCount = 0;
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             if (myFilter.test(myType)) {
                 myCount++;
             }

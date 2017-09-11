@@ -33,12 +33,12 @@ public final class GordianKeySetRecipe {
     /**
      * Recipe length (Integer).
      */
-    protected static final int RECIPELEN = Integer.BYTES;
+    static final int RECIPELEN = Integer.BYTES;
 
     /**
      * Salt length.
      */
-    protected static final int SALTLEN = GordianLength.LEN_128.getByteLength();
+    static final int SALTLEN = GordianLength.LEN_128.getByteLength();
 
     /**
      * Margins.
@@ -64,7 +64,7 @@ public final class GordianKeySetRecipe {
      * Constructor for random choices.
      * @param pFactory the factory
      */
-    protected GordianKeySetRecipe(final GordianFactory pFactory) {
+    GordianKeySetRecipe(final GordianFactory pFactory) {
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory);
         theRecipe = theParams.getRecipe();
@@ -76,8 +76,8 @@ public final class GordianKeySetRecipe {
      * @param pFactory the factory
      * @param pExternal the external form
      */
-    protected GordianKeySetRecipe(final GordianFactory pFactory,
-                                  final byte[] pExternal) {
+    GordianKeySetRecipe(final GordianFactory pFactory,
+                        final byte[] pExternal) {
         /* Determine data length */
         int myRecipeLen = RECIPELEN;
         final int myLen = pExternal.length;
@@ -126,7 +126,7 @@ public final class GordianKeySetRecipe {
      * Obtain the keySet parameters.
      * @return the parameters
      */
-    protected GordianKeySetParameters getParameters() {
+    GordianKeySetParameters getParameters() {
         return theParams;
     }
 
@@ -134,7 +134,7 @@ public final class GordianKeySetRecipe {
      * Obtain the bytes.
      * @return the bytes
      */
-    protected byte[] getBytes() {
+    byte[] getBytes() {
         return theBytes;
     }
 
@@ -144,8 +144,8 @@ public final class GordianKeySetRecipe {
      * @param pData the encrypted data
      * @return the external form
      */
-    protected byte[] buildExternal(final GordianFactory pFactory,
-                                   final byte[] pData) {
+    byte[] buildExternal(final GordianFactory pFactory,
+                         final byte[] pData) {
         /* Determine lengths */
         int myRecipeLen = RECIPELEN;
         final int myDataLen = pData.length;
@@ -265,7 +265,7 @@ public final class GordianKeySetRecipe {
          * Obtain the salt.
          * @return the salt
          */
-        protected byte[] getSalt() {
+        byte[] getSalt() {
             return theSalt;
         }
 
@@ -273,7 +273,7 @@ public final class GordianKeySetRecipe {
          * Obtain the streamKey Type.
          * @return the streamKeyType
          */
-        protected GordianStreamKeyType getStreamKeyType() {
+        GordianStreamKeyType getStreamKeyType() {
             return theStreamKeyType[0];
         }
 
@@ -281,7 +281,7 @@ public final class GordianKeySetRecipe {
          * Obtain the SymKey Types.
          * @return the symKeyTypes
          */
-        protected GordianSymKeyType[] getSymKeyTypes() {
+        GordianSymKeyType[] getSymKeyTypes() {
             return theSymKeyTypes;
         }
 
@@ -289,7 +289,7 @@ public final class GordianKeySetRecipe {
          * Obtain the Initialisation vector.
          * @return the initialisation vector
          */
-        protected byte[] getInitVector() {
+        byte[] getInitVector() {
             return theInitVector;
         }
 
@@ -297,7 +297,7 @@ public final class GordianKeySetRecipe {
          * Obtain the Recipe.
          * @return the recipe
          */
-        private byte[] getRecipe() {
+        byte[] getRecipe() {
             return theRecipe;
         }
     }

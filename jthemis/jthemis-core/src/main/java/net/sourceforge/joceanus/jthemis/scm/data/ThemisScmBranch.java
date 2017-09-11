@@ -324,12 +324,12 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the version directory */
-        myBuilder.append(BRANCH_PREFIX);
-        myBuilder.append(theMajorVersion);
-        myBuilder.append(BRANCH_SEP);
-        myBuilder.append(theMinorVersion);
-        myBuilder.append(BRANCH_SEP);
-        myBuilder.append(theDeltaVersion);
+        myBuilder.append(BRANCH_PREFIX)
+                .append(theMajorVersion)
+                .append(BRANCH_SEP)
+                .append(theMinorVersion)
+                .append(BRANCH_SEP)
+                .append(theDeltaVersion);
 
         /* Return the branch name */
         return myBuilder.toString();
@@ -395,7 +395,8 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
 
     @Override
     public int hashCode() {
-        return (theComponent.hashCode() * ThemisScmRepository.HASH_PRIME) + getVersionHash();
+        return theComponent.hashCode() * ThemisScmRepository.HASH_PRIME
+               + getVersionHash();
     }
 
     /**
@@ -632,7 +633,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          * Determine next major branch.
          * @return the major branch
          */
-        private B nextMajorBranch() {
+        B nextMajorBranch() {
             /* Loop to the last entry */
             B myBranch = null;
             final Iterator<B> myIterator = iterator();
@@ -655,7 +656,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          * @param pBase the branch to base from
          * @return the minor branch
          */
-        private B nextMinorBranch(final ThemisScmBranch<?, C, R> pBase) {
+        B nextMinorBranch(final ThemisScmBranch<?, C, R> pBase) {
             /* Access major version */
             final int myMajor = pBase.getMajorVersion();
 
@@ -693,7 +694,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
          * @param pBase the branch to base from
          * @return the delta branch
          */
-        private B nextDeltaBranch(final ThemisScmBranch<?, C, R> pBase) {
+        B nextDeltaBranch(final ThemisScmBranch<?, C, R> pBase) {
             /* Access major/minor version */
             final int myMajor = pBase.getMajorVersion();
             final int myMinor = pBase.getMinorVersion();

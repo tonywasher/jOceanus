@@ -2,6 +2,8 @@
 <ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="pmd" xsi:noNamespaceSchemaLocation="http://pmd.sourceforge.net/ruleset_2_0_0.xsd"
     xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd" xmlns="http://pmd.sourceforge.net/ruleset/2.0.0">
     <description>Base PMD rules for all projects</description>
+    <exclude-pattern>.*/embedded/.*</exclude-pattern>
+    <exclude-pattern>.*/test/.*</exclude-pattern>
 
     <rule ref="rulesets/java/basic.xml" />
 
@@ -84,5 +86,4 @@
     <rule ref="rulesets/java/unnecessary.xml" />
 
     <rule ref="rulesets/java/unusedcode.xml" />
-
 </ruleset>

@@ -708,8 +708,6 @@ public abstract class GordianFactory {
     private boolean validMacSpec(final GordianMacSpec pMacSpec) {
         /* Access details */
         final GordianMacType myType = pMacSpec.getMacType();
-        final GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
-        final GordianSymKeySpec mySymSpec = pMacSpec.getKeySpec();
 
         /* Check that the macType is supported */
         if (!supportedMacTypes().test(myType)) {
@@ -717,6 +715,8 @@ public abstract class GordianFactory {
         }
 
         /* Switch on MacType */
+        final GordianDigestSpec mySpec = pMacSpec.getDigestSpec();
+        final GordianSymKeySpec mySymSpec = pMacSpec.getKeySpec();
         switch (myType) {
             case HMAC:
                 return supportedHMacDigestSpecs().test(mySpec);
@@ -752,7 +752,6 @@ public abstract class GordianFactory {
      */
     protected boolean validSymKeySpec(final GordianSymKeySpec pSymKeySpec) {
         /* Access details */
-        final GordianSymKeyType myType = pSymKeySpec.getSymKeyType();
         final GordianLength myLen = pSymKeySpec.getBlockLength();
 
         /* Reject restrictedSpecs where the block length is too large */
@@ -762,6 +761,7 @@ public abstract class GordianFactory {
         }
 
         /* Check validity */
+        final GordianSymKeyType myType = pSymKeySpec.getSymKeyType();
         return supportedSymKeyTypes().test(myType)
                && myType.isLengthValid(myLen);
     }
@@ -774,22 +774,20 @@ public abstract class GordianFactory {
      */
     protected boolean validSignatureSpec(final GordianKeyPair pKeyPair,
                                          final GordianSignatureSpec pSignSpec) {
-        /* Access details */
-        final GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
-        final GordianSignatureType mySignType = pSignSpec.getSignatureType();
-        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
-
         /* Check signature matches keyPair */
         if (pSignSpec.getAsymKeyType() != pKeyPair.getKeySpec().getKeyType()) {
             return false;
         }
 
         /* Check that the signatureType is supported */
+        final GordianAsymKeyType myType = pSignSpec.getAsymKeyType();
+        final GordianSignatureType mySignType = pSignSpec.getSignatureType();
         if (!myType.isSignatureAvailable(mySignType)) {
             return false;
         }
 
         /* Check that the digestSpec is supported */
+        final GordianDigestSpec mySpec = pSignSpec.getDigestSpec();
         if (!validDigestSpec(mySpec)) {
             return false;
         }

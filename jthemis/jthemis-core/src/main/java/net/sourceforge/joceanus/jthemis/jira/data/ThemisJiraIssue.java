@@ -291,6 +291,14 @@ public class ThemisJiraIssue
     }
 
     /**
+     * Get the server.
+     * @return the server
+     */
+    ThemisJiraServer getServer() {
+        return theServer;
+    }
+
+    /**
      * Get the summary.
      * @return the summary
      */
@@ -487,7 +495,7 @@ public class ThemisJiraIssue
          * Constructor.
          * @param pKey the issue key
          */
-        private JiraIssueReference(final String pKey) {
+        JiraIssueReference(final String pKey) {
             /* record the details */
             theKey = pKey;
         }
@@ -507,7 +515,7 @@ public class ThemisJiraIssue
          */
         public ThemisJiraIssue getIssue() throws OceanusException {
             if (theIssue == null) {
-                theIssue = theServer.getIssue(theKey);
+                theIssue = getServer().getIssue(theKey);
             }
             return theIssue;
         }
@@ -532,10 +540,10 @@ public class ThemisJiraIssue
          * @param pLink the underlying link
          * @throws OceanusException on error
          */
-        private JiraIssueLink(final JSONObject pLink) throws OceanusException {
+        JiraIssueLink(final JSONObject pLink) throws OceanusException {
             /* Access the details */
             final JSONObject myLinkDtl = pLink.getJSONObject("issuelinktype");
-            theType = theServer.getIssueLinkType(myLinkDtl.getString(JiraIssueLinkType.FIELD_NAME));
+            theType = getServer().getIssueLinkType(myLinkDtl.getString(JiraIssueLinkType.FIELD_NAME));
 
             /* Determine the target issue */
             final JSONObject myIssueDtl = pLink.getJSONObject("issue");

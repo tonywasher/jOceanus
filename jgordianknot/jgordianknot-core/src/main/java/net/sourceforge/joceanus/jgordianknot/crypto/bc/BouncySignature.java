@@ -79,19 +79,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public final class BouncySignature {
     /**
-     * MGF1 Salt length.
-     */
-    private static final int MGF1_SALTLEN = 64;
-
-    /**
      * Signature generation error.
      */
-    private static final String ERROR_SIGGEN = "Failed to generate signature";
+    static final String ERROR_SIGGEN = "Failed to generate signature";
 
     /**
      * Signature validation error.
      */
-    private static final String ERROR_SIGPARSE = "Failed to parse signature";
+    static final String ERROR_SIGPARSE = "Failed to parse signature";
 
     /**
      * Private constructor.
@@ -104,6 +99,11 @@ public final class BouncySignature {
      */
     public abstract static class BouncyPSSSignature
             implements GordianConsumer {
+        /**
+         * MGF1 Salt length.
+         */
+        private static final int MGF1_SALTLEN = 64;
+
         /**
          * The RSA Signer.
          */
@@ -372,8 +372,8 @@ public final class BouncySignature {
      * @return encoded set
      * @throws OceanusException on error
      */
-    private static byte[] dsaEncode(final BigInteger r,
-                                    final BigInteger s) throws OceanusException {
+    static byte[] dsaEncode(final BigInteger r,
+                            final BigInteger s) throws OceanusException {
         try {
             final ASN1EncodableVector v = new ASN1EncodableVector();
 
@@ -392,7 +392,7 @@ public final class BouncySignature {
      * @return array of integers
      * @throws OceanusException on error
      */
-    private static BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
+    static BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
         try {
             final ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
             final BigInteger[] sig = new BigInteger[2];
@@ -414,9 +414,9 @@ public final class BouncySignature {
      * @return the ECSigner
      * @throws OceanusException on error
      */
-    private static DSA getDSASigner(final BouncyFactory pFactory,
-                                    final GordianAsymKeySpec pKeySpec,
-                                    final GordianSignatureSpec pSpec) throws OceanusException {
+    static DSA getDSASigner(final BouncyFactory pFactory,
+                            final GordianAsymKeySpec pKeySpec,
+                            final GordianSignatureSpec pSpec) throws OceanusException {
         /* Handle SM2 explicitly */
         if (GordianAsymKeyType.SM2.equals(pKeySpec.getKeyType())) {
             return new SM2Signer();

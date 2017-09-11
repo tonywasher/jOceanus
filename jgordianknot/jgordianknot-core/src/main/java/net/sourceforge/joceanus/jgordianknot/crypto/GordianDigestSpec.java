@@ -284,7 +284,7 @@ public class GordianDigestSpec {
      * @return true/false
      */
     public boolean isHybrid() {
-        return theStateLength != null && theStateLength != theLength;
+        return theStateLength != null && !theStateLength.equals(theLength);
     }
 
     @Override
@@ -301,7 +301,7 @@ public class GordianDigestSpec {
                     theName += SEP + Integer.toString(theLength.getLength());
                     break;
                 case SHAKE:
-                    if (theStateLength != theLength) {
+                    if (!theStateLength.equals(theLength)) {
                         theName += SEP + Integer.toString(theStateLength.getLength());
                     }
                     theName += SEP + Integer.toString(theLength.getLength());
@@ -366,9 +366,9 @@ public class GordianDigestSpec {
         final List<GordianDigestSpec> myList = new ArrayList<>();
 
         /* For each digest type */
-        for (GordianDigestType myType : GordianDigestType.values()) {
+        for (final GordianDigestType myType : GordianDigestType.values()) {
             /* For each length */
-            for (GordianLength myLength : myType.getSupportedLengths()) {
+            for (final GordianLength myLength : myType.getSupportedLengths()) {
                 myList.add(new GordianDigestSpec(myType, myLength));
                 final GordianLength myState = myType.getExtendedStateForLength(myLength);
                 if (myState != null) {

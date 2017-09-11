@@ -970,8 +970,8 @@ public final class BouncyFactory
      * @return the KeyGenerator
      */
     private static CipherKeyGenerator getBCKeyGenerator(final Object pKeyType) {
-        if ((pKeyType instanceof GordianMacSpec)
-            && (((GordianMacSpec) pKeyType).getMacType() == GordianMacType.POLY1305)) {
+        if (pKeyType instanceof GordianMacSpec
+            && ((GordianMacSpec) pKeyType).getMacType() == GordianMacType.POLY1305) {
             return new Poly1305KeyGenerator();
         }
         return GordianSymKeyType.DESEDE.equals(pKeyType)
@@ -1168,7 +1168,7 @@ public final class BouncyFactory
 
         /* Count valid values */
         int myCount = 0;
-        for (GordianSymKeyType myType : GordianSymKeyType.values()) {
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
             if (myFilter.test(myType)) {
                 myCount++;
             }

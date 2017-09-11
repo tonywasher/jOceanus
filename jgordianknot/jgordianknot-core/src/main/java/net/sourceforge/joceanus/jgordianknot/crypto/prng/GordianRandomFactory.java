@@ -81,7 +81,7 @@ public final class GordianRandomFactory {
     /**
      * The length of time before a reSeed is required.
      */
-    protected static final long RESEED_MAX = 1L << (RESEED_POWER - 1);
+    static final long RESEED_MAX = 1L << (RESEED_POWER - 1);
 
     /**
      * The power of 2 for BITS calculation.
@@ -91,7 +91,7 @@ public final class GordianRandomFactory {
     /**
      * The maximum # of bits that can be requested.
      */
-    protected static final int MAX_BITS_REQUEST = 1 << (BITS_POWER - 1);
+    static final int MAX_BITS_REQUEST = 1 << (BITS_POWER - 1);
 
     /**
      * The Entropy Secure Random instance.
@@ -133,7 +133,7 @@ public final class GordianRandomFactory {
      * @throws OceanusException on error
      */
     public GordianRandomFactory(final SecureRandom pEntropySource,
-                               final boolean isPredictionResistant) throws OceanusException {
+                                final boolean isPredictionResistant) throws OceanusException {
         /* If the EntropySource is null use StrongRandom */
         theRandom = pEntropySource == null
                                            ? getStrongRandom()
@@ -147,7 +147,7 @@ public final class GordianRandomFactory {
      * Access the Secure Random.
      * @return the secure random
      */
-    protected SecureRandom getRandom() {
+    SecureRandom getRandom() {
         return theRandom;
     }
 
@@ -165,25 +165,27 @@ public final class GordianRandomFactory {
      * @return the secure random
      * @throws OceanusException on error
      */
-    private static synchronized SecureRandom getStrongRandom() throws OceanusException {
-        /* If we have not yet created the strong entropy */
-        if (theStrongEntropy == null) {
-            /* Protect against exceptions */
-            try {
-                /* Handle differently for Windows and *nix */
-                final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-                theStrongEntropy = isWindows
-                                             ? SecureRandom.getInstanceStrong()
-                                             : SecureRandom.getInstance("NativePRNGNonBlocking");
+    private static SecureRandom getStrongRandom() throws OceanusException {
+        synchronized (GordianRandomFactory.class) {
+            /* If we have not yet created the strong entropy */
+            if (theStrongEntropy == null) {
+                /* Protect against exceptions */
+                try {
+                    /* Handle differently for Windows and *nix */
+                    final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
+                    theStrongEntropy = isWindows
+                                                 ? SecureRandom.getInstanceStrong()
+                                                 : SecureRandom.getInstance("NativePRNGNonBlocking");
 
-                /* Seed the Entropy */
-                theStrongEntropy.nextBoolean();
+                    /* Seed the Entropy */
+                    theStrongEntropy.nextBoolean();
 
-            } catch (NoSuchAlgorithmException e) {
-                throw new GordianCryptoException("No strong random", e);
+                } catch (NoSuchAlgorithmException e) {
+                    throw new GordianCryptoException("No strong random", e);
+                }
             }
+            return theStrongEntropy;
         }
-        return theStrongEntropy;
     }
 
     /**

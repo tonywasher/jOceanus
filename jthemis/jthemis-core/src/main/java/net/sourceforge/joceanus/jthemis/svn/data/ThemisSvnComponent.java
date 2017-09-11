@@ -152,11 +152,9 @@ public final class ThemisSvnComponent
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the base path */
-        myBuilder.append(getURLPath());
-
-        /* Add the trunk directory */
-        myBuilder.append(ThemisSvnRepository.SEP_URL);
-        myBuilder.append(DIR_TRUNK);
+        myBuilder.append(getURLPath())
+                .append(ThemisSvnRepository.SEP_URL)
+                .append(DIR_TRUNK);
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -171,11 +169,9 @@ public final class ThemisSvnComponent
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the base path */
-        myBuilder.append(getURLPath());
-
-        /* Add the branches directory */
-        myBuilder.append(ThemisSvnRepository.SEP_URL);
-        myBuilder.append(DIR_BRANCHES);
+        myBuilder.append(getURLPath())
+                .append(ThemisSvnRepository.SEP_URL)
+                .append(DIR_BRANCHES);
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -190,11 +186,9 @@ public final class ThemisSvnComponent
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the branch path */
-        myBuilder.append(getURLPath());
-
-        /* Add the tags directory */
-        myBuilder.append(ThemisSvnRepository.SEP_URL);
-        myBuilder.append(DIR_TAGS);
+        myBuilder.append(getURLPath())
+                .append(ThemisSvnRepository.SEP_URL)
+                .append(DIR_TAGS);
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -209,11 +203,9 @@ public final class ThemisSvnComponent
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
-        myBuilder.append(getRepository().getPath());
-
-        /* Build the component directory */
-        myBuilder.append(ThemisSvnRepository.SEP_URL);
-        myBuilder.append(getName());
+        myBuilder.append(getRepository().getPath())
+                .append(ThemisSvnRepository.SEP_URL)
+                .append(getName());
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -247,11 +239,9 @@ public final class ThemisSvnComponent
             final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Build the initial path */
-            myBuilder.append(pPath);
-            myBuilder.append(ThemisSvnRepository.SEP_URL);
-
-            /* Build the POM name */
-            myBuilder.append(ThemisMvnProjectDefinition.POM_NAME);
+            myBuilder.append(pPath)
+                    .append(ThemisSvnRepository.SEP_URL)
+                    .append(ThemisMvnProjectDefinition.POM_NAME);
 
             /* Create the repository path */
             final SVNURL myURL = SVNURL.parseURIEncoded(myBuilder.toString());

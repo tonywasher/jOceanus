@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 
 import java.io.InputStream;
+import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
@@ -90,9 +91,13 @@ public final class GordianStreamDefinition {
         final int myStreamId = (int) (pExternalId & TethysDataConverter.NYBBLE_MASK);
         theType = StreamType.fromId(myStreamId);
         theTypeId = pExternalId >> TethysDataConverter.NYBBLE_SHIFT;
-        theTypeDefinition = pTypeDef;
-        theInitVector = pInitVector;
-        theValue = pValue;
+        theTypeDefinition = Arrays.copyOf(pTypeDef, pTypeDef.length);
+        theInitVector = pInitVector == null
+                                            ? null
+                                            : Arrays.copyOf(pInitVector, pInitVector.length);
+        theValue = pValue == null
+                                  ? null
+                                  : Arrays.copyOf(pValue, pValue.length);
         theLength = null;
     }
 
@@ -196,7 +201,7 @@ public final class GordianStreamDefinition {
      * @return the type definition
      */
     public byte[] getTypeDefinition() {
-        return theTypeDefinition;
+        return Arrays.copyOf(theTypeDefinition, theTypeDefinition.length);
     }
 
     /**
@@ -204,7 +209,9 @@ public final class GordianStreamDefinition {
      * @return the initVector
      */
     public byte[] getInitVector() {
-        return theInitVector;
+        return theInitVector == null
+                                     ? null
+                                     : Arrays.copyOf(theInitVector, theInitVector.length);
     }
 
     /**
@@ -212,7 +219,9 @@ public final class GordianStreamDefinition {
      * @return the value
      */
     public byte[] getValue() {
-        return theValue;
+        return theValue == null
+                                ? null
+                                : Arrays.copyOf(theValue, theValue.length);
     }
 
     /**
@@ -230,8 +239,8 @@ public final class GordianStreamDefinition {
      * @return the new input stream
      * @throws OceanusException on error
      */
-    protected InputStream buildInputStream(final GordianKeySet pKeySet,
-                                           final InputStream pCurrent) throws OceanusException {
+    InputStream buildInputStream(final GordianKeySet pKeySet,
+                                 final InputStream pCurrent) throws OceanusException {
         switch (theType) {
             case DIGEST:
                 return buildDigestInputStream(pKeySet, pCurrent);
@@ -405,7 +414,7 @@ public final class GordianStreamDefinition {
          * @throws OceanusException on error
          */
         public static StreamType fromId(final int id) throws OceanusException {
-            for (StreamType myType : values()) {
+            for (final StreamType myType : values()) {
                 if (myType.getId() == id) {
                     return myType;
                 }

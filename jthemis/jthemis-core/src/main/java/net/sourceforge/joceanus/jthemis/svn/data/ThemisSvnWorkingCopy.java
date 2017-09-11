@@ -277,7 +277,7 @@ public final class ThemisSvnWorkingCopy
          * Constructor.
          * @param pCopy the working copy
          */
-        private UpdateHandler(final ThemisSvnWorkingCopy pCopy) {
+        UpdateHandler(final ThemisSvnWorkingCopy pCopy) {
             theCopy = pCopy;
         }
 
@@ -577,7 +577,8 @@ public final class ThemisSvnWorkingCopy
             final SVNStatus myStatus = getFileStatus(theRepository, pFile);
 
             /* If this is a working copy */
-            if ((myStatus != null) && myStatus.isVersioned()) {
+            if (myStatus != null
+                && myStatus.isVersioned()) {
                 /* Obtain the repository URL */
                 final SVNURL myURL = myStatus.getRemoteURL();
 

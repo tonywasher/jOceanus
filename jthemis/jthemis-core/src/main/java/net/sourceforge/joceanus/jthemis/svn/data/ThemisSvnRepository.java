@@ -215,15 +215,11 @@ public class ThemisSvnRepository
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
-        myBuilder.append(theBase);
-
-        /* Build the prefix directory */
-        myBuilder.append(SEP_URL);
-        myBuilder.append(PFIX_URL);
-
-        /* Build the component directory */
-        myBuilder.append(SEP_URL);
-        myBuilder.append(getName());
+        myBuilder.append(theBase)
+                .append(SEP_URL)
+                .append(PFIX_URL)
+                .append(SEP_URL)
+                .append(getName());
 
         /* Return the path */
         return myBuilder.toString();
@@ -241,12 +237,10 @@ public class ThemisSvnRepository
             /* Build the underlying string */
             final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-            /* Build the repository */
-            myBuilder.append(getPath());
-
-            /* Build the prefix directory */
-            myBuilder.append(SEP_URL);
-            myBuilder.append(pPath);
+            /* Build the repository directory */
+            myBuilder.append(getPath())
+                    .append(SEP_URL)
+                    .append(pPath);
 
             /* Return the path */
             return SVNURL.parseURIEncoded(myBuilder.toString());
@@ -300,7 +294,8 @@ public class ThemisSvnRepository
 
     @Override
     public int hashCode() {
-        return (theBase.hashCode() * HASH_PRIME) + super.hashCode();
+        return theBase.hashCode() * HASH_PRIME
+               + super.hashCode();
     }
 
     @Override

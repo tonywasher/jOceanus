@@ -141,9 +141,9 @@ public final class ThemisGitComponent
         try {
             /* StringBuilder */
             final StringBuilder myPathBuilder = new StringBuilder(BUFFER_LEN);
-            myPathBuilder.append(getRepository().getBase());
-            myPathBuilder.append(File.separatorChar);
-            myPathBuilder.append(getName());
+            myPathBuilder.append(getRepository().getBase())
+                    .append(File.separatorChar)
+                    .append(getName());
 
             /* Describe repository */
             final FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
@@ -174,12 +174,10 @@ public final class ThemisGitComponent
             /* Build the underlying string */
             final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-            /* Build the initial path */
-            myBuilder.append(pPath);
-            myBuilder.append(File.separatorChar);
-
-            /* Build the POM name */
-            myBuilder.append(ThemisMvnProjectDefinition.POM_NAME);
+            /* Build the initial path and POM Name */
+            myBuilder.append(pPath)
+                    .append(File.separatorChar)
+                    .append(ThemisMvnProjectDefinition.POM_NAME);
 
             /* Access object as input stream */
             myInput = getFileObjectAsInputStream(pCommitId, myBuilder.toString());
@@ -311,7 +309,7 @@ public final class ThemisGitComponent
 
             /* Locate files */
             final File myBaseDir = new File(theRepository.getBase());
-            for (File mySubDir : myBaseDir.listFiles()) {
+            for (final File mySubDir : myBaseDir.listFiles()) {
                 /* Ignore if not a directory */
                 if (!mySubDir.isDirectory()) {
                     continue;

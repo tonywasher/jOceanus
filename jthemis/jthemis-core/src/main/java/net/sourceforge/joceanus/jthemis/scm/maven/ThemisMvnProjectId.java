@@ -83,7 +83,7 @@ public final class ThemisMvnProjectId
     /**
      * The artifactId.
      */
-    private String theArtifactId;
+    private final String theArtifactId;
 
     /**
      * The version.
@@ -119,7 +119,7 @@ public final class ThemisMvnProjectId
 
         /* Access GroupID */
         theGroupId = theModel.getGroupId();
-        if ((theGroupId == null) && (myParent != null)) {
+        if (theGroupId == null && myParent != null) {
             theGroupId = myParent.getGroupId();
         }
 
@@ -128,7 +128,7 @@ public final class ThemisMvnProjectId
 
         /* Access version */
         theVersionText = theModel.getVersion();
-        if ((theVersionText == null) && (myParent != null)) {
+        if (theVersionText == null && myParent != null) {
             theVersionText = myParent.getVersion();
         }
 
@@ -243,7 +243,7 @@ public final class ThemisMvnProjectId
      * Set new version.
      * @param pVersion the version
      */
-    protected void setSnapshotVersion(final String pVersion) {
+    void setSnapshotVersion(final String pVersion) {
         /* Update version and text */
         theVersion = pVersion;
         theVersionText = pVersion
@@ -257,7 +257,7 @@ public final class ThemisMvnProjectId
      * Set new version.
      * @param pVersion the version
      */
-    protected void setVersion(final String pVersion) {
+    void setVersion(final String pVersion) {
         /* Update version and text */
         theVersion = pVersion;
         theVersionText = pVersion;
@@ -270,7 +270,7 @@ public final class ThemisMvnProjectId
      * Set new version.
      * @param pId the project Id
      */
-    protected void setNewVersion(final ThemisMvnProjectId pId) {
+    void setNewVersion(final ThemisMvnProjectId pId) {
         /* Ignore if wrong groupId/versionId */
         if (!theGroupId.equals(pId.getGroupId())) {
             return;
@@ -286,7 +286,7 @@ public final class ThemisMvnProjectId
     /**
      * Update version.
      */
-    protected void updateVersion() {
+    void updateVersion() {
         /* If we are top-level */
         if (theModel != null) {
             /* Set values into model */
@@ -328,10 +328,7 @@ public final class ThemisMvnProjectId
         if (!theArtifactId.equals(myThat.getArtifactId())) {
             return false;
         }
-        if (!theVersion.equals(myThat.getVersion())) {
-            return false;
-        }
-        return true;
+        return theVersion.equals(myThat.getVersion());
     }
 
     @Override

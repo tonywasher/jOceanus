@@ -179,7 +179,7 @@ public class ThemisSvnRevisionHistory
         theRevisionKey = new SvnRevisionKey(pPath, theRevision);
 
         /* Iterate through the file changes */
-        for (Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
+        for (final Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
             /* Access the key */
             final String myPath = myEntry.getKey();
             final SVNLogEntryPath myDetail = myEntry.getValue();
@@ -223,8 +223,8 @@ public class ThemisSvnRevisionHistory
                 }
 
                 /* else if this is a copy of a root of the directory */
-            } else if ((pPath.startsWith(myPath))
-                       && (myCopyPath != null)) {
+            } else if (pPath.startsWith(myPath)
+                       && myCopyPath != null) {
                 /* Check that this is not a second origin */
                 if (isOrigin) {
                     throw new ThemisDataException(theRevisionKey, "second origin for path");
@@ -372,10 +372,10 @@ public class ThemisSvnRevisionHistory
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Output the title */
-        myBuilder.append("\n\nRevision ");
-        myBuilder.append(theRevisionKey.toString());
-        myBuilder.append("\n");
-        myBuilder.append(theLogMessage);
+        myBuilder.append("\n\nRevision ")
+                .append(theRevisionKey.toString())
+                .append('\n')
+                .append(theLogMessage);
 
         /* Add SourceDirs */
         final Iterator<SvnSourceDir> myIterator = theSourceDirs.iterator();
@@ -468,7 +468,7 @@ public class ThemisSvnRevisionHistory
          * Constructor.
          * @param pEntry the log entry
          */
-        private SvnRevisionKey(final SVNLogEntryPath pEntry) {
+        SvnRevisionKey(final SVNLogEntryPath pEntry) {
             /* Store parameters */
             theRevision = SVNRevision.create(pEntry.getCopyRevision());
             thePath = pEntry.getCopyPath();
@@ -521,7 +521,7 @@ public class ThemisSvnRevisionHistory
         @Override
         public int hashCode() {
             return (int) theRevision.getNumber()
-                   + (thePath.hashCode() * HASH_PRIME);
+                   + thePath.hashCode() * HASH_PRIME;
         }
     }
 
@@ -571,8 +571,8 @@ public class ThemisSvnRevisionHistory
          * @param pRevision the source revision
          * @throws OceanusException on error
          */
-        private SvnSourceDir(final String pSource,
-                             final long pRevision) throws OceanusException {
+        SvnSourceDir(final String pSource,
+                     final long pRevision) throws OceanusException {
             /* Split according to directory parts */
             final SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
 
@@ -609,7 +609,7 @@ public class ThemisSvnRevisionHistory
          * Set the history.
          * @param pBasedOn the history base
          */
-        protected void setBasedOn(final ThemisSvnRevisionHistory pBasedOn) {
+        void setBasedOn(final ThemisSvnRevisionHistory pBasedOn) {
             theBasedOn = pBasedOn;
         }
 
@@ -619,10 +619,10 @@ public class ThemisSvnRevisionHistory
             final StringBuilder myBuilder = new StringBuilder();
 
             /* Add to output */
-            myBuilder.append("\nSource ");
-            myBuilder.append(theComponent);
-            myBuilder.append("\nFrom ");
-            myBuilder.append(theSource);
+            myBuilder.append("\nSource ")
+                    .append(theComponent)
+                    .append("\nFrom ")
+                    .append(theSource);
 
             /* Return the details */
             return myBuilder.toString();
@@ -678,7 +678,7 @@ public class ThemisSvnRevisionHistory
         /**
          * Constructor.
          */
-        private SvnSourceDirList() {
+        SvnSourceDirList() {
             theDirList = new ArrayList<>();
         }
 
@@ -710,7 +710,7 @@ public class ThemisSvnRevisionHistory
          * @param pDir the directory to add.
          * @throws OceanusException on error
          */
-        private void addItem(final SvnSourceDir pDir) throws OceanusException {
+        void addItem(final SvnSourceDir pDir) throws OceanusException {
             /* Loop through the existing items */
             final Iterator<SvnSourceDir> myIterator = iterator();
             while (myIterator.hasNext()) {

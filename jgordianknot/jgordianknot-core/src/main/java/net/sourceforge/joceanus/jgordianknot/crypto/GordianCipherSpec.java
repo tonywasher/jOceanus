@@ -264,7 +264,6 @@ public abstract class GordianCipherSpec<T> {
             /* Determine whether we have a short block length */
             final int myLen = getKeyType().getBlockLength().getLength();
             final boolean shortBlock = myLen < GordianLength.LEN_128.getLength();
-            final boolean stdBlock = myLen == GordianLength.LEN_128.getLength();
 
             /* Reject modes which do not allow short blocks */
             if (shortBlock && !theMode.allowShortBlock()) {
@@ -272,6 +271,7 @@ public abstract class GordianCipherSpec<T> {
             }
 
             /* Reject modes which do not allow non-standard blocks */
+            final boolean stdBlock = myLen == GordianLength.LEN_128.getLength();
             if (!stdBlock && theMode.needsStdBlock()) {
                 return false;
             }

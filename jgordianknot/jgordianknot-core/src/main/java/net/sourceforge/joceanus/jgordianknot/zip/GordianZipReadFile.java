@@ -242,14 +242,14 @@ public class GordianZipReadFile {
      * @throws OceanusException on error
      */
     public InputStream getInputStream(final GordianZipFileEntry pFile) throws OceanusException {
-        /* Declare control variables */
-        ZipInputStream myZipFile = null;
-        InputStream myResult = null;
-
         /* Check that entry belongs to this zip file */
         if (!pFile.getParent().equals(theContents)) {
             throw new GordianDataException("File does not belong to Zip file");
         }
+
+        /* Declare control variables */
+        ZipInputStream myZipFile = null;
+        InputStream myResult = null;
 
         /* Protect against exceptions */
         try {

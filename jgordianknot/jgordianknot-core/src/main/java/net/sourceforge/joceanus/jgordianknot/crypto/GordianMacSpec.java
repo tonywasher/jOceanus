@@ -172,8 +172,8 @@ public final class GordianMacSpec {
      * @param pLength the length
      * @return the MacSpec
      */
-    protected static GordianMacSpec skeinMac(final GordianLength pState,
-                                             final GordianLength pLength) {
+    static GordianMacSpec skeinMac(final GordianLength pState,
+                                   final GordianLength pLength) {
         final GordianDigestSpec mySpec = GordianDigestSpec.skein(pState, pLength);
         return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
     }
@@ -336,19 +336,19 @@ public final class GordianMacSpec {
         final List<GordianMacSpec> myList = new ArrayList<>();
 
         /* For each digestSpec */
-        for (GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
+        for (final GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
             myList.add(GordianMacSpec.hMac(mySpec));
         }
 
         /* For each SymKey */
-        for (GordianSymKeySpec mySymKeySpec : GordianSymKeySpec.listAll()) {
+        for (final GordianSymKeySpec mySymKeySpec : GordianSymKeySpec.listAll()) {
             myList.add(GordianMacSpec.gMac(mySymKeySpec));
             myList.add(GordianMacSpec.cMac(mySymKeySpec));
             myList.add(GordianMacSpec.poly1305Mac(mySymKeySpec));
         }
 
         /* For each length */
-        for (GordianLength myLength : GordianLength.values()) {
+        for (final GordianLength myLength : GordianLength.values()) {
             myList.add(GordianMacSpec.skeinMac(myLength));
             if (GordianDigestType.SKEIN.getExtendedStateForLength(myLength) != null) {
                 myList.add(GordianMacSpec.skeinMac(myLength, true));
@@ -359,12 +359,12 @@ public final class GordianMacSpec {
         myList.add(GordianMacSpec.vmpcMac());
 
         /* Add kalynaMac */
-        for (GordianLength myLength : GordianSymKeyType.KALYNA.getSupportedLengths()) {
+        for (final GordianLength myLength : GordianSymKeyType.KALYNA.getSupportedLengths()) {
             myList.add(GordianMacSpec.kalynaMac(myLength));
         }
 
         /* Add kupynaMac */
-        for (GordianLength myLength : GordianDigestType.KUPYNA.getSupportedLengths()) {
+        for (final GordianLength myLength : GordianDigestType.KUPYNA.getSupportedLengths()) {
             myList.add(GordianMacSpec.kupynaMac(myLength));
         }
 

@@ -117,7 +117,7 @@ public final class JcaDigest
      * @return the digest
      * @throws OceanusException on error
      */
-    protected static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getSignAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
             && pDigestSpec.getStateLength() != null) {
@@ -136,7 +136,7 @@ public final class JcaDigest
      * @return the digest
      * @throws OceanusException on error
      */
-    protected static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getHMacAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* If this is a sha2 extended algorithm */
         if (GordianDigestType.SHA2.equals(pDigestSpec.getDigestType())
             && pDigestSpec.getStateLength() != null) {
@@ -155,7 +155,7 @@ public final class JcaDigest
      * @return the name
      * @throws OceanusException on error
      */
-    protected static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    static String getAlgorithm(final GordianDigestSpec pDigestSpec) throws OceanusException {
         /* Access digest details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
         final GordianLength myLen = pDigestSpec.getDigestLength();
@@ -314,10 +314,10 @@ public final class JcaDigest
         final String myLen = Integer.toString(pSpec.getDigestLength().getLength());
         final String myState = Integer.toString(pSpec.getStateLength().getLength());
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("Skein-");
-        myBuilder.append(myState);
-        myBuilder.append("-");
-        myBuilder.append(myLen);
+        myBuilder.append("Skein-")
+                .append(myState)
+                .append('-')
+                .append(myLen);
         return myBuilder.toString();
     }
 
@@ -328,8 +328,8 @@ public final class JcaDigest
      */
     private static String getStreebogAlgorithm(final GordianLength pLength) {
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("GOST3411-2012-");
-        myBuilder.append(pLength.getLength());
+        myBuilder.append("GOST3411-2012-")
+                .append(pLength.getLength());
         return myBuilder.toString();
     }
 
@@ -338,7 +338,7 @@ public final class JcaDigest
      * @param pDigestType the digest type
      * @return true/false
      */
-    protected static boolean isHMacSupported(final GordianDigestType pDigestType) {
+    static boolean isHMacSupported(final GordianDigestType pDigestType) {
         switch (pDigestType) {
             case SM3:
             case BLAKE:

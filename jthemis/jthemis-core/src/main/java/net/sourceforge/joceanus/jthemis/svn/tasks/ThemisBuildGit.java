@@ -481,8 +481,8 @@ public class ThemisBuildGit {
          * @param pRevision the revision
          * @param pCommit the commit
          */
-        private SvnRevisionCommit(final long pRevision,
-                                  final RevCommit pCommit) {
+        SvnRevisionCommit(final long pRevision,
+                          final RevCommit pCommit) {
             theRevision = pRevision;
             theCommit = pCommit;
         }
@@ -491,7 +491,7 @@ public class ThemisBuildGit {
          * Obtain the revision.
          * @return the revision
          */
-        private long getRevision() {
+        long getRevision() {
             return theRevision;
         }
 
@@ -499,7 +499,7 @@ public class ThemisBuildGit {
          * Obtain the commit.
          * @return the commit
          */
-        private RevCommit getCommit() {
+        RevCommit getCommit() {
             return theCommit;
         }
     }
@@ -520,7 +520,7 @@ public class ThemisBuildGit {
          * @return the commit
          * @throws OceanusException on error
          */
-        private RevCommit getCommit(final long pRevision) throws OceanusException {
+        RevCommit getCommit(final long pRevision) throws OceanusException {
             /* Note commit */
             RevCommit myCommit = null;
 
@@ -562,8 +562,8 @@ public class ThemisBuildGit {
          * @param pAnchor the anchor
          * @param pCommit the commit
          */
-        private void addAnchor(final SvnExtractAnchor pAnchor,
-                               final RevCommit pCommit) {
+        void addAnchor(final SvnExtractAnchor pAnchor,
+                       final RevCommit pCommit) {
             /* Access the list */
             final Object myOwner = pAnchor.getOwner();
             SvnRevisionCommitList myList = get(myOwner);
@@ -583,7 +583,7 @@ public class ThemisBuildGit {
          * @return the commit
          * @throws OceanusException on error
          */
-        private RevCommit getCommit(final SvnExtractAnchor pAnchor) throws OceanusException {
+        RevCommit getCommit(final SvnExtractAnchor pAnchor) throws OceanusException {
             /* Access the list */
             final SvnRevisionCommitList myList = get(pAnchor.getOwner());
             if (myList != null) {
@@ -635,7 +635,7 @@ public class ThemisBuildGit {
          * @param pStatus the secondary status
          * @return the new status
          */
-        private SvnExtractStatus combineStatus(final SvnExtractStatus pStatus) {
+        SvnExtractStatus combineStatus(final SvnExtractStatus pStatus) {
             switch (pStatus) {
                 case OBSCURED:
                     return isComplete()
@@ -661,7 +661,7 @@ public class ThemisBuildGit {
          * Is the extract complete?
          * @return true/false
          */
-        private boolean isComplete() {
+        boolean isComplete() {
             switch (this) {
                 case FINISHED:
                 case COMPLETED:
@@ -675,7 +675,7 @@ public class ThemisBuildGit {
          * Should we retry?
          * @return true/false
          */
-        private boolean doRetry() {
+        boolean doRetry() {
             return this == REPEAT;
         }
 
@@ -683,7 +683,7 @@ public class ThemisBuildGit {
          * Is the extract cancelled?
          * @return true/false
          */
-        private boolean isCancelled() {
+        boolean isCancelled() {
             return this == CANCELLED;
         }
 
@@ -691,7 +691,7 @@ public class ThemisBuildGit {
          * Is the extract blocked?
          * @return true/false
          */
-        private boolean isBlocked() {
+        boolean isBlocked() {
             return this == BLOCKED;
         }
 
@@ -701,8 +701,8 @@ public class ThemisBuildGit {
          * @param pBlocked were plans blocked?
          * @return the status
          */
-        private static SvnExtractStatus determineStatus(final boolean pExtracted,
-                                                        final boolean pBlocked) {
+        static SvnExtractStatus determineStatus(final boolean pExtracted,
+                                                final boolean pBlocked) {
             return pBlocked
                             ? pExtracted
                                          ? OBSCURED

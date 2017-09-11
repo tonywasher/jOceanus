@@ -49,7 +49,7 @@ public final class GordianKeySetHashRecipe {
     /**
      * HashSize.
      */
-    protected static final int HASHLEN = RECIPELEN + SALTLEN + GordianLength.LEN_512.getByteLength();
+    static final int HASHLEN = RECIPELEN + SALTLEN + GordianLength.LEN_512.getByteLength();
 
     /**
      * Hash margins.
@@ -150,7 +150,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the Prime Digest type.
      * @return the digest type
      */
-    protected GordianDigestType getPrimeDigest() {
+    GordianDigestType getPrimeDigest() {
         return theParams.getPrimeDigest();
     }
 
@@ -158,7 +158,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the Alternate Digest type.
      * @return the digest type
      */
-    protected GordianDigestType getAlternateDigest() {
+    GordianDigestType getAlternateDigest() {
         return theParams.getAlternateDigest();
     }
 
@@ -166,7 +166,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the Secret Digest type.
      * @return the digest type
      */
-    protected GordianDigestType getSecretDigest() {
+    GordianDigestType getSecretDigest() {
         return theParams.getSecretDigest();
     }
 
@@ -174,7 +174,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the External Digest type.
      * @return the digest type
      */
-    protected GordianDigestType getExternalDigest() {
+    GordianDigestType getExternalDigest() {
         return theParams.getExternalDigest();
     }
 
@@ -182,7 +182,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the Adjustment.
      * @return the adjustment
      */
-    protected int getAdjustment() {
+    int getAdjustment() {
         return theParams.getAdjustment();
     }
 
@@ -190,7 +190,7 @@ public final class GordianKeySetHashRecipe {
      * Obtain the Initialisation vector.
      * @return the initialisation vector
      */
-    protected byte[] getInitVector() {
+    byte[] getInitVector() {
         return theInitVector == null
                                      ? null
                                      : Arrays.copyOf(theInitVector, theInitVector.length);
@@ -212,8 +212,8 @@ public final class GordianKeySetHashRecipe {
      * @param pHash the calculated hash
      * @return the external form
      */
-    protected byte[] buildExternal(final int pPassLength,
-                                   final byte[] pHash) {
+    byte[] buildExternal(final int pPassLength,
+                         final byte[] pHash) {
         /* Allocate the new buffer */
         final int myHashLen = pHash.length;
         final int myLen = RECIPELEN
@@ -268,7 +268,7 @@ public final class GordianKeySetHashRecipe {
          * Construct the parameters from random.
          * @param pFactory the factory
          */
-        protected HashParameters(final GordianFactory pFactory) {
+        HashParameters(final GordianFactory pFactory) {
             /* Obtain Id manager and random */
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
@@ -294,8 +294,8 @@ public final class GordianKeySetHashRecipe {
          * @param pFactory the factory
          * @param pRecipe the recipe bytes
          */
-        protected HashParameters(final GordianFactory pFactory,
-                                 final byte[] pRecipe) {
+        HashParameters(final GordianFactory pFactory,
+                       final byte[] pRecipe) {
             /* Obtain Id manager */
             final GordianIdManager myManager = pFactory.getIdManager();
             final GordianPersonalisation myPersonal = pFactory.getPersonalisation();
@@ -319,7 +319,7 @@ public final class GordianKeySetHashRecipe {
          * Obtain the Recipe.
          * @return the recipe
          */
-        private byte[] getRecipe() {
+        byte[] getRecipe() {
             return theRecipe;
         }
 
@@ -327,7 +327,7 @@ public final class GordianKeySetHashRecipe {
          * Obtain the Prime Digest type.
          * @return the digest type
          */
-        public GordianDigestType getPrimeDigest() {
+        GordianDigestType getPrimeDigest() {
             return theDigests[0];
         }
 
@@ -335,7 +335,7 @@ public final class GordianKeySetHashRecipe {
          * Obtain the Alternate Digest type.
          * @return the digest type
          */
-        public GordianDigestType getAlternateDigest() {
+        GordianDigestType getAlternateDigest() {
             return theDigests[1];
         }
 
@@ -343,7 +343,7 @@ public final class GordianKeySetHashRecipe {
          * Obtain the Secret Digest type.
          * @return the digest type
          */
-        public GordianDigestType getSecretDigest() {
+        GordianDigestType getSecretDigest() {
             return theDigests[2];
         }
 
@@ -351,7 +351,7 @@ public final class GordianKeySetHashRecipe {
          * Obtain the external Digest type.
          * @return the digest type
          */
-        public GordianDigestType getExternalDigest() {
+        GordianDigestType getExternalDigest() {
             return theExternalDigest[0];
         }
 
@@ -359,7 +359,7 @@ public final class GordianKeySetHashRecipe {
          * Obtain the Adjustment.
          * @return the adjustment
          */
-        public int getAdjustment() {
+        int getAdjustment() {
             return theAdjust;
         }
     }

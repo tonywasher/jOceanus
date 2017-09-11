@@ -59,7 +59,7 @@ public class GordianMacInputStream
 
         /* Store parameters */
         theMac = pMac;
-        theExpected = pExpected;
+        theExpected = Arrays.copyOf(pExpected, pExpected.length);
 
         /* Create processed buffer */
         setProcessedBuffer(new MacBuffer(this));
@@ -77,7 +77,7 @@ public class GordianMacInputStream
      * Check result.
      * @throws OceanusException on error
      */
-    private void checkResult() throws OceanusException {
+    void checkResult() throws OceanusException {
         /* Calculate MAC */
         final byte[] myResult = theMac.finish();
 
@@ -106,7 +106,7 @@ public class GordianMacInputStream
          * Constructor.
          * @param pStream the input stream
          */
-        private MacBuffer(final GordianMacInputStream pStream) {
+        MacBuffer(final GordianMacInputStream pStream) {
             theStream = pStream;
             theMac = theStream.getMac();
         }

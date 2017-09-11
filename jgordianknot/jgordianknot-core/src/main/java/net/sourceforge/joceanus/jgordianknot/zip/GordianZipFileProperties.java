@@ -43,7 +43,7 @@ public class GordianZipFileProperties {
     /**
      * The value separator.
      */
-    private static final char SEP_VALUE = '=';
+    static final char SEP_VALUE = '=';
 
     /**
      * The long separator.
@@ -139,8 +139,8 @@ public class GordianZipFileProperties {
             }
 
             /* else if the property now has no value */
-        } else if ((isNull)
-                   && (myProperty.getLongValue() == null)) {
+        } else if (isNull
+                   && myProperty.getLongValue() == null) {
             /* Remove the value from the list */
             theList.remove(myProperty);
 
@@ -176,8 +176,8 @@ public class GordianZipFileProperties {
             }
 
             /* else if the property now has no value */
-        } else if ((isNull)
-                   && (myProperty.getByteValue() == null)) {
+        } else if (isNull
+                   && myProperty.getByteValue() == null) {
             /* Remove the value from the list */
             theList.remove(myProperty);
 
@@ -325,8 +325,6 @@ public class GordianZipFileProperties {
 
         /* Split the values and name */
         final String myName = pValue.substring(0, myLoc);
-        String myBytes = pValue.substring(myLoc + 1);
-        final int myLen = myBytes.length();
 
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
@@ -335,6 +333,7 @@ public class GordianZipFileProperties {
         }
 
         /* Locate the Long separator in the string */
+        String myBytes = pValue.substring(myLoc + 1);
         myLoc = myBytes.indexOf(SEP_LONG);
 
         /* Check that we found the long separator */
@@ -344,16 +343,17 @@ public class GordianZipFileProperties {
         }
 
         /* Access the separate byte and long values */
-        final String myLong = (myLoc < myLen - 1)
-                                                  ? myBytes.substring(myLoc + 1)
-                                                  : null;
-        myBytes = (myLoc > 0)
-                              ? myBytes.substring(0, myLoc)
-                              : null;
+        final int myLen = myBytes.length();
+        final String myLong = myLoc < myLen - 1
+                                                ? myBytes.substring(myLoc + 1)
+                                                : null;
+        myBytes = myLoc > 0
+                            ? myBytes.substring(0, myLoc)
+                            : null;
 
         /* Must have at least one of Bytes/Long */
-        if ((myBytes == null)
-            && (myLong == null)) {
+        if (myBytes == null
+            && myLong == null) {
             throw new GordianDataException("Invalid property: "
                                            + myName);
         }
@@ -398,8 +398,8 @@ public class GordianZipFileProperties {
          * @param pList property list
          * @param pName the name of the property
          */
-        private Property(final List<Property> pList,
-                         final String pName) {
+        Property(final List<Property> pList,
+                 final String pName) {
             /* Check for invalid name */
             if (pName.indexOf(SEP_VALUE) != -1) {
                 throw new IllegalArgumentException("Invalid property name - "
@@ -442,7 +442,7 @@ public class GordianZipFileProperties {
          * Obtain the name of the property.
          * @return the name of the property
          */
-        private String getName() {
+        String getName() {
             return theName;
         }
 
@@ -450,7 +450,7 @@ public class GordianZipFileProperties {
          * Obtain the byte value of the property.
          * @return the value of the property
          */
-        private byte[] getByteValue() {
+        byte[] getByteValue() {
             return theByteValue;
         }
 
@@ -458,7 +458,7 @@ public class GordianZipFileProperties {
          * Obtain the long value of the property.
          * @return the value of the property
          */
-        private Long getLongValue() {
+        Long getLongValue() {
             return theLongValue;
         }
 
@@ -466,7 +466,7 @@ public class GordianZipFileProperties {
          * Set the byte value.
          * @param pValue the new value
          */
-        private void setByteValue(final byte[] pValue) {
+        void setByteValue(final byte[] pValue) {
             theByteValue = (pValue == null)
                                             ? null
                                             : Arrays.copyOf(pValue, pValue.length);
@@ -476,7 +476,7 @@ public class GordianZipFileProperties {
          * Set the long value.
          * @param pValue the new value
          */
-        private void setLongValue(final Long pValue) {
+        void setLongValue(final Long pValue) {
             theLongValue = pValue;
         }
     }

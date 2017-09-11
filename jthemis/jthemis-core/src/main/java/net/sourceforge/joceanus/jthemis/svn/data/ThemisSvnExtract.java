@@ -91,7 +91,7 @@ public class ThemisSvnExtract
     /**
      * Trunk extract list.
      */
-    private SvnBranchExtractPlan theTrunk;
+    private final SvnBranchExtractPlan theTrunk;
 
     /**
      * List of non-trunk Branch Extracts.
@@ -259,12 +259,10 @@ public class ThemisSvnExtract
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Output the title */
-        myBuilder.append("\n\nComponent ");
-        myBuilder.append(theComponent.toString());
-
-        /* Output the trunk */
-        myBuilder.append("\nTrunk ");
-        myBuilder.append(theTrunk.toString());
+        myBuilder.append("\n\nComponent ")
+                .append(theComponent.toString())
+                .append("\nTrunk ")
+                .append(theTrunk.toString());
 
         /* Add Branches */
         final Iterator<SvnBranchExtractPlan> myBrnIterator = theBranches.iterator();

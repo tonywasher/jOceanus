@@ -308,7 +308,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         /**
          * Constructor.
          */
-        private ThemisBranchMap() {
+        ThemisBranchMap() {
             theMap = new HashMap<>();
         }
 
@@ -336,7 +336,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         /**
          * Constructor.
          */
-        private ThemisTagMap() {
+        ThemisTagMap() {
             theMap = new HashMap<>();
         }
 

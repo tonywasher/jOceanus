@@ -107,10 +107,10 @@ public final class ThemisSvnBranch
      * @param pMinor the minor version
      * @param pDelta the delta version
      */
-    private ThemisSvnBranch(final ThemisSvnComponent pParent,
-                            final int pMajor,
-                            final int pMinor,
-                            final int pDelta) {
+    ThemisSvnBranch(final ThemisSvnComponent pParent,
+                    final int pMajor,
+                    final int pMinor,
+                    final int pDelta) {
         /* Call super constructor */
         super(pParent, pMajor, pMinor, pDelta);
 
@@ -250,7 +250,7 @@ public final class ThemisSvnBranch
      * Discover HistoryPath.
      * @throws OceanusException on error
      */
-    private void discoverHistory() throws OceanusException {
+    void discoverHistory() throws OceanusException {
         /* Access history map */
         final ThemisSvnRevisionHistoryMap myHistMap = theRepository.getHistoryMap();
 
@@ -444,7 +444,8 @@ public final class ThemisSvnBranch
                 final SVNURL myBranchURL = myBranch.getURL();
 
                 /* If this is parent of the passed URL */
-                if ((pURL.getPath().equals(myBranchURL.getPath())) || (pURL.getPath().startsWith(myBranchURL.getPath() + "/"))) {
+                if (pURL.getPath().equals(myBranchURL.getPath())
+                    || pURL.getPath().startsWith(myBranchURL.getPath() + "/")) {
                     /* This is the correct branch */
                     return myBranch;
                 }
@@ -481,7 +482,7 @@ public final class ThemisSvnBranch
              * Constructor.
              * @param pTags is this a search for tags?
              */
-            private ListDirHandler(final boolean pTags) {
+            ListDirHandler(final boolean pTags) {
                 isTags = pTags;
             }
 

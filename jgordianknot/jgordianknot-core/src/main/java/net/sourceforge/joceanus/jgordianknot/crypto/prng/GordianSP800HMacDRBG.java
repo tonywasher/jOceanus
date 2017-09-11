@@ -90,7 +90,7 @@ public final class GordianSP800HMacDRBG
     /**
      * The ReSeed Counter.
      */
-    private GordianByteArrayInteger theReseedCounter;
+    private final GordianByteArrayInteger theReseedCounter;
 
     /**
      * The Key.
@@ -206,13 +206,13 @@ public final class GordianSP800HMacDRBG
                                                + GordianRandomFactory.MAX_BITS_REQUEST);
         }
 
-        /* Access XtraBytes */
-        byte[] myXtraBytes = pXtraBytes;
-
         /* Check for reSeed required */
         if (theReseedCounter.compareLimit(GordianRandomFactory.RESEED_MAX)) {
             return -1;
         }
+
+        /* Access XtraBytes */
+        byte[] myXtraBytes = pXtraBytes;
 
         /* If we are prediction resistant */
         if (isPredictionResistant) {

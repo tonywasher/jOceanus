@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraSecurity.JiraUser;
  * Represents a Jira server.
  * @author Tony Washer
  */
-public class ThemisJiraServer {
+public final class ThemisJiraServer {
     /**
      * Create date time formatter.
      */
@@ -148,7 +148,7 @@ public class ThemisJiraServer {
      * Obtain the client.
      * @return the client
      */
-    protected ThemisHTTPJiraClient getClient() {
+    ThemisHTTPJiraClient getClient() {
         return theClient;
     }
 
@@ -156,7 +156,7 @@ public class ThemisJiraServer {
      * Obtain the active User.
      * @return the user
      */
-    protected JiraUser getActiveUser() {
+    JiraUser getActiveUser() {
         return theActive;
     }
 
@@ -1035,7 +1035,7 @@ public class ThemisJiraServer {
          * @param pType the base issueType
          * @throws OceanusException on error
          */
-        private JiraIssueType(final JSONObject pType) throws OceanusException {
+        JiraIssueType(final JSONObject pType) throws OceanusException {
             /* Parse base details */
             super(pType);
 
@@ -1069,7 +1069,7 @@ public class ThemisJiraServer {
          * @param pCategory the underlying status category
          * @throws OceanusException on error
          */
-        private JiraStatusCategory(final JSONObject pCategory) throws OceanusException {
+        JiraStatusCategory(final JSONObject pCategory) throws OceanusException {
             /* Parse base details */
             super(pCategory);
         }
@@ -1090,7 +1090,7 @@ public class ThemisJiraServer {
          * @param pStatus the underlying status
          * @throws OceanusException on error
          */
-        private JiraStatus(final JSONObject pStatus) throws OceanusException {
+        JiraStatus(final JSONObject pStatus) throws OceanusException {
             /* Parse base details */
             super(pStatus);
 
@@ -1124,7 +1124,7 @@ public class ThemisJiraServer {
          * @param pResolution the underlying resolution
          * @throws OceanusException on error
          */
-        private JiraResolution(final JSONObject pResolution) throws OceanusException {
+        JiraResolution(final JSONObject pResolution) throws OceanusException {
             /* Parse base details */
             super(pResolution);
         }
@@ -1145,7 +1145,7 @@ public class ThemisJiraServer {
          * @param pPriority the underlying priority
          * @throws OceanusException on error
          */
-        private JiraPriority(final JSONObject pPriority) throws OceanusException {
+        JiraPriority(final JSONObject pPriority) throws OceanusException {
             /* Parse base details */
             super(pPriority);
 
@@ -1188,7 +1188,7 @@ public class ThemisJiraServer {
          * @param pLinkType the underlying link
          * @throws OceanusException on error
          */
-        private JiraIssueLinkType(final JSONObject pLinkType) throws OceanusException {
+        JiraIssueLinkType(final JSONObject pLinkType) throws OceanusException {
             /* Parse base details */
             super(pLinkType);
 
