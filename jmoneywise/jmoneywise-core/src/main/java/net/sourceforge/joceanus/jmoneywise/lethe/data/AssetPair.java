@@ -25,8 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @author Tony Washer
  */
 public final class AssetPair
-        implements MetisDataFormat {
+        implements MetisDataObjectFormat {
     /**
      * Id shift.
      */
@@ -112,7 +113,7 @@ public final class AssetPair
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return toString();
     }
 
@@ -552,7 +553,7 @@ public final class AssetPair
                                                        : getAssetType(pReturned);
 
             /* Handle no change */
-            if (MetisDifference.isEqual(myType, pCurr.getReturnedCashType())) {
+            if (MetisDataDifference.isEqual(myType, pCurr.getReturnedCashType())) {
                 return pCurr;
             }
 

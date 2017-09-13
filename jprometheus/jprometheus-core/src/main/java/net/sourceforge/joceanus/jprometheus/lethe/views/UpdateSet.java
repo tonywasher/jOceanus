@@ -29,6 +29,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
@@ -125,7 +126,7 @@ public class UpdateSet<E extends Enum<E>>
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName() + "(" + theMap.size() + ")";
     }
 

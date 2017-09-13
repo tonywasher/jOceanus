@@ -24,8 +24,9 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -79,7 +80,7 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName() + "(" + size() + ")";
     }
 

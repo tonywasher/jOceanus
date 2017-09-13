@@ -24,8 +24,9 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
@@ -429,7 +430,7 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName();
     }
 
@@ -847,11 +848,11 @@ public abstract class DataItem<E extends Enum<E>>
      * @param pField the field to test
      * @return <code>true/false</code>
      */
-    public MetisDifference fieldChanged(final MetisField pField) {
-        return ((pField != null)
-                && (pField.getStorage().isValueSet()))
-                                                       ? theHistory.fieldChanged(pField)
-                                                       : MetisDifference.IDENTICAL;
+    public MetisDataDifference fieldChanged(final MetisField pField) {
+        return (pField != null
+                && pField.getStorage().isValueSet())
+                                                     ? theHistory.fieldChanged(pField)
+                                                     : MetisDataDifference.IDENTICAL;
     }
 
     /**
@@ -1045,7 +1046,7 @@ public abstract class DataItem<E extends Enum<E>>
             final Object myNew = myItem.getFieldValue(myField);
 
             /* Check the field */
-            if (!MetisDifference.isEqual(myValue, myNew)) {
+            if (!MetisDataDifference.isEqual(myValue, myNew)) {
                 return false;
             }
         }

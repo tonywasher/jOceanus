@@ -24,10 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -623,13 +624,13 @@ public class Portfolio
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = PortfolioInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -728,7 +729,7 @@ public class Portfolio
             && (pThat instanceof Portfolio)) {
             /* Check the portfolio type */
             final Portfolio myThat = (Portfolio) pThat;
-            iDiff = MetisDifference.compareObject(getPortfolioType(), myThat.getPortfolioType());
+            iDiff = MetisDataDifference.compareObject(getPortfolioType(), myThat.getPortfolioType());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -1005,17 +1006,17 @@ public class Portfolio
         applyBasicChanges(myPortfolio);
 
         /* Update the category type if required */
-        if (!MetisDifference.isEqual(getPortfolioType(), myPortfolio.getPortfolioType())) {
+        if (!MetisDataDifference.isEqual(getPortfolioType(), myPortfolio.getPortfolioType())) {
             setValueType(myPortfolio.getPortfolioType());
         }
 
         /* Update the parent account if required */
-        if (!MetisDifference.isEqual(getParent(), myPortfolio.getParent())) {
+        if (!MetisDataDifference.isEqual(getParent(), myPortfolio.getParent())) {
             setValueParent(myPortfolio.getParent());
         }
 
         /* Update the portfolio currency if required */
-        if (!MetisDifference.isEqual(getAssetCurrency(), myPortfolio.getAssetCurrency())) {
+        if (!MetisDataDifference.isEqual(getAssetCurrency(), myPortfolio.getAssetCurrency())) {
             setValueCurrency(myPortfolio.getAssetCurrency());
         }
 
@@ -1301,7 +1302,7 @@ public class Portfolio
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

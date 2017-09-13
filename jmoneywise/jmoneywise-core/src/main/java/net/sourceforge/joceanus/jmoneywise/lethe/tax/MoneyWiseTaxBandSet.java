@@ -26,9 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -40,7 +41,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Set of taxBands.
  */
 public class MoneyWiseTaxBandSet
-        implements MetisDataList<MoneyWiseTaxBand>, MetisDataFormat, Iterable<MoneyWiseTaxBand> {
+        implements MetisDataList<MoneyWiseTaxBand>, MetisDataObjectFormat, Iterable<MoneyWiseTaxBand> {
     /**
      * List of Tax Bands.
      */
@@ -86,7 +87,7 @@ public class MoneyWiseTaxBandSet
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return theTaxBands.toString();
     }
 
@@ -197,7 +198,7 @@ public class MoneyWiseTaxBandSet
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return toString();
         }
 

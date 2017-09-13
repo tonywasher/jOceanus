@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.Currency;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -114,13 +115,13 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     /**

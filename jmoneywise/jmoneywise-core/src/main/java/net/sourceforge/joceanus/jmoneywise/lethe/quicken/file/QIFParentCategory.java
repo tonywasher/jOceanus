@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket;
@@ -366,7 +366,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             final DepositBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
-            if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
+            if (!MetisDataDifference.isEqual(myCategory, myBucket.getCategory())) {
                 continue;
             }
 
@@ -453,7 +453,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
          */
         private boolean setDeposit(final DepositBucket pDeposit) {
             /* Adjust the selected deposit */
-            if (!MetisDifference.isEqual(pDeposit, theDeposit)) {
+            if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {
                 /* Store the deposit */
                 setTheDeposit(pDeposit);
                 return true;
@@ -497,7 +497,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
          */
         private boolean setCategory(final DepositCategory pCategory) {
             /* Adjust the selected category */
-            if (!MetisDifference.isEqual(pCategory, theCategory)) {
+            if (!MetisDataDifference.isEqual(pCategory, theCategory)) {
                 setTheDeposit(pCategory, getDefaultDeposit(pCategory));
                 return true;
             }

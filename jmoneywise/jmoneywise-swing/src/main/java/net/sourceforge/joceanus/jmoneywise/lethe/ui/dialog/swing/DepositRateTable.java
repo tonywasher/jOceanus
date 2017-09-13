@@ -33,7 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
@@ -225,7 +225,7 @@ public class DepositRateTable
      */
     protected void setDeposit(final Deposit pDeposit) {
         /* Store the deposit */
-        if (!MetisDifference.isEqual(pDeposit, theDeposit)) {
+        if (!MetisDataDifference.isEqual(pDeposit, theDeposit)) {
             theDeposit = pDeposit;
             theModel.fireNewDataEvents();
         }

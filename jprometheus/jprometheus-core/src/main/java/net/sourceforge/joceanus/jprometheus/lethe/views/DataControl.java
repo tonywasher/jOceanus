@@ -26,7 +26,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;

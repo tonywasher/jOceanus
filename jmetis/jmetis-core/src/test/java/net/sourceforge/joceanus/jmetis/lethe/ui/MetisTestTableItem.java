@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.lethe.ui;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -248,7 +249,7 @@ public class MetisTestTableItem
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName();
     }
 

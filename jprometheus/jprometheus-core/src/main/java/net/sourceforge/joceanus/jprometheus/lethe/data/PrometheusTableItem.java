@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDeletable;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataUpdatable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
@@ -67,15 +67,6 @@ public interface PrometheusTableItem extends MetisOrderedIdItem<Integer>, MetisD
          */
         default T get(final int pIndex) {
             return getUnderlyingList().get(pIndex);
-        }
-
-        /**
-         * Remove the item from the list.
-         * @param pItem the item to remove
-         * @return was the item originally in the list?
-         */
-        default boolean remove(final Object pItem) {
-            return getUnderlyingList().remove(pItem);
         }
 
         /**

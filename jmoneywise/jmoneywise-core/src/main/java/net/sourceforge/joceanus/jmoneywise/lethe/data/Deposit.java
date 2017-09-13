@@ -24,10 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -604,13 +605,13 @@ public class Deposit
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -746,11 +747,11 @@ public class Deposit
 
         /* Compare types of asset */
         int iDiff = super.compareTo(pThat);
-        if ((iDiff == 0)
-            && (pThat instanceof Deposit)) {
+        if (iDiff == 0
+            && pThat instanceof Deposit) {
             /* Check the category */
             final Deposit myThat = (Deposit) pThat;
-            iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
+            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -1012,17 +1013,17 @@ public class Deposit
         applyBasicChanges(myDeposit);
 
         /* Update the category if required */
-        if (!MetisDifference.isEqual(getCategory(), myDeposit.getCategory())) {
+        if (!MetisDataDifference.isEqual(getCategory(), myDeposit.getCategory())) {
             setValueCategory(myDeposit.getCategory());
         }
 
         /* Update the parent if required */
-        if (!MetisDifference.isEqual(getParent(), myDeposit.getParent())) {
+        if (!MetisDataDifference.isEqual(getParent(), myDeposit.getParent())) {
             setValueParent(myDeposit.getParent());
         }
 
         /* Update the deposit currency if required */
-        if (!MetisDifference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
+        if (!MetisDataDifference.isEqual(getAssetCurrency(), myDeposit.getAssetCurrency())) {
             setValueCurrency(myDeposit.getAssetCurrency());
         }
 
@@ -1315,7 +1316,7 @@ public class Deposit
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

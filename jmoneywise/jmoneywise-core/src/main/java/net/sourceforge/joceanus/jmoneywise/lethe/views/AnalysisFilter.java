@@ -22,8 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -128,7 +129,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getName();
     }
 
@@ -297,7 +298,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         final AnalysisFilter<?, ?> myThat = (AnalysisFilter<?, ?>) pThat;
 
         /* Check equality */
-        return MetisDifference.isEqual(getBucket(), myThat.getBucket());
+        return MetisDataDifference.isEqual(getBucket(), myThat.getBucket());
     }
 
     @Override

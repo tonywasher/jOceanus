@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;

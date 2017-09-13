@@ -25,8 +25,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        implements MetisDataFormat, MetisDataMap<E, Object> {
+        implements MetisDataObjectFormat, MetisDataMap<E, Object> {
     /**
      * Map.
      */
@@ -85,7 +86,7 @@ public abstract class BucketValues<T extends BucketValues<T, E>, E extends Enum<
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 

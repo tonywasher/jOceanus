@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket;
@@ -366,7 +366,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
             final CashBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
-            if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
+            if (!MetisDataDifference.isEqual(myCategory, myBucket.getCategory())) {
                 continue;
             }
 
@@ -453,7 +453,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
          */
         private boolean setCash(final CashBucket pCash) {
             /* Adjust the selected cash */
-            if (!MetisDifference.isEqual(pCash, theCash)) {
+            if (!MetisDataDifference.isEqual(pCash, theCash)) {
                 /* Store the cash */
                 setTheCash(pCash);
                 return true;
@@ -497,7 +497,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
          */
         private boolean setCategory(final CashCategory pCategory) {
             /* Adjust the selected category */
-            if (!MetisDifference.isEqual(pCategory, theCategory)) {
+            if (!MetisDataDifference.isEqual(pCategory, theCategory)) {
                 setTheCash(pCategory, getDefaultCash(pCategory));
                 return true;
             }

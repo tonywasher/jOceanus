@@ -24,8 +24,10 @@ package net.sourceforge.joceanus.jmetis.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
@@ -65,7 +67,7 @@ public class MetisValueSetDelta
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         /* Access the values */
         final Object[] myNewValues = theNewSet.getValues();
         final Object[] myOldValues = theOldSet.getValues();
@@ -77,7 +79,7 @@ public class MetisValueSetDelta
 
         /* Loop through the objects */
         for (int i = 0; i < myNewValues.length; i++) {
-            if (!MetisDifference.isEqual(myOldValues[i], myNewValues[i])) {
+            if (!MetisDataDifference.isEqual(myOldValues[i], myNewValues[i])) {
                 /* Increment the number of differences */
                 myNumDiffs++;
             }
@@ -137,7 +139,7 @@ public class MetisValueSetDelta
         } else if (myIndex == 1) {
             return (theOldSet.isDeletion() == theNewSet.isDeletion())
                                                                       ? MetisFieldValue.SKIP
-                                                                      : new MetisDataDifference(theOldSet.isDeletion(), MetisDifference.DIFFERENT);
+                                                                      : new MetisDataDelta(theOldSet.isDeletion(), MetisDataDifference.DIFFERENT);
         }
 
         /* Adjust index */
@@ -145,9 +147,9 @@ public class MetisValueSetDelta
 
         /* Obtain the difference */
         final Object myObject = theOldSet.getValue(myIndex);
-        final MetisDifference myDifference = MetisDifference.getDifference(myObject, theNewSet.getValue(myIndex));
+        final MetisDataDifference myDifference = MetisDataDifference.difference(myObject, theNewSet.getValue(myIndex));
 
         /* Return the value */
-        return new MetisDataDifference(myObject, myDifference);
+        return new MetisDataDelta(myObject, myDifference);
     }
 }

@@ -27,8 +27,8 @@ import java.util.Iterator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
 import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder.MetisHTMLTable;
@@ -179,7 +179,7 @@ public class MoneyWiseReportIncomeExpense
 
             /* Skip record if incorrect category */
             final TransactionCategory myCurr = myBucket.getTransactionCategory();
-            if (!MetisDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
+            if (!MetisDataDifference.isEqual(myCurr.getParentCategory(), myCategory)) {
                 continue;
             }
 

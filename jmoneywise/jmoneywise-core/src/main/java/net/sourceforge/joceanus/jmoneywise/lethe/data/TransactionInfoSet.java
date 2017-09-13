@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Currency;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -476,9 +476,9 @@ public class TransactionInfoSet
         if ((myCurrency == null) || (myPartnerCurrency == null)) {
             return MetisFieldRequired.NOTALLOWED;
         }
-        return MetisDifference.isEqual(myCurrency, myPartnerCurrency)
-                                                                      ? MetisFieldRequired.NOTALLOWED
-                                                                      : MetisFieldRequired.MUSTEXIST;
+        return MetisDataDifference.isEqual(myCurrency, myPartnerCurrency)
+                                                                          ? MetisFieldRequired.NOTALLOWED
+                                                                          : MetisFieldRequired.MUSTEXIST;
     }
 
     /**
@@ -521,7 +521,7 @@ public class TransactionInfoSet
         // case TRANSFER:
         // return MetisFieldRequired.MUSTEXIST;
         // case DIVIDEND:
-        // return MetisDifference.isEqual(pAccount, pPartner)
+        // return MetisDataDifference.isEqual(pAccount, pPartner)
         // ? MetisFieldRequired.MUSTEXIST
         // : MetisFieldRequired.NOTALLOWED;
         // default:
@@ -550,7 +550,7 @@ public class TransactionInfoSet
         // case TRANSFER:
         // return MetisFieldRequired.CANEXIST;
         // case DIVIDEND:
-        // return MetisDifference.isEqual(pAccount, pPartner)
+        // return MetisDataDifference.isEqual(pAccount, pPartner)
         // ? MetisFieldRequired.CANEXIST
         // : MetisFieldRequired.NOTALLOWED;
         // default:

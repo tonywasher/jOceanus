@@ -27,7 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 
 /**
  * Class representing a row within a sheet or a view.

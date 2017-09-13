@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -218,13 +218,13 @@ public abstract class AssetBase<T extends AssetBase<T>>
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     @Override
@@ -704,7 +704,7 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected int compareAsset(final T pThat) {
         /* Check the names */
-        final int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        final int iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -809,17 +809,17 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     protected void applyBasicChanges(final AssetBase<T> pAsset) {
         /* Update the name if required */
-        if (!MetisDifference.isEqual(getName(), pAsset.getName())) {
+        if (!MetisDataDifference.isEqual(getName(), pAsset.getName())) {
             setValueName(pAsset.getNameField());
         }
 
         /* Update the description if required */
-        if (!MetisDifference.isEqual(getDesc(), pAsset.getDesc())) {
+        if (!MetisDataDifference.isEqual(getDesc(), pAsset.getDesc())) {
             setValueDesc(pAsset.getDescField());
         }
 
         /* Update the closed indication if required */
-        if (!MetisDifference.isEqual(isClosed(), pAsset.isClosed())) {
+        if (!MetisDataDifference.isEqual(isClosed(), pAsset.isClosed())) {
             setValueClosed(pAsset.isClosed());
         }
     }

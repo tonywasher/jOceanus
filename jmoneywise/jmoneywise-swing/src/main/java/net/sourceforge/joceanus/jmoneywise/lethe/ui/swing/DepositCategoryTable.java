@@ -31,7 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
@@ -383,7 +383,7 @@ public class DepositCategoryTable
     protected void selectCategory(final DepositCategory pCategory) {
         /* Ensure the correct parent is selected */
         DepositCategory myParent = pCategory.getParentCategory();
-        if (!MetisDifference.isEqual(theParent, myParent)) {
+        if (!MetisDataDifference.isEqual(theParent, myParent)) {
             if (myParent != null) {
                 myParent = theCategories.findItemById(myParent.getId());
             }
@@ -428,7 +428,7 @@ public class DepositCategoryTable
      */
     private void handleDepositSelection() {
         final DepositCategory myCategory = theSelectButton.getValue();
-        if (!MetisDifference.isEqual(myCategory, theParent)) {
+        if (!MetisDataDifference.isEqual(myCategory, theParent)) {
             /* Store new category */
             selectParent(myCategory);
         }

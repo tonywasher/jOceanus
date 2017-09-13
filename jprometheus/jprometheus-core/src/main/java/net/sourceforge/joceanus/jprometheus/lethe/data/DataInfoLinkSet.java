@@ -26,9 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -160,7 +161,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return theActive.toString();
     }
 
@@ -360,7 +361,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
      * Determine whether any item has changed in this edit view.
      * @return <code>true/false</code>
      */
-    public MetisDifference fieldChanged() {
+    public MetisDataDifference fieldChanged() {
         /* Loop through the list */
         final Iterator<T> myIterator = theLinkSet.iterator();
         while (myIterator.hasNext()) {
@@ -369,12 +370,12 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
             /* Notify if the item has changed */
             if (myLink.hasHistory()
                 || myLink.getOriginalValues().getVersion() > 0) {
-                return MetisDifference.DIFFERENT;
+                return MetisDataDifference.DIFFERENT;
             }
         }
 
         /* No change has occurred */
-        return MetisDifference.IDENTICAL;
+        return MetisDataDifference.IDENTICAL;
     }
 
     @Override
@@ -589,7 +590,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * Value List.
      */
-    public static final class MetisInfoSetValueList extends ArrayList<Object> implements MetisDataFormat {
+    public static final class MetisInfoSetValueList extends ArrayList<Object> implements MetisDataObjectFormat {
         /**
          * Serial Id.
          */
@@ -629,7 +630,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return toString();
         }
     }

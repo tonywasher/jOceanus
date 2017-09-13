@@ -27,10 +27,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -182,7 +183,7 @@ public final class SecurityBucket
         final AssetCurrency myHoldingCurrency = pHolding.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
-        isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myHoldingCurrency);
+        isForeignCurrency = !MetisDataDifference.isEqual(myReportingCurrency, myHoldingCurrency);
         final Currency myCurrency = AccountBucket.deriveCurrency(myHoldingCurrency);
         final Currency myRepCurrency = AccountBucket.deriveCurrency(myReportingCurrency);
 
@@ -318,13 +319,13 @@ public final class SecurityBucket
     }
 
     @Override
-    public String formatObject() {
-        return getDecoratedName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getDecoratedName();
     }
 
     /**
@@ -563,7 +564,7 @@ public final class SecurityBucket
         }
 
         /* Check the portfolio */
-        final int iDiff = MetisDifference.compareObject(getPortfolio(), pThat.getPortfolio());
+        final int iDiff = MetisDataDifference.compareObject(getPortfolio(), pThat.getPortfolio());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -1109,7 +1110,7 @@ public final class SecurityBucket
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return getDataFields().getName() + "(" + size() + ")";
         }
 

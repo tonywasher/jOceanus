@@ -22,11 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.lethe.data;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
 /**
@@ -35,22 +31,10 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
  */
 public final class MetisDataObject {
     /**
-     * Format object interface.
-     */
-    @FunctionalInterface
-    public interface MetisDataFormat {
-        /**
-         * Obtain Object summary.
-         * @return the display summary of the object
-         */
-        String formatObject();
-    }
-
-    /**
      * Detail object interface.
      */
     public interface MetisDataContents
-            extends MetisDataFormat {
+            extends MetisDataObjectFormat {
         /**
          * Obtain the Report Fields.
          * @return the report fields
@@ -147,137 +131,6 @@ public final class MetisDataObject {
          */
         default boolean hasErrors(final MetisField pField) {
             return false;
-        }
-    }
-
-    /**
-     * List interface.
-     * @param <T> the list element type
-     */
-    @FunctionalInterface
-    public interface MetisDataList<T> {
-        /**
-         * Obtain underlying list.
-         * @return the list
-         */
-        List<T> getUnderlyingList();
-
-        /**
-         * Obtain the list iterator.
-         * @return the iterator
-         */
-        default Iterator<T> iterator() {
-            return getUnderlyingList().iterator();
-        }
-
-        /**
-         * Obtain the list iterator.
-         * @param pIndex the list position
-         * @return the iterator
-         */
-        default ListIterator<T> listIterator(final int pIndex) {
-            return getUnderlyingList().listIterator(pIndex);
-        }
-
-        /**
-         * Is the map empty?.
-         * @return true/false
-         */
-        default boolean isEmpty() {
-            return getUnderlyingList().isEmpty();
-        }
-
-        /**
-         * Obtain the size of the map.
-         * @return the size
-         */
-        default int size() {
-            return getUnderlyingList().size();
-        }
-    }
-
-    /**
-     * Map interface.
-     * @param <K> the map key type
-     * @param <V> the map value type
-     */
-    @FunctionalInterface
-    public interface MetisDataMap<K, V> {
-        /**
-         * Obtain underlying map.
-         * @return the map
-         */
-        Map<K, V> getUnderlyingMap();
-
-        /**
-         * Is the map empty?.
-         * @return true/false
-         */
-        default boolean isEmpty() {
-            return getUnderlyingMap().isEmpty();
-        }
-
-        /**
-         * Obtain the size of the map.
-         * @return the size
-         */
-        default int size() {
-            return getUnderlyingMap().size();
-        }
-    }
-
-    /**
-     * Difference interface.
-     */
-    @FunctionalInterface
-    public interface MetisDataDiffers {
-        /**
-         * Test for difference with another object.
-         * @param pThat the other object
-         * @return the difference
-         */
-        MetisDifference differs(Object pThat);
-    }
-
-    /**
-     * Difference class.
-     */
-    public static class MetisDataDifference {
-        /**
-         * The object itself.
-         */
-        private final Object theObject;
-
-        /**
-         * The difference.
-         */
-        private final MetisDifference theDifference;
-
-        /**
-         * Constructor.
-         * @param pObject the object
-         * @param pDifference the difference
-         */
-        public MetisDataDifference(final Object pObject,
-                                   final MetisDifference pDifference) {
-            theObject = pObject;
-            theDifference = pDifference;
-        }
-
-        /**
-         * Obtain the object.
-         * @return the object
-         */
-        public Object getObject() {
-            return theObject;
-        }
-
-        /**
-         * Obtain the difference.
-         * @return the difference
-         */
-        public MetisDifference getDifference() {
-            return theDifference;
         }
     }
 }

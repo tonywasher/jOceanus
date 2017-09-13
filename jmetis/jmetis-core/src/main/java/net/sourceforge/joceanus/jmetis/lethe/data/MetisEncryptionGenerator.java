@@ -28,6 +28,8 @@ import java.util.Date;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBigDecimal;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBigInteger;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedBoolean;
@@ -121,7 +123,7 @@ public class MetisEncryptionGenerator {
 
         /* If the value is not changed return the current value */
         if ((myCurrent != null)
-            && (MetisDifference.isEqual(myCurrent.getValue(), pValue))) {
+            && (MetisDataDifference.isEqual(myCurrent.getValue(), pValue))) {
             return pCurrent;
         }
 

@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -566,13 +566,13 @@ public class Transaction
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final TransactionInfoClass myClass = TransactionInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -636,7 +636,7 @@ public class Transaction
         }
 
         /* If the dates differ */
-        final int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        final int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -699,7 +699,9 @@ public class Transaction
         super.validate();
 
         /* Cannot have PartnerUnits if securities are identical */
-        if ((myAccountUnits != null) && (myPartnerUnits != null) && (MetisDifference.isEqual(myAccount, myPartner))) {
+        if (myAccountUnits != null
+            && myPartnerUnits != null
+            && MetisDataDifference.isEqual(myAccount, myPartner)) {
             addError(ERROR_CIRCULAR, TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERDELTAUNITS));
         }
 
@@ -987,7 +989,7 @@ public class Transaction
         pushHistory();
 
         /* Update the Date if required */
-        if (!MetisDifference.isEqual(getDate(), myTrans.getDate())) {
+        if (!MetisDataDifference.isEqual(getDate(), myTrans.getDate())) {
             setValueDate(myTrans.getDate());
         }
 

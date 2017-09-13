@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -276,7 +277,7 @@ public class MetisValueSet {
 
             /* Not equal if the value is different */
             final int iIndex = myField.getIndex();
-            if (MetisDifference.getDifference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
+            if (MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]).isDifferent()) {
                 return false;
             }
         }
@@ -321,7 +322,7 @@ public class MetisValueSet {
      * @param pOriginal the object to check for differences
      * @return the difference
      */
-    public MetisDifference differs(final MetisValueSet pOriginal) {
+    public MetisDataDifference differs(final MetisValueSet pOriginal) {
         boolean isSecureDiff = false;
 
         /* Access the test values */
@@ -330,7 +331,7 @@ public class MetisValueSet {
         /* Check for deletion flag and # of values */
         if ((isDeletion != pOriginal.isDeletion)
             || (theNumValues != pOriginal.theNumValues)) {
-            return MetisDifference.DIFFERENT;
+            return MetisDataDifference.DIFFERENT;
         }
 
         /* Loop through the values */
@@ -345,19 +346,19 @@ public class MetisValueSet {
 
             /* Check the field */
             final int iIndex = myField.getIndex();
-            final MetisDifference myDiff = MetisDifference.getDifference(theValues[iIndex], myObj[iIndex]);
-            if (myDiff == MetisDifference.DIFFERENT) {
+            final MetisDataDifference myDiff = MetisDataDifference.difference(theValues[iIndex], myObj[iIndex]);
+            if (myDiff == MetisDataDifference.DIFFERENT) {
                 return myDiff;
             }
-            if (myDiff == MetisDifference.SECURITY) {
+            if (myDiff == MetisDataDifference.SECURITY) {
                 isSecureDiff = true;
             }
         }
 
         /* Determine the difference */
         return isSecureDiff
-                            ? MetisDifference.SECURITY
-                            : MetisDifference.IDENTICAL;
+                            ? MetisDataDifference.SECURITY
+                            : MetisDataDifference.IDENTICAL;
     }
 
     /**
@@ -366,20 +367,20 @@ public class MetisValueSet {
      * @param pOriginal the original value set
      * @return the difference
      */
-    public MetisDifference fieldChanged(final MetisField pField,
-                                        final MetisValueSet pOriginal) {
+    public MetisDataDifference fieldChanged(final MetisField pField,
+                                            final MetisValueSet pOriginal) {
         /*
          * No difference if field does not exist, is not-equality or is not valueSet
          */
         if ((pField == null)
             || (!pField.getEquality().isEquality())
             || (!pField.getStorage().isValueSet())) {
-            return MetisDifference.IDENTICAL;
+            return MetisDataDifference.IDENTICAL;
         }
 
         /* Determine the difference */
         final int iIndex = pField.getIndex();
-        return MetisDifference.getDifference(theValues[iIndex], pOriginal.theValues[iIndex]);
+        return MetisDataDifference.difference(theValues[iIndex], pOriginal.theValues[iIndex]);
     }
 
     /**

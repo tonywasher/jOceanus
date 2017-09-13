@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
@@ -410,7 +410,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
          */
         private boolean setSecurity(final SecurityBucket pSecurity) {
             /* Adjust the selected security */
-            if (!MetisDifference.isEqual(pSecurity, theSecurity)) {
+            if (!MetisDataDifference.isEqual(pSecurity, theSecurity)) {
                 /* Store the security */
                 setTheSecurity(thePortfolio, pSecurity);
                 return true;
@@ -440,7 +440,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
          */
         private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
-            if (!MetisDifference.isEqual(pPortfolio, thePortfolio)) {
+            if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {
                 setTheSecurity(pPortfolio, getFirstSecurity(pPortfolio));
                 return true;
             }

@@ -26,7 +26,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.BucketAttribute;
@@ -1201,7 +1201,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         private boolean setRange(final TethysDateRangeSelector<N, I> pSelect) {
             /* Adjust the selected account */
             final TethysDateRange myRange = pSelect.getRange();
-            if (!MetisDifference.isEqual(myRange, theRange)) {
+            if (!MetisDataDifference.isEqual(myRange, theRange)) {
                 theRange = myRange;
                 return true;
             }
@@ -1214,7 +1214,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * @return true/false did a change occur
          */
         private boolean setAnalysisType(final AnalysisType pType) {
-            if (!MetisDifference.isEqual(pType, theType)) {
+            if (!MetisDataDifference.isEqual(pType, theType)) {
                 theType = pType;
                 return true;
             }
@@ -1227,7 +1227,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * @return true/false did a change occur
          */
         private boolean setBucket(final BucketAttribute pBucket) {
-            if (!MetisDifference.isEqual(pBucket, theBucket)) {
+            if (!MetisDataDifference.isEqual(pBucket, theBucket)) {
                 /* If this is the null bucket */
                 if (pBucket == null) {
                     showColumns = true;
@@ -1245,7 +1245,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * @return true/false did a change occur
          */
         private boolean setColumns(final AnalysisColumnSet pColumnSet) {
-            if (!MetisDifference.isEqual(pColumnSet, theColumns)) {
+            if (!MetisDataDifference.isEqual(pColumnSet, theColumns)) {
                 /* If this is the balance bucket */
                 if (pColumnSet.equals(AnalysisColumnSet.BALANCE)) {
                     showColumns = false;

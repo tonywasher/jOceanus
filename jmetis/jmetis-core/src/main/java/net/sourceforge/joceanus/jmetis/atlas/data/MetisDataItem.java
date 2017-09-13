@@ -188,7 +188,7 @@ public final class MetisDataItem {
          * @param pItem the item
          * @return true/false - was item in list?
          */
-        default boolean remove(final T pItem) {
+        default boolean remove(final Object pItem) {
             return getUnderlyingList().remove(pItem);
         }
     }

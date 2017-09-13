@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.Currency;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -377,7 +377,7 @@ public final class LoanBucket
                     final LoanBucket myBucket = myIterator.next();
 
                     /* Return if correct category */
-                    if (MetisDifference.isEqual(pCategory, myBucket.getCategory())) {
+                    if (MetisDataDifference.isEqual(pCategory, myBucket.getCategory())) {
                         return myBucket;
                     }
                 }

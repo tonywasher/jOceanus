@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -324,7 +324,7 @@ public class CashInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!MetisDifference.isEqual(getField(), myInfo.getField())) {
+        if (!MetisDataDifference.isEqual(getField(), myInfo.getField())) {
             setValueValue(myInfo.getField());
             if (getInfoType().isLink()) {
                 setValueLink(myInfo.getLink());

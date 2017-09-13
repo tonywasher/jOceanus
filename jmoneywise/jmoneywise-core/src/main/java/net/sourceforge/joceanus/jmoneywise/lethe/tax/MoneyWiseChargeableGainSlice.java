@@ -26,9 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -159,7 +160,7 @@ public class MoneyWiseChargeableGainSlice
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 
@@ -195,7 +196,7 @@ public class MoneyWiseChargeableGainSlice
      * List of Gains Slices.
      */
     public static class MoneyWiseChargeableGainSliceList
-            implements MetisDataFormat, MetisDataList<MoneyWiseChargeableGainSlice> {
+            implements MetisDataObjectFormat, MetisDataList<MoneyWiseChargeableGainSlice> {
         /**
          * Gains slices.
          */
@@ -240,7 +241,7 @@ public class MoneyWiseChargeableGainSlice
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             final StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(MoneyWiseChargeableGainSliceList.class.getSimpleName());
             myBuilder.append("(");

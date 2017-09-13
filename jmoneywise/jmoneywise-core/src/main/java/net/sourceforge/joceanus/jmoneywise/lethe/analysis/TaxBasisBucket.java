@@ -28,8 +28,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -270,13 +271,13 @@ public class TaxBasisBucket
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     @Override
@@ -1028,7 +1029,7 @@ public class TaxBasisBucket
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return getDataFields().getName() + "(" + size() + ")";
         }
 

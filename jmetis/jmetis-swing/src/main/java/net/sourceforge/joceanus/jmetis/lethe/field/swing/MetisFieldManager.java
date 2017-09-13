@@ -28,7 +28,7 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;

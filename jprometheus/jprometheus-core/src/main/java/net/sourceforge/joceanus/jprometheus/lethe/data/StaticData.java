@@ -28,9 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -232,13 +232,13 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     @Override
@@ -517,7 +517,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Make sure that the object is the same enumeration class */
-        if (!MetisDifference.isEqual(getEnumClass(), pThat.getEnumClass())) {
+        if (!MetisDataDifference.isEqual(getEnumClass(), pThat.getEnumClass())) {
             /* Order the classes by canonical name */
             return getEnumClass().getCanonicalName().compareTo(pThat.getEnumClass().getCanonicalName());
         }
@@ -529,7 +529,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         /* Compare on name */
-        iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -710,22 +710,22 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
      */
     protected void applyBasicChanges(final StaticData<?, ?, ?> pData) {
         /* Update the name if required */
-        if (!MetisDifference.isEqual(getName(), pData.getName())) {
+        if (!MetisDataDifference.isEqual(getName(), pData.getName())) {
             setValueName(pData.getNameField());
         }
 
         /* Update the description if required */
-        if (!MetisDifference.isEqual(getDesc(), pData.getDesc())) {
+        if (!MetisDataDifference.isEqual(getDesc(), pData.getDesc())) {
             setValueDesc(pData.getDescField());
         }
 
         /* Update the enabled indication if required */
-        if (!MetisDifference.isEqual(getEnabled(), pData.getEnabled())) {
+        if (!MetisDataDifference.isEqual(getEnabled(), pData.getEnabled())) {
             setEnabled(pData.getEnabled());
         }
 
         /* Update the order indication if required */
-        if (!MetisDifference.isEqual(getOrder(), pData.getOrder())) {
+        if (!MetisDataDifference.isEqual(getOrder(), pData.getOrder())) {
             setOrder(pData.getOrder());
         }
     }
@@ -952,7 +952,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

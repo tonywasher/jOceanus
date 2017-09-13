@@ -28,10 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -151,7 +152,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                                                                  : pAccount.getAssetCurrency();
 
         /* Determine whether we are a foreign currency */
-        isForeignCurrency = !MetisDifference.isEqual(myReportingCurrency, myAccountCurrency);
+        isForeignCurrency = !MetisDataDifference.isEqual(myReportingCurrency, myAccountCurrency);
         final Currency myCurrency = deriveCurrency(myAccountCurrency);
         final Currency myRepCurrency = deriveCurrency(myReportingCurrency);
 
@@ -264,13 +265,13 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     /**
@@ -933,7 +934,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return getDataFields().getName() + "(" + size() + ")";
         }
 

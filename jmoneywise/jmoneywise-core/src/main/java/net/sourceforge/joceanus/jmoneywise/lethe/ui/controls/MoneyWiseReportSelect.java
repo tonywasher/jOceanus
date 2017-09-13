@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
@@ -520,7 +520,7 @@ public class MoneyWiseReportSelect<N, I>
         private boolean setRange(final TethysDateRangeSelector<N, I> pSelect) {
             /* Adjust the date and build the new range */
             final TethysDateRange myRange = pSelect.getRange();
-            if (!MetisDifference.isEqual(myRange, theRange)) {
+            if (!MetisDataDifference.isEqual(myRange, theRange)) {
                 theRange = new TethysDateRange(myRange);
                 return true;
             }

@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.lethe.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
@@ -56,7 +57,7 @@ public class MetisErrorList<T extends MetisDataContents>
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName()
                + "("
                + size()

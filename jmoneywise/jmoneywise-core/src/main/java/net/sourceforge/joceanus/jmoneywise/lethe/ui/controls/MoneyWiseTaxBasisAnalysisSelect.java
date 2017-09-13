@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisResource;
@@ -406,7 +406,7 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
          */
         private boolean setTaxBasis(final TaxBasisBucket pTaxBasis) {
             /* Adjust the selected taxBasis */
-            if (!MetisDifference.isEqual(pTaxBasis, theBasis)) {
+            if (!MetisDataDifference.isEqual(pTaxBasis, theBasis)) {
                 setTheTaxBasis(pTaxBasis);
                 return true;
             }

@@ -34,7 +34,7 @@ import java.util.Map;
 import javax.swing.SortOrder;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.BinaryColumn;

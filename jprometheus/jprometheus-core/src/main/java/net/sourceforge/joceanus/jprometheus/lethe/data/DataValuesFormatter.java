@@ -49,8 +49,8 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
@@ -439,8 +439,8 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         final E myItemType = pList.getItemType();
 
         /* Check that the document name and dataType are correct */
-        if ((!MetisDifference.isEqual(myElement.getNodeName(), pList.listName()))
-            || (!MetisDifference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name()))) {
+        if (!MetisDataDifference.isEqual(myElement.getNodeName(), pList.listName())
+            || !MetisDataDifference.isEqual(myElement.getAttribute(DataValues.ATTR_TYPE), myItemType.name())) {
             throw new PrometheusDataException("Invalid list type");
         }
 

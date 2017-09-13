@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.Date;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
@@ -240,23 +240,23 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
-            return super.formatObject();
+            return super.toString();
         }
 
         /* Access InfoType */
         final StaticData<?, ?, ?> myInfoType = (StaticData<?, ?, ?>) myType;
 
         /* Access class */
-        return myInfoType.getName() + "=" + formatObject();
+        return myInfoType.getName() + "=" + super.toString();
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         /* Access Info Type Value */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myType = myValues.getValue(FIELD_INFOTYPE, Object.class);
         if (!(myType instanceof StaticData)) {
-            return super.formatObject();
+            return super.formatObject(pFormatter);
         }
 
         /* Access InfoType */

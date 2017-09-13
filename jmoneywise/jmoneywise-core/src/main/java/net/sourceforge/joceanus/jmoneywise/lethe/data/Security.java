@@ -26,9 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -573,13 +574,13 @@ public class Security
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = SecurityInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -729,7 +730,7 @@ public class Security
             && (pThat instanceof Security)) {
             /* Check the security type */
             final Security myThat = (Security) pThat;
-            iDiff = MetisDifference.compareObject(getSecurityType(), myThat.getSecurityType());
+            iDiff = MetisDataDifference.compareObject(getSecurityType(), myThat.getSecurityType());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -984,17 +985,17 @@ public class Security
         applyBasicChanges(mySecurity);
 
         /* Update the category type if required */
-        if (!MetisDifference.isEqual(getSecurityType(), mySecurity.getSecurityType())) {
+        if (!MetisDataDifference.isEqual(getSecurityType(), mySecurity.getSecurityType())) {
             setValueType(mySecurity.getSecurityType());
         }
 
         /* Update the parent if required */
-        if (!MetisDifference.isEqual(getParent(), mySecurity.getParent())) {
+        if (!MetisDataDifference.isEqual(getParent(), mySecurity.getParent())) {
             setValueParent(mySecurity.getParent());
         }
 
         /* Update the security currency if required */
-        if (!MetisDifference.isEqual(getAssetCurrency(), mySecurity.getAssetCurrency())) {
+        if (!MetisDataDifference.isEqual(getAssetCurrency(), mySecurity.getAssetCurrency())) {
             setValueCurrency(mySecurity.getAssetCurrency());
         }
 
@@ -1304,7 +1305,7 @@ public class Security
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

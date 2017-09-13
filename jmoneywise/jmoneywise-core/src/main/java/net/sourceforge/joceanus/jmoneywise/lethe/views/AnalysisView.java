@@ -27,8 +27,9 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -170,7 +171,7 @@ public class AnalysisView
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 
@@ -239,7 +240,7 @@ public class AnalysisView
      */
     public void setRange(final TethysDateRange pRange) {
         /* If we have changed the range */
-        if (!MetisDifference.isEqual(theRange, pRange)) {
+        if (!MetisDataDifference.isEqual(theRange, pRange)) {
             /* Obtain the required analysis and reset to it */
             theRange = pRange;
             theBaseAnalysis = theManager != null

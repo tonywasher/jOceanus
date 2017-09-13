@@ -30,9 +30,10 @@ import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -130,7 +131,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName();
     }
 
@@ -392,13 +393,13 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * @param pInfoClass the class to test
      * @return <code>true/false</code>
      */
-    public MetisDifference fieldChanged(final S pInfoClass) {
+    public MetisDataDifference fieldChanged(final S pInfoClass) {
         /* If this is called for LinkSet */
         if (pInfoClass.isLinkSet()) {
             /* Access the info */
             final DataInfoLinkSet<T, O, I, S, E> mySet = getInfoLinkSet(pInfoClass);
             return mySet == null
-                                 ? MetisDifference.IDENTICAL
+                                 ? MetisDataDifference.IDENTICAL
                                  : mySet.fieldChanged();
         }
 
@@ -407,12 +408,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
 
         /* Return change details */
         if (myInfo == null) {
-            return MetisDifference.DIFFERENT;
+            return MetisDataDifference.DIFFERENT;
         }
         return myInfo.hasHistory()
                || MetisDataState.NEW.equals(myInfo.getState())
-                                                               ? MetisDifference.DIFFERENT
-                                                               : MetisDifference.IDENTICAL;
+                                                               ? MetisDataDifference.DIFFERENT
+                                                               : MetisDataDifference.IDENTICAL;
     }
 
     /**

@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 
 /**
  * Data Viewer Page.
@@ -344,9 +344,9 @@ public class MetisViewerPage {
      */
     private int determineSize() {
         /* handle DataDifference */
-        Object myObject = theObject instanceof MetisDataDifference
-                                                                   ? ((MetisDataDifference) theObject).getObject()
-                                                                   : theObject;
+        Object myObject = theObject instanceof MetisDataDelta
+                                                              ? ((MetisDataDelta) theObject).getObject()
+                                                              : theObject;
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
@@ -406,9 +406,9 @@ public class MetisViewerPage {
      */
     private static boolean isCollection(final Object pObject) {
         /* handle DataDifference */
-        final Object myObject = pObject instanceof MetisDataDifference
-                                                                       ? ((MetisDataDifference) pObject).getObject()
-                                                                       : pObject;
+        final Object myObject = pObject instanceof MetisDataDelta
+                                                                  ? ((MetisDataDelta) pObject).getObject()
+                                                                  : pObject;
 
         /* Handle extended Lists/Maps */
         if (myObject instanceof MetisDataList
@@ -428,9 +428,9 @@ public class MetisViewerPage {
      */
     private static boolean isNonEmptyList(final Object pObject) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDifference
-                                                                 ? ((MetisDataDifference) pObject).getObject()
-                                                                 : pObject;
+        Object myObject = pObject instanceof MetisDataDelta
+                                                            ? ((MetisDataDelta) pObject).getObject()
+                                                            : pObject;
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
@@ -454,9 +454,9 @@ public class MetisViewerPage {
         }
 
         /* handle DataDifference */
-        final Object myObject = pObject instanceof MetisDataDifference
-                                                                       ? ((MetisDataDifference) pObject).getObject()
-                                                                       : pObject;
+        final Object myObject = pObject instanceof MetisDataDelta
+                                                                  ? ((MetisDataDelta) pObject).getObject()
+                                                                  : pObject;
 
         /* Handle structured object */
         if (myObject instanceof MetisDataContents) {

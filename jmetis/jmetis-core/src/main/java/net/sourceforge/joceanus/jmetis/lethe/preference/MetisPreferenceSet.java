@@ -32,7 +32,8 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -211,7 +212,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return theFields.getName();
     }
 
@@ -1068,7 +1069,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          */
         protected void setNewValue(final Object pNewValue) {
             theNewValue = pNewValue;
-            isChanged = !MetisDifference.isEqual(theNewValue, theValue);
+            isChanged = !MetisDataDifference.isEqual(theNewValue, theValue);
         }
 
         /**

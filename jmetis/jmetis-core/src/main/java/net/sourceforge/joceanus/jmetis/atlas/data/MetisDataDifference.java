@@ -137,8 +137,8 @@ public enum MetisDataDifference {
         }
 
         /* Neither value can be null */
-        if ((pCurr == null)
-            || (pNew == null)) {
+        if (pCurr == null
+            || pNew == null) {
             return DIFFERENT;
         }
 
@@ -199,5 +199,55 @@ public enum MetisDataDifference {
 
         /* Handle Standard cases */
         return pCurr.equals(pNew);
+    }
+
+    /**
+     * Compare two similar objects for order.
+     * @param <X> the object type
+     * @param pCurr The current object
+     * @param pNew The new object
+     * @return order
+     */
+    public static <X extends Comparable<? super X>> int compareObject(final X pCurr,
+                                                                      final X pNew) {
+        /* Handle identity */
+        if (pCurr == pNew) {
+            return 0;
+        }
+
+        /* Pass the call on, defaulting null to the end of the list */
+        return compareObject(pCurr, pNew, true);
+    }
+
+    /**
+     * Compare two similar objects for order.
+     * @param <X> the object type
+     * @param pCurr The current object
+     * @param pNew The new object
+     * @param pNullLast is Null at end of list?
+     * @return order
+     */
+    public static <X extends Comparable<? super X>> int compareObject(final X pCurr,
+                                                                      final X pNew,
+                                                                      final boolean pNullLast) {
+        /* Handle identity */
+        if (pCurr == pNew) {
+            return 0;
+        }
+
+        /* Handle positioning of nulls */
+        if (pCurr == null) {
+            return pNullLast
+                             ? 1
+                             : -1;
+        }
+        if (pNew == null) {
+            return pNullLast
+                             ? -1
+                             : 1;
+        }
+
+        /* Both non-Null, so pass the call on */
+        return pCurr.compareTo(pNew);
     }
 }

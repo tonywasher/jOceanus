@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket;
@@ -366,7 +366,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
             final LoanBucket myBucket = myIterator.next();
 
             /* Ignore if not the correct category */
-            if (!MetisDifference.isEqual(myCategory, myBucket.getCategory())) {
+            if (!MetisDataDifference.isEqual(myCategory, myBucket.getCategory())) {
                 continue;
             }
 
@@ -453,7 +453,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
          */
         private boolean setLoan(final LoanBucket pLoan) {
             /* Adjust the selected loan */
-            if (!MetisDifference.isEqual(pLoan, theLoan)) {
+            if (!MetisDataDifference.isEqual(pLoan, theLoan)) {
                 /* Set the Loan */
                 setTheLoan(pLoan);
                 return true;
@@ -497,7 +497,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
          */
         private boolean setCategory(final LoanCategory pCategory) {
             /* Adjust the selected category */
-            if (!MetisDifference.isEqual(pCategory, theCategory)) {
+            if (!MetisDataDifference.isEqual(pCategory, theCategory)) {
                 setTheLoan(pCategory, getDefaultLoan(pCategory));
                 return true;
             }

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -264,7 +264,7 @@ public class TransactionInfo
         /* If this is a linkSet */
         if (myType.getInfoClass().isLinkSet()) {
             /* Compare names */
-            iDiff = MetisDifference.compareObject(getLinkName(), pThat.getLinkName());
+            iDiff = MetisDataDifference.compareObject(getLinkName(), pThat.getLinkName());
             if (iDiff != 0) {
                 return iDiff;
             }
@@ -344,7 +344,7 @@ public class TransactionInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!MetisDifference.isEqual(getField(), myTransInfo.getField())) {
+        if (!MetisDataDifference.isEqual(getField(), myTransInfo.getField())) {
             setValueValue(myTransInfo.getField());
             if (getInfoType().isLink()) {
                 setValueLink(myTransInfo.getLink());

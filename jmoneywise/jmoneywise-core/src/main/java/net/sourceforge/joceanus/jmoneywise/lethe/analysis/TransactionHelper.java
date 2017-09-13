@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
@@ -493,24 +493,24 @@ public class TransactionHelper {
 
             /* Determine foreign account detail */
             AssetCurrency myActCurrency = theAccount.getAssetCurrency();
-            theForeignAccount = MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                                    ? null
-                                                                                    : new ForeignAccountDetail(this, myActCurrency, myAmount);
+            theForeignAccount = MetisDataDifference.isEqual(myActCurrency, theCurrency)
+                                                                                        ? null
+                                                                                        : new ForeignAccountDetail(this, myActCurrency, myAmount);
 
             /* If we have a partner amount */
             myActCurrency = thePartner.getAssetCurrency();
             theForeignPartner = myActCurrency == null
-                                || MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                                       ? null
-                                                                                       : new ForeignPartnerDetail(myActCurrency, myPartnerAmount);
+                                || MetisDataDifference.isEqual(myActCurrency, theCurrency)
+                                                                                           ? null
+                                                                                           : new ForeignPartnerDetail(myActCurrency, myPartnerAmount);
 
             /* If we have a returnedCash account */
             if (theReturnedCashAccount != null) {
                 /* Determine foreign returnedCash detail */
                 myActCurrency = theReturnedCashAccount.getAssetCurrency();
-                theForeignReturnedCash = MetisDifference.isEqual(myActCurrency, theCurrency)
-                                                                                             ? null
-                                                                                             : new ForeignPartnerDetail(myActCurrency, myReturnedCash);
+                theForeignReturnedCash = MetisDataDifference.isEqual(myActCurrency, theCurrency)
+                                                                                                 ? null
+                                                                                                 : new ForeignPartnerDetail(myActCurrency, myReturnedCash);
             } else {
                 theForeignReturnedCash = null;
             }

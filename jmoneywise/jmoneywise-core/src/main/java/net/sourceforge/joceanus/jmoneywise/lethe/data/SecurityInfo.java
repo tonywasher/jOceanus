@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -252,7 +252,7 @@ public class SecurityInfo
         /* If this is a linkSet */
         if (myType.getInfoClass().isLinkSet()) {
             /* Compare names */
-            iDiff = MetisDifference.compareObject(getLinkName(), pThat.getLinkName());
+            iDiff = MetisDataDifference.compareObject(getLinkName(), pThat.getLinkName());
             if (iDiff != 0) {
                 return iDiff;
             }
@@ -332,7 +332,7 @@ public class SecurityInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!MetisDifference.isEqual(getField(), mySecInfo.getField())) {
+        if (!MetisDataDifference.isEqual(getField(), mySecInfo.getField())) {
             setValueValue(mySecInfo.getField());
         }
 

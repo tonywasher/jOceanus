@@ -29,11 +29,11 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -197,15 +197,15 @@ public class ExchangeRate
     }
 
     @Override
-    public String formatObject() {
-        return getDate() + " " + getFromCurrency().getCurrency().getCurrencyCode() + ":"
-               + getToCurrency().getCurrency().getCurrencyCode() + "="
-               + getExchangeRate().toString();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getDate() + " " + getFromCurrency().getCurrency().getCurrencyCode() + ":"
+               + getToCurrency().getCurrency().getCurrencyCode() + "="
+               + getExchangeRate().toString();
     }
 
     @Override
@@ -450,20 +450,20 @@ public class ExchangeRate
         }
 
         /* Check the date */
-        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
         }
 
         /* Check the from currency */
-        iDiff = MetisDifference.compareObject(getFromCurrency(), pThat.getFromCurrency());
+        iDiff = MetisDataDifference.compareObject(getFromCurrency(), pThat.getFromCurrency());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the to currency */
-        iDiff = MetisDifference.compareObject(getToCurrency(), pThat.getToCurrency());
+        iDiff = MetisDataDifference.compareObject(getToCurrency(), pThat.getToCurrency());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -610,22 +610,22 @@ public class ExchangeRate
         pushHistory();
 
         /* Update the Date if required */
-        if (!MetisDifference.isEqual(getDate(), myRate.getDate())) {
+        if (!MetisDataDifference.isEqual(getDate(), myRate.getDate())) {
             setValueDate(myRate.getDate());
         }
 
         /* Update the from currency if required */
-        if (!MetisDifference.isEqual(getFromCurrency(), myRate.getFromCurrency())) {
+        if (!MetisDataDifference.isEqual(getFromCurrency(), myRate.getFromCurrency())) {
             setValueFromCurrency(myRate.getFromCurrency());
         }
 
         /* Update the to currency if required */
-        if (!MetisDifference.isEqual(getToCurrency(), myRate.getToCurrency())) {
+        if (!MetisDataDifference.isEqual(getToCurrency(), myRate.getToCurrency())) {
             setValueToCurrency(myRate.getToCurrency());
         }
 
         /* Update the rate if required */
-        if (!MetisDifference.isEqual(getExchangeRate(), myRate.getExchangeRate())) {
+        if (!MetisDataDifference.isEqual(getExchangeRate(), myRate.getExchangeRate())) {
             setValueExchangeRate(myRate.getExchangeRate());
         }
 
@@ -981,7 +981,7 @@ public class ExchangeRate
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1197,8 +1197,8 @@ public class ExchangeRate
             }
 
             @Override
-            public String formatObject() {
-                return theCurrency.formatObject()
+            public String formatObject(final MetisDataFormatter pFormatter) {
+                return theCurrency.formatObject(pFormatter)
                        + "("
                        + size()
                        + ")";
@@ -1206,7 +1206,10 @@ public class ExchangeRate
 
             @Override
             public String toString() {
-                return formatObject();
+                return theCurrency.toString()
+                       + "("
+                       + size()
+                       + ")";
             }
         }
     }

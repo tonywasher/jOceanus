@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedMoney;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -249,12 +249,12 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
     }
 
     @Override
-    public String toString() {
-        return formatObject();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         /* Access Key Values */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myAccount = myValues.getValue(FIELD_ACCOUNT);
@@ -699,7 +699,7 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         }
 
         /* If the categories differ */
-        final int iDiff = MetisDifference.compareObject(getCategory(), pThat.getCategory());
+        final int iDiff = MetisDataDifference.compareObject(getCategory(), pThat.getCategory());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -779,7 +779,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
         if (!isDividend()) {
             return false;
         }
-        return (getAccount() != null) && MetisDifference.isEqual(getAccount(), getPartner());
+        return getAccount() != null
+               && MetisDataDifference.isEqual(getAccount(), getPartner());
     }
 
     /**
@@ -1010,32 +1011,32 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
      */
     protected void applyBasicChanges(final T pTrans) {
         /* Update the assetPair if required */
-        if (!MetisDifference.isEqual(getAssetPair(), pTrans.getAssetPair())) {
+        if (!MetisDataDifference.isEqual(getAssetPair(), pTrans.getAssetPair())) {
             setValueAssetPair(pTrans.getAssetPair());
         }
 
         /* Update the category if required */
-        if (!MetisDifference.isEqual(getCategory(), pTrans.getCategory())) {
+        if (!MetisDataDifference.isEqual(getCategory(), pTrans.getCategory())) {
             setValueCategory(pTrans.getCategory());
         }
 
         /* Update the account if required */
-        if (!MetisDifference.isEqual(getAccount(), pTrans.getAccount())) {
+        if (!MetisDataDifference.isEqual(getAccount(), pTrans.getAccount())) {
             setValueAccount(pTrans.getAccount());
         }
 
         /* Update the partner if required */
-        if (!MetisDifference.isEqual(getPartner(), pTrans.getPartner())) {
+        if (!MetisDataDifference.isEqual(getPartner(), pTrans.getPartner())) {
             setValuePartner(pTrans.getPartner());
         }
 
         /* Update the amount if required */
-        if (!MetisDifference.isEqual(getAmount(), pTrans.getAmount())) {
+        if (!MetisDataDifference.isEqual(getAmount(), pTrans.getAmount())) {
             setValueAmount(pTrans.getAmountField());
         }
 
         /* Update the reconciled state if required */
-        if (!MetisDifference.isEqual(isReconciled(), pTrans.isReconciled())) {
+        if (!MetisDataDifference.isEqual(isReconciled(), pTrans.isReconciled())) {
             setValueReconciled(pTrans.isReconciled());
         }
     }

@@ -28,11 +28,11 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedRate;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -211,12 +211,12 @@ public class DepositRate
     }
 
     @Override
-    public String toString() {
-        return formatObject();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
-    public String formatObject() {
+    public String toString() {
         /* Access Key Values */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object myDeposit = myValues.getValue(FIELD_DEPOSIT);
@@ -545,7 +545,7 @@ public class DepositRate
         }
 
         /* If the date differs */
-        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
@@ -688,17 +688,17 @@ public class DepositRate
         pushHistory();
 
         /* Update the rate if required */
-        if (!MetisDifference.isEqual(getRate(), myRate.getRate())) {
+        if (!MetisDataDifference.isEqual(getRate(), myRate.getRate())) {
             setValueRate(myRate.getRateField());
         }
 
         /* Update the bonus if required */
-        if (!MetisDifference.isEqual(getBonus(), myRate.getBonus())) {
+        if (!MetisDataDifference.isEqual(getBonus(), myRate.getBonus())) {
             setValueBonus(myRate.getBonusField());
         }
 
         /* Update the date if required */
-        if (!MetisDifference.isEqual(getEndDate(), myRate.getEndDate())) {
+        if (!MetisDataDifference.isEqual(getEndDate(), myRate.getEndDate())) {
             setValueEndDate(myRate.getEndDate());
         }
 
@@ -911,7 +911,7 @@ public class DepositRate
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1068,8 +1068,8 @@ public class DepositRate
             }
 
             @Override
-            public String formatObject() {
-                return theDeposit.formatObject()
+            public String formatObject(final MetisDataFormatter pFormatter) {
+                return theDeposit.formatObject(pFormatter)
                        + "("
                        + size()
                        + ")";
@@ -1077,7 +1077,10 @@ public class DepositRate
 
             @Override
             public String toString() {
-                return formatObject();
+                return theDeposit.toString()
+                       + "("
+                       + size()
+                       + ")";
             }
         }
     }

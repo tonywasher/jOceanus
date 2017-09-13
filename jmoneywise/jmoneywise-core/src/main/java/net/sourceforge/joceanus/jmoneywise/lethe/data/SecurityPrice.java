@@ -28,11 +28,11 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedPrice;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -195,11 +195,6 @@ public class SecurityPrice
 
     @Override
     public String toString() {
-        return formatObject();
-    }
-
-    @Override
-    public String formatObject() {
         /* Access Key Values */
         final MetisEncryptedValueSet myValues = getValueSet();
         final Object mySecurity = myValues.getValue(FIELD_SECURITY);
@@ -219,6 +214,11 @@ public class SecurityPrice
 
         /* return it */
         return myBuilder.toString();
+    }
+
+    @Override
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     /**
@@ -428,7 +428,7 @@ public class SecurityPrice
         }
 
         /* Compare the dates */
-        int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             /* Sort in reverse date order !! */
             return -iDiff;
@@ -576,12 +576,12 @@ public class SecurityPrice
         pushHistory();
 
         /* Update the price if required */
-        if (!MetisDifference.isEqual(getPrice(), myPrice.getPrice())) {
+        if (!MetisDataDifference.isEqual(getPrice(), myPrice.getPrice())) {
             setValuePrice(myPrice.getPriceField());
         }
 
         /* Update the date if required */
-        if (!MetisDifference.isEqual(getDate(), myPrice.getDate())) {
+        if (!MetisDataDifference.isEqual(getDate(), myPrice.getDate())) {
             setValueDate(myPrice.getDate());
         }
 
@@ -793,7 +793,7 @@ public class SecurityPrice
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 
@@ -1010,8 +1010,8 @@ public class SecurityPrice
             }
 
             @Override
-            public String formatObject() {
-                return theSecurity.formatObject()
+            public String formatObject(final MetisDataFormatter pFormatter) {
+                return theSecurity.formatObject(pFormatter)
                        + "("
                        + size()
                        + ")";
@@ -1019,7 +1019,10 @@ public class SecurityPrice
 
             @Override
             public String toString() {
-                return formatObject();
+                return theSecurity.toString()
+                       + "("
+                       + size()
+                       + ")";
             }
         }
     }

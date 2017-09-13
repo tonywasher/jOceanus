@@ -26,6 +26,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
@@ -109,7 +111,7 @@ public class MetisValueSetHistory
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return MetisValueSetHistory.class.getSimpleName() + "(" + theStack.size() + ")";
     }
 
@@ -274,13 +276,13 @@ public class MetisValueSetHistory
      * @param pField the field
      * @return the difference
      */
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle irrelevant cases */
         if (!pField.getStorage().isValueSet()) {
-            return MetisDifference.IDENTICAL;
+            return MetisDataDifference.IDENTICAL;
         }
         if (!pField.getEquality().isEquality()) {
-            return MetisDifference.IDENTICAL;
+            return MetisDataDifference.IDENTICAL;
         }
 
         /* Call the function from the interface */

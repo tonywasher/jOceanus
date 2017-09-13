@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.time.Month;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -266,7 +267,7 @@ public class MoneyWiseUKAgeAllowance
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return FIELD_DEFS.getName();
     }
 }

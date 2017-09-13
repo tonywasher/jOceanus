@@ -185,7 +185,7 @@ public abstract class GordianFactory {
         /* Generate and apply the new seed */
         final byte[] mySeed = theRandom.generateSeed(SEED_SIZE);
         theRandom.setSeed(mySeed);
-        theRandom.reseed(null);
+        theRandom.reseed((byte[]) null);
     }
 
     /**

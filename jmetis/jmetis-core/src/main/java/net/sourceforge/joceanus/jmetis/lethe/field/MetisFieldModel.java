@@ -25,9 +25,9 @@ package net.sourceforge.joceanus.jmetis.lethe.field;
 import java.util.Currency;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
@@ -403,7 +403,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
 
             /* If there is no change in the valid value */
             if ((!isError)
-                && (MetisDifference.isEqual(theEdit, myText))) {
+                && (MetisDataDifference.isEqual(theEdit, myText))) {
                 return false;
             }
 
@@ -475,7 +475,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
                 theError = myText;
 
                 /* If this is a new value */
-            } else if (!MetisDifference.isEqual(myValue, getValue())) {
+            } else if (!MetisDataDifference.isEqual(myValue, getValue())) {
                 /* Record new value */
                 setValue(myValue);
                 return true;
@@ -520,7 +520,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
          */
         public void processValue(final Object pValue) {
             /* If this is a new value */
-            if (!MetisDifference.isEqual(pValue, getValue())) {
+            if (!MetisDataDifference.isEqual(pValue, getValue())) {
                 /* Record new value */
                 setValue(pValue);
             }
@@ -589,7 +589,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
          */
         public void processValue(final TethysDate pValue) {
             /* If this is a new value */
-            if (!MetisDifference.isEqual(pValue, getValue())) {
+            if (!MetisDataDifference.isEqual(pValue, getValue())) {
                 /* Record new value */
                 setValue(pValue);
             }

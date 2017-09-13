@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -307,7 +307,7 @@ public class LoanCategory
         applyBasicChanges(myCategory);
 
         /* Update the category type if required */
-        if (!MetisDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
+        if (!MetisDataDifference.isEqual(getCategoryType(), myCategory.getCategoryType())) {
             setValueType(myCategory.getCategoryType());
         }
 

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
@@ -550,7 +550,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
          */
         private boolean setPortfolio(final PortfolioBucket pPortfolio) {
             /* Adjust the selected portfolio */
-            if (!MetisDifference.isEqual(pPortfolio, thePortfolio)) {
+            if (!MetisDataDifference.isEqual(pPortfolio, thePortfolio)) {
                 thePortfolio = pPortfolio;
                 return true;
             }
@@ -565,7 +565,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
         private boolean setDate(final TethysDateButtonManager<N, I> pButton) {
             /* Adjust the date and build the new range */
             final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
-            if (!MetisDifference.isEqual(myDate, theDate)) {
+            if (!MetisDataDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
             }
@@ -626,7 +626,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
             theShowClosed.setSelected(showClosed);
 
             /* Determine whether we are todays date */
-            final boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
+            final boolean isToday = MetisDataDifference.isEqual(theDate, new TethysDate());
             final boolean isActive = thePortfolio != null && thePortfolio.isActive();
             theDownloadButton.setVisible(isToday && isActive);
         }

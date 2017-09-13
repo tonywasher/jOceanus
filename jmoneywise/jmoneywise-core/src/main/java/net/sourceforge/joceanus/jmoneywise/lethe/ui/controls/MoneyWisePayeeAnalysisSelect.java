@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket;
@@ -315,7 +315,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
          */
         private boolean setPayee(final PayeeBucket pPayee) {
             /* Adjust the selected payee */
-            if (!MetisDifference.isEqual(pPayee, thePayee)) {
+            if (!MetisDataDifference.isEqual(pPayee, thePayee)) {
                 setThePayee(pPayee);
                 return true;
             }

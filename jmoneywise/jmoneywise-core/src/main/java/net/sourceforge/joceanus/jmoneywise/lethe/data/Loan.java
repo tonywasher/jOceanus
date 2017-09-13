@@ -24,10 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -567,13 +568,13 @@ public class Loan
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = LoanInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -704,7 +705,7 @@ public class Loan
             && (pThat instanceof Loan)) {
             /* Check the category */
             final Loan myThat = (Loan) pThat;
-            iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
+            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -914,17 +915,17 @@ public class Loan
         applyBasicChanges(myLoan);
 
         /* Update the category if required */
-        if (!MetisDifference.isEqual(getCategory(), myLoan.getCategory())) {
+        if (!MetisDataDifference.isEqual(getCategory(), myLoan.getCategory())) {
             setValueCategory(myLoan.getCategory());
         }
 
         /* Update the parent if required */
-        if (!MetisDifference.isEqual(getParent(), myLoan.getParent())) {
+        if (!MetisDataDifference.isEqual(getParent(), myLoan.getParent())) {
             setValueParent(myLoan.getParent());
         }
 
         /* Update the deposit currency if required */
-        if (!MetisDifference.isEqual(getAssetCurrency(), myLoan.getAssetCurrency())) {
+        if (!MetisDataDifference.isEqual(getAssetCurrency(), myLoan.getAssetCurrency())) {
             setValueCurrency(myLoan.getAssetCurrency());
         }
 
@@ -1201,7 +1202,7 @@ public class Loan
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

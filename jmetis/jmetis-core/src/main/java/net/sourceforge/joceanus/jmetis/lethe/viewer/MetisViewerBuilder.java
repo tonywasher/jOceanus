@@ -38,8 +38,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.MetisIOException;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
@@ -347,9 +347,9 @@ public class MetisViewerBuilder {
         final String myText = formatValue(pData);
 
         /* If the Object is a data difference */
-        if (pData instanceof MetisDataDifference) {
+        if (pData instanceof MetisDataDelta) {
             /* Access the difference */
-            final MetisDifference myDiff = ((MetisDataDifference) pData).getDifference();
+            final MetisDataDifference myDiff = ((MetisDataDelta) pData).getDifference();
 
             /* If there is a difference */
             if (!myDiff.isIdentical()) {
@@ -416,8 +416,8 @@ public class MetisViewerBuilder {
     private static boolean needsWrapping(final Object pObject) {
         /* Determine whether we need wrapping */
         Object myObject = pObject;
-        if (MetisDataDifference.class.isInstance(myObject)) {
-            myObject = ((MetisDataDifference) pObject).getObject();
+        if (MetisDataDelta.class.isInstance(myObject)) {
+            myObject = ((MetisDataDelta) pObject).getObject();
         }
         return byte[].class.isInstance(myObject);
     }

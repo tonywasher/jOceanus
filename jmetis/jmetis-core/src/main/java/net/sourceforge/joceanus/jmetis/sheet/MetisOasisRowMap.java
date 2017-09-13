@@ -36,7 +36,7 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableRowGroupElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowsElement;
 import org.w3c.dom.Node;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 
 /**
  * Class to manage the rows for a Sheet in Oasis.

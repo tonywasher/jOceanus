@@ -29,7 +29,7 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.sheet.MetisOasisCellAddress.OasisCellRange;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 

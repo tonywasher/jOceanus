@@ -26,8 +26,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -41,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        implements MetisDataFormat, MetisDataMap<Integer, BucketSnapShot<T, E>> {
+        implements MetisDataObjectFormat, MetisDataMap<Integer, BucketSnapShot<T, E>> {
     /**
      * The history map.
      */
@@ -220,7 +221,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 

@@ -27,10 +27,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -135,7 +136,7 @@ public final class DilutionEvent
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFields().getName();
     }
 
@@ -207,7 +208,7 @@ public final class DilutionEvent
         }
 
         /* If the dates differ */
-        final int iDiff = MetisDifference.compareObject(getDate(), pThat.getDate());
+        final int iDiff = MetisDataDifference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -235,9 +236,9 @@ public final class DilutionEvent
         final DilutionEvent myThat = (DilutionEvent) pThat;
 
         /* Check equality */
-        return MetisDifference.isEqual(getDate(), myThat.getDate())
-               && MetisDifference.isEqual(getSecurity(), myThat.getSecurity())
-               && MetisDifference.isEqual(getTransaction(), myThat.getTransaction());
+        return MetisDataDifference.isEqual(getDate(), myThat.getDate())
+               && MetisDataDifference.isEqual(getSecurity(), myThat.getSecurity())
+               && MetisDataDifference.isEqual(getTransaction(), myThat.getTransaction());
     }
 
     @Override
@@ -295,9 +296,9 @@ public final class DilutionEvent
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(theSecurity.formatObject());
+            myBuilder.append(theSecurity.formatObject(pFormatter));
             myBuilder.append("(");
             myBuilder.append(size());
             myBuilder.append(")");
@@ -329,7 +330,7 @@ public final class DilutionEvent
      */
     public static class DilutionEventMap
             extends MetisNestedHashMap<Integer, DilutionEventList>
-            implements MetisDataFormat {
+            implements MetisDataObjectFormat {
         /**
          * Serial Id.
          */
@@ -387,7 +388,7 @@ public final class DilutionEvent
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return getClass().getSimpleName();
         }
 

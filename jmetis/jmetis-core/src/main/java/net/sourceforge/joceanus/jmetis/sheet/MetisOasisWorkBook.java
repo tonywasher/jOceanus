@@ -63,7 +63,7 @@ import org.w3c.dom.Node;
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.MetisIOException;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.sheet.MetisOasisCellAddress.OasisCellRange;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 

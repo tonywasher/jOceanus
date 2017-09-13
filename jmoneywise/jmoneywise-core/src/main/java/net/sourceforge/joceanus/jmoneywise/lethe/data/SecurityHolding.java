@@ -27,9 +27,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -134,13 +135,13 @@ public final class SecurityHolding
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     @Override
@@ -430,7 +431,7 @@ public final class SecurityHolding
      * SecurityHolding Map.
      */
     public static class SecurityHoldingMap
-            implements MetisDataFormat, MetisDataMap<Integer, PortfolioHoldingsMap> {
+            implements MetisDataObjectFormat, MetisDataMap<Integer, PortfolioHoldingsMap> {
         /**
          * Underlying portfolio list.
          */
@@ -474,7 +475,7 @@ public final class SecurityHolding
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return SecurityHoldingMap.class.getSimpleName();
         }
 
@@ -737,7 +738,7 @@ public final class SecurityHolding
      * PortfolioHoldings Map.
      */
     private static final class PortfolioHoldingsMap
-            implements MetisDataFormat, MetisDataMap<Integer, SecurityHolding> {
+            implements MetisDataObjectFormat, MetisDataMap<Integer, SecurityHolding> {
         /**
          * Portfolio.
          */
@@ -771,13 +772,13 @@ public final class SecurityHolding
         }
 
         @Override
-        public String formatObject() {
-            return thePortfolio.formatObject();
+        public String formatObject(final MetisDataFormatter pFormatter) {
+            return thePortfolio.formatObject(pFormatter);
         }
 
         @Override
         public String toString() {
-            return formatObject();
+            return thePortfolio.toString();
         }
 
         /**

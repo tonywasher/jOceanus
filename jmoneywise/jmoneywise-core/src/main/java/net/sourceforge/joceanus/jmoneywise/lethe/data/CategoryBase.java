@@ -24,8 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -169,13 +170,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     @Override
@@ -488,13 +489,13 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
         }
 
         /* Check the category type */
-        int iDiff = MetisDifference.compareObject(getCategoryType(), pThat.getCategoryType());
+        int iDiff = MetisDataDifference.compareObject(getCategoryType(), pThat.getCategoryType());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the names */
-        iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -679,17 +680,17 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
      */
     public void applyBasicChanges(final CategoryBase<T, S, C> pCategory) {
         /* Update the Name if required */
-        if (!MetisDifference.isEqual(getName(), pCategory.getName())) {
+        if (!MetisDataDifference.isEqual(getName(), pCategory.getName())) {
             setValueName(pCategory.getNameField());
         }
 
         /* Update the description if required */
-        if (!MetisDifference.isEqual(getDesc(), pCategory.getDesc())) {
+        if (!MetisDataDifference.isEqual(getDesc(), pCategory.getDesc())) {
             setValueDesc(pCategory.getDescField());
         }
 
         /* Update the parent category if required */
-        if (!MetisDifference.isEqual(getParentCategory(), pCategory.getParentCategory())) {
+        if (!MetisDataDifference.isEqual(getParentCategory(), pCategory.getParentCategory())) {
             /* Set value */
             setValueParent(pCategory.getParentCategory());
         }
@@ -774,7 +775,8 @@ public abstract class CategoryBase<T extends CategoryBase<T, S, C>, S extends St
                 final T myItem = myIterator.next();
 
                 /* If this is not deleted and matches */
-                if (!myItem.isDeleted() && MetisDifference.isEqual(pName, myItem.getName())) {
+                if (!myItem.isDeleted()
+                    && MetisDataDifference.isEqual(pName, myItem.getName())) {
                     /* found it */
                     return myItem;
                 }

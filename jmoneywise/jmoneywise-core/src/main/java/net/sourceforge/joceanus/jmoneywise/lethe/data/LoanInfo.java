@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -233,7 +233,7 @@ public class LoanInfo
         pushHistory();
 
         /* Update the value if required */
-        if (!MetisDifference.isEqual(getField(), myLoanInfo.getField())) {
+        if (!MetisDataDifference.isEqual(getField(), myLoanInfo.getField())) {
             setValueValue(myLoanInfo.getField());
         }
 

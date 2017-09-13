@@ -24,8 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -140,13 +141,13 @@ public class TransactionTag
     }
 
     @Override
-    public String formatObject() {
-        return getName();
+    public String formatObject(final MetisDataFormatter pFormatter) {
+        return toString();
     }
 
     @Override
     public String toString() {
-        return formatObject();
+        return getName();
     }
 
     @Override
@@ -352,7 +353,7 @@ public class TransactionTag
         }
 
         /* Check the names */
-        final int iDiff = MetisDifference.compareObject(getName(), pThat.getName());
+        final int iDiff = MetisDataDifference.compareObject(getName(), pThat.getName());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -436,12 +437,12 @@ public class TransactionTag
         pushHistory();
 
         /* Update the Name if required */
-        if (!MetisDifference.isEqual(getName(), myTag.getName())) {
+        if (!MetisDataDifference.isEqual(getName(), myTag.getName())) {
             setValueName(myTag.getNameField());
         }
 
         /* Update the description if required */
-        if (!MetisDifference.isEqual(getDesc(), myTag.getDesc())) {
+        if (!MetisDataDifference.isEqual(getDesc(), myTag.getDesc())) {
             setValueDesc(myTag.getDescField());
         }
 

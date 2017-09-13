@@ -30,8 +30,10 @@ import java.util.Date;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.MetisLogicException;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDiffers;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference.MetisDataDiffers;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -129,7 +131,7 @@ public final class MetisEncryptedData {
      * @param <T> the field type
      */
     public abstract static class MetisEncryptedField<T>
-            implements MetisDataFormat, MetisDataDiffers {
+            implements MetisDataObjectFormat, MetisDataDiffers {
         /**
          * Encryption KeySet.
          */
@@ -257,14 +259,14 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             /* Format the unencrypted field */
-            return theFormatter.formatObject(theDecrypted);
+            return toString();
         }
 
         @Override
         public String toString() {
-            return formatObject();
+            return theFormatter.formatObject(theDecrypted);
         }
 
         /**
@@ -310,9 +312,9 @@ public final class MetisEncryptedData {
             theFormatter = pFormatter;
 
             /* If we need to renew the encryption */
-            if ((pField == null)
-                || (MetisDifference.getDifference(pKeySet, pField.getKeySet()).isDifferent())
-                || (MetisDifference.getDifference(getValue(), pField.getValue()).isDifferent())) {
+            if (pField == null
+                || MetisDataDifference.difference(pKeySet, pField.getKeySet()).isDifferent()
+                || MetisDataDifference.difference(getValue(), pField.getValue()).isDifferent()) {
                 /* encrypt the value */
                 encryptValue();
 
@@ -342,7 +344,7 @@ public final class MetisEncryptedData {
             final MetisEncryptedField<?> myThat = (MetisEncryptedField<?>) pThat;
 
             /* Check differences */
-            if (MetisDifference.getDifference(getValue(), myThat.getValue()).isDifferent()) {
+            if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
                 return false;
             }
 
@@ -362,32 +364,32 @@ public final class MetisEncryptedData {
         }
 
         @Override
-        public MetisDifference differs(final Object pThat) {
+        public MetisDataDifference differs(final Object pThat) {
             /* Reject if null */
             if (pThat == null) {
-                return MetisDifference.DIFFERENT;
+                return MetisDataDifference.DIFFERENT;
             }
 
             /* Reject if wrong class */
             if (!getClass().equals(pThat.getClass())) {
-                return MetisDifference.DIFFERENT;
+                return MetisDataDifference.DIFFERENT;
             }
 
             /* Access as correct class */
             final MetisEncryptedField<?> myField = (MetisEncryptedField<?>) pThat;
 
             /* Compare Unencrypted value */
-            if (MetisDifference.getDifference(getValue(), myField.getValue()).isDifferent()) {
-                return MetisDifference.DIFFERENT;
+            if (MetisDataDifference.difference(getValue(), myField.getValue()).isDifferent()) {
+                return MetisDataDifference.DIFFERENT;
             }
 
             /* Compare Encrypted value */
             if (!Arrays.equals(getBytes(), myField.getBytes())) {
-                return MetisDifference.SECURITY;
+                return MetisDataDifference.SECURITY;
             }
 
             /* Item is the Same */
-            return MetisDifference.IDENTICAL;
+            return MetisDataDifference.IDENTICAL;
         }
     }
 

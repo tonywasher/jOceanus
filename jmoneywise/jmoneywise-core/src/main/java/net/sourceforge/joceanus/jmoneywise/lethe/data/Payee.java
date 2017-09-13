@@ -26,9 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -463,13 +464,13 @@ public class Payee
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = PayeeInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -558,7 +559,7 @@ public class Payee
             && (pThat instanceof Payee)) {
             /* Check the payee type */
             final Payee myThat = (Payee) pThat;
-            iDiff = MetisDifference.compareObject(getPayeeType(), myThat.getPayeeType());
+            iDiff = MetisDataDifference.compareObject(getPayeeType(), myThat.getPayeeType());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -757,7 +758,7 @@ public class Payee
         applyBasicChanges(myPayee);
 
         /* Update the category type if required */
-        if (!MetisDifference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
+        if (!MetisDataDifference.isEqual(getPayeeType(), myPayee.getPayeeType())) {
             setValueType(myPayee.getPayeeType());
         }
 
@@ -1054,7 +1055,7 @@ public class Payee
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

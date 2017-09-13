@@ -24,10 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -492,13 +493,13 @@ public class Cash
     }
 
     @Override
-    public MetisDifference fieldChanged(final MetisField pField) {
+    public MetisDataDifference fieldChanged(final MetisField pField) {
         /* Handle InfoSet fields */
         final AccountInfoClass myClass = CashInfoSet.getClassForField(pField);
         if (myClass != null) {
             return useInfoSet
                               ? theInfoSet.fieldChanged(myClass)
-                              : MetisDifference.IDENTICAL;
+                              : MetisDataDifference.IDENTICAL;
         }
 
         /* Check super fields */
@@ -582,7 +583,7 @@ public class Cash
             && (pThat instanceof Cash)) {
             /* Check the category */
             final Cash myThat = (Cash) pThat;
-            iDiff = MetisDifference.compareObject(getCategory(), myThat.getCategory());
+            iDiff = MetisDataDifference.compareObject(getCategory(), myThat.getCategory());
             if (iDiff == 0) {
                 /* Check the underlying base */
                 iDiff = super.compareAsset(myThat);
@@ -743,12 +744,12 @@ public class Cash
         applyBasicChanges(myCash);
 
         /* Update the category if required */
-        if (!MetisDifference.isEqual(getCategory(), myCash.getCategory())) {
+        if (!MetisDataDifference.isEqual(getCategory(), myCash.getCategory())) {
             setValueCategory(myCash.getCategory());
         }
 
         /* Update the currency if required */
-        if (!MetisDifference.isEqual(getAssetCurrency(), myCash.getAssetCurrency())) {
+        if (!MetisDataDifference.isEqual(getAssetCurrency(), myCash.getAssetCurrency())) {
             setValueCurrency(myCash.getAssetCurrency());
         }
 
@@ -1032,7 +1033,7 @@ public class Cash
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
         }
 

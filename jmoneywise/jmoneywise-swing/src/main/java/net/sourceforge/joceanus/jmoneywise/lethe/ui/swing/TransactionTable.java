@@ -31,7 +31,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
@@ -681,7 +681,7 @@ public class TransactionTable
 
         /* Set the selection */
         final TethysDateRange myRange = theSelect.getRange();
-        if (MetisDifference.isEqual(myRange, theRange)) {
+        if (MetisDataDifference.isEqual(myRange, theRange)) {
             /* Handle a simple filter change */
             theModel.fireNewDataEvents();
             theSelectionModel.handleNewFilter();

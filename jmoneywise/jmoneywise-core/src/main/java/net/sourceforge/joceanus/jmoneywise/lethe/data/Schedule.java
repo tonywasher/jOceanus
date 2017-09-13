@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -543,19 +543,19 @@ public class Schedule
         }
 
         /* Check the next date */
-        int iDiff = MetisDifference.compareObject(getNextDate(), pThat.getNextDate());
+        int iDiff = MetisDataDifference.compareObject(getNextDate(), pThat.getNextDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the start date */
-        iDiff = MetisDifference.compareObject(getStartDate(), pThat.getStartDate());
+        iDiff = MetisDataDifference.compareObject(getStartDate(), pThat.getStartDate());
         if (iDiff != 0) {
             return iDiff;
         }
 
         /* Check the frequency */
-        iDiff = MetisDifference.compareObject(getFrequency(), pThat.getFrequency());
+        iDiff = MetisDataDifference.compareObject(getFrequency(), pThat.getFrequency());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -762,33 +762,33 @@ public class Schedule
         pushHistory();
 
         /* Update the start/end dates if required */
-        if (!MetisDifference.isEqual(getStartDate(), mySchedule.getStartDate())) {
+        if (!MetisDataDifference.isEqual(getStartDate(), mySchedule.getStartDate())) {
             setStartDate(mySchedule.getStartDate());
         }
-        if (!MetisDifference.isEqual(getEndDate(), mySchedule.getEndDate())) {
+        if (!MetisDataDifference.isEqual(getEndDate(), mySchedule.getEndDate())) {
             setEndDate(mySchedule.getEndDate());
         }
 
         /* Update the frequency if required */
-        if (!MetisDifference.isEqual(getFrequency(), mySchedule.getFrequency())) {
+        if (!MetisDataDifference.isEqual(getFrequency(), mySchedule.getFrequency())) {
             setFrequency(mySchedule.getFrequency());
         }
 
         /* Update the repeat frequency if required */
-        if (!MetisDifference.isEqual(getRepeatFrequency(), mySchedule.getRepeatFrequency())) {
+        if (!MetisDataDifference.isEqual(getRepeatFrequency(), mySchedule.getRepeatFrequency())) {
             setRepeatFrequency(mySchedule.getRepeatFrequency());
         }
-        if (!MetisDifference.isEqual(getRepeatInterval(), mySchedule.getRepeatInterval())) {
+        if (!MetisDataDifference.isEqual(getRepeatInterval(), mySchedule.getRepeatInterval())) {
             setRepeatInterval(mySchedule.getRepeatInterval());
         }
 
         /* Update the pattern if required */
-        if (!MetisDifference.isEqual(getPattern(), mySchedule.getPattern())) {
+        if (!MetisDataDifference.isEqual(getPattern(), mySchedule.getPattern())) {
             setPattern(mySchedule.getPattern());
         }
 
         /* Update the next date if required */
-        if (!MetisDifference.isEqual(getNextDate(), mySchedule.getNextDate())) {
+        if (!MetisDataDifference.isEqual(getNextDate(), mySchedule.getNextDate())) {
             setNextDate(mySchedule.getNextDate());
         }
 

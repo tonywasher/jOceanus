@@ -26,8 +26,9 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataTouch.TouchCounter;
 
 /**
@@ -35,7 +36,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataTouch.TouchCounter;
  * @param <E> the Data item type class
  */
 public class DataTouch<E extends Enum<E>>
-        implements MetisDataFormat, MetisDataMap<E, TouchCounter<E>> {
+        implements MetisDataObjectFormat, MetisDataMap<E, TouchCounter<E>> {
     /**
      * Map of touches.
      */
@@ -56,7 +57,7 @@ public class DataTouch<E extends Enum<E>>
     }
 
     @Override
-    public String formatObject() {
+    public String formatObject(final MetisDataFormatter pFormatter) {
         return getClass().getSimpleName();
     }
 
@@ -147,7 +148,7 @@ public class DataTouch<E extends Enum<E>>
      * @param <E> the DataItem types
      */
     public static final class TouchCounter<E>
-            implements MetisDataFormat {
+            implements MetisDataObjectFormat {
         /**
          * The item type.
          */
@@ -168,7 +169,7 @@ public class DataTouch<E extends Enum<E>>
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             return Integer.toString(theTouches);
         }
 

@@ -27,7 +27,8 @@ import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataFormat;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.Frequency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
@@ -37,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Pattern for Schedule.
  */
 public abstract class SchedulePattern
-        implements MetisDataFormat {
+        implements MetisDataObjectFormat {
     /**
      * No Items.
      */
@@ -280,7 +281,7 @@ public abstract class SchedulePattern
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             /* Initialise variables */
             boolean myFirst = true;
             final Locale myLocale = Locale.getDefault();
@@ -408,7 +409,7 @@ public abstract class SchedulePattern
         }
 
         @Override
-        public String formatObject() {
+        public String formatObject(final MetisDataFormatter pFormatter) {
             /* Initialise variables */
             boolean myFirst = true;
             final StringBuilder myBuilder = new StringBuilder();

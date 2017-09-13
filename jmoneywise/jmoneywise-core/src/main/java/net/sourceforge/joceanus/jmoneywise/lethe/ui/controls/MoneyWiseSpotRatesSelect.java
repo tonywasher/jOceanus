@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
@@ -380,7 +380,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
         private boolean setDate(final TethysDateButtonManager<N, I> pButton) {
             /* Adjust the date and build the new range */
             final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
-            if (!MetisDifference.isEqual(myDate, theDate)) {
+            if (!MetisDataDifference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
             }
@@ -429,7 +429,7 @@ public class MoneyWiseSpotRatesSelect<N, I>
             theDateButton.setSelectedDate(theDate);
 
             /* Determine whether we are todays date */
-            final boolean isToday = MetisDifference.isEqual(theDate, new TethysDate());
+            final boolean isToday = MetisDataDifference.isEqual(theDate, new TethysDate());
             theDownloadButton.setVisible(isToday);
         }
     }

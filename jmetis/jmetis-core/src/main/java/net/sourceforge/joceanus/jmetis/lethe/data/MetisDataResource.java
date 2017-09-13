@@ -34,21 +34,6 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  */
 public enum MetisDataResource implements TethysResourceId {
     /**
-     * Difference IDENTICAL.
-     */
-    DIFFERENCE_IDENTICAL("difference.IDENTICAL"),
-
-    /**
-     * Difference SECURITY.
-     */
-    DIFFERENCE_SECURITY("difference.SECURITY"),
-
-    /**
-     * Difference DIFFERENT.
-     */
-    DIFFERENCE_DIFFERENT("difference.DIFFERENT"),
-
-    /**
      * FieldValue UNKNOWN.
      */
     FIELDVALUE_UNKNOWN("field.UNKNOWN"),
@@ -92,11 +77,6 @@ public enum MetisDataResource implements TethysResourceId {
      * ErrorList Name.
      */
     ERRORLIST_NAME("ErrorList.Name");
-
-    /**
-     * The Difference Map.
-     */
-    private static final Map<MetisDifference, TethysResourceId> DIFF_MAP = buildDifferenceMap();
 
     /**
      * The FieldValue Map.
@@ -146,28 +126,6 @@ public enum MetisDataResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build difference map.
-     * @return the map
-     */
-    private static Map<MetisDifference, TethysResourceId> buildDifferenceMap() {
-        /* Create the map and return it */
-        final Map<MetisDifference, TethysResourceId> myMap = new EnumMap<>(MetisDifference.class);
-        myMap.put(MetisDifference.IDENTICAL, DIFFERENCE_IDENTICAL);
-        myMap.put(MetisDifference.SECURITY, DIFFERENCE_SECURITY);
-        myMap.put(MetisDifference.DIFFERENT, DIFFERENCE_DIFFERENT);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for difference.
-     * @param pValue the Value
-     * @return the resource key
-     */
-    protected static TethysResourceId getKeyForDifference(final MetisDifference pValue) {
-        return TethysResourceBuilder.getKeyForEnum(DIFF_MAP, pValue);
     }
 
     /**

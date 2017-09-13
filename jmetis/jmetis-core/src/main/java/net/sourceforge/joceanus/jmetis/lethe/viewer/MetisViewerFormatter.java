@@ -26,10 +26,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
@@ -132,9 +132,9 @@ public class MetisViewerFormatter {
      */
     private void formatHTMLObject(final Object pObject) {
         /* handle DataDifference */
-        final Object myObject = pObject instanceof MetisDataDifference
-                                                                       ? ((MetisDataDifference) pObject).getObject()
-                                                                       : pObject;
+        final Object myObject = pObject instanceof MetisDataDelta
+                                                                  ? ((MetisDataDelta) pObject).getObject()
+                                                                  : pObject;
 
         /* If we are DataContents */
         if (myObject instanceof MetisDataContents) {
@@ -162,9 +162,9 @@ public class MetisViewerFormatter {
     private void formatHTMLCollection(final Object pObject,
                                       final int pStart) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDifference
-                                                                 ? ((MetisDataDifference) pObject).getObject()
-                                                                 : pObject;
+        Object myObject = pObject instanceof MetisDataDelta
+                                                            ? ((MetisDataDelta) pObject).getObject()
+                                                            : pObject;
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
@@ -191,9 +191,9 @@ public class MetisViewerFormatter {
     private void formatHTMLItem(final Object pObject,
                                 final int pIndex) {
         /* handle DataDifference */
-        Object myObject = pObject instanceof MetisDataDifference
-                                                                 ? ((MetisDataDifference) pObject).getObject()
-                                                                 : pObject;
+        Object myObject = pObject instanceof MetisDataDelta
+                                                            ? ((MetisDataDelta) pObject).getObject()
+                                                            : pObject;
 
         /* handle embedded objects */
         if (myObject instanceof MetisDataList) {
