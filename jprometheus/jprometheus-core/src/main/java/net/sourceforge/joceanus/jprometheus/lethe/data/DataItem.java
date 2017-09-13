@@ -25,12 +25,13 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisItemValidation;
@@ -221,9 +222,9 @@ public abstract class DataItem<E extends Enum<E>>
     private DataItem<?> theBase;
 
     /**
-     * The Edit state of this item {@link MetisEditState}.
+     * The Edit state of this item {@link MetisDataEditState}.
      */
-    private MetisEditState theEdit = MetisEditState.CLEAN;
+    private MetisDataEditState theEdit = MetisDataEditState.CLEAN;
 
     /**
      * Is the item a header.
@@ -462,7 +463,7 @@ public abstract class DataItem<E extends Enum<E>>
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase == null)
-                                     ? MetisFieldValue.SKIP
+                                     ? MetisDataFieldValue.SKIP
                                      : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
@@ -474,31 +475,31 @@ public abstract class DataItem<E extends Enum<E>>
         if (FIELD_DELETED.equals(pField)) {
             return isDeleted()
                                ? Boolean.TRUE
-                               : MetisFieldValue.SKIP;
+                               : MetisDataFieldValue.SKIP;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null)
                                          ? theValueSet.getVersion()
-                                         : MetisFieldValue.SKIP;
+                                         : MetisDataFieldValue.SKIP;
         }
         if (FIELD_HEADER.equals(pField)) {
             return isHeader
                             ? isHeader
-                            : MetisFieldValue.SKIP;
+                            : MetisDataFieldValue.SKIP;
         }
         if (FIELD_HISTORY.equals(pField)) {
             return hasHistory()
                                 ? theHistory
-                                : MetisFieldValue.SKIP;
+                                : MetisDataFieldValue.SKIP;
         }
         if (FIELD_ERRORS.equals(pField)) {
             return hasErrors()
                                ? theErrors
-                               : MetisFieldValue.SKIP;
+                               : MetisDataFieldValue.SKIP;
         }
 
         /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -576,7 +577,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Get the EditState for this item.
      * @return the EditState
      */
-    public MetisEditState getEditState() {
+    public MetisDataEditState getEditState() {
         return theEdit;
     }
 
@@ -585,7 +586,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return the State
      */
     public MetisDataState getState() {
-        return MetisDataState.determineState(theHistory);
+        return MetisDataVersionControl.determineState(theHistory);
     }
 
     /**
@@ -618,7 +619,7 @@ public abstract class DataItem<E extends Enum<E>>
      * Set the Edit State.
      * @param pState the Edit Status
      */
-    protected void setEditState(final MetisEditState pState) {
+    protected void setEditState(final MetisDataEditState pState) {
         theEdit = pState;
     }
 
@@ -771,7 +772,7 @@ public abstract class DataItem<E extends Enum<E>>
      */
     public void clearHistory() {
         theHistory.clearHistory();
-        theEdit = MetisEditState.CLEAN;
+        theEdit = MetisDataEditState.CLEAN;
     }
 
     /**
@@ -860,7 +861,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
-        return theEdit == MetisEditState.ERROR;
+        return theEdit == MetisDataEditState.ERROR;
     }
 
     /**
@@ -868,7 +869,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean hasChanges() {
-        return theEdit != MetisEditState.CLEAN;
+        return theEdit != MetisDataEditState.CLEAN;
     }
 
     /**
@@ -876,7 +877,8 @@ public abstract class DataItem<E extends Enum<E>>
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return (theEdit == MetisEditState.CLEAN) || (theEdit == MetisEditState.VALID);
+        return theEdit == MetisDataEditState.CLEAN
+               || theEdit == MetisDataEditState.VALID;
     }
 
     @Override
@@ -891,11 +893,11 @@ public abstract class DataItem<E extends Enum<E>>
     public void setValidEdit() {
         final MetisDataState myState = getState();
         if (myState == MetisDataState.CLEAN) {
-            theEdit = MetisEditState.CLEAN;
+            theEdit = MetisDataEditState.CLEAN;
         } else if (theList.getStyle() == ListStyle.CORE) {
-            theEdit = MetisEditState.DIRTY;
+            theEdit = MetisDataEditState.DIRTY;
         } else {
-            theEdit = MetisEditState.VALID;
+            theEdit = MetisDataEditState.VALID;
         }
     }
 
@@ -903,9 +905,9 @@ public abstract class DataItem<E extends Enum<E>>
      * Clear all errors for this item.
      */
     public void clearErrors() {
-        theEdit = (theValueSet.getVersion() > 0)
-                                                 ? MetisEditState.DIRTY
-                                                 : MetisEditState.CLEAN;
+        theEdit = theValueSet.getVersion() > 0
+                                               ? MetisDataEditState.DIRTY
+                                               : MetisDataEditState.CLEAN;
         theErrors.clearErrors();
     }
 
@@ -917,11 +919,11 @@ public abstract class DataItem<E extends Enum<E>>
     public void addError(final String pError,
                          final MetisField pField) {
         /* Set edit state and add the error */
-        theEdit = MetisEditState.ERROR;
+        theEdit = MetisDataEditState.ERROR;
         theErrors.addError(pError, pField);
 
         /* Note that the list has errors */
-        theList.setEditState(MetisEditState.ERROR);
+        theList.setEditState(MetisDataEditState.ERROR);
     }
 
     @Override
@@ -1105,8 +1107,8 @@ public abstract class DataItem<E extends Enum<E>>
      * Dirty items become valid.
      */
     public void validate() {
-        if (getEditState() == MetisEditState.DIRTY) {
-            setEditState(MetisEditState.VALID);
+        if (getEditState() == MetisDataEditState.DIRTY) {
+            setEditState(MetisDataEditState.VALID);
         }
     }
 

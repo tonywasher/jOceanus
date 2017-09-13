@@ -27,11 +27,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
@@ -222,9 +222,9 @@ public final class TransactionCategoryBucket
             return theHistory;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBaseValues != null)
-                                           ? theBaseValues
-                                           : MetisFieldValue.SKIP;
+            return theBaseValues != null
+                                         ? theBaseValues
+                                         : MetisDataFieldValue.SKIP;
         }
 
         /* Handle Attribute fields */
@@ -234,12 +234,12 @@ public final class TransactionCategoryBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
-                                                             : MetisFieldValue.SKIP;
+                                                             : MetisDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return MetisFieldValue.SKIP;
+        return MetisDataFieldValue.SKIP;
     }
 
     @Override
@@ -383,9 +383,9 @@ public final class TransactionCategoryBucket
         final Object myValue = getValue(pAttr);
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -997,7 +997,7 @@ public final class TransactionCategoryBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

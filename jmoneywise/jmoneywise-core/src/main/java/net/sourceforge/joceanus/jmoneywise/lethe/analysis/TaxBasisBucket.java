@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
@@ -249,7 +249,7 @@ public class TaxBasisBucket
         if (FIELD_ACCOUNTS.equals(pField)) {
             return hasAccounts
                                ? theAccounts
-                               : MetisFieldValue.SKIP;
+                               : MetisDataFieldValue.SKIP;
         }
         if (FIELD_BASE.equals(pField)) {
             return theBaseValues;
@@ -262,12 +262,12 @@ public class TaxBasisBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
-                                                             : MetisFieldValue.SKIP;
+                                                             : MetisDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -290,9 +290,9 @@ public class TaxBasisBucket
      * @return the name
      */
     public String getName() {
-        return (theTaxBasis == null)
-                                     ? NAME_TOTALS
-                                     : theTaxBasis.getName();
+        return theTaxBasis == null
+                                   ? NAME_TOTALS
+                                   : theTaxBasis.getName();
     }
 
     /**
@@ -457,9 +457,9 @@ public class TaxBasisBucket
         final Object myValue = getValue(pAttr);
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -1043,13 +1043,13 @@ public class TaxBasisBucket
             }
             if (FIELD_CHARGES.equals(pField)) {
                 return theCharges.isEmpty()
-                                            ? MetisFieldValue.SKIP
+                                            ? MetisDataFieldValue.SKIP
                                             : theCharges;
             }
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

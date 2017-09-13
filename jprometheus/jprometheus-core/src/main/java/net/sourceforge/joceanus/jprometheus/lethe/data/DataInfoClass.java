@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 
 /**
  * DataInfoClass interface.

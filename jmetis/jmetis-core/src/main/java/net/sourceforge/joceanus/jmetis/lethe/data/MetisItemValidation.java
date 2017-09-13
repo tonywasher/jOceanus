@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -82,9 +83,9 @@ public class MetisItemValidation
     public Object getFieldValue(final MetisField pField) {
         /* Handle out of range */
         final int iIndex = pField.getIndex();
-        if ((iIndex < 0)
+        if (iIndex < 0
             || iIndex >= theErrors.size()) {
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /* Access the element */

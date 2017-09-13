@@ -25,12 +25,12 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -244,12 +244,13 @@ public class Deposit
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet
                               ? theInfoSet
-                              : MetisFieldValue.SKIP;
+                              : MetisDataFieldValue.SKIP;
         }
 
         /* Handle infoSet fields */
         final AccountInfoClass myClass = DepositInfoSet.getClassForField(pField);
-        if ((theInfoSet != null) && (myClass != null)) {
+        if (theInfoSet != null
+            && myClass != null) {
             return theInfoSet.getFieldValue(pField);
         }
 
@@ -536,12 +537,13 @@ public class Deposit
     }
 
     @Override
-    public MetisEditState getEditState() {
+    public MetisDataEditState getEditState() {
         /* Pop history for self */
-        MetisEditState myState = super.getEditState();
+        MetisDataEditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == MetisEditState.CLEAN) && useInfoSet) {
+        if (myState == MetisDataEditState.CLEAN
+            && useInfoSet) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -1312,7 +1314,7 @@ public class Deposit
             }
 
             /* Unknown */
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override

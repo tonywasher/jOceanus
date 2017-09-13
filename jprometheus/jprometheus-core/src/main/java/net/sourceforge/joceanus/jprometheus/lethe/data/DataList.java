@@ -26,14 +26,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
@@ -146,7 +146,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * The edit state of the list.
      */
-    private MetisEditState theEdit = MetisEditState.CLEAN;
+    private MetisDataEditState theEdit = MetisDataEditState.CLEAN;
 
     /**
      * The DataSet.
@@ -284,29 +284,25 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             return theEdit;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase == null)
-                                     ? MetisFieldValue.SKIP
-                                     : theBase;
+            return theBase == null
+                                   ? MetisDataFieldValue.SKIP
+                                   : theBase;
         }
         if (FIELD_MAPS.equals(pField)) {
-            return (theDataMap == null)
-                                        ? MetisFieldValue.SKIP
-                                        : theDataMap;
+            return theDataMap == null
+                                      ? MetisDataFieldValue.SKIP
+                                      : theDataMap;
         }
         if (FIELD_ERRORS.equals(pField)) {
-            return MetisFieldValue.SKIP;
+            return MetisDataFieldValue.SKIP;
         }
         if (FIELD_TYPE.equals(pField)) {
             return theItemType;
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
-    /**
-     * Add item to list in sort order.
-     * @param pItem the item to add
-     * @return true if the item was added to the list
-     */
+    @Override
     public boolean add(final T pItem) {
         return theList.add(pItem);
     }
@@ -403,7 +399,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Get the EditState of the list.
      * @return the Edit State
      */
-    public MetisEditState getEditState() {
+    public MetisDataEditState getEditState() {
         return theEdit;
     }
 
@@ -460,7 +456,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return <code>true/false</code>
      */
     public boolean hasErrors() {
-        return theEdit == MetisEditState.ERROR;
+        return theEdit == MetisDataEditState.ERROR;
     }
 
     /**
@@ -477,7 +473,8 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * @return <code>true/false</code>
      */
     public boolean isValid() {
-        return (theEdit == MetisEditState.CLEAN) || (theEdit == MetisEditState.VALID);
+        return theEdit == MetisDataEditState.CLEAN
+               || theEdit == MetisDataEditState.VALID;
     }
 
     @Override
@@ -786,9 +783,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
     /**
      * Set the EditState for the list (forcible on error/change).
-     * @param pState the new {@link MetisEditState} (only ERROR/DIRTY)
+     * @param pState the new {@link MetisDataEditState} (only ERROR/DIRTY)
      */
-    public void setEditState(final MetisEditState pState) {
+    public void setEditState(final MetisDataEditState pState) {
         switch (pState) {
             case CLEAN:
             case VALID:
@@ -796,7 +793,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 theEdit = pState;
                 break;
             case DIRTY:
-                if (theEdit != MetisEditState.ERROR) {
+                if (theEdit != MetisDataEditState.ERROR) {
                     theEdit = pState;
                 }
                 break;
@@ -812,7 +809,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     public MetisErrorList<DataItem<E>> validate() {
         /* Allocate error list */
         MetisErrorList<DataItem<E>> myErrors = null;
-        MetisEditState myState = MetisEditState.CLEAN;
+        MetisDataEditState myState = MetisDataEditState.CLEAN;
 
         /* Loop through the items */
         final Iterator<T> myIterator = iterator();
@@ -825,7 +822,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
                 myCurr.setValidEdit();
-                myState = myState.combineState(MetisEditState.VALID);
+                myState = myState.combineState(MetisDataEditState.VALID);
                 continue;
             }
 
@@ -962,7 +959,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
 
         /* Loop through items clearing active flag */
         final Iterator<T> myIterator = iterator();
-        MetisEditState myState = MetisEditState.CLEAN;
+        MetisDataEditState myState = MetisDataEditState.CLEAN;
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
 
@@ -972,7 +969,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
                 myCurr.setValidEdit();
-                myState = myState.combineState(MetisEditState.VALID);
+                myState = myState.combineState(MetisDataEditState.VALID);
                 continue;
             }
 

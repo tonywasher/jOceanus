@@ -31,9 +31,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
@@ -110,9 +110,9 @@ public class MetisPreferenceManager
         final MetisPreferenceSet<?> mySet = theMap.get(pField.getName());
 
         /* Return the value */
-        return (mySet == null)
-                               ? MetisFieldValue.UNKNOWN
-                               : mySet;
+        return mySet == null
+                             ? MetisDataFieldValue.UNKNOWN
+                             : mySet;
     }
 
     @Override

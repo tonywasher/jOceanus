@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.lethe.data;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -106,12 +107,12 @@ public class MetisExceptionWrapper
         }
         if (FIELD_OBJECT.equals(pField)) {
             if (!(theWrapped instanceof OceanusException)) {
-                return MetisFieldValue.SKIP;
+                return MetisDataFieldValue.SKIP;
             }
             final OceanusException myWrapped = (OceanusException) theWrapped;
             final Object myObject = myWrapped.getObject();
             return (myObject == null)
-                                      ? MetisFieldValue.SKIP
+                                      ? MetisDataFieldValue.SKIP
                                       : myObject;
         }
         if (FIELD_STACK.equals(pField)) {
@@ -122,7 +123,7 @@ public class MetisExceptionWrapper
         if (FIELD_ORIGIN.equals(pField)) {
             Throwable myResult = theWrapped;
             if (myResult.getCause() == null) {
-                return MetisFieldValue.SKIP;
+                return MetisDataFieldValue.SKIP;
             }
             while (myResult.getCause() != null) {
                 myResult = myResult.getCause();
@@ -131,7 +132,7 @@ public class MetisExceptionWrapper
         }
 
         /* Unknown field */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

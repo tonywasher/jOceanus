@@ -26,11 +26,11 @@ import java.util.Currency;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
@@ -150,7 +150,7 @@ public abstract class MetisFieldModel<T extends MetisFieldSetItem> {
         Object myValue = pItem.getFieldValue(theField);
 
         /* If we are skipping the field */
-        if (MetisFieldValue.SKIP.equals(myValue)) {
+        if (MetisDataFieldValue.SKIP.equals(myValue)) {
             /* Set to null */
             myValue = null;
         }

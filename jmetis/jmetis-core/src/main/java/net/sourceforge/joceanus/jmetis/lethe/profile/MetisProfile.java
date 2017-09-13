@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -150,29 +150,30 @@ public class MetisProfile
         if (FIELD_STATUS.equals(pField)) {
             return theStatus.isRunning()
                                          ? theStatus
-                                         : MetisFieldValue.SKIP;
+                                         : MetisDataFieldValue.SKIP;
         }
         if (FIELD_ELAPSED.equals(pField)) {
             return theStatus.isRunning()
-                                         ? MetisFieldValue.SKIP
+                                         ? MetisDataFieldValue.SKIP
                                          : theElapsed;
         }
         if (FIELD_HIDDEN.equals(pField)) {
             return theHidden == null
-                                     ? MetisFieldValue.SKIP
+                                     ? MetisDataFieldValue.SKIP
                                      : theHidden;
         }
 
         /* Only possible if we have subTasks */
         if (theSubTasks == null) {
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /* return the value */
         final int iIndex = pField.getIndex();
-        return ((iIndex < 0) || (iIndex >= theSubTasks.size()))
-                                                                ? MetisFieldValue.UNKNOWN
-                                                                : theSubTasks.get(iIndex);
+        return (iIndex < 0
+                || iIndex >= theSubTasks.size())
+                                                 ? MetisDataFieldValue.UNKNOWN
+                                                 : theSubTasks.get(iIndex);
     }
 
     /**

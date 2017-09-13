@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
@@ -310,12 +310,12 @@ public final class SecurityBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
-                                                             : MetisFieldValue.SKIP;
+                                                             : MetisDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -528,9 +528,9 @@ public final class SecurityBucket
         final Object myValue = getAttribute(pAttr);
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -1122,7 +1122,7 @@ public final class SecurityBucket
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

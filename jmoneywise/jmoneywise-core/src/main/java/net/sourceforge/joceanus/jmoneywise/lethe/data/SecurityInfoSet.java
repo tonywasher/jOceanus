@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
@@ -113,9 +113,9 @@ public class SecurityInfoSet
         }
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -251,68 +251,78 @@ public class SecurityInfoSet
      * Validate the infoSet.
      */
     protected void validate() {
+        /* Loop through the classes */
+        for (final AccountInfoClass myClass : AccountInfoClass.values()) {
+            /* validate the class */
+            validateClass(myClass);
+        }
+    }
+
+    /**
+     * Validate the class.
+     * @param pClass the infoClass
+     */
+    private void validateClass(final AccountInfoClass pClass) {
         /* Access details about the Security */
         final Security mySecurity = getOwner();
 
-        /* Loop through the classes */
-        for (AccountInfoClass myClass : AccountInfoClass.values()) {
-            /* Access info for class */
-            final SecurityInfo myInfo = getInfo(myClass);
-            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+        /* Access info for class */
+        final SecurityInfo myInfo = getInfo(pClass);
+        final boolean isExisting = myInfo != null
+                                   && !myInfo.isDeleted();
 
-            /* Determine requirements for class */
-            final MetisFieldRequired myState = isClassRequired(myClass);
+        /* Determine requirements for class */
+        final MetisFieldRequired myState = isClassRequired(pClass);
 
-            /* If the field is missing */
-            if (!isExisting) {
-                /* Handle required field missing */
-                if (myState == MetisFieldRequired.MUSTEXIST) {
-                    mySecurity.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
+        /* If the field is missing */
+        if (!isExisting) {
+            /* Handle required field missing */
+            if (myState == MetisFieldRequired.MUSTEXIST) {
+                mySecurity.addError(DataItem.ERROR_MISSING, getFieldForClass(pClass));
+            }
+            return;
+        }
+
+        /* If field is not allowed */
+        if (myState == MetisFieldRequired.NOTALLOWED) {
+            mySecurity.addError(DataItem.ERROR_EXIST, getFieldForClass(pClass));
+            return;
+        }
+
+        /* Switch on class */
+        switch (pClass) {
+            case NOTES:
+                /* Access data */
+                final char[] myArray = myInfo.getValue(char[].class);
+                if (myArray.length > pClass.getMaximumLength()) {
+                    mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(pClass));
                 }
-                continue;
-            }
-
-            /* If field is not allowed */
-            if (myState == MetisFieldRequired.NOTALLOWED) {
-                mySecurity.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
-                continue;
-            }
-
-            /* Switch on class */
-            switch (myClass) {
-                case NOTES:
-                    /* Access data */
-                    final char[] myArray = myInfo.getValue(char[].class);
-                    if (myArray.length > myClass.getMaximumLength()) {
-                        mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case SYMBOL:
-                    /* Access data */
-                    final String mySymbol = myInfo.getValue(String.class);
-                    if (mySymbol.length() > myClass.getMaximumLength()) {
-                        mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case UNDERLYINGSTOCK:
-                    /* Access data */
-                    final Security myStock = myInfo.getValue(Security.class);
-                    if (!myStock.getSecurityTypeClass().isShares()) {
-                        mySecurity.addError("Invalid underlying stock", getFieldForClass(myClass));
-                    }
-                    break;
-                case OPTIONPRICE:
-                    /* Access data */
-                    final TethysPrice myPrice = myInfo.getValue(TethysPrice.class);
-                    if (myPrice.isZero()) {
-                        mySecurity.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                    } else if (!myPrice.isPositive()) {
-                        mySecurity.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    }
-                    break;
-                default:
-                    break;
-            }
+                break;
+            case SYMBOL:
+                /* Access data */
+                final String mySymbol = myInfo.getValue(String.class);
+                if (mySymbol.length() > pClass.getMaximumLength()) {
+                    mySecurity.addError(DataItem.ERROR_LENGTH, getFieldForClass(pClass));
+                }
+                break;
+            case UNDERLYINGSTOCK:
+                /* Access data */
+                final Security myStock = myInfo.getValue(Security.class);
+                if (!myStock.getSecurityTypeClass().isShares()) {
+                    mySecurity.addError("Invalid underlying stock", getFieldForClass(pClass));
+                }
+                break;
+            case OPTIONPRICE:
+                /* Access data */
+                final TethysPrice myPrice = myInfo.getValue(TethysPrice.class);
+                if (myPrice.isZero()) {
+                    mySecurity.addError(DataItem.ERROR_ZERO, getFieldForClass(pClass));
+                } else if (!myPrice.isPositive()) {
+                    mySecurity.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
+                }
+                break;
+            default:
+                break;
         }
     }
 }

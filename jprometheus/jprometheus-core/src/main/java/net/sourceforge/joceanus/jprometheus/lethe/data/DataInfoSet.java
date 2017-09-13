@@ -31,12 +31,12 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
@@ -127,7 +127,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         if (FIELD_VALUES.equals(pField)) {
             return theMap;
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -798,18 +798,18 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
      * Get the EditState for this item.
      * @return the EditState
      */
-    public MetisEditState getEditState() {
+    public MetisDataEditState getEditState() {
         /* Loop through each existing value */
         for (DataInfo<T, O, I, S, E> myValue : theMap.values()) {
             /* If we have changes */
             if (myValue.hasHistory()) {
                 /* Note that new state is changed */
-                return MetisEditState.VALID;
+                return MetisDataEditState.VALID;
             }
         }
 
         /* Default to clean */
-        return MetisEditState.CLEAN;
+        return MetisDataEditState.CLEAN;
     }
 
     /**

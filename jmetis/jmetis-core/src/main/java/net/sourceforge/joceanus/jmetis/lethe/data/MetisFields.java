@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+
 /**
  * Data Fields.
  * @author Tony Washer

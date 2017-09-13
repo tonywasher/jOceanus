@@ -35,7 +35,7 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
@@ -355,10 +355,10 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * Obtain the edit state of the table.
      * @return the edit state
      */
-    public MetisEditState getEditState() {
-        return (theUpdateSet == null)
-                                      ? MetisEditState.CLEAN
-                                      : theUpdateSet.getEditState();
+    public MetisDataEditState getEditState() {
+        return theUpdateSet == null
+                                    ? MetisDataEditState.CLEAN
+                                    : theUpdateSet.getEditState();
     }
 
     /**

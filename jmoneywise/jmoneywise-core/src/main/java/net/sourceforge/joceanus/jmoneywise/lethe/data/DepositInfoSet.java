@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
@@ -102,9 +102,9 @@ public class DepositInfoSet
     private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
         /* Return the value */
         final Object myValue = getField(pInfoClass);
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -196,55 +196,65 @@ public class DepositInfoSet
      * Validate the infoSet.
      */
     protected void validate() {
+        /* Loop through the classes */
+        for (final AccountInfoClass myClass : AccountInfoClass.values()) {
+            /* validate the class */
+            validateClass(myClass);
+        }
+    }
+
+    /**
+     * Validate the class.
+     * @param pClass the infoClass
+     */
+    private void validateClass(final AccountInfoClass pClass) {
         /* Access details about the Deposit */
         final Deposit myDeposit = getOwner();
 
-        /* Loop through the classes */
-        for (AccountInfoClass myClass : AccountInfoClass.values()) {
-            /* Access info for class */
-            final DepositInfo myInfo = getInfo(myClass);
-            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+        /* Access info for class */
+        final DepositInfo myInfo = getInfo(pClass);
+        final boolean isExisting = myInfo != null
+                                   && !myInfo.isDeleted();
 
-            /* Determine requirements for class */
-            final MetisFieldRequired myState = isClassRequired(myClass);
+        /* Determine requirements for class */
+        final MetisFieldRequired myState = isClassRequired(pClass);
 
-            /* If the field is missing */
-            if (!isExisting) {
-                /* Handle required field missing */
-                if (myState == MetisFieldRequired.MUSTEXIST) {
-                    myDeposit.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
+        /* If the field is missing */
+        if (!isExisting) {
+            /* Handle required field missing */
+            if (myState == MetisFieldRequired.MUSTEXIST) {
+                myDeposit.addError(DataItem.ERROR_MISSING, getFieldForClass(pClass));
+            }
+            return;
+        }
+
+        /* If field is not allowed */
+        if (myState == MetisFieldRequired.NOTALLOWED) {
+            myDeposit.addError(DataItem.ERROR_EXIST, getFieldForClass(pClass));
+            return;
+        }
+
+        /* Switch on class */
+        switch (pClass) {
+            case OPENINGBALANCE:
+                /* Access data */
+                final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
+                if (!myBalance.getCurrency().equals(myDeposit.getCurrency())) {
+                    myDeposit.addError(ERROR_CURRENCY, getFieldForClass(pClass));
                 }
-                continue;
-            }
-
-            /* If field is not allowed */
-            if (myState == MetisFieldRequired.NOTALLOWED) {
-                myDeposit.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
-                continue;
-            }
-
-            /* Switch on class */
-            switch (myClass) {
-                case OPENINGBALANCE:
-                    /* Access data */
-                    final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
-                    if (!myBalance.getCurrency().equals(myDeposit.getCurrency())) {
-                        myDeposit.addError(ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case SORTCODE:
-                case ACCOUNT:
-                case NOTES:
-                case REFERENCE:
-                    /* Access data */
-                    final char[] myArray = myInfo.getValue(char[].class);
-                    if (myArray.length > myClass.getMaximumLength()) {
-                        myDeposit.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                default:
-                    break;
-            }
+                break;
+            case SORTCODE:
+            case ACCOUNT:
+            case NOTES:
+            case REFERENCE:
+                /* Access data */
+                final char[] myArray = myInfo.getValue(char[].class);
+                if (myArray.length > pClass.getMaximumLength()) {
+                    myDeposit.addError(DataItem.ERROR_LENGTH, getFieldForClass(pClass));
+                }
+                break;
+            default:
+                break;
         }
     }
 }

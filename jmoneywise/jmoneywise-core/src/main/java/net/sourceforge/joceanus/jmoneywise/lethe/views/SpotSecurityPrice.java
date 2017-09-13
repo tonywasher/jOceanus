@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.views;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -188,8 +188,8 @@ public final class SpotSecurityPrice
     @Override
     public void setValidEdit() {
         setEditState(hasHistory()
-                                  ? MetisEditState.VALID
-                                  : MetisEditState.CLEAN);
+                                  ? MetisDataEditState.VALID
+                                  : MetisDataEditState.CLEAN);
     }
 
     @Override

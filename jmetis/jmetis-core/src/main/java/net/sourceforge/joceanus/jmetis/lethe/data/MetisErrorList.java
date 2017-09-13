@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.lethe.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -69,7 +70,7 @@ public class MetisErrorList<T extends MetisDataContents>
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

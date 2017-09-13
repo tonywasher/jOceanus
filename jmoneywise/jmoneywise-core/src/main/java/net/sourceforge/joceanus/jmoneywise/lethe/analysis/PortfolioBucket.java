@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
@@ -277,12 +277,12 @@ public final class PortfolioBucket
             if (myValue instanceof TethysDecimal) {
                 return ((TethysDecimal) myValue).isNonZero()
                                                              ? myValue
-                                                             : MetisFieldValue.SKIP;
+                                                             : MetisDataFieldValue.SKIP;
             }
             return myValue;
         }
 
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -316,9 +316,9 @@ public final class PortfolioBucket
      * @return the name
      */
     public String getName() {
-        return (thePortfolio == null)
-                                      ? NAME_TOTALS
-                                      : thePortfolio.getName();
+        return thePortfolio == null
+                                    ? NAME_TOTALS
+                                    : thePortfolio.getName();
     }
 
     @Override
@@ -403,9 +403,9 @@ public final class PortfolioBucket
         final Object myValue = getValue(pAttr);
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -877,7 +877,7 @@ public final class PortfolioBucket
             if (FIELD_TOTALS.equals(pField)) {
                 return theTotals;
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -399,32 +399,32 @@ public class MoneyWiseUKTaxConfig
         if (FIELD_AGERELATED.equals(pField)) {
             return hasAgeRelatedAllowance
                                           ? Boolean.TRUE
-                                          : MetisFieldValue.SKIP;
+                                          : MetisDataFieldValue.SKIP;
         }
         if (FIELD_ALLOWANCE.equals(pField)) {
             return theAllowance.isNonZero()
                                             ? theAllowance
-                                            : MetisFieldValue.SKIP;
+                                            : MetisDataFieldValue.SKIP;
         }
         if (FIELD_RENTAL.equals(pField)) {
             return theRentalAllowance.isNonZero()
                                                   ? theRentalAllowance
-                                                  : MetisFieldValue.SKIP;
+                                                  : MetisDataFieldValue.SKIP;
         }
         if (FIELD_SAVINGS.equals(pField)) {
             return theSavingsAllowance.isNonZero()
                                                    ? theSavingsAllowance
-                                                   : MetisFieldValue.SKIP;
+                                                   : MetisDataFieldValue.SKIP;
         }
         if (FIELD_DIVIDEND.equals(pField)) {
             return theDividendAllowance.isNonZero()
                                                     ? theDividendAllowance
-                                                    : MetisFieldValue.SKIP;
+                                                    : MetisDataFieldValue.SKIP;
         }
         if (FIELD_CAPITAL.equals(pField)) {
             return theCapitalAllowance.isNonZero()
                                                    ? theCapitalAllowance
-                                                   : MetisFieldValue.SKIP;
+                                                   : MetisDataFieldValue.SKIP;
         }
         if (FIELD_TAXBANDS.equals(pField)) {
             return theTaxBands;
@@ -432,11 +432,11 @@ public class MoneyWiseUKTaxConfig
         if (FIELD_LOSAVINGS.equals(pField)) {
             return theLoSavings.getAmount().isNonZero()
                                                         ? theLoSavings
-                                                        : MetisFieldValue.SKIP;
+                                                        : MetisDataFieldValue.SKIP;
         }
 
         /* Not recognised */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

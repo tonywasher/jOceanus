@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.lethe.data;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -33,16 +30,6 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * Resource IDs for JMetis viewer.
  */
 public enum MetisDataResource implements TethysResourceId {
-    /**
-     * FieldValue UNKNOWN.
-     */
-    FIELDVALUE_UNKNOWN("field.UNKNOWN"),
-
-    /**
-     * FieldValue SKIP.
-     */
-    FIELDVALUE_SKIP("field.SKIP"),
-
     /**
      * Profile Object Name.
      */
@@ -77,11 +64,6 @@ public enum MetisDataResource implements TethysResourceId {
      * ErrorList Name.
      */
     ERRORLIST_NAME("ErrorList.Name");
-
-    /**
-     * The FieldValue Map.
-     */
-    private static final Map<MetisFieldValue, TethysResourceId> VALUE_MAP = buildValueMap();
 
     /**
      * The Resource Builder.
@@ -126,26 +108,5 @@ public enum MetisDataResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build value map.
-     * @return the map
-     */
-    private static Map<MetisFieldValue, TethysResourceId> buildValueMap() {
-        /* Create the map and return it */
-        final Map<MetisFieldValue, TethysResourceId> myMap = new EnumMap<>(MetisFieldValue.class);
-        myMap.put(MetisFieldValue.UNKNOWN, FIELDVALUE_UNKNOWN);
-        myMap.put(MetisFieldValue.SKIP, FIELDVALUE_SKIP);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for fieldValue.
-     * @param pValue the Value
-     * @return the resource key
-     */
-    protected static TethysResourceId getKeyForFieldValue(final MetisFieldValue pValue) {
-        return TethysResourceBuilder.getKeyForEnum(VALUE_MAP, pValue);
     }
 }

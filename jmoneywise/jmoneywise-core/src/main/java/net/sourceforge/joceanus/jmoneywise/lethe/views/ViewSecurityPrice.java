@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -304,7 +304,7 @@ public class ViewSecurityPrice
         public Object getFieldValue(final MetisField pField) {
             if (FIELD_DILUTIONS.equals(pField)) {
                 return theDilutions.isEmpty()
-                                              ? MetisFieldValue.SKIP
+                                              ? MetisDataFieldValue.SKIP
                                               : theDilutions;
             }
             return super.getFieldValue(pField);

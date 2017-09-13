@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataConte
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldStorage;
@@ -236,20 +236,20 @@ public class MetisViewerFormatter {
             /* Access Field */
             final MetisField myField = myIterator.next();
             final MetisFieldStorage myStorage = myField.getStorage();
-            Object myValue = MetisFieldValue.SKIP;
+            Object myValue = MetisDataFieldValue.SKIP;
 
             /* Access the value */
-            if ((myStorage.isValueSet())
-                && (myValues != null)) {
+            if (myStorage.isValueSet()
+                && myValues != null) {
                 myValue = myValueCtl.skipField(myField)
-                                                        ? MetisFieldValue.SKIP
+                                                        ? MetisDataFieldValue.SKIP
                                                         : myValues.getValue(myField);
             } else if (!myStorage.isCalculated()) {
                 myValue = pContents.getFieldValue(myField);
             }
 
             /* Skip value if required */
-            if (MetisFieldValue.SKIP.equals(myValue)) {
+            if (MetisDataFieldValue.SKIP.equals(myValue)) {
                 continue;
             }
 

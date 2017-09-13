@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
@@ -428,72 +428,72 @@ public class Analysis
         }
         if (FIELD_DEPOSITS.equals(pField)) {
             return theDeposits.isEmpty()
-                                         ? MetisFieldValue.SKIP
+                                         ? MetisDataFieldValue.SKIP
                                          : theDeposits;
         }
         if (FIELD_CASH.equals(pField)) {
             return theCash.isEmpty()
-                                     ? MetisFieldValue.SKIP
+                                     ? MetisDataFieldValue.SKIP
                                      : theCash;
         }
         if (FIELD_LOANS.equals(pField)) {
             return theLoans.isEmpty()
-                                      ? MetisFieldValue.SKIP
+                                      ? MetisDataFieldValue.SKIP
                                       : theLoans;
         }
         if (FIELD_PORTFOLIOS.equals(pField)) {
             return thePortfolios.isEmpty()
-                                           ? MetisFieldValue.SKIP
+                                           ? MetisDataFieldValue.SKIP
                                            : thePortfolios;
         }
         if (FIELD_PAYEES.equals(pField)) {
             return thePayees.isEmpty()
-                                       ? MetisFieldValue.SKIP
+                                       ? MetisDataFieldValue.SKIP
                                        : thePayees;
         }
         if (FIELD_DEPCATS.equals(pField)) {
             return theDepositCategories.isEmpty()
-                                                  ? MetisFieldValue.SKIP
+                                                  ? MetisDataFieldValue.SKIP
                                                   : theDepositCategories;
         }
         if (FIELD_CASHCATS.equals(pField)) {
             return theCashCategories.isEmpty()
-                                               ? MetisFieldValue.SKIP
+                                               ? MetisDataFieldValue.SKIP
                                                : theCashCategories;
         }
         if (FIELD_LOANCATS.equals(pField)) {
             return theLoanCategories.isEmpty()
-                                               ? MetisFieldValue.SKIP
+                                               ? MetisDataFieldValue.SKIP
                                                : theLoanCategories;
         }
         if (FIELD_TRANCATS.equals(pField)) {
             return theTransCategories.isEmpty()
-                                                ? MetisFieldValue.SKIP
+                                                ? MetisDataFieldValue.SKIP
                                                 : theTransCategories;
         }
         if (FIELD_TRANSTAGS.equals(pField)) {
             return theTransTags.isEmpty()
-                                          ? MetisFieldValue.SKIP
+                                          ? MetisDataFieldValue.SKIP
                                           : theTransTags;
         }
         if (FIELD_TAXBASIS.equals(pField)) {
             return theTaxBasis.isEmpty()
-                                         ? MetisFieldValue.SKIP
+                                         ? MetisDataFieldValue.SKIP
                                          : theTaxBasis;
         }
         if (FIELD_TAXCALCNEW.equals(pField)) {
             return theTaxAnalysis != null
                                           ? theTaxAnalysis
-                                          : MetisFieldValue.SKIP;
+                                          : MetisDataFieldValue.SKIP;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
             return theDilutions.isEmpty()
-                                          ? MetisFieldValue.SKIP
+                                          ? MetisDataFieldValue.SKIP
                                           : theDilutions;
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

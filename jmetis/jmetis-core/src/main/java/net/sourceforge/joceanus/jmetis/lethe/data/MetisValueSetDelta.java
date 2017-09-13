@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.lethe.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
@@ -137,9 +138,9 @@ public class MetisValueSetDelta
 
             /* If this is the deletion field, return the flag */
         } else if (myIndex == 1) {
-            return (theOldSet.isDeletion() == theNewSet.isDeletion())
-                                                                      ? MetisFieldValue.SKIP
-                                                                      : new MetisDataDelta(theOldSet.isDeletion(), MetisDataDifference.DIFFERENT);
+            return theOldSet.isDeletion() == theNewSet.isDeletion()
+                                                                    ? MetisDataFieldValue.SKIP
+                                                                    : new MetisDataDelta(theOldSet.isDeletion(), MetisDataDifference.DIFFERENT);
         }
 
         /* Adjust index */

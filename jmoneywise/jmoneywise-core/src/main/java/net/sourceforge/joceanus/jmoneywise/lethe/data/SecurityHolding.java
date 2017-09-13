@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
@@ -159,7 +159,7 @@ public final class SecurityHolding
         if (FIELD_SECURITY.equals(pField)) {
             return theSecurity;
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -169,7 +169,8 @@ public final class SecurityHolding
         final Security mySecurity = getSecurity();
 
         /* Test underlying items */
-        return myPortfolio.isClosed() || mySecurity.isClosed();
+        return myPortfolio.isClosed()
+               || mySecurity.isClosed();
     }
 
     /**
@@ -182,7 +183,8 @@ public final class SecurityHolding
         final Security mySecurity = getSecurity();
 
         /* Test underlying items */
-        return myPortfolio.isDeleted() || mySecurity.isDeleted();
+        return myPortfolio.isDeleted()
+               || mySecurity.isDeleted();
     }
 
     @Override
@@ -291,9 +293,9 @@ public final class SecurityHolding
      */
     private static String getPortfolioName(final String pName) {
         final int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
-        return (iIndex == -1)
-                              ? pName
-                              : pName.substring(0, iIndex);
+        return iIndex == -1
+                            ? pName
+                            : pName.substring(0, iIndex);
     }
 
     /**
@@ -303,9 +305,9 @@ public final class SecurityHolding
      */
     private static String getSecurityName(final String pName) {
         final int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
-        return (iIndex == -1)
-                              ? ""
-                              : pName.substring(iIndex + 1);
+        return iIndex == -1
+                            ? ""
+                            : pName.substring(iIndex + 1);
     }
 
     /**

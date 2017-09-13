@@ -28,11 +28,11 @@ import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisNestedHashMap;
@@ -157,7 +157,7 @@ public final class DilutionEvent
         if (FIELD_TRANS.equals(pField)) {
             return theTransaction;
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -298,10 +298,10 @@ public final class DilutionEvent
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(theSecurity.formatObject(pFormatter));
-            myBuilder.append("(");
-            myBuilder.append(size());
-            myBuilder.append(")");
+            myBuilder.append(theSecurity.formatObject(pFormatter))
+                    .append("(")
+                    .append(size())
+                    .append(")");
             return myBuilder.toString();
         }
 
@@ -313,7 +313,7 @@ public final class DilutionEvent
             if (FIELD_SIZE.equals(pField)) {
                 return size();
             }
-            return MetisFieldValue.UNKNOWN;
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

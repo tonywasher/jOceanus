@@ -26,7 +26,7 @@ import java.util.Currency;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
@@ -123,9 +123,9 @@ public class TransactionInfoSet
         }
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -562,6 +562,18 @@ public class TransactionInfoSet
      * Validate the infoSet.
      */
     protected void validate() {
+        /* Loop through the classes */
+        for (final TransactionInfoClass myClass : TransactionInfoClass.values()) {
+            /* validate the class */
+            validateClass(myClass);
+        }
+    }
+
+    /**
+     * Validate the class.
+     * @param pClass the infoClass
+     */
+    private void validateClass(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         final Transaction myTransaction = getOwner();
         final TransactionAsset myAccount = myTransaction.getAccount();
@@ -570,128 +582,125 @@ public class TransactionInfoSet
         final TransactionCategoryClass myCatClass = myTransaction.getCategoryClass();
         final Currency myCurrency = myAccount.getCurrency();
 
-        /* Loop through the classes */
-        for (TransactionInfoClass myClass : TransactionInfoClass.values()) {
-            /* Access info for class */
-            final boolean isExisting = isExisting(myClass);
-            final TransactionInfo myInfo = myClass.isLinkSet()
-                                                               ? null
-                                                               : getInfo(myClass);
+        /* Access info for class */
+        final boolean isExisting = isExisting(pClass);
+        final TransactionInfo myInfo = pClass.isLinkSet()
+                                                          ? null
+                                                          : getInfo(pClass);
 
-            /* Determine requirements for class */
-            final MetisFieldRequired myState = isClassRequired(myClass);
+        /* Determine requirements for class */
+        final MetisFieldRequired myState = isClassRequired(pClass);
 
-            /* If the field is missing */
-            if (!isExisting) {
-                /* Handle required field missing */
-                if (myState == MetisFieldRequired.MUSTEXIST) {
-                    myTransaction.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
+        /* If the field is missing */
+        if (!isExisting) {
+            /* Handle required field missing */
+            if (myState == MetisFieldRequired.MUSTEXIST) {
+                myTransaction.addError(DataItem.ERROR_MISSING, getFieldForClass(pClass));
+            }
+            return;
+        }
+
+        /* If field is not allowed */
+        if (myState == MetisFieldRequired.NOTALLOWED) {
+            myTransaction.addError(DataItem.ERROR_EXIST, getFieldForClass(pClass));
+            return;
+        }
+        if (myInfo == null) {
+            return;
+        }
+
+        /* Switch on class */
+        switch (pClass) {
+            case QUALIFYYEARS:
+                /* Check value */
+                final Integer myYears = myInfo.getValue(Integer.class);
+                if (myYears == 0) {
+                    myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(pClass));
+                } else if (myYears < 0) {
+                    myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
                 }
-                continue;
-            }
-
-            /* If field is not allowed */
-            if (myState == MetisFieldRequired.NOTALLOWED) {
-                myTransaction.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
-                continue;
-            }
-            if (myInfo == null) {
-                continue;
-            }
-
-            /* Switch on class */
-            switch (myClass) {
-                case QUALIFYYEARS:
-                    /* Check value */
-                    final Integer myYears = myInfo.getValue(Integer.class);
-                    if (myYears == 0) {
-                        myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                    } else if (myYears < 0) {
-                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    }
-                    break;
-                case TAXCREDIT:
-                    /* Check value */
-                    TethysMoney myAmount = myInfo.getValue(TethysMoney.class);
-                    if (!myAmount.isPositive()) {
-                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    } else if (!myAmount.getCurrency().equals(myCurrency)) {
-                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case NATINSURANCE:
-                case DEEMEDBENEFIT:
-                case WITHHELD:
-                    /* Check value */
-                    myAmount = myInfo.getValue(TethysMoney.class);
-                    if (myAmount.isZero()) {
-                        myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                    } else if (!myAmount.isPositive()) {
-                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    } else if (!myAmount.getCurrency().equals(myCurrency)) {
-                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case PARTNERAMOUNT:
-                    /* Check value */
-                    myAmount = myInfo.getValue(TethysMoney.class);
-                    if (!myAmount.isPositive()) {
-                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
-                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case RETURNEDCASHACCOUNT:
-                    TransactionAsset myThirdParty = myInfo.getDeposit();
-                    if (!myCurrency.equals(myThirdParty.getCurrency())) {
-                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case RETURNEDCASH:
-                    /* Check value */
-                    myThirdParty = myTransaction.getReturnedCashAccount();
-                    myAmount = myInfo.getValue(TethysMoney.class);
-                    if (myAmount.isZero()) {
-                        myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                    } else if (!myAmount.isPositive()) {
-                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {
-                        myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case ACCOUNTDELTAUNITS:
-                case PARTNERDELTAUNITS:
-                    final MetisFieldRequired isRequired = myClass == TransactionInfoClass.ACCOUNTDELTAUNITS
-                                                                                                            ? isAccountUnitsPositive(myDir, myCatClass)
-                                                                                                            : isPartnerUnitsPositive(myDir, myCatClass);
-                    final TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
-                    if (myUnits.isZero()) {
-                        myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(myClass));
-                    } else if (myUnits.isPositive() && isRequired.notAllowed()) {
-                        myTransaction.addError(DataItem.ERROR_POSITIVE, getFieldForClass(myClass));
-                    } else if (!myUnits.isPositive() && isRequired.mustExist()) {
-                        myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
-                    }
-                    break;
-                case DILUTION:
-                    /* Check range */
-                    final TethysDilution myDilution = myInfo.getValue(TethysDilution.class);
-                    if (myDilution.outOfRange()) {
-                        myTransaction.addError(DataItem.ERROR_RANGE, getFieldForClass(myClass));
-                    }
-                    break;
-                case REFERENCE:
-                case COMMENTS:
-                    /* Check length */
-                    final String myValue = myInfo.getValue(String.class);
-                    if (myValue.length() > myClass.getMaximumLength()) {
-                        myTransaction.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                case TRANSTAG:
-                default:
-                    break;
-            }
+                break;
+            case TAXCREDIT:
+                /* Check value */
+                TethysMoney myAmount = myInfo.getValue(TethysMoney.class);
+                if (!myAmount.isPositive()) {
+                    myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
+                } else if (!myAmount.getCurrency().equals(myCurrency)) {
+                    myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(pClass));
+                }
+                break;
+            case NATINSURANCE:
+            case DEEMEDBENEFIT:
+            case WITHHELD:
+                /* Check value */
+                myAmount = myInfo.getValue(TethysMoney.class);
+                if (myAmount.isZero()) {
+                    myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(pClass));
+                } else if (!myAmount.isPositive()) {
+                    myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
+                } else if (!myAmount.getCurrency().equals(myCurrency)) {
+                    myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(pClass));
+                }
+                break;
+            case PARTNERAMOUNT:
+                /* Check value */
+                myAmount = myInfo.getValue(TethysMoney.class);
+                if (!myAmount.isPositive()) {
+                    myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
+                } else if (!myAmount.getCurrency().equals(myPartner.getCurrency())) {
+                    myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(pClass));
+                }
+                break;
+            case RETURNEDCASHACCOUNT:
+                TransactionAsset myThirdParty = myInfo.getDeposit();
+                if (!myCurrency.equals(myThirdParty.getCurrency())) {
+                    myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(pClass));
+                }
+                break;
+            case RETURNEDCASH:
+                /* Check value */
+                myThirdParty = myTransaction.getReturnedCashAccount();
+                myAmount = myInfo.getValue(TethysMoney.class);
+                if (myAmount.isZero()) {
+                    myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(pClass));
+                } else if (!myAmount.isPositive()) {
+                    myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
+                } else if (!myAmount.getCurrency().equals(myThirdParty.getCurrency())) {
+                    myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(pClass));
+                }
+                break;
+            case ACCOUNTDELTAUNITS:
+            case PARTNERDELTAUNITS:
+                final MetisFieldRequired isRequired = pClass == TransactionInfoClass.ACCOUNTDELTAUNITS
+                                                                                                       ? isAccountUnitsPositive(myDir, myCatClass)
+                                                                                                       : isPartnerUnitsPositive(myDir, myCatClass);
+                final TethysUnits myUnits = myInfo.getValue(TethysUnits.class);
+                if (myUnits.isZero()) {
+                    myTransaction.addError(DataItem.ERROR_ZERO, getFieldForClass(pClass));
+                } else if (myUnits.isPositive() && isRequired.notAllowed()) {
+                    myTransaction.addError(DataItem.ERROR_POSITIVE, getFieldForClass(pClass));
+                } else if (!myUnits.isPositive() && isRequired.mustExist()) {
+                    myTransaction.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(pClass));
+                }
+                break;
+            case DILUTION:
+                /* Check range */
+                final TethysDilution myDilution = myInfo.getValue(TethysDilution.class);
+                if (myDilution.outOfRange()) {
+                    myTransaction.addError(DataItem.ERROR_RANGE, getFieldForClass(pClass));
+                }
+                break;
+            case REFERENCE:
+            case COMMENTS:
+                /* Check length */
+                final String myValue = myInfo.getValue(String.class);
+                if (myValue.length() > pClass.getMaximumLength()) {
+                    myTransaction.addError(DataItem.ERROR_LENGTH, getFieldForClass(pClass));
+                }
+                break;
+            case TRANSTAG:
+            default:
+                break;
         }
     }
 

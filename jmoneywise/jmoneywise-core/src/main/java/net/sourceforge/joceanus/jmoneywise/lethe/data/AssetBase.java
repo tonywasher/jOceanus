@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -231,19 +231,19 @@ public abstract class AssetBase<T extends AssetBase<T>>
     public Object getFieldValue(final MetisField pField) {
         /* Handle flags */
         if (FIELD_CLOSEDATE.equals(pField)) {
-            return (theCloseDate != null)
-                                          ? theCloseDate
-                                          : MetisFieldValue.SKIP;
+            return theCloseDate != null
+                                        ? theCloseDate
+                                        : MetisDataFieldValue.SKIP;
         }
         if (FIELD_EVTFIRST.equals(pField)) {
-            return (theEarliest != null)
-                                         ? theEarliest
-                                         : MetisFieldValue.SKIP;
+            return theEarliest != null
+                                       ? theEarliest
+                                       : MetisDataFieldValue.SKIP;
         }
         if (FIELD_EVTLAST.equals(pField)) {
-            return (theLatest != null)
-                                       ? theLatest
-                                       : MetisFieldValue.SKIP;
+            return theLatest != null
+                                     ? theLatest
+                                     : MetisDataFieldValue.SKIP;
         }
         if (FIELD_ISRELEVANT.equals(pField)) {
             return isRelevant;

@@ -29,9 +29,9 @@ import java.util.Map.Entry;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
@@ -271,25 +271,25 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
             return theControlKeys.isEmpty()
-                                            ? MetisFieldValue.SKIP
+                                            ? MetisDataFieldValue.SKIP
                                             : theControlKeys;
         }
         if (FIELD_DATAKEYSETS.equals(pField)) {
             return theDataKeySets.isEmpty()
-                                            ? MetisFieldValue.SKIP
+                                            ? MetisDataFieldValue.SKIP
                                             : theDataKeySets;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
             return theDataKeys.isEmpty()
-                                         ? MetisFieldValue.SKIP
+                                         ? MetisDataFieldValue.SKIP
                                          : theDataKeys;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
             return theControlData.isEmpty()
-                                            ? MetisFieldValue.SKIP
+                                            ? MetisDataFieldValue.SKIP
                                             : theControlData;
         }
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -636,9 +636,10 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         final DataList<?, E> myList = theListMap.get(pListType);
 
         /* Cast correctly */
-        return ((myList == null) || (myList.isEmpty()))
-                                                        ? MetisFieldValue.SKIP
-                                                        : myList;
+        return myList == null
+               || myList.isEmpty()
+                                   ? MetisDataFieldValue.SKIP
+                                   : myList;
     }
 
     /**

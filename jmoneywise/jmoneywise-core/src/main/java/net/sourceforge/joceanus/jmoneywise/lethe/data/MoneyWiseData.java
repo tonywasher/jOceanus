@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
@@ -164,12 +164,12 @@ public class MoneyWiseData
     public Object getFieldValue(final MetisField pField) {
         if (FIELD_DEFCURR.equals(pField)) {
             return theDefaultCurrency == null
-                                              ? MetisFieldValue.SKIP
+                                              ? MetisDataFieldValue.SKIP
                                               : theDefaultCurrency;
         }
         if (FIELD_HOLDINGSMAP.equals(pField)) {
             return theSecurityHoldings == null
-                                               ? MetisFieldValue.SKIP
+                                               ? MetisDataFieldValue.SKIP
                                                : theSecurityHoldings;
         }
 

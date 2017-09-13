@@ -29,12 +29,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisEditState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
@@ -144,7 +144,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Unknown */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -238,13 +238,13 @@ public class UpdateSet<E extends Enum<E>>
                 /* Return the value */
                 final DataList<?, ?> myList = myEntry.getDataList();
                 return (myList == null)
-                                        ? MetisFieldValue.SKIP
+                                        ? MetisDataFieldValue.SKIP
                                         : myList;
             }
         }
 
         /* Not found , so add it */
-        return MetisFieldValue.UNKNOWN;
+        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -578,10 +578,10 @@ public class UpdateSet<E extends Enum<E>>
      * Get the edit state of this set of tables.
      * @return the edit state
      */
-    public MetisEditState getEditState() {
+    public MetisDataEditState getEditState() {
         /* Loop through the items in the list */
         final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
-        MetisEditState myState = MetisEditState.CLEAN;
+        MetisDataEditState myState = MetisDataEditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */
             final UpdateEntry<?, E> myEntry = myIterator.next();

@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmetis.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSetHistory;
 
 /**
  * Data Version History.
@@ -357,6 +359,41 @@ public class MetisDataVersionControl
         return myOriginal.isDeletion()
                                        ? MetisDataState.RECOVERED
                                        : MetisDataState.CHANGED;
+    }
+
+    /**
+     * Determine State of item.
+     * @param pHistory the history to derive state from
+     * @return the state of the item
+     */
+    @Deprecated
+    public static MetisDataState determineState(final MetisValueSetHistory pHistory) {
+        /* Access the current values and base values */
+        final MetisValueSet myCurr = pHistory.getValueSet();
+        final MetisValueSet myBase = pHistory.getOriginalValues();
+
+        /* If we are a new element */
+        if (myBase.getVersion() > 0) {
+            /* Return status */
+            return myCurr.isDeletion()
+                                       ? MetisDataState.DELNEW
+                                       : MetisDataState.NEW;
+        }
+
+        /* If we have no changes we are CLEAN */
+        if (myCurr.getVersion() == 0) {
+            return MetisDataState.CLEAN;
+        }
+
+        /* If we are deleted return so */
+        if (myCurr.isDeletion()) {
+            return MetisDataState.DELETED;
+        }
+
+        /* Return RECOVERED or CHANGED depending on whether we started as deleted */
+        return myBase.isDeletion()
+                                   ? MetisDataState.RECOVERED
+                                   : MetisDataState.CHANGED;
     }
 
     /**

@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.time.Month;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseMarginalReduction;
@@ -255,7 +255,7 @@ public class MoneyWiseUKAgeAllowance
         }
         if (FIELD_HIAGEALLOWANCE.equals(pField)) {
             return theHiAgeAllowance == null
-                                             ? MetisFieldValue.SKIP
+                                             ? MetisDataFieldValue.SKIP
                                              : theHiAgeAllowance;
         }
         if (FIELD_AGEALLOWLIMIT.equals(pField)) {

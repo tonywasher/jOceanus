@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldRequired;
@@ -123,9 +123,9 @@ public class CashInfoSet
         }
 
         /* Return the value */
-        return (myValue != null)
-                                 ? myValue
-                                 : MetisFieldValue.SKIP;
+        return myValue != null
+                               ? myValue
+                               : MetisDataFieldValue.SKIP;
     }
 
     /**
@@ -254,61 +254,72 @@ public class CashInfoSet
      * Validate the infoSet.
      */
     protected void validate() {
+        /* Loop through the classes */
+        for (final AccountInfoClass myClass : AccountInfoClass.values()) {
+            /* validate the class */
+            validateClass(myClass);
+        }
+    }
+
+    /**
+     * Validate the class.
+     * @param pClass the infoClass
+     */
+    private void validateClass(final AccountInfoClass pClass) {
         /* Access details about the Cash */
         final Cash myCash = getOwner();
 
-        /* Loop through the classes */
-        for (AccountInfoClass myClass : AccountInfoClass.values()) {
-            /* Access info for class */
-            final CashInfo myInfo = getInfo(myClass);
-            final boolean isExisting = (myInfo != null) && !myInfo.isDeleted();
+        /* Access info for class */
+        final CashInfo myInfo = getInfo(pClass);
+        final boolean isExisting = myInfo != null
+                                   && !myInfo.isDeleted();
 
-            /* Determine requirements for class */
-            final MetisFieldRequired myState = isClassRequired(myClass);
+        /* Determine requirements for class */
+        final MetisFieldRequired myState = isClassRequired(pClass);
 
-            /* If the field is missing */
-            if (!isExisting) {
-                /* Handle required field missing */
-                if (myState == MetisFieldRequired.MUSTEXIST) {
-                    myCash.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
-                }
-                continue;
+        /* If the field is missing */
+        if (!isExisting) {
+            /* Handle required field missing */
+            if (myState == MetisFieldRequired.MUSTEXIST) {
+                myCash.addError(DataItem.ERROR_MISSING, getFieldForClass(pClass));
             }
-
-            /* If field is not allowed */
-            if (myState == MetisFieldRequired.NOTALLOWED) {
-                myCash.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
-                continue;
-            }
-
-            /* Switch on class */
-            switch (myClass) {
-                case OPENINGBALANCE:
-                    /* Access data */
-                    final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
-                    if (!myBalance.getCurrency().equals(myCash.getCurrency())) {
-                        myCash.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(myClass));
-                    }
-                    break;
-                case AUTOEXPENSE:
-                    /* Access data */
-                    final TransactionCategory myExpense = myInfo.getEventCategory();
-                    final TransactionCategoryClass myCatClass = myExpense.getCategoryTypeClass();
-                    if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
-                        myCash.addError(ERROR_AUTOEXP, getFieldForClass(myClass));
-                    }
-                    break;
-                case NOTES:
-                    /* Access data */
-                    final char[] myArray = myInfo.getValue(char[].class);
-                    if (myArray.length > myClass.getMaximumLength()) {
-                        myCash.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
-                    }
-                    break;
-                default:
-                    break;
-            }
+            return;
         }
+
+        /* If field is not allowed */
+        if (myState == MetisFieldRequired.NOTALLOWED) {
+            myCash.addError(DataItem.ERROR_EXIST, getFieldForClass(pClass));
+            return;
+        }
+
+        /* Switch on class */
+        switch (pClass) {
+            case OPENINGBALANCE:
+                /* Access data */
+                final TethysMoney myBalance = myInfo.getValue(TethysMoney.class);
+                if (!myBalance.getCurrency().equals(myCash.getCurrency())) {
+                    myCash.addError(DepositInfoSet.ERROR_CURRENCY, getFieldForClass(pClass));
+                }
+                break;
+            case AUTOEXPENSE:
+                /* Access data */
+                final TransactionCategory myExpense = myInfo.getEventCategory();
+                final TransactionCategoryClass myCatClass = myExpense.getCategoryTypeClass();
+                if (!myCatClass.isExpense() || myCatClass.canParentCategory()) {
+                    myCash.addError(ERROR_AUTOEXP, getFieldForClass(pClass));
+                }
+                break;
+            case NOTES:
+                /* Access data */
+                final char[] myArray = myInfo.getValue(char[].class);
+                if (myArray.length > pClass.getMaximumLength()) {
+                    myCash.addError(DataItem.ERROR_LENGTH, getFieldForClass(pClass));
+                }
+                break;
+            default:
+                break;
+        }
+
     }
 
     @Override
