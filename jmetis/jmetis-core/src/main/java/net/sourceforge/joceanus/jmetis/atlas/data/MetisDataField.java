@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 
 /**
  * Metis Data Field.
@@ -57,12 +57,12 @@ public class MetisDataField {
     /**
      * The field equality type.
      */
-    private final MetisFieldEquality theEquality;
+    private final MetisDataFieldEquality theEquality;
 
     /**
      * The field storage type.
      */
-    private final MetisFieldStorage theStorage;
+    private final MetisDataFieldStorage theStorage;
 
     /**
      * Constructor.
@@ -77,8 +77,8 @@ public class MetisDataField {
                              final String pName,
                              final MetisDataType pDataType,
                              final Integer pMaxLength,
-                             final MetisFieldEquality pEquality,
-                             final MetisFieldStorage pStorage) {
+                             final MetisDataFieldEquality pEquality,
+                             final MetisDataFieldStorage pStorage) {
         /* Store parameters */
         theAnchor = pAnchor;
         theName = pName;
@@ -105,8 +105,8 @@ public class MetisDataField {
      */
     protected MetisDataField(final MetisDataFieldSet pAnchor,
                              final String pName,
-                             final MetisFieldEquality pEquality,
-                             final MetisFieldStorage pStorage) {
+                             final MetisDataFieldEquality pEquality,
+                             final MetisDataFieldStorage pStorage) {
         this(pAnchor, pName, MetisDataType.OBJECT, MetisDataFieldSet.FIELD_NO_MAXLENGTH, pEquality, pStorage);
     }
 
@@ -122,8 +122,8 @@ public class MetisDataField {
         theName = pName;
         theDataType = MetisDataType.OBJECT;
         theMaxLength = MetisDataFieldSet.FIELD_NO_MAXLENGTH;
-        theEquality = MetisFieldEquality.DERIVED;
-        theStorage = MetisFieldStorage.LOCAL;
+        theEquality = MetisDataFieldEquality.DERIVED;
+        theStorage = MetisDataFieldStorage.LOCAL;
 
         /* Check Validity */
         checkValidity();
@@ -168,7 +168,7 @@ public class MetisDataField {
      * Obtain the equality type.
      * @return equalityType
      */
-    public MetisFieldEquality getEquality() {
+    public MetisDataFieldEquality getEquality() {
         return theEquality;
     }
 
@@ -176,7 +176,7 @@ public class MetisDataField {
      * Obtain the storage type.
      * @return storageType
      */
-    public MetisFieldStorage getStorage() {
+    public MetisDataFieldStorage getStorage() {
         return theStorage;
     }
 
@@ -185,7 +185,7 @@ public class MetisDataField {
      * @return true/false
      */
     public boolean isVersioned() {
-        return theIndex != -1;
+        return theIndex != null;
     }
 
     /**

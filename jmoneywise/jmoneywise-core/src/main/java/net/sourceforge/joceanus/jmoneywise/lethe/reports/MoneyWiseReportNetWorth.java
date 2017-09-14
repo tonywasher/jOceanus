@@ -29,11 +29,11 @@ import org.w3c.dom.Element;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportBase;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder.MetisHTMLTable;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportReferenceManager.DelayedTable;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportBase;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportHTMLBuilder.MetisHTMLTable;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportReferenceManager.DelayedTable;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;

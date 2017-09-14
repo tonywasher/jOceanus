@@ -32,9 +32,9 @@ import javax.swing.WindowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisTestThread;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.swing.MetisSwingViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;

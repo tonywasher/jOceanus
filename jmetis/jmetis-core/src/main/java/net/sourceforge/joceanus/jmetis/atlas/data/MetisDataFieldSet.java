@@ -198,7 +198,7 @@ public class MetisDataFieldSet {
      * @return the field
      */
     public MetisDataField declareLocalField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.LOCAL);
     }
 
     /**
@@ -207,7 +207,7 @@ public class MetisDataFieldSet {
      * @return the field
      */
     public MetisDataField declareEqualityField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.EQUALITY, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.LOCAL);
     }
 
     /**
@@ -216,7 +216,7 @@ public class MetisDataFieldSet {
      * @return the field
      */
     public MetisDataField declareDerivedVersionedField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.VERSIONED);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
     }
 
     /**
@@ -240,7 +240,7 @@ public class MetisDataFieldSet {
     public MetisDataField declareEqualityVersionedField(final String pName,
                                                         final MetisDataType pDataType,
                                                         final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VERSIONED);
+        return declareDataField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
     }
 
     /**
@@ -249,7 +249,7 @@ public class MetisDataFieldSet {
      * @return the field
      */
     public MetisDataField declareCalculatedField(final String pName) {
-        return declareDataField(pName, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.CALCULATED);
+        return declareDataField(pName, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.CALCULATED);
     }
 
     /**
@@ -274,8 +274,8 @@ public class MetisDataFieldSet {
     private synchronized MetisDataField declareDataField(final String pName,
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength,
-                                                         final MetisFieldEquality pEquality,
-                                                         final MetisFieldStorage pStorage) {
+                                                         final MetisDataFieldEquality pEquality,
+                                                         final MetisDataFieldStorage pStorage) {
         /* Reject if we have indices */
         if (hasIndices) {
             throw new IllegalStateException("Already indexed");
@@ -380,7 +380,7 @@ public class MetisDataFieldSet {
     /**
      * Field presence status.
      */
-    public enum MetisFieldRequired {
+    public enum MetisDataFieldRequired {
         /**
          * Must exist.
          */
@@ -400,7 +400,7 @@ public class MetisDataFieldSet {
     /**
      * Field Storage.
      */
-    public enum MetisFieldStorage {
+    public enum MetisDataFieldStorage {
         /**
          * Local.
          */
@@ -436,7 +436,7 @@ public class MetisDataFieldSet {
     /**
      * Field Equality.
      */
-    public enum MetisFieldEquality {
+    public enum MetisDataFieldEquality {
         /**
          * Derived.
          */

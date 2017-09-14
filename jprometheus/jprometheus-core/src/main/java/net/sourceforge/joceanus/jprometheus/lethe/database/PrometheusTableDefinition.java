@@ -37,6 +37,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jprometheus.PrometheusLogicException;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.BinaryColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.BooleanColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.DateColumn;
@@ -51,7 +52,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefin
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.ReferenceColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.StringColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefinition.UnitsColumn;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;

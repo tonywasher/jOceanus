@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldIt
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 
 /**
  * Data Viewer Page.
@@ -459,13 +460,14 @@ public class MetisViewerPage {
                                                                   : pObject;
 
         /* Handle structured object */
-        if (myObject instanceof MetisDataFieldItem) {
+        if (myObject instanceof MetisDataFieldItem
+            || myObject instanceof MetisDataContents) {
             return true;
         }
 
         /* Handle simple objects */
-        return (myObject instanceof Throwable)
-               || (myObject instanceof StackTraceElement[]);
+        return myObject instanceof Throwable
+               || myObject instanceof StackTraceElement[];
     }
 
     /**

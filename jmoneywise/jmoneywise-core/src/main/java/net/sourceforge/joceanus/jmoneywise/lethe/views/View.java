@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
@@ -34,9 +34,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxF
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.database.MoneyWiseDatabase;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.MoneyWiseSheet;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.sheets.PrometheusSpreadSheet;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusViewerEntryId;

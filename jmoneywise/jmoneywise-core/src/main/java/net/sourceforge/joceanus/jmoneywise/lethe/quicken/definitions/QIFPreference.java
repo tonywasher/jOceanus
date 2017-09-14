@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 

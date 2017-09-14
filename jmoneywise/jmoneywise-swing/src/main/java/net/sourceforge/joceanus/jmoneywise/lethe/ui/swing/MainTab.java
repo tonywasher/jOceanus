@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.help.MoneyWiseHelp;

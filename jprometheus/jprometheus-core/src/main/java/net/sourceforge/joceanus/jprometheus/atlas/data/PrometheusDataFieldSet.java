@@ -76,7 +76,7 @@ public class PrometheusDataFieldSet
     public PrometheusDataField declareEqualityEncryptedField(final String pName,
                                                              final MetisDataType pDataType,
                                                              final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY);
+        return declareDataField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY);
     }
 
     /**
@@ -90,12 +90,12 @@ public class PrometheusDataFieldSet
     private synchronized PrometheusDataField declareDataField(final String pName,
                                                               final MetisDataType pDataType,
                                                               final Integer pMaxLength,
-                                                              final MetisFieldEquality pEquality) {
+                                                              final MetisDataFieldEquality pEquality) {
         /* Check the name */
         checkUniqueName(pName);
 
         /* Create the field */
-        final PrometheusDataField myField = new PrometheusDataField(this, pName, pDataType, pMaxLength, pEquality, MetisFieldStorage.VERSIONED);
+        final PrometheusDataField myField = new PrometheusDataField(this, pName, pDataType, pMaxLength, pEquality, MetisDataFieldStorage.VERSIONED);
 
         /* Register the field */
         registerField(myField);

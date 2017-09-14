@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 
 /**
@@ -45,8 +45,8 @@ public class PrometheusDataField
                                   final String pName,
                                   final MetisDataType pDataType,
                                   final Integer pMaxLength,
-                                  final MetisFieldEquality pEquality,
-                                  final MetisFieldStorage pStorage) {
+                                  final MetisDataFieldEquality pEquality,
+                                  final MetisDataFieldStorage pStorage) {
         /* Initialise underlying class */
         super(pAnchor, pName, pDataType, pMaxLength, pEquality, pStorage);
     }

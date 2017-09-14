@@ -33,7 +33,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
@@ -806,9 +805,9 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * Validate the data items.
      * @return the error list (or null if no errors)
      */
-    public MetisErrorList<DataItem<E>> validate() {
+    public DataErrorList<E> validate() {
         /* Allocate error list */
-        MetisErrorList<DataItem<E>> myErrors = null;
+        DataErrorList<E> myErrors = null;
         MetisDataEditState myState = MetisDataEditState.CLEAN;
 
         /* Loop through the items */
@@ -835,7 +834,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
                 /* If this is the first error */
                 if (myErrors == null) {
                     /* Allocate error list */
-                    myErrors = new MetisErrorList<>();
+                    myErrors = new DataErrorList<>();
                 }
 
                 /* Add to the error list */
@@ -856,7 +855,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public void validateOnLoad() throws OceanusException {
         /* Validate the list */
-        final MetisErrorList<DataItem<E>> myErrors = validate();
+        final DataErrorList<E> myErrors = validate();
         if (myErrors != null) {
             throw new PrometheusDataException(myErrors, DataItem.ERROR_VALIDATION);
         }

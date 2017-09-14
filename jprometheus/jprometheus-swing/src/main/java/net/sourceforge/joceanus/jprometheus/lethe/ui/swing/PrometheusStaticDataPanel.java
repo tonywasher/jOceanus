@@ -29,10 +29,10 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldEnum;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;

@@ -32,13 +32,12 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
@@ -623,7 +622,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        final MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
+        final MetisViewerErrorList myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {
@@ -662,7 +661,7 @@ public class UpdateSet<E extends Enum<E>>
         }
 
         /* Access any error */
-        final MetisErrorList<MetisExceptionWrapper> myErrors = theControl.getErrors();
+        final MetisViewerErrorList myErrors = theControl.getErrors();
 
         /* Show the error */
         if (!myErrors.isEmpty()) {

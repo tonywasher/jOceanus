@@ -30,10 +30,10 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;

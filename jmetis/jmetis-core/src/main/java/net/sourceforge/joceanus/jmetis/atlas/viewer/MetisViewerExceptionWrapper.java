@@ -147,9 +147,9 @@ public class MetisViewerExceptionWrapper
      */
     public String getMessage() {
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append(theClass);
-        myBuilder.append(": ");
-        myBuilder.append(theWrapped.getMessage());
+        myBuilder.append(theClass)
+                .append(": ")
+                .append(theWrapped.getMessage());
         return myBuilder.toString();
     }
 }

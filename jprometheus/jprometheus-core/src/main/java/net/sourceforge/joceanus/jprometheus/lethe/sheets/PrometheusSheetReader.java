@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
 import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;

@@ -28,9 +28,9 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisPreferenceView;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -49,9 +49,9 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreferen
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusBackup.PrometheusBackupPreferences;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusGoToEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusStaticDataPanel;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusDataEvent;

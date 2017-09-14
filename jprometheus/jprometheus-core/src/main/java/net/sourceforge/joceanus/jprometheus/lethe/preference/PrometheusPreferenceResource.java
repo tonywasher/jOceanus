@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.preference;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -134,11 +131,6 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
     DLPREF_GRANULARITY("dlpref.granularity");
 
     /**
-     * The Driver Map.
-     */
-    private static final Map<PrometheusJDBCDriver, TethysResourceId> DRIVER_MAP = buildDriverMap();
-
-    /**
      * The Resource Builder.
      */
     private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(PrometheusDataException.class.getCanonicalName());
@@ -181,27 +173,5 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
-    }
-
-    /**
-     * Build driver map.
-     * @return the map
-     */
-    private static Map<PrometheusJDBCDriver, TethysResourceId> buildDriverMap() {
-        /* Create the map and return it */
-        final Map<PrometheusJDBCDriver, TethysResourceId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
-        myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
-        myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
-        myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
-        return myMap;
-    }
-
-    /**
-     * Obtain key for DBDriver.
-     * @param pValue the Value
-     * @return the resource key
-     */
-    protected static TethysResourceId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-        return TethysResourceBuilder.getKeyForEnum(DRIVER_MAP, pValue);
     }
 }

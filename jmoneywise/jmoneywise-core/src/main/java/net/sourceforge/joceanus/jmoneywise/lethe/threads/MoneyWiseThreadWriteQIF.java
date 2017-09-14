@@ -32,7 +32,7 @@ import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;

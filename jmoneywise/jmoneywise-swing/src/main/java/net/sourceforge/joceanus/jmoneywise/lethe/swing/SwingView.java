@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.lethe.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.View;

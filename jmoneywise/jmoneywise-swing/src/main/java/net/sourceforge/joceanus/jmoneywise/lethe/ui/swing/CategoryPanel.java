@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;

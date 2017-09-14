@@ -31,7 +31,7 @@ import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
@@ -145,7 +145,7 @@ public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
             final MetisDataField myField = myEntry.getKey();
 
             /* If the field is changeable */
-            final MetisFieldStorage myStorage = myField.getStorage();
+            final MetisDataFieldStorage myStorage = myField.getStorage();
             if (myStorage.isVersioned()
                 || myStorage.isCalculated()) {
                 /* Set the value */
@@ -165,7 +165,7 @@ public class MetisFXTableFieldSet<R extends MetisDataTableItem> {
             final MetisDataField myField = myEntry.getKey();
 
             /* If the field is calculated */
-            final MetisFieldStorage myStorage = myField.getStorage();
+            final MetisDataFieldStorage myStorage = myField.getStorage();
             if (myStorage.isCalculated()) {
                 /* Set the value */
                 setCalculatedValue(myField, myEntry.getValue());

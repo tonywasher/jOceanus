@@ -22,15 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
 import net.sourceforge.joceanus.jmoneywise.lethe.sheets.ArchiveLoader;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusBackup.PrometheusBackupPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

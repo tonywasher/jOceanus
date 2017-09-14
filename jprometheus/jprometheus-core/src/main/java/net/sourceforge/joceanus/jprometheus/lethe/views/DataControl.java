@@ -27,14 +27,14 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisErrorList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
@@ -72,7 +72,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * The Error List.
      */
-    private final MetisErrorList<MetisExceptionWrapper> theErrors;
+    private final MetisViewerErrorList theErrors;
 
     /**
      * The UtilitySet.
@@ -106,7 +106,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theEventManager = new TethysEventManager<>();
 
         /* Create the error list */
-        theErrors = new MetisErrorList<>();
+        theErrors = new MetisViewerErrorList();
     }
 
     @Override
@@ -182,7 +182,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * @param pError the new Error
      */
     public void addError(final OceanusException pError) {
-        theErrors.add(new MetisExceptionWrapper(pError));
+        theErrors.add(new MetisViewerExceptionWrapper(pError));
     }
 
     /**
@@ -196,7 +196,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * Obtain current error.
      * @return the current Error
      */
-    public MetisErrorList<MetisExceptionWrapper> getErrors() {
+    public MetisViewerErrorList getErrors() {
         return theErrors;
     }
 

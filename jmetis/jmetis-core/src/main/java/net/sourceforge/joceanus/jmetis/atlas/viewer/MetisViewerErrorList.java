@@ -35,7 +35,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
 
 /**
- * Report-able object list.
+ * Report-able error list.
  */
 public class MetisViewerErrorList
         implements MetisDataFieldItem, MetisDataList<MetisViewerExceptionWrapper> {
@@ -98,5 +98,15 @@ public class MetisViewerErrorList
     @Override
     public List<MetisViewerExceptionWrapper> getUnderlyingList() {
         return theList;
+    }
+
+    /**
+     * Obtain the first error.
+     * @return the first error (or null)
+     */
+    public MetisViewerExceptionWrapper getFirst() {
+        return isEmpty()
+                         ? null
+                         : theList.get(0);
     }
 }

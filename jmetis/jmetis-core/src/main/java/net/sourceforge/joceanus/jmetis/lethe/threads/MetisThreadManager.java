@@ -25,14 +25,14 @@ package net.sourceforge.joceanus.jmetis.lethe.threads;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadPreference.MetisThreadPreferenceKey;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadPreference.MetisThreadPreferences;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerStandardEntry;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadPreference.MetisThreadPreferenceKey;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadPreference.MetisThreadPreferences;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -94,7 +94,7 @@ public abstract class MetisThreadManager<N, I>
     /**
      * The Error.
      */
-    private MetisExceptionWrapper theError;
+    private MetisViewerExceptionWrapper theError;
 
     /**
      * The number of reporting steps.
@@ -395,7 +395,7 @@ public abstract class MetisThreadManager<N, I>
      */
     protected void setError(final Throwable pException) {
         /* Record the error */
-        theError = new MetisExceptionWrapper(pException);
+        theError = new MetisViewerExceptionWrapper(pException);
 
         /* Report to manager */
         theErrorEntry.setObject(theError);

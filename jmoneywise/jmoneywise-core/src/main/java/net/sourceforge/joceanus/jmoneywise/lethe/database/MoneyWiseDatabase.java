@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDatabase.PrometheusDatabasePreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

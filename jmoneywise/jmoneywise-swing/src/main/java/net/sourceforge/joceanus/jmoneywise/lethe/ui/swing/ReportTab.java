@@ -27,12 +27,12 @@ import javax.swing.JComponent;
 
 import org.w3c.dom.Document;
 
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportHTMLBuilder;
-import net.sourceforge.joceanus.jmetis.lethe.report.MetisReportManager;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportHTMLBuilder;
+import net.sourceforge.joceanus.jmetis.atlas.report.MetisReportManager;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;

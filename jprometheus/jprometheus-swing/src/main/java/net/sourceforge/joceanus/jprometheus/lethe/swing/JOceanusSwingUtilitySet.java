@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jprometheus.lethe.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldColours.MetisColorPreferences;
+import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceEvent;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.preference.MetisPreferenceEvent;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.lethe.threads.swing.MetisSwingThreadManager;
 import net.sourceforge.joceanus.jmetis.lethe.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;

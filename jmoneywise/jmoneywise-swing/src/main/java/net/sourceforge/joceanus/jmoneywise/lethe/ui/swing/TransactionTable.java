@@ -32,6 +32,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
@@ -48,10 +52,6 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
-import net.sourceforge.joceanus.jmetis.lethe.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.lethe.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.lethe.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
