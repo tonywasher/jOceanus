@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 import javax.swing.JFrame;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisScmStatus;
 
 /**

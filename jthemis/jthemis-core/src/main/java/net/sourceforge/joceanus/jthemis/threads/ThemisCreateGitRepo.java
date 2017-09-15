@@ -24,10 +24,10 @@ package net.sourceforge.joceanus.jthemis.threads;
 
 import java.time.LocalTime;
 
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;

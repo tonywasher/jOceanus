@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
-import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerEntry;
-import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerErrorList;
-import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerExceptionWrapper;
-import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerManager;
-import net.sourceforge.joceanus.jmetis.atlas.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jmetis.ui.MetisUIEvent;
 import net.sourceforge.joceanus.jmetis.ui.MetisUIResource;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerExceptionWrapper;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.preference;
 
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

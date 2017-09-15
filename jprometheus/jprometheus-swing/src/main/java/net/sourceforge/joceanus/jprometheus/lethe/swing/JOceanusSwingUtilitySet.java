@@ -25,13 +25,13 @@ package net.sourceforge.joceanus.jprometheus.lethe.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceEvent;
-import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProgram;
-import net.sourceforge.joceanus.jmetis.atlas.threads.swing.MetisSwingThreadManager;
-import net.sourceforge.joceanus.jmetis.atlas.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.JOceanusUtilitySet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;

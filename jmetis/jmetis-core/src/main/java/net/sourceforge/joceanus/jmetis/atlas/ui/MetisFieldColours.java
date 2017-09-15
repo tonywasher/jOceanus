@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.HashMap;
 
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceKey;
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
 

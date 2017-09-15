@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 import javafx.application.Preloader;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
-import net.sourceforge.joceanus.jmetis.atlas.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXSplash;
+import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
