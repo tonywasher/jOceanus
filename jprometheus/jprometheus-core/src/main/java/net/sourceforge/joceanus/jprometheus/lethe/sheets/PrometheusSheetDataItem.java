@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.sheet.MetisCellPosition;
 import net.sourceforge.joceanus.jmetis.sheet.MetisCellStyleType;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;

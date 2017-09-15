@@ -22,6 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.threads;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
@@ -54,6 +62,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
  * @param <I> the icon type
  */
 public abstract class MetisToolkit<N, I> {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetisToolkit.class);
+
     /**
      * Formatter.
      */
@@ -346,5 +359,18 @@ public abstract class MetisToolkit<N, I> {
         return theProfile == null
                                   ? null
                                   : theProfile.getActiveTask();
+    }
+
+    /**
+     * Delete a file on error exit.
+     * @param pFile the file to delete
+     */
+    public static void cleanUpFile(final File pFile) {
+        try {
+            final Path myPath = pFile.toPath();
+            Files.delete(myPath);
+        } catch (IOException e) {
+            LOGGER.error("Failed to delete File", e);
+        }
     }
 }

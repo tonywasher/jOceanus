@@ -91,7 +91,9 @@ public final class GordianStreamDefinition {
         final int myStreamId = (int) (pExternalId & TethysDataConverter.NYBBLE_MASK);
         theType = StreamType.fromId(myStreamId);
         theTypeId = pExternalId >> TethysDataConverter.NYBBLE_SHIFT;
-        theTypeDefinition = Arrays.copyOf(pTypeDef, pTypeDef.length);
+        theTypeDefinition = pTypeDef == null
+                                             ? null
+                                             : Arrays.copyOf(pTypeDef, pTypeDef.length);
         theInitVector = pInitVector == null
                                             ? null
                                             : Arrays.copyOf(pInitVector, pInitVector.length);
@@ -201,7 +203,9 @@ public final class GordianStreamDefinition {
      * @return the type definition
      */
     public byte[] getTypeDefinition() {
-        return Arrays.copyOf(theTypeDefinition, theTypeDefinition.length);
+        return theTypeDefinition == null
+                                         ? null
+                                         : Arrays.copyOf(theTypeDefinition, theTypeDefinition.length);
     }
 
     /**

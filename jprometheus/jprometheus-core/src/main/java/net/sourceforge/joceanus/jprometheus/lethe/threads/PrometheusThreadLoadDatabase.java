@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.views.DataControl;

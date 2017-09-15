@@ -50,7 +50,7 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;

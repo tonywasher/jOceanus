@@ -33,9 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.atlas.preference.MetisPreferenceManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThread;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseIOException;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.definitions.QIFPreference.MoneyWiseQIFPreferenceKey;

@@ -90,7 +90,7 @@ public class MetisDataField {
         /* Allocate value index if required */
         theIndex = theStorage.isVersioned()
                                             ? theAnchor.getNextValue()
-                                            : -1;
+                                            : null;
 
         /* Check Validity */
         checkValidity();

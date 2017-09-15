@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadCancelException;
-import net.sourceforge.joceanus.jmetis.lethe.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadCancelException;
+import net.sourceforge.joceanus.jmetis.atlas.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
 import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
