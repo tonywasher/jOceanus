@@ -1,8 +1,8 @@
-JGordianKnot Project
+GordianKnot Project
 
-  jGordianKnot is a subComponent of the jOceanus project. 
+  GordianKnot is a subComponent of the jOceanus project. 
 
-  jGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. To utilise it you must
+  GordianKnot is a security suite for Java based on the BouncyCastle cryptography library. To utilise it you must
 additionally download this library from the {{{http://www.bouncycastle.org/java.html}BouncyCastle webSite}}
   
   Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
@@ -23,8 +23,7 @@ keys for the KeySet via another variant of the PBKDF2 algorithm.
 compared with the expected hash. If it matches, the password is assumed correct and the keySet will be generated. In the unlikely
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
-  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that uses CBC mode rather than ECB mode, and caters for
-blocksizes other than 128.
+  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blocksizes other than 128.
 
 * Supported Algorithms
 

@@ -159,12 +159,30 @@ public abstract class GordianCipherSpec<T> {
         }
 
         /**
+         * Create a GCFB symKey cipherSpec.
+         * @param pKeySpec the keySpec
+         * @return the cipherSpec
+         */
+        public static GordianSymCipherSpec gcfb(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCFB, GordianPadding.NONE);
+        }
+
+        /**
          * Create a OFB symKey cipherSpec.
          * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
         public static GordianSymCipherSpec ofb(final GordianSymKeySpec pKeySpec) {
             return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.OFB, GordianPadding.NONE);
+        }
+
+        /**
+         * Create a GOFB symKey cipherSpec.
+         * @param pKeySpec the keySpec
+         * @return the cipherSpec
+         */
+        public static GordianSymCipherSpec gofb(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GOFB, GordianPadding.NONE);
         }
 
         /**
@@ -177,6 +195,15 @@ public abstract class GordianCipherSpec<T> {
         }
 
         /**
+         * Create a KCTR symKey cipherSpec.
+         * @param pKeySpec the keySpec
+         * @return the cipherSpec
+         */
+        public static GordianSymCipherSpec kctr(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KCTR, GordianPadding.NONE);
+        }
+
+        /**
          * Create a CCM symKey cipherSpec.
          * @param pKeySpec the keySpec
          * @return the cipherSpec
@@ -186,12 +213,30 @@ public abstract class GordianCipherSpec<T> {
         }
 
         /**
+         * Create a KCCM symKey cipherSpec.
+         * @param pKeySpec the keySpec
+         * @return the cipherSpec
+         */
+        public static GordianSymCipherSpec kccm(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KCCM, GordianPadding.NONE);
+        }
+
+        /**
          * Create a GCM symKey cipherSpec.
          * @param pKeySpec the keySpec
          * @return the cipherSpec
          */
         public static GordianSymCipherSpec gcm(final GordianSymKeySpec pKeySpec) {
             return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.GCM, GordianPadding.NONE);
+        }
+
+        /**
+         * Create a KGCM symKey cipherSpec.
+         * @param pKeySpec the keySpec
+         * @return the cipherSpec
+         */
+        public static GordianSymCipherSpec kgcm(final GordianSymKeySpec pKeySpec) {
+            return new GordianSymCipherSpec(pKeySpec, GordianCipherMode.KGCM, GordianPadding.NONE);
         }
 
         /**
@@ -247,39 +292,6 @@ public abstract class GordianCipherSpec<T> {
          */
         public boolean isAAD() {
             return theMode != null && theMode.isAAD();
-        }
-
-        /**
-         * validate the cipherSpec.
-         * @param isAAD should the cipherSpec be AAD?
-         * @return true/false
-         */
-        public boolean validate(final boolean isAAD) {
-            /* Reject null modes and wrong AAD modes */
-            if (theMode == null
-                || isAAD != theMode.isAAD()) {
-                return false;
-            }
-
-            /* Determine whether we have a short block length */
-            final int myLen = getKeyType().getBlockLength().getLength();
-            final boolean shortBlock = myLen < GordianLength.LEN_128.getLength();
-
-            /* Reject modes which do not allow short blocks */
-            if (shortBlock && !theMode.allowShortBlock()) {
-                return false;
-            }
-
-            /* Reject modes which do not allow non-standard blocks */
-            final boolean stdBlock = myLen == GordianLength.LEN_128.getLength();
-            if (!stdBlock && theMode.needsStdBlock()) {
-                return false;
-            }
-
-            /* Reject bad padding */
-            return theMode.hasPadding()
-                                        ? thePadding != null
-                                        : GordianPadding.NONE.equals(thePadding);
         }
 
         @Override

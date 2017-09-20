@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.sheet;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -177,7 +178,7 @@ public class MetisExcelSheet
             final String myName = getName();
             final CellReference myFirst = new CellReference(myName, pFirstCell.getRowIndex(), pFirstCell.getColumnIndex(), true, true);
             final CellReference myLast = new CellReference(myName, pLastCell.getRowIndex(), pLastCell.getColumnIndex(), true, true);
-            final AreaReference myArea = new AreaReference(myFirst, myLast);
+            final AreaReference myArea = new AreaReference(myFirst, myLast, SpreadsheetVersion.EXCEL97);
 
             /* Declare to workBook */
             theExcelBook.declareRange(pName, myArea);

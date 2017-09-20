@@ -451,11 +451,19 @@ public abstract class GordianFactory {
     public abstract GordianCipher<GordianSymKeySpec> createSymKeyCipher(GordianSymCipherSpec pCipherSpec) throws OceanusException;
 
     /**
-     * Obtain predicate for supported digestSpecs.
+     * Obtain predicate for supported symKeySpecs.
      * @return the predicate
      */
     public Predicate<GordianSymKeySpec> supportedSymKeySpecs() {
         return this::validSymKeySpec;
+    }
+
+    /**
+     * Obtain predicate for supported sumCipherSpecs.
+     * @return the predicate
+     */
+    public BiPredicate<GordianSymCipherSpec, Boolean> supportedSymCipherSpecs() {
+        return this::validSymCipherSpec;
     }
 
     /**
@@ -822,5 +830,49 @@ public abstract class GordianFactory {
             default:
                 return false;
         }
+    }
+
+    /**
+     * validate the symCipherSpec.
+     * @param pCipherSpec the cipherSpec.
+     * @param isAAD is this cipherSpec for an AADCipher?
+     * @return true/false
+     */
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
+                                         final Boolean isAAD) {
+        /* Reject null modes and wrong AAD modes */
+        final GordianCipherMode myMode = pCipherSpec.getCipherMode();
+        if (myMode == null
+            || isAAD != myMode.isAAD()) {
+            return false;
+        }
+
+        /* Check that the mode is valid for the keyType */
+        final GordianSymKeySpec myKeySpec = pCipherSpec.getKeyType();
+        final GordianSymKeyType myKeyType = myKeySpec.getSymKeyType();
+        if (!myMode.validForSymKey(myKeyType)) {
+            return false;
+        }
+
+        /* Determine whether we have a short block length */
+        final int myLen = myKeySpec.getBlockLength().getLength();
+        final boolean shortBlock = myLen < GordianLength.LEN_128.getLength();
+
+        /* Reject modes which do not allow short blocks */
+        if (shortBlock && !myMode.allowShortBlock()) {
+            return false;
+        }
+
+        /* Reject modes which do not allow non-standard blocks */
+        final boolean stdBlock = myLen == GordianLength.LEN_128.getLength();
+        if (!stdBlock && myMode.needsStdBlock()) {
+            return false;
+        }
+
+        /* Reject bad padding */
+        final GordianPadding myPadding = pCipherSpec.getPadding();
+        return myMode.hasPadding()
+                                   ? myPadding != null
+                                   : GordianPadding.NONE.equals(myPadding);
     }
 }

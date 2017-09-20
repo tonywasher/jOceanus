@@ -190,23 +190,31 @@ public class GordianWrapCipher {
                         * theBlockLen;
         }
 
+        /* Determine semantics of the initial block */
+        final byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
+        int myCheckLen = theBlockLen - Integer.BYTES;
+        int myHdrLen = theBlockLen;
+
+        /* Handle 64-bit ciphers */
+        if (myCheckLen == 0) {
+            myCheckLen = theBlockLen;
+            myHdrLen += theBlockLen;
+            myNumBlocks++;
+        }
+
         /* Allocate buffer for data and encryption */
         final int myBufferLen = theBlockLen << 1;
         final byte[] myData = new byte[myTrueLen
-                                       + theBlockLen];
+                                       + myHdrLen];
         final byte[] myBuffer = new byte[myBufferLen];
         final byte[] myResult = new byte[myBufferLen];
-
-        /* Determine semantics of the initial block */
-        final byte[] myByteLen = TethysDataConverter.integerToByteArray(myDataLen);
-        final int myCheckLen = theBlockLen - Integer.BYTES;
 
         /* Build the initial block */
         for (int i = 0; i < myCheckLen; i++) {
             myData[i] = getIntegrityValue(i);
         }
         System.arraycopy(myByteLen, 0, myData, myCheckLen, Integer.BYTES);
-        System.arraycopy(pBytesToSecure, 0, myData, theBlockLen, myDataLen);
+        System.arraycopy(pBytesToSecure, 0, myData, myCheckLen + Integer.BYTES, myDataLen);
 
         /* Initialise the cipher */
         theCipher.initCipher(pKey, null, true);
@@ -251,8 +259,8 @@ public class GordianWrapCipher {
         theCipher.checkValidKey(pKey);
 
         /* Determine number of blocks */
-        final int myDataLen = pSecuredBytes.length
-                              - theBlockLen;
+        int myDataLen = pSecuredBytes.length
+                        - theBlockLen;
         final int myNumBlocks = myDataLen
                                 / theBlockLen;
 
@@ -294,35 +302,46 @@ public class GordianWrapCipher {
             }
         }
 
-        /* Check initialisation value */
-        final int myCheckLen = theBlockLen - Integer.BYTES;
-        boolean isCheckOK = true;
-        for (int myInit = 0; isCheckOK && myInit < myCheckLen; myInit++) {
-            isCheckOK = myData[myInit] == getIntegrityValue(myInit);
+        /* Handle 64-bit ciphers */
+        int myCheckLen = theBlockLen - Integer.BYTES;
+        if (myCheckLen == 0) {
+            myCheckLen = theBlockLen;
+            myDataLen -= theBlockLen;
         }
 
-        /* If we are OK */
+        /* Check initialisation value */
+        boolean isCheckOK = true;
+        for (int myInit = 0; myInit < myCheckLen; myInit++) {
+            if (myData[myInit] != getIntegrityValue(myInit)) {
+                isCheckOK = false;
+            }
+        }
+
+        /* Obtain encoded length */
+        final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
+        final int myEncodedLen = TethysDataConverter.byteArrayToInteger(myByteLen);
+
+        /* Obtain zeroLen and check that it is valid */
+        final int myZeroLen = myDataLen - myEncodedLen;
+        if (myZeroLen < 0) {
+            isCheckOK = false;
+        }
+        if (myZeroLen >= theBlockLen) {
+            isCheckOK = false;
+        }
+
+        /* Check trailing bytes */
+        for (int myZeros = myZeroLen, myLoc = myData.length - 1; myZeros > 0; myZeros--, myLoc--) {
+            /* Check that byte is zero */
+            if (myData[myLoc] != 0) {
+                isCheckOK = false;
+            }
+        }
+
+        /* Return unwrapped data */
         if (isCheckOK) {
-            /* Obtain encoded length */
-            final byte[] myByteLen = Arrays.copyOfRange(myData, myCheckLen, myCheckLen + Integer.BYTES);
-            final int myEncodedLen = TethysDataConverter.byteArrayToInteger(myByteLen);
-
-            /* Obtain zeroLen and check that it is valid */
-            final int myZeroLen = myDataLen - myEncodedLen;
-            isCheckOK = myZeroLen >= 0 && myZeroLen < theBlockLen;
-
-            /* Check trailing bytes */
-            for (int myZeros = myZeroLen, myLoc = myData.length - 1; isCheckOK
-                                                                     && myZeros > 0; myZeros--, myLoc--) {
-                /* Check that byte is zero */
-                isCheckOK = myData[myLoc] == 0;
-            }
-
-            /* Return unwrapped data */
-            if (isCheckOK) {
-                return Arrays.copyOfRange(myData, theBlockLen, myData.length
-                                                               - myZeroLen);
-            }
+            return Arrays.copyOfRange(myData, myCheckLen + Integer.BYTES, myData.length
+                                                                          - myZeroLen);
         }
 
         /* Reject if checks fail */

@@ -69,7 +69,32 @@ public enum GordianCipherMode {
     /**
      * OCB Mode.
      */
-    OCB;
+    OCB,
+
+    /**
+     * GCFB Mode.
+     */
+    GCFB,
+
+    /**
+     * GOFB Mode.
+     */
+    GOFB,
+
+    /**
+     * KCTR Mode.
+     */
+    KCTR,
+
+    /**
+     * KCCM Mode.
+     */
+    KCCM,
+
+    /**
+     * KGCM Mode.
+     */
+    KGCM;
 
     /**
      * Does the mode require padding?
@@ -95,6 +120,8 @@ public enum GordianCipherMode {
             case GCM:
             case EAX:
             case OCB:
+            case KCCM:
+            case KGCM:
                 return true;
             default:
                 return false;
@@ -129,6 +156,26 @@ public enum GordianCipherMode {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    /**
+     * Is this mode valid for the symKeyType?
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    public boolean validForSymKey(final GordianSymKeyType pKeyType) {
+        switch (this) {
+            case GOFB:
+            case GCFB:
+                return GordianSymKeyType.GOST.equals(pKeyType);
+            case KCTR:
+                return GordianSymKeyType.KALYNA.equals(pKeyType);
+            case KGCM:
+            case KCCM:
+                return false;
+            default:
+                return true;
         }
     }
 

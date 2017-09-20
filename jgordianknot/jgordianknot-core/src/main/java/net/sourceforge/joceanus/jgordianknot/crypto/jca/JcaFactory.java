@@ -333,7 +333,7 @@ public final class JcaFactory
         }
 
         /* Check validity of Mode */
-        if (!pCipherSpec.validate(false)) {
+        if (!validSymCipherSpec(pCipherSpec, false)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -351,7 +351,7 @@ public final class JcaFactory
         }
 
         /* Check validity of Mode */
-        if (!pCipherSpec.validate(true)) {
+        if (!validSymCipherSpec(pCipherSpec, true)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -802,19 +802,24 @@ public final class JcaFactory
             case ECB:
             case SIC:
             case CBC:
+            case OFB:
+            case CFB:
             case EAX:
             case CCM:
             case GCM:
+            case GOFB:
+            case GCFB:
                 return myMode.name();
+            case KCTR:
+                return "CTR";
+            case KCCM:
+                return "CCM";
+            case KGCM:
+                return "GCM";
             case OCB: /* TODO There is a problem with Kalyna OCB so temporarily switch to CTR" */
                 return GordianSymKeyType.KALYNA.equals(myKeyType)
                                                                   ? "CTR"
                                                                   : myMode.name();
-            case OFB:
-            case CFB:
-                return GordianSymKeyType.GOST.equals(myKeyType)
-                                                                ? "G" + myMode.name()
-                                                                : myMode.name();
             default:
                 throw new GordianDataException(getInvalidText(myMode));
         }
@@ -1197,5 +1202,29 @@ public final class JcaFactory
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
         return pSpec.getDigestType() == GordianDigestType.SHA2
                && pSpec.getStateLength() == null;
+    }
+
+    @Override
+    protected boolean validSymCipherSpec(final GordianSymCipherSpec pCipherSpec,
+                                         final Boolean isAAD) {
+        /* Check standard features */
+        if (!super.validSymCipherSpec(pCipherSpec, isAAD)) {
+            return false;
+        }
+
+        /* Additional Checks */
+        final GordianCipherMode myMode = pCipherSpec.getCipherMode();
+        switch (pCipherSpec.getKeyType().getSymKeyType()) {
+            case KALYNA:
+                /* Disallow CCM and GCM */
+                return !GordianCipherMode.CCM.equals(myMode)
+                       && !GordianCipherMode.GCM.equals(myMode);
+            case GOST:
+                /* Disallow OCB and OFB */
+                return !GordianCipherMode.OCB.equals(myMode)
+                       && !GordianCipherMode.OFB.equals(myMode);
+            default:
+                return true;
+        }
     }
 }

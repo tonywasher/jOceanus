@@ -81,7 +81,7 @@
     <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
     <MySQLVersion>5.1.44</MySQLVersion>
     <PostGreSQLVersion>42.1.4.jre7</PostGreSQLVersion>
-    <ApachePOIVersion>3.16</ApachePOIVersion>
+    <ApachePOIVersion>3.17</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
     <LOG4JVersion>2.9.0</LOG4JVersion>
@@ -99,7 +99,7 @@
     <CompilerPluginVersion>3.7.0</CompilerPluginVersion>
     <ShadePluginVersion>3.1.0</ShadePluginVersion>
     <DependencyPluginVersion>3.0.1</DependencyPluginVersion>
-    <SurefirePluginVersion>2.20</SurefirePluginVersion>
+    <SurefirePluginVersion>2.20.1</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <JarPluginVersion>3.0.2</JarPluginVersion>
     <ProjectInfoPluginVersion>2.9</ProjectInfoPluginVersion>

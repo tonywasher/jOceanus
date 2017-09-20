@@ -1,0 +1,15 @@
+Key Wrapping
+
+	Key Wrapping is performed by GordianKnot using a variant of the AES Key Wrapping algorithm specified in {{{https://tools.ietf.org/html/rfc5649}RFC 5649}}.
+	
+	The differences are necessary to enable support of ciphers that do not have the standard blockSize of 128 bits, since RFC 5649 assumes a 128 bit blockSize.
+	
+	[[1]] For blockSizes of 256 bits, the 32-bit Integrity Vector of <<0xA65959A6>> is expanded to the 96-bit <<0xA65959A6A65959A6A65959A6>> so that when combined with
+	the 32-bit dataLen of the wrapped data it comprises the half-block needed for the wrapping algorithm. This method will support any block size >= 128.
+	
+	[[2]] For blockSizes of 64, the Integrity Vector using the above adjustment becomes zero length, which is not very useful. In this case, we retain the 
+	standard 32-bit	Integrity Vector of <<0xA65959A6>> and prefix the 32-bit dataLen to the data to be wrapped.
+	
+	[]
+	
+	In addition, a block of random data is inserted immediately prior to the data to be wrapped.

@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.io.File;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import org.bouncycastle.util.Arrays;
@@ -275,6 +276,7 @@ public class GordianTestSuite {
 
         /* Loop through the symKeySpecs */
         Predicate<GordianSymKeySpec> mySymKeyPredicate = pFactory.supportedSymKeySpecs();
+        BiPredicate<GordianSymCipherSpec, Boolean> myCipherPredicate = pFactory.supportedSymCipherSpecs();
         for (GordianSymKeySpec mySpec : GordianSymKeySpec.listAll()) {
             /* If the symKey is supported */
             if (mySymKeyPredicate.test(mySpec)) {
@@ -289,7 +291,7 @@ public class GordianTestSuite {
                         for (GordianPadding myPadding : GordianPadding.values()) {
                             /* Check Id if the ciperSpec is supported */
                             GordianSymCipherSpec myTestSpec = new GordianSymCipherSpec(mySpec, myMode, myPadding);
-                            if (myTestSpec.validate(false)) {
+                            if (myCipherPredicate.test(myTestSpec, myMode.isAAD())) {
                                 checkExternalId(pKeySet, myTestSpec, GordianSymCipherSpec.class);
                             }
                         }
@@ -298,7 +300,7 @@ public class GordianTestSuite {
                     } else {
                         /* Check Id if the cipherSpec is supported */
                         GordianSymCipherSpec myTestSpec = new GordianSymCipherSpec(mySpec, myMode, GordianPadding.NONE);
-                        if (myTestSpec.validate(myMode.isAAD())) {
+                        if (myCipherPredicate.test(myTestSpec, myMode.isAAD())) {
                             checkExternalId(pKeySet, myTestSpec, GordianSymCipherSpec.class);
                         }
                     }

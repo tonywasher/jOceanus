@@ -135,6 +135,12 @@ public final class JcaCipher<T>
                 | InvalidAlgorithmParameterException e) {
             throw new GordianCryptoException("Failed to initialise cipher", e);
         }
+
+        /* Store key and initVector */
+        setKey(pKey);
+        setInitVector(pIV != null
+                                  ? pIV
+                                  : null);
     }
 
     @Override

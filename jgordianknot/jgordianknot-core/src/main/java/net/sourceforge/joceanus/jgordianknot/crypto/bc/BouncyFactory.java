@@ -108,6 +108,7 @@ import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GOFBBlockCipher;
 import org.bouncycastle.crypto.modes.KCCMBlockCipher;
+import org.bouncycastle.crypto.modes.KCTRBlockCipher;
 import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.modes.OCBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
@@ -387,7 +388,7 @@ public final class BouncyFactory
         }
 
         /* Check validity of Mode */
-        if (!pCipherSpec.validate(false)) {
+        if (!validSymCipherSpec(pCipherSpec, false)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -405,7 +406,7 @@ public final class BouncyFactory
         }
 
         /* Check validity of Mode */
-        if (!pCipherSpec.validate(true)) {
+        if (!validSymCipherSpec(pCipherSpec, true)) {
             throw new GordianDataException(getInvalidText(pCipherSpec));
         }
 
@@ -899,14 +900,16 @@ public final class BouncyFactory
                 return new CBCBlockCipher(pEngine);
             case SIC:
                 return new SICBlockCipher(pEngine);
+            case KCTR:
+                return new KCTRBlockCipher(pEngine);
             case CFB:
-                return pEngine instanceof GOST28147Engine
-                                                          ? new GCFBBlockCipher(pEngine)
-                                                          : new CFBBlockCipher(pEngine, pEngine.getBlockSize());
+                return new CFBBlockCipher(pEngine, pEngine.getBlockSize());
+            case GCFB:
+                return new GCFBBlockCipher(pEngine);
             case OFB:
-                return pEngine instanceof GOST28147Engine
-                                                          ? new GOFBBlockCipher(pEngine)
-                                                          : new OFBBlockCipher(pEngine, pEngine.getBlockSize());
+                return new OFBBlockCipher(pEngine, pEngine.getBlockSize());
+            case GOFB:
+                return new GOFBBlockCipher(pEngine);
             default:
                 throw new GordianDataException(getInvalidText(pMode));
         }
@@ -920,18 +923,17 @@ public final class BouncyFactory
      */
     private static AEADBlockCipher getBCAADCipher(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         final GordianSymKeySpec mySpec = pCipherSpec.getKeyType();
-        final GordianSymKeyType myType = mySpec.getSymKeyType();
         switch (pCipherSpec.getCipherMode()) {
             case EAX:
                 return new EAXBlockCipher(getBCSymEngine(mySpec));
             case CCM:
-                return GordianSymKeyType.KALYNA.equals(myType)
-                                                               ? new KCCMBlockCipher(getBCSymEngine(mySpec))
-                                                               : new CCMBlockCipher(getBCSymEngine(mySpec));
+                return new CCMBlockCipher(getBCSymEngine(mySpec));
+            case KCCM:
+                return new KCCMBlockCipher(getBCSymEngine(mySpec));
             case GCM:
-                return GordianSymKeyType.KALYNA.equals(myType)
-                                                               ? new KGCMBlockCipher(getBCSymEngine(mySpec))
-                                                               : new GCMBlockCipher(getBCSymEngine(mySpec));
+                return new GCMBlockCipher(getBCSymEngine(mySpec));
+            case KGCM:
+                return new KGCMBlockCipher(getBCSymEngine(mySpec));
             case OCB:
                 return new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
             default:

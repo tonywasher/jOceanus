@@ -27,16 +27,19 @@ import java.security.Security;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
  * Security Test suite - Algorithms.
@@ -46,6 +49,11 @@ public class GordianTestAlgorithms {
      * The Security Manager creator.
      */
     private final SecurityManagerCreator theCreator;
+
+    /**
+     * The TestData.
+     */
+    private byte[] theTestData;
 
     /**
      * Constructor.
@@ -122,8 +130,9 @@ public class GordianTestAlgorithms {
             if (mySymKeyPredicate.test(mySpec)) {
                 GordianKeyGenerator<GordianSymKeySpec> mySymGenerator = myFactory.getKeyGenerator(mySpec);
                 GordianKey<GordianSymKeySpec> mySymKey = mySymGenerator.generateKey();
-                System.out.println("  " + mySpec.toString());
+                profileSymKey(myFactory, mySymKey);
                 checkCipherModes(myFactory, mySymKey);
+                checkWrapCipher(myFactory, mySymKey);
             }
         }
 
@@ -133,9 +142,7 @@ public class GordianTestAlgorithms {
             if (myStreamKeyPredicate.test(myType)) {
                 GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
                 GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
-                GordianCipher<GordianStreamKeyType> myCipher = myFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(myType));
-                System.out.println("  " + myType.toString());
-                myCipher.initCipher(myStreamKey);
+                checkCipher(myFactory, myStreamKey);
             }
         }
     }
@@ -202,10 +209,10 @@ public class GordianTestAlgorithms {
             for (GordianPadding myPadding : GordianPadding.values()) {
                 checkCipher(pFactory, pKey, pMode, myPadding);
             }
-        } else if (!pMode.isAAD()) {
-            checkCipher(pFactory, pKey, pMode, GordianPadding.NONE);
-        } else {
+        } else if (pMode.isAAD()) {
             checkAADCipher(pFactory, pKey, pMode);
+        } else {
+            checkCipher(pFactory, pKey, pMode, GordianPadding.NONE);
         }
     }
 
@@ -221,11 +228,26 @@ public class GordianTestAlgorithms {
                              final GordianKey<GordianSymKeySpec> pKey,
                              final GordianCipherMode pMode,
                              final GordianPadding pPadding) throws OceanusException {
+        /* Access Data */
+        byte[] myTestData = getTestData();
+        BiPredicate<GordianSymCipherSpec, Boolean> myCipherPredicate = pFactory.supportedSymCipherSpecs();
+
+        /* Create the Spec */
         GordianSymCipherSpec mySpec = new GordianSymCipherSpec(pKey.getKeyType(), pMode, pPadding);
-        if (mySpec.validate(false)) {
+        if (myCipherPredicate.test(mySpec, false)) {
             System.out.println("   " + mySpec.toString());
             GordianCipher<GordianSymKeySpec> myCipher = pFactory.createSymKeyCipher(mySpec);
             myCipher.initCipher(pKey);
+            if (!pMode.hasPadding()
+                || !GordianPadding.NONE.equals(pPadding)) {
+                byte[] myIV = myCipher.getInitVector();
+                byte[] myEncrypted = myCipher.finish(myTestData);
+                myCipher.initCipher(pKey, myIV, false);
+                byte[] myResult = myCipher.finish(myEncrypted);
+                if (!Arrays.areEqual(myTestData, myResult)) {
+                    System.out.println("Failed to encrypt/decrypt");
+                }
+            }
         }
     }
 
@@ -234,17 +256,111 @@ public class GordianTestAlgorithms {
      * @param pFactory the factory
      * @param pKey the key
      * @param pMode the mode
+     * @param pPadding the padding
      * @throws OceanusException on error
      */
     private void checkAADCipher(final GordianFactory pFactory,
                                 final GordianKey<GordianSymKeySpec> pKey,
                                 final GordianCipherMode pMode) throws OceanusException {
+        /* Access Data */
+        byte[] myTestData = getTestData();
+        BiPredicate<GordianSymCipherSpec, Boolean> myCipherPredicate = pFactory.supportedSymCipherSpecs();
+
+        /* Create the Spec */
         GordianSymCipherSpec mySpec = new GordianSymCipherSpec(pKey.getKeyType(), pMode, GordianPadding.NONE);
-        if (mySpec.validate(true)) {
+        if (myCipherPredicate.test(mySpec, true)) {
             System.out.println("   " + mySpec.toString());
             GordianAADCipher myCipher = pFactory.createAADCipher(mySpec);
             myCipher.initCipher(pKey);
+            byte[] myIV = myCipher.getInitVector();
+            byte[] myEncrypted = myCipher.finish(myTestData);
+            myCipher.initCipher(pKey, myIV, false);
+            byte[] myResult = myCipher.finish(myEncrypted);
+            if (!Arrays.areEqual(myTestData, myResult)) {
+                System.out.println("Failed to encrypt/decrypt");
+            }
         }
+    }
+
+    /**
+     * Check stream cipher.
+     * @param pFactory the factory
+     * @param pKey the key
+     * @throws OceanusException on error
+     */
+    private void checkCipher(final GordianFactory pFactory,
+                             final GordianKey<GordianStreamKeyType> pKey) throws OceanusException {
+        /* Access Data */
+        byte[] myTestData = getTestData();
+
+        /* Create the Cipher */
+        System.out.println("  " + pKey.getKeyType().toString());
+        GordianCipher<GordianStreamKeyType> myCipher = pFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(pKey.getKeyType()));
+        myCipher.initCipher(pKey);
+        byte[] myIV = myCipher.getInitVector();
+        byte[] myEncrypted = myCipher.finish(myTestData);
+        myCipher.initCipher(pKey, myIV, false);
+        byte[] myResult = myCipher.finish(myEncrypted);
+        if (!Arrays.areEqual(myTestData, myResult)) {
+            System.out.println("Failed to encrypt/decrypt");
+        }
+    }
+
+    /**
+     * Check wrap cipher.
+     * @param pFactory the factory
+     * @param pKey the key
+     * @throws OceanusException on error
+     */
+    private void checkWrapCipher(final GordianFactory pFactory,
+                                 final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+        /* Access Data */
+        byte[] myTestData = getTestData();
+
+        /* Create the Cipher */
+        System.out.println("   Wrap" + pKey.getKeyType().toString());
+        GordianWrapCipher myCipher = pFactory.createWrapCipher(pKey.getKeyType());
+        byte[] myWrapped = myCipher.secureBytes(pKey, myTestData);
+        byte[] myResult = myCipher.deriveBytes(pKey, myWrapped);
+        if (!Arrays.areEqual(myTestData, myResult)) {
+            System.out.println("Failed to encrypt/decrypt");
+        }
+    }
+
+    /**
+     * Profile symKey.
+     * @param pFactory the factory
+     * @param pKey the symKey to profile
+     * @throws OceanusException on error
+     */
+    private void profileSymKey(final GordianFactory pFactory,
+                               final GordianKey<GordianSymKeySpec> pKey) throws OceanusException {
+        final GordianSymKeySpec myKeyType = pKey.getKeyType();
+        final int myLen = myKeyType.getBlockLength().getByteLength();
+        byte[] myBytes = new byte[myLen];
+        GordianSymCipherSpec mySpec = new GordianSymCipherSpec(myKeyType, GordianCipherMode.ECB, GordianPadding.NONE);
+        GordianCipher<GordianSymKeySpec> myCipher = pFactory.createSymKeyCipher(mySpec);
+        long myStart = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            myCipher.initCipher(pKey);
+            myCipher.update(myBytes);
+            myBytes = myCipher.finish();
+        }
+        long myElapsed = System.nanoTime() - myStart;
+        myElapsed /= 100;
+        System.out.println("  " + myKeyType.toString() + ":" + myElapsed);
+    }
+
+    /**
+     * Obtain the testData.
+     * @return the testData
+     * @throws OceanusException on error
+     */
+    private byte[] getTestData() throws OceanusException {
+        if (theTestData == null) {
+            theTestData = TethysDataConverter.stringToByteArray("TestDataStringThatIsNotRidiculouslyShort");
+        }
+        return theTestData;
     }
 
     /**
