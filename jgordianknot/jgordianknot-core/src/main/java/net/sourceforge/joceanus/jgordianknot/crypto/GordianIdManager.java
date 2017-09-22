@@ -516,6 +516,8 @@ public class GordianIdManager {
                 return new GordianMacSpec(myMacType, new GordianSymKeySpec(mySymType));
             case SKEIN:
                 return GordianMacSpec.skeinMac();
+            case BLAKE:
+                return GordianMacSpec.blakeMac();
             case KUPYNA:
                 return GordianMacSpec.kupynaMac();
             case KALYNA:
@@ -566,6 +568,9 @@ public class GordianIdManager {
             case SKEIN:
                 GordianDigestSpec mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.skeinMac(mySpec.getStateLength(), mySpec.getDigestLength());
+            case BLAKE:
+                mySpec = deriveDigestSpecFromEncodedId(myCode);
+                return GordianMacSpec.blakeMac(mySpec.getDigestLength());
             case KUPYNA:
                 mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.kupynaMac(mySpec.getDigestLength());
@@ -589,6 +594,7 @@ public class GordianIdManager {
         switch (myMacType) {
             case HMAC:
             case SKEIN:
+            case BLAKE:
             case KUPYNA:
                 myCode += deriveEncodedIdFromDigestSpec(pMacSpec.getDigestSpec()) << TethysDataConverter.NYBBLE_SHIFT;
                 break;

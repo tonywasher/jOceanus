@@ -32,12 +32,18 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.RC2ParameterSpec;
+import javax.crypto.spec.RC5ParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -126,7 +132,7 @@ public final class JcaCipher<T>
         try {
             /* Initialise as required */
             if (pIV != null) {
-                final AlgorithmParameterSpec myParms = new IvParameterSpec(pIV);
+                final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, pIV);
                 theCipher.init(myMode, myKey, myParms);
             } else {
                 theCipher.init(myMode, myKey);
@@ -141,6 +147,29 @@ public final class JcaCipher<T>
         setInitVector(pIV != null
                                   ? pIV
                                   : null);
+    }
+
+    /**
+     * Generate AlgorithmParameters.
+     * @param pKey the key
+     * @param pIV the Initialisation vector
+     * @return the parameters
+     */
+    static AlgorithmParameterSpec generateParameters(final JcaKey<?> pKey,
+                                                     final byte[] pIV) {
+        final Object myKeyType = pKey.getKeyType();
+        if (myKeyType instanceof GordianSymKeySpec) {
+            final GordianSymKeySpec mySpec = (GordianSymKeySpec) myKeyType;
+            final GordianSymKeyType myType = mySpec.getSymKeyType();
+            final GordianLength myLen = mySpec.getBlockLength();
+            if (GordianSymKeyType.RC2.equals(myType)) {
+                return new RC2ParameterSpec(pKey.getKeyBytes().length * Byte.SIZE, pIV);
+            }
+            if (GordianSymKeyType.RC5.equals(myType)) {
+                return new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
+            }
+        }
+        return new IvParameterSpec(pIV);
     }
 
     @Override

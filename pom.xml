@@ -84,7 +84,7 @@
     <ApachePOIVersion>3.17</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
-    <LOG4JVersion>2.9.0</LOG4JVersion>
+    <LOG4JVersion>2.9.1</LOG4JVersion>
     <JFreeChartVersion>1.0.19</JFreeChartVersion>
     <JSoupVersion>1.10.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>

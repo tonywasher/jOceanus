@@ -271,7 +271,11 @@ public class GordianSymKeySpec {
             /* Load the name */
             theName = theSymKeyType.toString();
             if (theSymKeyType.hasMultipleLengths()) {
-                theName += SEP + Integer.toString(theBlockLength.getLength());
+                int myLen = theBlockLength.getLength();
+                if (GordianSymKeyType.RC5.equals(theSymKeyType)) {
+                    myLen >>= 1;
+                }
+                theName += SEP + Integer.toString(myLen);
             }
         }
 

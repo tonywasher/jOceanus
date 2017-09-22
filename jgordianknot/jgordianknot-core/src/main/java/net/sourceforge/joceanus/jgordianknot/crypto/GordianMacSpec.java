@@ -179,6 +179,24 @@ public final class GordianMacSpec {
     }
 
     /**
+     * Create skeinMacSpec.
+     * @return the MacSpec
+     */
+    public static GordianMacSpec blakeMac() {
+        return GordianMacSpec.blakeMac(GordianDigestType.BLAKE.getDefaultLength());
+    }
+
+    /**
+     * Create blake2bMacSpec.
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec blakeMac(final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpec.blake(pLength);
+        return new GordianMacSpec(GordianMacType.BLAKE, mySpec);
+    }
+
+    /**
      * Create kalynaMacSpec.
      * @return the MacSpec
      */
@@ -266,6 +284,7 @@ public final class GordianMacSpec {
                     theName += SEP + theKeySpec.toString();
                     break;
                 case KUPYNA:
+                case BLAKE:
                     theName += SEP + theDigestSpec.getDigestLength().getLength();
                     break;
                 case KALYNA:
@@ -357,6 +376,11 @@ public final class GordianMacSpec {
 
         /* Add vmpcMac */
         myList.add(GordianMacSpec.vmpcMac());
+
+        /* Add blakeMac */
+        for (final GordianLength myLength : GordianDigestType.BLAKE.getSupportedLengths()) {
+            myList.add(GordianMacSpec.blakeMac(myLength));
+        }
 
         /* Add kalynaMac */
         for (final GordianLength myLength : GordianSymKeyType.KALYNA.getSupportedLengths()) {

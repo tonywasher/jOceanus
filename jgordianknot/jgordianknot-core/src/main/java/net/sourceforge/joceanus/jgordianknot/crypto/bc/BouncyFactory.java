@@ -75,11 +75,13 @@ import org.bouncycastle.crypto.engines.NoekeonEngine;
 import org.bouncycastle.crypto.engines.RC2Engine;
 import org.bouncycastle.crypto.engines.RC4Engine;
 import org.bouncycastle.crypto.engines.RC532Engine;
+import org.bouncycastle.crypto.engines.RC564Engine;
 import org.bouncycastle.crypto.engines.RC6Engine;
 import org.bouncycastle.crypto.engines.SEEDEngine;
 import org.bouncycastle.crypto.engines.SM4Engine;
 import org.bouncycastle.crypto.engines.Salsa20Engine;
 import org.bouncycastle.crypto.engines.SerpentEngine;
+import org.bouncycastle.crypto.engines.Shacal2Engine;
 import org.bouncycastle.crypto.engines.SkipjackEngine;
 import org.bouncycastle.crypto.engines.TEAEngine;
 import org.bouncycastle.crypto.engines.ThreefishEngine;
@@ -334,7 +336,8 @@ public final class BouncyFactory
     @Override
     public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p);
+                    && supportedSymKeySpecs().test(p)
+                    && p.getBlockLength() == GordianLength.LEN_128;
     }
 
     @Override
@@ -691,6 +694,8 @@ public final class BouncyFactory
                 return getBCPoly1305Mac(pMacSpec.getKeySpec());
             case SKEIN:
                 return getBCSkeinMac(pMacSpec.getDigestSpec());
+            case BLAKE:
+                return getBCBlakeMac(pMacSpec.getDigestSpec());
             case KALYNA:
                 return getBCKalynaMac(pMacSpec.getKeySpec());
             case KUPYNA:
@@ -771,6 +776,15 @@ public final class BouncyFactory
      */
     private static Mac getBCKupynaMac(final GordianDigestSpec pSpec) {
         return new DSTU7564Mac(pSpec.getDigestLength().getLength());
+    }
+
+    /**
+     * Create the BouncyCastle blakeMac.
+     * @param pSpec the digestSpec
+     * @return the MAC
+     */
+    private static Mac getBCBlakeMac(final GordianDigestSpec pSpec) {
+        return new BouncyBlake2bMac(pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -872,13 +886,17 @@ public final class BouncyFactory
             case RC2:
                 return new RC2Engine();
             case RC5:
-                return new RC532Engine();
+                return GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
+                                                                               ? new RC564Engine()
+                                                                               : new RC532Engine();
             case CAST5:
                 return new CAST5Engine();
             case DESEDE:
                 return new DESedeEngine();
             case GOST:
                 return new GOST28147Engine();
+            case SHACAL2:
+                return new Shacal2Engine();
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec));
         }
@@ -973,7 +991,7 @@ public final class BouncyFactory
      */
     private static CipherKeyGenerator getBCKeyGenerator(final Object pKeyType) {
         if (pKeyType instanceof GordianMacSpec
-            && ((GordianMacSpec) pKeyType).getMacType() == GordianMacType.POLY1305) {
+            && GordianMacType.POLY1305.equals(((GordianMacSpec) pKeyType).getMacType())) {
             return new Poly1305KeyGenerator();
         }
         return GordianSymKeyType.DESEDE.equals(pKeyType)
@@ -1136,7 +1154,7 @@ public final class BouncyFactory
      * @return the predicate
      */
     private static Predicate<GordianSymKeyType> generateKeySetSymKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted) && p.isLengthValid(GordianLength.LEN_128);
+        return p -> p.validForRestriction(pRestricted) && p.getDefaultLength().equals(GordianLength.LEN_128);
     }
 
     /**

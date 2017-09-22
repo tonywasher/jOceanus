@@ -44,6 +44,11 @@ public abstract class GordianFactory {
     public static final int HASH_PRIME = 37;
 
     /**
+     * RC5 rounds.
+     */
+    public static final int RC5_ROUNDS = 12;
+
+    /**
      * Restricted key length.
      */
     private static final int SMALL_KEYLEN = GordianLength.LEN_128.getLength();
@@ -737,6 +742,9 @@ public abstract class GordianFactory {
             case SKEIN:
                 return supportedDigestSpecs().test(mySpec)
                        && GordianDigestType.SKEIN.equals(mySpec.getDigestType());
+            case BLAKE:
+                return supportedDigestSpecs().test(mySpec)
+                       && GordianDigestType.BLAKE.equals(mySpec.getDigestType());
             case KUPYNA:
                 return supportedDigestSpecs().test(mySpec)
                        && GordianDigestType.KUPYNA.equals(mySpec.getDigestType());

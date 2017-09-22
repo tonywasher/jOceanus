@@ -28,12 +28,15 @@ import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.params.RC5Parameters;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -104,7 +107,7 @@ public final class BouncySymKeyCipher
         final boolean useIV = needsIV();
 
         /* Initialise the cipher */
-        CipherParameters myParms = new KeyParameter(myKey.getKey());
+        CipherParameters myParms = generateParameters(myKey);
         if (useIV) {
             myParms = new ParametersWithIV(myParms, pIV);
         }
@@ -115,6 +118,22 @@ public final class BouncySymKeyCipher
         setInitVector(useIV
                             ? pIV
                             : null);
+    }
+
+    /**
+     * Generate CipherParameters.
+     * @param pKey the key
+     * @return the parameters
+     */
+    static CipherParameters generateParameters(final BouncyKey<GordianSymKeySpec> pKey) {
+        final GordianSymKeySpec myKeySpec = pKey.getKeyType();
+        if (myKeySpec != null) {
+            final GordianSymKeyType myType = myKeySpec.getSymKeyType();
+            if (GordianSymKeyType.RC5.equals(myType)) {
+                return new RC5Parameters(pKey.getKey(), GordianFactory.RC5_ROUNDS);
+            }
+        }
+        return new KeyParameter(pKey.getKey());
     }
 
     @Override

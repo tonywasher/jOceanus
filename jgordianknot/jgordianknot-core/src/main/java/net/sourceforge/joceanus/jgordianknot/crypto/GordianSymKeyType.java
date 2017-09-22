@@ -134,7 +134,12 @@ public enum GordianSymKeyType {
     /**
      * GOST.
      */
-    GOST(GordianLength.LEN_64);
+    GOST(GordianLength.LEN_64),
+
+    /**
+     * SHACAL2.
+     */
+    SHACAL2(GordianLength.LEN_512);
 
     /**
      * The Supported lengths.

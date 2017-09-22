@@ -52,6 +52,11 @@ public enum GordianMacType {
     SKEIN,
 
     /**
+     * Blake2B.
+     */
+    BLAKE,
+
+    /**
      * Kalyna.
      */
     KALYNA,

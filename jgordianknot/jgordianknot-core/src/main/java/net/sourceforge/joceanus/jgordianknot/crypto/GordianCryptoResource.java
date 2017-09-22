@@ -154,9 +154,14 @@ public enum GordianCryptoResource implements TethysResourceId {
     MAC_KALYNA("mac.KALYNA"),
 
     /**
-     * MAC SKEIN.
+     * MAC KUPYNA.
      */
     MAC_KUPYNA("mac.KUPYNA"),
+
+    /**
+     * MAC BLAKE.
+     */
+    MAC_BLAKE("mac.BLAKE"),
 
     /**
      * MAC VMPC.
@@ -272,6 +277,11 @@ public enum GordianCryptoResource implements TethysResourceId {
      * SymKey DESede.
      */
     SYMKEY_DESEDE("symKey.DESede"),
+
+    /**
+     * SymKey SHACAL2.
+     */
+    SYMKEY_SHACAL2("symKey.SHACAL2"),
 
     /**
      * StreamKey XSALSA20.
@@ -458,6 +468,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianMacType.SKEIN, MAC_SKEIN);
         myMap.put(GordianMacType.KALYNA, MAC_KALYNA);
         myMap.put(GordianMacType.KUPYNA, MAC_KUPYNA);
+        myMap.put(GordianMacType.BLAKE, MAC_BLAKE);
         myMap.put(GordianMacType.VMPC, MAC_VMPC);
         return myMap;
     }
@@ -500,6 +511,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.DESEDE, SYMKEY_DESEDE);
         myMap.put(GordianSymKeyType.GOST, SYMKEY_GOST);
         myMap.put(GordianSymKeyType.KALYNA, SYMKEY_KALYNA);
+        myMap.put(GordianSymKeyType.SHACAL2, SYMKEY_SHACAL2);
         return myMap;
     }
 

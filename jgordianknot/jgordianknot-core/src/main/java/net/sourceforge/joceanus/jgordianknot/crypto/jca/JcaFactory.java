@@ -170,7 +170,7 @@ public final class JcaFactory
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
         PREDICATE_HMACDIGESTS = generateHMacDigestPredicate();
-        PREDICATE_MACS = p -> p != GordianMacType.CMAC && p != GordianMacType.KALYNA;
+        PREDICATE_MACS = p -> p != GordianMacType.CMAC && p != GordianMacType.KALYNA && p != GordianMacType.BLAKE;
 
         /* Calculate max cipher Steps */
         MAX_CIPHER_STEPS = new int[2];
@@ -783,6 +783,7 @@ public final class JcaFactory
             case CAST5:
             case BLOWFISH:
             case DESEDE:
+            case SHACAL2:
                 return pKeySpec.getSymKeyType().name();
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec));
