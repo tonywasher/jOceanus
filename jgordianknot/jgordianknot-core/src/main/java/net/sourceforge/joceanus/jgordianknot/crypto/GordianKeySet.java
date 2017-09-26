@@ -123,12 +123,20 @@ public final class GordianKeySet {
     }
 
     /**
+     * Obtain keyWrapExpansion for this keySet.
+     * @return the keyWrap expansion
+     */
+    public int getKeyWrapExpansion() {
+        return getKeyWrapExpansion(theFactory.getNumCipherSteps());
+    }
+
+    /**
      * Obtain keyWrapExpansion for # of steps.
      * @param pNumSteps the number of wrap steps
      * @return the keyWrap expansion
      */
     public static int getKeyWrapExpansion(final int pNumSteps) {
-        final int myExpansion = (BLOCKLEN * pNumSteps) >> 1;
+        final int myExpansion = GordianWrapCipher.getKeyWrapExpansion(GordianLength.LEN_128) * pNumSteps;
         return myExpansion + getEncryptionOverhead();
     }
 

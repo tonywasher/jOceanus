@@ -80,7 +80,7 @@
     <JSONVersion>20170516</JSONVersion>
     <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
     <MySQLVersion>5.1.44</MySQLVersion>
-    <PostGreSQLVersion>42.1.4.jre7</PostGreSQLVersion>
+    <PostGreSQLVersion>42.1.4</PostGreSQLVersion>
     <ApachePOIVersion>3.17</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>

@@ -33,9 +33,8 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 /**
  * GordianKnot base for WrapCipher.
  * <p>
- * This class uses a variant of RFC5649 to wrap keyData. In particular it uses the cipher in CBC
- * mode with no padding, and hence use an initVector that is derived via the key. It has also been
- * modified so that it does not require a 128-block cipher.
+ * This class uses a variant of RFC5649 to wrap keyData. It has been modified so that it does not
+ * require a 128-block cipher.
  */
 public class GordianWrapCipher {
     /**
@@ -198,9 +197,13 @@ public class GordianWrapCipher {
         /* Handle 64-bit ciphers */
         if (myCheckLen == 0) {
             myCheckLen = theBlockLen;
-            myHdrLen += theBlockLen;
+            myHdrLen += Integer.BYTES;
             myNumBlocks++;
         }
+
+        /* Add a block for random data */
+        myNumBlocks++;
+        myHdrLen += theBlockLen;
 
         /* Allocate buffer for data and encryption */
         final int myBufferLen = theBlockLen << 1;
@@ -208,13 +211,16 @@ public class GordianWrapCipher {
                                        + myHdrLen];
         final byte[] myBuffer = new byte[myBufferLen];
         final byte[] myResult = new byte[myBufferLen];
+        final byte[] myRandom = new byte[theBlockLen];
 
         /* Build the initial block */
         for (int i = 0; i < myCheckLen; i++) {
             myData[i] = getIntegrityValue(i);
         }
         System.arraycopy(myByteLen, 0, myData, myCheckLen, Integer.BYTES);
-        System.arraycopy(pBytesToSecure, 0, myData, myCheckLen + Integer.BYTES, myDataLen);
+        theFactory.getRandom().nextBytes(myRandom);
+        System.arraycopy(myRandom, 0, myData, myCheckLen + Integer.BYTES, theBlockLen);
+        System.arraycopy(pBytesToSecure, 0, myData, myHdrLen, myDataLen);
 
         /* Initialise the cipher */
         theCipher.initCipher(pKey, null, true);
@@ -309,6 +315,9 @@ public class GordianWrapCipher {
             myDataLen -= theBlockLen;
         }
 
+        /* Adjust for random data */
+        myDataLen -= theBlockLen;
+
         /* Check initialisation value */
         boolean isCheckOK = true;
         for (int myInit = 0; myInit < myCheckLen; myInit++) {
@@ -340,8 +349,8 @@ public class GordianWrapCipher {
 
         /* Return unwrapped data */
         if (isCheckOK) {
-            return Arrays.copyOfRange(myData, myCheckLen + Integer.BYTES, myData.length
-                                                                          - myZeroLen);
+            return Arrays.copyOfRange(myData, myCheckLen + Integer.BYTES + theBlockLen, myData.length
+                                                                                        - myZeroLen);
         }
 
         /* Reject if checks fail */
@@ -357,5 +366,26 @@ public class GordianWrapCipher {
         return (pIndex + 1) % INTEGRITY_MODULO < 2
                                                    ? INTEGRITY_VALUE1
                                                    : INTEGRITY_VALUE2;
+    }
+
+    /**
+     * Obtain keyWrapExpansion for this cipher.
+     * @return the keyWrap expansion
+     */
+    public int getKeyWrapExpansion() {
+        return getKeyWrapExpansion(getKeySpec().getBlockLength());
+    }
+
+    /**
+     * Obtain keyWrapExpansion for a blockLen.
+     * @param pBlockLen the number of bits in the blockLen
+     * @return the keyWrap expansion
+     */
+    public static int getKeyWrapExpansion(final GordianLength pBlockLen) {
+        final int myBlockLen = pBlockLen.getByteLength() >> 1;
+        final int myNumBlocks = 1 + myBlockLen <= Integer.BYTES
+                                                                ? 2
+                                                                : 1;
+        return myNumBlocks * myBlockLen;
     }
 }
