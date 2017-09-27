@@ -28,15 +28,14 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
@@ -64,46 +63,46 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * The Security Bucket class.
  */
 public final class SecurityBucket
-        implements MetisDataContents, Comparable<SecurityBucket>, MetisOrderedIdItem<Integer> {
+        implements MetisDataFieldItem, Comparable<SecurityBucket>, MetisIndexedItem {
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.SECURITY_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SecurityBucket.class);
 
     /**
      * Analysis Field Id.
      */
-    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * SecurityHolding Field Id.
      */
-    private static final MetisField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
+    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
 
     /**
      * Currency Field Id.
      */
-    private static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
+    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * Security Type Field Id.
      */
-    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
 
     /**
      * Base Field Id.
      */
-    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, SecurityAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
+    private static final Map<MetisDataField, SecurityAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
 
     /**
      * The analysis.
@@ -278,12 +277,12 @@ public final class SecurityBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -385,7 +384,7 @@ public final class SecurityBucket
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theSecurity.getId();
     }
 
@@ -538,7 +537,7 @@ public final class SecurityBucket
      * @param pField the field
      * @return the class
      */
-    private static SecurityAttribute getClassForField(final MetisField pField) {
+    private static SecurityAttribute getClassForField(final MetisDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -974,22 +973,17 @@ public final class SecurityBucket
      * SecurityBucket list class.
      */
     public static class SecurityBucketList
-            implements MetisDataContents, MetisDataList<SecurityBucket> {
+            implements MetisDataFieldItem, MetisDataList<SecurityBucket> {
 
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.SECURITY_LIST.getValue());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SecurityBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * The analysis.
@@ -999,7 +993,7 @@ public final class SecurityBucket
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, SecurityBucket> theList;
+        private final MetisIndexedList<SecurityBucket> theList;
 
         /**
          * Construct a top-level List.
@@ -1007,7 +1001,7 @@ public final class SecurityBucket
          */
         protected SecurityBucketList(final Analysis pAnalysis) {
             theAnalysis = pAnalysis;
-            theList = new MetisOrderedIdList<>(SecurityBucket.class);
+            theList = new MetisIndexedList<>();
         }
 
         /**
@@ -1034,7 +1028,7 @@ public final class SecurityBucket
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -1065,7 +1059,7 @@ public final class SecurityBucket
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -1094,31 +1088,28 @@ public final class SecurityBucket
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public List<SecurityBucket> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -1132,7 +1123,7 @@ public final class SecurityBucket
          */
         public SecurityBucket findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -1151,7 +1142,7 @@ public final class SecurityBucket
                 myItem = new SecurityBucket(theAnalysis, pHolding);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */

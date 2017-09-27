@@ -132,7 +132,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisDataFieldSet getBaseFields() {
+    protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -194,6 +194,16 @@ public class MetisIndexedList<T extends MetisIndexedItem>
         theList.add(pItem);
     }
 
+    @Override
+    public boolean add(final T pItem) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void add(final int pPosition, final T pItem) {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Remove item from the list.
      * @param pItem the item to remove
@@ -208,6 +218,11 @@ public class MetisIndexedList<T extends MetisIndexedItem>
             theIdMap.remove(myId);
             theList.remove(pItem);
         }
+    }
+
+    @Override
+    public boolean remove(final Object pItem) {
+        throw new UnsupportedOperationException();
     }
 
     /**

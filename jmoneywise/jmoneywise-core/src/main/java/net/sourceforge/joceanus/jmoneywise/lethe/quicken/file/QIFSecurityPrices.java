@@ -22,11 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 
@@ -49,7 +50,7 @@ public class QIFSecurityPrices
     /**
      * The Price List.
      */
-    private final MetisOrderedList<QIFPrice> thePrices;
+    private final List<QIFPrice> thePrices;
 
     /**
      * Constructor.
@@ -58,12 +59,7 @@ public class QIFSecurityPrices
      */
     protected QIFSecurityPrices(final QIFFile pFile,
                                 final Security pSecurity) {
-        /* Store parameters */
-        theFile = pFile;
-        theSecurity = new QIFSecurity(pFile, pSecurity);
-
-        /* Create the list */
-        thePrices = new MetisOrderedList<>(QIFPrice.class);
+        this(pFile, new QIFSecurity(pFile, pSecurity));
     }
 
     /**
@@ -78,7 +74,7 @@ public class QIFSecurityPrices
         theSecurity = pSecurity;
 
         /* Create the list */
-        thePrices = new MetisOrderedList<>(QIFPrice.class);
+        thePrices = new ArrayList<>();
     }
 
     /**
@@ -106,7 +102,7 @@ public class QIFSecurityPrices
         final QIFPrice myPrice = new QIFPrice(theFile, theSecurity, pPrice);
 
         /* Add to the list */
-        thePrices.append(myPrice);
+        thePrices.add(myPrice);
     }
 
     /**
@@ -115,14 +111,14 @@ public class QIFSecurityPrices
      */
     protected void addPrice(final QIFPrice pPrice) {
         /* Add to the list */
-        thePrices.append(pPrice);
+        thePrices.add(pPrice);
     }
 
     /**
      * Sort the prices.
      */
     protected void sortPrices() {
-        thePrices.reSort();
+        Collections.sort(thePrices);
     }
 
     /**

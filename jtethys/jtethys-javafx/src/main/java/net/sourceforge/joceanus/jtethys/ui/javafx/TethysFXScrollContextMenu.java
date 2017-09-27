@@ -373,11 +373,14 @@ public class TethysFXScrollContextMenu<T>
         /* determine the size of the menu */
         determineSize();
 
-        /* determine location to display */
-        final Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+        /* If we have elements */
+        if (theMenuSize != null) {
+            /* determine location to display */
+            final Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
-        /* Show menu */
-        showMenuAtLocation(myLocation);
+            /* Show menu */
+            showMenuAtLocation(myLocation);
+        }
     }
 
     /**
@@ -395,12 +398,15 @@ public class TethysFXScrollContextMenu<T>
         /* determine the size of the menu */
         determineSize();
 
-        /* determine location to display */
-        final Point2D myRequest = new Point2D(pX, pY);
-        final Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
+        /* If we have elements */
+        if (theMenuSize != null) {
+            /* determine location to display */
+            final Point2D myRequest = new Point2D(pX, pY);
+            final Point2D myLocation = TethysFXGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
 
-        /* Show menu */
-        showMenuAtLocation(myLocation);
+            /* Show menu */
+            showMenuAtLocation(myLocation);
+        }
     }
 
     /**
@@ -777,9 +783,13 @@ public class TethysFXScrollContextMenu<T>
      * Determine size of menu.
      */
     private void determineSize() {
-        /* If we need to rebuild the menu */
-        if (needReBuild
-            && !theMenuItems.isEmpty()) {
+        /* NoOp if we do not need to reBuild the menu */
+        if (!needReBuild) {
+            return;
+        }
+
+        /* If we have items */
+        if (!theMenuItems.isEmpty()) {
             /* Access the number of entries and the scroll count */
             final int myCount = theMenuItems.size();
             final int myScroll = Math.min(theMaxDisplayItems, myCount);
@@ -864,6 +874,10 @@ public class TethysFXScrollContextMenu<T>
                 /* Fix the width */
                 theStage.setMinWidth(myWidth);
             }
+
+            /* else reset the menuSize */
+        } else {
+            theMenuSize = null;
         }
 
         /* Reset flag */

@@ -22,21 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
@@ -56,36 +56,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Portfolio Bucket.
  */
 public final class PortfolioBucket
-        implements MetisDataContents, Comparable<PortfolioBucket>, MetisOrderedIdItem<Integer> {
+        implements MetisDataFieldItem, Comparable<PortfolioBucket>, MetisIndexedItem {
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PORTFOLIO_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PortfolioBucket.class);
 
     /**
      * Portfolio Field Id.
      */
-    private static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
+    private static final MetisDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
 
     /**
      * CashBucket Field Id.
      */
-    private static final MetisField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemName());
+    private static final MetisDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemName());
 
     /**
      * Securities Field Id.
      */
-    private static final MetisField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
+    private static final MetisDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListName());
 
     /**
      * Base Field Id.
      */
-    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, SecurityAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
+    private static final Map<MetisDataField, SecurityAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
 
     /**
      * Totals bucket name.
@@ -251,12 +251,12 @@ public final class PortfolioBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_PORTFOLIO.equals(pField)) {
             return thePortfolio;
         }
@@ -322,7 +322,7 @@ public final class PortfolioBucket
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return thePortfolio.getId();
     }
 
@@ -413,7 +413,7 @@ public final class PortfolioBucket
      * @param pField the field
      * @return the class
      */
-    private static SecurityAttribute getClassForField(final MetisField pField) {
+    private static SecurityAttribute getClassForField(final MetisDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -712,26 +712,21 @@ public final class PortfolioBucket
      * PortfolioBucket list class.
      */
     public static final class PortfolioBucketList
-            implements MetisDataContents, MetisDataList<PortfolioBucket> {
+            implements MetisDataFieldItem, MetisDataList<PortfolioBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PORTFOLIO_LIST.getValue());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PortfolioBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
         /**
          * The analysis.
@@ -741,7 +736,7 @@ public final class PortfolioBucket
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, PortfolioBucket> theList;
+        private final MetisIndexedList<PortfolioBucket> theList;
 
         /**
          * The totals.
@@ -766,7 +761,7 @@ public final class PortfolioBucket
             /* Initialise class */
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
-            theList = new MetisOrderedIdList<>(PortfolioBucket.class);
+            theList = new MetisIndexedList<>();
         }
 
         /**
@@ -790,7 +785,7 @@ public final class PortfolioBucket
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -818,7 +813,7 @@ public final class PortfolioBucket
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -846,31 +841,28 @@ public final class PortfolioBucket
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public List<PortfolioBucket> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -911,7 +903,7 @@ public final class PortfolioBucket
          */
         public PortfolioBucket findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -929,7 +921,7 @@ public final class PortfolioBucket
                 myItem = new PortfolioBucket(theAnalysis, pPortfolio);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */
@@ -1000,7 +992,7 @@ public final class PortfolioBucket
             /* Return the first portfolio in the list if it exists */
             return isEmpty()
                              ? null
-                             : theList.get(0);
+                             : theList.getUnderlyingList().get(0);
         }
 
         /**
@@ -1089,9 +1081,15 @@ public final class PortfolioBucket
                     }
                 }
 
+                /* Sort the list */
+                Collections.sort(myPortfolio.getSecurities().getUnderlyingList());
+
                 /* Calculate delta for the portfolio */
                 myPortfolio.calculateDelta();
             }
+
+            /* Sort the list */
+            Collections.sort(theList.getUnderlyingList());
 
             /* Calculate delta for the totals */
             theTotals.calculateDelta();

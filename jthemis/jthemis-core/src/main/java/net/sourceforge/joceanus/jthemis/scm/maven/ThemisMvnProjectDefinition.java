@@ -46,7 +46,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId.ProjectList;
 
 /**
  * Represents the definition of a project.
@@ -87,7 +86,7 @@ public class ThemisMvnProjectDefinition
     /**
      * Dependency identities.
      */
-    private final ProjectList theDependencies;
+    private final List<ThemisMvnProjectId> theDependencies;
 
     /**
      * SubModules.
@@ -110,7 +109,7 @@ public class ThemisMvnProjectDefinition
             theDefinition = new ThemisMvnProjectId(theModel);
 
             /* Create the dependency list */
-            theDependencies = new ProjectList();
+            theDependencies = new ArrayList<>();
             parseDependencies();
 
             /* Create the submodule list */
@@ -161,7 +160,7 @@ public class ThemisMvnProjectDefinition
      * Get Dependencies.
      * @return the project dependencies
      */
-    public ProjectList getDependencies() {
+    public List<ThemisMvnProjectId> getDependencies() {
         return theDependencies;
     }
 

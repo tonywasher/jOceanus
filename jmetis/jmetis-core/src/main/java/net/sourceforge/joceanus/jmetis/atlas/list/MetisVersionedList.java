@@ -57,7 +57,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class, MetisIndexedList.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class, MetisIndexedList.getBaseFieldSet());
 
     /**
      * Class Field Id.

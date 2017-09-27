@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory;
@@ -41,12 +41,12 @@ public final class CashBucket
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.CASH_NAME.getValue(), AccountBucket.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CashBucket.class, AccountBucket.getBaseFieldSet());
 
     /**
      * Cash Category Field Id.
      */
-    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemName());
 
     /**
      * The cash category.
@@ -114,12 +114,12 @@ public final class CashBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
@@ -142,7 +142,7 @@ public final class CashBucket
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.CASH_LIST.getValue(), AccountBucketList.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CashBucketList.class, AccountBucketList.getBaseFieldSet());
 
         /**
          * Construct a top-level List.
@@ -150,7 +150,7 @@ public final class CashBucket
          */
         protected CashBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(CashBucket.class, pAnalysis);
+            super(pAnalysis);
         }
 
         /**
@@ -200,7 +200,7 @@ public final class CashBucket
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 

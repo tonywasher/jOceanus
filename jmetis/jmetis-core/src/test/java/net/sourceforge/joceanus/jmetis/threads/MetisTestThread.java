@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jmetis.threads.MetisThread;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
-import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import java.util.concurrent.TimeUnit;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -76,7 +75,7 @@ public class MetisTestThread<N, I>
             /* Loop required times */
             for (int i = 0; i < pNumSteps; i++) {
                 /* Sleep awhile */
-                Thread.sleep(10);
+                TimeUnit.MILLISECONDS.sleep(10);
 
                 /* Set status */
                 pManager.setNextStep();

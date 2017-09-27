@@ -23,21 +23,21 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
  * @param <T> the account data type
  */
 public abstract class AccountBucket<T extends AssetBase<T>>
-        implements MetisDataContents, Comparable<AccountBucket<T>>, MetisOrderedIdItem<Integer> {
+        implements MetisDataFieldItem, Comparable<AccountBucket<T>>, MetisIndexedItem {
     /**
      * Default currency.
      */
@@ -66,32 +66,32 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     /**
      * Local Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(AccountBucket.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AccountBucket.class);
 
     /**
      * Analysis Field Id.
      */
-    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Account Field Id.
      */
-    private static final MetisField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
+    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
 
     /**
      * Base Field Id.
      */
-    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, AccountAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    private static final Map<MetisDataField, AccountAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
 
     /**
      * Totals bucket name.
@@ -234,8 +234,16 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         theBaseValues = theHistory.getBaseValues();
     }
 
+    /**
+     * Obtain the data fields.
+     * @return the data fields
+     */
+    protected static MetisDataFieldSet getBaseFieldSet() {
+        return FIELD_DEFS;
+    }
+
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -332,7 +340,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theAccount.getId();
     }
 
@@ -465,7 +473,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param pField the field
      * @return the class
      */
-    private static AccountAttribute getClassForField(final MetisField pField) {
+    private static AccountAttribute getClassForField(final MetisDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -890,21 +898,16 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param <T> the account data type
      */
     public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T>>
-            implements MetisDataContents, MetisDataList<B> {
+            implements MetisDataFieldItem, MetisDataList<B> {
         /**
          * Local Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(AccountBucketList.class.getSimpleName());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AccountBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * The analysis.
@@ -914,35 +917,38 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, B> theList;
+        private final MetisIndexedList<B> theList;
 
         /**
          * Construct a top-level List.
-         * @param pClass the bucket class
          * @param pAnalysis the analysis
          */
-        protected AccountBucketList(final Class<B> pClass,
-                                    final Analysis pAnalysis) {
+        protected AccountBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
-            theList = new MetisOrderedIdList<>(pClass);
+            theList = new MetisIndexedList<>();
         }
 
         @Override
         public List<B> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
+        }
+
+        /**
+         * Obtain the data fields.
+         * @return the data fields
+         */
+        protected static MetisDataFieldSet getBaseFieldSet() {
+            return FIELD_DEFS;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -973,7 +979,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* add to list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -1004,7 +1010,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -1034,9 +1040,10 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 final B myBucket = newBucket(myCurr, pRange);
 
                 /* If the bucket is non-idle or active */
-                if (myBucket.isActive() || !myBucket.isIdle()) {
+                if (myBucket.isActive()
+                    || !myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -1048,7 +1055,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          */
         public B findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -1075,7 +1082,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 myItem = newBucket(pAccount);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */
@@ -1088,6 +1095,13 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * @return the new bucket
          */
         protected abstract B newBucket(T pAccount);
+
+        /**
+         * SortBuckets.
+         */
+        protected void sortBuckets() {
+            Collections.sort(theList.getUnderlyingList());
+        }
 
         /**
          * Mark active accounts.

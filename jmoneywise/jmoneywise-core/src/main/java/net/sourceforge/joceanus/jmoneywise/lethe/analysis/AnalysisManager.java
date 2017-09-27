@@ -22,18 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
@@ -44,6 +45,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PayeeBucket.PayeeBucke
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket.PortfolioBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionCategoryBucket.TransactionCategoryBucketList;
+import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket.TransactionTagBucketList;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -52,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Analysis manager.
  */
 public class AnalysisManager
-        implements MetisDataContents, MetisDataMap<TethysDateRange, Analysis> {
+        implements MetisDataFieldItem, MetisDataMap<TethysDateRange, Analysis> {
     /**
      * Logger.
      */
@@ -61,12 +63,12 @@ public class AnalysisManager
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisManager.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AnalysisManager.class);
 
     /**
      * BaseAnalysis Field Id.
      */
-    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * The analysis map.
@@ -101,12 +103,12 @@ public class AnalysisManager
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
@@ -266,6 +268,10 @@ public class AnalysisManager
         /* Analyse the TaxBasis */
         final TaxBasisBucketList myTaxBasis = pAnalysis.getTaxBasis();
         myTaxBasis.produceTotals();
+
+        /* Sort the transaction Tag list */
+        final TransactionTagBucketList myTags = pAnalysis.getTransactionTags();
+        Collections.sort(myTags.getUnderlyingList());
     }
 
     /**

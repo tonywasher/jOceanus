@@ -22,17 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
@@ -48,13 +48,12 @@ public final class DepositCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.DEPOSITCATEGORY_NAME.getValue(),
-            AccountCategoryBucket.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DepositCategoryBucket.class, AccountCategoryBucket.getBaseFieldSet());
 
     /**
      * Deposit Category Field Id.
      */
-    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
 
     /**
      * The deposit category.
@@ -78,12 +77,12 @@ public final class DepositCategoryBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
@@ -92,13 +91,13 @@ public final class DepositCategoryBucket
 
     @Override
     public String getName() {
-        return (theCategory == null)
-                                     ? NAME_TOTALS
-                                     : theCategory.getName();
+        return theCategory == null
+                                   ? NAME_TOTALS
+                                   : theCategory.getName();
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theCategory.getId();
     }
 
@@ -149,26 +148,21 @@ public final class DepositCategoryBucket
      * DepositCategoryBucket list class.
      */
     public static final class DepositCategoryBucketList
-            implements MetisDataContents, MetisDataList<DepositCategoryBucket> {
+            implements MetisDataFieldItem, MetisDataList<DepositCategoryBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.DEPOSITCATEGORY_LIST.getValue());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DepositCategoryBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
+        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
 
         /**
          * The analysis.
@@ -178,7 +172,7 @@ public final class DepositCategoryBucket
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, DepositCategoryBucket> theList;
+        private final MetisIndexedList<DepositCategoryBucket> theList;
 
         /**
          * The currency.
@@ -204,29 +198,26 @@ public final class DepositCategoryBucket
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
-            theList = new MetisOrderedIdList<>(DepositCategoryBucket.class);
+            theList = new MetisIndexedList<>();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public List<DepositCategoryBucket> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -243,7 +234,7 @@ public final class DepositCategoryBucket
          */
         public DepositCategoryBucket findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -286,7 +277,7 @@ public final class DepositCategoryBucket
                 myItem = new DepositCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */
@@ -300,6 +291,9 @@ public final class DepositCategoryBucket
          */
         protected void analyseDeposits(final MarketAnalysis pMarket,
                                        final DepositBucketList pDeposits) {
+            /* Sort the deposits */
+            Collections.sort(pDeposits.getUnderlyingList());
+
             /* Loop through the buckets */
             final TethysDateRange myRange = theAnalysis.getDateRange();
             final Iterator<DepositBucket> myIterator = pDeposits.iterator();
@@ -348,7 +342,7 @@ public final class DepositCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            final MetisOrderedIdList<Integer, DepositCategoryBucket> myTotals = new MetisOrderedIdList<>(DepositCategoryBucket.class);
+            final MetisIndexedList<DepositCategoryBucket> myTotals = new MetisIndexedList<>();
 
             /* Loop through the buckets */
             Iterator<DepositCategoryBucket> myIterator = iterator();
@@ -368,13 +362,13 @@ public final class DepositCategoryBucket
                 /* If the bucket does not exist */
                 if (myTotal == null) {
                     /* Look for bucket in the new list */
-                    myTotal = myTotals.findItemById(myParent.getId());
+                    myTotal = myTotals.getItemById(myParent.getId());
 
                     /* If the bucket is completely new */
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
                         myTotal = new DepositCategoryBucket(theCurrency, myParent);
-                        myTotals.add(myTotal);
+                        myTotals.addToList(myTotal);
                     }
                 }
 
@@ -395,8 +389,11 @@ public final class DepositCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                theList.add(myCurr);
+                theList.addToList(myCurr);
             }
+
+            /* Sort the list */
+            Collections.sort(theList.getUnderlyingList());
 
             /* Calculate delta for the totals */
             theTotals.calculateDelta();

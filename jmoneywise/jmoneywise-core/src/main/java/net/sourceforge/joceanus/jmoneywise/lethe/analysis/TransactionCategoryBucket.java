@@ -22,20 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -60,41 +60,41 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Transaction Category Bucket.
  */
 public final class TransactionCategoryBucket
-        implements MetisDataContents, Comparable<TransactionCategoryBucket>, MetisOrderedIdItem<Integer> {
+        implements MetisDataFieldItem, Comparable<TransactionCategoryBucket>, MetisIndexedItem {
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TRANSCATEGORY_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionCategoryBucket.class);
 
     /**
      * Analysis Field Id.
      */
-    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Transaction Category Field Id.
      */
-    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getItemName());
 
     /**
      * Transaction Type Field Id.
      */
-    private static final MetisField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTYPE.getItemName());
+    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTYPE.getItemName());
 
     /**
      * Base Field Id.
      */
-    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, TransactionAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, TransactionAttribute.class);
+    private static final Map<MetisDataField, TransactionAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, TransactionAttribute.class);
 
     /**
      * Totals bucket name.
@@ -203,12 +203,12 @@ public final class TransactionCategoryBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -263,7 +263,7 @@ public final class TransactionCategoryBucket
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theCategory.getId();
     }
 
@@ -393,7 +393,7 @@ public final class TransactionCategoryBucket
      * @param pField the field
      * @return the class
      */
-    private static TransactionAttribute getClassForField(final MetisField pField) {
+    private static TransactionAttribute getClassForField(final MetisDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -773,27 +773,22 @@ public final class TransactionCategoryBucket
      * TransactionCategoryBucket list class.
      */
     public static final class TransactionCategoryBucketList
-            implements MetisDataContents, MetisDataList<TransactionCategoryBucket> {
+            implements MetisDataFieldItem, MetisDataList<TransactionCategoryBucket> {
 
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TRANSCATEGORY_LIST.getValue());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionCategoryBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
         /**
          * The analysis.
@@ -803,7 +798,7 @@ public final class TransactionCategoryBucket
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, TransactionCategoryBucket> theList;
+        private final MetisIndexedList<TransactionCategoryBucket> theList;
 
         /**
          * The data.
@@ -869,7 +864,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
+            theList = new MetisIndexedList<>();
 
             /* Access taxBasis list */
             theTaxBasis = theAnalysis.getTaxBasis();
@@ -899,7 +894,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
+            theList = new MetisIndexedList<>();
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -923,7 +918,7 @@ public final class TransactionCategoryBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    theList.add(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -941,7 +936,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
+            theList = new MetisIndexedList<>();
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -966,31 +961,28 @@ public final class TransactionCategoryBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
-                    theList.add(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public List<TransactionCategoryBucket> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -1007,7 +999,7 @@ public final class TransactionCategoryBucket
          */
         public TransactionCategoryBucket findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -1047,7 +1039,7 @@ public final class TransactionCategoryBucket
                 myItem = new TransactionCategoryBucket(theAnalysis, pCategory);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */
@@ -1088,7 +1080,7 @@ public final class TransactionCategoryBucket
             /* Return the first category in the list if it exists */
             return isEmpty()
                              ? null
-                             : theList.get(0);
+                             : theList.getUnderlyingList().get(0);
         }
 
         /**
@@ -1210,7 +1202,7 @@ public final class TransactionCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets */
-            final MetisOrderedIdList<Integer, TransactionCategoryBucket> myTotals = new MetisOrderedIdList<>(TransactionCategoryBucket.class);
+            final MetisIndexedList<TransactionCategoryBucket> myTotals = new MetisIndexedList<>();
 
             /* Loop through the buckets */
             Iterator<TransactionCategoryBucket> myIterator = iterator();
@@ -1230,13 +1222,13 @@ public final class TransactionCategoryBucket
                 /* If the bucket does not exist */
                 if (myTotal == null) {
                     /* Look for bucket in the new list */
-                    myTotal = myTotals.findItemById(myParent.getId());
+                    myTotal = myTotals.getItemById(myParent.getId());
 
                     /* If the bucket is completely new */
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
                         myTotal = new TransactionCategoryBucket(theAnalysis, myParent);
-                        myTotals.add(myTotal);
+                        myTotals.addToList(myTotal);
                     }
                 }
 
@@ -1254,8 +1246,11 @@ public final class TransactionCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                theList.add(myCurr);
+                theList.addToList(myCurr);
             }
+
+            /* Sort the list */
+            Collections.sort(theList.getUnderlyingList());
 
             /* Calculate delta for the totals */
             if (theTotals != null) {

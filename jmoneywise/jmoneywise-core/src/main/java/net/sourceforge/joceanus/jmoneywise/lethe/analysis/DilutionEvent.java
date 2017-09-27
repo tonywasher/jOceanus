@@ -23,20 +23,22 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisNestedHashMap;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
@@ -53,36 +55,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
  * @author Tony Washer
  */
 public final class DilutionEvent
-        implements MetisOrderedIdItem<Integer>, MetisDataContents, Comparable<DilutionEvent> {
+        implements MetisIndexedItem, MetisDataFieldItem, Comparable<DilutionEvent> {
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.DILUTION_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DilutionEvent.class);
 
     /**
      * Id Field Id.
      */
-    private static final MetisField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
 
     /**
      * Security Field Id.
      */
-    private static final MetisField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
+    private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Date Field Id.
      */
-    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Dilution Field Id.
      */
-    private static final MetisField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(StaticDataResource.TRANSINFO_DILUTION.getValue());
+    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(StaticDataResource.TRANSINFO_DILUTION.getValue());
 
     /**
      * Transaction Field Id.
      */
-    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * The Id.
@@ -131,17 +133,17 @@ public final class DilutionEvent
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFields().getName();
+        return getDataFieldSet().getName();
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_ID.equals(pField)) {
             return theId;
         }
@@ -193,7 +195,7 @@ public final class DilutionEvent
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theId;
     }
 
@@ -255,32 +257,26 @@ public final class DilutionEvent
      * List of dilutions for a security.
      */
     public static final class DilutionEventList
-            extends ArrayList<DilutionEvent>
-            implements MetisDataContents {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 6952350898773468201L;
-
+            implements MetisDataFieldItem, MetisDataList<DilutionEvent> {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.DILUTION_LIST.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DilutionEventList.class);
 
         /**
          * Security Field Id.
          */
-        private static final MetisField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getFieldName());
+        private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getFieldName());
 
         /**
-         * Size Field Id.
+         * The list.
          */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private final ArrayList<DilutionEvent> theList;
 
         /**
          * Security.
          */
-        private final transient Security theSecurity;
+        private final Security theSecurity;
 
         /**
          * Constructor.
@@ -288,30 +284,28 @@ public final class DilutionEvent
          */
         private DilutionEventList(final Security pSecurity) {
             theSecurity = pSecurity;
+            theList = new ArrayList<>();
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public List<DilutionEvent> getUnderlyingList() {
+            return theList;
+        }
+
+        @Override
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(theSecurity.formatObject(pFormatter))
-                    .append("(")
-                    .append(size())
-                    .append(")");
-            return myBuilder.toString();
+            return theSecurity.formatObject(pFormatter);
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_SECURITY.equals(pField)) {
                 return theSecurity;
-            }
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
             }
             return MetisDataFieldValue.UNKNOWN;
         }
@@ -329,22 +323,22 @@ public final class DilutionEvent
      * Map of DilutionLists indexed by Security Id.
      */
     public static class DilutionEventMap
-            extends MetisNestedHashMap<Integer, DilutionEventList>
-            implements MetisDataObjectFormat {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 2572420680159829956L;
-
+            implements MetisDataObjectFormat, MetisDataMap<Integer, DilutionEventList> {
         /**
          * The next Id.
          */
         private int theNextId = 1;
 
         /**
+         * The Map.
+         */
+        private final Map<Integer, DilutionEventList> theMap;
+
+        /**
          * Constructor.
          */
         protected DilutionEventMap() {
+            theMap = new HashMap<>();
         }
 
         /**
@@ -354,10 +348,13 @@ public final class DilutionEvent
          */
         protected DilutionEventMap(final DilutionEventMap pSource,
                                    final TethysDate pDate) {
+            /* Initialise */
+            this();
+
             /* Iterate through the source map */
-            final Iterator<Entry<Integer, DilutionEventList>> myIterator = pSource.entrySet().iterator();
+            final Iterator<Map.Entry<Integer, DilutionEventList>> myIterator = pSource.getUnderlyingMap().entrySet().iterator();
             while (myIterator.hasNext()) {
-                final Entry<Integer, DilutionEventList> myEntry = myIterator.next();
+                final Map.Entry<Integer, DilutionEventList> myEntry = myIterator.next();
 
                 /* Access the id and list iterator */
                 final Integer myId = myEntry.getKey();
@@ -385,6 +382,11 @@ public final class DilutionEvent
                     myList.add(myEvent);
                 }
             }
+        }
+
+        @Override
+        public Map<Integer, DilutionEventList> getUnderlyingMap() {
+            return theMap;
         }
 
         @Override
@@ -433,10 +435,11 @@ public final class DilutionEvent
         public TethysDilution getDilutionFactor(final Security pSecurity,
                                                 final TethysDate pDate) {
             /* Access the dilutions for this security */
-            final List<DilutionEvent> myList = get(pSecurity.getId());
-            if (myList == null) {
+            final DilutionEventList myDilutionList = get(pSecurity.getId());
+            if (myDilutionList == null) {
                 return null;
             }
+            final List<DilutionEvent> myList = myDilutionList.getUnderlyingList();
 
             /* Loop through the items */
             final ListIterator<DilutionEvent> myIterator = myList.listIterator(myList.size());

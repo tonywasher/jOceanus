@@ -23,8 +23,11 @@
 package net.sourceforge.joceanus.jmetis.atlas.data;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -270,7 +273,6 @@ public class MetisDataFieldSet {
      * @param pStorage the field storage type
      * @return the field
      */
-
     private synchronized MetisDataField declareDataField(final String pName,
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength,
@@ -378,6 +380,62 @@ public class MetisDataFieldSet {
     }
 
     /**
+     * Build field set for enum class.
+     * @param <E> the enum type
+     * @param pAnchor the field anchor
+     * @param pClass the enum class
+     * @return the map from field to enum.
+     */
+    public static <E extends Enum<E>> Map<MetisDataField, E> buildFieldMap(final MetisDataFieldSet pAnchor,
+                                                                           final Class<E> pClass) {
+        /* Create the map */
+        final Map<MetisDataField, E> myMap = new HashMap<>();
+
+        /* Loop through the enum values */
+        for (E myValue : pClass.getEnumConstants()) {
+            /* Determine name */
+            final String myName = myValue instanceof MetisFieldEnum
+                                                                    ? ((MetisFieldEnum) myValue).getFieldName()
+                                                                    : myValue.toString();
+
+            /* Declare a field for the value */
+            final MetisDataField myField = pAnchor.declareLocalField(myName);
+
+            /* Add to the map */
+            myMap.put(myField, myValue);
+        }
+
+        /* Return the map */
+        return myMap;
+    }
+
+    /**
+     * Reverse field set to enum map.
+     * @param <E> the enum type
+     * @param pSourceMap the source map
+     * @param pClass the enum class
+     * @return the map from field to enum.
+     */
+    public static <E extends Enum<E>> Map<E, MetisDataField> reverseFieldMap(final Map<MetisDataField, E> pSourceMap,
+                                                                             final Class<E> pClass) {
+        /* Create the map */
+        final Map<E, MetisDataField> myMap = new EnumMap<>(pClass);
+
+        /* Loop through the enum values */
+        for (Map.Entry<MetisDataField, E> myEntry : pSourceMap.entrySet()) {
+            /* Access Key and Value */
+            final MetisDataField myField = myEntry.getKey();
+            final E myEnum = myEntry.getValue();
+
+            /* Add to the map */
+            myMap.put(myEnum, myField);
+        }
+
+        /* Return the map */
+        return myMap;
+    }
+
+    /**
      * Field presence status.
      */
     public enum MetisDataFieldRequired {
@@ -454,6 +512,18 @@ public class MetisDataFieldSet {
         public boolean isEquality() {
             return this == EQUALITY;
         }
+    }
+
+    /**
+     * Enum naming interface.
+     */
+    @FunctionalInterface
+    public interface MetisFieldEnum {
+        /**
+         * Get Field name.
+         * @return the field name
+         */
+        String getFieldName();
     }
 
     /**

@@ -22,11 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
@@ -84,7 +85,7 @@ public class QIFFile {
     /**
      * Sorted List of Accounts with Events.
      */
-    private final MetisOrderedList<QIFAccountEvents> theAccounts;
+    private final List<QIFAccountEvents> theAccounts;
 
     /**
      * Map of Payees.
@@ -94,7 +95,7 @@ public class QIFFile {
     /**
      * Sorted List of Payees.
      */
-    private final MetisOrderedList<QIFPayee> thePayees;
+    private final List<QIFPayee> thePayees;
 
     /**
      * Map of Securities with Prices.
@@ -104,7 +105,7 @@ public class QIFFile {
     /**
      * Sorted List of Securities with Prices.
      */
-    private final MetisOrderedList<QIFSecurityPrices> theSecurities;
+    private final List<QIFSecurityPrices> theSecurities;
 
     /**
      * Map of Symbols to Securities.
@@ -119,7 +120,7 @@ public class QIFFile {
     /**
      * Sorted List of Parent Categories.
      */
-    private final MetisOrderedList<QIFParentCategory> theParentCategories;
+    private final List<QIFParentCategory> theParentCategories;
 
     /**
      * Map of Categories.
@@ -134,7 +135,7 @@ public class QIFFile {
     /**
      * Sorted List of Classes.
      */
-    private final MetisOrderedList<QIFClass> theClasses;
+    private final List<QIFClass> theClasses;
 
     /**
      * Constructor.
@@ -154,11 +155,11 @@ public class QIFFile {
         theClassMap = new HashMap<>();
 
         /* Allocate maps */
-        theAccounts = new MetisOrderedList<>(QIFAccountEvents.class);
-        thePayees = new MetisOrderedList<>(QIFPayee.class);
-        theSecurities = new MetisOrderedList<>(QIFSecurityPrices.class);
-        theParentCategories = new MetisOrderedList<>(QIFParentCategory.class);
-        theClasses = new MetisOrderedList<>(QIFClass.class);
+        theAccounts = new ArrayList<>();
+        thePayees = new ArrayList<>();
+        theSecurities = new ArrayList<>();
+        theParentCategories = new ArrayList<>();
+        theClasses = new ArrayList<>();
     }
 
     /**
@@ -254,13 +255,13 @@ public class QIFFile {
      */
     protected void sortLists() {
         /* Sort the classes */
-        theClasses.reSort();
+        theClasses.sort(null);
 
         /* Sort the payees */
-        thePayees.reSort();
+        thePayees.sort(null);
 
         /* Sort the categories */
-        theParentCategories.reSort();
+        theParentCategories.sort(null);
         final Iterator<QIFParentCategory> myCatIterator = categoryIterator();
         while (myCatIterator.hasNext()) {
             final QIFParentCategory myParent = myCatIterator.next();
@@ -270,7 +271,7 @@ public class QIFFile {
         }
 
         /* Sort the securities */
-        theSecurities.reSort();
+        theSecurities.sort(null);
         final Iterator<QIFSecurityPrices> mySecIterator = securityIterator();
         while (mySecIterator.hasNext()) {
             final QIFSecurityPrices mySecurity = mySecIterator.next();
@@ -280,7 +281,7 @@ public class QIFFile {
         }
 
         /* Sort the accounts */
-        theAccounts.reSort();
+        theAccounts.sort(null);
         final Iterator<QIFAccountEvents> myAccIterator = accountIterator();
         while (myAccIterator.hasNext()) {
             final QIFAccountEvents myAccount = myAccIterator.next();
@@ -328,7 +329,7 @@ public class QIFFile {
             /* Create the new Class */
             myClass = new QIFClass(this, pClass);
             theClassMap.put(myName, myClass);
-            theClasses.append(myClass);
+            theClasses.add(myClass);
         }
 
         /* Return the class */
@@ -346,7 +347,7 @@ public class QIFFile {
         if (myClass == null) {
             /* Register the new Class */
             theClassMap.put(myName, pClass);
-            theClasses.append(pClass);
+            theClasses.add(pClass);
         }
     }
 
@@ -386,7 +387,7 @@ public class QIFFile {
             /* Create the new Parent Category */
             myParent = new QIFParentCategory(this, pParent);
             theParentMap.put(myName, myParent);
-            theParentCategories.append(myParent);
+            theParentCategories.add(myParent);
         }
 
         /* Register the category */
@@ -410,7 +411,7 @@ public class QIFFile {
                 /* Create the new Parent Category */
                 final QIFParentCategory myParent = new QIFParentCategory(pCategory);
                 theParentMap.put(myName, myParent);
-                theParentCategories.append(myParent);
+                theParentCategories.add(myParent);
 
                 /* else this is a standard category */
             } else {
@@ -442,7 +443,7 @@ public class QIFFile {
             /* Create the new Account and add to the map and list */
             myAccount = new QIFAccountEvents(this, pAccount);
             theAccountMap.put(myName, myAccount);
-            theAccounts.append(myAccount);
+            theAccounts.add(myAccount);
         }
 
         /* Return the account */
@@ -462,7 +463,7 @@ public class QIFFile {
             /* Create the new Account and add to the map and list */
             myAccount = new QIFAccountEvents(this, myName);
             theAccountMap.put(myName, myAccount);
-            theAccounts.append(myAccount);
+            theAccounts.add(myAccount);
         }
 
         /* Return the account */
@@ -482,7 +483,7 @@ public class QIFFile {
             /* Create the new Account and add to the map/list */
             myAccount = new QIFAccountEvents(pAccount);
             theAccountMap.put(myName, myAccount);
-            theAccounts.append(myAccount);
+            theAccounts.add(myAccount);
         }
 
         /* Return the account */
@@ -502,7 +503,7 @@ public class QIFFile {
             /* Create the new Payee and add to the map and list */
             myPayee = new QIFPayee(pPayee);
             thePayeeMap.put(myName, myPayee);
-            thePayees.append(myPayee);
+            thePayees.add(myPayee);
         }
 
         /* Return the payee */
@@ -521,7 +522,7 @@ public class QIFFile {
             /* Create the new Payee and add to the map and list */
             myPayee = new QIFPayee(pPayee);
             thePayeeMap.put(pPayee, myPayee);
-            thePayees.append(myPayee);
+            thePayees.add(myPayee);
         }
 
         /* Return the payee */
@@ -542,7 +543,7 @@ public class QIFFile {
             mySecurity = new QIFSecurityPrices(this, pSecurity);
             theSecurityMap.put(myName, mySecurity);
             theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
-            theSecurities.append(mySecurity);
+            theSecurities.add(mySecurity);
         }
 
         /* Return the security */
@@ -562,7 +563,7 @@ public class QIFFile {
             mySecurity = new QIFSecurityPrices(this, pSecurity);
             theSecurityMap.put(myName, mySecurity);
             theSymbolMap.put(pSecurity.getSymbol(), mySecurity.getSecurity());
-            theSecurities.append(mySecurity);
+            theSecurities.add(mySecurity);
         }
     }
 

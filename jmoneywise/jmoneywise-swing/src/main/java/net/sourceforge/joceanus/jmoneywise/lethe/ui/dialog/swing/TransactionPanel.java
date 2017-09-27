@@ -896,7 +896,7 @@ public class TransactionPanel
                         }
 
                         /* Add the item to the menu */
-                        myCoreMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
+                        mySubMenu.getSubMenu().addItem(myHolding, mySecurity.getName());
                     }
                 }
             }

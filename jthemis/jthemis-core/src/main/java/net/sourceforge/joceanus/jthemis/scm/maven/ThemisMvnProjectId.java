@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.scm.maven;
 
-import java.util.ArrayList;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -336,51 +334,6 @@ public final class ThemisMvnProjectId
         return theGroupId.hashCode()
                + theArtifactId.hashCode()
                + theVersion.hashCode();
-    }
-
-    /**
-     * Project list.
-     */
-    public static final class ProjectList
-            extends ArrayList<ThemisMvnProjectId>
-            implements MetisDataFieldItem {
-        /**
-         * The Serial Id.
-         */
-        private static final long serialVersionUID = -5283059941533163228L;
-
-        /**
-         * Report fields.
-         */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ProjectList.class);
-
-        /**
-         * Size field id.
-         */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareEqualityField("Size");
-
-        @Override
-        public String formatObject(final MetisDataFormatter pFormatter) {
-            return "ProjectList("
-                   + size()
-                   + ")";
-        }
-
-        @Override
-        public MetisDataFieldSet getDataFieldSet() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
-        }
     }
 
     /**

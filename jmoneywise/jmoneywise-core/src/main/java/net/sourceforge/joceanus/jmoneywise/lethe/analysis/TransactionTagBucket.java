@@ -27,15 +27,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
@@ -46,26 +45,26 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
  * The TransactionTag Bucket class.
  */
 public final class TransactionTagBucket
-        implements MetisDataContents, Comparable<TransactionTagBucket>, MetisOrderedIdItem<Integer> {
+        implements MetisDataFieldItem, Comparable<TransactionTagBucket>, MetisIndexedItem {
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TRANSTAG_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionTagBucket.class);
 
     /**
      * Analysis Field Id.
      */
-    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * TransactionTag Field Id.
      */
-    private static final MetisField FIELD_TRANSTAG = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSTAG.getItemName());
+    private static final MetisDataField FIELD_TRANSTAG = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSTAG.getItemName());
 
     /**
      * History Field Id.
      */
-    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * The analysis.
@@ -153,12 +152,12 @@ public final class TransactionTagBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -182,7 +181,7 @@ public final class TransactionTagBucket
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theTransTag.getId();
     }
 
@@ -299,21 +298,16 @@ public final class TransactionTagBucket
      * TransactionTagBucketList class.
      */
     public static class TransactionTagBucketList
-            implements MetisDataContents, MetisDataList<TransactionTagBucket> {
+            implements MetisDataFieldItem, MetisDataList<TransactionTagBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.TRANSTAG_LIST.getValue());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionTagBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * The analysis.
@@ -323,7 +317,7 @@ public final class TransactionTagBucket
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, TransactionTagBucket> theList;
+        private final MetisIndexedList<TransactionTagBucket> theList;
 
         /**
          * Construct a top-level List.
@@ -331,7 +325,7 @@ public final class TransactionTagBucket
          */
         protected TransactionTagBucketList(final Analysis pAnalysis) {
             theAnalysis = pAnalysis;
-            theList = new MetisOrderedIdList<>(TransactionTagBucket.class);
+            theList = new MetisIndexedList<>();
         }
 
         /**
@@ -357,7 +351,7 @@ public final class TransactionTagBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
-                    theList.add(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -385,31 +379,28 @@ public final class TransactionTagBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
-                    theList.add(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public List<TransactionTagBucket> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -423,7 +414,7 @@ public final class TransactionTagBucket
          */
         public TransactionTagBucket findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -441,7 +432,7 @@ public final class TransactionTagBucket
                 myItem = new TransactionTagBucket(theAnalysis, pTag);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */
@@ -469,7 +460,7 @@ public final class TransactionTagBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                              ? null
-                             : theList.get(0);
+                             : theList.getUnderlyingList().get(0);
         }
 
         /**

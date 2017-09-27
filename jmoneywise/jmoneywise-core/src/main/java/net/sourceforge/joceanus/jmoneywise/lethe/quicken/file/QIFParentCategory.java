@@ -22,11 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 
 /**
@@ -43,7 +44,7 @@ public class QIFParentCategory
     /**
      * Children.
      */
-    private final MetisOrderedList<QIFEventCategory> theChildren;
+    private final List<QIFEventCategory> theChildren;
 
     /**
      * Constructor.
@@ -52,11 +53,7 @@ public class QIFParentCategory
      */
     protected QIFParentCategory(final QIFFile pFile,
                                 final TransactionCategory pParent) {
-        /* Create self definition */
-        theSelf = new QIFEventCategory(pFile, pParent);
-
-        /* Create child list */
-        theChildren = new MetisOrderedList<>(QIFEventCategory.class);
+        this(new QIFEventCategory(pFile, pParent));
     }
 
     /**
@@ -68,7 +65,7 @@ public class QIFParentCategory
         theSelf = pParent;
 
         /* Create child list */
-        theChildren = new MetisOrderedList<>(QIFEventCategory.class);
+        theChildren = new ArrayList<>();
     }
 
     @Override
@@ -113,7 +110,7 @@ public class QIFParentCategory
      * Sort the children.
      */
     protected void sortChildren() {
-        theChildren.reSort();
+        Collections.sort(theChildren);
     }
 
     /**

@@ -22,9 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
@@ -34,7 +37,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectF
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
@@ -703,7 +705,7 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
-            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
+            List<SecurityHolding> myList = new ArrayList<>();
 
             /* Loop through the securities */
             final Iterator<Security> myIterator = theSecurities.iterator();
@@ -719,14 +721,14 @@ public final class SecurityHolding
 
                 /* Create a new holding and add to the list */
                 final SecurityHolding myHolding = new SecurityHolding(pPortfolio, mySecurity);
-                myList.append(myHolding);
+                myList.add(myHolding);
             }
 
             /* Sort list or delete if empty */
             if (myList.isEmpty()) {
                 myList = null;
             } else {
-                myList.reSort();
+                Collections.sort(myList);
             }
 
             /* return iterator */
@@ -866,7 +868,7 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
-            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
+            List<SecurityHolding> myList = new ArrayList<>();
 
             /* Loop through the holdings */
             final Iterator<SecurityHolding> myIterator = theMap.values().iterator();
@@ -877,7 +879,7 @@ public final class SecurityHolding
                 /* Ignore closed/deleted */
                 if (!mySecurity.isClosed() && !mySecurity.isDeleted()) {
                     /* Add to the list */
-                    myList.append(myHolding);
+                    myList.add(myHolding);
                 }
             }
 
@@ -885,7 +887,7 @@ public final class SecurityHolding
             if (myList.isEmpty()) {
                 myList = null;
             } else {
-                myList.reSort();
+                Collections.sort(myList);
             }
 
             /* return iterator */
@@ -907,7 +909,7 @@ public final class SecurityHolding
             }
 
             /* Create an empty list */
-            MetisOrderedList<SecurityHolding> myList = new MetisOrderedList<>(SecurityHolding.class);
+            List<SecurityHolding> myList = new ArrayList<>();
 
             /* Loop through the securities */
             final Iterator<Security> myIterator = theSecurities.iterator();
@@ -925,7 +927,7 @@ public final class SecurityHolding
                 if (theMap.get(mySecurity.getId()) == null) {
                     /* Create a new holding and add to the list */
                     final SecurityHolding myHolding = new SecurityHolding(thePortfolio, mySecurity);
-                    myList.append(myHolding);
+                    myList.add(myHolding);
                 }
             }
 
@@ -933,7 +935,7 @@ public final class SecurityHolding
             if (myList.isEmpty()) {
                 myList = null;
             } else {
-                myList.reSort();
+                Collections.sort(myList);
             }
 
             /* return iterator */

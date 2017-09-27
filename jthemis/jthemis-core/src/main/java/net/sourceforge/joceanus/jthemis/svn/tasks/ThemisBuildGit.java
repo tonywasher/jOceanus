@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CheckoutCommand;
@@ -41,6 +43,8 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -508,11 +512,23 @@ public class ThemisBuildGit {
      * Revision Commit List.
      */
     private static final class SvnRevisionCommitList
-            extends ArrayList<SvnRevisionCommit> {
+            implements MetisDataList<SvnRevisionCommit> {
         /**
-         * SerialId.
+         * The list.
          */
-        private static final long serialVersionUID = -401436905814909199L;
+        private final List<SvnRevisionCommit> theList;
+
+        /**
+         * Constructor.
+         */
+        private SvnRevisionCommitList() {
+            theList = new ArrayList<>();
+        }
+
+        @Override
+        public List<SvnRevisionCommit> getUnderlyingList() {
+            return theList;
+        }
 
         /**
          * Obtain the commit for the revision.
@@ -551,11 +567,23 @@ public class ThemisBuildGit {
      * Revision Commit Map.
      */
     private static final class SvnRevisionCommitMap
-            extends HashMap<Object, SvnRevisionCommitList> {
+            implements MetisDataMap<Object, SvnRevisionCommitList> {
         /**
-         * Serial Id.
+         * The map.
          */
-        private static final long serialVersionUID = 6482318288739116836L;
+        private final Map<Object, SvnRevisionCommitList> theMap;
+
+        /**
+         * Constructor.
+         */
+        private SvnRevisionCommitMap() {
+            theMap = new HashMap<>();
+        }
+
+        @Override
+        public Map<Object, SvnRevisionCommitList> getUnderlyingMap() {
+            return theMap;
+        }
 
         /**
          * Add mapping.
@@ -703,13 +731,15 @@ public class ThemisBuildGit {
          */
         static SvnExtractStatus determineStatus(final boolean pExtracted,
                                                 final boolean pBlocked) {
-            return pBlocked
-                            ? pExtracted
-                                         ? OBSCURED
-                                         : BLOCKED
-                            : pExtracted
-                                         ? COMPLETED
-                                         : FINISHED;
+            if (pBlocked) {
+                return pExtracted
+                                  ? OBSCURED
+                                  : BLOCKED;
+            } else {
+                return pExtracted
+                                  ? COMPLETED
+                                  : FINISHED;
+            }
         }
     }
 }

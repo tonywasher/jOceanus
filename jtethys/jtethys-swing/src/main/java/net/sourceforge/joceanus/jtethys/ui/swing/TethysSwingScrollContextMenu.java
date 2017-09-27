@@ -327,11 +327,14 @@ public class TethysSwingScrollContextMenu<T>
         /* determine the size of the menu */
         determineSize();
 
-        /* determine location to display */
-        final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+        /* If we have elements */
+        if (theMenuSize != null) {
+            /* determine location to display */
+            final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
-        /* Show menu */
-        showMenuAtLocation(myLocation);
+            /* Show menu */
+            showMenuAtLocation(myLocation);
+        }
     }
 
     /**
@@ -349,11 +352,14 @@ public class TethysSwingScrollContextMenu<T>
         /* determine the size of the menu */
         determineSize();
 
-        /* determine location to display */
-        final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
+        /* If we have elements */
+        if (theMenuSize != null) {
+            /* determine location to display */
+            final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, pSide, theMenuSize);
 
-        /* Show menu */
-        showMenuAtLocation(myLocation);
+            /* Show menu */
+            showMenuAtLocation(myLocation);
+        }
     }
 
     /**
@@ -373,12 +379,15 @@ public class TethysSwingScrollContextMenu<T>
         /* determine the size of the menu */
         determineSize();
 
-        /* determine location to display */
-        final Point myRequest = new Point((int) pX, (int) pY);
-        final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
+        /* If we have elements */
+        if (theMenuSize != null) {
+            /* determine location to display */
+            final Point myRequest = new Point((int) pX, (int) pY);
+            final Point myLocation = TethysSwingGuiUtils.obtainDisplayPoint(pAnchor, myRequest, theMenuSize);
 
-        /* Show menu */
-        showMenuAtLocation(myLocation);
+            /* Show menu */
+            showMenuAtLocation(myLocation);
+        }
     }
 
     /**
@@ -847,9 +856,13 @@ public class TethysSwingScrollContextMenu<T>
      * Determine size of menu.
      */
     private void determineSize() {
-        /* If we need to rebuild the menu */
-        if (needReBuild
-            && !theMenuItems.isEmpty()) {
+        /* NoOp if we do not need to reBuild the menu */
+        if (!needReBuild) {
+            return;
+        }
+
+        /* If we have items */
+        if (!theMenuItems.isEmpty()) {
             /* Access the number of entries and the scroll count */
             final int myCount = theMenuItems.size();
             final int myScroll = Math.min(theMaxDisplayItems, myCount);
@@ -930,6 +943,10 @@ public class TethysSwingScrollContextMenu<T>
                 theDialog.setPreferredSize(theMenuSize);
                 theDialog.pack();
             }
+
+            /* else reset the menuSize */
+        } else {
+            theMenuSize = null;
         }
 
         /* Reset flag */

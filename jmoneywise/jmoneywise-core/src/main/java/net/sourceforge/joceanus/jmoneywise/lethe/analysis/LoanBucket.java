@@ -26,9 +26,8 @@ import java.util.Currency;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
@@ -45,17 +44,17 @@ public final class LoanBucket
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.LOAN_NAME.getValue(), AccountBucket.FIELD_DEFS);
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(LoanBucket.class, AccountBucket.getBaseFieldSet());
 
     /**
      * Loan Category Field Id.
      */
-    private static final MetisField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemName());
 
     /**
      * IsCreditCard Field Id.
      */
-    private static final MetisField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(AnalysisResource.LOAN_CREDITCARD.getValue());
+    private static final MetisDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(AnalysisResource.LOAN_CREDITCARD.getValue());
 
     /**
      * The loan category.
@@ -134,12 +133,12 @@ public final class LoanBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
@@ -272,12 +271,11 @@ public final class LoanBucket
      * LoanBucket list class.
      */
     public static class LoanBucketList
-            extends AccountBucketList<LoanBucket, Loan>
-            implements MetisDataContents {
+            extends AccountBucketList<LoanBucket, Loan> {
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.LOAN_LIST.getValue(), AccountBucketList.FIELD_DEFS);
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(LoanBucketList.class, AccountBucketList.getBaseFieldSet());
 
         /**
          * Construct a top-level List.
@@ -285,7 +283,7 @@ public final class LoanBucket
          */
         protected LoanBucketList(final Analysis pAnalysis) {
             /* Initialise class */
-            super(LoanBucket.class, pAnalysis);
+            super(pAnalysis);
         }
 
         /**
@@ -335,7 +333,7 @@ public final class LoanBucket
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 

@@ -22,20 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -53,31 +53,31 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * The Payee Bucket class.
  */
 public final class PayeeBucket
-        implements MetisDataContents, Comparable<PayeeBucket>, MetisOrderedIdItem<Integer> {
+        implements MetisDataFieldItem, Comparable<PayeeBucket>, MetisIndexedItem {
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PAYEE_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PayeeBucket.class);
 
     /**
      * Analysis Field Id.
      */
-    private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Payee Field Id.
      */
-    private static final MetisField FIELD_PAYEE = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.PAYEE.getItemName());
+    private static final MetisDataField FIELD_PAYEE = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.PAYEE.getItemName());
 
     /**
      * Base Field Id.
      */
-    private static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
 
     /**
      * Totals bucket name.
@@ -87,7 +87,7 @@ public final class PayeeBucket
     /**
      * FieldSet map.
      */
-    private static final Map<MetisField, PayeeAttribute> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, PayeeAttribute.class);
+    private static final Map<MetisDataField, PayeeAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, PayeeAttribute.class);
 
     /**
      * The analysis.
@@ -189,12 +189,12 @@ public final class PayeeBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
@@ -252,7 +252,7 @@ public final class PayeeBucket
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return thePayee.getId();
     }
 
@@ -374,7 +374,7 @@ public final class PayeeBucket
      * @param pField the field
      * @return the class
      */
-    private static PayeeAttribute getClassForField(final MetisField pField) {
+    private static PayeeAttribute getClassForField(final MetisDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -880,27 +880,22 @@ public final class PayeeBucket
      * PayeeBucket list class.
      */
     public static class PayeeBucketList
-            implements MetisDataContents, MetisDataList<PayeeBucket> {
+            implements MetisDataFieldItem, MetisDataList<PayeeBucket> {
 
         /**
          * Local Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(AnalysisResource.PAYEE_LIST.getValue());
-
-        /**
-         * Size Field Id.
-         */
-        private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PayeeBucketList.class);
 
         /**
          * Analysis field Id.
          */
-        private static final MetisField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
         /**
          * Totals field Id.
          */
-        private static final MetisField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
 
         /**
          * The analysis.
@@ -910,7 +905,7 @@ public final class PayeeBucket
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, PayeeBucket> theList;
+        private final MetisIndexedList<PayeeBucket> theList;
 
         /**
          * The data.
@@ -931,7 +926,7 @@ public final class PayeeBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisOrderedIdList<>(PayeeBucket.class);
+            theList = new MetisIndexedList<>();
         }
 
         /**
@@ -957,7 +952,7 @@ public final class PayeeBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
@@ -986,31 +981,28 @@ public final class PayeeBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base and add to the list */
                     myBucket.adjustToBase();
-                    theList.append(myBucket);
+                    theList.addToList(myBucket);
                 }
             }
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public List<PayeeBucket> getUnderlyingList() {
-            return theList;
+            return theList.getUnderlyingList();
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFieldSet().getName();
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
+        public Object getFieldValue(final MetisDataField pField) {
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
             }
@@ -1027,7 +1019,7 @@ public final class PayeeBucket
          */
         public PayeeBucket findItemById(final Integer pId) {
             /* Return results */
-            return theList.findItemById(pId);
+            return theList.getItemById(pId);
         }
 
         /**
@@ -1070,7 +1062,7 @@ public final class PayeeBucket
                 myItem = new PayeeBucket(theAnalysis, myPayee);
 
                 /* Add to the list */
-                theList.add(myItem);
+                theList.addToList(myItem);
             }
 
             /* Return the bucket */
@@ -1111,7 +1103,7 @@ public final class PayeeBucket
             /* Return the first payee in the list if it exists */
             return isEmpty()
                              ? null
-                             : theList.get(0);
+                             : theList.getUnderlyingList().get(0);
         }
 
         /**
@@ -1129,6 +1121,9 @@ public final class PayeeBucket
                 /* Add to totals bucket */
                 theTotals.addValues(myCurr);
             }
+
+            /* Sort the payees */
+            Collections.sort(theList.getUnderlyingList());
 
             /* Calculate delta for the totals */
             if (theTotals != null) {
