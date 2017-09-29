@@ -133,6 +133,11 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
     TAXBANDS_TAXDUE("TaxBands.TaxDue"),
 
     /**
+     * TaxBands hasLoTaxBand.
+     */
+    TAXBANDS_HASLOTAXBAND("TaxBands.hasLoTaxBand"),
+
+    /**
      * TaxYear Name.
      */
     TAXYEAR_NAME("TaxYear.Name"),
@@ -245,7 +250,47 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
     /**
      * CashType Small.
      */
-    CASHTYPE_SMALL("CashType.Small");
+    CASHTYPE_SMALL("CashType.Small"),
+
+    /**
+     * ChargeableGain Gain.
+     */
+    CHARGEABLEGAIN_GAIN("ChargeableGain.Gain"),
+
+    /**
+     * ChargeableGain Slice.
+     */
+    CHARGEABLEGAIN_SLICE("ChargeableGain.Slice"),
+
+    /**
+     * ChargeableGain TotalGain.
+     */
+    CHARGEABLEGAIN_TOTALGAINS("ChargeableGain.TotalGains"),
+
+    /**
+     * ChargeableGain TotalSlices.
+     */
+    CHARGEABLEGAIN_TOTALSLICES("ChargeableGain.TotalSlices"),
+
+    /**
+     * ChargeableGain Ratio.
+     */
+    CHARGEABLEGAIN_RATIO("ChargeableGain.Ratio"),
+
+    /**
+     * ChargeableGain TaxedSlices.
+     */
+    CHARGEABLEGAIN_TAXEDSLICES("ChargeableGain.TaxedSlices"),
+
+    /**
+     * ChargeableGain NettTaxDue.
+     */
+    CHARGEABLEGAIN_NETTTAXDUE("ChargeableGain.NettTaxDue"),
+
+    /**
+     * ChargeableGain TaxRelief.
+     */
+    CHARGEABLEGAIN_TAXRELIEF("ChargeableGain.TaxRelief");
 
     /**
      * The Marginal Map.

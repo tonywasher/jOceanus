@@ -72,17 +72,17 @@ public final class SecurityBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * SecurityHolding Field Id.
      */
-    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
+    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
 
     /**
      * Currency Field Id.
      */
-    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
+    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * Security Type Field Id.

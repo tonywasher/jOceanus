@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
@@ -40,16 +40,16 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Income Tax Scheme.
  */
 public class MoneyWiseUKIncomeScheme
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKIncomeScheme.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKIncomeScheme.class);
 
     /**
      * Relief Available Field Id.
      */
-    private static final MetisField FIELD_RELIEF = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE.getValue());
+    private static final MetisDataField FIELD_RELIEF = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE.getValue());
 
     /**
      * Tax Relief available.
@@ -253,17 +253,17 @@ public class MoneyWiseUKIncomeScheme
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_RELIEF.equals(pField)) {
             return reliefAvailable;
@@ -275,6 +275,6 @@ public class MoneyWiseUKIncomeScheme
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFields().getName();
+        return getDataFieldSet().getName();
     }
 }

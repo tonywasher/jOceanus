@@ -42,82 +42,82 @@ public abstract class CoeusTransaction
     /**
      * ID Field Id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ID.getValue());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ID.getValue());
 
     /**
      * Market Field Id.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKET.getValue());
+    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET.getValue());
 
     /**
      * Loan Field Id.
      */
-    private static final MetisDataField FIELD_LOAN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOAN.getValue());
+    private static final MetisDataField FIELD_LOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOAN.getValue());
 
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE.getValue());
 
     /**
      * Description Field Id.
      */
-    private static final MetisDataField FIELD_DESC = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DESC.getValue());
+    private static final MetisDataField FIELD_DESC = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DESC.getValue());
 
     /**
      * TransactionType Field Id.
      */
-    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TRANSTYPE.getValue());
+    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSTYPE.getValue());
 
     /**
      * Invested Field Id.
      */
-    protected static final MetisDataField FIELD_INVESTED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INVESTED.getValue());
+    protected static final MetisDataField FIELD_INVESTED = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INVESTED.getValue());
 
     /**
      * Holding Field Id.
      */
-    protected static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HOLDING.getValue());
+    protected static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HOLDING.getValue());
 
     /**
      * LoanBook Field Id.
      */
-    protected static final MetisDataField FIELD_LOANBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANBOOK.getValue());
+    protected static final MetisDataField FIELD_LOANBOOK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANBOOK.getValue());
 
     /**
      * Interest Field Id.
      */
-    protected static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTEREST.getValue());
+    protected static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTEREST.getValue());
 
     /**
      * BadDebtInterest Field Id.
      */
-    protected static final MetisDataField FIELD_BADDEBTINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTINTEREST.getValue());
+    protected static final MetisDataField FIELD_BADDEBTINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTINTEREST.getValue());
 
     /**
      * BadDebtCapital Field Id.
      */
-    protected static final MetisDataField FIELD_BADDEBTCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTCAPITAL.getValue());
+    protected static final MetisDataField FIELD_BADDEBTCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTCAPITAL.getValue());
 
     /**
      * Fees Field Id.
      */
-    protected static final MetisDataField FIELD_FEES = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_FEES.getValue());
+    protected static final MetisDataField FIELD_FEES = FIELD_DEFS.declareLocalField(CoeusResource.DATA_FEES.getValue());
 
     /**
      * CashBack Field Id.
      */
-    protected static final MetisDataField FIELD_CASHBACK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_CASHBACK.getValue());
+    protected static final MetisDataField FIELD_CASHBACK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_CASHBACK.getValue());
 
     /**
      * BadDebt Field Id.
      */
-    protected static final MetisDataField FIELD_BADDEBT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBT.getValue());
+    protected static final MetisDataField FIELD_BADDEBT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBT.getValue());
 
     /**
      * Recovered Field Id.
      */
-    protected static final MetisDataField FIELD_RECOVERED = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RECOVERED.getValue());
+    protected static final MetisDataField FIELD_RECOVERED = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RECOVERED.getValue());
 
     /**
      * Blank Character.

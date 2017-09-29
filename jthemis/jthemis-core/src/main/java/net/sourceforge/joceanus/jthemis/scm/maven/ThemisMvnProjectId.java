@@ -61,17 +61,17 @@ public final class ThemisMvnProjectId
     /**
      * Group field id.
      */
-    private static final MetisDataField FIELD_GROUP = FIELD_DEFS.declareEqualityField("Group");
+    private static final MetisDataField FIELD_GROUP = FIELD_DEFS.declareLocalField("Group");
 
     /**
      * Artifact field id.
      */
-    private static final MetisDataField FIELD_ARTIFACT = FIELD_DEFS.declareEqualityField("Artifact");
+    private static final MetisDataField FIELD_ARTIFACT = FIELD_DEFS.declareLocalField("Artifact");
 
     /**
      * Version field id.
      */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
 
     /**
      * The groupId.

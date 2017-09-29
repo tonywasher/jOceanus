@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -40,22 +40,22 @@ public class MoneyWiseUKSavingsAllowance
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKSavingsAllowance.class.getSimpleName(), MoneyWiseUKBasicAllowance.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKSavingsAllowance.class, MoneyWiseUKBasicAllowance.getBaseFieldSet());
 
     /**
      * SavingsAllowance Field Id.
      */
-    private static final MetisField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
+    private static final MetisDataField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
 
     /**
      * DividendsAllowance Field Id.
      */
-    private static final MetisField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
+    private static final MetisDataField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
 
     /**
      * AdditionalAllowanceLimit Field Id.
      */
-    private static final MetisField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE.getValue());
+    private static final MetisDataField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE.getValue());
 
     /**
      * SavingsAllowance.
@@ -182,12 +182,12 @@ public class MoneyWiseUKSavingsAllowance
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         if (FIELD_SAVINGSALLOWANCE.equals(pField)) {
             return theSavingsAllowance;
         }

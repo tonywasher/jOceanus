@@ -26,13 +26,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -45,36 +45,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Chargeable Gains Slice record.
  */
 public class MoneyWiseChargeableGainSlice
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseChargeableGainSlice.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseChargeableGainSlice.class);
 
     /**
      * Date Field Id.
      */
-    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Gain Field Id.
      */
-    private static final MetisField FIELD_GAIN = FIELD_DEFS.declareEqualityField("Gain");
+    private static final MetisDataField FIELD_GAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_GAIN.getValue());
 
     /**
      * Years Field Id.
      */
-    private static final MetisField FIELD_YEARS = FIELD_DEFS.declareEqualityField(StaticDataResource.TRANSINFO_QUALYEARS.getValue());
+    private static final MetisDataField FIELD_YEARS = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_QUALYEARS.getValue());
 
     /**
      * Slice Field Id.
      */
-    private static final MetisField FIELD_SLICE = FIELD_DEFS.declareEqualityField("Slice");
+    private static final MetisDataField FIELD_SLICE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_SLICE.getValue());
 
     /**
      * Transaction Field Id.
      */
-    private static final MetisField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * The Date.
@@ -165,12 +165,12 @@ public class MoneyWiseChargeableGainSlice
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_DATE.equals(pField)) {
             return theDate;
@@ -242,12 +242,7 @@ public class MoneyWiseChargeableGainSlice
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            final StringBuilder myBuilder = new StringBuilder();
-            myBuilder.append(MoneyWiseChargeableGainSliceList.class.getSimpleName());
-            myBuilder.append("(");
-            myBuilder.append(theSlices.size());
-            myBuilder.append(")");
-            return myBuilder.toString();
+            return MoneyWiseChargeableGainSliceList.class.getSimpleName();
         }
 
         /**

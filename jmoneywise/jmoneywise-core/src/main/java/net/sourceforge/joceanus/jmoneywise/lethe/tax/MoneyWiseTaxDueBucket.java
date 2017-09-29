@@ -26,11 +26,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
@@ -41,36 +41,36 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Tax Due Bucket.
  */
 public class MoneyWiseTaxDueBucket
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxDueBucket.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseTaxDueBucket.class);
 
     /**
      * TaxBasis Field Id.
      */
-    private static final MetisField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getItemName());
+    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getItemName());
 
     /**
      * TaxConfig Field Id.
      */
-    private static final MetisField FIELD_TAXCONFIG = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_NAME.getValue());
+    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME.getValue());
 
     /**
      * TaxBands Field Id.
      */
-    private static final MetisField FIELD_TAXBANDS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
 
     /**
      * Taxable Income Field Id.
      */
-    private static final MetisField FIELD_INCOME = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
+    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
 
     /**
      * TaxDue Field Id.
      */
-    private static final MetisField FIELD_TAXDUE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
+    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
 
     /**
      * Tax Basis.
@@ -202,7 +202,7 @@ public class MoneyWiseTaxDueBucket
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -210,12 +210,12 @@ public class MoneyWiseTaxDueBucket
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_TAXBASIS.equals(pField)) {
             return theTaxBasis;
@@ -255,26 +255,26 @@ public class MoneyWiseTaxDueBucket
      * Tax Band Bucket.
      */
     public static class MoneyWiseTaxBandBucket
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxBandBucket.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseTaxBandBucket.class);
 
         /**
          * Amount Field Id.
          */
-        private static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_AMOUNT.getValue());
+        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT.getValue());
 
         /**
          * Rate Field Id.
          */
-        private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_RATE.getValue());
+        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE.getValue());
 
         /**
          * TaxDue Field Id.
          */
-        private static final MetisField FIELD_TAXDUE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
+        private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
 
         /**
          * Amount in Band.
@@ -329,12 +329,12 @@ public class MoneyWiseTaxDueBucket
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_AMOUNT.equals(pField)) {
                 return theAmount;

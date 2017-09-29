@@ -57,12 +57,12 @@ public final class ThemisGitTag
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField("Repository");
 
     /**
      * Component field id.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
 
     /**
      * Parent Repository.

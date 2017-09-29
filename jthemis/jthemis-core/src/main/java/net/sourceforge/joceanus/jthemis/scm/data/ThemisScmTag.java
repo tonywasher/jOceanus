@@ -55,12 +55,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
     /**
      * Branch field id.
      */
-    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branch");
 
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
 
     /**
      * Project definition field id.

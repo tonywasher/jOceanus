@@ -49,12 +49,12 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField("Repository");
 
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
 
     /**
      * Branches field id.

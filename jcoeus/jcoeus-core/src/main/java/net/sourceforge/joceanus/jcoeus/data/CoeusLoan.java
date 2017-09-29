@@ -43,37 +43,37 @@ public abstract class CoeusLoan
     /**
      * Market Field Id.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKET.getValue());
+    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET.getValue());
 
     /**
      * LoanId Field Id.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY.getValue());
 
     /**
      * StartDate Field Id.
      */
-    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_STARTDATE.getValue());
+    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE.getValue());
 
     /**
      * InitialLoan Field Id.
      */
-    private static final MetisDataField FIELD_INITIALLOAN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LENT.getValue());
+    private static final MetisDataField FIELD_INITIALLOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT.getValue());
 
     /**
      * LastDate Field Id.
      */
-    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LASTDATE.getValue());
+    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE.getValue());
 
     /**
      * BadDebtDate Field Id.
      */
-    private static final MetisDataField FIELD_BADDEBTDATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BADDEBTDATE.getValue());
+    private static final MetisDataField FIELD_BADDEBTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTDATE.getValue());
 
     /**
      * Loan Market.

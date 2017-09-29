@@ -71,12 +71,12 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Account Field Id.
      */
-    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_ACCOUNT.getValue());
+    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_ACCOUNT.getValue());
 
     /**
      * Base Field Id.

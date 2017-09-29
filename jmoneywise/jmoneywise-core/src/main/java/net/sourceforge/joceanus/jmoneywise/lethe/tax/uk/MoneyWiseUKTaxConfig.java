@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
@@ -41,81 +41,81 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Tax configuration.
  */
 public class MoneyWiseUKTaxConfig
-        implements MetisDataContents, MoneyWiseTaxConfig {
+        implements MetisDataFieldItem, MoneyWiseTaxConfig {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxConfig.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxConfig.class);
 
     /**
      * TaxYear Field Id.
      */
-    private static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
+    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
 
     /**
      * TaxBasis Field Id.
      */
-    private static final MetisField FIELD_TAXSOURCE = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getListName());
+    private static final MetisDataField FIELD_TAXSOURCE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListName());
 
     /**
      * GrossTaxable Field Id.
      */
-    private static final MetisField FIELD_GROSS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_GROSS.getValue());
+    private static final MetisDataField FIELD_GROSS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_GROSS.getValue());
 
     /**
      * GrossPreSavings Field Id.
      */
-    private static final MetisField FIELD_PRESAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS.getValue());
+    private static final MetisDataField FIELD_PRESAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS.getValue());
 
     /**
      * Birthday Field Id.
      */
-    private static final MetisField FIELD_BIRTHDAY = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY.getValue());
+    private static final MetisDataField FIELD_BIRTHDAY = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY.getValue());
 
     /**
      * ClientAge Field Id.
      */
-    private static final MetisField FIELD_AGE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_AGE.getValue());
+    private static final MetisDataField FIELD_AGE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGE.getValue());
 
     /**
      * AgeRelatedAllowances Field Id.
      */
-    private static final MetisField FIELD_AGERELATED = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE.getValue());
+    private static final MetisDataField FIELD_AGERELATED = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE.getValue());
 
     /**
      * Allowance Field Id.
      */
-    private static final MetisField FIELD_ALLOWANCE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_BASIC.getValue());
+    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC.getValue());
 
     /**
      * Rental Allowance Field Id.
      */
-    private static final MetisField FIELD_RENTAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_RENTAL.getValue());
+    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL.getValue());
 
     /**
      * Savings Allowance Field Id.
      */
-    private static final MetisField FIELD_SAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
+    private static final MetisDataField FIELD_SAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
 
     /**
      * Dividend Allowance Field Id.
      */
-    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
+    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
 
     /**
      * Capital Allowance Field Id.
      */
-    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL.getValue());
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL.getValue());
 
     /**
      * TaxBands Field Id.
      */
-    private static final MetisField FIELD_TAXBANDS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
 
     /**
      * Low Savings Band Field Id.
      */
-    private static final MetisField FIELD_LOSAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
+    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
 
     /**
      * TaxYear.
@@ -371,12 +371,12 @@ public class MoneyWiseUKTaxConfig
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_TAXYEAR.equals(pField)) {
             return theTaxYear;

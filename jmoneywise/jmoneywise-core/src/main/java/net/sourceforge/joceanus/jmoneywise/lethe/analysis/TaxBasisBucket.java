@@ -68,12 +68,12 @@ public class TaxBasisBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Tax Basis Field Id.
      */
-    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TAXBASIS.getItemName());
+    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getItemName());
 
     /**
      * Base Field Id.

@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -38,26 +38,26 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * UK TaxBands.
  */
 public class MoneyWiseUKTaxBands
-        implements MetisDataContents {
+        implements MetisDataFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxBands.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxBands.class);
 
     /**
      * StandardSet Field Id.
      */
-    private static final MetisField FIELD_STANDARD = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_STANDARD.getValue());
+    private static final MetisDataField FIELD_STANDARD = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_STANDARD.getValue());
 
     /**
      * Has Low Tax Band Field Id.
      */
-    private static final MetisField FIELD_LOTAXBAND = FIELD_DEFS.declareEqualityField("hasLoTaxBand");
+    private static final MetisDataField FIELD_LOTAXBAND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_HASLOTAXBAND.getValue());
 
     /**
      * Low Savings Band Field Id.
      */
-    private static final MetisField FIELD_LOSAVINGS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
+    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
 
     /**
      * Standard TaxBandSet.
@@ -173,12 +173,12 @@ public class MoneyWiseUKTaxBands
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_STANDARD.equals(pField)) {
             return theStandard;

@@ -54,12 +54,12 @@ public final class TransactionTagBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * TransactionTag Field Id.
      */
-    private static final MetisDataField FIELD_TRANSTAG = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSTAG.getItemName());
+    private static final MetisDataField FIELD_TRANSTAG = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getItemName());
 
     /**
      * History Field Id.

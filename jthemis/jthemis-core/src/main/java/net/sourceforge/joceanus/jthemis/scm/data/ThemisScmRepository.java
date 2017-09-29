@@ -55,7 +55,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
 
     /**
      * Components field id.

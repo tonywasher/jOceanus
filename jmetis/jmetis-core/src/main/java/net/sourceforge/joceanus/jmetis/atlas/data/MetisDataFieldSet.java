@@ -40,7 +40,7 @@ public class MetisDataFieldSet {
     /**
      * Hash Prime.
      */
-    protected static final int HASH_PRIME = 19;
+    public static final int HASH_PRIME = 19;
 
     /**
      * No Maximum Length.
@@ -102,8 +102,18 @@ public class MetisDataFieldSet {
      */
     public MetisDataFieldSet(final Class<?> pClazz,
                              final MetisDataFieldSet pParent) {
-        /* Initialise the list */
-        theName = pClazz.getSimpleName();
+        this(pClazz.getSimpleName(), pParent);
+    }
+
+    /**
+     * Constructor.
+     * @param pName the name of the item
+     * @param pParent the parent fields
+     */
+    public MetisDataFieldSet(final String pName,
+                             final MetisDataFieldSet pParent) {
+        /* Initialise the set */
+        theName = pName;
         theParent = pParent;
         theFields = new ArrayList<>();
         if (theParent != null) {
@@ -202,15 +212,6 @@ public class MetisDataFieldSet {
      */
     public MetisDataField declareLocalField(final String pName) {
         return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.LOCAL);
-    }
-
-    /**
-     * Declare field used for equality test.
-     * @param pName the name of the field
-     * @return the field
-     */
-    public MetisDataField declareEqualityField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.LOCAL);
     }
 
     /**

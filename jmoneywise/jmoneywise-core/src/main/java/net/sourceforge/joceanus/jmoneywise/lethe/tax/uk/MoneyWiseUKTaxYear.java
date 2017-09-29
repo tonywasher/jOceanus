@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -43,32 +43,32 @@ public class MoneyWiseUKTaxYear
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxYear.class.getSimpleName(), MoneyWiseTaxYear.getBaseFields());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxYear.class, MoneyWiseTaxYear.getBaseFieldSet());
 
     /**
      * Allowances Field Id.
      */
-    private static final MetisField FIELD_ALLOWANCES = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES.getValue());
+    private static final MetisDataField FIELD_ALLOWANCES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES.getValue());
 
     /**
      * Bands Field Id.
      */
-    private static final MetisField FIELD_BANDS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+    private static final MetisDataField FIELD_BANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
 
     /**
      * InterestScheme Field Id.
      */
-    private static final MetisField FIELD_INTEREST = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_INTEREST.getValue());
+    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_INTEREST.getValue());
 
     /**
      * DividendScheme Field Id.
      */
-    private static final MetisField FIELD_DIVIDEND = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND.getValue());
+    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND.getValue());
 
     /**
      * CapitalScheme Field Id.
      */
-    private static final MetisField FIELD_CAPITAL = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_CAPITAL.getValue());
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_CAPITAL.getValue());
 
     /**
      * The Allowances.
@@ -163,12 +163,12 @@ public class MoneyWiseUKTaxYear
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_ALLOWANCES.equals(pField)) {
             return theAllowances;

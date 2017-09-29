@@ -69,7 +69,7 @@ public final class TransactionCategoryBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Transaction Category Field Id.

@@ -46,22 +46,22 @@ public class CoeusMarketAnnual
     /**
      * Market Field Id.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKET.getValue());
+    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET.getValue());
 
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE.getValue());
 
     /**
      * Monthly Histories Field Id.
      */
-    private static final MetisDataField FIELD_MONTHS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MONTHLYTOTALS.getValue());
+    private static final MetisDataField FIELD_MONTHS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MONTHLYTOTALS.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY.getValue());
 
     /**
      * Loan Market.

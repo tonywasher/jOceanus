@@ -64,12 +64,12 @@ public final class ThemisSvnWorkingCopy
     /**
      * Component field id.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
 
     /**
      * Branch field id.
      */
-    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branch");
 
     /**
      * Alias field id.
@@ -392,7 +392,7 @@ public final class ThemisSvnWorkingCopy
         /**
          * Repository field id.
          */
-        private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+        private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField("Repository");
 
         /**
          * Location field id.

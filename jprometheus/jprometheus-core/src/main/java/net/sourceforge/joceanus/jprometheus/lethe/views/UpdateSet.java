@@ -30,12 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
@@ -53,16 +53,16 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
-        implements MetisDataContents, TethysEventProvider<PrometheusDataEvent>, DataListSet<E> {
+        implements MetisDataFieldItem, TethysEventProvider<PrometheusDataEvent>, DataListSet<E> {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusViewResource.UPDATESET_NAME.getValue());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(UpdateSet.class);
 
     /**
      * Version field id.
      */
-    public static final MetisField FIELD_VERSION = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
 
     /**
      * Logger.
@@ -77,7 +77,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private final MetisFields theLocalFields;
+    private final MetisDataFieldSet theLocalFields;
 
     /**
      * The entry map.
@@ -113,24 +113,24 @@ public class UpdateSet<E extends Enum<E>>
         theEventManager = new TethysEventManager<>();
 
         /* Create local fields */
-        theLocalFields = new MetisFields(FIELD_DEFS.getName(), FIELD_DEFS);
+        theLocalFields = new MetisDataFieldSet(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the map */
         theMap = new EnumMap<>(pClass);
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return theLocalFields;
     }
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFields().getName() + "(" + theMap.size() + ")";
+        return getDataFieldSet().getName();
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_VERSION.equals(pField)) {
             return theVersion;

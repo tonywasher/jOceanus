@@ -61,37 +61,37 @@ public class CoeusFundingCircleLoanBookItem
     /**
      * Loan Id Field Id.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID.getValue());
 
     /**
      * Description Field Id.
      */
-    private static final MetisDataField FIELD_DESC = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DESC.getValue());
+    private static final MetisDataField FIELD_DESC = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DESC.getValue());
 
     /**
      * AuctionId Field Id.
      */
-    private static final MetisDataField FIELD_AUCTIONID = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_AUCTIONID.getValue());
+    private static final MetisDataField FIELD_AUCTIONID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONID.getValue());
 
     /**
      * Risk Field Id.
      */
-    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANRISK.getValue());
+    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK.getValue());
 
     /**
      * Outstanding Balance Field Id.
      */
-    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_BALANCE.getValue());
+    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE.getValue());
 
     /**
      * Rate Field Id.
      */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_RATE.getValue());
+    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE.getValue());
 
     /**
      * Status Field Id.
      */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOANSTATUS.getValue());
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS.getValue());
 
     /**
      * The loan Id.

@@ -66,12 +66,12 @@ public class ThemisMvnProjectDefinition
     /**
      * Id field id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareEqualityField("Id");
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField("Id");
 
     /**
      * Dependencies field id.
      */
-    private static final MetisDataField FIELD_DEPS = FIELD_DEFS.declareEqualityField("Dependencies");
+    private static final MetisDataField FIELD_DEPS = FIELD_DEFS.declareLocalField("Dependencies");
 
     /**
      * POM Model representation.

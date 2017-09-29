@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
@@ -50,46 +50,46 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * UK Tax Analysis.
  */
 public class MoneyWiseUKTaxAnalysis
-        implements MetisDataContents, MoneyWiseTaxAnalysis {
+        implements MetisDataFieldItem, MoneyWiseTaxAnalysis {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKTaxAnalysis.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxAnalysis.class);
 
     /**
      * TaxYear Field Id.
      */
-    private static final MetisField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
+    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
 
     /**
      * TaxConfig Field Id.
      */
-    private static final MetisField FIELD_TAXCONFIG = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXCONFIG_NAME.getValue());
+    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME.getValue());
 
     /**
      * TaxBuckets Field Id.
      */
-    private static final MetisField FIELD_TAXBUCKETS = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS.getValue());
+    private static final MetisDataField FIELD_TAXBUCKETS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS.getValue());
 
     /**
      * TaxableIncome Field Id.
      */
-    private static final MetisField FIELD_INCOME = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
+    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
 
     /**
      * TaxDue Field Id.
      */
-    private static final MetisField FIELD_TAXDUE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
+    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
 
     /**
      * TaxPaid Field Id.
      */
-    private static final MetisField FIELD_TAXPAID = FIELD_DEFS.declareEqualityField(TaxBasisClass.TAXPAID.toString());
+    private static final MetisDataField FIELD_TAXPAID = FIELD_DEFS.declareLocalField(TaxBasisClass.TAXPAID.toString());
 
     /**
      * TaxProfit Field Id.
      */
-    private static final MetisField FIELD_TAXPROFIT = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT.getValue());
+    private static final MetisDataField FIELD_TAXPROFIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT.getValue());
 
     /**
      * The TaxYear.
@@ -348,12 +348,12 @@ public class MoneyWiseUKTaxAnalysis
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisDataFieldSet getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_TAXYEAR.equals(pField)) {
             return theTaxYear;

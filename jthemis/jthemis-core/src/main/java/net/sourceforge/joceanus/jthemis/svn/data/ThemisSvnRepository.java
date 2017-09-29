@@ -67,7 +67,7 @@ public class ThemisSvnRepository
     /**
      * Base field id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
 
     /**
      * HistoryMap field id.

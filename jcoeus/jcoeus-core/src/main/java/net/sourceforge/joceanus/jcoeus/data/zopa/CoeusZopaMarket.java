@@ -52,27 +52,27 @@ public class CoeusZopaMarket
     /**
      * Missing LoanBook Field Id.
      */
-    private static final MetisDataField FIELD_MISSINGBOOK = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGBOOK.getValue());
+    private static final MetisDataField FIELD_MISSINGBOOK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGBOOK.getValue());
 
     /**
      * Missing Capital Field Id.
      */
-    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGCAPITAL.getValue());
+    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL.getValue());
 
     /**
      * Missing Interest Field Id.
      */
-    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MISSINGINTEREST.getValue());
+    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST.getValue());
 
     /**
      * Zombie Loans Field Id.
      */
-    private static final MetisDataField FIELD_ZOMBIELOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ZOMBIELOANS.getValue());
+    private static final MetisDataField FIELD_ZOMBIELOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ZOMBIELOANS.getValue());
 
     /**
      * Interesting loans Field Id.
      */
-    private static final MetisDataField FIELD_INTERESTINGLOANS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_INTERESTINGLOANS.getValue());
+    private static final MetisDataField FIELD_INTERESTINGLOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTERESTINGLOANS.getValue());
 
     /**
      * The Decimal size.

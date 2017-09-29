@@ -45,27 +45,27 @@ public abstract class CoeusHistory
     /**
      * Market Field Id.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKET.getValue());
+    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET.getValue());
 
     /**
      * Loan Field Id.
      */
-    private static final MetisDataField FIELD_LOAN = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_LOAN.getValue());
+    private static final MetisDataField FIELD_LOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOAN.getValue());
 
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE.getValue());
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY.getValue());
 
     /**
      * Totals Field Id.
      */
-    private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_TOTALS.getValue());
+    private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TOTALS.getValue());
 
     /**
      * The market.

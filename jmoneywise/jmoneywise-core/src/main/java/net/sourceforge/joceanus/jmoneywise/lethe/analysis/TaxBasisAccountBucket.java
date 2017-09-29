@@ -54,7 +54,7 @@ public final class TaxBasisAccountBucket
     /**
      * Parent Field Id.
      */
-    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
+    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.TRANSACTION_ACCOUNT.getValue());
 
     /**
      * Parent.

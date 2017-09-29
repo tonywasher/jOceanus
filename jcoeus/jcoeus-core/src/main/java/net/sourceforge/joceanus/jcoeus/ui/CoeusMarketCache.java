@@ -59,17 +59,17 @@ public class CoeusMarketCache
     /**
      * MarketSet Field Id.
      */
-    private static final MetisDataField FIELD_MARKETSET = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_MARKETSET.getValue());
+    private static final MetisDataField FIELD_MARKETSET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKETSET.getValue());
 
     /**
      * SnapShot Field Id.
      */
-    private static final MetisDataField FIELD_SNAPSHOT = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_SNAPSHOTMAP.getValue());
+    private static final MetisDataField FIELD_SNAPSHOT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_SNAPSHOTMAP.getValue());
 
     /**
      * Annual Field Id.
      */
-    private static final MetisDataField FIELD_ANNUAL = FIELD_DEFS.declareEqualityField(CoeusResource.DATA_ANNUALMAP.getValue());
+    private static final MetisDataField FIELD_ANNUAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ANNUALMAP.getValue());
 
     /**
      * The MarketSet.

@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -153,7 +153,7 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestAsIncomeScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKInterestAsIncomeScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
 
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
@@ -161,7 +161,7 @@ public abstract class MoneyWiseUKInterestScheme
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
     }
@@ -174,12 +174,12 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestBaseRateScheme.class.getSimpleName(), MoneyWiseUKIncomeScheme.getBaseFields());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKInterestBaseRateScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
 
         /**
          * Base Rate Field Id.
          */
-        private static final MetisField FIELD_BASERATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
+        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
 
         /**
          * The Base Rate.
@@ -208,17 +208,17 @@ public abstract class MoneyWiseUKInterestScheme
          * Obtain the data fields.
          * @return the data fields
          */
-        protected static MetisFields getBaseFields() {
+        protected static MetisDataFieldSet getBaseFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_BASERATE.equals(pField)) {
                 return theBaseRate;
@@ -237,7 +237,7 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseUKInterestLoBaseRateScheme.class.getSimpleName(), MoneyWiseUKInterestBaseRateScheme.getBaseFields());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKInterestLoBaseRateScheme.class, MoneyWiseUKInterestBaseRateScheme.getBaseFieldSet());
 
         /**
          * Constructor.
@@ -248,7 +248,7 @@ public abstract class MoneyWiseUKInterestScheme
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
     }

@@ -60,7 +60,7 @@ public final class ThemisSvnBranch
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField("Repository");
 
     /**
      * RevisionPath.

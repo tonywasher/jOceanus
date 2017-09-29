@@ -51,27 +51,27 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     /**
      * Id Id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(DataItem.FIELD_ID.getName());
 
     /**
      * Transaction Id.
      */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * Date Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Values Id.
      */
-    private static final MetisDataField FIELD_VALUES = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_VALUES.getValue());
+    private static final MetisDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_VALUES.getValue());
 
     /**
      * Previous Values Id.
      */
-    private static final MetisDataField FIELD_PREVIOUS = FIELD_DEFS.declareEqualityField(AnalysisResource.BUCKET_PREVIOUS.getValue());
+    private static final MetisDataField FIELD_PREVIOUS = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_PREVIOUS.getValue());
 
     /**
      * The id of the transaction.

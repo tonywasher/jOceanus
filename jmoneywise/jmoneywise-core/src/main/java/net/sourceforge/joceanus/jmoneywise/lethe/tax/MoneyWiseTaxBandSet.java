@@ -26,13 +26,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -122,21 +122,21 @@ public class MoneyWiseTaxBandSet
      * MoneyWiseTaxBand class.
      */
     public static class MoneyWiseTaxBand
-            implements MetisDataContents {
+            implements MetisDataFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxBand.class.getSimpleName());
+        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseTaxBand.class);
 
         /**
          * StandardSet Field Id.
          */
-        private static final MetisField FIELD_RATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_RATE.getValue());
+        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE.getValue());
 
         /**
          * Amount Field Id.
          */
-        private static final MetisField FIELD_AMOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXBANDS_AMOUNT.getValue());
+        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT.getValue());
 
         /**
          * Amount.
@@ -214,12 +214,12 @@ public class MoneyWiseTaxBandSet
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisDataFieldSet getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
-        public Object getFieldValue(final MetisField pField) {
+        public Object getFieldValue(final MetisDataField pField) {
             /* Handle standard fields */
             if (FIELD_RATE.equals(pField)) {
                 return theRate;

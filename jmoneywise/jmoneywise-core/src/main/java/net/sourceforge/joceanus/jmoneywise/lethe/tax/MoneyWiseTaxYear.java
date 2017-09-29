@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -35,16 +35,16 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * The Tax Year.
  */
 public abstract class MoneyWiseTaxYear
-        implements MetisDataContents, MoneyWiseTaxCredit {
+        implements MetisDataFieldItem, MoneyWiseTaxCredit {
     /**
      * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseTaxYear.class.getSimpleName());
+    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseTaxYear.class);
 
     /**
      * Date Field Id.
      */
-    private static final MetisField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseTaxResource.TAXYEAR_END.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_END.getValue());
 
     /**
      * The Date.
@@ -77,12 +77,12 @@ public abstract class MoneyWiseTaxYear
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisFields getBaseFields() {
+    protected static MetisDataFieldSet getBaseFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
+    public Object getFieldValue(final MetisDataField pField) {
         /* Handle standard fields */
         if (FIELD_DATE.equals(pField)) {
             return theYear;

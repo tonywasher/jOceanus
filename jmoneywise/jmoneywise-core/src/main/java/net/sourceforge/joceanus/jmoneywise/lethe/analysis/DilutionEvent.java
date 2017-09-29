@@ -64,27 +64,27 @@ public final class DilutionEvent
     /**
      * Id Field Id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareEqualityField(DataItem.FIELD_ID.getName());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(DataItem.FIELD_ID.getName());
 
     /**
      * Security Field Id.
      */
-    private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.SECURITY.getItemName());
+    private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemName());
 
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
 
     /**
      * Dilution Field Id.
      */
-    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(StaticDataResource.TRANSINFO_DILUTION.getValue());
+    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_DILUTION.getValue());
 
     /**
      * Transaction Field Id.
      */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemName());
 
     /**
      * The Id.

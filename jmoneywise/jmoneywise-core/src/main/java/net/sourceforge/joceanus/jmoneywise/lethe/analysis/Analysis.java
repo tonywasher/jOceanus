@@ -79,12 +79,12 @@ public class Analysis
     /**
      * TaxYears Field Id.
      */
-    private static final MetisDataField FIELD_TAXYEARS = FIELD_DEFS.declareEqualityField("TaxYears");
+    private static final MetisDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_YEARS.getValue());
 
     /**
      * Currency Field Id.
      */
-    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.CURRENCY.getItemName());
+    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemName());
 
     /**
      * DepositBuckets Field Id.
@@ -142,9 +142,9 @@ public class Analysis
     private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListName());
 
     /**
-     * NewTaxCalc Field Id.
+     * TaxCalc Field Id.
      */
-    private static final MetisDataField FIELD_TAXCALCNEW = FIELD_DEFS.declareLocalField("NewTax");
+    private static final MetisDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_CALCULATION.getValue());
 
     /**
      * Dilutions Field Id.
@@ -481,7 +481,7 @@ public class Analysis
                                          ? MetisDataFieldValue.SKIP
                                          : theTaxBasis;
         }
-        if (FIELD_TAXCALCNEW.equals(pField)) {
+        if (FIELD_TAXCALC.equals(pField)) {
             return theTaxAnalysis != null
                                           ? theTaxAnalysis
                                           : MetisDataFieldValue.SKIP;

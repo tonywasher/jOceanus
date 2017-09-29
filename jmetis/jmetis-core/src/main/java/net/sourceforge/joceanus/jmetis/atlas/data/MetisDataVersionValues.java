@@ -267,8 +267,8 @@ public class MetisDataVersionValues {
         final Object[] myObj = mySet.theValues;
 
         /* Check for deletion flag and # of values */
-        if ((isDeletion != mySet.isDeletion)
-            || (theNumValues != mySet.theNumValues)) {
+        if (isDeletion != mySet.isDeletion
+            || theNumValues != mySet.theNumValues) {
             return false;
         }
 
@@ -277,8 +277,8 @@ public class MetisDataVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisDataField myField = myIterator.next();
-            if ((!myField.getEquality().isEquality())
-                || (!myField.getStorage().isVersioned())) {
+            if (!myField.getEquality().isEquality()
+                || !myField.getStorage().isVersioned()) {
                 continue;
             }
 
@@ -305,8 +305,8 @@ public class MetisDataVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisDataField myField = myIterator.next();
-            if ((!myField.getEquality().isEquality())
-                || (!myField.getStorage().isVersioned())) {
+            if (!myField.getEquality().isEquality()
+                || !myField.getStorage().isVersioned()) {
                 continue;
             }
 
@@ -336,8 +336,8 @@ public class MetisDataVersionValues {
         final Object[] myObj = pOriginal.theValues;
 
         /* Check for deletion flag and # of values */
-        if ((isDeletion != pOriginal.isDeletion)
-            || (theNumValues != pOriginal.theNumValues)) {
+        if (isDeletion != pOriginal.isDeletion
+            || theNumValues != pOriginal.theNumValues) {
             return MetisDataDifference.DIFFERENT;
         }
 
@@ -346,8 +346,8 @@ public class MetisDataVersionValues {
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
             final MetisDataField myField = myIterator.next();
-            if ((!myField.getEquality().isEquality())
-                || (!myField.getStorage().isVersioned())) {
+            if (!myField.getEquality().isEquality()
+                || !myField.getStorage().isVersioned()) {
                 continue;
             }
 
@@ -377,9 +377,9 @@ public class MetisDataVersionValues {
     public MetisDataDifference fieldChanged(final MetisDataField pField,
                                             final MetisDataVersionValues pOriginal) {
         /* No difference if field does not exist, is not-equality or is not versioned */
-        if ((pField == null)
-            || (!pField.getEquality().isEquality())
-            || (!pField.getStorage().isVersioned())) {
+        if (pField == null
+            || !pField.getEquality().isEquality()
+            || !pField.getStorage().isVersioned()) {
             return MetisDataDifference.IDENTICAL;
         }
 

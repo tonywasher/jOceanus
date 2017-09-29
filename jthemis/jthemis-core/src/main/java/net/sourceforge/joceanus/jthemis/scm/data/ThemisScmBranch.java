@@ -76,12 +76,12 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
 
     /**
      * Component field id.
      */
-    private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareEqualityField("Component");
+    private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField("Component");
 
     /**
      * Tags field id.

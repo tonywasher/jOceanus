@@ -62,12 +62,12 @@ public final class PayeeBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
 
     /**
      * Payee Field Id.
      */
-    private static final MetisDataField FIELD_PAYEE = FIELD_DEFS.declareEqualityField(MoneyWiseDataType.PAYEE.getItemName());
+    private static final MetisDataField FIELD_PAYEE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getItemName());
 
     /**
      * Base Field Id.
