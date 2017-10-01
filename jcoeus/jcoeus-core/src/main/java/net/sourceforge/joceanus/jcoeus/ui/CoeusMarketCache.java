@@ -142,11 +142,7 @@ public class CoeusMarketCache
     public CoeusMarketSnapShot getSnapShot(final CoeusMarketProvider pProvider,
                                            final TethysDate pDate) {
         /* Obtain the map for the snapShot */
-        Map<TethysDate, CoeusMarketSnapShot> myMap = theSnapShotMap.get(pProvider);
-        if (myMap == null) {
-            myMap = new HashMap<>();
-            theSnapShotMap.put(pProvider, myMap);
-        }
+        final Map<TethysDate, CoeusMarketSnapShot> myMap = theSnapShotMap.computeIfAbsent(pProvider, p -> new HashMap<>());
 
         /* Obtain the snapShot */
         CoeusMarketSnapShot mySnapShot = myMap.get(pDate);
@@ -169,11 +165,7 @@ public class CoeusMarketCache
     public CoeusMarketAnnual getAnnual(final CoeusMarketProvider pProvider,
                                        final TethysDate pDate) {
         /* Obtain the map for the annual */
-        Map<TethysDate, CoeusMarketAnnual> myMap = theAnnualMap.get(pProvider);
-        if (myMap == null) {
-            myMap = new HashMap<>();
-            theAnnualMap.put(pProvider, myMap);
-        }
+        final Map<TethysDate, CoeusMarketAnnual> myMap = theAnnualMap.computeIfAbsent(pProvider, p -> new HashMap<>());
 
         /* Obtain the annual */
         CoeusMarketAnnual myAnnual = myMap.get(pDate);

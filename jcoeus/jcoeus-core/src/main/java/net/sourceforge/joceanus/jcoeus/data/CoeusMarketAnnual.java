@@ -259,16 +259,8 @@ public class CoeusMarketAnnual
         final TethysDate myDate = theCalendar.getEndOfMonth(pDate);
         final Month myMonth = myDate.getMonthValue();
 
-        /* Look up an existing history */
-        CoeusHistory myHistory = theMonthlyHistories.get(myMonth);
-        if (myHistory == null) {
-            /* Create new history and record it */
-            myHistory = theMarket.newHistory(myDate);
-            theMonthlyHistories.put(myMonth, myHistory);
-        }
-
-        /* Return the history */
-        return myHistory;
+        /* Look up and return the history */
+        return theMonthlyHistories.computeIfAbsent(myMonth, m -> theMarket.newHistory(myDate));
     }
 
     /**

@@ -221,7 +221,7 @@ public final class CoeusLendingWorksTotals
 
     @Override
     public TethysDecimal getTaxableEarnings() {
-        return theInterest;
+        return getEarnings();
     }
 
     @Override
@@ -231,7 +231,7 @@ public final class CoeusLendingWorksTotals
 
     @Override
     public TethysDecimal getNettInterest() {
-        return theEarnings;
+        return getInterest();
     }
 
     @Override

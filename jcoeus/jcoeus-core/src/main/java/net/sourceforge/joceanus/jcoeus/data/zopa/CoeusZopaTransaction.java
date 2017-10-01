@@ -421,7 +421,7 @@ public final class CoeusZopaTransaction
     @Override
     public TethysDecimal getBadDebtCapital() {
         if (theLoan == null
-            || theLoan.isBadDebtCapital()) {
+            || !theLoan.isBadDebtCapital()) {
             return ZERO_MONEY;
         }
         return CoeusTransactionType.RECOVERY.equals(theTransType)

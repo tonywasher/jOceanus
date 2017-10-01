@@ -399,7 +399,7 @@ public final class CoeusFundingCircleTransaction
     @Override
     public TethysMoney getBadDebtCapital() {
         if (theLoan == null
-            || theLoan.isBadDebtCapital()) {
+            || !theLoan.isBadDebtCapital()) {
             return ZERO_MONEY;
         }
         return CoeusTransactionType.RECOVERY.equals(theTransType)

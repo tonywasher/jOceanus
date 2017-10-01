@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
@@ -30,7 +31,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
 
 /**
  * Group class for data item.
@@ -52,7 +52,7 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     /**
      * The list.
      */
-    private final MetisOrderedIdList<Integer, T> theList;
+    private final List<T> theList;
 
     /**
      * Parent Event.
@@ -62,13 +62,11 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     /**
      * Constructor.
      * @param pParent the parent.
-     * @param pClass the class
      */
-    public DataGroup(final T pParent,
-                     final Class<T> pClass) {
+    public DataGroup(final T pParent) {
         /* Store parameter */
         theParent = pParent;
-        theList = new MetisOrderedIdList<>(pClass);
+        theList = new ArrayList<>();
     }
 
     @Override

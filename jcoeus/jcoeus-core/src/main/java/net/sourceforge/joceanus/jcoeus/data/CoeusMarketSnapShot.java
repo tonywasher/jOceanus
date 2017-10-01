@@ -230,18 +230,21 @@ public class CoeusMarketSnapShot
     private CoeusLoan getSnapShotLoan(final CoeusLoan pLoan) {
         /* Look up existing snapShot */
         final String myId = pLoan.getLoanId();
-        CoeusLoan myLoan = theLoanMap.get(myId);
+        return theLoanMap.computeIfAbsent(myId, i -> newSnapShotLoan(pLoan));
+    }
 
-        /* If we do not have a snapShot */
-        if (myLoan == null) {
-            /* Create and record it */
-            myLoan = theMarket.newLoan(myId);
-            theLoanMap.put(myId, myLoan);
-            theLoanList.add(myLoan);
+    /**
+     * Create a new loan for the snapShot.
+     * @param pLoan the market loan
+     * @return the loan
+     */
+    private CoeusLoan newSnapShotLoan(final CoeusLoan pLoan) {
+        /* Create and record it */
+        final CoeusLoan myLoan = theMarket.newLoan(pLoan.getLoanId());
+        theLoanList.add(myLoan);
 
-            /* Ensure that the badDebt date is copied */
-            myLoan.setBadDebtDate(pLoan.getBadDebtDate());
-        }
+        /* Ensure that the badDebt date is copied */
+        myLoan.setBadDebtDate(pLoan.getBadDebtDate());
 
         /* return the loan SnapShot */
         return myLoan;

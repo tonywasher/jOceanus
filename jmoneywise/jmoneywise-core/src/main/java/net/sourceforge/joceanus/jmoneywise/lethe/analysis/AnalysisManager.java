@@ -278,7 +278,7 @@ public class AnalysisManager
      * Check totals for an analysis.
      * @param pAnalysis the analysis to check
      */
-    private void checkTotals(final Analysis pAnalysis) {
+    private static void checkTotals(final Analysis pAnalysis) {
         /* Obtain Totals bucket */
         final DepositCategoryBucket myDepCat = pAnalysis.getDepositCategories().getTotals();
         final CashCategoryBucket myCashCat = pAnalysis.getCashCategories().getTotals();

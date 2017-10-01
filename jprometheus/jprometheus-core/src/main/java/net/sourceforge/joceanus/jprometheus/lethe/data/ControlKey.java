@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdList;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
@@ -807,7 +807,7 @@ public final class ControlKey
         /**
          * The list.
          */
-        private final MetisOrderedIdList<Integer, DataKeySet> theList;
+        private final List<DataKeySet> theList;
 
         /**
          * Iterator.
@@ -818,7 +818,7 @@ public final class ControlKey
          * Constructor.
          */
         protected DataKeySetResource() {
-            theList = new MetisOrderedIdList<>(DataKeySet.class);
+            theList = new ArrayList<>();
         }
 
         @Override
@@ -852,7 +852,7 @@ public final class ControlKey
             /* If this is first registration */
             if (!theList.contains(pKeySet)) {
                 /* Add the KeySet */
-                theList.append(pKeySet);
+                theList.add(pKeySet);
 
                 /* Reset any iterator */
                 if (theIterator != null) {
