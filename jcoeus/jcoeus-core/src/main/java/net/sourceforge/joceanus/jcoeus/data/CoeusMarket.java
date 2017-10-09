@@ -203,14 +203,24 @@ public abstract class CoeusMarket
      * @throws OceanusException on error
      */
     public void recordLoan(final CoeusLoan pLoan) throws OceanusException {
+        recordLoanIdMapping(pLoan.getLoanId(), pLoan);
+    }
+
+    /**
+     * Record loanId mapping.
+     * @param pLoanId the loanId
+     * @param pLoan the loan
+     * @throws OceanusException on error
+     */
+    public void recordLoanIdMapping(final String pLoanId,
+                                    final CoeusLoan pLoan) throws OceanusException {
         /* Ensure that the id is unique */
-        final String myId = pLoan.getLoanId();
-        if (theLoanMap.get(myId) != null) {
-            throw new CoeusDataException(myId, "Duplicate LoanId");
+        if (theLoanMap.get(pLoanId) != null) {
+            throw new CoeusDataException(pLoanId, "Duplicate LoanId");
         }
 
         /* Record the loan */
-        theLoanMap.put(myId, pLoan);
+        theLoanMap.put(pLoanId, pLoan);
     }
 
     /**

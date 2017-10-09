@@ -90,7 +90,7 @@ public class CoeusLendingWorksTransactionParser
     @Override
     protected void resetFields() {
         /* Set the date format */
-        setDateFormat("yyyy-MM-dd");
+        setDateFormat("yyyy-MM-dd HH:mm:ss");
 
         /* Clear data */
         theTransactions.clear();

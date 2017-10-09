@@ -165,9 +165,10 @@ public class MetisProfile
 
         /* return the value */
         final int iIndex = pField.getIndex();
-        return ((iIndex < 0) || (iIndex >= theSubTasks.size()))
-                                                                ? MetisDataFieldValue.UNKNOWN
-                                                                : theSubTasks.get(iIndex);
+        return (iIndex < 0
+                || iIndex >= theSubTasks.size())
+                                                 ? MetisDataFieldValue.UNKNOWN
+                                                 : theSubTasks.get(iIndex);
     }
 
     /**
@@ -288,9 +289,10 @@ public class MetisProfile
         }
 
         /* Return self is no active and running subTask else ask subTask */
-        return theCurrentTask == null || !theCurrentTask.isRunning()
-                                                                     ? this
-                                                                     : theCurrentTask.getActiveTask();
+        return theCurrentTask == null
+               || !theCurrentTask.isRunning()
+                                              ? this
+                                              : theCurrentTask.getActiveTask();
     }
 
     /**

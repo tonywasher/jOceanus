@@ -110,10 +110,8 @@ public class CoeusFundingCircleMarket
         while (myIterator.hasNext()) {
             final CoeusFundingCircleLoanBookItem myItem = myIterator.next();
 
-            /* Create the loan and record it */
-            final CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
-            recordLoan(myLoan);
-            theAuctionMap.put(myItem.getAuctionId(), myLoan);
+            /* Process the bookItem */
+            processBookItem(myItem);
         }
     }
 
@@ -152,11 +150,33 @@ public class CoeusFundingCircleMarket
 
             /* If the loan is not rejected, add to the list */
             if (myItem.getStatus() != CoeusLoanStatus.REJECTED) {
-                /* Create the loan and record it */
-                final CoeusFundingCircleLoan myLoan = new CoeusFundingCircleLoan(this, myItem);
-                recordLoan(myLoan);
-                theAuctionMap.put(myItem.getAuctionId(), myLoan);
+                /* Process the bookItem */
+                processBookItem(myItem);
             }
+        }
+    }
+
+    /**
+     * Process bookItem.
+     * @param pItem the bookItem to process
+     * @throws OceanusException on error
+     */
+    public void processBookItem(final CoeusFundingCircleLoanBookItem pItem) throws OceanusException {
+        /* Check to see whether this is a second loanPart */
+        final String myAuctionId = pItem.getAuctionId();
+        CoeusFundingCircleLoan myLoan = theAuctionMap.get(myAuctionId);
+
+        /* If this is a second loanPart */
+        if (myLoan != null) {
+            /* Merge the bookItems */
+            myLoan.addBookItem(pItem);
+            recordLoanIdMapping(pItem.getLoanId(), myLoan);
+
+        } else {
+            /* Create the loan and record it */
+            myLoan = new CoeusFundingCircleLoan(this, pItem);
+            recordLoan(myLoan);
+            theAuctionMap.put(myAuctionId, myLoan);
         }
     }
 

@@ -75,7 +75,7 @@
     <appLibDir/>
     <BouncyCastleVersion>1.58</BouncyCastleVersion>
     <SvnKitVersion>1.9.0</SvnKitVersion>
-    <JGitVersion>4.8.0.201706111038-r</JGitVersion>
+    <JGitVersion>4.9.0.201710071750-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20170516</JSONVersion>
     <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
@@ -89,7 +89,7 @@
     <JSoupVersion>1.10.3</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
-    <CheckStyleVersion>8.2</CheckStyleVersion>
+    <CheckStyleVersion>8.3</CheckStyleVersion>
     <PMDVersion>5.8.1</PMDVersion>
     <CleanPluginVersion>3.0.0</CleanPluginVersion>
     <InstallPluginVersion>2.5.2</InstallPluginVersion>

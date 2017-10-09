@@ -22,6 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data.fundingcircle;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
@@ -46,9 +50,14 @@ public class CoeusFundingCircleLoan
     private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM.getValue());
 
     /**
+     * The list of bookItems.
+     */
+    private final List<CoeusFundingCircleLoanBookItem> theBookItems;
+
+    /**
      * The bookItem.
      */
-    private final CoeusFundingCircleLoanBookItem theBookItem;
+    private CoeusFundingCircleLoanBookItem theBookItem;
 
     /**
      * The loanId.
@@ -63,6 +72,7 @@ public class CoeusFundingCircleLoan
     protected CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
                                      final CoeusFundingCircleLoanBookItem pBookItem) {
         super(pMarket, pBookItem.getLoanId());
+        theBookItems = new ArrayList<>();
         theBookItem = pBookItem;
         theLoanIdNo = Integer.parseInt(getLoanId());
     }
@@ -75,6 +85,7 @@ public class CoeusFundingCircleLoan
     protected CoeusFundingCircleLoan(final CoeusFundingCircleMarket pMarket,
                                      final String pId) {
         super(pMarket, pId);
+        theBookItems = null;
         theBookItem = null;
         theLoanIdNo = Integer.parseInt(pId);
     }
@@ -85,11 +96,45 @@ public class CoeusFundingCircleLoan
     }
 
     /**
+     * Add a book item.
+     * @param pBookItem the book item
+     */
+    protected void addBookItem(final CoeusFundingCircleLoanBookItem pBookItem) {
+        /* If this is the first secondary item */
+        if (theBookItems.isEmpty()) {
+            /* Add the original to the list */
+            theBookItems.add(theBookItem);
+        }
+
+        /* Create merged item */
+        theBookItem = new CoeusFundingCircleLoanBookItem(theBookItem, pBookItem);
+
+        /* add to list */
+        theBookItems.add(pBookItem);
+    }
+
+    /**
      * Obtain the book item.
      * @return the book item
      */
     public CoeusFundingCircleLoanBookItem getLoanBookItem() {
         return theBookItem;
+    }
+
+    /**
+     * Obtain the book item iterator.
+     * @return the iterator
+     */
+    public Iterator<CoeusFundingCircleLoanBookItem> bookItemIterator() {
+        return theBookItems.iterator();
+    }
+
+    /**
+     * Has multiple bookItems?
+     * @return true/false
+     */
+    public boolean hasMultipleBookItems() {
+        return !theBookItems.isEmpty();
     }
 
     @Override

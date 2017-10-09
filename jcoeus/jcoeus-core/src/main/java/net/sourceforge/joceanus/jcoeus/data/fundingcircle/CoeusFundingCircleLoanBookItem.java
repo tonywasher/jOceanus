@@ -207,6 +207,28 @@ public class CoeusFundingCircleLoanBookItem
     }
 
     /**
+     * Constructor for merged bookItem.
+     * @param pBase the base item
+     * @param pNew the new item
+     */
+    protected CoeusFundingCircleLoanBookItem(final CoeusFundingCircleLoanBookItem pBase,
+                                             final CoeusFundingCircleLoanBookItem pNew) {
+        /* Obtain IDs */
+        theLoanId = pBase.getLoanId();
+
+        /* Obtain details from the base */
+        theRisk = pBase.getRisk();
+        theStatus = pBase.getStatus();
+        theRate = pBase.getRate();
+        theDesc = pBase.getDescription();
+        theAuctionId = pBase.getAuctionId();
+
+        /* Calculate the new balance */
+        theBalance = new TethysMoney(pBase.getBalance());
+        theBalance.addAmount(pNew.getBalance());
+    }
+
+    /**
      * Obtain the loanId.
      * @return the loan id
      */

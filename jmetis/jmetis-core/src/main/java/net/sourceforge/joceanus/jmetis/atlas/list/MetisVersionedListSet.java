@@ -105,9 +105,10 @@ public class MetisVersionedListSet
             if (myName.equals(myEntry.getKey().getListName())) {
                 /* Return the list */
                 final MetisVersionedList<?> myList = myEntry.getValue();
-                return myList == null || myList.isEmpty()
-                                                          ? MetisDataFieldValue.SKIP
-                                                          : myList;
+                return myList == null
+                       || myList.isEmpty()
+                                           ? MetisDataFieldValue.SKIP
+                                           : myList;
             }
         }
 
@@ -220,8 +221,8 @@ public class MetisVersionedListSet
      */
     protected void checkReWindVersion(final int pVersion) {
         /* Version must be less than current version and positive */
-        if ((theVersion < pVersion)
-            || (pVersion < 0)) {
+        if (theVersion < pVersion
+            || pVersion < 0) {
             throw new IllegalArgumentException("Invalid Version");
         }
     }

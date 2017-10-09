@@ -85,5 +85,4 @@ public class CoeusLendingWorksLoader {
         /* Return the market */
         return myMarket;
     }
-
 }
