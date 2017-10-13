@@ -86,6 +86,11 @@ public final class JcaMac
             throw new GordianCryptoException("Failed to initialise Mac", e);
         }
 
+        /* Reset the Mac */
+        if (getMacSpec().getMacType().needsReset()) {
+            reset();
+        }
+
         /* Store key and initVector */
         setKey(pKey);
         setInitVector(pIV);

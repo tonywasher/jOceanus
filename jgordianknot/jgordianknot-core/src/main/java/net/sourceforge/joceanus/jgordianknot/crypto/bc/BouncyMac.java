@@ -74,6 +74,12 @@ public final class BouncyMac
         }
         theMac.init(myParms);
 
+        /* Reset the byte count */
+        resetByteCount();
+        if (getMacSpec().getMacType().needsReset()) {
+            reset();
+        }
+
         /* Store key and initVector */
         setKey(pKey);
         setInitVector(pIV);
@@ -88,17 +94,21 @@ public final class BouncyMac
     public void update(final byte[] pBytes,
                        final int pOffset,
                        final int pLength) {
+        adjustByteCount(pLength);
         theMac.update(pBytes, pOffset, pLength);
     }
 
     @Override
     public void update(final byte pByte) {
+        adjustByteCount(1);
         theMac.update(pByte);
     }
 
     @Override
     public void update(final byte[] pBytes) {
-        theMac.update(pBytes, 0, pBytes.length);
+        final int myLen = pBytes.length;
+        adjustByteCount(myLen);
+        theMac.update(pBytes, 0, myLen);
     }
 
     @Override
@@ -109,6 +119,7 @@ public final class BouncyMac
     @Override
     public byte[] finish() {
         final byte[] myResult = new byte[getMacSize()];
+        adjustPadding();
         theMac.doFinal(myResult, 0);
         return myResult;
     }
@@ -116,6 +127,7 @@ public final class BouncyMac
     @Override
     public int finish(final byte[] pBuffer,
                       final int pOffset) {
+        adjustPadding();
         return theMac.doFinal(pBuffer, pOffset);
     }
 }

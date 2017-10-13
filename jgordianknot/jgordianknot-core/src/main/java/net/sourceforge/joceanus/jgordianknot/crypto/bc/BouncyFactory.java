@@ -240,7 +240,7 @@ public final class BouncyFactory
     static {
         /* Create the Predicates */
         PREDICATE_DIGESTS = generateDigestPredicate();
-        PREDICATE_MACS = p -> p != GordianMacType.KALYNA;
+        PREDICATE_MACS = p -> true;
 
         /* Calculate max cipher Steps */
         MAX_CIPHER_STEPS = new int[2];

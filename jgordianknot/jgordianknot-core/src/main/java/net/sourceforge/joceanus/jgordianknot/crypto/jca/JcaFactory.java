@@ -797,7 +797,6 @@ public final class JcaFactory
      * @throws OceanusException on error
      */
     private static String getCipherModeAlgorithm(final GordianSymCipherSpec pSpec) throws OceanusException {
-        final GordianSymKeyType myKeyType = pSpec.getKeyType().getSymKeyType();
         final GordianCipherMode myMode = pSpec.getCipherMode();
         switch (pSpec.getCipherMode()) {
             case ECB:
@@ -808,6 +807,7 @@ public final class JcaFactory
             case EAX:
             case CCM:
             case GCM:
+            case OCB:
             case GOFB:
             case GCFB:
                 return myMode.name();
@@ -817,10 +817,6 @@ public final class JcaFactory
                 return "CCM";
             case KGCM:
                 return "GCM";
-            case OCB: /* TODO There is a problem with Kalyna OCB so temporarily switch to CTR" */
-                return GordianSymKeyType.KALYNA.equals(myKeyType)
-                                                                  ? "CTR"
-                                                                  : myMode.name();
             default:
                 throw new GordianDataException(getInvalidText(myMode));
         }
@@ -1217,8 +1213,9 @@ public final class JcaFactory
         final GordianCipherMode myMode = pCipherSpec.getCipherMode();
         switch (pCipherSpec.getKeyType().getSymKeyType()) {
             case KALYNA:
-                /* Disallow CCM and GCM */
-                return !GordianCipherMode.CCM.equals(myMode)
+                /* Disallow OCB, CCM and GCM */
+                return !GordianCipherMode.OCB.equals(myMode)
+                       && !GordianCipherMode.CCM.equals(myMode)
                        && !GordianCipherMode.GCM.equals(myMode);
             case GOST:
                 /* Disallow OCB and OFB */

@@ -107,4 +107,26 @@ public enum GordianMacType {
                 return 0;
         }
     }
+
+    /**
+     * Needs re-initialisation after final.
+     * @return true/false
+     */
+    public boolean needsReInitialisation() {
+        return this == GMAC;
+    }
+
+    /**
+     * Needs reset after final.
+     * @return true/false
+     */
+    public boolean needsReset() {
+        switch (this) {
+            case KALYNA:
+            case KUPYNA:
+                return true;
+            default:
+                return false;
+        }
+    }
 }

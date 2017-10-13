@@ -56,6 +56,11 @@ public class GordianTestAlgorithms {
     private byte[] theTestData;
 
     /**
+     * The AADData.
+     */
+    private byte[] theAADData;
+
+    /**
      * Constructor.
      * @param pCreator the Secure Manager creator
      */
@@ -120,7 +125,7 @@ public class GordianTestAlgorithms {
                 GordianMac myMac = myFactory.createMac(mySpec);
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(mySpec);
                 GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
-                profileMac(myMac, myKey);
+                profileMac(myFactory, myMac, myKey);
             }
         }
 
@@ -165,21 +170,56 @@ public class GordianTestAlgorithms {
 
     /**
      * Profile digest.
+     * @param pFactory the factory
      * @param pMac the Mac to profile
+     * @param pKey the key
      * @throws OceanusException on error
      */
-    private void profileMac(final GordianMac pMac,
+    private void profileMac(final GordianFactory pFactory,
+                            final GordianMac pMac,
                             final GordianKey<GordianMacSpec> pKey) throws OceanusException {
+        /* Define the input */
         byte[] myBytes = "MacInput".getBytes();
+        boolean isInconsistent = false;
+
+        /* Access the two macs */
+        GordianMacSpec mySpec = pMac.getMacSpec();
+        GordianMacType myType = mySpec.getMacType();
+        boolean twoMacs = GordianMacType.GMAC.equals(myType);
+        boolean needsReInit = myType.needsReInitialisation() || myType.needsReset();
+        GordianMac myMac1 = pMac;
+        GordianMac myMac2 = twoMacs
+                                    ? pFactory.createMac(mySpec)
+                                    : pMac;
+
+        /* Start loop */
         long myStart = System.nanoTime();
-        for (int i = 0; i < 100; i++) {
-            pMac.initMac(pKey);
-            pMac.update(myBytes);
-            pMac.finish();
+        for (int i = 0; i < 500; i++) {
+            /* Use first mac */
+            myMac1.initMac(pKey);
+            myMac1.update(myBytes);
+            byte[] myFirst = myMac1.finish();
+
+            /* If we need to reInitialise */
+            if (needsReInit) {
+                myMac2.initMac(pKey, myMac1.getInitVector());
+            }
+
+            /* Use second mac */
+            myMac2.update(myBytes);
+            byte[] mySecond = myMac2.finish();
+            if (!Arrays.areEqual(myFirst, mySecond)) {
+                isInconsistent = true;
+            }
         }
+
+        /* Record elapsed */
         long myElapsed = System.nanoTime() - myStart;
         myElapsed /= 100000;
         System.out.println("  " + pMac.getMacSpec().toString() + ":" + myElapsed);
+        if (isInconsistent) {
+            System.out.println("  " + pMac.getMacSpec().toString() + " inconsistent");
+        }
     }
 
     /**
@@ -264,6 +304,7 @@ public class GordianTestAlgorithms {
                                 final GordianCipherMode pMode) throws OceanusException {
         /* Access Data */
         byte[] myTestData = getTestData();
+        byte[] myAADData = getAADData();
         BiPredicate<GordianSymCipherSpec, Boolean> myCipherPredicate = pFactory.supportedSymCipherSpecs();
 
         /* Create the Spec */
@@ -273,8 +314,10 @@ public class GordianTestAlgorithms {
             GordianAADCipher myCipher = pFactory.createAADCipher(mySpec);
             myCipher.initCipher(pKey);
             byte[] myIV = myCipher.getInitVector();
+            myCipher.updateAAD(myAADData);
             byte[] myEncrypted = myCipher.finish(myTestData);
             myCipher.initCipher(pKey, myIV, false);
+            myCipher.updateAAD(myAADData);
             byte[] myResult = myCipher.finish(myEncrypted);
             if (!Arrays.areEqual(myTestData, myResult)) {
                 System.out.println("Failed to encrypt/decrypt");
@@ -361,6 +404,18 @@ public class GordianTestAlgorithms {
             theTestData = TethysDataConverter.stringToByteArray("TestDataStringThatIsNotRidiculouslyShort");
         }
         return theTestData;
+    }
+
+    /**
+     * Obtain the aadData.
+     * @return the aadData
+     * @throws OceanusException on error
+     */
+    private byte[] getAADData() throws OceanusException {
+        if (theAADData == null) {
+            theAADData = TethysDataConverter.stringToByteArray("SomeAADBytes");
+        }
+        return theAADData;
     }
 
     /**

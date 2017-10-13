@@ -45,6 +45,11 @@ public abstract class GordianAADCipher
         super(pFactory, pCipherSpec);
     }
 
+    @Override
+    public GordianSymCipherSpec getCipherSpec() {
+        return (GordianSymCipherSpec) super.getCipherSpec();
+    }
+
     /**
      * Process the passed AAD data.
      * @param pBytes AAD Bytes to update cipher with

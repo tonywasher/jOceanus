@@ -48,6 +48,11 @@ public abstract class GordianMac
     private final SecureRandom theRandom;
 
     /**
+     * The BlockSize (for Padding).
+     */
+    private final int thePaddingBlock;
+
+    /**
      * The KeyGenerator.
      */
     private GordianKeyGenerator<GordianMacSpec> theGenerator;
@@ -63,6 +68,11 @@ public abstract class GordianMac
     private byte[] theInitVector;
 
     /**
+     * ByteCount.
+     */
+    private int theByteCount;
+
+    /**
      * Constructor.
      * @param pFactory the Security Factory
      * @param pMacSpec the macSpec
@@ -72,6 +82,7 @@ public abstract class GordianMac
         theMacSpec = pMacSpec;
         theFactory = pFactory;
         theRandom = pFactory.getRandom();
+        thePaddingBlock = theMacSpec.paddingBlock();
     }
 
     /**
@@ -206,5 +217,45 @@ public abstract class GordianMac
     public byte[] finish(final byte[] pBytes) {
         update(pBytes);
         return finish();
+    }
+
+    /**
+     * Adjust the byteCount.
+     * @param pAdjust the adjustment count
+     */
+    protected void adjustByteCount(final int pAdjust) {
+        theByteCount += pAdjust;
+    }
+
+    /**
+     * Reset the byteCount.
+     */
+    protected void resetByteCount() {
+        theByteCount = 0;
+    }
+
+    /**
+     * Adjust Padding.
+     */
+    protected void adjustPadding() {
+        /* If padding is needed for partial blocks */
+        if (thePaddingBlock != 0) {
+            /* If we have a partial block */
+            final int myNumBytes = theByteCount % thePaddingBlock;
+            if (myNumBytes != 0) {
+                /* Insert a one */
+                update((byte) 1);
+
+                /* Calculate number of padding zeros and perform padding */
+                final int myPadding = thePaddingBlock - myNumBytes - 1;
+                if (myPadding != 0) {
+                    final byte[] myZeros = new byte[myPadding];
+                    update(myZeros);
+                }
+            }
+        }
+
+        /* Reset the byte count */
+        resetByteCount();
     }
 }

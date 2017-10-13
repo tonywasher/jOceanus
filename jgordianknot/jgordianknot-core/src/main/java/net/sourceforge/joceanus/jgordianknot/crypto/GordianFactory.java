@@ -749,11 +749,8 @@ public abstract class GordianFactory {
                 return supportedDigestSpecs().test(mySpec)
                        && GordianDigestType.KUPYNA.equals(mySpec.getDigestType());
             case KALYNA:
-                return false;
-            /**
-             * KalynaMac not currently usable! return validSymKeySpec(mySymSpec) &&
-             * GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType());
-             */
+                return validSymKeySpec(mySymSpec)
+                       && GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType());
             case VMPC:
                 return true;
             default:
