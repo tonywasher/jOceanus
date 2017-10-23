@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jthemis</artifactId>
-    <version>v1.5.2-SNAPSHOT</version>   
+    <version>v1.5.2-b4</version>   
   </parent>
   <artifactId>jthemis-swing</artifactId>
   <name>jThemis Swing Project Framework</name>

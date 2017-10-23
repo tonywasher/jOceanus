@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.joceanus</groupId>
     <artifactId>jmoneywise</artifactId>
-    <version>v1.5.2-SNAPSHOT</version>   
+    <version>v1.5.2-b4</version>   
   </parent>
   <artifactId>jmoneywise-javafx</artifactId>
   <name>jMoneyWise Personal Finance - JavaFX</name>
