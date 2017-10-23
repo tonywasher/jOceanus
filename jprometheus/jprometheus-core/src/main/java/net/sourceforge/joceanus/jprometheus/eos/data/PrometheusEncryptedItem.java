@@ -20,7 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
+package net.sourceforge.joceanus.jprometheus.eos.data;
+
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
+
 /**
- * Data definitions.
+ * Encrypted Data Item.
  */
-package net.sourceforge.joceanus.jprometheus.atlas.data;
+public class PrometheusEncryptedItem
+        extends MetisDataEosVersionedItem {
+    /**
+     * Report fields.
+     */
+    static {
+        PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusEncryptedItem.class);
+    }
+
+    @Override
+    protected PrometheusEncryptedValues newVersionValues() {
+        return new PrometheusEncryptedValues(this);
+    }
+}

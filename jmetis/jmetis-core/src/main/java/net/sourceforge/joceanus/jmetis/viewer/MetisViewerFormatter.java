@@ -37,6 +37,9 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersion
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
@@ -146,6 +149,10 @@ public class MetisViewerFormatter {
         if (myObject instanceof MetisDataVersionedItem) {
             formatHTMLVersionedItem((MetisDataVersionedItem) myObject);
 
+            /* If we are DataEosFieldItem */
+        } else if (myObject instanceof MetisDataEosFieldItem) {
+            formatHTMLEosFieldItem((MetisDataEosFieldItem) myObject);
+
             /* If we are DataFieldItem */
         } else if (myObject instanceof MetisDataFieldItem) {
             formatHTMLFieldItem((MetisDataFieldItem) myObject);
@@ -245,6 +252,44 @@ public class MetisViewerFormatter {
             final Object myValue = myStorage.isCalculated()
                                                             ? MetisDataFieldValue.SKIP
                                                             : pItem.getFieldValue(myField);
+
+            /* Skip value if required */
+            if (MetisDataFieldValue.SKIP.equals(myValue)) {
+                continue;
+            }
+
+            /* Start the field */
+            theBuilder.newTableRow();
+            theBuilder.newDataCell(myField.getName());
+            theBuilder.newDataCell(myValue);
+        }
+    }
+
+    /**
+     * Build HTML table describing DataEosFieldItem.
+     * @param pItem the item
+     */
+    private void formatHTMLEosFieldItem(final MetisDataEosFieldItem pItem) {
+        /* Access details */
+        final MetisDataEosFieldSetDef myFields = pItem.getDataFieldSet();
+
+        /* Initialise the document */
+        theBuilder.newTitle(myFields.getName());
+        theBuilder.newTable();
+        theBuilder.newTitleCell(COLUMN_FIELD);
+        theBuilder.newTitleCell(COLUMN_VALUE);
+
+        /* Loop through the fields */
+        final Iterator<MetisDataEosFieldDef> myIterator = myFields.fieldIterator();
+        while (myIterator.hasNext()) {
+            /* Access Field */
+            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisDataFieldStorage myStorage = myField.getStorage();
+
+            /* Access the value */
+            final Object myValue = myStorage.isCalculated()
+                                                            ? MetisDataFieldValue.SKIP
+                                                            : myField.getFieldValue(pItem);
 
             /* Skip value if required */
             if (MetisDataFieldValue.SKIP.equals(myValue)) {
@@ -404,7 +449,7 @@ public class MetisViewerFormatter {
             int myCount = ITEMS_PER_PAGE;
             int myIndex = myStart + 1;
             while (myIterator.hasNext()
-                   && (myCount-- > 0)) {
+                   && myCount-- > 0) {
                 /* Access the key and value */
                 final Object myObject = myIterator.next();
 
@@ -442,7 +487,7 @@ public class MetisViewerFormatter {
             if (myCount > 0) {
                 /* Skip leading entries */
                 while (myIterator.hasNext()
-                       && (myCount-- > 0)) {
+                       && myCount-- > 0) {
                     myIterator.next();
                 }
             }

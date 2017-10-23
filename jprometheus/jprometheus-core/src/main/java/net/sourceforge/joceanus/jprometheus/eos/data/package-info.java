@@ -20,21 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.data;
-
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-
 /**
- * Prometheus Set of versioned Values.
+ * Data definitions.
  */
-public class PrometheusDataVersionControl
-        extends MetisDataVersionControl {
-    /**
-     * Constructor.
-     * @param pItem the owning item
-     */
-    protected PrometheusDataVersionControl(final MetisDataVersionedItem pItem) {
-        super(pItem);
-    }
-}
+package net.sourceforge.joceanus.jprometheus.eos.data;

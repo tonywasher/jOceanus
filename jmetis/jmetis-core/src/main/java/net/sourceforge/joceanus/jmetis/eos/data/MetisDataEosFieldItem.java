@@ -51,7 +51,7 @@ public interface MetisDataEosFieldItem
         String getName();
 
         /**
-         * Obtain the versionIndex of the field.
+         * Obtain the index of the field.
          * @return the index of the field.
          */
         Integer getIndex();
@@ -130,18 +130,5 @@ public interface MetisDataEosFieldItem
          * Lock the fieldSet.
          */
         void setLocked();
-    }
-
-    /**
-     * FieldSet interface.
-     */
-    interface MetisDataEosVersionedFieldSetDef
-            extends MetisDataEosFieldSetDef {
-        /**
-         * Obtain a new version values.
-         * @param pItem the owning item
-         * @return the version values
-         */
-        MetisDataEosVersionValues newVersionValues(MetisDataEosVersionedItem pItem);
     }
 }

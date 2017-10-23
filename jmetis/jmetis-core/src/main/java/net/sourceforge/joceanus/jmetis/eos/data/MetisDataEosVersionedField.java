@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,18 +20,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.data;
+package net.sourceforge.joceanus.jmetis.eos.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 
 /**
- * Prometheus Data fields.
+ * Metis Data Versioned Field.
+ * @param <T> the data type
  */
-public class PrometheusDataField
-        extends MetisDataField {
+public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
+        extends MetisDataEosField<T> {
     /**
      * Constructor.
      * @param pAnchor the anchor
@@ -41,30 +41,25 @@ public class PrometheusDataField
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
-    protected PrometheusDataField(final PrometheusDataFieldSet pAnchor,
-                                  final String pName,
-                                  final MetisDataType pDataType,
-                                  final Integer pMaxLength,
-                                  final MetisDataFieldEquality pEquality,
-                                  final MetisDataFieldStorage pStorage) {
-        /* Initialise underlying class */
+    protected MetisDataEosVersionedField(final MetisDataEosVersionedFieldSet<T> pAnchor,
+                                         final String pName,
+                                         final MetisDataType pDataType,
+                                         final Integer pMaxLength,
+                                         final MetisDataFieldEquality pEquality,
+                                         final MetisDataFieldStorage pStorage) {
+        /* initialise underlying class */
         super(pAnchor, pName, pDataType, pMaxLength, pEquality, pStorage);
     }
 
     @Override
-    protected void checkValidity() {
-        /* Check underlying options */
-        super.checkValidity();
+    public MetisDataEosVersionedFieldSet<T> getAnchor() {
+        return (MetisDataEosVersionedFieldSet<T>) super.getAnchor();
+    }
 
-        /* Object/ByteArray are not valid for Encryption */
-        switch (getDataType()) {
-            case OBJECT:
-            case BYTEARRAY:
-            case LINK:
-            case LINKSET:
-                throw new IllegalArgumentException("Invalid encrypted object");
-            default:
-                break;
-        }
+    @Override
+    public Object getFieldValue(final Object pObject) {
+        final T myObject = getAnchor().getFieldClass().cast(pObject);
+        final MetisDataEosVersionValues myValues = myObject.getValueSet();
+        return myValues.getValue(this);
     }
 }

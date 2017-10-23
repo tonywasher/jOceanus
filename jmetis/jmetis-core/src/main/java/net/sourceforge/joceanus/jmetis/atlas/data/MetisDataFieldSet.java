@@ -471,6 +471,11 @@ public class MetisDataFieldSet {
         VERSIONED,
 
         /**
+         * Paired.
+         */
+        PAIRED,
+
+        /**
          * Calculated.
          */
         CALCULATED;
@@ -480,7 +485,21 @@ public class MetisDataFieldSet {
          * @return true/false
          */
         public boolean isVersioned() {
-            return this == VERSIONED;
+            switch (this) {
+                case VERSIONED:
+                case PAIRED:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * Is the field paired?
+         * @return true/false
+         */
+        public boolean isPaired() {
+            return this == PAIRED;
         }
 
         /**

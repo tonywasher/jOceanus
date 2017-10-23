@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jPrometheus: Application Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,28 +20,30 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jprometheus.eos.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedFieldSet;
 
 /**
- * Metis Data FieldSet.
+ * Prometheus Data fieldSet.
  * @param <T> the data type
  */
-public class MetisDataEosVersionedFieldSet<T extends MetisDataEosVersionedItem>
-        extends MetisDataEosFieldSet<T> {
+public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
+        extends MetisDataEosVersionedFieldSet<T> {
     /**
      * Constructor.
      * @param pClazz the class of the item
      * @param pStatic is this a static fieldSet?
      * @param pParent the parent fields
      */
-    protected MetisDataEosVersionedFieldSet(final Class<T> pClazz,
-                                            final MetisDataEosFieldSetDef pParent,
-                                            final boolean pStatic) {
+    PrometheusEncryptedFieldSet(final Class<T> pClazz,
+                                final MetisDataEosFieldSetDef pParent,
+                                final boolean pStatic) {
         /* Pass call on */
         super(pClazz, pParent, pStatic);
     }
@@ -52,14 +54,14 @@ public class MetisDataEosVersionedFieldSet<T extends MetisDataEosVersionedItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static <T extends MetisDataEosVersionedItem> MetisDataEosVersionedFieldSet<T> newVersionedFieldSet(final Class<T> pClazz) {
+    public static <T extends PrometheusEncryptedItem> PrometheusEncryptedFieldSet<T> newEncryptedFieldSet(final Class<T> pClazz) {
         /* Synchronise on class */
         synchronized (MetisDataEosFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
             final MetisDataEosFieldSetDef myParent = lookUpFieldSet(pClazz);
 
             /* Create the new fieldSet and store into map */
-            final MetisDataEosVersionedFieldSet<T> myFieldSet = new MetisDataEosVersionedFieldSet<>(pClazz, myParent, true);
+            final PrometheusEncryptedFieldSet<T> myFieldSet = new PrometheusEncryptedFieldSet<>(pClazz, myParent, true);
             registerFieldSet(pClazz, myFieldSet);
 
             /* Return the new fieldSet */
@@ -68,54 +70,43 @@ public class MetisDataEosVersionedFieldSet<T extends MetisDataEosVersionedItem>
     }
 
     /**
-     * Declare versioned field not used for equality test.
-     * @param pName the name of the field
-     * @return the field
-     */
-    public MetisDataEosVersionedField<T> declareDerivedVersionedField(final String pName) {
-        return declareVersionedField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
-    }
-
-    /**
-     * Declare versioned field used for equality test.
+     * Declare encrypted valueSet field used for equality test.
      * @param pName the name of the field
      * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisDataEosVersionedField<T> declareEqualityVersionedField(final String pName,
-                                                                       final MetisDataType pDataType) {
-        return declareEqualityVersionedField(pName, pDataType, FIELD_NO_MAXLENGTH);
+    public PrometheusEncryptedField<T> declareEqualityEncryptedField(final String pName,
+                                                                     final MetisDataType pDataType) {
+        return declareEqualityEncryptedField(pName, pDataType, FIELD_NO_MAXLENGTH);
     }
 
     /**
-     * Declare versioned field used for equality test.
+     * Declare encrypted valueSet field used for equality test.
      * @param pName the name of the field
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public MetisDataEosVersionedField<T> declareEqualityVersionedField(final String pName,
-                                                                       final MetisDataType pDataType,
-                                                                       final Integer pMaxLength) {
-        return declareVersionedField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
+    public PrometheusEncryptedField<T> declareEqualityEncryptedField(final String pName,
+                                                                     final MetisDataType pDataType,
+                                                                     final Integer pMaxLength) {
+        return declareDataField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY);
     }
 
     /**
-     * Declare versioned field.
+     * Declare field.
      * @param pName the name of the field
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the equality class
-     * @param pStorage the field storage type
      * @return the field
      */
-    private MetisDataEosVersionedField<T> declareVersionedField(final String pName,
-                                                                final MetisDataType pDataType,
-                                                                final Integer pMaxLength,
-                                                                final MetisDataFieldEquality pEquality,
-                                                                final MetisDataFieldStorage pStorage) {
+    private PrometheusEncryptedField<T> declareDataField(final String pName,
+                                                         final MetisDataType pDataType,
+                                                         final Integer pMaxLength,
+                                                         final MetisDataFieldEquality pEquality) {
         /* Create the field */
-        final MetisDataEosVersionedField<T> myField = new MetisDataEosVersionedField<>(this, pName, pDataType, pMaxLength, pEquality, pStorage);
+        final PrometheusEncryptedField<T> myField = new PrometheusEncryptedField<>(this, pName, pDataType, pMaxLength, pEquality, MetisDataFieldStorage.VERSIONED);
 
         /* Register the field */
         registerField(myField);

@@ -107,7 +107,7 @@ public class MetisDataEosVersionValues {
      * Obtain the underlying item.
      * @return the item
      */
-    protected MetisDataEosFieldItem getItem() {
+    protected MetisDataEosVersionedItem getItem() {
         return theItem;
     }
 
@@ -207,16 +207,6 @@ public class MetisDataEosVersionValues {
 
         /* Return the value */
         return theValues[pField.getIndex()];
-    }
-
-    /**
-     * Get the indexed value.
-     * @param pIndex the index
-     * @return the value
-     */
-    protected Object getValue(final int pIndex) {
-        /* Return the value */
-        return theValues[pIndex];
     }
 
     /**

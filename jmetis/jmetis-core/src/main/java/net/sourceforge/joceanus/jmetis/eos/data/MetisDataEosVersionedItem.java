@@ -82,11 +82,31 @@ public class MetisDataEosVersionedItem
      */
     protected MetisDataEosVersionedItem() {
         /* Allocate the history */
-        final MetisDataEosVersionValues myValues = getDataFieldSet().newVersionValues(this);
+        final MetisDataEosVersionValues myValues = newVersionValues();
         theHistory = new MetisDataEosVersionHistory(myValues);
 
         /* Allocate the validation */
         theValidation = new MetisDataEosValidation();
+    }
+
+    /**
+     * Constructor.
+     * @param pValues the initial values
+     */
+    protected MetisDataEosVersionedItem(final MetisDataEosVersionValues pValues) {
+        /* Allocate the history */
+        theHistory = new MetisDataEosVersionHistory(pValues);
+
+        /* Allocate the validation */
+        theValidation = new MetisDataEosValidation();
+    }
+
+    /**
+     * Obtain new version values.
+     * @return new values
+     */
+    protected MetisDataEosVersionValues newVersionValues() {
+        return new MetisDataEosVersionValues(this);
     }
 
     @Override
@@ -175,7 +195,7 @@ public class MetisDataEosVersionedItem
     }
 
     @Override
-    public MetisDataEosVersionedFieldSetDef getDataFieldSet() {
+    public MetisDataEosFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 

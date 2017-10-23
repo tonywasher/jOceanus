@@ -128,6 +128,16 @@ public enum MetisDataType {
     LINKSET,
 
     /**
+     * KeyHash.
+     */
+    KEYHASH,
+
+    /**
+     * Key.
+     */
+    KEY,
+
+    /**
      * Object (not relevant/none-of-the-above).
      */
     OBJECT,

@@ -20,18 +20,18 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.atlas.data;
+package net.sourceforge.joceanus.jprometheus.eos.data;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
 
 /**
  * Prometheus Set of versioned Values.
  */
-public class PrometheusDataVersionValues
-        extends MetisDataVersionValues {
+public class PrometheusEncryptedValues
+        extends MetisDataEosVersionValues {
     /**
      * The KeySet.
      */
@@ -41,32 +41,37 @@ public class PrometheusDataVersionValues
      * Constructor.
      * @param pItem the associated item
      */
-    public PrometheusDataVersionValues(final MetisDataVersionedItem pItem) {
+    public PrometheusEncryptedValues(final PrometheusEncryptedItem pItem) {
         super(pItem);
     }
 
     @Override
-    public PrometheusDataVersionValues cloneIt() {
+    public PrometheusEncryptedValues cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        final PrometheusDataVersionValues mySet = new PrometheusDataVersionValues(getItem());
+        final PrometheusEncryptedValues mySet = new PrometheusEncryptedValues(getItem());
         mySet.copyFrom(this);
         return mySet;
     }
 
     @Override
-    public void copyFrom(final MetisDataVersionValues pPrevious) {
+    protected PrometheusEncryptedItem getItem() {
+        return (PrometheusEncryptedItem) super.getItem();
+    }
+
+    @Override
+    public void copyFrom(final MetisDataEosVersionValues pPrevious) {
         /* Perform main copy */
         super.copyFrom(pPrevious);
 
         /* Copy the keySet */
-        if (pPrevious instanceof PrometheusDataVersionValues) {
-            final PrometheusDataVersionValues myPrevious = (PrometheusDataVersionValues) pPrevious;
+        if (pPrevious instanceof PrometheusEncryptedValues) {
+            final PrometheusEncryptedValues myPrevious = (PrometheusEncryptedValues) pPrevious;
             theKeySet = myPrevious.theKeySet;
         }
     }
 
     @Override
-    protected void checkValueType(final MetisDataField pField,
+    protected void checkValueType(final MetisDataEosFieldDef pField,
                                   final Object pValue) {
         /* Allow byteArray */
         if (pValue instanceof byte[]) {

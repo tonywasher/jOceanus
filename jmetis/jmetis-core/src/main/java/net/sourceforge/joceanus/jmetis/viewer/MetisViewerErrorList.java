@@ -68,10 +68,7 @@ public class MetisViewerErrorList
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFieldSet().getName()
-               + "("
-               + size()
-               + ")";
+        return getDataFieldSet().getName();
     }
 
     @Override
