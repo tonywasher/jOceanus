@@ -32,6 +32,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  */
 public abstract class GordianKeyEncapsulation {
     /**
+     * InitVectorLength.
+     */
+    protected static final int INITLEN = 16;
+
+    /**
      * The factory.
      */
     private final GordianFactory theFactory;

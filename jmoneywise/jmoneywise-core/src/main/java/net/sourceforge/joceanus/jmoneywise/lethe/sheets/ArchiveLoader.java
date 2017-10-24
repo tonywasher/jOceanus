@@ -238,9 +238,6 @@ public class ArchiveLoader {
                 pData.hitEventLimit();
             }
 
-            /* Close the Stream to force out errors */
-            myStream.close();
-
         } catch (IOException e) {
             /* Report the error */
             throw new MoneyWiseIOException("Failed to load Workbook: " + myArchive.getName(), e);

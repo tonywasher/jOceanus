@@ -4,6 +4,12 @@ GordianKnot Project
 
   GordianKnot is a security suite for Java based on the BouncyCastle cryptography library. To utilise it you must
 additionally download this library from the {{{http://www.bouncycastle.org/java.html}BouncyCastle webSite}}
+
+  In the first instance, GordianKnot provides a simple API on top of BouncyCastle providing access to 
+the various BouncyCastle primitives such as symmetric/stream ciphers, digests/Macs and asymmetricKey functionality.  
+Details are provided in the section {{Simple API}}.
+
+  It also build on this API to provide various extensions such as triple encryption and encrypted ZipFiles.   	
   
   Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
 the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plaintext is encrypted 
@@ -23,74 +29,112 @@ keys for the KeySet via another variant of the PBKDF2 algorithm.
 compared with the expected hash. If it matches, the password is assumed correct and the keySet will be generated. In the unlikely
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
-  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blocksizes other than 128.
+  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blocksizes other than 128. Details
+are provided {{{./KeyWrap.apt}here}}.  
+  
 
-* Supported Algorithms
+{Simple API}
 
-  The following symmetric key algorithms are supported for 128/256 byte keys. You will only be able to use 256 byte keys
-if you are able to access the <<UNLIMITED>> strength JCE policy files.
+* Configuration
 
-    * AES
+  GordianKnot is initialised with two separate boolean parameters, providing four possible setups
+  	[[1]] Use JCE or Native BouncyCastle
+  	[[2]] Use restricted (128-bit) or unrestricted (256-bit) keys
+  	
+  You will only be able to use 256 byte keys if you are able to access the <<UNLIMITED>> strength JCE policy files. 
+Not all of BouncyCastle functionality is available through the JCE and so there will be a subset of functionality available in this mode.
+    	
+* Symmetric Encryption
 
-    * Serpent
+  A cipher for encryption/decryption is created by specifying a CipherSpec (Algorithm/BlockSize if needed) and a mode, plus padding if required.
+The cipher can be used for encryption of byte streams in the same fashion as the standard JCA Cipher class. In addition a wrapCipher can be created 
+for each algorithm as defined in {{Key Wrapping}}.
 
-    * TwoFish
+** Supported Algorithms
 
-    * CAMELLIA
+  The following symmetric key algorithms are supported for both JCA and Native.  
 
-    * CAST6
+*-------------*-------------*------------*
+| Algorithm   | BlockLength | KeyLengths |
+*-------------*-------------*------------*    
+| AES         | 128         | 128,256    |  
+*-------------*-------------*------------*
+| Serpent     | 128         | 128,256    |  
+*-------------*-------------*------------*
+| TwoFish     | 128         | 128,256    |  
+*-------------*-------------*------------*
+| CAMELLIA    | 128         | 128,256    |  
+*-------------*-------------*------------*
+| CAST6       | 128         | 128,256    |  
+*-------------*-------------*------------*
+| RC6         | 128         | 128,256    |  
+*-------------*-------------*------------*
+| ARIA        | 128         | 128,256    |  
+*-------------*-------------*------------*
+| Threefish   | 256         | 256        |  
+*-------------*-------------*------------*
+| Noekeon     | 128         | 128        |  
+*-------------*-------------*------------*
+| SM4         | 128         | 128        |  
+*-------------*-------------*------------*
+| SEED        | 128         | 128        |  
+*-------------*-------------*------------*
+| SKIPJACK    | 64          | 128        |  
+*-------------*-------------*------------*
+| Blowfish    | 64          | 128,256    |  
+*-------------*-------------*------------*
+| DESede      | 64          | 128        |  
+*-------------*-------------*------------*
+| CAST5       | 64          | 128        |  
+*-------------*-------------*------------*
+| RC5         | 64          | 128        |
+*-------------*-------------*------------*
+| RC2         | 64          | 128, 256   |
+*-------------*-------------*------------*
+| IDEA        | 64          | 128        |
+*-------------*-------------*------------*
+| TEA         | 64          | 128        |
+*-------------*-------------*------------*
+| XTEA        | 64          | 128        |
+*-------------*-------------*------------*
+| Magma(GOST) | 64          | 256        |
+*-------------*-------------*------------*
+| SHACAL2     | 512         | 128, 256   |
+*-------------*-------------*------------*
+| Kalyna      | 128         | 128, 256   |
+|             | 256         | 256        |
+*-------------*-------------*------------*
+        
+** Supported Modes
 
-    * RC6
+  The following modes are available with the above algorithms
 
-    * ARIA
+*------*-------*
+| Mode | Notes |
+*------*-------*
+| ECB  |
+*------*
+| CBC  |
+*------*--------------------------------*
+| SIC  | KCTR Mode available for Kalyna |
+*------*--------------------------------*
+| OFB  | GOFB Mode available for Magma  |
+*------*--------------------------------*
+| CFB  | GCFB Mode available for Magma  |
+*------*--------------------------------*
+| EAX  |
+*------*--------------------------------*
+| GCM  | KGCM Mode available for Kalyna |
+*------*--------------------------------*
+| CCM  | KCCM Mode available for Kalyna |
+*------*--------------------------------*
+| OCB  |
+*------*
+   
 
-    * ThreeFish (unrestricted keys)
- 
-    * Noekeon (restricted keys)
+** Supported Paddings
 
-    * SM4 (restricted keys)
-
-    * SEED (restricted keys) 
-
-    * SKIPJACK (restricted keys) 
-	
-    * BlowFish 
-
-    * DESede (restricted keys) 
-	
-    * CAST5 (restricted keys) 
-	
-    * RC5 (restricted keys) 
-	
-    * RC2 
-	
-    * IDEA (restricted keys) 
-	
-    * TEA (restricted keys) 
-
-    * XTEA (restricted keys) 
-	
-  The following modes are available for the above keys
-
-    * ECB
-
-    * CBC
- 
-    * OFB
-
-    * CFB
-
-    * SIC (CTR)
-
-    * GCM
-
-    * CCM
-
-    * EAX
-
-	* OCB
-
-	The following paddings are available for ECB and CBC modes
+  The following paddings are available for ECB and CBC modes
 
     * CTS
 
@@ -103,26 +147,50 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
     * TBC
    
     * NONE (used for all modes other than ECB/CBC)
+    
+* {Key Wrapping}
 
-  The following Stream Key algorithms are supported (bracketed versions used for restricted keys).
+	Key Wrapping is performed by GordianKnot using a variant of the AES Key Wrapping algorithm specified in {{{https://tools.ietf.org/html/rfc5649}RFC 5649}}.
+	
+	The differences are necessary to enable support of ciphers that do not have the standard blockSize of 128 bits, since RFC 5649 assumes a 128 bit blockSize.
+	
+	[[1]] For blockSizes of 256 bits, the 32-bit Integrity Vector of <<0xA65959A6>> is expanded to the 96-bit <<0xA65959A6A65959A6A65959A6>> so that when combined with
+	the 32-bit dataLen of the wrapped data it comprises the half-block needed for the wrapping algorithm. This method can be extended to support any block size >= 128.
+	
+	[[2]] For blockSizes of 64, the Integrity Vector using the above adjustment becomes zero length, which is not very useful. In this case, we retain the 
+	standard 32-bit	Integrity Vector of <<0xA65959A6>> and prefix the 32-bit dataLen to the data to be wrapped.
+	
+	[]
+	
+	In addition, a block of random data is inserted immediately prior to the data to be wrapped.
+	
+* StreamKey Encryption 	    
 
-    * ChaCha
+  The following Stream Key algorithms are supported.
 
-    * ChaCha7539 (unrestricted keys)
-
-    * Salsa20
-
-    * XSalsa20 (unrestricted keys)
-
-    * HC256(HC128 for restricted keys)
-
-    * VMPC 
-
-    * ISAAC 
-
-    * RC4 
-
-    * Grain128 (restricted keys)
+*-------------*-------------*------------*
+| Algorithm   | KeyLengths  | Notes      |
+*-------------*-------------*------------*    
+| ChaCha      | 128,256     |  
+*-------------*-------------*    
+| ChaCha7539  | 256         |  
+*-------------*-------------*    
+| Salsa20     | 128,256     |  
+*-------------*-------------*    
+| XSalsa20    | 256         |  
+*-------------*-------------*    
+| HC128       | 128         |  
+*-------------*-------------*    
+| HC256       | 256         |  
+*-------------*-------------*    
+| VMPC        | 128,256     |  
+*-------------*-------------*-------------*     
+| ISAAC       | 128,256     | Not for JCA |  
+*-------------*-------------*-------------*     
+| RC4         | 128,256     |  
+*-------------*-------------*    
+| Grain128    | 128         |  
+*-------------*-------------*    
 
   The following MessageDigest algorithms are supported (bit lengths in brackets).
 
@@ -150,6 +218,10 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * MD5 (128)
 
+    * SHAKE (128, 256)
+	
+    * Kupyna (256, 384, 512)
+	
   The following Mac Algorithms are supported
 
     * HMac (for each supported message digest/length)
@@ -164,6 +236,12 @@ if you are able to access the <<UNLIMITED>> strength JCE policy files.
 
     * VMPCMAC
 
+    * Blake2bMAC
+	
+    * KupynaMAC
+	
+    * KalynaMAC
+	
 ZipFile support
 
   In addition to Encryption services, jGordianKnot also provides support for to creating and reading encrypted ZipFiles.
