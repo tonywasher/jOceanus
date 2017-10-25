@@ -33,7 +33,9 @@ import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.signers.DSASigner;
+import org.bouncycastle.crypto.signers.DSTU4145Signer;
 import org.bouncycastle.crypto.signers.ECDSASigner;
+import org.bouncycastle.crypto.signers.ECGOST3410_2012Signer;
 import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.crypto.signers.SM2Signer;
@@ -164,9 +166,15 @@ public final class BouncySignature {
     static DSA getDSASigner(final BouncyFactory pFactory,
                             final GordianAsymKeySpec pKeySpec,
                             final GordianSignatureSpec pSpec) throws OceanusException {
-        /* Handle SM2 explicitly */
+        /* Handle SM2/DSTU/GOST explicitly */
         if (GordianAsymKeyType.SM2.equals(pKeySpec.getKeyType())) {
             return new SM2Signer();
+        }
+        if (GordianAsymKeyType.DSTU4145.equals(pKeySpec.getKeyType())) {
+            return new DSTU4145Signer();
+        }
+        if (GordianAsymKeyType.GOST2012.equals(pKeySpec.getKeyType())) {
+            return new ECGOST3410_2012Signer();
         }
 
         /* Note if we are DSA */

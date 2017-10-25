@@ -105,6 +105,14 @@ public final class JcaFactory
     private static final String KALYNA_ALGORITHM = "DSTU7624";
 
     /**
+     * Static Constructor.
+     */
+    static {
+        /* Select unlimited security */
+        Security.setProperty("crypto.policy", "unlimited");
+    }
+
+    /**
      * Note the standard provider.
      */
     private static final Provider BCPROV = new BouncyCastleProvider();

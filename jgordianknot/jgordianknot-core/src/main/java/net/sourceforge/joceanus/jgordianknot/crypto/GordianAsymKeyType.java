@@ -52,6 +52,16 @@ public enum GordianAsymKeyType {
     SM2(GordianSignatureType.NATIVE),
 
     /**
+     * DSTU4145.
+     */
+    DSTU4145(GordianSignatureType.NATIVE),
+
+    /**
+     * GOST2012.
+     */
+    GOST2012(GordianSignatureType.NATIVE),
+
+    /**
      * SPHINCS.
      */
     SPHINCS(GordianSignatureType.NATIVE),

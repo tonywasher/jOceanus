@@ -40,12 +40,12 @@ public final class GordianLZMAInputStream
     /**
      * The sink stream to write to for the decoder thread.
      */
-    private final OutputStream theSink;
+    final OutputStream theSink;
 
     /**
      * The source stream for the decoder thread.
      */
-    private final InputStream theInput;
+    final InputStream theInput;
 
     /**
      * The source stream to read from the decoder thread.

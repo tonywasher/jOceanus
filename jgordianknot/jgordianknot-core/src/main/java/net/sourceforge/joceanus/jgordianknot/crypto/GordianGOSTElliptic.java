@@ -23,18 +23,33 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 /**
- * Named SM2 Elliptic Curves.
+ * Named GOST-2012 Elliptic Curves.
  */
-public enum GordianSM2Elliptic implements GordianElliptic {
+public enum GordianGOSTElliptic implements GordianElliptic {
     /**
-     * sm2p256v1.
+     * CryptoPro-A.
      */
-    SM2P256V1("sm2p256v1", 256),
+    CRYPTOPROA("GostR3410-2001-CryptoPro-A", 256),
 
     /**
-     * wapip192v1.
+     * CryptoPro-B.
      */
-    WAPIP192V1("wapip192v1", 192);
+    CRYPTOPROB("GostR3410-2001-CryptoPro-B", 256),
+
+    /**
+     * CryptoPro-C.
+     */
+    CRYPTOPROC("GostR3410-2001-CryptoPro-C", 256),
+
+    /**
+     * CryptoPro-XchA.
+     */
+    CRYPTOPROXCHA("GostR3410-2001-CryptoPro-XchA", 256),
+
+    /**
+     * CryptoPro-XchB.
+     */
+    CRYPTOPROXCHB("GostR3410-2001-CryptoPro-XchB", 256);
 
     /**
      * The curve name.
@@ -51,8 +66,8 @@ public enum GordianSM2Elliptic implements GordianElliptic {
      * @param pName the name of the curve
      * @param pSize the bitSize of the curve
      */
-    GordianSM2Elliptic(final String pName,
-                       final int pSize) {
+    GordianGOSTElliptic(final String pName,
+                        final int pSize) {
         theName = pName;
         theSize = pSize;
     }

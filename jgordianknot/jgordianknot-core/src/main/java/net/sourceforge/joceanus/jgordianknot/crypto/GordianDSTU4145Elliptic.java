@@ -23,18 +23,58 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 /**
- * Named SM2 Elliptic Curves.
+ * Named DSTU4145 Elliptic Curves.
  */
-public enum GordianSM2Elliptic implements GordianElliptic {
+public enum GordianDSTU4145Elliptic implements GordianElliptic {
     /**
-     * sm2p256v1.
+     * DSTU4145-1.
      */
-    SM2P256V1("sm2p256v1", 256),
+    DSTU1(1, 256),
 
     /**
-     * wapip192v1.
+     * DSTU4145-2.
      */
-    WAPIP192V1("wapip192v1", 192);
+    DSTU2(2, 256),
+
+    /**
+     * DSTU4145-3.
+     */
+    DSTU3(3, 256),
+
+    /**
+     * DSTU4145-4.
+     */
+    DSTU4(4, 256),
+
+    /**
+     * DSTU4145-5.
+     */
+    DSTU5(5, 256),
+
+    /**
+     * DSTU4145-6.
+     */
+    DSTU6(6, 256),
+
+    /**
+     * DSTU4145-7.
+     */
+    DSTU7(7, 256),
+
+    /**
+     * DSTU4145-8.
+     */
+    DSTU8(8, 256),
+
+    /**
+     * DSTU4145-9.
+     */
+    DSTU9(9, 192);
+
+    /**
+     * Curve Base.
+     */
+    private static final String BASE = "1.2.804.2.1.1.1.1.3.1.1.2.";
 
     /**
      * The curve name.
@@ -48,12 +88,12 @@ public enum GordianSM2Elliptic implements GordianElliptic {
 
     /**
      * Constructor.
-     * @param pName the name of the curve
+     * @param pIndex the index of the curve
      * @param pSize the bitSize of the curve
      */
-    GordianSM2Elliptic(final String pName,
-                       final int pSize) {
-        theName = pName;
+    GordianDSTU4145Elliptic(final int pIndex,
+                            final int pSize) {
+        theName = BASE + pIndex;
         theSize = pSize;
     }
 
@@ -69,6 +109,6 @@ public enum GordianSM2Elliptic implements GordianElliptic {
 
     @Override
     public String toString() {
-        return theName;
+        return name();
     }
 }

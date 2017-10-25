@@ -308,7 +308,7 @@ public final class JcaDigest
     /**
      * Determine the Skein algorithm.
      * @param pSpec the digestSpec
-     * @return the namet
+     * @return the name
      */
     private static String getSkeinAlgorithm(final GordianDigestSpec pSpec) {
         final String myLen = Integer.toString(pSpec.getDigestLength().getLength());

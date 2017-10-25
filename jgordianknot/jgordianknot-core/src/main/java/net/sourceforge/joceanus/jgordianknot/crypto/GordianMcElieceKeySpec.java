@@ -22,12 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
+
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
- * XMSS key Spec.
+ * McEliece KeyTypes.
  */
-public final class GordianXMSSKeySpec {
+public final class GordianMcElieceKeySpec {
     /**
      * The Separator.
      */
@@ -36,12 +38,12 @@ public final class GordianXMSSKeySpec {
     /**
      * The key type.
      */
-    private final GordianXMSSKeyType theKeyType;
+    private final GordianMcElieceKeyType theKeyType;
 
     /**
      * The digest type.
      */
-    private final GordianXMSSDigestType theDigestType;
+    private final GordianMcElieceDigestType theDigestType;
 
     /**
      * The String name.
@@ -53,25 +55,25 @@ public final class GordianXMSSKeySpec {
      * @param pKeyType the keyType
      * @param pDigestType the digestType
      */
-    private GordianXMSSKeySpec(final GordianXMSSKeyType pKeyType,
-                               final GordianXMSSDigestType pDigestType) {
+    private GordianMcElieceKeySpec(final GordianMcElieceKeyType pKeyType,
+                                   final GordianMcElieceDigestType pDigestType) {
         theKeyType = pKeyType;
         theDigestType = pDigestType;
     }
 
     /**
-     * Is this key XMSSMT?
+     * Is this key CCA2?
      * @return true/false
      */
-    public boolean isXMSSMT() {
-        return theKeyType.isXMSSMT();
+    public boolean isCCA2() {
+        return theKeyType.isCCA2();
     }
 
     /**
      * Obtain the keyType.
      * @return the keyType
      */
-    public GordianXMSSKeyType getKeyType() {
+    public GordianMcElieceKeyType getKeyType() {
         return theKeyType;
     }
 
@@ -79,26 +81,25 @@ public final class GordianXMSSKeySpec {
      * Obtain the digestType.
      * @return the digestType
      */
-    public GordianXMSSDigestType getDigestType() {
+    public GordianMcElieceDigestType getDigestType() {
         return theDigestType;
     }
 
     /**
-     * Create XMSSSpec.
-     * @param pDigestType the digestType
+     * Create McElieceSpec.
      * @return the keySpec
      */
-    public static GordianXMSSKeySpec xmss(final GordianXMSSDigestType pDigestType) {
-        return new GordianXMSSKeySpec(GordianXMSSKeyType.XMSS, pDigestType);
+    public static GordianMcElieceKeySpec standard() {
+        return new GordianMcElieceKeySpec(GordianMcElieceKeyType.STANDARD, null);
     }
 
     /**
-     * Create XMSSSpec.
+     * Create McEliece CCA2 keySpec.
      * @param pDigestType the digestType
      * @return the keySpec
      */
-    public static GordianXMSSKeySpec xmssmt(final GordianXMSSDigestType pDigestType) {
-        return new GordianXMSSKeySpec(GordianXMSSKeyType.XMSSMT, pDigestType);
+    public static GordianMcElieceKeySpec xmssmt(final GordianMcElieceDigestType pDigestType) {
+        return new GordianMcElieceKeySpec(GordianMcElieceKeyType.CCA2, pDigestType);
     }
 
     @Override
@@ -107,7 +108,9 @@ public final class GordianXMSSKeySpec {
         if (theName == null) {
             /* Load the name */
             theName = theKeyType.toString();
-            theName += SEP + theDigestType.toString();
+            if (theDigestType != null) {
+                theName += SEP + theDigestType.toString();
+            }
         }
 
         /* return the name */
@@ -124,13 +127,13 @@ public final class GordianXMSSKeySpec {
             return false;
         }
 
-        /* Make sure that the object is a xmssSpec */
+        /* Make sure that the object is a mEliecesSpec */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }
 
-        /* Access the target xmssSpec */
-        final GordianXMSSKeySpec myThat = (GordianXMSSKeySpec) pThat;
+        /* Access the target mcElieceSpec */
+        final GordianMcElieceKeySpec myThat = (GordianMcElieceKeySpec) pThat;
 
         /* Check KeyType and digestType */
         return theKeyType == myThat.getKeyType()
@@ -140,54 +143,82 @@ public final class GordianXMSSKeySpec {
     @Override
     public int hashCode() {
         final int hashCode = theKeyType.hashCode() << TethysDataConverter.BYTE_SHIFT;
-        return hashCode + theDigestType.hashCode();
+        return theDigestType == null
+                                     ? hashCode
+                                     : hashCode + theDigestType.hashCode();
     }
 
     /**
-     * XMSS keyTypes.
+     * McEliece keyTypes.
      */
-    public enum GordianXMSSKeyType {
+    public enum GordianMcElieceKeyType {
         /**
-         * XMSS.
+         * Standard.
          */
-        XMSS,
+        STANDARD,
 
         /**
-         * XMSS-MT.
+         * CCA2.
          */
-        XMSSMT;
+        CCA2;
 
         /**
-         * Is this key XMSSMT?
+         * Is this key CCA2?
          * @return true/false
          */
-        public boolean isXMSSMT() {
-            return this == XMSSMT;
+        public boolean isCCA2() {
+            return this == CCA2;
         }
     }
 
     /**
-     * XMSS digestTypes.
+     * McEliece digestTypes.
      */
-    public enum GordianXMSSDigestType {
+    public enum GordianMcElieceDigestType {
+        /**
+         * SHA1.
+         */
+        SHA1(McElieceCCA2KeyGenParameterSpec.SHA1),
+
+        /**
+         * SHA224.
+         */
+        SHA224(McElieceCCA2KeyGenParameterSpec.SHA224),
+
         /**
          * SHA256.
          */
-        SHA256,
+        SHA256(McElieceCCA2KeyGenParameterSpec.SHA256),
+
+        /**
+         * SHA384.
+         */
+        SHA384(McElieceCCA2KeyGenParameterSpec.SHA384),
 
         /**
          * SHA512.
          */
-        SHA512,
+        SHA512(McElieceCCA2KeyGenParameterSpec.SHA512);
 
         /**
-         * SHAKE128.
+         * The McEliece parameter.
          */
-        SHAKE128,
+        private final String theParm;
 
         /**
-         * SHAKE256.
+         * Constructor.
+         * @param pParam the parameter
          */
-        SHAKE256;
+        GordianMcElieceDigestType(final String pParam) {
+            theParm = pParam;
+        }
+
+        /**
+         * Obtain the parameter.
+         * @return the parameter
+         */
+        public String getParameter() {
+            return theParm;
+        }
     }
 }

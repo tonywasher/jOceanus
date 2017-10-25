@@ -145,6 +145,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPublicKey;
@@ -186,6 +187,16 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.Boun
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySPHINCSAsymKey.BouncySPHINCSValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSMTValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSPrivateKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianSecureRandom;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -1012,6 +1023,8 @@ public final class BouncyFactory
                 return new BouncyRSAKeyPairGenerator(this, pKeySpec);
             case EC:
             case SM2:
+            case DSTU4145:
+            case GOST2012:
                 return new BouncyECKeyPairGenerator(this, pKeySpec);
             case DSA:
                 return new BouncyDSAKeyPairGenerator(this, pKeySpec);
@@ -1022,11 +1035,15 @@ public final class BouncyFactory
             case RAINBOW:
                 return new BouncyRainbowKeyPairGenerator(this, pKeySpec);
             case MCELIECE:
-                return pKeySpec.getMcElieceType().isCCA2()
+                return pKeySpec.getMcElieceSpec().isCCA2()
                                                            ? new BouncyMcElieceCCA2KeyPairGenerator(this, pKeySpec)
                                                            : new BouncyMcElieceKeyPairGenerator(this, pKeySpec);
             case NEWHOPE:
                 return new BouncyNewHopeKeyPairGenerator(this, pKeySpec);
+            case XMSS:
+                return pKeySpec.getXMSSKeySpec().isXMSSMT()
+                                                            ? new BouncyXMSSMTKeyPairGenerator(this, pKeySpec)
+                                                            : new BouncyXMSSKeyPairGenerator(this, pKeySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
         }
@@ -1046,6 +1063,8 @@ public final class BouncyFactory
                 return new BouncyRSASigner(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
             case SM2:
+            case DSTU4145:
+            case GOST2012:
                 return new BouncyECSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case DSA:
                 return new BouncyDSASigner(this, (BouncyDSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
@@ -1053,6 +1072,11 @@ public final class BouncyFactory
                 return new BouncySPHINCSSigner(this, (BouncySPHINCSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
             case RAINBOW:
                 return new BouncyRainbowSigner(this, (BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case XMSS:
+                final GordianXMSSKeySpec myKeySpec = pKeyPair.getPrivateKey().getKeySpec().getXMSSKeySpec();
+                return myKeySpec.isXMSSMT()
+                                            ? new BouncyXMSSMTSigner(this, (BouncyXMSSMTPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec)
+                                            : new BouncyXMSSSigner(this, (BouncyXMSSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -1072,6 +1096,8 @@ public final class BouncyFactory
                 return new BouncyRSAValidator(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
             case SM2:
+            case DSTU4145:
+            case GOST2012:
                 return new BouncyECValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case DSA:
                 return new BouncyDSAValidator(this, (BouncyDSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
@@ -1079,6 +1105,11 @@ public final class BouncyFactory
                 return new BouncySPHINCSValidator(this, (BouncySPHINCSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
                 return new BouncyRainbowValidator(this, (BouncyRainbowPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case XMSS:
+                final GordianXMSSKeySpec myKeySpec = pKeyPair.getPublicKey().getKeySpec().getXMSSKeySpec();
+                return myKeySpec.isXMSSMT()
+                                            ? new BouncyXMSSMTValidator(this, (BouncyXMSSMTPublicKey) pKeyPair.getPublicKey(), pSignatureSpec)
+                                            : new BouncyXMSSValidator(this, (BouncyXMSSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }

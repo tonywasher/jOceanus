@@ -67,7 +67,7 @@ public class GordianTestAsymmetric {
     protected void createKeyPairs(final GordianFactory pFactory,
                                   final GordianKeySet pKeySet) throws OceanusException {
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rsa(GordianModulus.MOD2048));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(GordianElliptic.SECT571K1));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(GordianDSAElliptic.SECT571K1));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dsa(GordianDSAKeyType.MOD2048_2));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dh(GordianModulus.MOD4096));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sm2(GordianSM2Elliptic.SM2P256V1));
@@ -84,7 +84,7 @@ public class GordianTestAsymmetric {
      */
     protected void testKeyPairs(final GordianFactory pFactory,
                                 final GordianKeySet pKeySet) throws OceanusException {
-        for (GordianElliptic myCurve : GordianElliptic.values()) {
+        for (GordianDSAElliptic myCurve : GordianDSAElliptic.values()) {
             createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(myCurve));
         }
         theMap.clear();

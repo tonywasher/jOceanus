@@ -49,7 +49,6 @@ import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcElieceCCA2PrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcElieceCCA2PublicKey;
 import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.mceliece.BCMcEliecePublicKey;
-import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -529,11 +528,6 @@ public final class BouncyMcElieceAsymKey {
     public static class BouncyMcElieceCCA2KeyPairGenerator
             extends BouncyKeyPairGenerator {
         /**
-         * Digest String.
-         */
-        private static final String MCELIECE_DIGEST = McElieceCCA2KeyGenParameterSpec.SHA256;
-
-        /**
          * Generator.
          */
         private final McElieceCCA2KeyPairGenerator theGenerator;
@@ -550,8 +544,17 @@ public final class BouncyMcElieceAsymKey {
 
             /* Create and initialise the generator */
             theGenerator = new McElieceCCA2KeyPairGenerator();
-            final KeyGenerationParameters myParams = new McElieceCCA2KeyGenerationParameters(getRandom(), new McElieceCCA2Parameters(MCELIECE_DIGEST));
+            final KeyGenerationParameters myParams = new McElieceCCA2KeyGenerationParameters(getRandom(),
+                    new McElieceCCA2Parameters(getDigest()));
             theGenerator.init(myParams);
+        }
+
+        /**
+         * Obtain the digest string.
+         * @return the digest
+         */
+        private String getDigest() {
+            return getKeySpec().getMcElieceSpec().getDigestType().getParameter();
         }
 
         @Override
@@ -578,7 +581,7 @@ public final class BouncyMcElieceAsymKey {
                 final McElieceCCA2PrivateKey myKey = McElieceCCA2PrivateKey.getInstance(myInfo.parsePrivateKey());
                 final BouncyMcElieceCCA2PrivateKey myPrivate = new BouncyMcElieceCCA2PrivateKey(getKeySpec(),
                         new McElieceCCA2PrivateKeyParameters(myKey.getN(), myKey.getK(), myKey.getField(), myKey.getGoppaPoly(),
-                                myKey.getP(), MCELIECE_DIGEST));
+                                myKey.getP(), getDigest()));
                 final BouncyMcElieceCCA2PublicKey myPublic = derivePublicKey(pPublicKey);
                 return new BouncyKeyPair(myPublic, myPrivate);
             } catch (IOException e) {
@@ -611,7 +614,7 @@ public final class BouncyMcElieceAsymKey {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
                 final McElieceCCA2PublicKey myKey = McElieceCCA2PublicKey.getInstance(myInfo.parsePublicKey());
                 final McElieceCCA2PublicKeyParameters myParms = new McElieceCCA2PublicKeyParameters(myKey.getN(),
-                        myKey.getT(), myKey.getG(), MCELIECE_DIGEST);
+                        myKey.getT(), myKey.getG(), getDigest());
                 return new BouncyMcElieceCCA2PublicKey(getKeySpec(), myParms);
             } catch (IOException e) {
                 throw new GordianCryptoException(ERROR_PARSE, e);

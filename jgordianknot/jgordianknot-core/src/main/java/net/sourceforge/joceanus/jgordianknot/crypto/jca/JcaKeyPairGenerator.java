@@ -39,11 +39,10 @@ import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
@@ -202,11 +201,8 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
-                final GordianAsymKeyType myKeyType = pKeySpec.getKeyType();
                 theGenerator = JcaFactory.getJavaKeyPairGenerator(EC_ALGO, false);
-                final ECGenParameterSpec myParms = new ECGenParameterSpec(GordianAsymKeyType.EC.equals(myKeyType)
-                                                                                                                  ? pKeySpec.getElliptic().getCurveName()
-                                                                                                                  : pKeySpec.getSM2Elliptic().getCurveName());
+                final ECGenParameterSpec myParms = new ECGenParameterSpec(pKeySpec.getElliptic().getCurveName());
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
@@ -451,7 +447,7 @@ public abstract class JcaKeyPairGenerator
             super(pFactory, pKeySpec);
 
             /* Create and initialise the generator */
-            final GordianMcElieceKeyType myKeyType = pKeySpec.getMcElieceType();
+            final GordianMcElieceKeySpec myKeyType = pKeySpec.getMcElieceSpec();
             theGenerator = JcaFactory.getJavaKeyPairGenerator(myKeyType.isCCA2()
                                                                                  ? MCELIECECCA2_ALGO
                                                                                  : MCELIECE_ALGO, true);

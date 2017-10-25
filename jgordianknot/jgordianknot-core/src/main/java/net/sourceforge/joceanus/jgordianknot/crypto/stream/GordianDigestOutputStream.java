@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 
@@ -71,7 +72,9 @@ public class GordianDigestOutputStream
      * @return the result
      */
     public byte[] getResult() {
-        return theResult;
+        return theResult == null
+                                 ? null
+                                 : Arrays.copyOf(theResult, theResult.length);
     }
 
     /**
