@@ -24,9 +24,6 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestAlgorithms;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
@@ -79,7 +76,7 @@ public class GordianSwingTester
                 theTests.testZipFile();
             }
         } else {
-            GordianTestAlgorithms.listAlgorithms();
+            GordianListAlgorithms.listAlgorithms();
         }
     }
 

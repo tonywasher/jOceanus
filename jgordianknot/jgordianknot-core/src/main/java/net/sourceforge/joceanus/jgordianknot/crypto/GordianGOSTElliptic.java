@@ -29,22 +29,22 @@ public enum GordianGOSTElliptic implements GordianElliptic {
     /**
      * CryptoPro-A.
      */
-    CRYPTOPROA("GostR3410-2001-CryptoPro-A", 256),
+    CRYPTOPROA("GostR3410-2001-CryptoPro-A", 257),
 
     /**
      * CryptoPro-B.
      */
-    CRYPTOPROB("GostR3410-2001-CryptoPro-B", 256),
+    CRYPTOPROB("GostR3410-2001-CryptoPro-B", 254),
 
     /**
      * CryptoPro-C.
      */
-    CRYPTOPROC("GostR3410-2001-CryptoPro-C", 256),
+    CRYPTOPROC("GostR3410-2001-CryptoPro-C", 255),
 
     /**
      * CryptoPro-XchA.
      */
-    CRYPTOPROXCHA("GostR3410-2001-CryptoPro-XchA", 256),
+    CRYPTOPROXCHA("GostR3410-2001-CryptoPro-XchA", 257),
 
     /**
      * CryptoPro-XchB.

@@ -79,6 +79,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaR
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowSigner;
@@ -893,6 +895,8 @@ public final class JcaFactory
                 return new JcaRSAKeyPairGenerator(this, pKeySpec);
             case EC:
             case SM2:
+            case DSTU4145:
+            case GOST2012:
                 return new JcaECKeyPairGenerator(this, pKeySpec);
             case DSA:
                 return new JcaDSAKeyPairGenerator(this, pKeySpec);
@@ -927,6 +931,9 @@ public final class JcaFactory
             case SM2:
             case DSA:
                 return new JcaDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case GOST2012:
+            case DSTU4145:
+                return new JcaGOSTSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
                 return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
             case RAINBOW:
@@ -937,7 +944,7 @@ public final class JcaFactory
     }
 
     /**
-     * Create the BouncyCastle KEM Sender.
+     * Create the BouncyCastle Validator.
      * @param pKeyPair the keyPair
      * @param pSignatureSpec the signatureSpec
      * @return the Validator
@@ -952,6 +959,9 @@ public final class JcaFactory
             case SM2:
             case DSA:
                 return new JcaDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case GOST2012:
+            case DSTU4145:
+                return new JcaGOSTValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
@@ -1108,6 +1118,10 @@ public final class JcaFactory
                 return validSPHINCSSignature(pKeyPair, myDigest);
             case RAINBOW:
                 return validRainbowSignature(myDigest);
+            case DSTU4145:
+                return validDSTUSignature(myDigest);
+            case GOST2012:
+                return validGOSTSignature(myDigest);
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:
@@ -1207,6 +1221,24 @@ public final class JcaFactory
     private static boolean validRainbowSignature(final GordianDigestSpec pSpec) {
         return pSpec.getDigestType() == GordianDigestType.SHA2
                && pSpec.getStateLength() == null;
+    }
+
+    /**
+     * Check DSTUSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validDSTUSignature(final GordianDigestSpec pSpec) {
+        return pSpec.getDigestType() == GordianDigestType.GOST;
+    }
+
+    /**
+     * Check DSTUSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validGOSTSignature(final GordianDigestSpec pSpec) {
+        return pSpec.getDigestType() == GordianDigestType.STREEBOG;
     }
 
     @Override

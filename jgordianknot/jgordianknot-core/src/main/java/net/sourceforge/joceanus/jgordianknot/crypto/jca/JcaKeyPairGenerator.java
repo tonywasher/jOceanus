@@ -178,11 +178,6 @@ public abstract class JcaKeyPairGenerator
     public static class JcaECKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
-         * EC algorithm.
-         */
-        private static final String EC_ALGO = "EC";
-
-        /**
          * Generator.
          */
         private final KeyPairGenerator theGenerator;
@@ -201,14 +196,15 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Create and initialise the generator */
-                theGenerator = JcaFactory.getJavaKeyPairGenerator(EC_ALGO, false);
+                final String myAlgo = getAlgorithm();
+                theGenerator = JcaFactory.getJavaKeyPairGenerator(myAlgo, false);
                 final ECGenParameterSpec myParms = new ECGenParameterSpec(pKeySpec.getElliptic().getCurveName());
                 theGenerator.initialize(myParms, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaFactory.getJavaKeyFactory(EC_ALGO, false));
+                setKeyFactory(JcaFactory.getJavaKeyFactory(myAlgo, false));
             } catch (InvalidAlgorithmParameterException e) {
-                throw new GordianCryptoException("Failed to create ECgenerator", e);
+                throw new GordianCryptoException("Failed to create ECgenerator for:  " + pKeySpec, e);
             }
         }
 
@@ -218,6 +214,21 @@ public abstract class JcaKeyPairGenerator
             final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
             final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
             return new JcaKeyPair(myPublic, myPrivate);
+        }
+
+        /**
+         * Obtain algorithm for keySpec.
+         * @return the algorithm
+         */
+        private String getAlgorithm() {
+            switch (this.getKeySpec().getKeyType()) {
+                case DSTU4145:
+                    return "DSTU4145";
+                case GOST2012:
+                    return "ECGOST3410-2012";
+                default:
+                    return "EC";
+            }
         }
     }
 

@@ -87,7 +87,7 @@ public final class BouncyXMSSAsymKey {
     /**
      * Default layers for XMSS key.
      */
-    static final int DEFAULT_LAYERS = 20;
+    static final int DEFAULT_LAYERS = 4;
 
     /**
      * Private constructor.

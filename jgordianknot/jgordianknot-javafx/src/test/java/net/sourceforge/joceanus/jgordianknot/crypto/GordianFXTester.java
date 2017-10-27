@@ -95,7 +95,7 @@ public class GordianFXTester
                 theTests.testZipFile();
             }
         } else {
-            GordianTestAlgorithms.listAlgorithms();
+            GordianListAlgorithms.listAlgorithms();
         }
     }
 

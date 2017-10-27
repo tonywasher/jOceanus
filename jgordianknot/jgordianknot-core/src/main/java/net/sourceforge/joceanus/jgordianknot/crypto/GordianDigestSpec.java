@@ -188,11 +188,19 @@ public class GordianDigestSpec {
 
     /**
      * Create gostDigestSpec.
+     * @return the DigestSpec
+     */
+    public static GordianDigestSpec gost() {
+        return new GordianDigestSpec(GordianDigestType.GOST);
+    }
+
+    /**
+     * Create streebogDigestSpec.
      * @param pLength the length
      * @return the DigestSpec
      */
-    public static GordianDigestSpec gost(final GordianLength pLength) {
-        return new GordianDigestSpec(GordianDigestType.GOST, pLength);
+    public static GordianDigestSpec streebog(final GordianLength pLength) {
+        return new GordianDigestSpec(GordianDigestType.STREEBOG, pLength);
     }
 
     /**

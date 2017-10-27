@@ -78,7 +78,7 @@
     <JGitVersion>4.9.0.201710071750-r</JGitVersion>
     <HttpClientVersion>4.5.3</HttpClientVersion>
     <JSONVersion>20171018</JSONVersion>
-    <ApacheMavenVersion>3.5.0</ApacheMavenVersion>
+    <ApacheMavenVersion>3.5.2</ApacheMavenVersion>
     <MySQLVersion>5.1.44</MySQLVersion>
     <PostGreSQLVersion>42.1.4</PostGreSQLVersion>
     <ApachePOIVersion>3.17</ApachePOIVersion>

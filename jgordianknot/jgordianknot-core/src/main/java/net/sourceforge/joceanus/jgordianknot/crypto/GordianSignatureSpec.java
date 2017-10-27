@@ -110,6 +110,23 @@ public class GordianSignatureSpec {
     }
 
     /**
+     * Create DSTU4145Spec.
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec dstu4145() {
+        return new GordianSignatureSpec(GordianAsymKeyType.DSTU4145, GordianDigestSpec.gost());
+    }
+
+    /**
+     * Create GOST2012Spec.
+     * @param pLength the length
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec gost2012(final GordianLength pLength) {
+        return new GordianSignatureSpec(GordianAsymKeyType.GOST2012, GordianDigestSpec.streebog(pLength));
+    }
+
+    /**
      * Create SPHINCSSpec.
      * @param pDigestSpec the digestSpec
      * @return the SignatureSpec

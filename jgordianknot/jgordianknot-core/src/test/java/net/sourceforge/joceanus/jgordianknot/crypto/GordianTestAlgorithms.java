@@ -22,16 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.security.Provider;
-import java.security.Security;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
@@ -42,7 +35,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
 /**
- * Security Test suite - Algorithms.
+ * Security Test suite - Test Symmetric/Stream and Digest/MAC Algorithms.
  */
 public class GordianTestAlgorithms {
     /**
@@ -416,99 +409,5 @@ public class GordianTestAlgorithms {
             theAADData = TethysDataConverter.stringToByteArray("SomeAADBytes");
         }
         return theAADData;
-    }
-
-    /**
-     * List the supported algorithms.
-     */
-    protected static void listAlgorithms() {
-        Set<String> ciphers = new HashSet<String>();
-        Set<String> secretKeyFactories = new HashSet<String>();
-        Set<String> keyFactories = new HashSet<String>();
-        Set<String> keyAgreements = new HashSet<String>();
-        Set<String> keyGenerators = new HashSet<String>();
-        Set<String> keyPairGenerators = new HashSet<String>();
-        Set<String> messageDigests = new HashSet<String>();
-        Set<String> macs = new HashSet<String>();
-        Set<String> signatures = new HashSet<String>();
-        Set<String> randoms = new HashSet<String>();
-        Set<String> remaining = new HashSet<String>();
-
-        Security.addProvider(new BouncyCastleProvider());
-        Security.addProvider(new BouncyCastlePQCProvider());
-
-        for (Provider myProvider : Security.getProviders()) {
-            if (!"BC".equals(myProvider.getName())
-                && !"BCPQC".equals(myProvider.getName())) {
-                continue;
-            }
-            Iterator<Object> it = myProvider.keySet().iterator();
-            while (it.hasNext()) {
-                String entry = (String) it.next();
-                if (entry.startsWith("Alg.Alias.")) {
-                    entry = entry.substring("Alg.Alias.".length());
-                }
-                if (entry.contains(".OID.")
-                    || entry.contains(".1.")) {
-                    continue;
-                }
-                if (entry.startsWith("Cipher.")) {
-                    ciphers.add(entry.substring("Cipher.".length()));
-                } else if (entry.startsWith("SecretKeyFactory.")) {
-                    secretKeyFactories.add(entry.substring("SecretKeyFactory.".length()));
-                } else if (entry.startsWith("KeyFactory.")) {
-                    keyFactories.add(entry.substring("KeyFactory.".length()));
-                } else if (entry.startsWith("KeyAgreement.")) {
-                    keyAgreements.add(entry.substring("KeyAgreement.".length()));
-                } else if (entry.startsWith("KeyGenerator.")) {
-                    keyGenerators.add(entry.substring("KeyGenerator.".length()));
-                } else if (entry.startsWith("KeyPairGenerator.")) {
-                    keyPairGenerators.add(entry.substring("KeyPairGenerator.".length()));
-                } else if (entry.startsWith("MessageDigest.")) {
-                    messageDigests.add(entry.substring("MessageDigest.".length()));
-                } else if (entry.startsWith("Mac.")) {
-                    macs.add(entry.substring("Mac.".length()));
-                } else if (entry.startsWith("Signature.")) {
-                    signatures.add(entry.substring("Signature.".length()));
-                } else if (entry.startsWith("SecureRandom.")) {
-                    randoms.add(entry.substring("SecureRandom.".length()));
-                } else {
-                    remaining.add(entry);
-                }
-            }
-        }
-
-        printSet("Ciphers", ciphers);
-        printSet("SecretKeyFactories", secretKeyFactories);
-        printSet("KeyFactories", keyFactories);
-        printSet("KeyAgreements", keyAgreements);
-        printSet("KeyGenerators", keyGenerators);
-        printSet("KeyPairGenerators", keyPairGenerators);
-        printSet("MessageDigests", messageDigests);
-        printSet("Macs", macs);
-        printSet("Signatures", signatures);
-        printSet("Randoms", randoms);
-        printSet("Remaining", remaining);
-    }
-
-    /**
-     * Print out a set of algorithms.
-     * @param setName the name of the set
-     * @param algorithms the set of algorithms
-     */
-    private static void printSet(final String setName,
-                                 final Set<String> algorithms) {
-        System.out.println(setName
-                           + ":");
-        if (algorithms.isEmpty()) {
-            System.out.println("            None available.");
-        } else {
-            Iterator<String> it = algorithms.iterator();
-            while (it.hasNext()) {
-                String name = it.next();
-                System.out.println("            "
-                                   + name);
-            }
-        }
     }
 }

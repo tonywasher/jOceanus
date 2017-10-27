@@ -46,7 +46,7 @@ public class GordianPipedStream {
     /**
      * The Array Blocking queue that implements the pipe.
      */
-    final ArrayBlockingQueue<byte[]> theQueue;
+    private final ArrayBlockingQueue<byte[]> theQueue;
 
     /**
      * The Input Stream.

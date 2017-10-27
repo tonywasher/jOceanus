@@ -40,12 +40,12 @@ public final class GordianLZMAInputStream
     /**
      * The sink stream to write to for the decoder thread.
      */
-    final OutputStream theSink;
+    private final OutputStream theSink;
 
     /**
      * The source stream for the decoder thread.
      */
-    final InputStream theInput;
+    private final InputStream theInput;
 
     /**
      * The source stream to read from the decoder thread.
@@ -128,6 +128,15 @@ public final class GordianLZMAInputStream
     }
 
     /**
+     * Close the input.
+     * @throws IOException on error
+     */
+    void closeInput() throws IOException {
+        theInput.close();
+        theSink.close();
+    }
+
+    /**
      * The decoder service.
      */
     private final class DecoderService
@@ -180,8 +189,8 @@ public final class GordianLZMAInputStream
                 theDecoder.Code(theInput, theSink, -1);
 
                 /* Close the input/output streams */
-                theInput.close();
-                theSink.close();
+                closeInput();
+
             } catch (IOException e) {
                 theError = e;
             }

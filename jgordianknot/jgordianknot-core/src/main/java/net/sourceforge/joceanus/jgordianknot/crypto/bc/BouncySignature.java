@@ -115,43 +115,115 @@ public final class BouncySignature {
     }
 
     /**
-     * BouncyCastle DSA Encoder. Copied from SignatureSpi.java
-     * @param r first integer
-     * @param s second integer
-     * @return encoded set
-     * @throws OceanusException on error
+     * DSACoder interface.
      */
-    static byte[] dsaEncode(final BigInteger r,
-                            final BigInteger s) throws OceanusException {
-        try {
-            final ASN1EncodableVector v = new ASN1EncodableVector();
+    interface BouncyDSACoder {
+        /**
+         * Encode integers into byte array.
+         * @param r first integer
+         * @param s second integer
+         * @return encoded set
+         * @throws OceanusException on error
+         */
+        byte[] dsaEncode(BigInteger r,
+                         BigInteger s) throws OceanusException;
 
-            v.add(new ASN1Integer(r));
-            v.add(new ASN1Integer(s));
+        /**
+         * Decode byte array into integersBouncyCastle DSA Decoder. Copied from SignatureSpi.java
+         * @param pEncoded the encode set
+         * @return array of integers
+         * @throws OceanusException on error
+         */
+        BigInteger[] dsaDecode(byte[] pEncoded) throws OceanusException;
 
-            return new DERSequence(v).getEncoded(ASN1Encoding.DER);
-        } catch (IOException e) {
-            throw new GordianCryptoException(ERROR_SIGGEN, e);
+    }
+
+    /**
+     * DER encoder.
+     */
+    private static final class BouncyDERCoder implements BouncyDSACoder {
+        @Override
+        public byte[] dsaEncode(final BigInteger r,
+                                final BigInteger s) throws OceanusException {
+            try {
+                final ASN1EncodableVector v = new ASN1EncodableVector();
+
+                v.add(new ASN1Integer(r));
+                v.add(new ASN1Integer(s));
+
+                return new DERSequence(v).getEncoded(ASN1Encoding.DER);
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_SIGGEN, e);
+            }
+        }
+
+        @Override
+        public BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
+            try {
+                final ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
+                final BigInteger[] sig = new BigInteger[2];
+
+                sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
+                sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
+
+                return sig;
+            } catch (IOException e) {
+                throw new GordianCryptoException(ERROR_SIGPARSE, e);
+            }
         }
     }
 
     /**
-     * BouncyCastle DSA Decoder. Copied from SignatureSpi.java
-     * @param pEncoded the encode set
-     * @return array of integers
-     * @throws OceanusException on error
+     * Plain encoder.
      */
-    static BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
-        try {
-            final ASN1Sequence s = (ASN1Sequence) ASN1Primitive.fromByteArray(pEncoded);
+    private static final class BouncyPlainCoder implements BouncyDSACoder {
+        @Override
+        public byte[] dsaEncode(final BigInteger r,
+                                final BigInteger s) throws OceanusException {
+            /* Access byteArrays */
+            final byte[] myFirst = makeUnsigned(r);
+            final byte[] mySecond = makeUnsigned(s);
+            final byte[] myResult = myFirst.length > mySecond.length
+                                                                     ? new byte[myFirst.length * 2]
+                                                                     : new byte[mySecond.length * 2];
+
+            /* Build array and return */
+            System.arraycopy(myFirst, 0, myResult, myResult.length / 2 - myFirst.length, myFirst.length);
+            System.arraycopy(mySecond, 0, myResult, myResult.length - mySecond.length, mySecond.length);
+            return myResult;
+        }
+
+        /**
+         * Make the value unsigned.
+         * @param pValue the value
+         * @return the unsigned value
+         */
+        private static byte[] makeUnsigned(final BigInteger pValue) {
+            /* Convert to byteArray and return if OK */
+            final byte[] myResult = pValue.toByteArray();
+            if (myResult[0] != 0) {
+                return myResult;
+            }
+
+            /* Shorten the array */
+            final byte[] myTmp = new byte[myResult.length - 1];
+            System.arraycopy(myResult, 1, myTmp, 0, myTmp.length);
+            return myTmp;
+        }
+
+        @Override
+        public BigInteger[] dsaDecode(final byte[] pEncoded) throws OceanusException {
+            /* Build the value arrays */
+            final byte[] myFirst = new byte[pEncoded.length / 2];
+            final byte[] mySecond = new byte[pEncoded.length / 2];
+            System.arraycopy(pEncoded, 0, myFirst, 0, myFirst.length);
+            System.arraycopy(pEncoded, myFirst.length, mySecond, 0, mySecond.length);
+
+            /* Create the signature values and return */
             final BigInteger[] sig = new BigInteger[2];
-
-            sig[0] = ASN1Integer.getInstance(s.getObjectAt(0)).getValue();
-            sig[1] = ASN1Integer.getInstance(s.getObjectAt(1)).getValue();
-
+            sig[0] = new BigInteger(1, myFirst);
+            sig[1] = new BigInteger(1, mySecond);
             return sig;
-        } catch (IOException e) {
-            throw new GordianCryptoException(ERROR_SIGPARSE, e);
         }
     }
 
@@ -195,6 +267,24 @@ public final class BouncySignature {
                 return isDSA
                              ? new DSASigner()
                              : new ECDSASigner();
+        }
+    }
+
+    /**
+     * Obtain DSACoder.
+     * @param pKeySpec the keySpec
+     * @return the ECCoder
+     */
+    static BouncyDSACoder getDSACoder(final GordianAsymKeySpec pKeySpec) {
+        switch (pKeySpec.getKeyType()) {
+            case DSTU4145:
+            case GOST2012:
+                return new BouncyPlainCoder();
+            case EC:
+            case DSA:
+            case SM2:
+            default:
+                return new BouncyDERCoder();
         }
     }
 }

@@ -47,6 +47,7 @@ import org.bouncycastle.asn1.x9.X9ECPoint;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.DSA;
+import org.bouncycastle.crypto.generators.DSTU4145KeyPairGenerator;
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.kems.ECIESKeyEncapsulation;
 import org.bouncycastle.crypto.params.ECDomainParameters;
@@ -62,6 +63,7 @@ import org.bouncycastle.math.ec.ECCurve;
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianLogicException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation;
@@ -74,6 +76,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyEncapsulation.BouncyKeyDerivation;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSACoder;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -271,7 +274,10 @@ public final class BouncyEllipticAsymKey {
             super(pFactory, pKeySpec);
 
             /* Create the generator */
-            theGenerator = new ECKeyPairGenerator();
+            final GordianAsymKeyType myType = pKeySpec.getKeyType();
+            theGenerator = GordianAsymKeyType.DSTU4145.equals(myType)
+                                                                      ? new DSTU4145KeyPairGenerator()
+                                                                      : new ECKeyPairGenerator();
             theCurve = pKeySpec.getElliptic().getCurveName();
 
             /* Lookup the parameters */
@@ -414,6 +420,11 @@ public final class BouncyEllipticAsymKey {
         private final DSA theSigner;
 
         /**
+         * The Coder.
+         */
+        private final BouncyDSACoder theCoder;
+
+        /**
          * Constructor.
          * @param pFactory the factory
          * @param pPrivateKey the private key
@@ -428,8 +439,9 @@ public final class BouncyEllipticAsymKey {
             /* Initialise underlying class */
             super(pFactory, pSpec);
 
-            /* Create the signer */
+            /* Create the signer and Coder */
             theSigner = BouncySignature.getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
+            theCoder = BouncySignature.getDSACoder(pPrivateKey.getKeySpec());
 
             /* Initialise and set the signer */
             final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
@@ -439,7 +451,7 @@ public final class BouncyEllipticAsymKey {
         @Override
         public byte[] sign() throws OceanusException {
             final BigInteger[] myValues = theSigner.generateSignature(getDigest());
-            return BouncySignature.dsaEncode(myValues[0], myValues[1]);
+            return theCoder.dsaEncode(myValues[0], myValues[1]);
         }
     }
 
@@ -453,6 +465,11 @@ public final class BouncyEllipticAsymKey {
          * The EC Signer.
          */
         private final DSA theSigner;
+
+        /**
+         * The Coder.
+         */
+        private final BouncyDSACoder theCoder;
 
         /**
          * Constructor.
@@ -469,6 +486,7 @@ public final class BouncyEllipticAsymKey {
 
             /* Create the signer */
             theSigner = BouncySignature.getDSASigner(pFactory, pPublicKey.getKeySpec(), pSpec);
+            theCoder = BouncySignature.getDSACoder(pPublicKey.getKeySpec());
 
             /* Initialise and set the signer */
             theSigner.init(false, pPublicKey.getPublicKey());
@@ -476,7 +494,7 @@ public final class BouncyEllipticAsymKey {
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
-            final BigInteger[] myValues = BouncySignature.dsaDecode(pSignature);
+            final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }

@@ -57,6 +57,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDSACoder;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -340,6 +341,11 @@ public final class BouncyDSAAsymKey {
         private final DSA theSigner;
 
         /**
+         * The Coder.
+         */
+        private final BouncyDSACoder theCoder;
+
+        /**
          * Constructor.
          * @param pFactory the factory
          * @param pPrivateKey the private key
@@ -356,6 +362,7 @@ public final class BouncyDSAAsymKey {
 
             /* Create the signer */
             theSigner = BouncySignature.getDSASigner(pFactory, pPrivateKey.getKeySpec(), pSpec);
+            theCoder = BouncySignature.getDSACoder(pPrivateKey.getKeySpec());
 
             /* Initialise and set the signer */
             final ParametersWithRandom myParms = new ParametersWithRandom(pPrivateKey.getPrivateKey(), pRandom);
@@ -365,7 +372,7 @@ public final class BouncyDSAAsymKey {
         @Override
         public byte[] sign() throws OceanusException {
             final BigInteger[] myValues = theSigner.generateSignature(getDigest());
-            return BouncySignature.dsaEncode(myValues[0], myValues[1]);
+            return theCoder.dsaEncode(myValues[0], myValues[1]);
         }
     }
 
@@ -379,6 +386,11 @@ public final class BouncyDSAAsymKey {
          * The EC Signer.
          */
         private final DSA theSigner;
+
+        /**
+         * The Coder.
+         */
+        private final BouncyDSACoder theCoder;
 
         /**
          * Constructor.
@@ -395,6 +407,7 @@ public final class BouncyDSAAsymKey {
 
             /* Create the signer */
             theSigner = BouncySignature.getDSASigner(pFactory, pPublicKey.getKeySpec(), pSpec);
+            theCoder = BouncySignature.getDSACoder(pPublicKey.getKeySpec());
 
             /* Initialise and set the signer */
             theSigner.init(false, pPublicKey.getPublicKey());
@@ -402,7 +415,7 @@ public final class BouncyDSAAsymKey {
 
         @Override
         public boolean verify(final byte[] pSignature) throws OceanusException {
-            final BigInteger[] myValues = BouncySignature.dsaDecode(pSignature);
+            final BigInteger[] myValues = theCoder.dsaDecode(pSignature);
             return theSigner.verifySignature(getDigest(), myValues[0], myValues[1]);
         }
     }

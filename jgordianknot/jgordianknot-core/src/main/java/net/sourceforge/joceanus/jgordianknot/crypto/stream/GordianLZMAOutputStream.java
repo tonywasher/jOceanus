@@ -44,12 +44,12 @@ public final class GordianLZMAOutputStream
     /**
      * The source stream for the encoder thread.
      */
-    final InputStream theSource;
+    private final InputStream theSource;
 
     /**
      * The target stream for the encoder thread.
      */
-    final OutputStream theTarget;
+    private final OutputStream theTarget;
 
     /**
      * The encoder service.

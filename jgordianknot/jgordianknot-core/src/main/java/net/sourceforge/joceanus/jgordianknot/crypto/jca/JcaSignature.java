@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
@@ -104,6 +105,11 @@ public abstract class JcaSignature
     static final String RAINBOW_ALGOBASE = "withRainbow";
 
     /**
+     * The DSTU Signature.
+     */
+    static final String DSTU_SIGN = "DSTU4145";
+
+    /**
      * The RSA Signer.
      */
     private Signature theSigner;
@@ -169,7 +175,7 @@ public abstract class JcaSignature
         protected JcaRSASigner(final JcaPrivateKey pPrivateKey,
                                final GordianSignatureSpec pSignatureSpec,
                                final SecureRandom pRandom) throws OceanusException {
-            /* Create the PSSParameterSpec */
+            /* Create the Signer */
             try {
                 final String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
                 setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPrivateKey.getKeySpec(), pSignatureSpec), false));
@@ -208,7 +214,7 @@ public abstract class JcaSignature
          */
         protected JcaRSAValidator(final JcaPublicKey pPublicKey,
                                   final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Create the PSSParameterSpec */
+            /* Create the Signer */
             try {
                 final String myDigest = JcaDigest.getSignAlgorithm(pSignatureSpec.getDigestSpec());
                 setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPublicKey.getKeySpec(), pSignatureSpec), false));
@@ -273,6 +279,31 @@ public abstract class JcaSignature
     }
 
     /**
+     * Obtain Signer base.
+     * @param pKeySpec the keySpec
+     * @param pSignatureSpec the signatureSpec
+     * @return the base
+     */
+    private static String getSignature(final GordianAsymKeySpec pKeySpec,
+                                       final GordianSignatureSpec pSignatureSpec) {
+        /* Handle DSTU explicitly */
+        if (GordianAsymKeyType.DSTU4145.equals(pKeySpec.getKeyType())) {
+            return DSTU_SIGN;
+        }
+
+        /* Obtain the digest length */
+        final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
+
+        /* Build the algorithm */
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append("GOST3411-2012-");
+        myBuilder.append(myLength.getLength());
+        myBuilder.append("withECGOST3410-2012-");
+        myBuilder.append(myLength.getLength());
+        return myBuilder.toString();
+    }
+
+    /**
      * DSA signer.
      */
     public static class JcaDSASigner
@@ -327,10 +358,88 @@ public abstract class JcaSignature
          */
         protected JcaDSAValidator(final JcaPublicKey pPublicKey,
                                   final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Create the PSSParameterSpec */
+            /* Create the Signer */
             try {
                 final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
                 setSigner(JcaFactory.getJavaSignature(myDigest + getSignatureBase(pPublicKey.getKeySpec(), pSignatureSpec), false));
+
+                /* Initialise and set the signer */
+                getSigner().initVerify(pPublicKey.getPublicKey());
+
+                /* Catch exceptions */
+            } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().verify(pSignature);
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * GOST signer.
+     */
+    public static class JcaGOSTSigner
+            extends JcaSignature
+            implements GordianSigner {
+        /**
+         * Constructor.
+         * @param pPrivateKey the private key
+         * @param pSignatureSpec the signatureSpec
+         * @param pRandom the secure random
+         * @throws OceanusException on error
+         */
+        protected JcaGOSTSigner(final JcaPrivateKey pPrivateKey,
+                                final GordianSignatureSpec pSignatureSpec,
+                                final SecureRandom pRandom) throws OceanusException {
+            /* Create the Signer */
+            try {
+                setSigner(JcaFactory.getJavaSignature(getSignature(pPrivateKey.getKeySpec(), pSignatureSpec), false));
+
+                /* Initialise and set the signer */
+                getSigner().initSign(pPrivateKey.getPrivateKey(), pRandom);
+
+                /* Catch exceptions */
+            } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().sign();
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * GOST Validator.
+     */
+    public static class JcaGOSTValidator
+            extends JcaSignature
+            implements GordianValidator {
+        /**
+         * Constructor.
+         * @param pPublicKey the public key
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        protected JcaGOSTValidator(final JcaPublicKey pPublicKey,
+                                   final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Create the Signer */
+            try {
+                setSigner(JcaFactory.getJavaSignature(getSignature(pPublicKey.getKeySpec(), pSignatureSpec), false));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());
@@ -405,7 +514,7 @@ public abstract class JcaSignature
          */
         protected JcaSPHINCSValidator(final JcaPublicKey pPublicKey,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Create the PSSParameterSpec */
+            /* Create the Signer */
             try {
                 final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
                 setSigner(JcaFactory.getJavaSignature(myDigest + SPHINCS_ALGOBASE, true));
@@ -485,7 +594,7 @@ public abstract class JcaSignature
          */
         protected JcaRainbowValidator(final JcaPublicKey pPublicKey,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
-            /* Create the PSSParameterSpec */
+            /* Create the Signer */
             try {
                 final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
                 setSigner(JcaFactory.getJavaSignature(myDigest + RAINBOW_ALGOBASE, true));

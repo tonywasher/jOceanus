@@ -87,9 +87,9 @@ public abstract class GordianHashManager {
      */
     protected GordianHashManager(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */
-        theFactory = (pParameters.getFactoryType() == GordianFactoryType.BC)
-                                                                             ? new BouncyFactory(pParameters)
-                                                                             : new JcaFactory(pParameters);
+        theFactory = GordianFactoryType.BC.equals(pParameters.getFactoryType())
+                                                                                ? new BouncyFactory(pParameters)
+                                                                                : new JcaFactory(pParameters);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<>();

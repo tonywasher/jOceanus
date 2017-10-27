@@ -168,7 +168,7 @@ public abstract class GordianFactory {
         final GordianDigestType[] myDigestTypes = GordianDigestType.values();
         for (;;) {
             final int myInt = pRandom.nextInt(myDigestTypes.length);
-            if (supportedHMacDigestTypes().test(myDigestTypes[myInt])) {
+            if (supportedKeySetDigestTypes().test(myDigestTypes[myInt])) {
                 return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]));
             }
         }

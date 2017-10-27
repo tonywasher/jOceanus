@@ -74,6 +74,8 @@ public class GordianTestAsymmetric {
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sphincs(GordianSPHINCSKeyType.SHA2));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.rainbow());
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.newHope());
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.CRYPTOPROA));
     }
 
     /**
@@ -86,6 +88,15 @@ public class GordianTestAsymmetric {
                                 final GordianKeySet pKeySet) throws OceanusException {
         for (GordianDSAElliptic myCurve : GordianDSAElliptic.values()) {
             createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.ec(myCurve));
+        }
+        for (GordianSM2Elliptic myCurve : GordianSM2Elliptic.values()) {
+            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.sm2(myCurve));
+        }
+        for (GordianDSTU4145Elliptic myCurve : GordianDSTU4145Elliptic.values()) {
+            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dstu4145(myCurve));
+        }
+        for (GordianGOSTElliptic myCurve : GordianGOSTElliptic.values()) {
+            createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(myCurve));
         }
         theMap.clear();
     }
@@ -198,13 +209,14 @@ public class GordianTestAsymmetric {
             GordianKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pStatus.getKeySpec());
             thePair = myGenerator.deriveKeyPair(pStatus.thePublic, pStatus.thePrivate, pKeySet);
 
-            /* Don't worry about the keySpes */
+            /* Don't worry about the keySpecs */
             thePrivate = null;
             thePublic = null;
 
             /* Record the signature map */
             theSignatures = pStatus.theSignatures;
 
+            /* Check that the pairs are identical */
             if (!thePair.equals(pStatus.thePair)) {
                 System.out.println("Failed to decrypt KeyPair for: " + getKeySpec());
             }

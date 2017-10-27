@@ -29,47 +29,47 @@ public enum GordianDSTU4145Elliptic implements GordianElliptic {
     /**
      * DSTU4145-1.
      */
-    DSTU1(1, 256),
+    DSTU1(1, 167),
 
     /**
      * DSTU4145-2.
      */
-    DSTU2(2, 256),
+    DSTU2(2, 171),
 
     /**
      * DSTU4145-3.
      */
-    DSTU3(3, 256),
+    DSTU3(3, 177),
 
     /**
      * DSTU4145-4.
      */
-    DSTU4(4, 256),
+    DSTU4(4, 188),
 
     /**
      * DSTU4145-5.
      */
-    DSTU5(5, 256),
+    DSTU5(5, 233),
 
     /**
      * DSTU4145-6.
      */
-    DSTU6(6, 256),
+    DSTU6(6, 248),
 
     /**
      * DSTU4145-7.
      */
-    DSTU7(7, 256),
+    DSTU7(7, 306),
 
     /**
      * DSTU4145-8.
      */
-    DSTU8(8, 256),
+    DSTU8(8, 366),
 
     /**
      * DSTU4145-9.
      */
-    DSTU9(9, 192);
+    DSTU9(9, 431);
 
     /**
      * Curve Base.
