@@ -38,7 +38,9 @@ are provided {{{./KeyWrap.apt}here}}.
 * Configuration
 
   GordianKnot is initialised with two separate boolean parameters, providing four possible setups
+  	
   	[[1]] Use JCE or Native BouncyCastle
+  	
   	[[2]] Use restricted (128-bit) or unrestricted (256-bit) keys
   	
   You will only be able to use 256 byte keys if you are able to access the <<UNLIMITED>> strength JCE policy files. 
@@ -252,10 +254,15 @@ improved compression over the Deflation standard Java method.
   Encryption is performed in a similar fashion to <<KeySet>> encryption, as follows (N = number of configured encryption steps)
 
      [[1]] Digest is calculated on the plain text
+
      [[2]] LZMA compression is performed
+
      [[3]] StreamKey encryption is performed
+
      [[4]] (N-1)*SymKey ECB encryption (first with ISO7816-4 padding, remainder with NONE)
+
      [[5]] SymKey SIC encryption 
+
      [[6]] Mac calculated on encrypted data
 	
   The ZipFile directory is additionally encrypted, so as to restrict information leakage.

@@ -160,15 +160,24 @@ public abstract class GordianFactory {
      */
     public GordianRandomSpec generateRandomSpec(final SecureRandom pRandom) {
         /* Determine the type of random generator */
-        final GordianRandomType myType = pRandom.nextBoolean()
-                                                               ? GordianRandomType.HMAC
-                                                               : GordianRandomType.HASH;
+        final boolean isHMac = pRandom.nextBoolean();
+        final GordianRandomType myType = isHMac
+                                                ? GordianRandomType.HMAC
+                                                : GordianRandomType.HASH;
+        final Predicate<GordianDigestSpec> myPredicate = isHMac
+                                                                ? supportedHMacDigestSpecs()
+                                                                : supportedDigestSpecs();
 
         /* Access the digestTypes */
         final GordianDigestType[] myDigestTypes = GordianDigestType.values();
         for (;;) {
+            /* Obtain the candidate DigestSpec */
             final int myInt = pRandom.nextInt(myDigestTypes.length);
-            if (supportedKeySetDigestTypes().test(myDigestTypes[myInt])) {
+            final GordianDigestType myDigestType = myDigestTypes[myInt];
+            final GordianDigestSpec mySpec = new GordianDigestSpec(myDigestType, GordianLength.LEN_512);
+
+            /* If this is a valid digestSpec, return it */
+            if (myPredicate.test(mySpec)) {
                 return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]));
             }
         }

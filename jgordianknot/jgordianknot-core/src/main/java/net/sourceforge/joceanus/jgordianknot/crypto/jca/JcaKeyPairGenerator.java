@@ -26,6 +26,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -36,6 +37,8 @@ import javax.crypto.spec.DHParameterSpec;
 import org.bouncycastle.crypto.params.DHParameters;
 import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -45,6 +48,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec.GordianXMSSKeyType;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -516,6 +522,68 @@ public abstract class JcaKeyPairGenerator
 
             /* Create the factory */
             setKeyFactory(JcaFactory.getJavaKeyFactory(NEWHOPE_ALGO, true));
+        }
+
+        @Override
+        public JcaKeyPair generateKeyPair() {
+            final KeyPair myPair = theGenerator.generateKeyPair();
+            final JcaPublicKey myPublic = new JcaPublicKey(getKeySpec(), myPair.getPublic());
+            final JcaPrivateKey myPrivate = new JcaPrivateKey(getKeySpec(), myPair.getPrivate());
+            return new JcaKeyPair(myPublic, myPrivate);
+        }
+    }
+
+    /**
+     * Jca XMSS KeyPair generator.
+     */
+    public static class JcaXMSSKeyPairGenerator
+            extends JcaKeyPairGenerator {
+        /**
+         * Default height for XMSS key.
+         */
+        public static final int DEFAULT_HEIGHT = BouncyXMSSAsymKey.DEFAULT_HEIGHT;
+
+        /**
+         * Default layers for XMSS key.
+         */
+        public static final int DEFAULT_LAYERS = BouncyXMSSAsymKey.DEFAULT_LAYERS;
+
+        /**
+         * Generator.
+         */
+        private final KeyPairGenerator theGenerator;
+
+        /**
+         * Constructor.
+         * @param pFactory the Security Factory
+         * @param pKeySpec the keySpec
+         * @throws OceanusException on error
+         */
+        protected JcaXMSSKeyPairGenerator(final JcaFactory pFactory,
+                                          final GordianAsymKeySpec pKeySpec) throws OceanusException {
+            /* Initialise underlying class */
+            super(pFactory, pKeySpec);
+
+            /* Protect against exceptions */
+            try {
+                /* Access the algorithm */
+                final GordianXMSSKeySpec mySpec = pKeySpec.getXMSSKeySpec();
+                final GordianXMSSKeyType myType = mySpec.getKeyType();
+
+                /* Create the parameters */
+                final AlgorithmParameterSpec myAlgo = myType.isXMSSMT()
+                                                                        ? new XMSSMTParameterSpec(DEFAULT_HEIGHT, DEFAULT_LAYERS, mySpec.getDigestType().name())
+                                                                        : new XMSSParameterSpec(DEFAULT_HEIGHT, mySpec.getDigestType().name());
+
+                /* Create and initialise the generator */
+                theGenerator = JcaFactory.getJavaKeyPairGenerator(myType.toString(), true);
+                theGenerator.initialize(myAlgo, getRandom());
+
+                /* Create the factory */
+                setKeyFactory(JcaFactory.getJavaKeyFactory(myType.toString(), true));
+            } catch (InvalidAlgorithmParameterException e) {
+                throw new GordianCryptoException("Failed to create DHgenerator", e);
+            }
         }
 
         @Override

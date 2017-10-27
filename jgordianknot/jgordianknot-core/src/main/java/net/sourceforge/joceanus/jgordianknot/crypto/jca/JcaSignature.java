@@ -291,6 +291,11 @@ public abstract class JcaSignature
             return DSTU_SIGN;
         }
 
+        /* Handle XMSS explicitly */
+        if (GordianAsymKeyType.XMSS.equals(pKeySpec.getKeyType())) {
+            return "SHA256with" + pKeySpec.getXMSSKeySpec().getKeyType().name();
+        }
+
         /* Obtain the digest length */
         final GordianLength myLength = pSignatureSpec.getDigestSpec().getDigestLength();
 

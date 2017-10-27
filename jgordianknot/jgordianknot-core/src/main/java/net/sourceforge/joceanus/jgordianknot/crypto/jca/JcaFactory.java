@@ -77,6 +77,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaN
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaRainbowKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaSPHINCSKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPairGenerator.JcaXMSSKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaDSAValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaGOSTSigner;
@@ -910,6 +911,8 @@ public final class JcaFactory
                 return new JcaMcElieceKeyPairGenerator(this, pKeySpec);
             case NEWHOPE:
                 return new JcaNewHopeKeyPairGenerator(this, pKeySpec);
+            case XMSS:
+                return new JcaXMSSKeyPairGenerator(this, pKeySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
         }
@@ -933,6 +936,7 @@ public final class JcaFactory
                 return new JcaDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case GOST2012:
             case DSTU4145:
+            case XMSS:
                 return new JcaGOSTSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
                 return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
@@ -961,6 +965,7 @@ public final class JcaFactory
                 return new JcaDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case GOST2012:
             case DSTU4145:
+            case XMSS:
                 return new JcaGOSTValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
@@ -1125,6 +1130,7 @@ public final class JcaFactory
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:
+            case XMSS:
             default:
                 return false;
         }

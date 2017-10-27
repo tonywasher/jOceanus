@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -76,6 +77,7 @@ public class GordianTestAsymmetric {
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.newHope());
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.CRYPTOPROA));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmss(GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA256)));
     }
 
     /**
@@ -250,6 +252,7 @@ public class GordianTestAsymmetric {
                     /* If the signature is supported */
                     if (mySignPredicate.test(thePair, mySign)) {
                         createSignature(mySign, pSources);
+                        return;
                     }
                 }
             }

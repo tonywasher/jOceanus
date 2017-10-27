@@ -178,7 +178,7 @@ public final class GordianRandomFactory {
                                                  : SecureRandom.getInstance("NativePRNGNonBlocking");
 
                     /* Seed the Entropy */
-                    theStrongEntropy.nextBoolean();
+                    theStrongEntropy.setSeed(createPersonalisation(null));
 
                 } catch (NoSuchAlgorithmException e) {
                     throw new GordianCryptoException("No strong random", e);
@@ -193,17 +193,37 @@ public final class GordianRandomFactory {
      * @return initVector.
      */
     private byte[] defaultPersonalisation() {
-        /* Create the source arrays */
-        final byte[] myThread = TethysDataConverter.longToByteArray(Thread.currentThread().getId());
-        final byte[] myTime = TethysDataConverter.longToByteArray(System.currentTimeMillis());
+        /* Obtain some underlying entropy */
         final byte[] mySeed = new byte[NUM_ENTROPY_BYTES_REQUIRED];
         theRandom.nextBytes(mySeed);
 
+        /* Create the personalisation */
+        return createPersonalisation(mySeed);
+    }
+
+    /**
+     * Create a personalisation Vector.
+     * @param pSeed the seed (or null)
+     * @return initVector.
+     */
+    private static byte[] createPersonalisation(final byte[] pSeed) {
+        /* Create the source arrays */
+        final byte[] myThread = TethysDataConverter.longToByteArray(Thread.currentThread().getId());
+        final byte[] myTime = TethysDataConverter.longToByteArray(System.currentTimeMillis());
+
         /* Create the final initVector */
-        final byte[] myVector = new byte[myThread.length + myTime.length + mySeed.length];
-        System.arraycopy(mySeed, 0, myVector, 0, mySeed.length);
-        System.arraycopy(myThread, 0, myVector, mySeed.length, myThread.length);
-        System.arraycopy(myTime, 0, myVector, mySeed.length + myThread.length, myTime.length);
+        int myLen = myThread.length + myTime.length;
+        if (pSeed != null) {
+            myLen += pSeed.length;
+        }
+        final byte[] myVector = new byte[myLen];
+
+        /* Build the vector */
+        System.arraycopy(myThread, 0, myVector, 0, myThread.length);
+        System.arraycopy(myTime, 0, myVector, myThread.length, myTime.length);
+        if (pSeed != null) {
+            System.arraycopy(pSeed, 0, myVector, 0, pSeed.length);
+        }
 
         /* return it */
         return myVector;

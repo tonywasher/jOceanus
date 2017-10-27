@@ -250,6 +250,12 @@ public final class GordianAsymKeySpec {
             if (theSubKeyType != null) {
                 theName += SEP + theSubKeyType.toString();
             }
+
+            /* For XMSS use the subKeyType */
+            if (GordianAsymKeyType.XMSS.equals(theKeyType)
+                && theSubKeyType != null) {
+                theName = theSubKeyType.toString();
+            }
         }
 
         /* return the name */
