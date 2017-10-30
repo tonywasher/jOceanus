@@ -48,12 +48,12 @@ import java.security.SecureRandom;
 
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropyUtil;
-import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 
 /**
  * SecureRandom wrapper class.
  */
-public class GordianSecureRandom extends SecureRandom {
+public class GordianSecureRandom
+        extends SecureRandom {
     /**
      * Serial Id.
      */
@@ -67,7 +67,7 @@ public class GordianSecureRandom extends SecureRandom {
     /**
      * The DRBG generator.
      */
-    private final transient SP80090DRBG theGenerator;
+    private final transient GordianDRBGenerator theGenerator;
 
     /**
      * The DRBG provider.
@@ -86,7 +86,7 @@ public class GordianSecureRandom extends SecureRandom {
      * @param pEntropy the entropy source
      * @param isPredictionResistant true/false
      */
-    protected GordianSecureRandom(final SP80090DRBG pGenerator,
+    protected GordianSecureRandom(final GordianDRBGenerator pGenerator,
                                   final SecureRandom pRandom,
                                   final EntropySource pEntropy,
                                   final boolean isPredictionResistant) {
@@ -130,6 +130,11 @@ public class GordianSecureRandom extends SecureRandom {
     @Override
     public byte[] generateSeed(final int numBytes) {
         return EntropyUtil.generateSeed(theEntropy, numBytes);
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return theGenerator.getAlgorithm();
     }
 
     /**

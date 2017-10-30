@@ -45,7 +45,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.prng;
 
 import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianByteArrayInteger;
@@ -58,7 +57,12 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * This implementation is modified so that it accepts any GordianDigest.
  */
 public final class GordianSP800HashDRBG
-        implements SP80090DRBG {
+        implements GordianDRBGenerator {
+    /**
+     * The SP800 prefix.
+     */
+    static final String SP800_PREFIX = "SP800-";
+
     /**
      * The bit shift.
      */
@@ -313,5 +317,10 @@ public final class GordianSP800HashDRBG
     @Override
     public int getBlockSize() {
         return theDigest.getDigestSize();
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return SP800_PREFIX + theDigest.getDigestSpec().toString();
     }
 }

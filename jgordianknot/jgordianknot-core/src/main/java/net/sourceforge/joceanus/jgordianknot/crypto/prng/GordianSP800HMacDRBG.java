@@ -45,7 +45,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.prng;
 
 import org.bouncycastle.crypto.prng.EntropySource;
-import org.bouncycastle.crypto.prng.drbg.SP80090DRBG;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianByteArrayInteger;
@@ -59,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * This implementation is modified so that it accepts any GordianMac.
  */
 public final class GordianSP800HMacDRBG
-        implements SP80090DRBG {
+        implements GordianDRBGenerator {
     /**
      * The bit shift.
      */
@@ -273,5 +272,10 @@ public final class GordianSP800HMacDRBG
     @Override
     public int getBlockSize() {
         return theHMac.getMacSize();
+    }
+
+    @Override
+    public String getAlgorithm() {
+        return GordianSP800HashDRBG.SP800_PREFIX + theHMac.getMacSpec().toString();
     }
 }

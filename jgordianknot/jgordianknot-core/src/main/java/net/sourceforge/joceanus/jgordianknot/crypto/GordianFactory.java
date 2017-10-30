@@ -170,6 +170,8 @@ public abstract class GordianFactory {
 
         /* Access the digestTypes */
         final GordianDigestType[] myDigestTypes = GordianDigestType.values();
+
+        /* Keep looping until we find a valid digest */
         for (;;) {
             /* Obtain the candidate DigestSpec */
             final int myInt = pRandom.nextInt(myDigestTypes.length);

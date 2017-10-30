@@ -44,6 +44,11 @@ public class GordianRandomSpec {
     private final GordianDigestSpec theDigestSpec;
 
     /**
+     * The SymKeySpec.
+     */
+    private final GordianSymKeySpec theSymKeySpec;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -57,6 +62,19 @@ public class GordianRandomSpec {
                                 final GordianDigestSpec pDigestSpec) {
         theRandomType = pRandomType;
         theDigestSpec = pDigestSpec;
+        theSymKeySpec = null;
+    }
+
+    /**
+     * Constructor.
+     * @param pRandomType the randomType
+     * @param pSymKeySpec the symKeySpec
+     */
+    protected GordianRandomSpec(final GordianRandomType pRandomType,
+                                final GordianSymKeySpec pSymKeySpec) {
+        theRandomType = pRandomType;
+        theDigestSpec = null;
+        theSymKeySpec = pSymKeySpec;
     }
 
     /**
@@ -78,6 +96,15 @@ public class GordianRandomSpec {
     }
 
     /**
+     * Create x931Spec.
+     * @param pSymKeySpec the symKeySpec
+     * @return the RandomSpec
+     */
+    public static GordianRandomSpec x931(final GordianSymKeySpec pSymKeySpec) {
+        return new GordianRandomSpec(GordianRandomType.X931, pSymKeySpec);
+    }
+
+    /**
      * Obtain the randomType.
      * @return the randomType.
      */
@@ -93,13 +120,25 @@ public class GordianRandomSpec {
         return theDigestSpec;
     }
 
+    /**
+     * Obtain the symKeySpec.
+     * @return the symKeySpec.
+     */
+    public GordianSymKeySpec getSymKeySpec() {
+        return theSymKeySpec;
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
         if (theName == null) {
             /* Load the name */
             theName = theRandomType.toString();
-            theName += SEP + theDigestSpec.toString();
+            if (theDigestSpec != null) {
+                theName += SEP + theDigestSpec.toString();
+            } else if (theSymKeySpec != null) {
+                theName += SEP + theSymKeySpec.toString();
+            }
         }
 
         /* return the name */
@@ -130,13 +169,21 @@ public class GordianRandomSpec {
         }
 
         /* Match subfields */
-        return theDigestSpec.equals(myThat.getDigestSpec());
+        final boolean isDigestEqual = theDigestSpec != null
+                                                            ? theDigestSpec.equals(myThat.getDigestSpec())
+                                                            : myThat.getDigestSpec() == null;
+        final boolean isSymKeyEqual = theSymKeySpec != null
+                                                            ? theSymKeySpec.equals(myThat.getSymKeySpec())
+                                                            : myThat.getSymKeySpec() == null;
+        return isDigestEqual && isSymKeyEqual;
     }
 
     @Override
     public int hashCode() {
         int hashCode = theRandomType.ordinal() << TethysDataConverter.BYTE_SHIFT;
-        hashCode += theDigestSpec.hashCode();
+        hashCode += theDigestSpec != null
+                                          ? theDigestSpec.hashCode()
+                                          : theSymKeySpec.hashCode();
         return hashCode;
     }
 }
