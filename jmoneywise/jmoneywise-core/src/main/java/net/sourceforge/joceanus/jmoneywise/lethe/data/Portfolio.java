@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
@@ -51,6 +53,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioType.PortfolioTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
@@ -925,6 +928,7 @@ public class Portfolio
 
     @Override
     public void validate() {
+        final PortfolioList myList = getList();
         final Payee myParent = getParent();
         final PortfolioType myPortType = getPortfolioType();
         final AssetCurrency myCurrency = getAssetCurrency();
@@ -936,9 +940,21 @@ public class Portfolio
         if (myPortType == null) {
             addError(ERROR_MISSING, FIELD_PORTTYPE);
         } else {
+            /* Access the class */
+            final PortfolioTypeClass myClass = myPortType.getPortfolioClass();
+
             /* PortfolioType must be enabled */
             if (!myPortType.getEnabled()) {
                 addError(ERROR_DISABLED, FIELD_PORTTYPE);
+            }
+
+            /* If the PortfolioType is singular */
+            if (myClass.isSingular()) {
+                /* Count the elements of this class */
+                final PortfolioDataMap myMap = myList.getDataMap();
+                if (!myMap.validSingularCount(myClass)) {
+                    addError(ERROR_MULT, FIELD_PORTTYPE);
+                }
             }
         }
 
@@ -1206,6 +1222,16 @@ public class Portfolio
             return myPortfolio;
         }
 
+        /**
+         * Obtain the first portfolio for the specified class.
+         * @param pClass the portfolio class
+         * @return the portfolio
+         */
+        public Portfolio getSingularClass(final PortfolioTypeClass pClass) {
+            /* Lookup in the map */
+            return getDataMap().findSingularItem(pClass);
+        }
+
         @Override
         public Portfolio addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the portfolio */
@@ -1275,16 +1301,41 @@ public class Portfolio
                 .getValue());
 
         /**
+         * CategoryMap Field Id.
+         */
+        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+
+        /**
+         * CategoryCountMap Field Id.
+         */
+        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+
+        /**
          * The assetMap.
          */
         private AssetDataMap theUnderlyingMap;
+
+        /**
+         * Map of category counts.
+         */
+        private final Map<Integer, Integer> thePortfolioCountMap;
+
+        /**
+         * Map of singular categories.
+         */
+        private final Map<Integer, Portfolio> thePortfolioMap;
 
         /**
          * Constructor.
          * @param pDeposits the deposits list
          */
         protected PortfolioDataMap(final DepositList pDeposits) {
+            /* Access underlying nameMap */
             theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+
+            /* Create the maps */
+            thePortfolioCountMap = new HashMap<>();
+            thePortfolioMap = new HashMap<>();
         }
 
         @Override
@@ -1298,6 +1349,12 @@ public class Portfolio
             if (FIELD_UNDERLYINGMAP.equals(pField)) {
                 return theUnderlyingMap;
             }
+            if (FIELD_CATMAP.equals(pField)) {
+                return thePortfolioMap;
+            }
+            if (FIELD_CATCOUNT.equals(pField)) {
+                return thePortfolioCountMap;
+            }
 
             /* Unknown */
             return MetisDataFieldValue.UNKNOWN;
@@ -1310,11 +1367,28 @@ public class Portfolio
 
         @Override
         public void resetMap() {
-            /* No action */
+            thePortfolioCountMap.clear();
+            thePortfolioMap.clear();
         }
 
         @Override
         public void adjustForItem(final Portfolio pItem) {
+            /* If the class is singular */
+            final PortfolioTypeClass myClass = pItem.getPortfolioTypeClass();
+            if (myClass.isSingular()) {
+                /* Adjust category count */
+                final Integer myId = myClass.getClassId();
+                final Integer myCount = thePortfolioCountMap.get(myId);
+                if (myCount == null) {
+                    thePortfolioCountMap.put(myId, DataInstanceMap.ONE);
+                } else {
+                    thePortfolioCountMap.put(myId, myCount + 1);
+                }
+
+                /* Adjust portfolio map */
+                thePortfolioMap.put(myId, pItem);
+            }
+
             /* Adjust name count */
             theUnderlyingMap.adjustForItem(pItem);
         }
@@ -1347,6 +1421,25 @@ public class Portfolio
          */
         public boolean availableName(final String pName) {
             return theUnderlyingMap.availableKey(pName);
+        }
+
+        /**
+         * find singular item.
+         * @param pClass the class to look up
+         * @return the matching item
+         */
+        public Portfolio findSingularItem(final PortfolioTypeClass pClass) {
+            return thePortfolioMap.get(pClass.getClassId());
+        }
+
+        /**
+         * Check validity of singular count.
+         * @param pClass the class to look up
+         * @return true/false
+         */
+        public boolean validSingularCount(final PortfolioTypeClass pClass) {
+            final Integer myResult = thePortfolioCountMap.get(pClass.getClassId());
+            return DataInstanceMap.ONE.equals(myResult);
         }
     }
 }

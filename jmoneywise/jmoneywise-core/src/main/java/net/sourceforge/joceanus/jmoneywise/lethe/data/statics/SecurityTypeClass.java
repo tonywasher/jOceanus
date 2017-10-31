@@ -89,15 +89,24 @@ public enum SecurityTypeClass implements StaticInterface {
      * an Income:Pension transaction. It should have a single unit valued at the size of the
      * PensionPot.
      */
-    PENSIONPOT(8, 7),
+    DEFINEDCONTRIBUTION(8, 7),
 
     /**
-     * Annuity PensionPot.
+     * DefinedBenefit PensionPot.
      * <p>
-     * This is defined Benefit Pension Pot. TaxFree contributions can be made to this Pot via an
+     * This is a defined Benefit Pension Pot. TaxFree contributions can be made to this Pot via an
      * Income:Pension transaction. It should have a single unit valued at the annual income value.
+     * Its valuation is the annual income multiplied by 20.
      */
-    ANNUITYPOT(9, 8),
+    DEFINEDBENEFIT(9, 8),
+
+    /**
+     * StatePension PensionPot.
+     * <p>
+     * This is a state Pension Pot. It should have a single unit valued at the weekly income value.
+     * Its valuation is the weekly income multiplied by 52*20. It is a singular Security.
+     */
+    STATEPENSION(10, 9),
 
     /**
      * StockOption.
@@ -105,7 +114,7 @@ public enum SecurityTypeClass implements StaticInterface {
      * This is stockOption. It relates to an option to buy a particular stock at a particular price
      * at a later date.
      */
-    STOCKOPTION(10, 9),
+    STOCKOPTION(11, 10),
 
     /**
      * Generic Asset Account.
@@ -113,7 +122,7 @@ public enum SecurityTypeClass implements StaticInterface {
      * This is a generic asset account and represents items whose value is determined by the product
      * of the number units held and the most recent unit price.
      */
-    ASSET(11, 10);
+    ASSET(12, 11);
 
     /**
      * The String name.
@@ -179,14 +188,14 @@ public enum SecurityTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the SecurityType is a pensionPot.
-     * @return <code>true</code> if the security type is a pension pot, <code>false</code>
-     * otherwise.
+     * Determine whether the SecurityType is a pension.
+     * @return <code>true</code> if the security type is a pension, <code>false</code> otherwise.
      */
-    public boolean isPensionPot() {
+    public boolean isPension() {
         switch (this) {
-            case PENSIONPOT:
-            case ANNUITYPOT:
+            case DEFINEDBENEFIT:
+            case DEFINEDCONTRIBUTION:
+            case STATEPENSION:
                 return true;
             default:
                 return false;
@@ -334,5 +343,21 @@ public enum SecurityTypeClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Is this a statePension?
+     * @return <code>true</code> if the SecurityType is statePension, <code>false</code> otherwise.
+     */
+    public boolean isStatePension() {
+        return this == STATEPENSION;
+    }
+
+    /**
+     * Is this a singular security?.
+     * @return <code>true</code> if the SecurityType is singular, <code>false</code> otherwise.
+     */
+    public boolean isSingular() {
+        return isStatePension();
     }
 }

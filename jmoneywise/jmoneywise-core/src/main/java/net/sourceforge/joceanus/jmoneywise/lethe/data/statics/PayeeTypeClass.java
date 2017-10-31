@@ -247,6 +247,7 @@ public enum PayeeTypeClass implements StaticInterface {
             case EMPLOYER:
                 return !pClass.needsMarketParent();
             case GOVERNMENT:
+                return pClass.isStatePension();
             case TAXMAN:
             case INDIVIDUAL:
             case PAYEE:
@@ -266,8 +267,8 @@ public enum PayeeTypeClass implements StaticInterface {
             case MARKET:
             case INSTITUTION:
             case EMPLOYER:
-                return true;
             case GOVERNMENT:
+                return true;
             case TAXMAN:
             case INDIVIDUAL:
             case PAYEE:

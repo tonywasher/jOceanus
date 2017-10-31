@@ -289,54 +289,12 @@ public final class SecurityHolding
     }
 
     /**
-     * Obtain portfolio name from composite name.
-     * @param pName the composite name
-     * @return the portfolio name
-     */
-    private static String getPortfolioName(final String pName) {
-        final int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
-        return iIndex == -1
-                            ? pName
-                            : pName.substring(0, iIndex);
-    }
-
-    /**
-     * Obtain security name from composite name.
-     * @param pName the composite name
-     * @return the security name
-     */
-    private static String getSecurityName(final String pName) {
-        final int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
-        return iIndex == -1
-                            ? ""
-                            : pName.substring(iIndex + 1);
-    }
-
-    /**
      * Generate the id.
      * @return the id.
      */
     private Integer generateId() {
         return theSecurity.getId()
                | (thePortfolio.getId() << PORTFOLIO_SHIFT);
-    }
-
-    /**
-     * Obtain portfolio id from composite id.
-     * @param pId the composite id
-     * @return the portfolio id
-     */
-    private static Integer getPortfolioId(final Integer pId) {
-        return (pId >>> PORTFOLIO_SHIFT) & ID_MASK;
-    }
-
-    /**
-     * Obtain security id from composite id.
-     * @param pId the composite id
-     * @return the security id
-     */
-    private static Integer getSecurityId(final Integer pId) {
-        return pId & ID_MASK;
     }
 
     /**
@@ -518,6 +476,48 @@ public final class SecurityHolding
         }
 
         /**
+         * Obtain portfolio name from composite name.
+         * @param pName the composite name
+         * @return the portfolio name
+         */
+        private static String getPortfolioName(final String pName) {
+            final int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
+            return iIndex == -1
+                                ? pName
+                                : pName.substring(0, iIndex);
+        }
+
+        /**
+         * Obtain security name from composite name.
+         * @param pName the composite name
+         * @return the security name
+         */
+        private static String getSecurityName(final String pName) {
+            final int iIndex = pName.indexOf(SECURITYHOLDING_SEP);
+            return iIndex == -1
+                                ? ""
+                                : pName.substring(iIndex + 1);
+        }
+
+        /**
+         * Obtain portfolio id from composite id.
+         * @param pId the composite id
+         * @return the portfolio id
+         */
+        private static Integer getPortfolioId(final Integer pId) {
+            return (pId >>> PORTFOLIO_SHIFT) & ID_MASK;
+        }
+
+        /**
+         * Obtain security id from composite id.
+         * @param pId the composite id
+         * @return the security id
+         */
+        private static Integer getSecurityId(final Integer pId) {
+            return pId & ID_MASK;
+        }
+
+        /**
          * Declare holding.
          * @param pPortfolio the portfolio
          * @param pSecurity the security
@@ -534,17 +534,7 @@ public final class SecurityHolding
 
             /* Look up existing holding */
             final Integer myId = pSecurity.getId();
-            SecurityHolding myHolding = myMap.get(myId);
-
-            /* If the holding does not currently exist */
-            if (myHolding == null) {
-                /* Create the holding and store it */
-                myHolding = new SecurityHolding(pPortfolio, pSecurity);
-                myMap.put(myId, myHolding);
-            }
-
-            /* Return the holding */
-            return myHolding;
+            return myMap.computeIfAbsent(myId, i -> new SecurityHolding(pPortfolio, pSecurity));
         }
 
         /**
@@ -562,7 +552,8 @@ public final class SecurityHolding
                 final Portfolio myPortfolio = thePortfolios.findItemById(pId);
 
                 /* Reject if no such portfolio */
-                if ((myPortfolio == null) || (myPortfolio.isDeleted())) {
+                if (myPortfolio == null
+                    || myPortfolio.isDeleted()) {
                     return null;
                 }
 
@@ -591,17 +582,7 @@ public final class SecurityHolding
 
             /* Look up in the map */
             final Integer myId = myPortfolio.getId();
-            PortfolioHoldingsMap myMap = theMap.get(myId);
-
-            /* If the Id is not found */
-            if (myMap == null) {
-                /* Allocate and store the map */
-                myMap = new PortfolioHoldingsMap(myPortfolio, theSecurities);
-                theMap.put(myId, myMap);
-            }
-
-            /* Return the map */
-            return myMap;
+            return theMap.computeIfAbsent(myId, i -> new PortfolioHoldingsMap(myPortfolio, theSecurities));
         }
 
         /**
@@ -829,17 +810,7 @@ public final class SecurityHolding
 
             /* Look up in the map */
             final Integer myId = mySecurity.getId();
-            SecurityHolding myHolding = theMap.get(myId);
-
-            /* If the Id is not found */
-            if (myHolding == null) {
-                /* Allocate and store the holding */
-                myHolding = new SecurityHolding(thePortfolio, mySecurity);
-                theMap.put(myId, myHolding);
-            }
-
-            /* Return the holding */
-            return myHolding;
+            return theMap.computeIfAbsent(myId, i -> new SecurityHolding(thePortfolio, mySecurity));
         }
 
         /**

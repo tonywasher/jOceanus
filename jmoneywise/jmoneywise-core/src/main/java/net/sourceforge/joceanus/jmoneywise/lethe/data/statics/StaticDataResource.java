@@ -104,6 +104,11 @@ public enum StaticDataResource implements TethysResourceId {
     PORTFOLIOTYPE_TAXFREE("PortfolioType.TaxFree"),
 
     /**
+     * /** PortfolioType Pension.
+     */
+    PORTFOLIOTYPE_PENSION("PortfolioType.Pension"),
+
+    /**
      * PortfolioType SIPP.
      */
     PORTFOLIOTYPE_SIPP("PortfolioType.SIPP"),
@@ -144,14 +149,19 @@ public enum StaticDataResource implements TethysResourceId {
     SECURITYTYPE_VEHICLE("SecurityType.Vehicle"),
 
     /**
-     * SecurityType PensionPot.
+     * SecurityType StatePension.
      */
-    SECURITYTYPE_PENSIONPOT("SecurityType.PensionPot"),
+    SECURITYTYPE_STATEPENSION("SecurityType.StatePension"),
 
     /**
-     * SecurityType AnnuityPot.
+     * SecurityType DefinedBenefit.
      */
-    SECURITYTYPE_ANNUITYPOT("SecurityType.AnnuityPot"),
+    SECURITYTYPE_BENEFIT("SecurityType.DefinedBenefit"),
+
+    /**
+     * SecurityType DefinedContribution.
+     */
+    SECURITYTYPE_CONTRIBUTION("SecurityType.DefinedContribution"),
 
     /**
      * SecurityType StockOption.
@@ -1017,6 +1027,7 @@ public enum StaticDataResource implements TethysResourceId {
         final Map<PortfolioTypeClass, TethysResourceId> myMap = new EnumMap<>(PortfolioTypeClass.class);
         myMap.put(PortfolioTypeClass.STANDARD, PORTFOLIOTYPE_STANDARD);
         myMap.put(PortfolioTypeClass.TAXFREE, PORTFOLIOTYPE_TAXFREE);
+        myMap.put(PortfolioTypeClass.PENSION, PORTFOLIOTYPE_PENSION);
         myMap.put(PortfolioTypeClass.SIPP, PORTFOLIOTYPE_SIPP);
         return myMap;
     }
@@ -1044,8 +1055,9 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(SecurityTypeClass.ENDOWMENT, SECURITYTYPE_ENDOWMENT);
         myMap.put(SecurityTypeClass.PROPERTY, SECURITYTYPE_PROPERTY);
         myMap.put(SecurityTypeClass.VEHICLE, SECURITYTYPE_VEHICLE);
-        myMap.put(SecurityTypeClass.PENSIONPOT, SECURITYTYPE_PENSIONPOT);
-        myMap.put(SecurityTypeClass.ANNUITYPOT, SECURITYTYPE_ANNUITYPOT);
+        myMap.put(SecurityTypeClass.STATEPENSION, SECURITYTYPE_STATEPENSION);
+        myMap.put(SecurityTypeClass.DEFINEDBENEFIT, SECURITYTYPE_BENEFIT);
+        myMap.put(SecurityTypeClass.DEFINEDCONTRIBUTION, SECURITYTYPE_CONTRIBUTION);
         myMap.put(SecurityTypeClass.STOCKOPTION, SECURITYTYPE_STOCKOPTION);
         myMap.put(SecurityTypeClass.ASSET, SECURITYTYPE_ASSET);
         return myMap;

@@ -46,6 +46,18 @@ public final class TransactionValidator {
      * @return true/false
      */
     public static boolean isValidAccount(final TransactionAsset pAccount) {
+        /* Validate securityHolding */
+        if (pAccount instanceof SecurityHolding
+            && !checkSecurityHolding((SecurityHolding) pAccount)) {
+            return false;
+        }
+
+        /* Reject pensions portfolio */
+        if (pAccount instanceof Portfolio
+            && ((Portfolio) pAccount).getPortfolioTypeClass().holdsPensions()) {
+            return false;
+        }
+
         /* Check type of account */
         final AssetType myType = pAccount.getAssetType();
         return myType.isBaseAccount() && !pAccount.isHidden();
@@ -92,7 +104,7 @@ public final class TransactionValidator {
             case BADDEBTCAPITAL:
             case BADDEBTINTEREST:
                 /* Account must be peer2Peer */
-                return (pAccount instanceof Deposit)
+                return pAccount instanceof Deposit
                        && (((Deposit) pAccount).isDepositClass(DepositCategoryClass.PEER2PEER));
 
             case CASHBACK:
@@ -105,7 +117,7 @@ public final class TransactionValidator {
             case RENTALEXPENSE:
             case ROOMRENTALINCOME:
                 /* Account must be property */
-                return (pAccount instanceof SecurityHolding)
+                return pAccount instanceof SecurityHolding
                        && ((SecurityHolding) pAccount).getSecurity().isSecurityClass(SecurityTypeClass.PROPERTY);
 
             case UNITSADJUST:
@@ -134,8 +146,8 @@ public final class TransactionValidator {
                 return myType.isValued() || myType.isAutoExpense();
 
             case PORTFOLIOXFER:
-                return (pAccount instanceof SecurityHolding)
-                       || (pAccount instanceof Portfolio);
+                return pAccount instanceof SecurityHolding
+                       || pAccount instanceof Portfolio;
 
             case TRANSFER:
                 return true;
@@ -236,6 +248,18 @@ public final class TransactionValidator {
             return false;
         }
 
+        /* Validate securityHolding */
+        if (pPartner instanceof SecurityHolding
+            && !checkSecurityHolding((SecurityHolding) pPartner)) {
+            return false;
+        }
+
+        /* Reject pensions portfolio */
+        if (pPartner instanceof Portfolio
+            && ((Portfolio) pPartner).getPortfolioTypeClass().holdsPensions()) {
+            return false;
+        }
+
         /* If this involves auto-expense */
         if (pAccount.isAutoExpense()
             || pPartner.isAutoExpense()) {
@@ -264,7 +288,7 @@ public final class TransactionValidator {
         switch (myCatClass) {
             case TAXEDINCOME:
                 /* Taxed Income must have a Payee that can provide income */
-                return (pPartner instanceof Payee)
+                return pPartner instanceof Payee
                        && ((Payee) pPartner).getPayeeTypeClass().canProvideTaxedIncome();
 
             case OTHERINCOME:
@@ -274,13 +298,13 @@ public final class TransactionValidator {
 
             case LOCALTAXES:
                 /* LocalTaxes must have a Government Payee partner */
-                return (pPartner instanceof Payee)
+                return pPartner instanceof Payee
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.GOVERNMENT);
 
             case GIFTEDINCOME:
             case INHERITED:
                 /* Gifted/Inherited Income must have an Individual Payee partner */
-                return (pPartner instanceof Payee)
+                return pPartner instanceof Payee
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.INDIVIDUAL);
 
             case RENTALINCOME:
@@ -308,7 +332,7 @@ public final class TransactionValidator {
 
             case BADDEBTCAPITAL:
             case BADDEBTINTEREST:
-                return (pPartner instanceof Payee)
+                return pPartner instanceof Payee
                        && MetisDataDifference.isEqual(pPartner, pAccount.getParent());
 
             case UNITSADJUST:
@@ -333,7 +357,7 @@ public final class TransactionValidator {
 
             case INCOMETAX:
             case TAXRELIEF:
-                return (pPartner instanceof Payee)
+                return pPartner instanceof Payee
                        && ((Payee) pPartner).isPayeeClass(PayeeTypeClass.TAXMAN);
 
             case PORTFOLIOXFER:
@@ -342,6 +366,26 @@ public final class TransactionValidator {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Check securityHolding.
+     * @param pHolding the securityHolding
+     * @return valid true/false
+     */
+    private static boolean checkSecurityHolding(final SecurityHolding pHolding) {
+        /* Access the components */
+        final Portfolio myPortfolio = pHolding.getPortfolio();
+        final Security mySecurity = pHolding.getSecurity();
+
+        /* If the portfolio can hold pensions */
+        if (myPortfolio.getPortfolioTypeClass().holdsPensions()) {
+            /* Can only hold pensions */
+            return mySecurity.getSecurityTypeClass().isPension();
+        }
+
+        /* cannot be a pension */
+        return !mySecurity.getSecurityTypeClass().isPension();
     }
 
     /**

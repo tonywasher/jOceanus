@@ -46,11 +46,18 @@ public enum PortfolioTypeClass implements StaticInterface {
     TAXFREE(2, 1),
 
     /**
+     * Pension.
+     * <p>
+     * This is a Pension. and is singular
+     */
+    PENSION(3, 2),
+
+    /**
      * SIPP.
      * <p>
      * This is a SIPP Portfolio.
      */
-    SIPP(3, 2);
+    SIPP(4, 3);
 
     /**
      * The String name.
@@ -120,12 +127,51 @@ public enum PortfolioTypeClass implements StaticInterface {
      * @return <code>true</code> if the PortfolioTtype is tax free, <code>false</code> otherwise.
      */
     public boolean isTaxFree() {
+        return this != STANDARD;
+    }
+
+    /**
+     * Determine whether the PortfolioType is a pension.
+     * @return <code>true</code> if the Portfoliotype is pension, <code>false</code> otherwise.
+     */
+    public boolean isPension() {
         switch (this) {
+            case PENSION:
+            case SIPP:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the PortfolioType owns securities.
+     * @return <code>true</code> if the PortfolioType owns securities, <code>false</code> otherwise.
+     */
+    public boolean holdsSecurities() {
+        switch (this) {
+            case STANDARD:
             case TAXFREE:
             case SIPP:
                 return true;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine whether the PortfolioType can hold pension securitues.
+     * @return <code>true</code> if the PortfolioType owns pensions, <code>false</code> otherwise.
+     */
+    public boolean holdsPensions() {
+        return this == PENSION;
+    }
+
+    /**
+     * Is this a singular portfolio?.
+     * @return <code>true</code> if the PortfolioType is singular, <code>false</code> otherwise.
+     */
+    public boolean isSingular() {
+        return isPension();
     }
 }

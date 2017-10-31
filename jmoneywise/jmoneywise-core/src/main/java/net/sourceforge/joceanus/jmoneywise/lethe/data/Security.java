@@ -883,6 +883,7 @@ public class Security
 
     @Override
     public void validate() {
+        final SecurityList myList = getList();
         final Payee myParent = getParent();
         final SecurityType mySecType = getSecurityType();
         final AssetCurrency myCurrency = getAssetCurrency();
@@ -895,9 +896,21 @@ public class Security
         if (mySecType == null) {
             addError(ERROR_MISSING, FIELD_SECTYPE);
         } else {
+            /* Access the class */
+            final SecurityTypeClass myClass = mySecType.getSecurityClass();
+
             /* SecurityType must be enabled */
             if (!mySecType.getEnabled()) {
                 addError(ERROR_DISABLED, FIELD_SECTYPE);
+            }
+
+            /* If the SecurityType is singular */
+            if (myClass.isSingular()) {
+                /* Count the elements of this class */
+                final SecurityDataMap myMap = myList.getDataMap();
+                if (!myMap.validSingularCount(myClass)) {
+                    addError(ERROR_MULT, FIELD_SECTYPE);
+                }
             }
         }
 
@@ -930,10 +943,18 @@ public class Security
             }
         }
 
-        /* If symbol exists it must be unique */
-        if ((mySymbol != null)
-            && !getList().validSymbolCount(mySymbol)) {
-            addError(ERROR_DUPLICATE, SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL));
+        /* If we have a securityType */
+        if (mySecType != null) {
+            /* Check symbol rules */
+            if (mySecType.getSecurityClass().needsSymbol()) {
+                if (mySymbol == null) {
+                    addError(ERROR_MISSING, SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL));
+                } else if (!getList().validSymbolCount(mySymbol)) {
+                    addError(ERROR_DUPLICATE, SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL));
+                }
+            } else if (mySymbol != null) {
+                addError(ERROR_EXIST, SecurityInfoSet.getFieldForClass(AccountInfoClass.SYMBOL));
+            }
         }
 
         /* If we have an infoSet */
@@ -1204,6 +1225,16 @@ public class Security
             return mySecurity;
         }
 
+        /**
+         * Obtain the first security for the specified class.
+         * @param pClass the security class
+         * @return the security
+         */
+        public Security getSingularClass(final SecurityTypeClass pClass) {
+            /* Lookup in the map */
+            return getDataMap().findSingularItem(pClass);
+        }
+
         @Override
         public Security addValuesItem(final DataValues<MoneyWiseDataType> pValues) throws OceanusException {
             /* Create the security */
@@ -1259,6 +1290,16 @@ public class Security
         private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
 
         /**
+         * CategoryMap Field Id.
+         */
+        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+
+        /**
+         * CategoryCountMap Field Id.
+         */
+        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+
+        /**
          * SymbolMap Field Id.
          */
         private static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
@@ -1279,10 +1320,22 @@ public class Security
         private final Map<String, Security> theSymbolMap;
 
         /**
+         * Map of category counts.
+         */
+        private final Map<Integer, Integer> theSecurityCountMap;
+
+        /**
+         * Map of singular categories.
+         */
+        private final Map<Integer, Security> theSecurityMap;
+
+        /**
          * Constructor.
          */
         public SecurityDataMap() {
             /* Create the maps */
+            theSecurityCountMap = new HashMap<>();
+            theSecurityMap = new HashMap<>();
             theSymbolCountMap = new HashMap<>();
             theSymbolMap = new HashMap<>();
         }
@@ -1295,6 +1348,12 @@ public class Security
         @Override
         public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
+            if (FIELD_CATMAP.equals(pField)) {
+                return theSecurityMap;
+            }
+            if (FIELD_CATCOUNT.equals(pField)) {
+                return theSecurityCountMap;
+            }
             if (FIELD_SYMMAP.equals(pField)) {
                 return theSymbolMap;
             }
@@ -1314,23 +1373,43 @@ public class Security
         @Override
         public void resetMap() {
             super.resetMap();
+            theSecurityCountMap.clear();
+            theSecurityMap.clear();
             theSymbolCountMap.clear();
             theSymbolMap.clear();
         }
 
         @Override
         public void adjustForItem(final Security pItem) {
-            /* Adjust symbol count */
-            final String mySymbol = pItem.getSymbol();
-            final Integer myCount = theSymbolCountMap.get(mySymbol);
-            if (myCount == null) {
-                theSymbolCountMap.put(mySymbol, ONE);
-            } else {
-                theSymbolCountMap.put(mySymbol, myCount + 1);
+            /* If the class is singular */
+            final SecurityTypeClass myClass = pItem.getSecurityTypeClass();
+            if (myClass.isSingular()) {
+                /* Adjust category count */
+                final Integer myId = myClass.getClassId();
+                final Integer myCount = theSecurityCountMap.get(myId);
+                if (myCount == null) {
+                    theSecurityCountMap.put(myId, ONE);
+                } else {
+                    theSecurityCountMap.put(myId, myCount + 1);
+                }
+
+                /* Adjust security map */
+                theSecurityMap.put(myId, pItem);
             }
 
-            /* Adjust symbol map */
-            theSymbolMap.put(mySymbol, pItem);
+            /* Adjust symbol count */
+            if (myClass.needsSymbol()) {
+                final String mySymbol = pItem.getSymbol();
+                final Integer myCount = theSymbolCountMap.get(mySymbol);
+                if (myCount == null) {
+                    theSymbolCountMap.put(mySymbol, ONE);
+                } else {
+                    theSymbolCountMap.put(mySymbol, myCount + 1);
+                }
+
+                /* Adjust symbol map */
+                theSymbolMap.put(mySymbol, pItem);
+            }
 
             /* Adjust name count */
             adjustForItem(pItem, pItem.getName());
@@ -1380,6 +1459,25 @@ public class Security
          */
         public boolean availableName(final String pName) {
             return availableKey(pName);
+        }
+
+        /**
+         * find singular item.
+         * @param pClass the class to look up
+         * @return the matching item
+         */
+        public Security findSingularItem(final SecurityTypeClass pClass) {
+            return theSecurityMap.get(pClass.getClassId());
+        }
+
+        /**
+         * Check validity of singular count.
+         * @param pClass the class to look up
+         * @return true/false
+         */
+        public boolean validSingularCount(final SecurityTypeClass pClass) {
+            final Integer myResult = theSecurityCountMap.get(pClass.getClassId());
+            return ONE.equals(myResult);
         }
     }
 }

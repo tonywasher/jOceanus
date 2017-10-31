@@ -821,7 +821,8 @@ public class TransactionPanel
             TethysScrollSubMenu<TransactionAsset, Icon> myCoreMenu = null;
 
             /* Ignore deleted or closed */
-            if (myPortfolio.isDeleted() || myPortfolio.isClosed()) {
+            if (myPortfolio.isDeleted()
+                || myPortfolio.isClosed()) {
                 continue;
             }
 

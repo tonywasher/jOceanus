@@ -187,12 +187,7 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isDeposit() {
-        switch (this) {
-            case DEPOSIT:
-                return true;
-            default:
-                return false;
-        }
+        return this == DEPOSIT;
     }
 
     /**
@@ -200,12 +195,7 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isLoan() {
-        switch (this) {
-            case LOAN:
-                return true;
-            default:
-                return false;
-        }
+        return this == LOAN;
     }
 
     /**
@@ -213,12 +203,7 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isSecurity() {
-        switch (this) {
-            case SECURITY:
-                return true;
-            default:
-                return false;
-        }
+        return this == SECURITY;
     }
 
     /**
@@ -226,12 +211,7 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isSecurityHolding() {
-        switch (this) {
-            case SECURITYHOLDING:
-                return true;
-            default:
-                return false;
-        }
+        return this == SECURITYHOLDING;
     }
 
     /**
@@ -239,12 +219,7 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isPortfolio() {
-        switch (this) {
-            case PORTFOLIO:
-                return true;
-            default:
-                return false;
-        }
+        return this == PORTFOLIO;
     }
 
     /**
@@ -252,12 +227,15 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isPayee() {
-        switch (this) {
-            case PAYEE:
-                return true;
-            default:
-                return false;
-        }
+        return this == PAYEE;
+    }
+
+    /**
+     * Determine whether this is a cash.
+     * @return true/false
+     */
+    public boolean isCash() {
+        return this == CASH;
     }
 
     /**
@@ -265,11 +243,6 @@ public enum AssetType {
      * @return true/false
      */
     public boolean isAutoExpense() {
-        switch (this) {
-            case AUTOEXPENSE:
-                return true;
-            default:
-                return false;
-        }
+        return this == AUTOEXPENSE;
     }
 }

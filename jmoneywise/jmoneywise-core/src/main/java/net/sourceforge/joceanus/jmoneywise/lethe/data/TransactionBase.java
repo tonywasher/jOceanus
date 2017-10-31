@@ -930,12 +930,6 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             doCheckCombo = false;
 
         } else {
-            /* Holding currency combo must be valid */
-            // if ((myAccount instanceof SecurityHolding)
-            // && !((SecurityHolding) myAccount).validCurrencies()) {
-            // addError(SecurityHolding.ERROR_CURRENCYCOMBO, FIELD_ACCOUNT);
-            // }
-
             /* Account must be valid */
             if (!TransactionValidator.isValidAccount(myAccount)) {
                 addError(ERROR_COMBO, FIELD_ACCOUNT);
@@ -949,7 +943,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             doCheckCombo = false;
 
             /* Category must be valid for Account */
-        } else if (doCheckCombo && !TransactionValidator.isValidCategory(myAccount, myCategory)) {
+        } else if (doCheckCombo
+                   && !TransactionValidator.isValidCategory(myAccount, myCategory)) {
             addError(ERROR_COMBO, FIELD_CATEGORY);
             doCheckCombo = false;
         }
@@ -960,7 +955,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
             doCheckCombo = false;
 
             /* Direction must be valid for Account */
-        } else if (doCheckCombo && !TransactionValidator.isValidDirection(myAccount, myCategory, myDir)) {
+        } else if (doCheckCombo
+                   && !TransactionValidator.isValidDirection(myAccount, myCategory, myDir)) {
             addError(ERROR_COMBO, FIELD_DIRECTION);
             doCheckCombo = false;
         }
@@ -971,7 +967,8 @@ public abstract class TransactionBase<T extends TransactionBase<T>>
 
         } else {
             /* Partner must be valid for Account */
-            if (doCheckCombo && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
+            if (doCheckCombo
+                && !TransactionValidator.isValidPartner(myAccount, myCategory, myPartner)) {
                 addError(ERROR_COMBO, FIELD_PARTNER);
             }
         }
