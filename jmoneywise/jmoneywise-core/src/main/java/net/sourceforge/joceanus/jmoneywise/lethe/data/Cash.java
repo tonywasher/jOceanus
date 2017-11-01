@@ -39,7 +39,7 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashCategory.CashCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CashInfo.CashInfoList;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
@@ -859,8 +859,8 @@ public class Cash
         public CashList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) {
             /* Build an empty List */
             final CashList myList = getEmptyList(ListStyle.EDIT);
-            final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-            myList.ensureMap(myDeposits);
+            final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            myList.ensureMap(myPayees);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -969,16 +969,16 @@ public class Cash
         }
 
         /**
-         * Ensure Map based on the deposit list.
-         * @param pDeposits the deposit list
+         * Ensure Map based on the payee list.
+         * @param pPayees the payee list
          */
-        private void ensureMap(final DepositList pDeposits) {
-            setDataMap(new CashDataMap(pDeposits));
+        private void ensureMap(final PayeeList pPayees) {
+            setDataMap(new CashDataMap(pPayees));
         }
 
         @Override
         protected CashDataMap allocateDataMap() {
-            return new CashDataMap(getDataSet().getDeposits());
+            return new CashDataMap(getDataSet().getPayees());
         }
 
         @Override
@@ -997,12 +997,12 @@ public class Cash
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
         /**
          * UnderlyingMap Field Id.
          */
-        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**
@@ -1012,10 +1012,10 @@ public class Cash
 
         /**
          * Constructor.
-         * @param pDeposits the deposits list
+         * @param pPayees the payee list
          */
-        protected CashDataMap(final DepositList pDeposits) {
-            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        protected CashDataMap(final PayeeList pPayees) {
+            theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();
         }
 
         @Override

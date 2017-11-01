@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanInfo.LoanInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
@@ -1036,8 +1035,8 @@ public class Loan
         public LoanList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final LoanList myList = getEmptyList(ListStyle.EDIT);
-            final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-            myList.ensureMap(myDeposits);
+            final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            myList.ensureMap(myPayees);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -1138,16 +1137,16 @@ public class Loan
         }
 
         /**
-         * Ensure Map based on the deposit list.
-         * @param pDeposits the deposit list
+         * Ensure Map based on the payee list.
+         * @param pPayees the payee list
          */
-        private void ensureMap(final DepositList pDeposits) {
-            setDataMap(new LoanDataMap(pDeposits));
+        private void ensureMap(final PayeeList pPayees) {
+            setDataMap(new LoanDataMap(pPayees));
         }
 
         @Override
         protected LoanDataMap allocateDataMap() {
-            return new LoanDataMap(getDataSet().getDeposits());
+            return new LoanDataMap(getDataSet().getPayees());
         }
 
         @Override
@@ -1166,12 +1165,12 @@ public class Loan
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
         /**
          * UnderlyingMap Field Id.
          */
-        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**
@@ -1181,10 +1180,10 @@ public class Loan
 
         /**
          * Constructor.
-         * @param pDeposits the deposits list
+         * @param pPayees the payee list
          */
-        protected LoanDataMap(final DepositList pDeposits) {
-            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+        protected LoanDataMap(final PayeeList pPayees) {
+            theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();
         }
 
         @Override

@@ -32,13 +32,13 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase.CategoryDataMap;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PayeeInfo.PayeeInfoList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
+import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
@@ -1002,21 +1003,32 @@ public class Payee
      * The dataMap class.
      */
     protected static class PayeeDataMap
-            extends DataInstanceMap<Payee, MoneyWiseDataType, String> {
+            implements DataMapItem<Payee, MoneyWiseDataType>, MetisDataContents {
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+
+        /**
+         * UnderlyingMap Field Id.
+         */
+        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+                .getValue());
 
         /**
          * CategoryMap Field Id.
          */
-        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+        private static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        private static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+
+        /**
+         * The assetMap.
+         */
+        private AssetDataMap theUnderlyingMap;
 
         /**
          * Map of category counts.
@@ -1032,6 +1044,9 @@ public class Payee
          * Constructor.
          */
         public PayeeDataMap() {
+            /* Create underlying map */
+            theUnderlyingMap = new AssetDataMap();
+
             /* Create the maps */
             thePayeeCountMap = new HashMap<>();
             thePayeeMap = new HashMap<>();
@@ -1045,6 +1060,9 @@ public class Payee
         @Override
         public Object getFieldValue(final MetisField pField) {
             /* Handle standard fields */
+            if (FIELD_UNDERLYINGMAP.equals(pField)) {
+                return theUnderlyingMap;
+            }
             if (FIELD_CATMAP.equals(pField)) {
                 return thePayeeMap;
             }
@@ -1053,7 +1071,7 @@ public class Payee
             }
 
             /* Unknown */
-            return super.getFieldValue(pField);
+            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
@@ -1061,9 +1079,17 @@ public class Payee
             return FIELD_DEFS.getName();
         }
 
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        public AssetDataMap getUnderlyingMap() {
+            return theUnderlyingMap;
+        }
+
         @Override
         public void resetMap() {
-            super.resetMap();
+            theUnderlyingMap.resetMap();
             thePayeeCountMap.clear();
             thePayeeMap.clear();
         }
@@ -1077,7 +1103,7 @@ public class Payee
                 final Integer myId = myClass.getClassId();
                 final Integer myCount = thePayeeCountMap.get(myId);
                 if (myCount == null) {
-                    thePayeeCountMap.put(myId, ONE);
+                    thePayeeCountMap.put(myId, DataInstanceMap.ONE);
                 } else {
                     thePayeeCountMap.put(myId, myCount + 1);
                 }
@@ -1087,7 +1113,7 @@ public class Payee
             }
 
             /* Adjust name count */
-            adjustForItem(pItem, pItem.getName());
+            theUnderlyingMap.adjustForItem(pItem);
         }
 
         /**
@@ -1096,7 +1122,10 @@ public class Payee
          * @return the matching item
          */
         public Payee findItemByName(final String pName) {
-            return findItemByKey(pName);
+            final AssetBase<?> myAsset = theUnderlyingMap.findAssetByName(pName);
+            return myAsset instanceof Payee
+                                            ? (Payee) myAsset
+                                            : null;
         }
 
         /**
@@ -1105,7 +1134,7 @@ public class Payee
          * @return true/false
          */
         public boolean validNameCount(final String pName) {
-            return validKeyCount(pName);
+            return theUnderlyingMap.validKeyCount(pName);
         }
 
         /**
@@ -1114,7 +1143,7 @@ public class Payee
          * @return true/false
          */
         public boolean availableName(final String pName) {
-            return availableKey(pName);
+            return theUnderlyingMap.availableKey(pName);
         }
 
         /**
@@ -1133,7 +1162,7 @@ public class Payee
          */
         public boolean validSingularCount(final PayeeTypeClass pClass) {
             final Integer myResult = thePayeeCountMap.get(pClass.getClassId());
-            return ONE.equals(myResult);
+            return DataInstanceMap.ONE.equals(myResult);
         }
     }
 }

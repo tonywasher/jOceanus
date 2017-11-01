@@ -39,7 +39,6 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
-import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseTax.MoneyWiseTaxCredit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee.PayeeList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.PortfolioInfo.PortfolioInfoList;
@@ -1143,8 +1142,8 @@ public class Portfolio
         public PortfolioList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final PortfolioList myList = getEmptyList(ListStyle.EDIT);
-            final DepositList myDeposits = pUpdateSet.getDataList(MoneyWiseDataType.DEPOSIT, DepositList.class);
-            myList.ensureMap(myDeposits);
+            final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            myList.ensureMap(myPayees);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -1264,16 +1263,16 @@ public class Portfolio
         }
 
         /**
-         * Ensure Map based on the deposit list.
-         * @param pDeposits the deposit list
+         * Ensure Map based on the payee list.
+         * @param pPayees the payee list
          */
-        private void ensureMap(final DepositList pDeposits) {
-            setDataMap(new PortfolioDataMap(pDeposits));
+        private void ensureMap(final PayeeList pPayees) {
+            setDataMap(new PortfolioDataMap(pPayees));
         }
 
         @Override
         protected PortfolioDataMap allocateDataMap() {
-            return new PortfolioDataMap(getDataSet().getDeposits());
+            return new PortfolioDataMap(getDataSet().getPayees());
         }
 
         @Override
@@ -1292,23 +1291,23 @@ public class Portfolio
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
         /**
          * UnderlyingMap Field Id.
          */
-        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**
          * CategoryMap Field Id.
          */
-        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
+        private static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
 
         /**
          * CategoryCountMap Field Id.
          */
-        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        private static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
 
         /**
          * The assetMap.
@@ -1327,11 +1326,11 @@ public class Portfolio
 
         /**
          * Constructor.
-         * @param pDeposits the deposits list
+         * @param pPayees the payee list
          */
-        protected PortfolioDataMap(final DepositList pDeposits) {
+        protected PortfolioDataMap(final PayeeList pPayees) {
             /* Access underlying nameMap */
-            theUnderlyingMap = pDeposits.getDataMap().getUnderlyingMap();
+            theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();
 
             /* Create the maps */
             thePortfolioCountMap = new HashMap<>();

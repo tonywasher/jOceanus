@@ -1134,7 +1134,8 @@ public class Deposit
         public DepositList deriveEditList(final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Build an empty List */
             final DepositList myList = getEmptyList(ListStyle.EDIT);
-            myList.ensureMap();
+            final PayeeList myPayees = pUpdateSet.getDataList(MoneyWiseDataType.PAYEE, PayeeList.class);
+            myList.ensureMap(myPayees);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getActInfoTypes();
@@ -1260,9 +1261,17 @@ public class Deposit
             return null;
         }
 
+        /**
+         * Ensure Map based on the payee list.
+         * @param pPayees the payee list
+         */
+        private void ensureMap(final PayeeList pPayees) {
+            setDataMap(new DepositDataMap(pPayees));
+        }
+
         @Override
         protected DepositDataMap allocateDataMap() {
-            return new DepositDataMap();
+            return new DepositDataMap(getDataSet().getPayees());
         }
 
         @Override
@@ -1281,12 +1290,12 @@ public class Deposit
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
 
         /**
          * UnderlyingMap Field Id.
          */
-        public static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
+        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
                 .getValue());
 
         /**
@@ -1296,9 +1305,10 @@ public class Deposit
 
         /**
          * Constructor.
+         * @param pPayees the payee list
          */
-        protected DepositDataMap() {
-            theUnderlyingMap = new AssetDataMap();
+        protected DepositDataMap(final PayeeList pPayees) {
+            theUnderlyingMap = pPayees.getDataMap().getUnderlyingMap();
         }
 
         @Override
@@ -1332,7 +1342,7 @@ public class Deposit
 
         @Override
         public void resetMap() {
-            theUnderlyingMap.resetMap();
+            /* No action */
         }
 
         @Override

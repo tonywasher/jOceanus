@@ -99,12 +99,12 @@ public class MoneyWiseData
     /**
      * DefaultCurrency Field Id.
      */
-    public static final MetisField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+    private static final MetisField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
 
     /**
      * SecurityHoldings Field Id.
      */
-    public static final MetisField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
+    private static final MetisField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
 
     /**
      * TaxFactory.

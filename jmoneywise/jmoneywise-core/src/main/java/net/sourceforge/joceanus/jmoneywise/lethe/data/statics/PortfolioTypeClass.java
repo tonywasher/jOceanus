@@ -132,7 +132,7 @@ public enum PortfolioTypeClass implements StaticInterface {
 
     /**
      * Determine whether the PortfolioType is a pension.
-     * @return <code>true</code> if the Portfoliotype is pension, <code>false</code> otherwise.
+     * @return <code>true</code> if the PortfolioType is pension, <code>false</code> otherwise.
      */
     public boolean isPension() {
         switch (this) {
@@ -172,6 +172,6 @@ public enum PortfolioTypeClass implements StaticInterface {
      * @return <code>true</code> if the PortfolioType is singular, <code>false</code> otherwise.
      */
     public boolean isSingular() {
-        return isPension();
+        return holdsPensions();
     }
 }
