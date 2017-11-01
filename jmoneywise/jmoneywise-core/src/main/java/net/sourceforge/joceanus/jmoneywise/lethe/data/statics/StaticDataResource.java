@@ -314,6 +314,11 @@ public enum StaticDataResource implements TethysResourceId {
     TRANSTYPE_SECURITYREPLACE("TransType.SecurityReplace"),
 
     /**
+     * TransType Security Closure.
+     */
+    TRANSTYPE_SECURITYCLOSURE("TransType.SecurityClosure"),
+
+    /**
      * TransType Stock TakeOver.
      */
     TRANSTYPE_STOCKTAKEOVER("TransType.StockTakeOver"),
@@ -347,6 +352,16 @@ public enum StaticDataResource implements TethysResourceId {
      * TransType OptionsExercise.
      */
     TRANSTYPE_OPTIONSEXERCISE("TransType.OptionsExercise"),
+
+    /**
+     * TransType PensionDrawdown.
+     */
+    TRANSTYPE_PENSIONDRAWDOWN("TransType.PensionDrawdown"),
+
+    /**
+     * TransType Pension TaxFree.
+     */
+    TRANSTYPE_PENSIONTAXFREE("TransType.PensionTaxFree"),
 
     /**
      * TransType Expense.
@@ -1111,7 +1126,6 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.ROOMRENTALINCOME, TRANSTYPE_ROOMRENTINCOME);
         myMap.put(TransactionCategoryClass.INTEREST, TRANSTYPE_INTEREST);
         myMap.put(TransactionCategoryClass.DIVIDEND, TRANSTYPE_DIVIDEND);
-        myMap.put(TransactionCategoryClass.BSHAREDIVIDEND, TRANSTYPE_BSHAREDIVIDEND);
         myMap.put(TransactionCategoryClass.VIRTUALINCOME, TRANSTYPE_VIRTUALINCOME);
         myMap.put(TransactionCategoryClass.PENSIONPAYMENT, TRANSTYPE_PENSIONPAYMENT);
         myMap.put(TransactionCategoryClass.GIFTEDINCOME, TRANSTYPE_GIFTEDINCOME);
@@ -1127,12 +1141,15 @@ public enum StaticDataResource implements TethysResourceId {
         myMap.put(TransactionCategoryClass.STOCKDEMERGER, TRANSTYPE_STOCKDEMERGER);
         myMap.put(TransactionCategoryClass.STOCKTAKEOVER, TRANSTYPE_STOCKTAKEOVER);
         myMap.put(TransactionCategoryClass.SECURITYREPLACE, TRANSTYPE_SECURITYREPLACE);
+        myMap.put(TransactionCategoryClass.SECURITYCLOSURE, TRANSTYPE_SECURITYCLOSURE);
         myMap.put(TransactionCategoryClass.STOCKRIGHTSISSUE, TRANSTYPE_STOCKRIGHTSISSUE);
         myMap.put(TransactionCategoryClass.PORTFOLIOXFER, TRANSTYPE_PORTFOLIOXFER);
         myMap.put(TransactionCategoryClass.OPTIONSGRANT, TRANSTYPE_OPTIONSGRANT);
         myMap.put(TransactionCategoryClass.OPTIONSVEST, TRANSTYPE_OPTIONSVEST);
         myMap.put(TransactionCategoryClass.OPTIONSEXPIRE, TRANSTYPE_OPTIONSEXPIRE);
         myMap.put(TransactionCategoryClass.OPTIONSEXERCISE, TRANSTYPE_OPTIONSEXERCISE);
+        myMap.put(TransactionCategoryClass.PENSIONDRAWDOWN, TRANSTYPE_PENSIONDRAWDOWN);
+        myMap.put(TransactionCategoryClass.PENSIONTAXFREE, TRANSTYPE_PENSIONTAXFREE);
         myMap.put(TransactionCategoryClass.EXPENSE, TRANSTYPE_EXPENSE);
         myMap.put(TransactionCategoryClass.BADDEBTCAPITAL, TRANSTYPE_BADDEBTCAPITAL);
         myMap.put(TransactionCategoryClass.BADDEBTINTEREST, TRANSTYPE_BADDEBTINTEREST);

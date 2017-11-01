@@ -391,7 +391,7 @@ public class DepositInfo
 
         @Override
         public void postProcessOnLoad() throws OceanusException {
-            /* Validate the PayeeInfo */
+            /* Validate the DepositInfo */
             validateOnLoad();
 
             /* Map and Validate the Deposits */

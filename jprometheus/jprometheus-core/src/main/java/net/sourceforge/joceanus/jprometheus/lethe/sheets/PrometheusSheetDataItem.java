@@ -173,33 +173,32 @@ public abstract class PrometheusSheetDataItem<T extends DataItem<E> & Comparable
 
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
-            if (theActiveView == null) {
-                return;
-            }
-            final Iterator<MetisDataRow> myIterator = theActiveView.iterator();
+            if (theActiveView != null) {
+                final Iterator<MetisDataRow> myIterator = theActiveView.iterator();
 
-            /* Declare the new stage */
-            theReport.setNewStage(theRangeName);
+                /* Declare the new stage */
+                theReport.setNewStage(theRangeName);
 
-            /* Determine count of rows */
-            final int myTotal = theActiveView.getRowCount();
+                /* Determine count of rows */
+                final int myTotal = theActiveView.getRowCount();
 
-            /* Declare the number of steps */
-            theReport.setNumSteps(myTotal);
+                /* Declare the number of steps */
+                theReport.setNumSteps(myTotal);
 
-            /* Loop through the rows of the range */
-            theCurrRow = 0;
-            while (myIterator.hasNext()) {
-                /* Access the row */
-                theActiveRow = myIterator.next();
+                /* Loop through the rows of the range */
+                theCurrRow = 0;
+                while (myIterator.hasNext()) {
+                    /* Access the row */
+                    theActiveRow = myIterator.next();
 
-                /* load the item */
-                final DataValues<E> myValues = loadSecureValues();
-                theLastItem = theList.addValuesItem(myValues);
+                    /* load the item */
+                    final DataValues<E> myValues = loadSecureValues();
+                    theLastItem = theList.addValuesItem(myValues);
 
-                /* Report the progress */
-                theReport.setNextStep();
-                theCurrRow++;
+                    /* Report the progress */
+                    theReport.setNextStep();
+                    theCurrRow++;
+                }
             }
 
             /* Post process the load */

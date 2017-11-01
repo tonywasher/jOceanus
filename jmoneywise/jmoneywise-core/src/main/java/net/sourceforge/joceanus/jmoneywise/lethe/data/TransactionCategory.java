@@ -352,13 +352,13 @@ public final class TransactionCategory
                         if (!myParentClass.canParentCategory()) {
                             addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
-                        if ((myParentClass.isIncome() != myClass.isIncome())
-                            || (myParentClass.isSecurityTransfer() != myClass.isSecurityTransfer())) {
+                        if (myParentClass.isIncome() != myClass.isIncome()
+                            || myParentClass.isSecurityTransfer() != myClass.isSecurityTransfer()) {
                             addError(ERROR_DIFFPARENT, FIELD_PARENT);
                         }
 
                         /* Check that name reflects parent */
-                        if ((myName != null) && !myName.startsWith(myParent.getName() + STR_SEP)) {
+                        if (myName != null && !myName.startsWith(myParent.getName() + STR_SEP)) {
                             addError(ERROR_MATCHPARENT, FIELD_PARENT);
                         }
                     }
