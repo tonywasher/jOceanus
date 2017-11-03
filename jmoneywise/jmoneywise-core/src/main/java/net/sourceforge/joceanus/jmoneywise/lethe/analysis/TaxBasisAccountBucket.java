@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
@@ -240,7 +240,7 @@ public final class TaxBasisAccountBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<TaxBasisAccountBucket> theList;
+        private final List<TaxBasisAccountBucket> theList;
 
         /**
          * Parent.
@@ -262,7 +262,7 @@ public final class TaxBasisAccountBucket
             theAnalysis = pAnalysis;
             theParent = pParent;
             theMap = new HashMap<>();
-            theList = new MetisIndexedList<>();
+            theList = new ArrayList<>();
         }
 
         /**
@@ -290,7 +290,7 @@ public final class TaxBasisAccountBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                     theMap.put(deriveAssetKey(myBucket), myBucket);
                 }
             }
@@ -324,7 +324,7 @@ public final class TaxBasisAccountBucket
                     myBucket.adjustToBase();
 
                     /* Add to list and to map */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                     theMap.put(deriveAssetKey(myBucket), myBucket);
                 }
             }
@@ -337,7 +337,7 @@ public final class TaxBasisAccountBucket
 
         @Override
         public List<TaxBasisAccountBucket> getUnderlyingList() {
-            return theList.getUnderlyingList();
+            return theList;
         }
 
         @Override
@@ -351,16 +351,6 @@ public final class TaxBasisAccountBucket
                 return theAnalysis;
             }
             return MetisDataFieldValue.UNKNOWN;
-        }
-
-        /**
-         * Obtain item by id.
-         * @param pId the id to lookup
-         * @return the item (or null if not present)
-         */
-        public TaxBasisAccountBucket findItemById(final Integer pId) {
-            /* Return results */
-            return theList.getItemById(pId);
         }
 
         /**
@@ -433,6 +423,7 @@ public final class TaxBasisAccountBucket
                 myItem = new TaxBasisAccountBucket(theAnalysis, theParent, pAccount);
 
                 /* Add to the list */
+                theList.add(myItem);
                 theMap.put(myKey, myItem);
             }
 
