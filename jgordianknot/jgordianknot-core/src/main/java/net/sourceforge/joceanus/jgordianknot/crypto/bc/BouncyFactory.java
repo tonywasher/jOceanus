@@ -198,7 +198,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyX
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
-import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianSecureRandom;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -290,13 +290,13 @@ public final class BouncyFactory
         theSP800Factory = new GordianRandomFactory();
 
         /* Create the SecureRandom instance */
-        final GordianSecureRandom myRandom = createRandom(theSP800Factory.generateRandomSpec(this));
+        final GordianBaseSecureRandom myRandom = createRandom(theSP800Factory.generateRandomSpec(this));
         setSecureRandom(myRandom);
         theGeneratorCache.resetCache();
     }
 
     @Override
-    public GordianSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+    public GordianBaseSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
         /* Check validity of randomSpec */
         if (!supportedRandomSpecs().test(pRandomSpec)) {
             throw new GordianDataException(getInvalidText(pRandomSpec));
@@ -532,7 +532,7 @@ public final class BouncyFactory
      * @return the secureRandom
      * @throws OceanusException on error
      */
-    private GordianSecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
+    private GordianBaseSecureRandom getSP800SecureRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
         final GordianDigestSpec myDigest = pRandomSpec.getDigestSpec();
         switch (pRandomSpec.getRandomType()) {
             case HASH:

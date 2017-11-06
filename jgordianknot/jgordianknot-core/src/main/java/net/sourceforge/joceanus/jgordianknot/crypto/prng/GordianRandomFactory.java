@@ -236,7 +236,7 @@ public final class GordianRandomFactory {
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a Hash DRBG.
      */
-    public GordianSecureRandom buildHash(final GordianDigest pDigest,
+    public GordianBaseSecureRandom buildHash(final GordianDigest pDigest,
                                          final boolean isPredictionResistant) {
         return buildHash(pDigest, null, isPredictionResistant);
     }
@@ -249,7 +249,7 @@ public final class GordianRandomFactory {
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a Hash DRBG.
      */
-    public GordianSecureRandom buildHash(final GordianDigest pDigest,
+    public GordianBaseSecureRandom buildHash(final GordianDigest pDigest,
                                          final byte[] pInitVector,
                                          final boolean isPredictionResistant) {
         /* Create initVector if required */
@@ -260,7 +260,7 @@ public final class GordianRandomFactory {
         /* Build DRBG */
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         final GordianSP800HashDRBG myProvider = new GordianSP800HashDRBG(pDigest, myEntropy, defaultPersonalisation(), myInit);
-        return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
+        return new GordianBaseSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 
     /**
@@ -270,7 +270,7 @@ public final class GordianRandomFactory {
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
      */
-    public GordianSecureRandom buildHMAC(final GordianMac hMac,
+    public GordianBaseSecureRandom buildHMAC(final GordianMac hMac,
                                          final boolean isPredictionResistant) {
         return buildHMAC(hMac, null, isPredictionResistant);
     }
@@ -283,7 +283,7 @@ public final class GordianRandomFactory {
      * SecureRandom should re-seed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
      */
-    public GordianSecureRandom buildHMAC(final GordianMac hMac,
+    public GordianBaseSecureRandom buildHMAC(final GordianMac hMac,
                                          final byte[] pInitVector,
                                          final boolean isPredictionResistant) {
         /* Create initVector if required */
@@ -294,6 +294,6 @@ public final class GordianRandomFactory {
         /* Build DRBG */
         final EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         final GordianSP800HMacDRBG myProvider = new GordianSP800HMacDRBG(hMac, myEntropy, defaultPersonalisation(), myInit);
-        return new GordianSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
+        return new GordianBaseSecureRandom(myProvider, theRandom, myEntropy, isPredictionResistant);
     }
 }

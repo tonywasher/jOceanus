@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -62,27 +63,27 @@ public final class PayeeBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
     /**
      * Payee Field Id.
      */
-    private static final MetisDataField FIELD_PAYEE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getItemName());
+    private static final MetisDataField FIELD_PAYEE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getItemId());
 
     /**
      * Base Field Id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
 
     /**
      * Totals bucket name.
      */
-    private static final String NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS.getValue();
+    private static final MetisFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
 
     /**
      * FieldSet map.
@@ -239,7 +240,7 @@ public final class PayeeBucket
      */
     public String getName() {
         return thePayee == null
-                                ? NAME_TOTALS
+                                ? NAME_TOTALS.getId()
                                 : thePayee.getName();
     }
 
@@ -890,7 +891,7 @@ public final class PayeeBucket
         /**
          * Analysis field Id.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
         /**
          * Totals field Id.

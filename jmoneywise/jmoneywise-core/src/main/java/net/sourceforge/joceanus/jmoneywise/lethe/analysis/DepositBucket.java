@@ -53,7 +53,7 @@ public final class DepositBucket
     /**
      * Deposit Category Field Id.
      */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemId());
 
     /**
      * The analysis.

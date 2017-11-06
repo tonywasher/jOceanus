@@ -62,32 +62,32 @@ public class MoneyWiseUKChargeableGainsScheme
         /**
          * Total Gains Field Id.
          */
-        private static final MetisDataField FIELD_TOTALGAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS.getValue());
+        private static final MetisDataField FIELD_TOTALGAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS);
 
         /**
          * Total Slices Field Id.
          */
-        private static final MetisDataField FIELD_TOTALSLICES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS.getValue());
+        private static final MetisDataField FIELD_TOTALSLICES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS);
 
         /**
          * Ratio Field Id.
          */
-        private static final MetisDataField FIELD_RATIO = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_RATIO.getValue());
+        private static final MetisDataField FIELD_RATIO = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_RATIO);
 
         /**
          * TaxedSlices Field Id.
          */
-        private static final MetisDataField FIELD_TAXEDSLICES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXEDSLICES.getValue());
+        private static final MetisDataField FIELD_TAXEDSLICES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXEDSLICES);
 
         /**
          * NettTaxDue Field Id.
          */
-        private static final MetisDataField FIELD_NETTTAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_NETTTAXDUE.getValue());
+        private static final MetisDataField FIELD_NETTTAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_NETTTAXDUE);
 
         /**
          * TaxRelief Field Id.
          */
-        private static final MetisDataField FIELD_TAXRELIEF = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXRELIEF.getValue());
+        private static final MetisDataField FIELD_TAXRELIEF = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXRELIEF);
 
         /**
          * The total gains.

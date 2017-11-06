@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.eos.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
 
@@ -69,53 +70,53 @@ public class MetisDataEosVersionedFieldSet<T extends MetisDataEosVersionedItem>
 
     /**
      * Declare versioned field not used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @return the field
      */
-    public MetisDataEosVersionedField<T> declareDerivedVersionedField(final String pName) {
-        return declareVersionedField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
+    public MetisDataEosVersionedField<T> declareDerivedVersionedField(final MetisFieldId pId) {
+        return declareVersionedField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
     }
 
     /**
      * Declare versioned field used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisDataEosVersionedField<T> declareEqualityVersionedField(final String pName,
+    public MetisDataEosVersionedField<T> declareEqualityVersionedField(final MetisFieldId pId,
                                                                        final MetisDataType pDataType) {
-        return declareEqualityVersionedField(pName, pDataType, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, pDataType, FIELD_NO_MAXLENGTH);
     }
 
     /**
      * Declare versioned field used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public MetisDataEosVersionedField<T> declareEqualityVersionedField(final String pName,
+    public MetisDataEosVersionedField<T> declareEqualityVersionedField(final MetisFieldId pId,
                                                                        final MetisDataType pDataType,
                                                                        final Integer pMaxLength) {
-        return declareVersionedField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
+        return declareVersionedField(pId, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
     }
 
     /**
      * Declare versioned field.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the equality class
      * @param pStorage the field storage type
      * @return the field
      */
-    private MetisDataEosVersionedField<T> declareVersionedField(final String pName,
+    private MetisDataEosVersionedField<T> declareVersionedField(final MetisFieldId pId,
                                                                 final MetisDataType pDataType,
                                                                 final Integer pMaxLength,
                                                                 final MetisDataFieldEquality pEquality,
                                                                 final MetisDataFieldStorage pStorage) {
         /* Create the field */
-        final MetisDataEosVersionedField<T> myField = new MetisDataEosVersionedField<>(this, pName, pDataType, pMaxLength, pEquality, pStorage);
+        final MetisDataEosVersionedField<T> myField = new MetisDataEosVersionedField<>(this, pId, pDataType, pMaxLength, pEquality, pStorage);
 
         /* Register the field */
         registerField(myField);

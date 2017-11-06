@@ -31,7 +31,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 
 /**
  * Metis Data FieldSet.
@@ -58,7 +60,7 @@ public class MetisDataFieldSet {
     private final Integer theAnchorId;
 
     /**
-     * Name of Item.
+     * Id of Item.
      */
     private final String theName;
 
@@ -207,53 +209,53 @@ public class MetisDataFieldSet {
 
     /**
      * Declare local field not used for equality.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @return the field
      */
-    public MetisDataField declareLocalField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.LOCAL);
+    public MetisDataField declareLocalField(final MetisFieldId pId) {
+        return declareDataField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.LOCAL);
     }
 
     /**
      * Declare versioned field not used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @return the field
      */
-    public MetisDataField declareDerivedVersionedField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
+    public MetisDataField declareDerivedVersionedField(final MetisFieldId pId) {
+        return declareDataField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
     }
 
     /**
      * Declare versioned field used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisDataField declareEqualityVersionedField(final String pName,
+    public MetisDataField declareEqualityVersionedField(final MetisFieldId pId,
                                                         final MetisDataType pDataType) {
-        return declareEqualityVersionedField(pName, pDataType, FIELD_NO_MAXLENGTH);
+        return declareEqualityVersionedField(pId, pDataType, FIELD_NO_MAXLENGTH);
     }
 
     /**
      * Declare versioned field used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public MetisDataField declareEqualityVersionedField(final String pName,
+    public MetisDataField declareEqualityVersionedField(final MetisFieldId pId,
                                                         final MetisDataType pDataType,
                                                         final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
+        return declareDataField(pId, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
     }
 
     /**
      * Declare field used for calculation.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @return the field
      */
-    public MetisDataField declareCalculatedField(final String pName) {
-        return declareDataField(pName, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.CALCULATED);
+    public MetisDataField declareCalculatedField(final MetisFieldId pId) {
+        return declareDataField(pId, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.CALCULATED);
     }
 
     /**
@@ -267,14 +269,14 @@ public class MetisDataFieldSet {
 
     /**
      * Declare field.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the equality class
      * @param pStorage the field storage type
      * @return the field
      */
-    private synchronized MetisDataField declareDataField(final String pName,
+    private synchronized MetisDataField declareDataField(final MetisFieldId pId,
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength,
                                                          final MetisDataFieldEquality pEquality,
@@ -285,10 +287,10 @@ public class MetisDataFieldSet {
         }
 
         /* Check the name */
-        checkUniqueName(pName);
+        checkUniqueName(pId);
 
         /* Create the field */
-        final MetisDataField myField = new MetisDataField(this, pName, pDataType, pMaxLength, pEquality, pStorage);
+        final MetisDataField myField = new MetisDataField(this, pId, pDataType, pMaxLength, pEquality, pStorage);
 
         /* Register the field */
         registerField(myField);
@@ -338,17 +340,21 @@ public class MetisDataFieldSet {
 
     /**
      * Check unique name.
-     * @param pName the name to check.
+     * @param pId the fieldId to check.
      * @throws IllegalArgumentException if name is present
      */
-    protected void checkUniqueName(final String pName) {
+    protected void checkUniqueName(final MetisFieldId pId) {
+        /* Obtain the name to check */
+        String myName = pId.getId();
+
+        /* Loop through existing iDs */
         final Iterator<MetisDataField> myIterator = fieldIterator();
         while (myIterator.hasNext()) {
             final MetisDataField myField = myIterator.next();
 
             /* If the name exists, throw an exception */
-            if (pName.equals(myField.getName())) {
-                throw new IllegalArgumentException("Duplicate field name: " + pName);
+            if (myName.equals(myField.getFieldId().getId())) {
+                throw new IllegalArgumentException("Duplicate field name: " + myName);
             }
         }
     }
@@ -400,7 +406,7 @@ public class MetisDataFieldSet {
                                                                     : myValue.toString();
 
             /* Declare a field for the value */
-            final MetisDataField myField = pAnchor.declareLocalField(myName);
+            final MetisDataField myField = pAnchor.declareLocalField(new MetisSimpleFieldId(myName));
 
             /* Add to the map */
             myMap.put(myField, myValue);

@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent.GitComponentList;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferenceKey;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
@@ -55,7 +56,7 @@ public class ThemisGitRepository
     /**
      * Base field id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BASE);
 
     /**
      * The Preferences.

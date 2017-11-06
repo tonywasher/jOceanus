@@ -30,6 +30,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityValues;
@@ -53,7 +54,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Base Field Id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
 
     /**
      * FieldSet map.
@@ -63,7 +64,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Totals bucket name.
      */
-    protected static final String NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS.getValue();
+    protected static final MetisFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
 
     /**
      * Values.

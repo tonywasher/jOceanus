@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
@@ -64,32 +65,32 @@ public final class ThemisSvnWorkingCopy
     /**
      * Component field id.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
 
     /**
      * Branch field id.
      */
-    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branch");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCH);
 
     /**
      * Alias field id.
      */
-    private static final MetisDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
+    private static final MetisDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ALIAS);
 
     /**
      * Revision field id.
      */
-    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
 
     /**
      * Project field id.
      */
-    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT);
 
     /**
      * Update list field id.
      */
-    private static final MetisDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
+    private static final MetisDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField(ThemisResource.SVN_UPDATES);
 
     /**
      * The branch associated with the working copy.
@@ -387,17 +388,17 @@ public final class ThemisSvnWorkingCopy
         /**
          * Size field id.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Repository field id.
          */
-        private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField("Repository");
+        private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
 
         /**
          * Location field id.
          */
-        private static final MetisDataField FIELD_LOC = FIELD_DEFS.declareLocalField("Location");
+        private static final MetisDataField FIELD_LOC = FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOCATION);
 
         /**
          * The repository for which these are working sets.

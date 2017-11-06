@@ -72,32 +72,32 @@ public final class SecurityBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
     /**
      * SecurityHolding Field Id.
      */
-    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING.getValue());
+    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING);
 
     /**
      * Currency Field Id.
      */
-    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemName());
+    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemId());
 
     /**
      * Security Type Field Id.
      */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemId());
 
     /**
      * Base Field Id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
 
     /**
      * FieldSet map.
@@ -983,7 +983,7 @@ public final class SecurityBucket
         /**
          * Analysis field Id.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
         /**
          * The analysis.

@@ -44,7 +44,7 @@ public abstract class MoneyWiseTaxYear
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_END.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_END);
 
     /**
      * The Date.

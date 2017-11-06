@@ -107,12 +107,12 @@ public class MetisPreferenceManager
     @Override
     public Object getFieldValue(final MetisDataField pField) {
         /* Access preference set */
-        final MetisPreferenceSet<?> mySet = theMap.get(pField.getName());
+        final MetisPreferenceSet<?> mySet = theMap.get(pField.getFieldId().getId());
 
         /* Return the value */
-        return (mySet == null)
-                               ? MetisDataFieldValue.UNKNOWN
-                               : mySet;
+        return mySet == null
+                             ? MetisDataFieldValue.UNKNOWN
+                             : mySet;
     }
 
     @Override
@@ -169,7 +169,7 @@ public class MetisPreferenceManager
                 theMap.put(myName, mySet);
 
                 /* Create the DataField */
-                theFields.declareLocalField(myName);
+                theFields.declareIndexField(myName);
 
                 /* Fire the action performed */
                 theEventManager.fireEvent(MetisPreferenceEvent.NEWSET, mySet);

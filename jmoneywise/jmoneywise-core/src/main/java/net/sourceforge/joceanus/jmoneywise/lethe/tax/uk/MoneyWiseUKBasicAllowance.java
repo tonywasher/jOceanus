@@ -45,22 +45,22 @@ public abstract class MoneyWiseUKBasicAllowance
     /**
      * Allowance Field Id.
      */
-    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC.getValue());
+    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC);
 
     /**
      * RentalAllowance Field Id.
      */
-    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL.getValue());
+    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL);
 
     /**
      * CapitalAllowance Field Id.
      */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL.getValue());
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL);
 
     /**
      * MarginalReduction Field Id.
      */
-    private static final MetisDataField FIELD_MARGINAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.MARGINAL_REDUCTION.getValue());
+    private static final MetisDataField FIELD_MARGINAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.MARGINAL_REDUCTION);
 
     /**
      * Allowance.

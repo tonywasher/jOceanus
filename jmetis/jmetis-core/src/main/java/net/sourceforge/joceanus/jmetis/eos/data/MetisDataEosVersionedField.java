@@ -24,31 +24,34 @@ package net.sourceforge.joceanus.jmetis.eos.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosVersionedFieldDef;
 
 /**
  * Metis Data Versioned Field.
  * @param <T> the data type
  */
 public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
-        extends MetisDataEosField<T> {
+        extends MetisDataEosField<T>
+        implements MetisDataEosVersionedFieldDef {
     /**
      * Constructor.
      * @param pAnchor the anchor
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
     protected MetisDataEosVersionedField(final MetisDataEosVersionedFieldSet<T> pAnchor,
-                                         final String pName,
+                                         final MetisFieldId pId,
                                          final MetisDataType pDataType,
                                          final Integer pMaxLength,
                                          final MetisDataFieldEquality pEquality,
                                          final MetisDataFieldStorage pStorage) {
         /* initialise underlying class */
-        super(pAnchor, pName, pDataType, pMaxLength, pEquality, pStorage);
+        super(pAnchor, pId, pDataType, pMaxLength, pEquality, pStorage);
     }
 
     @Override
@@ -61,5 +64,13 @@ public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
         final T myObject = getAnchor().getFieldClass().cast(pObject);
         final MetisDataEosVersionValues myValues = myObject.getValueSet();
         return myValues.getValue(this);
+    }
+
+    @Override
+    public void setFieldValue(final Object pObject,
+                              final Object pValue) {
+        final T myObject = getAnchor().getFieldClass().cast(pObject);
+        final MetisDataEosVersionValues myValues = myObject.getValueSet();
+        myValues.setValue(this, pValue);
     }
 }

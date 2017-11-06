@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
  * Status record in Working Copy.
@@ -49,32 +50,32 @@ public class ThemisSvnUpdateStatus
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME);
 
     /**
      * Status field id.
      */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField("Status");
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_STATUS);
 
     /**
      * PropertyStatus field id.
      */
-    private static final MetisDataField FIELD_PSTATUS = FIELD_DEFS.declareLocalField("PropStatus");
+    private static final MetisDataField FIELD_PSTATUS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_PROPSTATUS);
 
     /**
      * NodeKind field id.
      */
-    private static final MetisDataField FIELD_KIND = FIELD_DEFS.declareLocalField("NodeKind");
+    private static final MetisDataField FIELD_KIND = FIELD_DEFS.declareLocalField(ThemisResource.SVN_NODEKIND);
 
     /**
      * CopyFromNode field id.
      */
-    private static final MetisDataField FIELD_COPYFROM = FIELD_DEFS.declareLocalField("CopyFrom");
+    private static final MetisDataField FIELD_COPYFROM = FIELD_DEFS.declareLocalField(ThemisResource.SVN_COPYFROM);
 
     /**
      * CopyFromRevision field id.
      */
-    private static final MetisDataField FIELD_COPYREV = FIELD_DEFS.declareLocalField("CopyRevision");
+    private static final MetisDataField FIELD_COPYREV = FIELD_DEFS.declareLocalField(ThemisResource.SVN_COPYREVISION);
 
     /**
      * Name of item.
@@ -163,7 +164,7 @@ public class ThemisSvnUpdateStatus
         /**
          * Size field id.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Status List.

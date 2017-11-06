@@ -49,11 +49,14 @@ import java.security.SecureRandom;
 import org.bouncycastle.crypto.prng.EntropySource;
 import org.bouncycastle.crypto.prng.EntropyUtil;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSecureRandom;
+
 /**
  * SecureRandom wrapper class.
  */
-public class GordianSecureRandom
-        extends SecureRandom {
+public class GordianBaseSecureRandom
+        extends SecureRandom
+        implements GordianSecureRandom {
     /**
      * Serial Id.
      */
@@ -86,15 +89,20 @@ public class GordianSecureRandom
      * @param pEntropy the entropy source
      * @param isPredictionResistant true/false
      */
-    protected GordianSecureRandom(final GordianDRBGenerator pGenerator,
-                                  final SecureRandom pRandom,
-                                  final EntropySource pEntropy,
-                                  final boolean isPredictionResistant) {
+    protected GordianBaseSecureRandom(final GordianDRBGenerator pGenerator,
+                                      final SecureRandom pRandom,
+                                      final EntropySource pEntropy,
+                                      final boolean isPredictionResistant) {
         /* Store parameters */
         theGenerator = pGenerator;
         theRandom = pRandom;
         theEntropy = pEntropy;
         predictionResistant = isPredictionResistant;
+    }
+
+    @Override
+    public SecureRandom getRandom() {
+        return this;
     }
 
     @Override

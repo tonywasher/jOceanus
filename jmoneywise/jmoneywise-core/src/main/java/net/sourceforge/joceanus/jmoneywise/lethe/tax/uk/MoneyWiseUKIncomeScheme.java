@@ -49,7 +49,7 @@ public class MoneyWiseUKIncomeScheme
     /**
      * Relief Available Field Id.
      */
-    private static final MetisDataField FIELD_RELIEF = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE.getValue());
+    private static final MetisDataField FIELD_RELIEF = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RELIEF_AVAILABLE);
 
     /**
      * Tax Relief available.

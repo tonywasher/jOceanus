@@ -24,6 +24,8 @@ package net.sourceforge.joceanus.jmetis.atlas.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Metis Data Field.
@@ -40,9 +42,9 @@ public class MetisDataField {
     private final Integer theIndex;
 
     /**
-     * Name of field.
+     * Id of field.
      */
-    private final String theName;
+    private final MetisFieldId theId;
 
     /**
      * DataType of field.
@@ -67,21 +69,21 @@ public class MetisDataField {
     /**
      * Constructor.
      * @param pAnchor the anchor
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
     protected MetisDataField(final MetisDataFieldSet pAnchor,
-                             final String pName,
+                             final MetisFieldId pId,
                              final MetisDataType pDataType,
                              final Integer pMaxLength,
                              final MetisDataFieldEquality pEquality,
                              final MetisDataFieldStorage pStorage) {
         /* Store parameters */
         theAnchor = pAnchor;
-        theName = pName;
+        theId = pId;
         theDataType = pDataType;
         theMaxLength = pMaxLength;
         theEquality = pEquality;
@@ -99,15 +101,15 @@ public class MetisDataField {
     /**
      * Constructor.
      * @param pAnchor the anchor
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
     protected MetisDataField(final MetisDataFieldSet pAnchor,
-                             final String pName,
+                             final MetisFieldId pId,
                              final MetisDataFieldEquality pEquality,
                              final MetisDataFieldStorage pStorage) {
-        this(pAnchor, pName, MetisDataType.OBJECT, MetisDataFieldSet.FIELD_NO_MAXLENGTH, pEquality, pStorage);
+        this(pAnchor, pId, MetisDataType.OBJECT, MetisDataFieldSet.FIELD_NO_MAXLENGTH, pEquality, pStorage);
     }
 
     /**
@@ -119,7 +121,7 @@ public class MetisDataField {
                              final String pName) {
         /* Store parameters */
         theAnchor = pAnchor;
-        theName = pName;
+        theId = new MetisSimpleFieldId(pName);
         theDataType = MetisDataType.OBJECT;
         theMaxLength = MetisDataFieldSet.FIELD_NO_MAXLENGTH;
         theEquality = MetisDataFieldEquality.DERIVED;
@@ -141,11 +143,11 @@ public class MetisDataField {
     }
 
     /**
-     * Get the name.
-     * @return the name
+     * Get the fieldId.
+     * @return the id
      */
-    public String getName() {
-        return theName;
+    public MetisFieldId getFieldId() {
+        return theId;
     }
 
     /**
@@ -249,18 +251,80 @@ public class MetisDataField {
         }
 
         /* Check the name and index is the same */
-        return (theIndex == myThat.theIndex)
-               && theName.equals(myThat.theName);
+        return theIndex == myThat.theIndex
+               && theId.equals(myThat.theId);
     }
 
     @Override
     public int hashCode() {
         return theAnchor.hashCode() * MetisDataFieldSet.HASH_PRIME
-               + theName.hashCode();
+               + theId.hashCode();
     }
 
     @Override
     public String toString() {
-        return theName;
+        return theId.getId();
+    }
+
+    /**
+     * Simple class to convert a string into a FieldId.
+     */
+    public static class MetisSimpleFieldId
+            implements MetisFieldId {
+        /**
+         * The Id.
+         */
+        private final String theId;
+
+        /**
+         * Constructor.
+         * @param pId the Id
+         */
+        public MetisSimpleFieldId(final String pId) {
+            theId = pId;
+        }
+
+        @Override
+        public String getId() {
+            return theId;
+        }
+
+        /**
+         * Convert a resourceId to fieldId.
+         * @param pId the resourceId
+         * @return the fieldId
+         */
+        public static MetisFieldId convertResource(final TethysResourceId pId) {
+            return pId instanceof MetisFieldId
+                                               ? (MetisFieldId) pId
+                                               : new MetisSimpleFieldId(pId.getValue());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Handle trivial cases */
+            if (this == pThat) {
+                return true;
+            }
+            if (pThat == null) {
+                return false;
+            }
+
+            /* Check class */
+            if (!(pThat instanceof MetisSimpleFieldId)) {
+                return false;
+            }
+
+            /* Access as MetisDataField */
+            final MetisSimpleFieldId myThat = (MetisSimpleFieldId) pThat;
+
+            /* Check the Id is the same */
+            return theId.equals(myThat.theId);
+        }
+
+        @Override
+        public int hashCode() {
+            return theId.hashCode();
+        }
     }
 }

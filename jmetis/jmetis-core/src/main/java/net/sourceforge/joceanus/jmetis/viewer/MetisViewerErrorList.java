@@ -47,7 +47,7 @@ public class MetisViewerErrorList
     /**
      * Size Field Id.
      */
-    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE);
 
     /**
      * The list.

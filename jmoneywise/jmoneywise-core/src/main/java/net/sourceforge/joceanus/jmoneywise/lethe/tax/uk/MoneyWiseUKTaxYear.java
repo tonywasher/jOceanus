@@ -48,27 +48,27 @@ public class MoneyWiseUKTaxYear
     /**
      * Allowances Field Id.
      */
-    private static final MetisDataField FIELD_ALLOWANCES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES.getValue());
+    private static final MetisDataField FIELD_ALLOWANCES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES);
 
     /**
      * Bands Field Id.
      */
-    private static final MetisDataField FIELD_BANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+    private static final MetisDataField FIELD_BANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS);
 
     /**
      * InterestScheme Field Id.
      */
-    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_INTEREST.getValue());
+    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_INTEREST);
 
     /**
      * DividendScheme Field Id.
      */
-    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND.getValue());
+    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND);
 
     /**
      * CapitalScheme Field Id.
      */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_CAPITAL.getValue());
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_CAPITAL);
 
     /**
      * The Allowances.

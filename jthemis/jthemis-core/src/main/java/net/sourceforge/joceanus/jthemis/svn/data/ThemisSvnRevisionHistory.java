@@ -43,6 +43,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
  * Methods to access revision history.
@@ -58,42 +59,42 @@ public class ThemisSvnRevisionHistory
     /**
      * Owner field.
      */
-    private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+    private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER);
 
     /**
      * Date field.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE);
 
     /**
      * Revision field.
      */
-    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
 
     /**
      * Message field.
      */
-    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("LogMessage");
+    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG);
 
     /**
      * Origin field.
      */
-    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField("Origin");
+    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGIN);
 
     /**
      * Origin definition.
      */
-    private static final MetisDataField FIELD_ORIGINDEF = FIELD_DEFS.declareLocalField("OriginDefinition");
+    private static final MetisDataField FIELD_ORIGINDEF = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGINDEF);
 
     /**
      * CopyDirs field.
      */
-    private static final MetisDataField FIELD_SOURCEDIRS = FIELD_DEFS.declareLocalField("SourceDirs");
+    private static final MetisDataField FIELD_SOURCEDIRS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCEDIRS);
 
     /**
      * BasedOn field.
      */
-    private static final MetisDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField("BasedOn");
+    private static final MetisDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField(ThemisResource.SVN_BASEDON);
 
     /**
      * The owner.
@@ -538,17 +539,17 @@ public class ThemisSvnRevisionHistory
         /**
          * Component field.
          */
-        private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField("Component");
+        private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
 
         /**
          * Source field.
          */
-        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE);
 
         /**
          * BasedOn field.
          */
-        private static final MetisDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField("BasedOn");
+        private static final MetisDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField(ThemisResource.SVN_BASEDON);
 
         /**
          * Component.
@@ -668,7 +669,7 @@ public class ThemisSvnRevisionHistory
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Directory List.
@@ -790,17 +791,17 @@ public class ThemisSvnRevisionHistory
         /**
          * Component field.
          */
-        private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
+        private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
 
         /**
          * Type field.
          */
-        private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("Type");
+        private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_TYPE);
 
         /**
          * Source field.
          */
-        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE);
 
         /**
          * Component.

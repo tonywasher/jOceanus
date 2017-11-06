@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.eos.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
@@ -70,43 +71,144 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet field used for equality test.
-     * @param pName the name of the field
-     * @param pDataType the dataType of the field
+     * Declare encrypted valueSet string field.
+     * @param pId the fieldId
+     * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public PrometheusEncryptedField<T> declareEqualityEncryptedField(final String pName,
-                                                                     final MetisDataType pDataType) {
-        return declareEqualityEncryptedField(pName, pDataType, FIELD_NO_MAXLENGTH);
+    public PrometheusEncryptedField<T> declareEncryptedStringField(final MetisFieldId pId,
+                                                                   final int pMaxLength) {
+        return declareEqualityEncryptedField(pId, MetisDataType.STRING, pMaxLength);
+    }
+
+    /**
+     * Declare encrypted valueSet charArray field.
+     * @param pId the fieldId
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedCharArrayField(final MetisFieldId pId,
+                                                                      final int pMaxLength) {
+        return declareEqualityEncryptedField(pId, MetisDataType.CHARARRAY, pMaxLength);
+    }
+
+    /**
+     * Declare encrypted valueSet integer field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedIntegerField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.INTEGER, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet long field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedLongField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.LONG, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet boolean field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedBooleanField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.BOOLEAN, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet date field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedDateField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.DATE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet money field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedMoneyField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.MONEY, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet price field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedPriceField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.PRICE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet units field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedUnitsField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.UNITS, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet rate field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedRateField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.RATE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet ratio field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedRatioField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted valueSet dilution field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedDilutionField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.DILUTION, FIELD_NO_MAXLENGTH);
     }
 
     /**
      * Declare encrypted valueSet field used for equality test.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public PrometheusEncryptedField<T> declareEqualityEncryptedField(final String pName,
-                                                                     final MetisDataType pDataType,
-                                                                     final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY);
+    private PrometheusEncryptedField<T> declareEqualityEncryptedField(final MetisFieldId pId,
+                                                                      final MetisDataType pDataType,
+                                                                      final Integer pMaxLength) {
+        return declareDataField(pId, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY);
     }
 
     /**
      * Declare field.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the equality class
      * @return the field
      */
-    private PrometheusEncryptedField<T> declareDataField(final String pName,
+    private PrometheusEncryptedField<T> declareDataField(final MetisFieldId pId,
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength,
                                                          final MetisDataFieldEquality pEquality) {
         /* Create the field */
-        final PrometheusEncryptedField<T> myField = new PrometheusEncryptedField<>(this, pName, pDataType, pMaxLength, pEquality, MetisDataFieldStorage.VERSIONED);
+        final PrometheusEncryptedField<T> myField = new PrometheusEncryptedField<>(this, pId, pDataType, pMaxLength, pEquality, MetisDataFieldStorage.VERSIONED);
 
         /* Register the field */
         registerField(myField);

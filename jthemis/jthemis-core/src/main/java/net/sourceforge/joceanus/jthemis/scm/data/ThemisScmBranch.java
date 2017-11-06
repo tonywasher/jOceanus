@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag.ScmTagList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
@@ -76,22 +77,22 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME);
 
     /**
      * Component field id.
      */
-    private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField("Component");
+    private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
 
     /**
      * Tags field id.
      */
-    private static final MetisDataField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
+    private static final MetisDataField FIELD_TAGS = FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS);
 
     /**
      * Project definition field id.
      */
-    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT);
 
     /**
      * Component.
@@ -465,7 +466,7 @@ public abstract class ThemisScmBranch<B extends ThemisScmBranch<B, C, R>, C exte
         /**
          * Size field id.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Branch List.

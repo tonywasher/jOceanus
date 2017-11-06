@@ -43,7 +43,7 @@ public class CoeusRateSetterLoan
     /**
      * LoanBookItem Field Id.
      */
-    private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM.getValue());
+    private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM);
 
     /**
      * The market.

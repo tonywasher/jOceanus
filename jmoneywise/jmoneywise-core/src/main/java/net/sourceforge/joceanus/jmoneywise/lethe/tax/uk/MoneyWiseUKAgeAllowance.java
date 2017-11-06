@@ -47,17 +47,17 @@ public class MoneyWiseUKAgeAllowance
     /**
      * LoAgeAllowance Field Id.
      */
-    private static final MetisDataField FIELD_LOAGEALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_LOAGE.getValue());
+    private static final MetisDataField FIELD_LOAGEALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_LOAGE);
 
     /**
      * HiAgeAllowance Field Id.
      */
-    private static final MetisDataField FIELD_HIAGEALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_HIAGE.getValue());
+    private static final MetisDataField FIELD_HIAGEALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_HIAGE);
 
     /**
      * AgeAllowanceLimit Field Id.
      */
-    private static final MetisDataField FIELD_AGEALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_AGEALLOWANCE.getValue());
+    private static final MetisDataField FIELD_AGEALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_AGEALLOWANCE);
 
     /**
      * Age Allowance minimum.

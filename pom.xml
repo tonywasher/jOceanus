@@ -85,8 +85,8 @@
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <SLF4JVersion>1.7.25</SLF4JVersion>
     <LOG4JVersion>2.9.1</LOG4JVersion>
-    <JFreeChartVersion>1.0.19</JFreeChartVersion>
-    <JSoupVersion>1.10.3</JSoupVersion>
+    <JFreeChartVersion>1.5.0</JFreeChartVersion>
+    <JSoupVersion>1.11.1</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
     <CheckStyleVersion>8.4</CheckStyleVersion>

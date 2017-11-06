@@ -49,22 +49,22 @@ public class CoeusZopaLoan
     /**
      * LoanBookItem Field Id.
      */
-    private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM.getValue());
+    private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM);
 
     /**
      * LoanBookItemList Field Id.
      */
-    private static final MetisDataField FIELD_BOOKITEMLIST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEMS.getValue());
+    private static final MetisDataField FIELD_BOOKITEMLIST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEMS);
 
     /**
      * MissingCapital Field Id.
      */
-    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL.getValue());
+    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL);
 
     /**
      * MissingInterest Field Id.
      */
-    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST.getValue());
+    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST);
 
     /**
      * The list of bookItems.

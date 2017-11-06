@@ -35,6 +35,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldIt
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxAnalysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
@@ -59,37 +60,37 @@ public class MoneyWiseUKTaxAnalysis
     /**
      * TaxYear Field Id.
      */
-    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
+    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME);
 
     /**
      * TaxConfig Field Id.
      */
-    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME.getValue());
+    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME);
 
     /**
      * TaxBuckets Field Id.
      */
-    private static final MetisDataField FIELD_TAXBUCKETS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS.getValue());
+    private static final MetisDataField FIELD_TAXBUCKETS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS);
 
     /**
      * TaxableIncome Field Id.
      */
-    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
+    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME);
 
     /**
      * TaxDue Field Id.
      */
-    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
+    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE);
 
     /**
      * TaxPaid Field Id.
      */
-    private static final MetisDataField FIELD_TAXPAID = FIELD_DEFS.declareLocalField(TaxBasisClass.TAXPAID.toString());
+    private static final MetisDataField FIELD_TAXPAID = FIELD_DEFS.declareLocalField(StaticDataResource.TAXBASIS_TAXPAID);
 
     /**
      * TaxProfit Field Id.
      */
-    private static final MetisDataField FIELD_TAXPROFIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT.getValue());
+    private static final MetisDataField FIELD_TAXPROFIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT);
 
     /**
      * The TaxYear.

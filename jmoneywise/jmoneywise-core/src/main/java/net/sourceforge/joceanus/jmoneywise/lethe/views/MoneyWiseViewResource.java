@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
@@ -29,7 +30,8 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 /**
  * Resource IDs for jMoneyWise View Fields.
  */
-public enum MoneyWiseViewResource implements TethysResourceId {
+public enum MoneyWiseViewResource
+        implements TethysResourceId, MetisFieldId {
     /**
      * View Name.
      */
@@ -153,5 +155,10 @@ public enum MoneyWiseViewResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    @Override
+    public String getId() {
+        return getValue();
     }
 }

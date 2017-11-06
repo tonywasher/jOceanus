@@ -43,37 +43,37 @@ public abstract class CoeusLoan
     /**
      * Market Field Id.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET.getValue());
+    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
 
     /**
      * LoanId Field Id.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
 
     /**
      * StartDate Field Id.
      */
-    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE.getValue());
+    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE);
 
     /**
      * InitialLoan Field Id.
      */
-    private static final MetisDataField FIELD_INITIALLOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT.getValue());
+    private static final MetisDataField FIELD_INITIALLOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT);
 
     /**
      * LastDate Field Id.
      */
-    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE.getValue());
+    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE);
 
     /**
      * BadDebtDate Field Id.
      */
-    private static final MetisDataField FIELD_BADDEBTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTDATE.getValue());
+    private static final MetisDataField FIELD_BADDEBTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTDATE);
 
     /**
      * Loan Market.

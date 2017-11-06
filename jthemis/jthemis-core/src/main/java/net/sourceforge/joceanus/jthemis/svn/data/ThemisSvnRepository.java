@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent.SvnComponentList;
@@ -67,12 +68,12 @@ public class ThemisSvnRepository
     /**
      * Base field id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BASE);
 
     /**
      * HistoryMap field id.
      */
-    private static final MetisDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField("HistoryMap");
+    private static final MetisDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField(ThemisResource.SVN_HISTORY);
 
     /**
      * The Preferences.

@@ -260,7 +260,7 @@ public class MetisViewerFormatter {
 
             /* Start the field */
             theBuilder.newTableRow();
-            theBuilder.newDataCell(myField.getName());
+            theBuilder.newDataCell(myField.getFieldId().getId());
             theBuilder.newDataCell(myValue);
         }
     }
@@ -298,7 +298,7 @@ public class MetisViewerFormatter {
 
             /* Start the field */
             theBuilder.newTableRow();
-            theBuilder.newDataCell(myField.getName());
+            theBuilder.newDataCell(myField.getFieldId().getId());
             theBuilder.newDataCell(myValue);
         }
     }
@@ -341,7 +341,7 @@ public class MetisViewerFormatter {
 
             /* Start the field */
             theBuilder.newTableRow();
-            theBuilder.newDataCell(myField.getName());
+            theBuilder.newDataCell(myField.getFieldId().getId());
             if (myControl.fieldChanged(myField).isDifferent()) {
                 theBuilder.newDataCell(myValue, true);
             } else {

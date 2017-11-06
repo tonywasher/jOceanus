@@ -97,7 +97,7 @@ public class TransactionAnalyser
     /**
      * Analysis field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
     /**
      * The Amount Tax threshold for "small" transactions (£3000).

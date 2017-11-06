@@ -114,7 +114,7 @@ public class MetisDataVersionDelta
             }
 
             /* Declare the field */
-            myLocal.declareIndexField(myField.getName());
+            myLocal.declareIndexField(myField.getFieldId().getId());
         }
 
         /* Return the fields */

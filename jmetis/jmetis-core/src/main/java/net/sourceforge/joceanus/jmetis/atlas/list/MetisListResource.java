@@ -23,13 +23,15 @@
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * ResourcesIds for List.
  */
-public enum MetisListResource implements TethysResourceId {
+public enum MetisListResource
+        implements TethysResourceId, MetisFieldId {
     /**
      * List Size.
      */
@@ -103,5 +105,10 @@ public enum MetisListResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    @Override
+    public String getId() {
+        return getValue();
     }
 }

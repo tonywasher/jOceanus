@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
  * Project element of POM.
@@ -61,17 +62,17 @@ public final class ThemisMvnProjectId
     /**
      * Group field id.
      */
-    private static final MetisDataField FIELD_GROUP = FIELD_DEFS.declareLocalField("Group");
+    private static final MetisDataField FIELD_GROUP = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_GROUP);
 
     /**
      * Artifact field id.
      */
-    private static final MetisDataField FIELD_ARTIFACT = FIELD_DEFS.declareLocalField("Artifact");
+    private static final MetisDataField FIELD_ARTIFACT = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ARTIFACT);
 
     /**
      * Version field id.
      */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_VERSION);
 
     /**
      * The groupId.

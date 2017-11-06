@@ -50,72 +50,72 @@ public class MoneyWiseUKTaxConfig
     /**
      * TaxYear Field Id.
      */
-    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME.getValue());
+    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME);
 
     /**
      * TaxBasis Field Id.
      */
-    private static final MetisDataField FIELD_TAXSOURCE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListName());
+    private static final MetisDataField FIELD_TAXSOURCE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListId());
 
     /**
      * GrossTaxable Field Id.
      */
-    private static final MetisDataField FIELD_GROSS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_GROSS.getValue());
+    private static final MetisDataField FIELD_GROSS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_GROSS);
 
     /**
      * GrossPreSavings Field Id.
      */
-    private static final MetisDataField FIELD_PRESAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS.getValue());
+    private static final MetisDataField FIELD_PRESAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS);
 
     /**
      * Birthday Field Id.
      */
-    private static final MetisDataField FIELD_BIRTHDAY = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY.getValue());
+    private static final MetisDataField FIELD_BIRTHDAY = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY);
 
     /**
      * ClientAge Field Id.
      */
-    private static final MetisDataField FIELD_AGE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGE.getValue());
+    private static final MetisDataField FIELD_AGE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGE);
 
     /**
      * AgeRelatedAllowances Field Id.
      */
-    private static final MetisDataField FIELD_AGERELATED = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE.getValue());
+    private static final MetisDataField FIELD_AGERELATED = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE);
 
     /**
      * Allowance Field Id.
      */
-    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC.getValue());
+    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC);
 
     /**
      * Rental Allowance Field Id.
      */
-    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL.getValue());
+    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL);
 
     /**
      * Savings Allowance Field Id.
      */
-    private static final MetisDataField FIELD_SAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
+    private static final MetisDataField FIELD_SAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS);
 
     /**
      * Dividend Allowance Field Id.
      */
-    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
+    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND);
 
     /**
      * Capital Allowance Field Id.
      */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL.getValue());
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL);
 
     /**
      * TaxBands Field Id.
      */
-    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS);
 
     /**
      * Low Savings Band Field Id.
      */
-    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
+    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS);
 
     /**
      * TaxYear.

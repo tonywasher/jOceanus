@@ -92,7 +92,7 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * Rate Field Id.
          */
-        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
+        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE);
 
         /**
          * The Base Rate.
@@ -166,7 +166,7 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * Rate Field Id.
          */
-        private static final MetisDataField FIELD_HIGHRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE.getValue());
+        private static final MetisDataField FIELD_HIGHRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE);
 
         /**
          * The High Rate.
@@ -264,7 +264,7 @@ public abstract class MoneyWiseUKCapitalScheme
         /**
          * Residential Field Id.
          */
-        private static final MetisDataField FIELD_RESIDENTIAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL.getValue());
+        private static final MetisDataField FIELD_RESIDENTIAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL);
 
         /**
          * The Residential Scheme.

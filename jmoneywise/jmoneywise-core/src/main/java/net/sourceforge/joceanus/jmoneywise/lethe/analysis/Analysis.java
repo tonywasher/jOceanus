@@ -74,82 +74,82 @@ public class Analysis
     /**
      * Range Field Id.
      */
-    private static final MetisDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE.getValue());
+    private static final MetisDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE);
 
     /**
      * TaxYears Field Id.
      */
-    private static final MetisDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_YEARS.getValue());
+    private static final MetisDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_YEARS);
 
     /**
      * Currency Field Id.
      */
-    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemName());
+    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemId());
 
     /**
      * DepositBuckets Field Id.
      */
-    private static final MetisDataField FIELD_DEPOSITS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSIT.getListName());
+    private static final MetisDataField FIELD_DEPOSITS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSIT.getListId());
 
     /**
      * CashBuckets Field Id.
      */
-    private static final MetisDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getListName());
+    private static final MetisDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getListId());
 
     /**
      * LoanBuckets Field Id.
      */
-    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOAN.getListName());
+    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOAN.getListId());
 
     /**
      * PayeeBuckets Field Id.
      */
-    private static final MetisDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getListName());
+    private static final MetisDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getListId());
 
     /**
      * PortfolioBuckets Field Id.
      */
-    private static final MetisDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getListName());
+    private static final MetisDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getListId());
 
     /**
      * DepositCategoryBuckets Field Id.
      */
-    private static final MetisDataField FIELD_DEPCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getListName());
+    private static final MetisDataField FIELD_DEPCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getListId());
 
     /**
      * CashCategoryBuckets Field Id.
      */
-    private static final MetisDataField FIELD_CASHCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getListName());
+    private static final MetisDataField FIELD_CASHCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getListId());
 
     /**
      * LoanCategoryBuckets Field Id.
      */
-    private static final MetisDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getListName());
+    private static final MetisDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getListId());
 
     /**
      * TransactionCategoryBuckets Field Id.
      */
-    private static final MetisDataField FIELD_TRANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListName());
+    private static final MetisDataField FIELD_TRANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListId());
 
     /**
      * TransactionTagBuckets Field Id.
      */
-    private static final MetisDataField FIELD_TRANSTAGS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListName());
+    private static final MetisDataField FIELD_TRANSTAGS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListId());
 
     /**
      * TaxBasisBuckets Field Id.
      */
-    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListName());
+    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListId());
 
     /**
      * TaxCalc Field Id.
      */
-    private static final MetisDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_CALCULATION.getValue());
+    private static final MetisDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_CALCULATION);
 
     /**
      * Dilutions Field Id.
      */
-    private static final MetisDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
+    private static final MetisDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS);
 
     /**
      * The DataSet.

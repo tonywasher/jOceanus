@@ -58,52 +58,52 @@ public class CoeusZopaLoanBookItem
     /**
      * Loan Id Field Id.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
 
     /**
      * Risk Field Id.
      */
-    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK.getValue());
+    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK);
 
     /**
      * Rate Field Id.
      */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE.getValue());
+    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE);
 
     /**
      * Status Field Id.
      */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS.getValue());
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS);
 
     /**
      * Original Loan Field Id.
      */
-    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT.getValue());
+    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT);
 
     /**
      * Balance Field Id.
      */
-    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE.getValue());
+    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE);
 
     /**
      * Repaid Field Id.
      */
-    private static final MetisDataField FIELD_REPAID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_REPAID.getValue());
+    private static final MetisDataField FIELD_REPAID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_REPAID);
 
     /**
      * Capital Field Id.
      */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_CAPITAL.getValue());
+    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_CAPITAL);
 
     /**
      * Interest Field Id.
      */
-    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTEREST.getValue());
+    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTEREST);
 
     /**
      * Missing Field Id.
      */
-    private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSING.getValue());
+    private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSING);
 
     /**
      * The loan Id.

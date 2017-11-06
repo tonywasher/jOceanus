@@ -131,12 +131,12 @@ public class MoneyWiseTaxBandSet
         /**
          * StandardSet Field Id.
          */
-        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE.getValue());
+        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE);
 
         /**
          * Amount Field Id.
          */
-        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT.getValue());
+        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT);
 
         /**
          * Amount.

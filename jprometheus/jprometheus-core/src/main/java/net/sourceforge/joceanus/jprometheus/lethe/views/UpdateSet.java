@@ -62,7 +62,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Version field id.
      */
-    public static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
+    public static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION);
 
     /**
      * Logger.
@@ -139,7 +139,7 @@ public class UpdateSet<E extends Enum<E>>
         /* If the field is an entry handle specially */
         if (theLocalFields.equals(pField.getAnchor())) {
             /* Obtain the entry */
-            return findEntryValue(pField.getName());
+            return findEntryValue(pField.getFieldId().getId());
         }
 
         /* Unknown */
@@ -191,7 +191,7 @@ public class UpdateSet<E extends Enum<E>>
             /* Not found , so add it */
             myEntry = new UpdateEntry<>(pDataType);
             theMap.put(pDataType, myEntry);
-            theLocalFields.declareLocalField(myEntry.getName());
+            theLocalFields.declareIndexField(myEntry.getName());
         }
 
         /* Update list to null and return */

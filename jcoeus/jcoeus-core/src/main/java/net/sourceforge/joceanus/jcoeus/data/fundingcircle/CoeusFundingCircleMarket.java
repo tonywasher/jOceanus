@@ -51,7 +51,7 @@ public class CoeusFundingCircleMarket
     /**
      * AuctionMap Field Id.
      */
-    private static final MetisDataField FIELD_AUCTIONS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONMAP.getValue());
+    private static final MetisDataField FIELD_AUCTIONS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONMAP);
 
     /**
      * The LoanBook Parser.

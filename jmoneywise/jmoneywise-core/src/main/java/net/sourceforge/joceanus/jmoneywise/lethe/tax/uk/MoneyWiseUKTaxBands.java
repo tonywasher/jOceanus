@@ -47,17 +47,17 @@ public class MoneyWiseUKTaxBands
     /**
      * StandardSet Field Id.
      */
-    private static final MetisDataField FIELD_STANDARD = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_STANDARD.getValue());
+    private static final MetisDataField FIELD_STANDARD = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_STANDARD);
 
     /**
      * Has Low Tax Band Field Id.
      */
-    private static final MetisDataField FIELD_LOTAXBAND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_HASLOTAXBAND.getValue());
+    private static final MetisDataField FIELD_LOTAXBAND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_HASLOTAXBAND);
 
     /**
      * Low Savings Band Field Id.
      */
-    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS.getValue());
+    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS);
 
     /**
      * Standard TaxBandSet.

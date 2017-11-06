@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jprometheus.eos.data;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedField;
 
@@ -36,20 +37,20 @@ public class PrometheusEncryptedField<T extends PrometheusEncryptedItem>
     /**
      * Constructor.
      * @param pAnchor the anchor
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
     PrometheusEncryptedField(final PrometheusEncryptedFieldSet<T> pAnchor,
-                             final String pName,
+                             final MetisFieldId pId,
                              final MetisDataType pDataType,
                              final Integer pMaxLength,
                              final MetisDataFieldEquality pEquality,
                              final MetisDataFieldStorage pStorage) {
         /* Initialise underlying class */
-        super(pAnchor, pName, pDataType, pMaxLength, pEquality, pStorage);
+        super(pAnchor, pId, pDataType, pMaxLength, pEquality, pStorage);
     }
 
     @Override

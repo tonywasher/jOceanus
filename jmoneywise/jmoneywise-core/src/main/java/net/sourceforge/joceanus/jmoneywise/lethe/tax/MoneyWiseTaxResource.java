@@ -25,13 +25,15 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise Tax Fields.
  */
-public enum MoneyWiseTaxResource implements TethysResourceId {
+public enum MoneyWiseTaxResource
+        implements TethysResourceId, MetisFieldId {
     /**
      * Basic Allowance.
      */
@@ -345,6 +347,11 @@ public enum MoneyWiseTaxResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    @Override
+    public String getId() {
+        return getValue();
     }
 
     /**

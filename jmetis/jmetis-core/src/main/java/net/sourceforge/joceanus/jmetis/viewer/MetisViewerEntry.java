@@ -301,7 +301,7 @@ public class MetisViewerEntry {
             /* If we should add the child */
             if (addChild) {
                 /* Create it */
-                final MetisViewerEntry myChild = theManager.newEntry(this, myField.getName());
+                final MetisViewerEntry myChild = theManager.newEntry(this, myField.getFieldId().getId());
                 myChild.setObject(myValue);
             }
         }

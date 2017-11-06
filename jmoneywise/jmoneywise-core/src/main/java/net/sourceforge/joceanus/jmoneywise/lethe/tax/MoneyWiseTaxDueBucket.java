@@ -50,27 +50,27 @@ public class MoneyWiseTaxDueBucket
     /**
      * TaxBasis Field Id.
      */
-    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getItemName());
+    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getItemId());
 
     /**
      * TaxConfig Field Id.
      */
-    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME.getValue());
+    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME);
 
     /**
      * TaxBands Field Id.
      */
-    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS.getValue());
+    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS);
 
     /**
      * Taxable Income Field Id.
      */
-    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME.getValue());
+    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME);
 
     /**
      * TaxDue Field Id.
      */
-    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
+    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE);
 
     /**
      * Tax Basis.
@@ -264,17 +264,17 @@ public class MoneyWiseTaxDueBucket
         /**
          * Amount Field Id.
          */
-        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT.getValue());
+        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT);
 
         /**
          * Rate Field Id.
          */
-        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE.getValue());
+        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE);
 
         /**
          * TaxDue Field Id.
          */
-        private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE.getValue());
+        private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE);
 
         /**
          * Amount in Band.

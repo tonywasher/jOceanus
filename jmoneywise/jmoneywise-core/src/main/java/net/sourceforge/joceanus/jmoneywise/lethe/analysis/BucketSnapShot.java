@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldIt
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -51,27 +51,27 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
     /**
      * Id Id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(DataItem.FIELD_ID.getName());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID);
 
     /**
      * Transaction Id.
      */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemId());
 
     /**
      * Date Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE);
 
     /**
      * Values Id.
      */
-    private static final MetisDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_VALUES.getValue());
+    private static final MetisDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_VALUES);
 
     /**
      * Previous Values Id.
      */
-    private static final MetisDataField FIELD_PREVIOUS = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_PREVIOUS.getValue());
+    private static final MetisDataField FIELD_PREVIOUS = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_PREVIOUS);
 
     /**
      * The id of the transaction.

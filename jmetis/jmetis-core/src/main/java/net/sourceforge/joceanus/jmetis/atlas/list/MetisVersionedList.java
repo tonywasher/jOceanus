@@ -62,12 +62,12 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     /**
      * Class Field Id.
      */
-    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS.getValue());
+    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS);
 
     /**
      * Version Field Id.
      */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION);
 
     /**
      * The class of the list.

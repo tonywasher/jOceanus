@@ -186,7 +186,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     @Override
     public Object getFieldValue(final MetisDataField pField) {
         /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pField.getName());
+        final MetisPreferenceItem<K> myPref = getPreference(pField.getFieldId().getId());
 
         /* Return the value */
         if (myPref == null) {
@@ -910,7 +910,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
             theDisplay = pKey.getDisplay();
 
             /* Create the DataField */
-            theField = theSet.theFields.declareLocalField(theName);
+            theField = theSet.theFields.declareIndexField(theName);
         }
 
         /**

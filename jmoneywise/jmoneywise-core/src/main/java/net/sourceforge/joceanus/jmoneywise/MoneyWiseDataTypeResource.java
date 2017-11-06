@@ -25,13 +25,15 @@ package net.sourceforge.joceanus.jmoneywise;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
  * Resource IDs for jMoneyWise DataType Fields.
  */
-public enum MoneyWiseDataTypeResource implements TethysResourceId {
+public enum MoneyWiseDataTypeResource
+        implements TethysResourceId, MetisFieldId {
     /**
      * DepositType Name.
      */
@@ -495,6 +497,11 @@ public enum MoneyWiseDataTypeResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    @Override
+    public String getId() {
+        return getValue();
     }
 
     /**

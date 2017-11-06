@@ -75,12 +75,12 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
     /**
      * Bucket Field Id.
      */
-    private static final MetisDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET.getValue());
+    private static final MetisDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET);
 
     /**
      * Attribute Field Id.
      */
-    private static final MetisDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR.getValue());
+    private static final MetisDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR);
 
     /**
      * The Underlying bucket.

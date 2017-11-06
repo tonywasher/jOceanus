@@ -162,7 +162,7 @@ public class MetisDataEosVersionDelta
             /* If there is a difference */
             if (!myDifference.isIdentical()) {
                 /* Declare the field */
-                myLocal.declareLocalField(myField.getName(), f -> new MetisDataDelta(myObject, myDifference));
+                myLocal.declareLocalField(myField.getFieldId(), f -> new MetisDataDelta(myObject, myDifference));
             }
         }
 

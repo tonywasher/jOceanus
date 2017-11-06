@@ -46,7 +46,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityHolding;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
+import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 
@@ -64,27 +64,27 @@ public final class DilutionEvent
     /**
      * Id Field Id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(DataItem.FIELD_ID.getName());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID);
 
     /**
      * Security Field Id.
      */
-    private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemName());
+    private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemId());
 
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE);
 
     /**
      * Dilution Field Id.
      */
-    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_DILUTION.getValue());
+    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_DILUTION);
 
     /**
      * Transaction Field Id.
      */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemId());
 
     /**
      * The Id.
@@ -266,7 +266,7 @@ public final class DilutionEvent
         /**
          * Security Field Id.
          */
-        private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getFieldName());
+        private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemId());
 
         /**
          * The list.

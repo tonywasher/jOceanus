@@ -40,37 +40,37 @@ public class MetisDataVersionControl
     /**
      * Id Field Id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID.getValue());
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID);
 
     /**
      * Version Field Id.
      */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION.getValue());
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION);
 
     /**
      * Deleted Field Id.
      */
-    private static final MetisDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED.getValue());
+    private static final MetisDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED);
 
     /**
      * State Field Id.
      */
-    private static final MetisDataField FIELD_STATE = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE.getValue());
+    private static final MetisDataField FIELD_STATE = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE);
 
     /**
      * EditState Field Id.
      */
-    private static final MetisDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_EDITSTATE.getValue());
+    private static final MetisDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_EDITSTATE);
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_HISTORY);
 
     /**
      * Validation Field Id.
      */
-    private static final MetisDataField FIELD_VALIDATION = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS.getValue());
+    private static final MetisDataField FIELD_VALIDATION = FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS);
 
     /**
      * The history of values for this object.

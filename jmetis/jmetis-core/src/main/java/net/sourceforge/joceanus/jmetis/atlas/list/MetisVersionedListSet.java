@@ -51,7 +51,7 @@ public class MetisVersionedListSet
     /**
      * Version Field Id.
      */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION.getValue());
+    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION);
 
     /**
      * The Local fields.
@@ -99,7 +99,7 @@ public class MetisVersionedListSet
         }
 
         /* Look for a key of this type */
-        final String myName = pField.getName();
+        final String myName = pField.getFieldId().getId();
         for (Map.Entry<MetisListKey, MetisVersionedList<MetisDataVersionedItem>> myEntry : theListMap.entrySet()) {
             /* If this is the correct value */
             if (myName.equals(myEntry.getKey().getListName())) {
@@ -212,7 +212,7 @@ public class MetisVersionedListSet
         theListMap.put(pKey, pList);
 
         /* Create the DataField */
-        theFields.declareLocalField(pKey.getListName());
+        theFields.declareIndexField(pKey.getListName());
     }
 
     /**

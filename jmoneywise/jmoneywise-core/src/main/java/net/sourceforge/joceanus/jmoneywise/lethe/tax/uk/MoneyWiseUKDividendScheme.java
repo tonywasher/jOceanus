@@ -218,7 +218,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Base Rate Field Id.
          */
-        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
+        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE);
 
         /**
          * The Base Rate.
@@ -292,7 +292,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Rate Field Id.
          */
-        private static final MetisDataField FIELD_HIGHRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE.getValue());
+        private static final MetisDataField FIELD_HIGHRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE);
 
         /**
          * The Higher Rate.
@@ -391,7 +391,7 @@ public abstract class MoneyWiseUKDividendScheme
         /**
          * Rate Field Id.
          */
-        private static final MetisDataField FIELD_ADDRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE.getValue());
+        private static final MetisDataField FIELD_ADDRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE);
 
         /**
          * The Additional Rate.

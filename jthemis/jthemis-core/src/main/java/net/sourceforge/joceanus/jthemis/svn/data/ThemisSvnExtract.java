@@ -47,6 +47,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectF
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnSourceDir;
@@ -66,22 +67,22 @@ public class ThemisSvnExtract
     /**
      * Component field.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Component");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
 
     /**
      * Trunk field.
      */
-    private static final MetisDataField FIELD_TRUNK = FIELD_DEFS.declareLocalField("Trunk");
+    private static final MetisDataField FIELD_TRUNK = FIELD_DEFS.declareLocalField(ThemisResource.SVN_TRUNK);
 
     /**
      * Branches field.
      */
-    private static final MetisDataField FIELD_BRANCHES = FIELD_DEFS.declareLocalField("Branches");
+    private static final MetisDataField FIELD_BRANCHES = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES);
 
     /**
      * Tags field.
      */
-    private static final MetisDataField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
+    private static final MetisDataField FIELD_TAGS = FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS);
 
     /**
      * Component.
@@ -348,7 +349,7 @@ public class ThemisSvnExtract
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Plan List.
@@ -433,7 +434,7 @@ public class ThemisSvnExtract
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Plan List.
@@ -519,17 +520,17 @@ public class ThemisSvnExtract
         /**
          * Owner field.
          */
-        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER);
 
         /**
          * Anchor field.
          */
-        private static final MetisDataField FIELD_ANCHOR = FIELD_DEFS.declareLocalField("Anchor");
+        private static final MetisDataField FIELD_ANCHOR = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHOR);
 
         /**
          * Views field.
          */
-        private static final MetisDataField FIELD_VIEWS = FIELD_DEFS.declareLocalField("Views");
+        private static final MetisDataField FIELD_VIEWS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_VIEWS);
 
         /**
          * Repository.
@@ -903,7 +904,7 @@ public class ThemisSvnExtract
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * View List.
@@ -954,7 +955,7 @@ public class ThemisSvnExtract
         /**
          * Owner field.
          */
-        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER);
 
         /**
          * Original owner.
@@ -1011,22 +1012,22 @@ public class ThemisSvnExtract
         /**
          * Revision field.
          */
-        private static final MetisDataField FIELD_REV = FIELD_DEFS.declareLocalField("Revision");
+        private static final MetisDataField FIELD_REV = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
 
         /**
          * Date field.
          */
-        private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+        private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE);
 
         /**
          * Message field.
          */
-        private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField("Message");
+        private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG);
 
         /**
          * Items field.
          */
-        private static final MetisDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField("Items");
+        private static final MetisDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ITEMS);
 
         /**
          * Repository.
@@ -1281,12 +1282,12 @@ public class ThemisSvnExtract
         /**
          * Target field.
          */
-        private static final MetisDataField FIELD_TARGET = FIELD_DEFS.declareLocalField("Target");
+        private static final MetisDataField FIELD_TARGET = FIELD_DEFS.declareLocalField(ThemisResource.SVN_TARGET);
 
         /**
          * Source field.
          */
-        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField("Source");
+        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE);
 
         /**
          * Target path.
@@ -1391,7 +1392,7 @@ public class ThemisSvnExtract
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Item List.

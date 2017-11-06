@@ -54,27 +54,27 @@ public class MoneyWiseChargeableGainSlice
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE);
 
     /**
      * Gain Field Id.
      */
-    private static final MetisDataField FIELD_GAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_GAIN.getValue());
+    private static final MetisDataField FIELD_GAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_GAIN);
 
     /**
      * Years Field Id.
      */
-    private static final MetisDataField FIELD_YEARS = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_QUALYEARS.getValue());
+    private static final MetisDataField FIELD_YEARS = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_QUALYEARS);
 
     /**
      * Slice Field Id.
      */
-    private static final MetisDataField FIELD_SLICE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_SLICE.getValue());
+    private static final MetisDataField FIELD_SLICE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_SLICE);
 
     /**
      * Transaction Field Id.
      */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemName());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemId());
 
     /**
      * The Date.

@@ -53,7 +53,7 @@ public final class LoanCategoryBucket
     /**
      * Loan Category Field Id.
      */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemName());
+    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemId());
 
     /**
      * The loan category.
@@ -92,7 +92,7 @@ public final class LoanCategoryBucket
     @Override
     public String getName() {
         return theCategory == null
-                                   ? NAME_TOTALS
+                                   ? NAME_TOTALS.getId()
                                    : theCategory.getName();
     }
 
@@ -157,12 +157,12 @@ public final class LoanCategoryBucket
         /**
          * Analysis field Id.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
         /**
          * Totals field Id.
          */
-        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS.getValue());
+        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS);
 
         /**
          * The analysis.

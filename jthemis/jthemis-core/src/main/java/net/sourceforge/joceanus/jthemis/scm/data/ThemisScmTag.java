@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 /**
@@ -55,17 +56,17 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
     /**
      * Branch field id.
      */
-    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branch");
+    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCH);
 
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME);
 
     /**
      * Project definition field id.
      */
-    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT);
 
     /**
      * The Branch to which this Tag belongs.
@@ -236,7 +237,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         /**
          * Size field id.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
 
         /**
          * Tag List.

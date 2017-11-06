@@ -112,7 +112,7 @@ public class MetisDataEosValidation
 
         /* Declare error field */
         final int myCount = countFieldErrors(pField);
-        final String myName = pField.getName() + "-" + myCount;
+        final String myName = pField.getFieldId().getId() + "-" + myCount;
         theLocalFields.declareLocalField(myName, f -> myError);
 
         /* Add to the end of the list */
@@ -318,7 +318,7 @@ public class MetisDataEosValidation
          * @return the formatted error
          */
         private String formatError() {
-            return theField.getName()
+            return theField.getFieldId().getId()
                    + ": "
                    + theError;
         }

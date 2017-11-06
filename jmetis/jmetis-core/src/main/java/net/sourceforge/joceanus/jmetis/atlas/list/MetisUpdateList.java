@@ -50,7 +50,7 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
     /**
      * Base Field Id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE);
 
     /**
      * The base list.

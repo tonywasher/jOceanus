@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.EnumMap;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
@@ -34,7 +35,8 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 /**
  * Resource IDs for jMoneyWise Analysis Fields.
  */
-public enum AnalysisResource implements TethysResourceId {
+public enum AnalysisResource
+        implements TethysResourceId, MetisFieldId {
     /**
      * Analysis Name.
      */
@@ -572,6 +574,11 @@ public enum AnalysisResource implements TethysResourceId {
 
         /* return the value */
         return theValue;
+    }
+
+    @Override
+    public String getId() {
+        return getValue();
     }
 
     /**

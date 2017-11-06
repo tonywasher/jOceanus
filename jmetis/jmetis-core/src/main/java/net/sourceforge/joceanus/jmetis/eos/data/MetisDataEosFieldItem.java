@@ -27,7 +27,9 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * FieldItem Interface.
@@ -45,10 +47,10 @@ public interface MetisDataEosFieldItem
      */
     interface MetisDataEosFieldDef {
         /**
-         * Obtain the name of the field.
+         * Obtain the id of the field.
          * @return the name of the field.
          */
-        String getName();
+        MetisFieldId getFieldId();
 
         /**
          * Obtain the index of the field.
@@ -96,6 +98,21 @@ public interface MetisDataEosFieldItem
          */
         <X> X getFieldValue(Object pObject,
                             Class<X> pClazz);
+    }
+
+    /**
+     * Versioned Field interface.
+     */
+    interface MetisDataEosVersionedFieldDef
+            extends MetisDataEosFieldDef {
+        /**
+         * Set the value of a field.
+         * @param pObject the object
+         * @param pValue the new value
+         * @throws OceanusException on error
+         */
+        void setFieldValue(Object pObject,
+                           Object pValue) throws OceanusException;
     }
 
     /**

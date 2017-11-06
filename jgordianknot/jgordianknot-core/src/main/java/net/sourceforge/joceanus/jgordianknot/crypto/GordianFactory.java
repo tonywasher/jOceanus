@@ -31,7 +31,6 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
-import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianSecureRandom;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -130,8 +129,8 @@ public abstract class GordianFactory {
      * Obtain the secureRandom instance.
      * @return the secureRandom instance
      */
-    protected GordianSecureRandom getRandom() {
-        return theRandom;
+    protected SecureRandom getRandom() {
+        return theRandom.getRandom();
     }
 
     /**
@@ -191,7 +190,7 @@ public abstract class GordianFactory {
      */
     protected void setSecureRandom(final GordianSecureRandom pRandom) {
         theRandom = pRandom;
-        getIdManager().setSecureRandom(pRandom);
+        getIdManager().setSecureRandom(pRandom.getRandom());
     }
 
     /**
@@ -271,7 +270,7 @@ public abstract class GordianFactory {
      * @return the new SecureRandom
      * @throws OceanusException on error
      */
-    public abstract GordianSecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
+    public abstract SecureRandom createRandom(GordianRandomSpec pRandomSpec) throws OceanusException;
 
     /**
      * Obtain predicate for supported randomSpecs.

@@ -56,7 +56,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     /**
      * Size Field Id.
      */
-    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE.getValue());
+    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE);
 
     /**
      * The First Id.

@@ -27,6 +27,7 @@ import java.util.function.Function;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
 
@@ -47,9 +48,9 @@ public class MetisDataEosField<T extends MetisDataEosFieldItem>
     private final Integer theIndex;
 
     /**
-     * Name of field.
+     * Id of field.
      */
-    private final String theName;
+    private final MetisFieldId theId;
 
     /**
      * DataType of field.
@@ -79,21 +80,21 @@ public class MetisDataEosField<T extends MetisDataEosFieldItem>
     /**
      * Constructor.
      * @param pAnchor the anchor
-     * @param pName the name of the field
+     * @param pId the id of the field
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
     MetisDataEosField(final MetisDataEosFieldSet<T> pAnchor,
-                      final String pName,
+                      final MetisFieldId pId,
                       final MetisDataType pDataType,
                       final Integer pMaxLength,
                       final MetisDataFieldEquality pEquality,
                       final MetisDataFieldStorage pStorage) {
         /* Store parameters */
         theAnchor = pAnchor;
-        theName = pName;
+        theId = pId;
         theDataType = pDataType;
         theMaxLength = pMaxLength;
         theEquality = pEquality;
@@ -112,17 +113,17 @@ public class MetisDataEosField<T extends MetisDataEosFieldItem>
     /**
      * Constructor.
      * @param pAnchor the anchor
-     * @param pName the name of the field
+     * @param pId the id of the field
      * @param pValue the value supplier
      * @param pStorage the field storage type
      */
     MetisDataEosField(final MetisDataEosFieldSet<T> pAnchor,
-                      final String pName,
+                      final MetisFieldId pId,
                       final Function<T, Object> pValue,
                       final MetisDataFieldStorage pStorage) {
         /* Store parameters */
         theAnchor = pAnchor;
-        theName = pName;
+        theId = pId;
         theDataType = MetisDataType.OBJECT;
         theMaxLength = MetisDataEosFieldSet.FIELD_NO_MAXLENGTH;
         theEquality = MetisDataFieldEquality.DERIVED;
@@ -143,8 +144,8 @@ public class MetisDataEosField<T extends MetisDataEosFieldItem>
     }
 
     @Override
-    public String getName() {
-        return theName;
+    public MetisFieldId getFieldId() {
+        return theId;
     }
 
     @Override
@@ -234,20 +235,20 @@ public class MetisDataEosField<T extends MetisDataEosFieldItem>
             return false;
         }
 
-        /* Check the name and index is the same */
+        /* Check the id and index is the same */
         return theIndex == myThat.theIndex
-               && theName.equals(myThat.theName);
+               && theId.equals(myThat.theId);
     }
 
     @Override
     public int hashCode() {
         return theAnchor.hashCode() * MetisDataEosFieldSet.HASH_PRIME
-               + theName.hashCode();
+               + theId.hashCode();
     }
 
     @Override
     public String toString() {
-        return theName;
+        return theId.getId();
     }
 
     @Override

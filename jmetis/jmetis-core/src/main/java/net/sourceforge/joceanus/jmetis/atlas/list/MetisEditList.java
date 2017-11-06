@@ -61,12 +61,12 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     /**
      * Base Field Id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE.getValue());
+    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE);
 
     /**
      * EditVersion Field Id.
      */
-    private static final MetisDataField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION.getValue());
+    private static final MetisDataField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION);
 
     /**
      * The base list.

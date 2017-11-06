@@ -54,17 +54,17 @@ public final class TransactionTagBucket
     /**
      * Analysis Field Id.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
     /**
      * TransactionTag Field Id.
      */
-    private static final MetisDataField FIELD_TRANSTAG = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getItemName());
+    private static final MetisDataField FIELD_TRANSTAG = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getItemId());
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
 
     /**
      * The analysis.
@@ -307,7 +307,7 @@ public final class TransactionTagBucket
         /**
          * Analysis field Id.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME.getValue());
+        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
 
         /**
          * The analysis.

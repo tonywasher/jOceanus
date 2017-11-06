@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
  * Represents the definition of a project.
@@ -66,12 +67,12 @@ public class ThemisMvnProjectDefinition
     /**
      * Id field id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField("Id");
+    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ID);
 
     /**
      * Dependencies field id.
      */
-    private static final MetisDataField FIELD_DEPS = FIELD_DEFS.declareLocalField("Dependencies");
+    private static final MetisDataField FIELD_DEPS = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_DEPENDENCIES);
 
     /**
      * POM Model representation.

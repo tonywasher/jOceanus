@@ -119,7 +119,7 @@ public class MetisDataItemValidation
         final MetisErrorElement myEl = new MetisErrorElement(pText, pField);
 
         /* Declare error field */
-        theLocalFields.declareIndexField(pField.getName());
+        theLocalFields.declareIndexField(pField.getFieldId().getId());
 
         /* Add to the end of the list */
         theErrors.add(myEl);
@@ -299,7 +299,7 @@ public class MetisDataItemValidation
          * @return the formatted error
          */
         private String formatError() {
-            return theField.getName()
+            return theField.getFieldId().getId()
                    + ": "
                    + theError;
         }

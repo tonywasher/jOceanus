@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldEnum;
 
 /**
@@ -209,29 +211,38 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     SCHEDULE;
 
     /**
-     * The String name.
+     * The String id.
      */
-    private String theName;
+    private MetisFieldId theNameId;
 
     /**
-     * The List name.
+     * The List id.
      */
-    private String theListName;
+    private MetisFieldId theListId;
 
     @Override
     public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = MoneyWiseDataTypeResource.getKeyForDataType(this).getValue();
-        }
-
         /* return the name */
-        return theName;
+        return getItemId().getId();
     }
 
     /**
-     * Obtain name of item.
+     * Obtain Id of item.
+     * @return the item name
+     */
+    public MetisFieldId getItemId() {
+        /* If we have not yet loaded the id */
+        if (theNameId == null) {
+            /* Load the id */
+            theNameId = MetisSimpleFieldId.convertResource(MoneyWiseDataTypeResource.getKeyForDataType(this));
+        }
+
+        /* Return the name id */
+        return theNameId;
+    }
+
+    /**
+     * Obtain Name of item.
      * @return the item name
      */
     public String getItemName() {
@@ -239,22 +250,30 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     }
 
     /**
-     * Obtain name of associated list.
+     * Obtain Id of associated list.
+     * @return the list name
+     */
+    public MetisFieldId getListId() {
+        /* If we have not yet loaded the id */
+        if (theListId == null) {
+            /* Load the id */
+            theListId = MetisSimpleFieldId.convertResource(MoneyWiseDataTypeResource.getKeyForDataList(this));
+        }
+
+        /* return the list id */
+        return theListId;
+    }
+
+    /**
+     * Obtain Name of list for item.
      * @return the list name
      */
     public String getListName() {
-        /* If we have not yet loaded the name */
-        if (theListName == null) {
-            /* Load the name */
-            theListName = MoneyWiseDataTypeResource.getKeyForDataList(this).getValue();
-        }
-
-        /* return the list name */
-        return theListName;
+        return getFieldName();
     }
 
     @Override
     public String getFieldName() {
-        return getListName();
+        return getListId().getId();
     }
 }

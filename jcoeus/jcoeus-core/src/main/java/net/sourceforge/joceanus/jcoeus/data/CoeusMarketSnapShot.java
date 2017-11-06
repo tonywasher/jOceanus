@@ -47,22 +47,22 @@ public class CoeusMarketSnapShot
     /**
      * Market Field Id.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET.getValue());
+    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
 
     /**
      * Date Field Id.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE.getValue());
+    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE);
 
     /**
      * LoanMap Field Id.
      */
-    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP.getValue());
+    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP);
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
 
     /**
      * Loan Market.

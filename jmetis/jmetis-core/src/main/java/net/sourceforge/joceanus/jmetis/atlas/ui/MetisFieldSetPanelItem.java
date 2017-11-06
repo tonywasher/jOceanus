@@ -147,7 +147,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
         /* Create the label */
         theLabel = myGuiFactory.newLabel();
-        theLabel.setText(pField.getName() + TethysLabel.STR_COLON);
+        theLabel.setText(pField.getFieldId().getId() + TethysLabel.STR_COLON);
         theLabel.setAlignment(TethysAlignment.EAST);
 
         /* Create the Node */

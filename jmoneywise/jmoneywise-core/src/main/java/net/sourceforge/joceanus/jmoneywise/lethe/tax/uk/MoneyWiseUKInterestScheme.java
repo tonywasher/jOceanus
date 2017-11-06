@@ -179,7 +179,7 @@ public abstract class MoneyWiseUKInterestScheme
         /**
          * Base Rate Field Id.
          */
-        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE.getValue());
+        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE);
 
         /**
          * The Base Rate.

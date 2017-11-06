@@ -42,32 +42,32 @@ public class MetisViewerExceptionWrapper
     /**
      * Class Field Id.
      */
-    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CLASS.getValue());
+    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CLASS);
 
     /**
      * Message Field Id.
      */
-    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_MESSAGE.getValue());
+    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_MESSAGE);
 
     /**
      * Origin Field Id.
      */
-    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_ORIGIN.getValue());
+    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_ORIGIN);
 
     /**
      * Cause Field Id.
      */
-    private static final MetisDataField FIELD_CAUSE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CAUSE.getValue());
+    private static final MetisDataField FIELD_CAUSE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CAUSE);
 
     /**
      * Object Field Id.
      */
-    private static final MetisDataField FIELD_OBJECT = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_OBJECT.getValue());
+    private static final MetisDataField FIELD_OBJECT = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_OBJECT);
 
     /**
      * Stack Field Id.
      */
-    private static final MetisDataField FIELD_STACK = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_STACK.getValue());
+    private static final MetisDataField FIELD_STACK = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_STACK);
 
     /**
      * The wrapped exception.

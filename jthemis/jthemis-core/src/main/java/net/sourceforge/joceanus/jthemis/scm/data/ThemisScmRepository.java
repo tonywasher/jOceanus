@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldIt
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent.ScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 
@@ -55,22 +56,22 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Name field id.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField("Name");
+    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME);
 
     /**
      * Components field id.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
+    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENTS);
 
     /**
      * BranchMap field id.
      */
-    private static final MetisDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
+    private static final MetisDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES);
 
     /**
      * TagMap field id.
      */
-    private static final MetisDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
+    private static final MetisDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS);
 
     /**
      * The Preference Manager.

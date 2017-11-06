@@ -48,7 +48,7 @@ public class MetisEditListSet
     /**
      * EditVersion Field Id.
      */
-    private static final MetisDataField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION.getValue());
+    private static final MetisDataField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION);
 
     /**
      * The Event Manager.

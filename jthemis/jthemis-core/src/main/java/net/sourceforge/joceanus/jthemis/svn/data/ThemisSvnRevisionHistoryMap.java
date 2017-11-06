@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnSourceDir;
 
@@ -159,17 +160,17 @@ public class ThemisSvnRevisionHistoryMap
         /**
          * Path field.
          */
-        private static final MetisDataField FIELD_PATH = FIELD_DEFS.declareLocalField("Path");
+        private static final MetisDataField FIELD_PATH = FIELD_DEFS.declareLocalField(ThemisResource.SVN_PATH);
 
         /**
          * Revision field.
          */
-        private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
+        private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
 
         /**
          * Initial History field.
          */
-        private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
+        private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(ThemisResource.SVN_HISTORY);
 
         /**
          * The HistoryMap.

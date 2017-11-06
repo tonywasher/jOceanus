@@ -57,37 +57,37 @@ public class CoeusRateSetterLoanBookItem
     /**
      * Loan Id Field Id.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID.getValue());
+    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
 
     /**
      * StartDate Field Id.
      */
-    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE.getValue());
+    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE);
 
     /**
      * Original Loan Field Id.
      */
-    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT.getValue());
+    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT);
 
     /**
      * Outstanding Balance Field Id.
      */
-    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE.getValue());
+    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE);
 
     /**
      * Rate Field Id.
      */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE.getValue());
+    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE);
 
     /**
      * LastDate Field Id.
      */
-    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE.getValue());
+    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE);
 
     /**
      * Status Field Id.
      */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS.getValue());
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS);
 
     /**
      * The loan Id.

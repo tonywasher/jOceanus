@@ -45,17 +45,17 @@ public class MoneyWiseUKSavingsAllowance
     /**
      * SavingsAllowance Field Id.
      */
-    private static final MetisDataField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS.getValue());
+    private static final MetisDataField FIELD_SAVINGSALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS);
 
     /**
      * DividendsAllowance Field Id.
      */
-    private static final MetisDataField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND.getValue());
+    private static final MetisDataField FIELD_DIVIDENDALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND);
 
     /**
      * AdditionalAllowanceLimit Field Id.
      */
-    private static final MetisDataField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE.getValue());
+    private static final MetisDataField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE);
 
     /**
      * SavingsAllowance.

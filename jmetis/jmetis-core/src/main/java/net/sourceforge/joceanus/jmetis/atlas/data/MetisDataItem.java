@@ -52,6 +52,17 @@ public final class MetisDataItem {
     }
 
     /**
+     * Interface for items are fieldIds.
+     */
+    public interface MetisFieldId {
+        /**
+         * Obtain the fieldId.
+         * @return the fieldId
+         */
+        String getId();
+    }
+
+    /**
      * Interface for items that are looked up via an integer index id.
      */
     public interface MetisIndexedItem {

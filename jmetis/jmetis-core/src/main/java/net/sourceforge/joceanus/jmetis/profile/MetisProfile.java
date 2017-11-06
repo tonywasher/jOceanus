@@ -52,22 +52,22 @@ public class MetisProfile
     /**
      * Task Field Id.
      */
-    private static final MetisDataField FIELD_TASK = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_TASK.getValue());
+    private static final MetisDataField FIELD_TASK = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_TASK);
 
     /**
      * Status Field Id.
      */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_STATUS.getValue());
+    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_STATUS);
 
     /**
      * Elapsed Field Id.
      */
-    private static final MetisDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_ELAPSED.getValue());
+    private static final MetisDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_ELAPSED);
 
     /**
      * Hidden Field Id.
      */
-    private static final MetisDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_HIDDEN.getValue());
+    private static final MetisDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_HIDDEN);
 
     /**
      * Report fields.

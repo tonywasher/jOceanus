@@ -51,22 +51,22 @@ public abstract class CoeusMarket
     /**
      * Provider Field Id.
      */
-    private static final MetisDataField FIELD_PROVIDER = FIELD_DEFS.declareLocalField(CoeusResource.DATA_PROVIDER.getValue());
+    private static final MetisDataField FIELD_PROVIDER = FIELD_DEFS.declareLocalField(CoeusResource.DATA_PROVIDER);
 
     /**
      * LoanMap Field Id.
      */
-    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP.getValue());
+    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP);
 
     /**
      * Transactions Field Id.
      */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSACTIONS.getValue());
+    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSACTIONS);
 
     /**
      * History Field Id.
      */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY.getValue());
+    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
 
     /**
      * Loan Market Provider.

@@ -31,7 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
 
@@ -276,38 +278,53 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
 
     /**
      * Declare local field not used for equality.
+     * @param pId the id of the field
+     * @param pValue the value supplier
+     * @return the field
+     */
+    public MetisDataEosField<T> declareLocalField(final MetisFieldId pId,
+                                                  final Function<T, Object> pValue) {
+        return declareDataField(pId, pValue, MetisDataFieldStorage.LOCAL);
+    }
+
+    /**
+     * Declare field used for calculation.
+     * @param pId the fieldId
+     * @param pValue the value supplier
+     * @return the field
+     */
+    public MetisDataEosField<T> declareCalculatedField(final MetisFieldId pId,
+                                                       final Function<T, Object> pValue) {
+        return declareDataField(pId, pValue, MetisDataFieldStorage.CALCULATED);
+    }
+
+    /**
+     * Declare local field not used for equality.
      * @param pName the name of the field
      * @param pValue the value supplier
      * @return the field
      */
     public MetisDataEosField<T> declareLocalField(final String pName,
                                                   final Function<T, Object> pValue) {
-        return declareDataField(pName, pValue, MetisDataFieldStorage.LOCAL);
-    }
-
-    /**
-     * Declare field used for calculation.
-     * @param pName the name of the field
-     * @param pValue the value supplier
-     * @return the field
-     */
-    public MetisDataEosField<T> declareCalculatedField(final String pName,
-                                                       final Function<T, Object> pValue) {
-        return declareDataField(pName, pValue, MetisDataFieldStorage.CALCULATED);
+        /* Only allowed for dynamic fieldSet */
+        if (isStatic) {
+            throw new IllegalArgumentException("Only allowed for dynamic fieldSets");
+        }
+        return declareLocalField(new MetisSimpleFieldId(pName), pValue);
     }
 
     /**
      * Declare non-versioned field.
-     * @param pName the name of the field
+     * @param pId the fieldId
      * @param pValue the value supplier
      * @param pStorage the field storage type
      * @return the field
      */
-    private MetisDataEosField<T> declareDataField(final String pName,
+    private MetisDataEosField<T> declareDataField(final MetisFieldId pId,
                                                   final Function<T, Object> pValue,
                                                   final MetisDataFieldStorage pStorage) {
         /* Create the field */
-        final MetisDataEosField<T> myField = new MetisDataEosField<>(this, pName, pValue, pStorage);
+        final MetisDataEosField<T> myField = new MetisDataEosField<>(this, pId, pValue, pStorage);
 
         /* Register the field */
         registerField(myField);
@@ -333,8 +350,8 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
 
         /* Synchronise */
         synchronized (this) {
-            /* Check the name */
-            checkUniqueName(pField.getName());
+            /* Check the id for uniqueness */
+            checkUniqueName(pField.getFieldId());
 
             /* Add it to the list */
             theFields.add(pField);
@@ -347,20 +364,46 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
     }
 
     /**
-     * Check unique name.
-     * @param pName the name to check.
+     * Check uniqueness of Id.
+     * @param pId the id to check.
      * @throws IllegalArgumentException if name is present
      */
-    protected void checkUniqueName(final String pName) {
+    protected void checkUniqueName(final MetisFieldId pId) {
+        /* Obtain the name to check */
+        String myName = pId.getId();
+
+        /* Loop through existing iDs */
         final Iterator<MetisDataEosFieldDef> myIterator = fieldIterator();
         while (myIterator.hasNext()) {
             final MetisDataEosFieldDef myField = myIterator.next();
 
             /* If the name exists, throw an exception */
-            if (pName.equals(myField.getName())) {
-                throw new IllegalArgumentException("Duplicate field name: " + pName);
+            if (myName.equals(myField.getFieldId().getId())) {
+                throw new IllegalArgumentException("Duplicate field name: " + myName);
             }
         }
+    }
+
+    /**
+     * Obtain field from fieldId.
+     * @param pId the fieldId.
+     * @return the corresponding field
+     * @throws IllegalArgumentException if name is not present
+     */
+    public MetisDataEosFieldDef getField(final MetisFieldId pId) {
+        /* Loop through existing iDs */
+        final Iterator<MetisDataEosFieldDef> myIterator = fieldIterator();
+        while (myIterator.hasNext()) {
+            final MetisDataEosFieldDef myField = myIterator.next();
+
+            /* If we have the id, return it */
+            if (pId.equals(myField.getFieldId())) {
+                return myField;
+            }
+        }
+
+        /* Not found */
+        throw new IllegalArgumentException("Unknown field: " + pId.getId());
     }
 
     @Override
