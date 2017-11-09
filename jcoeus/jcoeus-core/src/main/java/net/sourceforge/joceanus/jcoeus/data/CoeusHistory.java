@@ -26,46 +26,30 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Transaction Totals History.
  */
 public abstract class CoeusHistory
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusHistory.class);
+    private static final MetisDataEosFieldSet<CoeusHistory> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusHistory.class);
 
     /**
-     * Market Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
-
-    /**
-     * Loan Field Id.
-     */
-    private static final MetisDataField FIELD_LOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOAN);
-
-    /**
-     * Date Field Id.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
-
-    /**
-     * Totals Field Id.
-     */
-    private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TOTALS);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusHistory::getMarket);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOAN, CoeusHistory::getLoan);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusHistory::getDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusHistory::getHistory);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_TOTALS, CoeusHistory::getTotals);
+    }
 
     /**
      * The market.
@@ -148,6 +132,14 @@ public abstract class CoeusHistory
     }
 
     /**
+     * Obtain the history.
+     * @return the history
+     */
+    private List<CoeusTotals> getHistory() {
+        return theHistory;
+    }
+
+    /**
      * Obtain the history iterator.
      * @return the iterator
      */
@@ -187,44 +179,8 @@ public abstract class CoeusHistory
         theHistory.clear();
     }
 
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
     @Override
     public String toString() {
         return theTotals.toString();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_MARKET.equals(pField)) {
-            return theMarket;
-        }
-        if (FIELD_LOAN.equals(pField)) {
-            final CoeusLoan myLoan = getLoan();
-            return myLoan == null
-                                  ? MetisDataFieldValue.SKIP
-                                  : myLoan;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate == null
-                                   ? MetisDataFieldValue.SKIP
-                                   : theDate;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-        if (FIELD_TOTALS.equals(pField)) {
-            return theTotals;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -99,7 +99,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
     /**
      * The field definition.
      */
-    private final MetisDataField theField;
+    private final MetisFieldId theField;
 
     /**
      * Is the field visible?
@@ -118,7 +118,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
      * @param pEdit the edit field
      */
     protected MetisFieldSetPanelItem(final MetisFieldSetPanel<N, I> pPanel,
-                                     final MetisDataField pField,
+                                     final MetisFieldId pField,
                                      final TethysDataEditField<T, N, I> pEdit) {
         /* Set fields */
         this(pPanel, pField, null, pEdit);
@@ -132,7 +132,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
      * @param pEdit the edit field
      */
     protected MetisFieldSetPanelItem(final MetisFieldSetPanel<N, I> pPanel,
-                                     final MetisDataField pField,
+                                     final MetisFieldId pField,
                                      final Class<T> pClazz,
                                      final TethysDataEditField<T, N, I> pEdit) {
         /* Set fields */
@@ -147,7 +147,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
         /* Create the label */
         theLabel = myGuiFactory.newLabel();
-        theLabel.setText(pField.getFieldId().getId() + TethysLabel.STR_COLON);
+        theLabel.setText(pField.getId() + TethysLabel.STR_COLON);
         theLabel.setAlignment(TethysAlignment.EAST);
 
         /* Create the Node */
@@ -209,7 +209,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
      * obtain the field.
      * @return the field
      */
-    public MetisDataField getField() {
+    public MetisFieldId getField() {
         return theField;
     }
 
@@ -354,7 +354,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pEdit the edit field
          */
         protected MetisFieldSetValidatedItem(final MetisFieldSetPanel<N, I> pPanel,
-                                             final MetisDataField pField,
+                                             final MetisFieldId pField,
                                              final Class<T> pClazz,
                                              final TethysValidatedEditField<T, N, I> pEdit) {
             /* Initialise underlying class */
@@ -384,7 +384,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pEdit the edit field
          */
         protected MetisFieldSetCurrencyItem(final MetisFieldSetPanel<N, I> pPanel,
-                                            final MetisDataField pField,
+                                            final MetisFieldId pField,
                                             final Class<T> pClazz,
                                             final TethysCurrencyEditField<T, N, I> pEdit) {
             /* Initialise underlying class */
@@ -410,7 +410,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetStringItem(final MetisFieldSetPanel<N, I> pPanel,
-                                          final MetisDataField pField) {
+                                          final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, String.class, pPanel.getGuiFactory().newStringField());
         }
@@ -429,7 +429,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetCharArrayItem(final MetisFieldSetPanel<N, I> pPanel,
-                                             final MetisDataField pField) {
+                                             final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, char[].class, pPanel.getGuiFactory().newCharArrayField());
         }
@@ -448,7 +448,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetShortItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataField pField) {
+                                         final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, Short.class, pPanel.getGuiFactory().newShortField());
         }
@@ -467,7 +467,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetIntegerItem(final MetisFieldSetPanel<N, I> pPanel,
-                                           final MetisDataField pField) {
+                                           final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, Integer.class, pPanel.getGuiFactory().newIntegerField());
         }
@@ -486,7 +486,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetLongItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataField pField) {
+                                        final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, Long.class, pPanel.getGuiFactory().newLongField());
         }
@@ -505,7 +505,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetMoneyItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataField pField) {
+                                         final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysMoney.class, pPanel.getGuiFactory().newMoneyField());
         }
@@ -524,7 +524,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetPriceItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataField pField) {
+                                         final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysPrice.class, pPanel.getGuiFactory().newPriceField());
         }
@@ -543,7 +543,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetRateItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataField pField) {
+                                        final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysRate.class, pPanel.getGuiFactory().newRateField());
         }
@@ -562,7 +562,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetUnitsItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataField pField) {
+                                         final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysUnits.class, pPanel.getGuiFactory().newUnitsField());
         }
@@ -581,7 +581,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetRatioItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataField pField) {
+                                         final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysRatio.class, pPanel.getGuiFactory().newRatioField());
         }
@@ -600,7 +600,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetDilutionItem(final MetisFieldSetPanel<N, I> pPanel,
-                                            final MetisDataField pField) {
+                                            final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysDilution.class, pPanel.getGuiFactory().newDilutionField());
         }
@@ -620,7 +620,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetDateItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataField pField) {
+                                        final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysDate.class, pPanel.getGuiFactory().newDateField());
         }
@@ -647,7 +647,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pClass the item class
          */
         protected MetisFieldSetScrollItem(final MetisFieldSetPanel<N, I> pPanel,
-                                          final MetisDataField pField,
+                                          final MetisFieldId pField,
                                           final Class<T> pClass) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, pPanel.getGuiFactory().newScrollField());
@@ -674,7 +674,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pField the field
          */
         protected MetisFieldSetListItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataField pField) {
+                                        final MetisFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, pPanel.getGuiFactory().newListField());
         }
@@ -712,7 +712,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
          * @param pClass the item class
          */
         protected MetisFieldSetIconItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataField pField,
+                                        final MetisFieldId pField,
                                         final Class<T> pClass) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, pPanel.getGuiFactory().newIconField());

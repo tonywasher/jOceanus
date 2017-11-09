@@ -22,10 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -34,46 +32,24 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * Coeus Loan.
  */
 public abstract class CoeusLoan
-        implements MetisDataFieldItem, Comparable<CoeusLoan> {
+        implements MetisDataEosFieldItem, Comparable<CoeusLoan> {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusLoan.class);
+    private static final MetisDataEosFieldSet<CoeusLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusLoan.class);
 
     /**
-     * Market Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
-
-    /**
-     * LoanId Field Id.
-     */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
-
-    /**
-     * StartDate Field Id.
-     */
-    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE);
-
-    /**
-     * InitialLoan Field Id.
-     */
-    private static final MetisDataField FIELD_INITIALLOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT);
-
-    /**
-     * LastDate Field Id.
-     */
-    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE);
-
-    /**
-     * BadDebtDate Field Id.
-     */
-    private static final MetisDataField FIELD_BADDEBTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTDATE);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusLoan::getMarket);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID, CoeusLoan::getLoanId);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusLoan::getHistory);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE, CoeusLoan::getStartDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT, CoeusLoan::getInitialLoan);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE, CoeusLoan::getLastDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTDATE, CoeusLoan::getBadDebtDate);
+    }
 
     /**
      * Loan Market.
@@ -313,47 +289,8 @@ public abstract class CoeusLoan
         return theLoanId.hashCode();
     }
 
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
     @Override
     public String toString() {
         return theLoanId;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_MARKET.equals(pField)) {
-            return theMarket;
-        }
-        if (FIELD_LOANID.equals(pField)) {
-            return theLoanId;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-        if (FIELD_STARTDATE.equals(pField)) {
-            return theStartDate;
-        }
-        if (FIELD_INITIALLOAN.equals(pField)) {
-            return theInitialLoan;
-        }
-        if (FIELD_LASTDATE.equals(pField)) {
-            return theLastDate;
-        }
-        if (FIELD_BADDEBTDATE.equals(pField)) {
-            return theBadDebtDate == null
-                                          ? MetisDataFieldValue.SKIP
-                                          : theBadDebtDate;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

@@ -157,7 +157,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    protected static MetisDataEosFieldSetDef lookUpFieldSet(final Class<?> pClazz) {
+    public static MetisDataEosFieldSetDef lookUpFieldSet(final Class<?> pClazz) {
         /* Check that the class does not already exist */
         final String myClassName = pClazz.getCanonicalName();
         if (myClassName == null || pClazz.isArray()) {
@@ -293,9 +293,8 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pValue the value supplier
      * @return the field
      */
-    public MetisDataEosField<T> declareCalculatedField(final MetisFieldId pId,
-                                                       final Function<T, Object> pValue) {
-        return declareDataField(pId, pValue, MetisDataFieldStorage.CALCULATED);
+    public MetisDataEosField<T> declareCalculatedField(final MetisFieldId pId) {
+        return declareDataField(pId, null, MetisDataFieldStorage.CALCULATED);
     }
 
     /**
@@ -384,12 +383,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
         }
     }
 
-    /**
-     * Obtain field from fieldId.
-     * @param pId the fieldId.
-     * @return the corresponding field
-     * @throws IllegalArgumentException if name is not present
-     */
+    @Override
     public MetisDataEosFieldDef getField(final MetisFieldId pId) {
         /* Loop through existing iDs */
         final Iterator<MetisDataEosFieldDef> myIterator = fieldIterator();

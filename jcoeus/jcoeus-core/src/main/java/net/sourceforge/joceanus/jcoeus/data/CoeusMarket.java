@@ -29,44 +29,31 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Loan Market.
  */
 public abstract class CoeusMarket
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusMarket.class);
+    private static final MetisDataEosFieldSet<CoeusMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarket.class);
 
     /**
-     * Provider Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_PROVIDER = FIELD_DEFS.declareLocalField(CoeusResource.DATA_PROVIDER);
-
-    /**
-     * LoanMap Field Id.
-     */
-    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP);
-
-    /**
-     * Transactions Field Id.
-     */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSACTIONS);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_PROVIDER, CoeusMarket::getProvider);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP, CoeusMarket::getLoans);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSACTIONS, CoeusMarket::getTransactions);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusMarket::getFullHistory);
+    }
 
     /**
      * Loan Market Provider.
@@ -141,6 +128,14 @@ public abstract class CoeusMarket
      */
     public Iterator<CoeusLoan> loanIterator() {
         return theLoanMap.values().iterator();
+    }
+
+    /**
+     * Obtain the loans.
+     * @return the loans
+     */
+    private Map<String, CoeusLoan> getLoans() {
+        return theLoanMap;
     }
 
     /**
@@ -352,65 +347,4 @@ public abstract class CoeusMarket
      * @return true/false
      */
     public abstract boolean hasBadDebt();
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Skip zero value.
-     * @param pValue the value
-     * @return the value if non-zero, else SKIP
-     */
-    public static Object skipZero(final TethysDecimal pValue) {
-        return pValue.isZero()
-                               ? MetisDataFieldValue.SKIP
-                               : pValue;
-    }
-
-    /**
-     * Skip empty list.
-     * @param pList the list
-     * @return the list if non-empty, else SKIP
-     */
-    public static Object skipEmpty(final List<?> pList) {
-        return pList.isEmpty()
-                               ? MetisDataFieldValue.SKIP
-                               : pList;
-    }
-
-    /**
-     * Skip null value.
-     * @param pValue the value
-     * @return the list if non-empty, else SKIP
-     */
-    public static Object skipNull(final Object pValue) {
-        return pValue == null
-                              ? MetisDataFieldValue.SKIP
-                              : pValue;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_PROVIDER.equals(pField)) {
-            return theProvider;
-        }
-        if (FIELD_LOANS.equals(pField)) {
-            return theLoanMap;
-        }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTransactions;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
-    }
 }

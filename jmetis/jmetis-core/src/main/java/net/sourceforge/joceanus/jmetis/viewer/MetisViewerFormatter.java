@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldStorage;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 
 /**
@@ -292,7 +293,7 @@ public class MetisViewerFormatter {
                                                             : myField.getFieldValue(pItem);
 
             /* Skip value if required */
-            if (MetisDataFieldValue.SKIP.equals(myValue)) {
+            if (skipValue(myValue)) {
                 continue;
             }
 
@@ -301,6 +302,41 @@ public class MetisViewerFormatter {
             theBuilder.newDataCell(myField.getFieldId().getId());
             theBuilder.newDataCell(myValue);
         }
+    }
+
+    /**
+     * Should we skip the value.
+     * @param pObject the object
+     * @return true/false
+     */
+    private static boolean skipValue(final Object pValue) {
+        /* Access the value */
+        Object myValue = pValue;
+
+        /* Skip empty lists */
+        if (myValue instanceof MetisDataList) {
+            myValue = ((MetisDataList<?>) myValue).getUnderlyingList();
+        }
+        if (myValue instanceof List) {
+            return ((List<?>) myValue).isEmpty();
+        }
+
+        /* Skip empty maps */
+        if (myValue instanceof MetisDataMap) {
+            myValue = ((MetisDataMap<?, ?>) myValue).getUnderlyingMap();
+        }
+        if (myValue instanceof Map) {
+            return ((Map<?, ?>) myValue).isEmpty();
+        }
+
+        /* Skip zero decimals */
+        if (myValue instanceof TethysDecimal) {
+            return ((TethysDecimal) myValue).isZero();
+        }
+
+        /* Skip value if required */
+        return myValue == null
+               || MetisDataFieldValue.SKIP.equals(myValue);
     }
 
     /**

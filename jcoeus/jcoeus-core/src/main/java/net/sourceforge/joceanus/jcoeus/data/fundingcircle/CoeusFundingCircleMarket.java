@@ -32,9 +32,8 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -46,12 +45,14 @@ public class CoeusFundingCircleMarket
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusFundingCircleMarket.class, CoeusMarket.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<CoeusFundingCircleMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusFundingCircleMarket.class);
 
     /**
      * AuctionMap Field Id.
      */
-    private static final MetisDataField FIELD_AUCTIONS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONMAP);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONMAP, CoeusFundingCircleMarket::getAuctionMap);
+    }
 
     /**
      * The LoanBook Parser.
@@ -213,6 +214,14 @@ public class CoeusFundingCircleMarket
         return myLoan;
     }
 
+    /**
+     * Obtain the auctionMap.
+     * @return the auctionMap
+     */
+    private Map<String, CoeusFundingCircleLoan> getAuctionMap() {
+        return theAuctionMap;
+    }
+
     @Override
     public boolean usesDecimalTotals() {
         return false;
@@ -261,18 +270,7 @@ public class CoeusFundingCircleMarket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusFundingCircleMarket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_AUCTIONS.equals(pField)) {
-            return theAuctionMap;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 }

@@ -30,9 +30,7 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -44,27 +42,17 @@ public class CoeusZopaLoan
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaLoan.class, CoeusLoan.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<CoeusZopaLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaLoan.class);
 
     /**
-     * LoanBookItem Field Id.
+     * Fields.
      */
-    private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM);
-
-    /**
-     * LoanBookItemList Field Id.
-     */
-    private static final MetisDataField FIELD_BOOKITEMLIST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEMS);
-
-    /**
-     * MissingCapital Field Id.
-     */
-    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL);
-
-    /**
-     * MissingInterest Field Id.
-     */
-    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM, CoeusZopaLoan::getBookItem);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEMS, CoeusZopaLoan::getBookItems);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL, CoeusZopaLoan::getMissingCapital);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST, CoeusZopaLoan::getMissingInterest);
+    }
 
     /**
      * The list of bookItems.
@@ -178,11 +166,35 @@ public class CoeusZopaLoan
     }
 
     /**
+     * Obtain the book item list.
+     * @return the list
+     */
+    private List<CoeusZopaLoanBookItem> getBookItems() {
+        return theBookItems;
+    }
+
+    /**
      * Has multiple bookItems?
      * @return true/false
      */
     public boolean hasMultipleBookItems() {
         return !theBookItems.isEmpty();
+    }
+
+    /**
+     * Obtain the missing capital.
+     * @return the missing capital
+     */
+    private TethysDecimal getMissingCapital() {
+        return theMissingCapital;
+    }
+
+    /**
+     * Obtain the missing interest.
+     * @return the missing interest
+     */
+    private TethysDecimal getMissingInterest() {
+        return theMissingInterest;
     }
 
     /**
@@ -262,7 +274,7 @@ public class CoeusZopaLoan
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusZopaLoan> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -279,31 +291,5 @@ public class CoeusZopaLoan
             myBuilder.insert(0, "Z:");
         }
         return myBuilder.toString();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_BOOKITEM.equals(pField)) {
-            return theBookItem;
-        }
-        if (FIELD_BOOKITEMLIST.equals(pField)) {
-            return theBookItems.isEmpty()
-                                          ? MetisDataFieldValue.SKIP
-                                          : theBookItems;
-        }
-        if (FIELD_MISSINGCAPITAL.equals(pField)) {
-            return theMissingCapital.isZero()
-                                              ? MetisDataFieldValue.SKIP
-                                              : theMissingCapital;
-        }
-        if (FIELD_MISSINGINTEREST.equals(pField)) {
-            return theMissingInterest.isZero()
-                                               ? MetisDataFieldValue.SKIP
-                                               : theMissingInterest;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 }

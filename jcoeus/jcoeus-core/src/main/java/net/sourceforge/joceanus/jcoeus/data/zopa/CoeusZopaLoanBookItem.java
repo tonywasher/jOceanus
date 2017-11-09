@@ -28,13 +28,10 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
-import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -44,11 +41,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Zopa LoanBook Item.
  */
 public class CoeusZopaLoanBookItem
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaLoanBookItem.class);
+    private static final MetisDataEosFieldSet<CoeusZopaLoanBookItem> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaLoanBookItem.class);
 
     /**
      * Builder buffer length.
@@ -56,54 +53,21 @@ public class CoeusZopaLoanBookItem
     private static final int BUFFER_LEN = 100;
 
     /**
-     * Loan Id Field Id.
+     * Fields.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
-
-    /**
-     * Risk Field Id.
-     */
-    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK);
-
-    /**
-     * Rate Field Id.
-     */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE);
-
-    /**
-     * Status Field Id.
-     */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS);
-
-    /**
-     * Original Loan Field Id.
-     */
-    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT);
-
-    /**
-     * Balance Field Id.
-     */
-    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE);
-
-    /**
-     * Repaid Field Id.
-     */
-    private static final MetisDataField FIELD_REPAID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_REPAID);
-
-    /**
-     * Capital Field Id.
-     */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_CAPITAL);
-
-    /**
-     * Interest Field Id.
-     */
-    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTEREST);
-
-    /**
-     * Missing Field Id.
-     */
-    private static final MetisDataField FIELD_MISSING = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSING);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID, CoeusZopaLoanBookItem::getLoanId);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK, CoeusZopaLoanBookItem::getRisk);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusZopaLoanBookItem::getDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE, CoeusZopaLoanBookItem::getRate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS, CoeusZopaLoanBookItem::getStatus);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT, CoeusZopaLoanBookItem::getLent);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE, CoeusZopaLoanBookItem::getBalance);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_REPAID, CoeusZopaLoanBookItem::getRepaid);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_CAPITAL, CoeusZopaLoanBookItem::getCapitalRepaid);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTEREST, CoeusZopaLoanBookItem::getInterestRepaid);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSING, CoeusZopaLoanBookItem::getMissing);
+    }
 
     /**
      * The loan Id.
@@ -516,45 +480,7 @@ public class CoeusZopaLoanBookItem
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusZopaLoanBookItem> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_LOANID.equals(pField)) {
-            return theLoanId;
-        }
-        if (FIELD_RISK.equals(pField)) {
-            return theRisk;
-        }
-        if (FIELD_RATE.equals(pField)) {
-            return theRate;
-        }
-        if (FIELD_STATUS.equals(pField)) {
-            return theStatus;
-        }
-        if (FIELD_LENT.equals(pField)) {
-            return theLent;
-        }
-        if (FIELD_BALANCE.equals(pField)) {
-            return theBalance;
-        }
-        if (FIELD_REPAID.equals(pField)) {
-            return theRepaid;
-        }
-        if (FIELD_CAPITAL.equals(pField)) {
-            return theCapital;
-        }
-        if (FIELD_INTEREST.equals(pField)) {
-            return theInterest;
-        }
-        if (FIELD_MISSING.equals(pField)) {
-            return CoeusMarket.skipZero(theMissing);
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

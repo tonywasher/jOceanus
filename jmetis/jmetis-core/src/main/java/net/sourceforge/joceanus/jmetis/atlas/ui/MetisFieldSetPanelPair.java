@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -63,7 +63,7 @@ public class MetisFieldSetPanelPair<N, I>
     /**
      * The field map.
      */
-    private final Map<MetisDataField, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
+    private final Map<MetisFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
 
     /**
      * The Node.
@@ -175,7 +175,7 @@ public class MetisFieldSetPanelPair<N, I>
      * Obtain the fieldSet map.
      * @return the fieldSet map
      */
-    protected Map<MetisDataField, MetisFieldSetPanelItem<?, N, I>> getFieldMap() {
+    protected Map<MetisFieldId, MetisFieldSetPanelItem<?, N, I>> getFieldMap() {
         return theFieldMap;
     }
 
@@ -183,7 +183,7 @@ public class MetisFieldSetPanelPair<N, I>
      * Set the item.
      * @param pItem the item to set
      */
-    public void setItem(final MetisDataFieldItem pItem) {
+    public void setItem(final MetisDataEosFieldItem pItem) {
         /* Declare to the main panel */
         theMainPanel.setItem(pItem);
 
@@ -199,7 +199,7 @@ public class MetisFieldSetPanelPair<N, I>
      * obtain the item.
      * @return the item
      */
-    public MetisDataFieldItem getItem() {
+    public MetisDataEosFieldItem getItem() {
         return theMainPanel.getItem();
     }
 
@@ -263,7 +263,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pField the field
      * @param pReadOnly the readOnly state
      */
-    public void setReadOnlyField(final MetisDataField pField,
+    public void setReadOnlyField(final MetisFieldId pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -278,7 +278,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pField the field
      * @param pCurrency the currency supplier
      */
-    public void setDeemedCurrency(final MetisDataField pField,
+    public void setDeemedCurrency(final MetisFieldId pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -294,7 +294,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pField the field
      * @param pShow true/false
      */
-    public void showCmdButton(final MetisDataField pField,
+    public void showCmdButton(final MetisFieldId pField,
                               final boolean pShow) {
         /* Look up the field */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -367,7 +367,7 @@ public class MetisFieldSetPanelPair<N, I>
          * Set the item.
          * @param pItem the item to set
          */
-        private void setItem(final MetisDataFieldItem pItem) {
+        private void setItem(final MetisDataEosFieldItem pItem) {
             thePanel.setItem(pItem);
         }
 

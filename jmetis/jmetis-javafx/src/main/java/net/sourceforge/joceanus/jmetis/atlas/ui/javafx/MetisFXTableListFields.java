@@ -30,20 +30,20 @@ import java.util.Map;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
 
 /**
  * Table List fields.
  * @param <R> the item type
  */
-public class MetisFXTableListFields<R extends MetisDataTableItem> {
+public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
     /**
      * The fieldSet.
      */
-    private final List<MetisDataField> theFields;
+    private final List<MetisDataEosFieldDef> theFields;
 
     /**
      * The fieldSet Map.
@@ -68,7 +68,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      * Obtain the fields.
      * @return the fields
      */
-    protected List<MetisDataField> getFields() {
+    protected List<MetisDataEosFieldDef> getFields() {
         return theFields;
     }
 
@@ -93,7 +93,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      * Declare field.
      * @param pField the field
      */
-    protected void declareField(final MetisDataField pField) {
+    protected void declareField(final MetisDataEosFieldDef pField) {
         theFields.add(pField);
     }
 
@@ -104,12 +104,7 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      */
     private MetisFXTableFieldSet<R> getFieldSet(final R pItem) {
         final Integer myId = pItem.getIndexedId();
-        MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(myId);
-        if (myFieldSet == null) {
-            myFieldSet = new MetisFXTableFieldSet<>(pItem, this);
-            theIdMap.put(myId, myFieldSet);
-        }
-        return myFieldSet;
+        return theIdMap.computeIfAbsent(myId, i -> new MetisFXTableFieldSet<>(pItem, this));
     }
 
     /**
@@ -126,14 +121,14 @@ public class MetisFXTableListFields<R extends MetisDataTableItem> {
      * Obtain the ObjectProperty for an item and field.
      * @param <T> the property type
      * @param pItem the item
-     * @param pId the field id
+     * @param pField the field
      * @return the array
      */
     @SuppressWarnings("unchecked")
     protected <T> ObjectProperty<T> getObjectProperty(final R pItem,
-                                                      final MetisDataField pId) {
+                                                      final MetisDataEosFieldDef pField) {
         final MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
-        return (ObjectProperty<T>) myFieldSet.getPropertyForField(pId);
+        return (ObjectProperty<T>) myFieldSet.getPropertyForField(pField);
     }
 
     /**

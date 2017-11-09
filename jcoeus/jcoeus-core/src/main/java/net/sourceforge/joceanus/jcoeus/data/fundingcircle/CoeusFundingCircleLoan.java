@@ -29,8 +29,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -42,12 +41,14 @@ public class CoeusFundingCircleLoan
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusFundingCircleLoan.class, CoeusLoan.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<CoeusFundingCircleLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusFundingCircleLoan.class);
 
     /**
-     * LoanBookItem Field Id.
+     * Fields.
      */
-    private static final MetisDataField FIELD_BOOKITEM = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BOOKITEM, CoeusFundingCircleLoan::getLoanBookItem);
+    }
 
     /**
      * The list of bookItems.
@@ -188,18 +189,7 @@ public class CoeusFundingCircleLoan
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusFundingCircleLoan> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_BOOKITEM.equals(pField)) {
-            return theBookItem;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 }

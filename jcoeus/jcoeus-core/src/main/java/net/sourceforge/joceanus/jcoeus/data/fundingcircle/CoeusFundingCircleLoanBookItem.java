@@ -29,11 +29,9 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -42,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * FundingCircle Loan Book Item.
  */
 public class CoeusFundingCircleLoanBookItem
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
@@ -56,42 +54,20 @@ public class CoeusFundingCircleLoanBookItem
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusFundingCircleLoanBookItem.class);
+    private static final MetisDataEosFieldSet<CoeusFundingCircleLoanBookItem> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusFundingCircleLoanBookItem.class);
 
     /**
-     * Loan Id Field Id.
+     * Fields.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
-
-    /**
-     * Description Field Id.
-     */
-    private static final MetisDataField FIELD_DESC = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DESC);
-
-    /**
-     * AuctionId Field Id.
-     */
-    private static final MetisDataField FIELD_AUCTIONID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONID);
-
-    /**
-     * Risk Field Id.
-     */
-    private static final MetisDataField FIELD_RISK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK);
-
-    /**
-     * Outstanding Balance Field Id.
-     */
-    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE);
-
-    /**
-     * Rate Field Id.
-     */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE);
-
-    /**
-     * Status Field Id.
-     */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID, CoeusFundingCircleLoanBookItem::getLoanId);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_DESC, CoeusFundingCircleLoanBookItem::getDescription);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_AUCTIONID, CoeusFundingCircleLoanBookItem::getAuctionId);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANRISK, CoeusFundingCircleLoanBookItem::getRisk);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE, CoeusFundingCircleLoanBookItem::getBalance);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE, CoeusFundingCircleLoanBookItem::getRate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS, CoeusFundingCircleLoanBookItem::getStatus);
+    }
 
     /**
      * The loan Id.
@@ -381,36 +357,7 @@ public class CoeusFundingCircleLoanBookItem
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusFundingCircleLoanBookItem> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_LOANID.equals(pField)) {
-            return theLoanId;
-        }
-        if (FIELD_DESC.equals(pField)) {
-            return theDesc;
-        }
-        if (FIELD_AUCTIONID.equals(pField)) {
-            return theAuctionId;
-        }
-        if (FIELD_RISK.equals(pField)) {
-            return theRisk;
-        }
-        if (FIELD_BALANCE.equals(pField)) {
-            return theBalance;
-        }
-        if (FIELD_RATE.equals(pField)) {
-            return theRate;
-        }
-        if (FIELD_STATUS.equals(pField)) {
-            return theStatus;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

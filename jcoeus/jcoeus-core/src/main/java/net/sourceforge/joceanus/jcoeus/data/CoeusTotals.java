@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataTableItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -34,136 +33,42 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Transaction Totals.
  */
 public abstract class CoeusTotals
-        implements MetisDataTableItem {
+        implements MetisDataEosTableItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusTotals.class);
+    private static final MetisDataEosFieldSet<CoeusTotals> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusTotals.class);
 
     /**
-     * ID Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ID);
-
-    /**
-     * Market Field Id.
-     */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
-
-    /**
-     * Loan Field Id.
-     */
-    public static final MetisDataField FIELD_LOAN = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOAN);
-
-    /**
-     * Date Field Id.
-     */
-    public static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE);
-
-    /**
-     * Description Field Id.
-     */
-    public static final MetisDataField FIELD_DESC = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DESC);
-
-    /**
-     * TransactionType Field Id.
-     */
-    public static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSTYPE);
-
-    /**
-     * Transaction Field Id.
-     */
-    private static final MetisDataField FIELD_TRANSACTION = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TRANSACTION);
-
-    /**
-     * TotalSourceValue Field Id.
-     */
-    private static final MetisDataField FIELD_SOURCEVALUE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_SOURCEVALUE);
-
-    /**
-     * TotalAssetValue Field Id.
-     */
-    private static final MetisDataField FIELD_ASSETVALUE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ASSETVALUE);
-
-    /**
-     * TotalInvested Field Id.
-     */
-    private static final MetisDataField FIELD_INVESTED = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INVESTED);
-
-    /**
-     * TotalHolding Field Id.
-     */
-    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HOLDING);
-
-    /**
-     * TotalLoanBook Field Id.
-     */
-    private static final MetisDataField FIELD_LOANBOOK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANBOOK);
-
-    /**
-     * TotalEarnings Field Id.
-     */
-    private static final MetisDataField FIELD_EARNINGS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_EARNINGS);
-
-    /**
-     * TotalTaxableEarnings Field Id.
-     */
-    private static final MetisDataField FIELD_TAXEARNINGS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_TAXABLEEARNINGS);
-
-    /**
-     * TotalInterest Field Id.
-     */
-    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTEREST);
-
-    /**
-     * TotalNettInterest Field Id.
-     */
-    private static final MetisDataField FIELD_NETTINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_NETTINTEREST);
-
-    /**
-     * TotalBadDebtInterest Field Id.
-     */
-    private static final MetisDataField FIELD_BADDEBTINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTINTEREST);
-
-    /**
-     * TotalBadDebtCapital Field Id.
-     */
-    private static final MetisDataField FIELD_BADDEBTCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBTCAPITAL);
-
-    /**
-     * TotalFees Field Id.
-     */
-    private static final MetisDataField FIELD_FEES = FIELD_DEFS.declareLocalField(CoeusResource.DATA_FEES);
-
-    /**
-     * TotalCashBack Field Id.
-     */
-    private static final MetisDataField FIELD_CASHBACK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_CASHBACK);
-
-    /**
-     * TotalLosses Field Id.
-     */
-    private static final MetisDataField FIELD_LOSSES = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOSSES);
-
-    /**
-     * TotalBadDebt Field Id.
-     */
-    private static final MetisDataField FIELD_BADDEBT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BADDEBT);
-
-    /**
-     * TotalRecovered Field Id.
-     */
-    private static final MetisDataField FIELD_RECOVERED = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RECOVERED);
-
-    /**
-     * Delta Field Id.
-     */
-    public static final MetisDataField FIELD_DELTA = FIELD_DEFS.declareCalculatedField(CoeusResource.DATA_DELTA);
-
-    /**
-     * TotalRecovered Field Id.
-     */
-    public static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareCalculatedField(CoeusResource.DATA_BALANCE);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.ID, CoeusTotals::getId);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.MARKET, CoeusTotals::getMarket);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.LOAN, CoeusTotals::getLoan);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.DATE, CoeusTotals::getDate);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.DESC, CoeusTotals::getDescription);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.TRANSTYPE, CoeusTotals::getTransType);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.TRANSACTION, CoeusTotals::getTransaction);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.SOURCEVALUE, CoeusTotals::getSourceValue);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.ASSETVALUE, CoeusTotals::getAssetValue);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.INVESTED, CoeusTotals::getInvested);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.HOLDING, CoeusTotals::getHolding);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.LOANBOOK, CoeusTotals::getLoanBook);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.EARNINGS, CoeusTotals::getEarnings);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.TAXABLEEARNINGS, CoeusTotals::getTaxableEarnings);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.INTEREST, CoeusTotals::getInterest);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.NETTINTEREST, CoeusTotals::getNettInterest);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.BADDEBTINTEREST, CoeusTotals::getBadDebtInterest);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.BADDEBTCAPITAL, CoeusTotals::getBadDebtCapital);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.FEES, CoeusTotals::getFees);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.CASHBACK, CoeusTotals::getCashBack);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.LOSSES, CoeusTotals::getLosses);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.BADDEBT, CoeusTotals::getBadDebt);
+        FIELD_DEFS.declareLocalField(CoeusTotalsField.RECOVERED, CoeusTotals::getRecovered);
+        FIELD_DEFS.declareCalculatedField(CoeusTotalsField.DELTA);
+        FIELD_DEFS.declareCalculatedField(CoeusTotalsField.BALANCE);
+    }
 
     /**
      * The market.
@@ -222,11 +127,29 @@ public abstract class CoeusTotals
                                                        : pPrevious;
     }
 
+    /**
+     * Obtain the fieldSet.
+     * @return the fieldSet.
+     */
+    public static MetisDataEosFieldSet<CoeusTotals> getTheFieldSet() {
+        return FIELD_DEFS;
+    }
+
     @Override
     public Integer getIndexedId() {
         return theTransaction != null
                                       ? theTransaction.getIndexedId()
                                       : -1;
+    }
+
+    /**
+     * Obtain the id.
+     * @return the id
+     */
+    private Integer getId() {
+        return theTransaction != null
+                                      ? theTransaction.getIndexedId()
+                                      : null;
     }
 
     /**
@@ -261,6 +184,24 @@ public abstract class CoeusTotals
         return theTransaction == null
                                       ? CoeusTransactionType.TOTALS.toString()
                                       : theTransaction.getDescription();
+    }
+
+    /**
+     * Obtain the TransactionType.
+     * @return the transType
+     */
+    private CoeusTransactionType getTransType() {
+        return theTransaction == null
+                                      ? CoeusTransactionType.TOTALS
+                                      : theTransaction.getTransType();
+    }
+
+    /**
+     * Obtain the Transaction.
+     * @return the transaction
+     */
+    private CoeusTransaction getTransaction() {
+        return theTransaction;
     }
 
     /**
@@ -398,9 +339,9 @@ public abstract class CoeusTotals
      * @param pField the field
      * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForField(final MetisDataField pField) {
+    public TethysDecimal getDeltaForField(final MetisDataEosFieldDef pField) {
         /* Obtain the field value */
-        Object myValue = getFieldValue(pField);
+        Object myValue = pField.getFieldValue(this);
         if (MetisDataFieldValue.SKIP.equals(myValue)) {
             myValue = getZero();
         }
@@ -414,7 +355,7 @@ public abstract class CoeusTotals
         /* Obtain the previous field value */
         myValue = thePrevious == null
                                       ? null
-                                      : thePrevious.getFieldValue(pField);
+                                      : pField.getFieldValue(thePrevious);
         if (MetisDataFieldValue.SKIP.equals(myValue)) {
             myValue = null;
         }
@@ -452,37 +393,37 @@ public abstract class CoeusTotals
      * @param pTotalSet the totalSet
      * @return the balance field
      */
-    protected static MetisDataField getBalanceField(final CoeusTotalSet pTotalSet) {
+    protected static CoeusTotalsField getBalanceField(final CoeusTotalSet pTotalSet) {
         switch (pTotalSet) {
             case INVESTED:
-                return FIELD_INVESTED;
+                return CoeusTotalsField.INVESTED;
             case EARNINGS:
-                return FIELD_EARNINGS;
+                return CoeusTotalsField.EARNINGS;
             case TAXABLEEARNINGS:
-                return FIELD_TAXEARNINGS;
+                return CoeusTotalsField.TAXABLEEARNINGS;
             case INTEREST:
-                return FIELD_INTEREST;
+                return CoeusTotalsField.INTEREST;
             case NETTINTEREST:
-                return FIELD_NETTINTEREST;
+                return CoeusTotalsField.NETTINTEREST;
             case FEES:
-                return FIELD_FEES;
+                return CoeusTotalsField.FEES;
             case CASHBACK:
-                return FIELD_CASHBACK;
+                return CoeusTotalsField.CASHBACK;
             case BADDEBTCAPITAL:
-                return FIELD_BADDEBTCAPITAL;
+                return CoeusTotalsField.BADDEBTCAPITAL;
             case BADDEBTINTEREST:
-                return FIELD_BADDEBTINTEREST;
+                return CoeusTotalsField.BADDEBTINTEREST;
             case LOSSES:
-                return FIELD_LOSSES;
+                return CoeusTotalsField.LOSSES;
             case BADDEBT:
-                return FIELD_BADDEBT;
+                return CoeusTotalsField.BADDEBT;
             case RECOVERED:
-                return FIELD_RECOVERED;
+                return CoeusTotalsField.RECOVERED;
             case HOLDING:
-                return FIELD_HOLDING;
+                return CoeusTotalsField.HOLDING;
             case LOANBOOK:
             default:
-                return FIELD_LOANBOOK;
+                return CoeusTotalsField.LOANBOOK;
         }
     }
 
@@ -491,14 +432,6 @@ public abstract class CoeusTotals
      * @return zero total
      */
     protected abstract TethysDecimal getZero();
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    public static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
 
     @Override
     public String toString() {
@@ -536,87 +469,5 @@ public abstract class CoeusTotals
 
         /* Return the formatted string */
         return myBuilder.toString();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_ID.equals(pField)) {
-            final Integer myId = getIndexedId();
-            return myId == -1
-                              ? MetisDataFieldValue.SKIP
-                              : myId;
-        }
-        if (FIELD_MARKET.equals(pField)) {
-            return theMarket;
-        }
-        if (FIELD_LOAN.equals(pField)) {
-            return CoeusMarket.skipNull(getLoan());
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return CoeusMarket.skipNull(theDate);
-        }
-        if (FIELD_DESC.equals(pField)) {
-            return getDescription();
-        }
-        if (FIELD_TYPE.equals(pField)) {
-            return theTransaction == null
-                                          ? CoeusTransactionType.TOTALS
-                                          : theTransaction.getTransType();
-        }
-        if (FIELD_TRANSACTION.equals(pField)) {
-            return CoeusMarket.skipNull(theTransaction);
-        }
-        if (FIELD_ASSETVALUE.equals(pField)) {
-            return CoeusMarket.skipZero(getAssetValue());
-        }
-        if (FIELD_HOLDING.equals(pField)) {
-            return CoeusMarket.skipZero(getHolding());
-        }
-        if (FIELD_LOANBOOK.equals(pField)) {
-            return CoeusMarket.skipZero(getLoanBook());
-        }
-        if (FIELD_SOURCEVALUE.equals(pField)) {
-            return CoeusMarket.skipZero(getSourceValue());
-        }
-        if (FIELD_INVESTED.equals(pField)) {
-            return CoeusMarket.skipZero(getInvested());
-        }
-        if (FIELD_EARNINGS.equals(pField)) {
-            return CoeusMarket.skipZero(getEarnings());
-        }
-        if (FIELD_TAXEARNINGS.equals(pField)) {
-            return CoeusMarket.skipZero(getTaxableEarnings());
-        }
-        if (FIELD_INTEREST.equals(pField)) {
-            return CoeusMarket.skipZero(getInterest());
-        }
-        if (FIELD_NETTINTEREST.equals(pField)) {
-            return CoeusMarket.skipZero(getNettInterest());
-        }
-        if (FIELD_BADDEBTINTEREST.equals(pField)) {
-            return CoeusMarket.skipZero(getBadDebtInterest());
-        }
-        if (FIELD_BADDEBTCAPITAL.equals(pField)) {
-            return CoeusMarket.skipZero(getBadDebtCapital());
-        }
-        if (FIELD_FEES.equals(pField)) {
-            return CoeusMarket.skipZero(getFees());
-        }
-        if (FIELD_CASHBACK.equals(pField)) {
-            return CoeusMarket.skipZero(getCashBack());
-        }
-        if (FIELD_LOSSES.equals(pField)) {
-            return CoeusMarket.skipZero(getLosses());
-        }
-        if (FIELD_BADDEBT.equals(pField)) {
-            return CoeusMarket.skipZero(getBadDebt());
-        }
-        if (FIELD_RECOVERED.equals(pField)) {
-            return CoeusMarket.skipZero(getRecovered());
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

@@ -24,12 +24,13 @@ package net.sourceforge.joceanus.jcoeus.ui.panels;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
+import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -68,7 +69,7 @@ public class CoeusStatementTable<N, I>
     /**
      * The Loan Column.
      */
-    private final TethysTableColumn<CoeusLoan, MetisDataField, CoeusTotals, N, I> theLoanColumn;
+    private final TethysTableColumn<CoeusLoan, MetisFieldId, CoeusTotals, N, I> theLoanColumn;
 
     /**
      * The Statement Calculator.
@@ -89,13 +90,13 @@ public class CoeusStatementTable<N, I>
         theList = new MetisIndexedList<>();
 
         /* Create the table */
-        theTable = pToolkit.newTableManager(theList);
-        theTable.declareDateColumn(CoeusTotals.FIELD_DATE);
-        theTable.declareScrollColumn(CoeusTotals.FIELD_TYPE, CoeusTransactionType.class);
-        theTable.declareStringColumn(CoeusTotals.FIELD_DESC);
-        theLoanColumn = theTable.declareScrollColumn(CoeusTotals.FIELD_LOAN, CoeusLoan.class);
-        theTable.declareRawDecimalColumn(CoeusTotals.FIELD_DELTA);
-        theTable.declareRawDecimalColumn(CoeusTotals.FIELD_BALANCE);
+        theTable = pToolkit.newTableManager(CoeusTotals.getTheFieldSet(), theList);
+        theTable.declareDateColumn(CoeusTotalsField.DATE);
+        theTable.declareScrollColumn(CoeusTotalsField.TRANSTYPE, CoeusTransactionType.class);
+        theTable.declareStringColumn(CoeusTotalsField.DESC);
+        theLoanColumn = theTable.declareScrollColumn(CoeusTotalsField.LOAN, CoeusLoan.class);
+        theTable.declareRawDecimalColumn(CoeusTotalsField.DELTA);
+        theTable.declareRawDecimalColumn(CoeusTotalsField.BALANCE);
 
         /* Create the selector */
         theSelector = new CoeusStatementSelect<>(myFactory, pCache);

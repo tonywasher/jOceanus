@@ -26,9 +26,11 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 
 /**
  * Statement calculator.
@@ -36,9 +38,19 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 public class CoeusStatementCalculator
         implements MetisTableCalculator<CoeusTotals> {
     /**
+     * The FieldSet.
+     */
+    private static final MetisDataEosFieldSet<CoeusTotals> FIELD_SET = CoeusTotals.getTheFieldSet();
+
+    /**
+     * The delta field.
+     */
+    private static final MetisDataEosFieldDef FIELD_DELTA = FIELD_SET.getField(CoeusTotalsField.DELTA);
+
+    /**
      * The current underlying field.
      */
-    private MetisDataField theField;
+    private MetisDataEosFieldDef theField;
 
     /**
      * The current filter.
@@ -50,8 +62,8 @@ public class CoeusStatementCalculator
      * @param pTotalSet the totalSet
      */
     protected void setTotalSet(final CoeusTotalSet pTotalSet) {
-        theField = pTotalSet.getBalanceField();
-        theFilter = p -> calculateValue(p, CoeusTotals.FIELD_DELTA) != null;
+        theField = FIELD_SET.getField(pTotalSet.getBalanceField());
+        theFilter = p -> calculateValue(p, FIELD_DELTA) != null;
     }
 
     /**
@@ -64,11 +76,11 @@ public class CoeusStatementCalculator
 
     @Override
     public Object calculateValue(final CoeusTotals pTotals,
-                                 final MetisDataField pField) {
-        if (CoeusTotals.FIELD_DELTA.equals(pField)) {
+                                 final MetisDataEosFieldDef pField) {
+        if (CoeusTotalsField.DELTA.equals(pField.getFieldId())) {
             return pTotals.getDeltaForField(theField);
-        } else if (CoeusTotals.FIELD_BALANCE.equals(pField)) {
-            final Object myValue = pTotals.getFieldValue(theField);
+        } else if (CoeusTotalsField.BALANCE.equals(pField.getFieldId())) {
+            final Object myValue = theField.getFieldValue(pTotals);
             return MetisDataFieldValue.SKIP.equals(myValue)
                                                             ? null
                                                             : myValue;

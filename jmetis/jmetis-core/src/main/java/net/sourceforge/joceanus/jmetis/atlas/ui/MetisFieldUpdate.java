@@ -23,7 +23,7 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -42,7 +42,7 @@ public class MetisFieldUpdate {
     /**
      * The field.
      */
-    private final MetisDataField theField;
+    private final MetisFieldId theField;
 
     /**
      * The new value.
@@ -54,7 +54,7 @@ public class MetisFieldUpdate {
      * @param pField the source field
      * @param pNewValue the new Value
      */
-    public MetisFieldUpdate(final MetisDataField pField,
+    public MetisFieldUpdate(final MetisFieldId pField,
                             final Object pNewValue) {
         theField = pField;
         theValue = pNewValue;
@@ -64,7 +64,7 @@ public class MetisFieldUpdate {
      * Obtain the source field.
      * @return the field
      */
-    public MetisDataField getField() {
+    public MetisFieldId getField() {
         return theField;
     }
 

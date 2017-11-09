@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFie
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -147,5 +148,20 @@ public interface MetisDataEosFieldItem
          * Lock the fieldSet.
          */
         void setLocked();
+
+        /**
+         * Obtain field from fieldId.
+         * @param pId the fieldId.
+         * @return the corresponding field
+         * @throws IllegalArgumentException if name is not present
+         */
+        MetisDataEosFieldDef getField(final MetisFieldId pId);
+    }
+
+    /**
+     * Table Item.
+     */
+    public interface MetisDataEosTableItem
+            extends MetisDataEosFieldItem, MetisIndexedItem {
     }
 }

@@ -31,10 +31,8 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -47,32 +45,18 @@ public class CoeusZopaMarket
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaMarket.class, CoeusMarket.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<CoeusZopaMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaMarket.class);
 
     /**
-     * Missing LoanBook Field Id.
+     * Fields.
      */
-    private static final MetisDataField FIELD_MISSINGBOOK = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGBOOK);
-
-    /**
-     * Missing Capital Field Id.
-     */
-    private static final MetisDataField FIELD_MISSINGCAPITAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL);
-
-    /**
-     * Missing Interest Field Id.
-     */
-    private static final MetisDataField FIELD_MISSINGINTEREST = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST);
-
-    /**
-     * Zombie Loans Field Id.
-     */
-    private static final MetisDataField FIELD_ZOMBIELOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ZOMBIELOANS);
-
-    /**
-     * Interesting loans Field Id.
-     */
-    private static final MetisDataField FIELD_INTERESTINGLOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTERESTINGLOANS);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGBOOK, CoeusZopaMarket::getMissingLoanBook);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGCAPITAL, CoeusZopaMarket::getMissingCapital);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MISSINGINTEREST, CoeusZopaMarket::getMissingInterest);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_ZOMBIELOANS, CoeusZopaMarket::getZombieLoans);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_INTERESTINGLOANS, CoeusZopaMarket::getInterestingLoans);
+    }
 
     /**
      * The Decimal size.
@@ -204,6 +188,46 @@ public class CoeusZopaMarket
         }
     }
 
+    /**
+     * Obtain the missing LoanBook.
+     * @return the missing loanBook
+     */
+    private TethysDecimal getMissingLoanBook() {
+        return theMissingLoanBook;
+    }
+
+    /**
+     * Obtain the missing Capital.
+     * @return the missing Capital
+     */
+    private TethysDecimal getMissingCapital() {
+        return theMissingCapital;
+    }
+
+    /**
+     * Obtain the missing Interest.
+     * @return the missing Interest
+     */
+    private TethysDecimal getMissingInterest() {
+        return theMissingInterest;
+    }
+
+    /**
+     * Obtain the zombieLoans.
+     * @return the zombieLoans
+     */
+    private TethysDecimal getZombieLoans() {
+        return theZombieLoans;
+    }
+
+    /**
+     * Obtain the interestingLoans.
+     * @return the interestingLoans
+     */
+    private List<CoeusZopaLoan> getInterestingLoans() {
+        return theInterestingLoans;
+    }
+
     @Override
     public boolean usesDecimalTotals() {
         return true;
@@ -297,32 +321,7 @@ public class CoeusZopaMarket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusZopaMarket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_MISSINGBOOK.equals(pField)) {
-            return skipZero(theMissingLoanBook);
-        }
-        if (FIELD_MISSINGCAPITAL.equals(pField)) {
-            return skipZero(theMissingCapital);
-        }
-        if (FIELD_MISSINGINTEREST.equals(pField)) {
-            return skipZero(theMissingInterest);
-        }
-        if (FIELD_ZOMBIELOANS.equals(pField)) {
-            return skipZero(theZombieLoans);
-        }
-        if (FIELD_INTERESTINGLOANS.equals(pField)) {
-            return theInterestingLoans.isEmpty()
-                                                 ? MetisDataFieldValue.SKIP
-                                                 : theInterestingLoans;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 }

@@ -28,7 +28,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -41,7 +41,7 @@ public final class CoeusZopaTransaction
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusZopaTransaction.class, CoeusTransaction.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<CoeusZopaTransaction> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaTransaction.class);
 
     /**
      * Transfer prefix.
@@ -699,7 +699,7 @@ public final class CoeusZopaTransaction
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusZopaTransaction> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }
