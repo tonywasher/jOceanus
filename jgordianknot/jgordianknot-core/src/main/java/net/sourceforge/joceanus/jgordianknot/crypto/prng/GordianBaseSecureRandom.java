@@ -154,4 +154,43 @@ public class GordianBaseSecureRandom
             theGenerator.reseed(pXtraInput);
         }
     }
+
+    /**
+     * Simple secureRandom.
+     */
+    protected static class GordianSimpleSecureRandom
+            implements GordianSecureRandom {
+        /**
+         * The underlying secureRandom.
+         */
+        private final SecureRandom theRandom;
+
+        /**
+         * Constructor.
+         * @param the underlying random
+         */
+        protected GordianSimpleSecureRandom(final SecureRandom pRandom) {
+            theRandom = pRandom;
+        }
+
+        @Override
+        public byte[] generateSeed(int pLength) {
+            return theRandom.generateSeed(pLength);
+        }
+
+        @Override
+        public void setSeed(byte[] pSeed) {
+            theRandom.setSeed(pSeed);
+        }
+
+        @Override
+        public void reseed(byte[] pXtraBytes) {
+            setSeed(pXtraBytes);
+        }
+
+        @Override
+        public SecureRandom getRandom() {
+            return theRandom;
+        }
+    }
 }

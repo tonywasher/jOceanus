@@ -56,6 +56,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianRandomSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianSecureRandom;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom.GordianSimpleSecureRandom;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -152,12 +154,20 @@ public final class GordianRandomFactory {
     }
 
     /**
+     * Access the initial SecureRandom.
+     * @return the secure random
+     */
+    public GordianSecureRandom getInitialRandom() {
+        return new GordianSimpleSecureRandom(theRandom);
+    }
+
+    /**
      * Create a random randomSpec.
      * @param pFactory the factory
      * @return the randomSpec
      */
     public GordianRandomSpec generateRandomSpec(final GordianFactory pFactory) {
-        return pFactory.generateRandomSpec(theRandom);
+        return pFactory.generateRandomSpec();
     }
 
     /**
@@ -237,7 +247,7 @@ public final class GordianRandomFactory {
      * @return a SecureRandom supported by a Hash DRBG.
      */
     public GordianBaseSecureRandom buildHash(final GordianDigest pDigest,
-                                         final boolean isPredictionResistant) {
+                                             final boolean isPredictionResistant) {
         return buildHash(pDigest, null, isPredictionResistant);
     }
 
@@ -250,8 +260,8 @@ public final class GordianRandomFactory {
      * @return a SecureRandom supported by a Hash DRBG.
      */
     public GordianBaseSecureRandom buildHash(final GordianDigest pDigest,
-                                         final byte[] pInitVector,
-                                         final boolean isPredictionResistant) {
+                                             final byte[] pInitVector,
+                                             final boolean isPredictionResistant) {
         /* Create initVector if required */
         final byte[] myInit = pInitVector == null
                                                   ? theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED)
@@ -271,7 +281,7 @@ public final class GordianRandomFactory {
      * @return a SecureRandom supported by a HMAC DRBG.
      */
     public GordianBaseSecureRandom buildHMAC(final GordianMac hMac,
-                                         final boolean isPredictionResistant) {
+                                             final boolean isPredictionResistant) {
         return buildHMAC(hMac, null, isPredictionResistant);
     }
 
@@ -284,8 +294,8 @@ public final class GordianRandomFactory {
      * @return a SecureRandom supported by a HMAC DRBG.
      */
     public GordianBaseSecureRandom buildHMAC(final GordianMac hMac,
-                                         final byte[] pInitVector,
-                                         final boolean isPredictionResistant) {
+                                             final byte[] pInitVector,
+                                             final boolean isPredictionResistant) {
         /* Create initVector if required */
         final byte[] myInit = pInitVector == null
                                                   ? theRandom.generateSeed(NUM_ENTROPY_BYTES_REQUIRED)

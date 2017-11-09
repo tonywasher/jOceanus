@@ -88,8 +88,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowS
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -217,6 +217,7 @@ public final class JcaFactory
 
         /* Create the SP800 Factory */
         theSP800Factory = new GordianRandomFactory();
+        setSecureRandom(theSP800Factory.getInitialRandom());
 
         /* Create the SecureRandom instance */
         final GordianBaseSecureRandom myRandom = createRandom(theSP800Factory.generateRandomSpec(this));

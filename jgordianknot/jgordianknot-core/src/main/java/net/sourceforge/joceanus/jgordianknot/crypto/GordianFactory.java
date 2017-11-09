@@ -154,12 +154,14 @@ public abstract class GordianFactory {
 
     /**
      * Create a random randomSpec.
-     * @param pRandom the random generator
      * @return the randomSpec
      */
-    public GordianRandomSpec generateRandomSpec(final SecureRandom pRandom) {
+    public GordianRandomSpec generateRandomSpec() {
+        /* Access the random generator */
+        SecureRandom myRandom = getRandom();
+
         /* Determine the type of random generator */
-        final boolean isHMac = pRandom.nextBoolean();
+        final boolean isHMac = myRandom.nextBoolean();
         final GordianRandomType myType = isHMac
                                                 ? GordianRandomType.HMAC
                                                 : GordianRandomType.HASH;
@@ -173,7 +175,7 @@ public abstract class GordianFactory {
         /* Keep looping until we find a valid digest */
         for (;;) {
             /* Obtain the candidate DigestSpec */
-            final int myInt = pRandom.nextInt(myDigestTypes.length);
+            final int myInt = myRandom.nextInt(myDigestTypes.length);
             final GordianDigestType myDigestType = myDigestTypes[myInt];
             final GordianDigestSpec mySpec = new GordianDigestSpec(myDigestType, GordianLength.LEN_512);
 

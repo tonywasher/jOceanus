@@ -197,8 +197,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyX
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey.BouncyXMSSValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
+import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -288,6 +288,7 @@ public final class BouncyFactory
 
         /* Create the SP800 Factory */
         theSP800Factory = new GordianRandomFactory();
+        setSecureRandom(theSP800Factory.getInitialRandom());
 
         /* Create the SecureRandom instance */
         final GordianBaseSecureRandom myRandom = createRandom(theSP800Factory.generateRandomSpec(this));
