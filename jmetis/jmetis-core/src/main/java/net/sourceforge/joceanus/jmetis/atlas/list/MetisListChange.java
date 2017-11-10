@@ -50,9 +50,9 @@ public class MetisListChange<T extends MetisIndexedItem> {
     private List<T> theChanged;
 
     /**
-     * The item IDs that are being deleted.
+     * The items that are being deleted.
      */
-    private List<Integer> theDeleted;
+    private List<T> theDeleted;
 
     /**
      * Constructor.
@@ -128,7 +128,7 @@ public class MetisListChange<T extends MetisIndexedItem> {
      * Obtain the iterator for added items.
      * @return the iterator
      */
-    public Iterator<Integer> deletedIterator() {
+    public Iterator<T> deletedIterator() {
         return theDeleted != null
                                   ? theDeleted.iterator()
                                   : Collections.emptyIterator();
@@ -164,7 +164,7 @@ public class MetisListChange<T extends MetisIndexedItem> {
         if (theDeleted == null) {
             theDeleted = new ArrayList<>();
         }
-        theDeleted.add(pItem.getIndexedId());
+        theDeleted.add(pItem);
     }
 
     /**

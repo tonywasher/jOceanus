@@ -209,14 +209,20 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      * @param pItem the item to remove
      */
     public void removeFromList(final T pItem) {
-        /* Access the id */
-        final Integer myId = pItem.getIndexedId();
+        removeById(pItem.getIndexedId());
+    }
 
-        /* Check that the id is present */
-        if (theIdMap.get(myId) != null) {
+    /**
+     * Remove item from the list.
+     * @param pId the id of the item to remove
+     */
+    public void removeById(final Integer pId) {
+        /* If the item is present */
+        T myItem = theIdMap.get(pId);
+        if (myItem != null) {
             /* Remove from the list */
-            theIdMap.remove(myId);
-            theList.remove(pItem);
+            theIdMap.remove(pId);
+            theList.remove(myItem);
         }
     }
 

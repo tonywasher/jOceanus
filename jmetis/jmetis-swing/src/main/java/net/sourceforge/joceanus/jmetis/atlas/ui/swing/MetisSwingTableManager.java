@@ -108,15 +108,15 @@ public class MetisSwingTableManager<R extends MetisDataEosTableItem>
      * @param <T> the class
      * @param pItem the item
      * @param pField the field
-     * @param pClass the item class
+     * @param pClazz the item class
      * @return the value
      */
     private <T> T getItemFieldValue(final R pItem,
                                     final MetisDataEosFieldDef pField,
-                                    final Class<T> pClass) {
+                                    final Class<T> pClazz) {
         return pField.getStorage().isCalculated()
-                                                  ? getCalculatedFieldValue(pItem, pField, pClass)
-                                                  : getStandardFieldValue(pItem, pField, pClass);
+                                                  ? getCalculatedFieldValue(pItem, pField, pClazz)
+                                                  : getStandardFieldValue(pItem, pField, pClazz);
     }
 
     /**
@@ -124,12 +124,12 @@ public class MetisSwingTableManager<R extends MetisDataEosTableItem>
      * @param <T> the class
      * @param pItem the item
      * @param pField the field
-     * @param pClass the item class
+     * @param pClazz the item class
      * @return the value
      */
     private <T> T getStandardFieldValue(final R pItem,
                                         final MetisDataEosFieldDef pField,
-                                        final Class<T> pClass) {
+                                        final Class<T> pClazz) {
         Object myValue = pField.getFieldValue(pItem);
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
@@ -137,7 +137,7 @@ public class MetisSwingTableManager<R extends MetisDataEosTableItem>
         if (myValue instanceof MetisEncryptedValue) {
             myValue = ((MetisEncryptedValue) myValue).getValue();
         }
-        return pClass.cast(myValue);
+        return pClazz.cast(myValue);
     }
 
     /**
@@ -145,16 +145,16 @@ public class MetisSwingTableManager<R extends MetisDataEosTableItem>
      * @param <T> the class
      * @param pItem the item
      * @param pField the field
-     * @param pClass the item class
+     * @param pClazz the item class
      * @return the value
      */
     private <T> T getCalculatedFieldValue(final R pItem,
                                           final MetisDataEosFieldDef pField,
-                                          final Class<T> pClass) {
+                                          final Class<T> pClazz) {
         final Object myValue = theCalculator == null
                                                      ? null
                                                      : theCalculator.calculateValue(pItem, pField);
-        return pClass.cast(myValue);
+        return pClazz.cast(myValue);
     }
 
     /**

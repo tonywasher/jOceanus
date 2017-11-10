@@ -55,7 +55,7 @@ public abstract class TethysHelpModule {
     /**
      * The class of the Help System.
      */
-    private final Class<?> theClass;
+    private final Class<?> theClazz;
 
     /**
      * The title of the Help System.
@@ -74,13 +74,13 @@ public abstract class TethysHelpModule {
 
     /**
      * Constructor.
-     * @param pClass the class representing the resource
+     * @param pClazz the class representing the resource
      * @param pTitle the title
      */
-    public TethysHelpModule(final Class<?> pClass,
+    public TethysHelpModule(final Class<?> pClazz,
                             final String pTitle) {
         /* Store parameters */
-        theClass = pClass;
+        theClazz = pClazz;
         theTitle = pTitle;
 
         /* Create entry list */
@@ -195,7 +195,7 @@ public abstract class TethysHelpModule {
      * @throws OceanusException on error
      */
     protected void loadCSS(final String pName) throws OceanusException {
-        theCSS = TethysResourceBuilder.loadResourceToString(theClass, pName);
+        theCSS = TethysResourceBuilder.loadResourceToString(theClazz, pName);
     }
 
     /**
@@ -209,7 +209,7 @@ public abstract class TethysHelpModule {
             /* If we have a file name */
             if (myEntry.getFileName() != null) {
                 /* Reset the builder */
-                final String myPage = TethysResourceBuilder.loadResourceToString(theClass, myEntry.getFileName());
+                final String myPage = TethysResourceBuilder.loadResourceToString(theClazz, myEntry.getFileName());
 
                 /* Set the HTML for the entry */
                 myEntry.setHtml(myPage);

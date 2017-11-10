@@ -147,20 +147,20 @@ public class MetisPreferenceManager
     /**
      * Obtain the preference set for the calling class.
      * @param <X> the preference set type
-     * @param pClass the class of the preference set
+     * @param pClazz the class of the preference set
      * @return the relevant preferenceSet
      */
-    public synchronized <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClass) {
+    public synchronized <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClazz) {
         /* Locate a cached PreferenceSet */
-        final String myName = pClass.getSimpleName();
-        X mySet = pClass.cast(theMap.get(myName));
+        final String myName = pClazz.getSimpleName();
+        X mySet = pClazz.cast(theMap.get(myName));
 
         /* If we have not seen this set before */
         if (mySet == null) {
             /* Protect against exceptions */
             try {
                 /* Obtain the relevant constructor */
-                final Constructor<X> myConstructor = pClass.getConstructor(getClass());
+                final Constructor<X> myConstructor = pClazz.getConstructor(getClass());
 
                 /* Access the new set */
                 mySet = myConstructor.newInstance(this);

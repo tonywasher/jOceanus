@@ -228,12 +228,12 @@ public class TethysSwingTableCellFactory<C, R> {
      * Obtain Scroll Cell.
      * @param <T> the column type
      * @param pColumn the column
-     * @param pClass the class of the item
+     * @param pClazz the class of the item
      * @return the scroll cell
      */
     protected <T> TethysSwingTableCell<T, C, R> scrollCell(final TethysSwingTableScrollColumn<T, C, R> pColumn,
-                                                           final Class<T> pClass) {
-        return new TethysSwingTableScrollCell<>(pColumn, theGuiFactory, pClass);
+                                                           final Class<T> pClazz) {
+        return new TethysSwingTableScrollCell<>(pColumn, theGuiFactory, pClazz);
     }
 
     /**
@@ -259,12 +259,12 @@ public class TethysSwingTableCellFactory<C, R> {
      * Obtain Icon Cell.
      * @param <T> the column type
      * @param pColumn the column
-     * @param pClass the class of the item
+     * @param pClazz the class of the item
      * @return the icon cell
      */
     protected <T> TethysSwingTableCell<T, C, R> iconCell(final TethysSwingTableIconColumn<T, C, R> pColumn,
-                                                         final Class<T> pClass) {
-        return new TethysSwingTableIconCell<>(pColumn, theGuiFactory, pClass);
+                                                         final Class<T> pClazz) {
+        return new TethysSwingTableIconCell<>(pColumn, theGuiFactory, pClazz);
     }
 
     /**
@@ -293,7 +293,7 @@ public class TethysSwingTableCellFactory<C, R> {
         /**
          * The Data class.
          */
-        private final Class<T> theClass;
+        private final Class<T> theClazz;
 
         /**
          * The Editor.
@@ -340,15 +340,15 @@ public class TethysSwingTableCellFactory<C, R> {
          * Constructor.
          * @param pColumn the column
          * @param pControl the edit control
-         * @param pClass the field class
+         * @param pClazz the field class
          */
         protected TethysSwingTableCell(final TethysSwingTableColumn<T, C, R> pColumn,
                                        final TethysSwingDataTextField<T> pControl,
-                                       final Class<T> pClass) {
+                                       final Class<T> pClazz) {
             /* Record the parameters */
             theColumn = pColumn;
             theEditControl = pControl;
-            theClass = pClass;
+            theClazz = pClazz;
 
             /* Create the editor and renderer */
             theEditor = new TethysSwingTableCellEditor();
@@ -467,7 +467,7 @@ public class TethysSwingTableCellFactory<C, R> {
          * @return the cast value
          */
         protected T getCastValue(final Object pValue) {
-            return theClass.cast(pValue);
+            return theClazz.cast(pValue);
         }
 
         /**
@@ -996,12 +996,12 @@ public class TethysSwingTableCellFactory<C, R> {
          * Constructor.
          * @param pColumn the column
          * @param pFactory the GUI Factory
-         * @param pClass the field class
+         * @param pClazz the field class
          */
         protected TethysSwingTableScrollCell(final TethysSwingTableScrollColumn<T, C, R> pColumn,
                                              final TethysSwingGuiFactory pFactory,
-                                             final Class<T> pClass) {
-            super(pColumn, pFactory.newScrollField(), pClass);
+                                             final Class<T> pClazz) {
+            super(pColumn, pFactory.newScrollField(), pClazz);
             useDialogForEdit();
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
@@ -1066,12 +1066,12 @@ public class TethysSwingTableCellFactory<C, R> {
          * Constructor.
          * @param pColumn the column
          * @param pFactory the GUI Factory
-         * @param pClass the field class
+         * @param pClazz the field class
          */
         protected TethysSwingTableIconCell(final TethysSwingTableIconColumn<T, C, R> pColumn,
                                            final TethysSwingGuiFactory pFactory,
-                                           final Class<T> pClass) {
-            super(pColumn, pFactory.newIconField(), pClass);
+                                           final Class<T> pClazz) {
+            super(pColumn, pFactory.newIconField(), pClazz);
             final Supplier<TethysIconMapSet<T>> mySupplier = () -> getColumn().getIconMapSet().apply(getActiveRow());
             getControl().setIconMapSet(mySupplier);
             getRenderControl().setIconMapSet(mySupplier);

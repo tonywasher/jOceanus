@@ -213,11 +213,11 @@ public class MetisDataEosVersionValues {
      * Get the value as an object type.
      * @param <X> the required type
      * @param pField the field
-     * @param pClass the class
+     * @param pClazz the class
      * @return the value
      */
     public <X> X getValue(final MetisDataEosFieldDef pField,
-                          final Class<X> pClass) {
+                          final Class<X> pClazz) {
         /* Access the value */
         Object myValue = getValue(pField);
 
@@ -225,13 +225,13 @@ public class MetisDataEosVersionValues {
         if (myValue instanceof MetisDataEosEncryptedValue) {
             /* Access correct part of pair */
             final MetisDataEosEncryptedValue myEncrypted = (MetisDataEosEncryptedValue) myValue;
-            myValue = byte[].class.equals(pClass)
+            myValue = byte[].class.equals(pClazz)
                                                   ? myEncrypted.getEncryption()
-                                                  : myEncrypted.getValue(pClass);
+                                                  : myEncrypted.getValue(pClazz);
         }
 
         /* Return the value */
-        return pClass.cast(myValue);
+        return pClazz.cast(myValue);
     }
 
     @Override
@@ -442,11 +442,11 @@ public class MetisDataEosVersionValues {
         /**
          * Get the value as an object type.
          * @param <X> the required type
-         * @param pClass the class
+         * @param pClazz the class
          * @return the value
          */
-        public <X> X getValue(final Class<X> pClass) {
-            return pClass.cast(theValue);
+        public <X> X getValue(final Class<X> pClazz) {
+            return pClazz.cast(theValue);
         }
 
         /**

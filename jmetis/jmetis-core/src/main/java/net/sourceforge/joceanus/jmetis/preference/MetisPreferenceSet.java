@@ -123,20 +123,20 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
-                                 final Class<K> pClass,
+                                 final Class<K> pClazz,
                                  final TethysResourceId pId) throws OceanusException {
-        this(pManager, pClass, pId.getValue());
+        this(pManager, pClazz, pId.getValue());
     }
 
     /**
      * Constructor.
      * @param pManager the preference manager
-     * @param pClass the key class
+     * @param pClazz the key class
      * @param pName the set name
      * @throws OceanusException on error
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
-                                 final Class<K> pClass,
+                                 final Class<K> pClazz,
                                  final String pName) throws OceanusException {
         /* Store security manager and name */
         theSecurityManager = pManager.getSecurity();
@@ -150,7 +150,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
         /* Allocate the preference maps */
         theNameMap = new HashMap<>();
-        theKeyMap = new EnumMap<>(pClass);
+        theKeyMap = new EnumMap<>(pClazz);
 
         /* Access the active key names */
         try {
@@ -397,13 +397,13 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Define new Enum preference.
      * @param <E> the Enum type
      * @param pKey the key for the preference
-     * @param pClass the Enum class
+     * @param pClazz the Enum class
      * @return the newly created preference
      */
     protected <E extends Enum<E>> MetisEnumPreference<K, E> defineEnumPreference(final K pKey,
-                                                                                 final Class<E> pClass) {
+                                                                                 final Class<E> pClazz) {
         /* Create the preference */
-        final MetisEnumPreference<K, E> myPref = new MetisEnumPreference<>(this, pKey, pClass);
+        final MetisEnumPreference<K, E> myPref = new MetisEnumPreference<>(this, pKey, pClazz);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -639,11 +639,11 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Obtain Enum preference.
      * @param <E> the EnumType
      * @param pKey the key of the preference
-     * @param pClass the Enum class
+     * @param pClazz the Enum class
      * @return the Enum preference
      */
     public <E extends Enum<E>> MetisEnumPreference<K, E> getEnumPreference(final K pKey,
-                                                                           final Class<E> pClass) {
+                                                                           final Class<E> pClazz) {
         /* Access preference */
         final MetisPreferenceItem<K> myPref = getPreference(pKey);
 
@@ -662,7 +662,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         /* Access as Enum preference */
         @SuppressWarnings("unchecked")
         final MetisEnumPreference<K, E> myEnumPref = (MetisEnumPreference<K, E>) myPref;
-        if (!myEnumPref.theClass.equals(pClass)) {
+        if (!myEnumPref.theClazz.equals(pClazz)) {
             throw new IllegalArgumentException(ERROR_INVALID
                                                + pKey);
         }
@@ -675,13 +675,13 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Obtain Enum value.
      * @param <E> the EnumType
      * @param pKey the key of the preference
-     * @param pClass the Enum class
+     * @param pClazz the Enum class
      * @return the Enum value
      */
     public <E extends Enum<E>> E getEnumValue(final K pKey,
-                                              final Class<E> pClass) {
+                                              final Class<E> pClazz) {
         /* Access preference */
-        final MetisEnumPreference<K, E> myPref = getEnumPreference(pKey, pClass);
+        final MetisEnumPreference<K, E> myPref = getEnumPreference(pKey, pClazz);
 
         /* Return the value */
         return myPref.getValue();
@@ -1353,7 +1353,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         /**
          * The enum class.
          */
-        private final Class<E> theClass;
+        private final Class<E> theClazz;
 
         /**
          * The enum values.
@@ -1369,17 +1369,17 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          * Constructor.
          * @param pSet the preference Set
          * @param pKey the key of the preference
-         * @param pClass the class of the preference
+         * @param pClazz the class of the preference
          */
         public MetisEnumPreference(final MetisPreferenceSet<K> pSet,
                                    final K pKey,
-                                   final Class<E> pClass) {
+                                   final Class<E> pClazz) {
             /* Store name */
             super(pSet, pKey, MetisPreferenceType.ENUM);
 
             /* Store the class */
-            theClass = pClass;
-            theValues = theClass.getEnumConstants();
+            theClazz = pClazz;
+            theValues = theClazz.getEnumConstants();
 
             /* Set null filter */
             setFilter(null);
@@ -1397,7 +1397,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
         @Override
         public E getValue() {
-            return theClass.cast(super.getValue());
+            return theClazz.cast(super.getValue());
         }
 
         /**
@@ -1465,7 +1465,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
 
         @Override
         protected void storeThePreference(final Object pNewValue) {
-            getHandle().put(getPreferenceName(), theClass.cast(pNewValue).name());
+            getHandle().put(getPreferenceName(), theClazz.cast(pNewValue).name());
         }
     }
 

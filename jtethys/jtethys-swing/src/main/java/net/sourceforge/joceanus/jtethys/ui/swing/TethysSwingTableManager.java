@@ -343,8 +343,8 @@ public class TethysSwingTableManager<C, R>
 
     @Override
     public <T> TethysSwingTableScrollColumn<T, C, R> declareScrollColumn(final C pId,
-                                                                         final Class<T> pClass) {
-        return new TethysSwingTableScrollColumn<>(this, pId, pClass);
+                                                                         final Class<T> pClazz) {
+        return new TethysSwingTableScrollColumn<>(this, pId, pClazz);
     }
 
     @Override
@@ -354,8 +354,8 @@ public class TethysSwingTableManager<C, R>
 
     @Override
     public <T> TethysSwingTableIconColumn<T, C, R> declareIconColumn(final C pId,
-                                                                     final Class<T> pClass) {
-        return new TethysSwingTableIconColumn<>(this, pId, pClass);
+                                                                     final Class<T> pClazz) {
+        return new TethysSwingTableIconColumn<>(this, pId, pClazz);
     }
 
     /**
@@ -1045,13 +1045,13 @@ public class TethysSwingTableManager<C, R>
          * Constructor.
          * @param pTable the table
          * @param pId the id
-         * @param pClass the item class
+         * @param pClazz the item class
          */
         protected TethysSwingTableScrollColumn(final TethysSwingTableManager<C, R> pTable,
                                                final C pId,
-                                               final Class<T> pClass) {
+                                               final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.SCROLL);
-            declareCell(getTable().getCellFactory().scrollCell(this, pClass));
+            declareCell(getTable().getCellFactory().scrollCell(this, pClazz));
             theConfigurator = (r, c) -> {
             };
         }
@@ -1128,13 +1128,13 @@ public class TethysSwingTableManager<C, R>
          * Constructor.
          * @param pTable the table
          * @param pId the id
-         * @param pClass the item class
+         * @param pClazz the item class
          */
         protected TethysSwingTableIconColumn(final TethysSwingTableManager<C, R> pTable,
                                              final C pId,
-                                             final Class<T> pClass) {
+                                             final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.ICON);
-            declareCell(getTable().getCellFactory().iconCell(this, pClass));
+            declareCell(getTable().getCellFactory().iconCell(this, pClazz));
             theSupplier = p -> null;
         }
 

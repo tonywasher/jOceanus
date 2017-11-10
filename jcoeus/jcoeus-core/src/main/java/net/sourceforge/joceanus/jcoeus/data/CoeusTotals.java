@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -94,6 +93,16 @@ public abstract class CoeusTotals
      * The previous Totals.
      */
     private final CoeusTotals thePrevious;
+
+    /**
+     * The delta.
+     */
+    private TethysDecimal theDelta;
+
+    /**
+     * The balance.
+     */
+    private TethysDecimal theBalance;
 
     /**
      * Constructor.
@@ -301,6 +310,22 @@ public abstract class CoeusTotals
     public abstract TethysDecimal getRecovered();
 
     /**
+     * Obtain the Transaction.
+     * @return the transaction
+     */
+    public TethysDecimal getDelta() {
+        return theDelta;
+    }
+
+    /**
+     * Obtain the Transaction.
+     * @return the transaction
+     */
+    public TethysDecimal getBalance() {
+        return theBalance;
+    }
+
+    /**
      * Add totals to totals.
      * @param pTotals the totals to add
      */
@@ -335,56 +360,60 @@ public abstract class CoeusTotals
     }
 
     /**
-     * Obtain delta for field.
+     * Calculate the fields.
      * @param pField the field
-     * @return the delta (or null)
      */
-    public TethysDecimal getDeltaForField(final MetisDataEosFieldDef pField) {
-        /* Obtain the field value */
-        Object myValue = pField.getFieldValue(this);
-        if (MetisDataFieldValue.SKIP.equals(myValue)) {
-            myValue = getZero();
-        }
+    public void calculateFields(final MetisDataEosFieldDef pField) {
+        /* Obtain the balance field value */
+        Object myBalance = pField.getFieldValue(this);
 
-        /* If we do not have Decimal value, return null */
-        if (!(myValue instanceof TethysDecimal)) {
-            return null;
+        /* Make sure that balance is Decimal */
+        if (!(myBalance instanceof TethysDecimal)) {
+            /* Null values */
+            theBalance = null;
+            theDelta = null;
+        } else {
+            /* Store new values */
+            theBalance = (TethysDecimal) myBalance;
+            theDelta = calculateDelta(pField);
         }
-        final TethysDecimal myDecimal = (TethysDecimal) myValue;
+    }
 
+    /**
+     * Calculate the delta.
+     * @param pField the field
+     * @return the delta
+     */
+    private TethysDecimal calculateDelta(final MetisDataEosFieldDef pField) {
         /* Obtain the previous field value */
-        myValue = thePrevious == null
-                                      ? null
-                                      : pField.getFieldValue(thePrevious);
-        if (MetisDataFieldValue.SKIP.equals(myValue)) {
-            myValue = null;
-        }
+        Object myPrevious = thePrevious == null
+                                                ? null
+                                                : pField.getFieldValue(thePrevious);
 
         /* If we do not have a preceding total */
-        if (!(myValue instanceof TethysDecimal)) {
-            /* Return non-zero value or null */
-            return myDecimal.isNonZero()
-                                         ? myDecimal
-                                         : null;
+        if (!(myPrevious instanceof TethysDecimal)) {
+            /* Set delta as balance or null */
+            return theBalance.isNonZero()
+                                          ? theBalance
+                                          : null;
         }
 
-        /* Return null if there is no change */
-        final TethysDecimal myPrevious = (TethysDecimal) myValue;
-        if (myPrevious.equals(myDecimal)) {
+        /* Delta is null if there is no change */
+        if (theBalance.equals(myPrevious)) {
             return null;
         }
 
         /* If this is a money value */
-        if (myPrevious instanceof TethysMoney
-            && myDecimal instanceof TethysMoney) {
-            final TethysMoney myResult = new TethysMoney((TethysMoney) myDecimal);
+        if (theBalance instanceof TethysMoney
+            && myPrevious instanceof TethysMoney) {
+            final TethysMoney myResult = new TethysMoney((TethysMoney) theBalance);
             myResult.subtractAmount((TethysMoney) myPrevious);
             return myResult;
         }
 
         /* Handle standard result */
-        final TethysDecimal myResult = new TethysDecimal(myDecimal);
-        myResult.subtractValue(myPrevious);
+        final TethysDecimal myResult = new TethysDecimal(theBalance);
+        myResult.subtractValue((TethysDecimal) myPrevious);
         return myResult;
     }
 

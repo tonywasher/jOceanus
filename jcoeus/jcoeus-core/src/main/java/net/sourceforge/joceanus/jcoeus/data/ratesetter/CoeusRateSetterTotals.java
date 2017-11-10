@@ -206,11 +206,6 @@ public final class CoeusRateSetterTotals
     }
 
     @Override
-    public TethysMoney getDeltaForField(final MetisDataEosFieldDef pField) {
-        return (TethysMoney) super.getDeltaForField(pField);
-    }
-
-    @Override
     public TethysMoney getAssetValue() {
         return theAssetValue;
     }

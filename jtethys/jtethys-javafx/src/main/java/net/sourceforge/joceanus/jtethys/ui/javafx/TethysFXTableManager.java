@@ -319,8 +319,8 @@ public class TethysFXTableManager<C, R>
 
     @Override
     public <T> TethysFXTableScrollColumn<T, C, R> declareScrollColumn(final C pId,
-                                                                      final Class<T> pClass) {
-        return new TethysFXTableScrollColumn<>(this, pId, pClass);
+                                                                      final Class<T> pClazz) {
+        return new TethysFXTableScrollColumn<>(this, pId, pClazz);
     }
 
     @Override
@@ -330,8 +330,8 @@ public class TethysFXTableManager<C, R>
 
     @Override
     public <T> TethysFXTableIconColumn<T, C, R> declareIconColumn(final C pId,
-                                                                  final Class<T> pClass) {
-        return new TethysFXTableIconColumn<>(this, pId, pClass);
+                                                                  final Class<T> pClazz) {
+        return new TethysFXTableIconColumn<>(this, pId, pClazz);
     }
 
     /**
@@ -846,13 +846,13 @@ public class TethysFXTableManager<C, R>
          * Constructor.
          * @param pTable the table
          * @param pId the id
-         * @param pClass the item class
+         * @param pClazz the item class
          */
         protected TethysFXTableScrollColumn(final TethysFXTableManager<C, R> pTable,
                                             final C pId,
-                                            final Class<T> pClass) {
+                                            final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.SCROLL);
-            declareCellFactory(super.getCellFactory().scrollCellFactory(this, pClass));
+            declareCellFactory(super.getCellFactory().scrollCellFactory(this, pClazz));
             theConfigurator = (r, c) -> {
             };
         }
@@ -929,13 +929,13 @@ public class TethysFXTableManager<C, R>
          * Constructor.
          * @param pTable the table
          * @param pId the id
-         * @param pClass the item class
+         * @param pClazz the item class
          */
         protected TethysFXTableIconColumn(final TethysFXTableManager<C, R> pTable,
                                           final C pId,
-                                          final Class<T> pClass) {
+                                          final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.ICON);
-            declareCellFactory(super.getCellFactory().iconCellFactory(this, pClass));
+            declareCellFactory(super.getCellFactory().iconCellFactory(this, pClazz));
             theSupplier = p -> null;
         }
 

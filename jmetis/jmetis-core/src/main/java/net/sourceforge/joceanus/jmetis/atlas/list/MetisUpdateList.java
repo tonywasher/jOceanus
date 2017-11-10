@@ -325,11 +325,11 @@ public final class MetisUpdateList<T extends MetisDataVersionedItem>
         }
 
         /* Process deleted entries (can only happen from a rewind of DelNew) */
-        final Iterator<Integer> myIdIterator = myChange.deletedIterator();
-        while (myIdIterator.hasNext()) {
-            final Integer myId = myIdIterator.next();
-            final T myCurr = getItemById(myId);
-            removeFromList(myCurr);
+        myIterator = myChange.deletedIterator();
+        while (myIterator.hasNext()) {
+            final T myCurr = myIterator.next();
+            final Integer myId = myCurr.getIndexedId();
+            removeById(myId);
         }
 
         /* Make sure that the version is correct */

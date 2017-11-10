@@ -179,10 +179,11 @@ public class MetisSwingTableListManager<R extends MetisDataEosTableItem> {
      * Handle deleted items in the edit list.
      * @param pIterator the iterator
      */
-    private void handleDeletedItems(final Iterator<Integer> pIterator) {
+    private void handleDeletedItems(final Iterator<R> pIterator) {
         /* Loop through the added items */
         while (pIterator.hasNext()) {
-            final Integer myId = pIterator.next();
+            final R myItem = pIterator.next();
+            final Integer myId = myItem.getIndexedId();
 
             /* Locate the item in the idList and report deletion */
             final int myLoc = theIdList.indexOf(myId);

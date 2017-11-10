@@ -22,12 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.panels;
 
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
@@ -43,14 +44,9 @@ public class CoeusStatementCalculator
     private static final MetisDataEosFieldSet<CoeusTotals> FIELD_SET = CoeusTotals.getTheFieldSet();
 
     /**
-     * The delta field.
+     * The totals.
      */
-    private static final MetisDataEosFieldDef FIELD_DELTA = FIELD_SET.getField(CoeusTotalsField.DELTA);
-
-    /**
-     * The current underlying field.
-     */
-    private MetisDataEosFieldDef theField;
+    private final MetisIndexedList<CoeusTotals> theTotals;
 
     /**
      * The current filter.
@@ -58,12 +54,32 @@ public class CoeusStatementCalculator
     private Predicate<CoeusTotals> theFilter;
 
     /**
+     * Constructor.
+     * @param pTotals the totals
+     */
+    public CoeusStatementCalculator(final MetisIndexedList<CoeusTotals> pTotals) {
+        theTotals = pTotals;
+    }
+
+    /**
      * Set the TotalSet.
      * @param pTotalSet the totalSet
      */
     protected void setTotalSet(final CoeusTotalSet pTotalSet) {
-        theField = FIELD_SET.getField(pTotalSet.getBalanceField());
-        theFilter = p -> calculateValue(p, FIELD_DELTA) != null;
+        /* Determine the field of interest */
+        MetisDataEosFieldDef myField = FIELD_SET.getField(pTotalSet.getBalanceField());
+
+        /* Create new filter */
+        theFilter = p -> p.getDelta() != null;
+
+        /* Loop through all the fields */
+        Iterator<CoeusTotals> myIterator = theTotals.iterator();
+        while (myIterator.hasNext()) {
+            CoeusTotals myTotals = myIterator.next();
+
+            /* Calculate fields */
+            myTotals.calculateFields(myField);
+        }
     }
 
     /**
@@ -77,14 +93,13 @@ public class CoeusStatementCalculator
     @Override
     public Object calculateValue(final CoeusTotals pTotals,
                                  final MetisDataEosFieldDef pField) {
-        if (CoeusTotalsField.DELTA.equals(pField.getFieldId())) {
-            return pTotals.getDeltaForField(theField);
-        } else if (CoeusTotalsField.BALANCE.equals(pField.getFieldId())) {
-            final Object myValue = theField.getFieldValue(pTotals);
-            return MetisDataFieldValue.SKIP.equals(myValue)
-                                                            ? null
-                                                            : myValue;
+        switch ((CoeusTotalsField) pField.getFieldId()) {
+            case DELTA:
+                return pTotals.getDelta();
+            case BALANCE:
+                return pTotals.getBalance();
+            default:
+                return null;
         }
-        return null;
     }
 }

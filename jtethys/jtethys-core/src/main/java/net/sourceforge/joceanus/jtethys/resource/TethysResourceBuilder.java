@@ -111,15 +111,15 @@ public final class TethysResourceBuilder {
 
     /**
      * Obtain bundle name based on package name.
-     * @param pClass the class name.
+     * @param pClazz the class name.
      * @return the bundle.
      */
-    private static String getPackageBundle(final String pClass) {
+    private static String getPackageBundle(final String pClazz) {
         /* Check that we have separators */
-        int myIndex = pClass.lastIndexOf('.');
+        int myIndex = pClazz.lastIndexOf('.');
         if (myIndex != -1) {
             /* Strip the final class name off */
-            final String myResult = pClass.substring(0, myIndex);
+            final String myResult = pClazz.substring(0, myIndex);
 
             /* Locate the package name */
             myIndex = myResult.lastIndexOf('.');
@@ -139,7 +139,7 @@ public final class TethysResourceBuilder {
         }
 
         /* No change */
-        return pClass;
+        return pClazz;
     }
 
     /**
@@ -191,18 +191,18 @@ public final class TethysResourceBuilder {
 
     /**
      * Load resource file to String.
-     * @param pClass the class to use to load the resource
+     * @param pClazz the class to use to load the resource
      * @param pName the name of the resource relative to the class
      * @return the loaded resource
      * @throws OceanusException on error
      */
-    public static String loadResourceToString(final Class<?> pClass,
+    public static String loadResourceToString(final Class<?> pClazz,
                                               final String pName) throws OceanusException {
         /* Reset the builder */
         final StringBuilder myBuilder = new StringBuilder();
 
         /* Protect against exceptions */
-        try (InputStream myStream = pClass.getResourceAsStream(pName);
+        try (InputStream myStream = pClazz.getResourceAsStream(pName);
              InputStreamReader myInputReader = new InputStreamReader(myStream, StandardCharsets.UTF_8);
              BufferedReader myReader = new BufferedReader(myInputReader)) {
 

@@ -115,12 +115,12 @@ public class TethysEvent<E extends Enum<E>> {
 
     /**
      * Obtain the details.
-     * @param pClass the class of the details
+     * @param pClazz the class of the details
      * @param <T> the details class
      * @return the details
      */
-    public <T> T getDetails(final Class<T> pClass) {
-        return pClass.cast(theDetails);
+    public <T> T getDetails(final Class<T> pClazz) {
+        return pClazz.cast(theDetails);
     }
 
     /**

@@ -136,8 +136,12 @@ public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
      * @param pItem the item
      */
     protected void updateProperties(final R pItem) {
-        final MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
-        myFieldSet.updateValues();
+        /* If we have a fieldSet for this item */
+        final MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(pItem.getIndexedId());
+        if (myFieldSet != null) {
+            /* Update the values */
+            myFieldSet.updateValues();
+        }
     }
 
     /**
@@ -150,19 +154,9 @@ public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
     /**
      * Remove item by id.
      * @param pId the iD
-     * @return the item that was removed
      */
-    protected R removeItem(final Integer pId) {
-        /* Obtain the field set */
-        final MetisFXTableFieldSet<R> myFieldSet = theIdMap.get(pId);
-        if (myFieldSet != null) {
-            /* Remove from the map and return the item */
-            theIdMap.remove(pId);
-            return myFieldSet.getItem();
-        }
-
-        /* No item found */
-        return null;
+    protected void removeItem(final Integer pId) {
+        theIdMap.remove(pId);
     }
 
     /**

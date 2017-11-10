@@ -452,11 +452,11 @@ public abstract class TethysTableManager<C, R, N, I>
      * Declare scroll column.
      * @param <T> the data type
      * @param pId the column id
-     * @param pClass the column class
+     * @param pClazz the column class
      * @return the column
      */
     public abstract <T> TethysTableScrollColumn<T, C, R, N, I> declareScrollColumn(C pId,
-                                                                                   Class<T> pClass);
+                                                                                   Class<T> pClazz);
 
     /**
      * Declare list column.
@@ -470,11 +470,11 @@ public abstract class TethysTableManager<C, R, N, I>
      * Declare icon column.
      * @param <T> the data type
      * @param pId the column id
-     * @param pClass the column class
+     * @param pClazz the column class
      * @return the column
      */
     public abstract <T> TethysTableIconColumn<T, C, R, N, I> declareIconColumn(C pId,
-                                                                               Class<T> pClass);
+                                                                               Class<T> pClazz);
 
     /**
      * Column Definition.

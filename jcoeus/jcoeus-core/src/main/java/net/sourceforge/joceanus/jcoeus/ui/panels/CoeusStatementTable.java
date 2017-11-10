@@ -109,7 +109,7 @@ public class CoeusStatementTable<N, I>
         thePane.setCentre(theTable);
 
         /* Create the calculator */
-        theCalculator = new CoeusStatementCalculator();
+        theCalculator = new CoeusStatementCalculator(theList);
     }
 
     @Override
@@ -161,7 +161,6 @@ public class CoeusStatementTable<N, I>
         /* Show or hide the loan column */
         final boolean showLoan = !(myFilter instanceof CoeusSnapShotFilter)
                                  || ((CoeusSnapShotFilter) myFilter).getLoan() == null;
-
         theLoanColumn.setVisible(showLoan);
 
         /* Reset the filter */

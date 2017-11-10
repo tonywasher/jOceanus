@@ -55,10 +55,10 @@ public class MetisProgram {
 
     /**
      * Constructor.
-     * @param pClass the program definition class
+     * @param pClazz the program definition class
      * @throws OceanusException on error
      */
-    public MetisProgram(final Class<? extends TethysProgram> pClass) throws OceanusException {
+    public MetisProgram(final Class<? extends TethysProgram> pClazz) throws OceanusException {
         try {
             /* Create a timer */
             theProfile = new MetisProfile("StartUp");
@@ -67,7 +67,7 @@ public class MetisProgram {
             TethysLogConfig.configureLog4j();
 
             /* Obtain program details */
-            theApp = pClass.newInstance();
+            theApp = pClazz.newInstance();
 
         } catch (InstantiationException
                 | IllegalAccessException e) {

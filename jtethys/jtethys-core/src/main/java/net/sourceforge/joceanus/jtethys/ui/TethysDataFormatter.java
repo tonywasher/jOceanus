@@ -255,115 +255,115 @@ public class TethysDataFormatter {
      * Parse object value.
      * @param <T> the value type
      * @param pSource the source value
-     * @param pClass the value type class
+     * @param pClazz the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad Date/Decimal format
      * @throws NumberFormatException on bad Integer format
      */
     public <T> T parseValue(final String pSource,
-                            final Class<T> pClass) {
-        if (Boolean.class.equals(pClass)) {
-            return pClass.cast(Boolean.parseBoolean(pSource));
+                            final Class<T> pClazz) {
+        if (Boolean.class.equals(pClazz)) {
+            return pClazz.cast(Boolean.parseBoolean(pSource));
         }
-        if (Short.class.equals(pClass)) {
-            return pClass.cast(Short.parseShort(pSource));
+        if (Short.class.equals(pClazz)) {
+            return pClazz.cast(Short.parseShort(pSource));
         }
-        if (Integer.class.equals(pClass)) {
-            return pClass.cast(Integer.parseInt(pSource));
+        if (Integer.class.equals(pClazz)) {
+            return pClazz.cast(Integer.parseInt(pSource));
         }
-        if (Long.class.equals(pClass)) {
-            return pClass.cast(Long.parseLong(pSource));
+        if (Long.class.equals(pClazz)) {
+            return pClazz.cast(Long.parseLong(pSource));
         }
-        if (Float.class.equals(pClass)) {
-            return pClass.cast(Float.parseFloat(pSource));
+        if (Float.class.equals(pClazz)) {
+            return pClazz.cast(Float.parseFloat(pSource));
         }
-        if (Double.class.equals(pClass)) {
-            return pClass.cast(Double.parseDouble(pSource));
+        if (Double.class.equals(pClazz)) {
+            return pClazz.cast(Double.parseDouble(pSource));
         }
-        if (BigInteger.class.equals(pClass)) {
-            return pClass.cast(new BigInteger(pSource));
+        if (BigInteger.class.equals(pClazz)) {
+            return pClazz.cast(new BigInteger(pSource));
         }
-        if (BigDecimal.class.equals(pClass)) {
-            return pClass.cast(new BigDecimal(pSource));
+        if (BigDecimal.class.equals(pClazz)) {
+            return pClazz.cast(new BigDecimal(pSource));
         }
-        if (Date.class.equals(pClass)) {
+        if (Date.class.equals(pClazz)) {
             /* Parse the date */
-            return pClass.cast(theDateFormatter.parseJavaDate(pSource));
+            return pClazz.cast(theDateFormatter.parseJavaDate(pSource));
         }
-        if (TethysDate.class.equals(pClass)) {
+        if (TethysDate.class.equals(pClazz)) {
             /* Parse the date */
-            return pClass.cast(theDateFormatter.parseDate(pSource));
+            return pClazz.cast(theDateFormatter.parseDate(pSource));
         }
-        if (Calendar.class.equals(pClass)) {
+        if (Calendar.class.equals(pClazz)) {
             /* Parse the date */
-            return pClass.cast(theDateFormatter.parseCalendarDay(pSource));
+            return pClazz.cast(theDateFormatter.parseCalendarDay(pSource));
         }
-        if (LocalDate.class.equals(pClass)) {
+        if (LocalDate.class.equals(pClazz)) {
             /* Parse the date */
-            return pClass.cast(theDateFormatter.parseLocalDate(pSource));
+            return pClazz.cast(theDateFormatter.parseLocalDate(pSource));
         }
-        if (TethysPrice.class.equals(pClass)) {
+        if (TethysPrice.class.equals(pClazz)) {
             /* Parse the price */
-            return pClass.cast(theDecimalParser.parsePriceValue(pSource));
+            return pClazz.cast(theDecimalParser.parsePriceValue(pSource));
         }
-        if (TethysMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClazz)) {
             /* Parse the money */
-            return pClass.cast(theDecimalParser.parseMoneyValue(pSource));
+            return pClazz.cast(theDecimalParser.parseMoneyValue(pSource));
         }
-        if (TethysRate.class.equals(pClass)) {
+        if (TethysRate.class.equals(pClazz)) {
             /* Parse the rate */
-            return pClass.cast(theDecimalParser.parseRateValue(pSource));
+            return pClazz.cast(theDecimalParser.parseRateValue(pSource));
         }
-        if (TethysUnits.class.equals(pClass)) {
+        if (TethysUnits.class.equals(pClazz)) {
             /* Parse the units */
-            return pClass.cast(theDecimalParser.parseUnitsValue(pSource));
+            return pClazz.cast(theDecimalParser.parseUnitsValue(pSource));
         }
-        if (TethysDilution.class.equals(pClass)) {
+        if (TethysDilution.class.equals(pClazz)) {
             /* Parse the dilution */
-            return pClass.cast(theDecimalParser.parseDilutionValue(pSource));
+            return pClazz.cast(theDecimalParser.parseDilutionValue(pSource));
         }
-        if (TethysRatio.class.equals(pClass)) {
+        if (TethysRatio.class.equals(pClazz)) {
             /* Parse the dilution */
-            return pClass.cast(theDecimalParser.parseRatioValue(pSource));
+            return pClazz.cast(theDecimalParser.parseRatioValue(pSource));
         }
-        throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
+        throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());
     }
 
     /**
      * Parse object value.
      * @param <T> the value type
      * @param pSource the source value
-     * @param pClass the value type class
+     * @param pClazz the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad TethysDecimal format
      */
     public <T> T parseValue(final Double pSource,
-                            final Class<T> pClass) {
-        if (TethysPrice.class.equals(pClass)) {
+                            final Class<T> pClazz) {
+        if (TethysPrice.class.equals(pClazz)) {
             /* Parse the price */
-            return pClass.cast(theDecimalParser.createPriceFromDouble(pSource));
+            return pClazz.cast(theDecimalParser.createPriceFromDouble(pSource));
         }
-        if (TethysMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClazz)) {
             /* Parse the money */
-            return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource));
+            return pClazz.cast(theDecimalParser.createMoneyFromDouble(pSource));
         }
-        if (TethysRate.class.equals(pClass)) {
+        if (TethysRate.class.equals(pClazz)) {
             /* Parse the rate */
-            return pClass.cast(theDecimalParser.createRateFromDouble(pSource));
+            return pClazz.cast(theDecimalParser.createRateFromDouble(pSource));
         }
-        if (TethysUnits.class.equals(pClass)) {
+        if (TethysUnits.class.equals(pClazz)) {
             /* Parse the units */
-            return pClass.cast(theDecimalParser.createUnitsFromDouble(pSource));
+            return pClazz.cast(theDecimalParser.createUnitsFromDouble(pSource));
         }
-        if (TethysDilution.class.equals(pClass)) {
+        if (TethysDilution.class.equals(pClazz)) {
             /* Parse the dilution */
-            return pClass.cast(theDecimalParser.createDilutionFromDouble(pSource));
+            return pClazz.cast(theDecimalParser.createDilutionFromDouble(pSource));
         }
-        if (TethysRatio.class.equals(pClass)) {
+        if (TethysRatio.class.equals(pClazz)) {
             /* Parse the dilution */
-            return pClass.cast(theDecimalParser.createRatioFromDouble(pSource));
+            return pClazz.cast(theDecimalParser.createRatioFromDouble(pSource));
         }
-        throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
+        throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());
     }
 
     /**
@@ -371,22 +371,22 @@ public class TethysDataFormatter {
      * @param <T> the value type
      * @param pSource the source value
      * @param pCurrCode the currency code
-     * @param pClass the value type class
+     * @param pClazz the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad TethysDecimal format
      */
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
-                            final Class<T> pClass) {
-        if (TethysPrice.class.equals(pClass)) {
+                            final Class<T> pClazz) {
+        if (TethysPrice.class.equals(pClazz)) {
             /* Parse the price */
-            return pClass.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));
+            return pClazz.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));
         }
-        if (TethysMoney.class.equals(pClass)) {
+        if (TethysMoney.class.equals(pClazz)) {
             /* Parse the money */
-            return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
+            return pClazz.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
         }
-        throw new IllegalArgumentException(ERROR_CLASS + pClass.getSimpleName());
+        throw new IllegalArgumentException(ERROR_CLASS + pClazz.getSimpleName());
     }
 
     /**

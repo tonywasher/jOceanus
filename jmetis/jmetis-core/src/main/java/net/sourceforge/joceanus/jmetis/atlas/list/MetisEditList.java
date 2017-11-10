@@ -642,14 +642,14 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      * Handle Underlying deleted changes.
      * @param pIterator the iterator
      */
-    private void handleBaseDeletedItems(final Iterator<Integer> pIterator) {
+    private void handleBaseDeletedItems(final Iterator<T> pIterator) {
         /* Loop through the deleted items */
         while (pIterator.hasNext()) {
-            final Integer myId = pIterator.next();
+            final T myItem = pIterator.next();
+            final Integer myId = myItem.getIndexedId();
 
-            /* Obtain the item to be deleted */
-            final T myItem = getItemById(myId);
-            removeFromList(myItem);
+            /* Remove the item */
+            removeById(myId);
 
             /* Record deletion */
             theChange.registerDeleted(myItem);

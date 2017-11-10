@@ -67,7 +67,7 @@ public class MetisFXTableList<R extends MetisDataEosTableItem>
         theListFields = new MetisFXTableListFields<>(theCoreList);
 
         /* Create the list */
-        theList = FXCollections.observableArrayList(theListFields::getObservables);
+        theList = FXCollections.observableArrayList();
 
         /* Listen to events on the versionedList */
         final TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
@@ -151,16 +151,15 @@ public class MetisFXTableList<R extends MetisDataEosTableItem>
      * Handle deleted items in the edit list.
      * @param pIterator the iterator
      */
-    private void handleDeletedItems(final Iterator<Integer> pIterator) {
+    private void handleDeletedItems(final Iterator<R> pIterator) {
         /* Loop through the added items */
         while (pIterator.hasNext()) {
-            final Integer myId = pIterator.next();
+            final R myItem = pIterator.next();
+            final Integer myId = myItem.getIndexedId();
 
             /* Remove the item if present */
-            final R myItem = theListFields.removeItem(myId);
-            if (myItem != null) {
-                theList.remove(myItem);
-            }
+            theListFields.removeItem(myId);
+            theList.remove(myItem);
         }
     }
 }

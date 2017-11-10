@@ -227,12 +227,12 @@ public class TethysFXTableCellFactory<C, R> {
      * Obtain Scroll Cell Factory.
      * @param <T> the column type
      * @param pColumn the column
-     * @param pClass the class of the item
+     * @param pClazz the class of the item
      * @return the scroll cell factory
      */
     protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> scrollCellFactory(final TethysFXTableScrollColumn<T, C, R> pColumn,
-                                                                                 final Class<T> pClass) {
-        return e -> new TethysFXTableScrollCell<>(pColumn, theGuiFactory, pClass);
+                                                                                 final Class<T> pClazz) {
+        return e -> new TethysFXTableScrollCell<>(pColumn, theGuiFactory, pClazz);
     }
 
     /**
@@ -258,12 +258,12 @@ public class TethysFXTableCellFactory<C, R> {
      * Obtain Icon Cell Factory.
      * @param <T> the column type
      * @param pColumn the column
-     * @param pClass the class of the item
+     * @param pClazz the class of the item
      * @return the icon cell factory
      */
     protected <T> Callback<TableColumn<R, T>, TableCell<R, T>> iconCellFactory(final TethysFXTableIconColumn<T, C, R> pColumn,
-                                                                               final Class<T> pClass) {
-        return e -> new TethysFXTableIconCell<>(pColumn, theGuiFactory, pClass);
+                                                                               final Class<T> pClazz) {
+        return e -> new TethysFXTableIconCell<>(pColumn, theGuiFactory, pClazz);
     }
 
     /**
@@ -315,15 +315,15 @@ public class TethysFXTableCellFactory<C, R> {
          * Constructor.
          * @param pColumn the column
          * @param pControl the edit control
-         * @param pClass the field class
+         * @param pClazz the field class
          */
         protected TethysFXTableCell(final TethysFXTableColumn<T, C, R> pColumn,
                                     final TethysFXDataTextField<T> pControl,
-                                    final Class<T> pClass) {
+                                    final Class<T> pClazz) {
             /* Record the parameters */
             theColumn = pColumn;
             theControl = pControl;
-            theClass = pClass;
+            theClass = pClazz;
 
             /* Create the event manager */
             theEventManager = new TethysEventManager<>();
@@ -426,9 +426,9 @@ public class TethysFXTableCellFactory<C, R> {
                                               : myRow.getIndex();
 
             /* Access explicit item */
-            return (myIndex < 0) || (myIndex >= mySize)
-                                                        ? null
-                                                        : myItems.get(myIndex);
+            return myIndex < 0 || myIndex >= mySize
+                                                    ? null
+                                                    : myItems.get(myIndex);
         }
 
         @Override
@@ -867,12 +867,12 @@ public class TethysFXTableCellFactory<C, R> {
          * Constructor.
          * @param pColumn the column
          * @param pFactory the GUI Factory
-         * @param pClass the field class
+         * @param pClazz the field class
          */
         protected TethysFXTableScrollCell(final TethysFXTableScrollColumn<T, C, R> pColumn,
                                           final TethysFXGuiFactory pFactory,
-                                          final Class<T> pClass) {
-            super(pColumn, pFactory.newScrollField(), pClass);
+                                          final Class<T> pClazz) {
+            super(pColumn, pFactory.newScrollField(), pClazz);
             getControl().setMenuConfigurator(c -> getColumn().getMenuConfigurator().accept(getActiveRow(), c));
         }
 
@@ -935,12 +935,12 @@ public class TethysFXTableCellFactory<C, R> {
          * Constructor.
          * @param pColumn the column
          * @param pFactory the GUI Factory
-         * @param pClass the field class
+         * @param pClazz the field class
          */
         protected TethysFXTableIconCell(final TethysFXTableIconColumn<T, C, R> pColumn,
                                         final TethysFXGuiFactory pFactory,
-                                        final Class<T> pClass) {
-            super(pColumn, pFactory.newIconField(), pClass);
+                                        final Class<T> pClazz) {
+            super(pColumn, pFactory.newIconField(), pClazz);
             getControl().setIconMapSet(this::determineMapSet);
         }
 
