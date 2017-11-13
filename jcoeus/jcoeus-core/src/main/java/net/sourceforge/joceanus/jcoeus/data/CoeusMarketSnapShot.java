@@ -28,41 +28,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Loan Market SnapShot.
  */
 public class CoeusMarketSnapShot
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusMarketSnapShot.class);
+    private static final MetisDataEosFieldSet<CoeusMarketSnapShot> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarketSnapShot.class);
 
     /**
-     * Market Field Id.
+     * Field Ids.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
-
-    /**
-     * Date Field Id.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE);
-
-    /**
-     * LoanMap Field Id.
-     */
-    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusMarketSnapShot::getMarket);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusMarketSnapShot::getDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANMAP, CoeusMarketSnapShot::loanMap);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusMarketSnapShot::getHistory);
+    }
 
     /**
      * Loan Market.
@@ -130,6 +118,14 @@ public class CoeusMarketSnapShot
      */
     public TethysDate getDate() {
         return theDate;
+    }
+
+    /**
+     * Obtain loanMap.
+     * @return the map
+     */
+    private Map<String, CoeusLoan> loanMap() {
+        return theLoanMap;
     }
 
     /**
@@ -258,27 +254,7 @@ public class CoeusMarketSnapShot
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusMarketSnapShot> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_MARKET.equals(pField)) {
-            return theMarket;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_LOANS.equals(pField)) {
-            return theLoanMap;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

@@ -29,11 +29,9 @@ import org.jsoup.nodes.Element;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -43,11 +41,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * RateSetter Loan Book Item.
  */
 public class CoeusRateSetterLoanBookItem
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusRateSetterLoanBookItem.class);
+    private static final MetisDataEosFieldSet<CoeusRateSetterLoanBookItem> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusRateSetterLoanBookItem.class);
 
     /**
      * Builder buffer length.
@@ -55,39 +53,17 @@ public class CoeusRateSetterLoanBookItem
     private static final int BUFFER_LEN = 100;
 
     /**
-     * Loan Id Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_LOANID = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID);
-
-    /**
-     * StartDate Field Id.
-     */
-    private static final MetisDataField FIELD_STARTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE);
-
-    /**
-     * Original Loan Field Id.
-     */
-    private static final MetisDataField FIELD_LENT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT);
-
-    /**
-     * Outstanding Balance Field Id.
-     */
-    private static final MetisDataField FIELD_BALANCE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE);
-
-    /**
-     * Rate Field Id.
-     */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE);
-
-    /**
-     * LastDate Field Id.
-     */
-    private static final MetisDataField FIELD_LASTDATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE);
-
-    /**
-     * Status Field Id.
-     */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANID, CoeusRateSetterLoanBookItem::getLoanId);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_STARTDATE, CoeusRateSetterLoanBookItem::getStartDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LENT, CoeusRateSetterLoanBookItem::getLent);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_BALANCE, CoeusRateSetterLoanBookItem::getBalance);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_RATE, CoeusRateSetterLoanBookItem::getRate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LASTDATE, CoeusRateSetterLoanBookItem::getLastDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_LOANSTATUS, CoeusRateSetterLoanBookItem::getStatus);
+    }
 
     /**
      * The loan Id.
@@ -241,36 +217,7 @@ public class CoeusRateSetterLoanBookItem
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusRateSetterLoanBookItem> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_LOANID.equals(pField)) {
-            return theLoanId;
-        }
-        if (FIELD_STARTDATE.equals(pField)) {
-            return theStartDate;
-        }
-        if (FIELD_LENT.equals(pField)) {
-            return theLent;
-        }
-        if (FIELD_BALANCE.equals(pField)) {
-            return theBalance;
-        }
-        if (FIELD_RATE.equals(pField)) {
-            return theRate;
-        }
-        if (FIELD_LASTDATE.equals(pField)) {
-            return theLastDate;
-        }
-        if (FIELD_STATUS.equals(pField)) {
-            return theStatus;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

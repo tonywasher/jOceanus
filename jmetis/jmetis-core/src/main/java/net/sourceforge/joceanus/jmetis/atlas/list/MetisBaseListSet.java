@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Set of BaseLists.
@@ -35,7 +35,7 @@ public final class MetisBaseListSet
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisBaseListSet.class, MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<MetisBaseListSet> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisBaseListSet.class);
 
     /**
      * Constructor.
@@ -45,13 +45,13 @@ public final class MetisBaseListSet
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisBaseListSet> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public MetisBaseList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
-        return (MetisBaseList<MetisDataVersionedItem>) super.getList(pListKey);
+    public MetisBaseList<MetisDataEosVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisBaseList<MetisDataEosVersionedItem>) super.getList(pListKey);
     }
 
     /**
@@ -65,8 +65,8 @@ public final class MetisBaseListSet
             final MetisListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisBaseList<MetisDataVersionedItem> mySource = pSource.getList(myKey);
-            final MetisBaseList<MetisDataVersionedItem> myTarget = getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> mySource = pSource.getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myTarget = getList(myKey);
 
             /* Reset the content */
             myTarget.doResetContent(mySource);
@@ -96,8 +96,8 @@ public final class MetisBaseListSet
             final MetisListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisBaseList<MetisDataVersionedItem> myBase = pBase.getList(myKey);
-            final MetisBaseList<MetisDataVersionedItem> myTarget = getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myBase = pBase.getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myTarget = getList(myKey);
 
             /* reBase the list */
             myTarget.doReBaseList(myBase);
@@ -128,11 +128,11 @@ public final class MetisBaseListSet
             final MetisListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisBaseList<MetisDataVersionedItem> myOld = pOld.getList(myKey);
-            final MetisBaseList<MetisDataVersionedItem> myNew = getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myOld = pOld.getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myNew = getList(myKey);
 
             /* Obtain the difference list and add if non-empty */
-            final MetisDifferenceList<MetisDataVersionedItem> myDifference = myNew.doDeriveDifferences(myOld);
+            final MetisDifferenceList<MetisDataEosVersionedItem> myDifference = myNew.doDeriveDifferences(myOld);
             if (!myDifference.isEmpty()) {
                 myDifferences.declareList(myKey, myDifference);
                 myNewVersion = 1;
@@ -161,10 +161,10 @@ public final class MetisBaseListSet
             final MetisListKey myKey = myIterator.next();
 
             /* Obtain the list */
-            final MetisBaseList<MetisDataVersionedItem> myList = getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myList = getList(myKey);
 
             /* Obtain the update list and add */
-            final MetisUpdateList<MetisDataVersionedItem> myUpdate = myList.deriveUpdates();
+            final MetisUpdateList<MetisDataEosVersionedItem> myUpdate = myList.deriveUpdates();
             myUpdates.declareList(myKey, myUpdate);
 
             /* Note maximum version */
@@ -190,10 +190,10 @@ public final class MetisBaseListSet
             final MetisListKey myKey = myIterator.next();
 
             /* Obtain the list */
-            final MetisBaseList<MetisDataVersionedItem> myList = getList(myKey);
+            final MetisBaseList<MetisDataEosVersionedItem> myList = getList(myKey);
 
             /* Obtain the edit list and add */
-            final MetisEditList<MetisDataVersionedItem> myEdit = myList.deriveEditList();
+            final MetisEditList<MetisDataEosVersionedItem> myEdit = myList.deriveEditList();
             myEdits.declareList(myKey, myEdit);
         }
 

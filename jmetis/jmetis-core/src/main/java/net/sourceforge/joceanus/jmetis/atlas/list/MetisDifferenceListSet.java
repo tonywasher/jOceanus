@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Set of DifferenceLists.
@@ -33,7 +33,7 @@ public final class MetisDifferenceListSet
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisDifferenceListSet.class, MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<MetisDifferenceListSet> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisDifferenceListSet.class);
 
     /**
      * Constructor.
@@ -43,12 +43,12 @@ public final class MetisDifferenceListSet
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisDifferenceListSet> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public MetisDifferenceList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
-        return (MetisDifferenceList<MetisDataVersionedItem>) super.getList(pListKey);
+    public MetisDifferenceList<MetisDataEosVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisDifferenceList<MetisDataEosVersionedItem>) super.getList(pListKey);
     }
 }

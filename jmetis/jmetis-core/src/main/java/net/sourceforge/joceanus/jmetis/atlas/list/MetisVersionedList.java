@@ -30,19 +30,16 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Versioned List implementation.
  * @param <T> the item type
  */
-public class MetisVersionedList<T extends MetisDataVersionedItem>
+public class MetisVersionedList<T extends MetisDataEosVersionedItem>
         extends MetisIndexedList<T> {
     /**
      * Logger.
@@ -57,17 +54,16 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedList.class, MetisIndexedList.getBaseFieldSet());
+    @SuppressWarnings("rawtypes")
+    private static final MetisDataEosFieldSet<MetisVersionedList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisVersionedList.class);
 
     /**
-     * Class Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS);
-
-    /**
-     * Version Field Id.
-     */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION);
+    static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS, MetisVersionedList::getClazz);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisVersionedList::getVersion);
+    }
 
     /**
      * The class of the list.
@@ -107,36 +103,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_CLASS.equals(pField)) {
-            return theClazz;
-        }
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion != 0
-                                   ? theVersion
-                                   : MetisDataFieldValue.SKIP;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFields() {
+    public MetisDataEosFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -150,9 +117,9 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
 
     /**
      * Obtain the class.
-     * @return the version
+     * @return the class
      */
-    public Class<T> getTheClazz() {
+    public Class<T> getClazz() {
         return theClazz;
     }
 
@@ -195,7 +162,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
     @SuppressWarnings("unchecked")
     protected MetisVersionedList<T> castList(final MetisVersionedList<?> pSource) {
         /* Class must be the same */
-        if (!theClazz.equals(pSource.getTheClazz())) {
+        if (!theClazz.equals(pSource.getClazz())) {
             throw new InvalidParameterException("Inconsistent class");
         }
 
@@ -223,7 +190,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
 
         /* Check local fields */
         if (theVersion != myThat.getVersion()
-            || !theClazz.equals(myThat.getTheClazz())) {
+            || !theClazz.equals(myThat.getClazz())) {
             return false;
         }
 
@@ -267,13 +234,12 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
-            final MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* If the version is later than the required version */
-            int myVersion = myControl.getVersion();
+            int myVersion = myCurr.getVersion();
             if (myVersion > pVersion) {
                 /* If the item was created after the required version */
-                if (myControl.getOriginalVersion() > pVersion) {
+                if (myCurr.getOriginalVersion() > pVersion) {
                     /* Remove from list */
                     myIterator.remove();
                     myChange.registerDeleted(myCurr);
@@ -283,12 +249,12 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
                 /* Loop while version is too high */
                 while (myVersion > pVersion) {
                     /* Pop history */
-                    myControl.popTheHistory();
-                    myVersion = myControl.getVersion();
+                    myCurr.popTheHistory();
+                    myVersion = myCurr.getVersion();
                 }
 
                 /* Adjust the state */
-                myControl.adjustState();
+                myCurr.adjustState();
 
                 /* Note maximum version */
                 myMaxVersion = Math.max(myMaxVersion, myVersion);
@@ -315,9 +281,8 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         final T myNew = newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
-        MetisDataVersionControl myControl = pBase.getVersionControl();
-        MetisDataVersionValues myBaseSet = myControl.getValueSet();
-        final MetisDataVersionValues mySet = myBaseSet.cloneIt();
+        MetisDataEosVersionValues myBaseSet = pBase.getValueSet();
+        final MetisDataEosVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
         /* Obtain an undeleted set as the base value */
@@ -325,9 +290,8 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         myBaseSet.setDeletion(false);
 
         /* Record as the history of the item */
-        myControl = myNew.getVersionControl();
-        myControl.setValues(mySet);
-        myControl.setHistory(myBaseSet);
+        myNew.setValues(mySet);
+        myNew.setHistory(myBaseSet);
 
         /* Return the new item */
         return myNew;
@@ -345,19 +309,16 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataVersionControl myControl = pCurr.getVersionControl();
-        MetisDataVersionValues mySet = myControl.getValueSet();
+        MetisDataEosVersionValues mySet = pCurr.getValueSet();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the value set as the base value */
-        myControl = pBase.getVersionControl();
-        MetisDataVersionValues myBaseSet = myControl.getValueSet();
+        MetisDataEosVersionValues myBaseSet = pBase.getValueSet();
         myBaseSet = myBaseSet.cloneIt();
 
         /* Record as the history of the item */
-        myControl = myNew.getVersionControl();
-        myControl.setValues(mySet);
-        myControl.setHistory(myBaseSet);
+        myNew.setValues(mySet);
+        myNew.setHistory(myBaseSet);
 
         /* Return the new item */
         return myNew;
@@ -373,14 +334,12 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataVersionControl myControl = pCurr.getVersionControl();
-        MetisDataVersionValues mySet = myControl.getValueSet();
+        MetisDataEosVersionValues mySet = pCurr.getValueSet();
         mySet = mySet.cloneIt();
         mySet.setVersion(1);
 
         /* Record as the history of the item */
-        myControl = myNew.getVersionControl();
-        myControl.setValues(mySet);
+        myNew.setValues(mySet);
 
         /* Return the new item */
         return myNew;
@@ -395,7 +354,7 @@ public class MetisVersionedList<T extends MetisDataVersionedItem>
         /* Protect against exceptions */
         try {
             final T myItem = theConstructor.newInstance();
-            myItem.getVersionControl().setIndexedId(pId);
+            myItem.setIndexedId(pId);
             return myItem;
         } catch (InstantiationException
                 | IllegalAccessException

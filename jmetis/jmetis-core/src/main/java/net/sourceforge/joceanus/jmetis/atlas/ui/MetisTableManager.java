@@ -366,7 +366,7 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
                                           final MetisDataEosTableItem pItem) {
         if (pItem instanceof MetisDataEosVersionedItem) {
             final MetisDataEosVersionedItem myVersioned = (MetisDataEosVersionedItem) pItem;
-            MetisDataEosFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
+            final MetisDataEosFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
             return myVersioned.getValidation().hasErrors(myField);
         }
         return false;
@@ -382,7 +382,7 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
                                           final MetisDataEosTableItem pItem) {
         if (pItem instanceof MetisDataEosVersionedItem) {
             final MetisDataEosVersionedItem myVersioned = (MetisDataEosVersionedItem) pItem;
-            MetisDataEosFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
+            final MetisDataEosFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
             return myVersioned.fieldChanged(myField).isDifferent();
         }
         return false;

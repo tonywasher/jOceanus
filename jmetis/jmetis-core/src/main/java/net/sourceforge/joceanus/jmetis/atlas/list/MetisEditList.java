@@ -27,13 +27,10 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -41,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Edit List.
  * @param <T> the item type
  */
-public class MetisEditList<T extends MetisDataVersionedItem>
+public class MetisEditList<T extends MetisDataEosVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Logger.
@@ -56,17 +53,16 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisEditList.class, MetisVersionedList.getBaseFields());
+    @SuppressWarnings("rawtypes")
+    private static final MetisDataEosFieldSet<MetisEditList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisEditList.class);
 
     /**
-     * Base Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE);
-
-    /**
-     * EditVersion Field Id.
-     */
-    private static final MetisDataField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION);
+    static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisEditList::getBaseList);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION, MetisEditList::getEditVersion);
+    }
 
     /**
      * The base list.
@@ -99,7 +95,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      */
     protected MetisEditList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(pBase.getTheClazz());
+        super(pBase.getClazz());
 
         /* Copy the comparator from the base list */
         setComparator(pBase.getComparator());
@@ -117,30 +113,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_BASE.equals(pField)) {
-            return theBase.isEmpty()
-                                     ? MetisDataFieldValue.SKIP
-                                     : theBase;
-        }
-        if (FIELD_EDITVERSION.equals(pField)) {
-            return theEditVersion != 0
-                                       ? theEditVersion
-                                       : MetisDataFieldValue.SKIP;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFields() {
+    public MetisDataEosFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -187,6 +160,14 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      */
     protected MetisBaseList<T> getBaseList() {
         return theBase;
+    }
+
+    /**
+     * Obtain the editVersion.
+     * @return the editVersion
+     */
+    private int getEditVersion() {
+        return theEditVersion;
     }
 
     /**
@@ -267,16 +248,15 @@ public class MetisEditList<T extends MetisDataVersionedItem>
             final T myCurr = myIterator.next();
 
             /* If the item is being edited */
-            final MetisDataVersionControl myControl = myCurr.getVersionControl();
-            if (myControl.getVersion() == theEditVersion) {
+            if (myCurr.getVersion() == theEditVersion) {
                 /* If the item is newly created */
-                if (myControl.getOriginalVersion() == theEditVersion) {
+                if (myCurr.getOriginalVersion() == theEditVersion) {
                     /* Remove from list */
                     myIterator.remove();
 
                     /* else just pop the history */
                 } else {
-                    myControl.popTheHistory();
+                    myCurr.popTheHistory();
                 }
             }
         }
@@ -309,10 +289,9 @@ public class MetisEditList<T extends MetisDataVersionedItem>
             final T myCurr = myIterator.next();
 
             /* If the item is being edited */
-            final MetisDataVersionControl myControl = myCurr.getVersionControl();
-            if (myControl.getVersion() == theEditVersion) {
+            if (myCurr.getVersion() == theEditVersion) {
                 /* If the item is newly created */
-                if (myControl.getOriginalVersion() == theEditVersion) {
+                if (myCurr.getOriginalVersion() == theEditVersion) {
                     /* Register as a new item */
                     theChange.registerAdded(myCurr);
 
@@ -322,7 +301,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
                 }
 
                 /* adjust the state */
-                myControl.adjustState();
+                myCurr.adjustState();
             }
         }
 
@@ -358,9 +337,8 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         startEditVersion();
 
         /* Start editing */
-        final MetisDataVersionControl myControl = pItem.getVersionControl();
-        if (myControl.getVersion() != theEditVersion) {
-            myControl.pushHistory(theEditVersion);
+        if (pItem.getVersion() != theEditVersion) {
+            pItem.pushHistory(theEditVersion);
         }
     }
 
@@ -369,7 +347,7 @@ public class MetisEditList<T extends MetisDataVersionedItem>
      * @param pItem the item
      */
     protected void prepareItemForEdit(final Object pItem) {
-        prepareItemForEdit(getTheClazz().cast(pItem));
+        prepareItemForEdit(getClazz().cast(pItem));
     }
 
     /**
@@ -384,10 +362,9 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         final T myNew = newListItem(getNextId());
 
         /* Start editing */
-        final MetisDataVersionControl myControl = myNew.getVersionControl();
-        final MetisDataVersionValues myValues = myControl.getValueSet();
+        final MetisDataEosVersionValues myValues = myNew.getValueSet();
         myValues.setVersion(theEditVersion);
-        myControl.adjustState();
+        myNew.adjustState();
 
         /* Return the item */
         return myNew;
@@ -434,10 +411,9 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         final Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             final T myCurr = myIterator.next();
-            final MetisDataVersionControl myControl = myCurr.getVersionControl();
 
             /* Switch on state */
-            switch (myControl.getState()) {
+            switch (myCurr.getState()) {
                 case NEW:
                     handleCommitOfNewItem(myCurr);
                     break;
@@ -480,13 +456,11 @@ public class MetisEditList<T extends MetisDataVersionedItem>
     private void handleCommitOfNewItem(final T pItem) {
         /* Commit the item */
         final T myItem = newItemFromBase(pItem);
-        MetisDataVersionControl myControl = myItem.getVersionControl();
-        myControl.getValueSet().setVersion(theNewVersion);
+        myItem.getValueSet().setVersion(theNewVersion);
         theBase.addToList(myItem);
 
         /* Reset history on item */
-        myControl = pItem.getVersionControl();
-        myControl.clearHistory();
+        pItem.clearHistory();
 
         /* Add to the changes */
         theChange.registerChanged(pItem);
@@ -512,14 +486,12 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         final T myBase = theBase.getItemById(pItem.getIndexedId());
 
         /* Clear history in item and obtain the valueSet */
-        MetisDataVersionControl myControl = pItem.getVersionControl();
-        myControl.clearHistory();
-        final MetisDataVersionValues mySet = myControl.getValueSet();
+        pItem.clearHistory();
+        final MetisDataEosVersionValues mySet = pItem.getValueSet();
 
         /* Set values in changed item */
-        myControl = myBase.getVersionControl();
-        myControl.pushHistory(theNewVersion);
-        final MetisDataVersionValues myBaseSet = myControl.getValueSet();
+        myBase.pushHistory(theNewVersion);
+        final MetisDataEosVersionValues myBaseSet = myBase.getValueSet();
         myBaseSet.copyFrom(mySet);
 
         /* Add to the changes */
@@ -537,14 +509,12 @@ public class MetisEditList<T extends MetisDataVersionedItem>
         final T myNew = newListItem(pBase.getIndexedId());
 
         /* Access the valueSet */
-        MetisDataVersionControl myControl = myNew.getVersionControl();
-        final MetisDataVersionValues mySet = myControl.getValueSet();
+        final MetisDataEosVersionValues mySet = myNew.getValueSet();
 
         /* Obtain a clone of the value set as the base value */
-        myControl = pBase.getVersionControl();
-        final MetisDataVersionValues myBaseSet = myControl.getValueSet();
+        final MetisDataEosVersionValues myBaseSet = pBase.getValueSet();
         mySet.copyFrom(myBaseSet);
-        myControl.adjustState();
+        pBase.adjustState();
 
         /* Return the new item */
         return myNew;
@@ -623,12 +593,10 @@ public class MetisEditList<T extends MetisDataVersionedItem>
             final T myItem = getItemById(myId);
 
             /* Access set to be changed */
-            MetisDataVersionControl myControl = myItem.getVersionControl();
-            final MetisDataVersionValues mySet = myControl.getValueSet();
+            final MetisDataEosVersionValues mySet = myItem.getValueSet();
 
             /* Access base set */
-            myControl = myCurr.getVersionControl();
-            final MetisDataVersionValues myBase = myControl.getValueSet();
+            final MetisDataEosVersionValues myBase = myCurr.getValueSet();
 
             /* Reset values in the item */
             mySet.copyFrom(myBase);

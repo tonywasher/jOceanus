@@ -114,6 +114,14 @@ public interface MetisDataEosFieldItem
          */
         void setFieldValue(Object pObject,
                            Object pValue) throws OceanusException;
+
+        /**
+         * Set the value of a field (without checks).
+         * @param pObject the object
+         * @param pValue the new value
+         */
+        void setFieldUncheckedValue(Object pObject,
+                                    Object pValue);
     }
 
     /**
@@ -155,7 +163,7 @@ public interface MetisDataEosFieldItem
          * @return the corresponding field
          * @throws IllegalArgumentException if name is not present
          */
-        MetisDataEosFieldDef getField(final MetisFieldId pId);
+        MetisDataEosFieldDef getField(MetisFieldId pId);
     }
 
     /**

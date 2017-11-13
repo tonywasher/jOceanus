@@ -27,7 +27,8 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 /**
  * Transaction FieldIds.
  */
-public enum CoeusTotalsField implements MetisFieldId {
+public enum CoeusTotalsField
+        implements MetisFieldId {
     /**
      * ID.
      */
@@ -160,7 +161,7 @@ public enum CoeusTotalsField implements MetisFieldId {
 
     /**
      * Constructor.
-     * @param pField
+     * @param pField the field
      */
     CoeusTotalsField(final MetisFieldId pField) {
         theField = pField;

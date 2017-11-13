@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFie
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosVersionedFieldDef;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Metis Data Versioned Field.
@@ -68,9 +69,17 @@ public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
 
     @Override
     public void setFieldValue(final Object pObject,
-                              final Object pValue) {
+                              final Object pValue) throws OceanusException {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
         final MetisDataEosVersionValues myValues = myObject.getValueSet();
         myValues.setValue(this, pValue);
+    }
+
+    @Override
+    public void setFieldUncheckedValue(final Object pObject,
+                                       final Object pValue) {
+        final T myObject = getAnchor().getFieldClass().cast(pObject);
+        final MetisDataEosVersionValues myValues = myObject.getValueSet();
+        myValues.setUncheckedValue(this, pValue);
     }
 }

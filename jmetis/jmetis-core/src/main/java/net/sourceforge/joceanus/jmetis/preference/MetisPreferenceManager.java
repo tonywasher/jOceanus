@@ -31,11 +31,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -47,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public class MetisPreferenceManager
-        implements MetisDataFieldItem, TethysEventProvider<MetisPreferenceEvent> {
+        implements MetisDataEosFieldItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Logger.
      */
@@ -56,7 +54,7 @@ public class MetisPreferenceManager
     /**
      * Report fields.
      */
-    private final MetisDataFieldSet theFields = new MetisDataFieldSet(MetisPreferenceManager.class);
+    private final MetisDataEosFieldSet<MetisPreferenceManager> theFields;
 
     /**
      * Load error text.
@@ -91,28 +89,18 @@ public class MetisPreferenceManager
     public MetisPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         theViewerManager = pViewer;
         theEventManager = new TethysEventManager<>();
+        theFields = MetisDataEosFieldSet.newFieldSet(MetisPreferenceManager.this);
         theSecurityManager = new MetisPreferenceSecurity(this);
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisPreferenceManager> getDataFieldSet() {
         return theFields;
     }
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
         return theFields.getName();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Access preference set */
-        final MetisPreferenceSet<?> mySet = theMap.get(pField.getFieldId().getId());
-
-        /* Return the value */
-        return mySet == null
-                             ? MetisDataFieldValue.UNKNOWN
-                             : mySet;
     }
 
     @Override
@@ -150,41 +138,61 @@ public class MetisPreferenceManager
      * @param pClazz the class of the preference set
      * @return the relevant preferenceSet
      */
-    public synchronized <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClazz) {
-        /* Locate a cached PreferenceSet */
-        final String myName = pClazz.getSimpleName();
-        X mySet = pClazz.cast(theMap.get(myName));
+    public <X extends MetisPreferenceSet<?>> X getPreferenceSet(final Class<X> pClazz) {
+        /* Synchronise */
+        synchronized (this) {
+            /* Locate a cached PreferenceSet */
+            final String myName = pClazz.getSimpleName();
+            X mySet = pClazz.cast(theMap.get(myName));
 
-        /* If we have not seen this set before */
-        if (mySet == null) {
-            /* Protect against exceptions */
-            try {
-                /* Obtain the relevant constructor */
-                final Constructor<X> myConstructor = pClazz.getConstructor(getClass());
-
-                /* Access the new set */
-                mySet = myConstructor.newInstance(this);
-
-                /* Cache the set */
-                theMap.put(myName, mySet);
-
-                /* Create the DataField */
-                theFields.declareIndexField(myName);
-
-                /* Fire the action performed */
-                theEventManager.fireEvent(MetisPreferenceEvent.NEWSET, mySet);
-
-            } catch (IllegalAccessException
-                    | InstantiationException
-                    | NoSuchMethodException
-                    | SecurityException
-                    | IllegalArgumentException
-                    | InvocationTargetException e) {
-                LOGGER.error(ERROR_LOAD, e);
+            /* If we have not seen this set before */
+            if (mySet == null) {
+                /* Create the new preferenceSet */
+                mySet = newPreferenceSet(myName, pClazz);
             }
-        }
 
-        /* Return the PreferenceSet */
-        return mySet;
+            /* Return the PreferenceSet */
+            return mySet;
+        }
+    }
+
+    /**
+     * Create a new preferenceSet.
+     * @param <X> the preference set type
+     * @param pName the name of the preference set
+     * @param pClazz the class of the preference set
+     * @return the new preferenceSet
+     */
+    private <X extends MetisPreferenceSet<?>> X newPreferenceSet(final String pName,
+                                                                 final Class<X> pClazz) {
+        /* Protect against exceptions */
+        try {
+            /* Obtain the relevant constructor */
+            final Constructor<X> myConstructor = pClazz.getConstructor(getClass());
+
+            /* Access the new set */
+            final X mySet = myConstructor.newInstance(this);
+
+            /* Cache the set */
+            theMap.put(pName, mySet);
+
+            /* Create the DataField */
+            theFields.declareLocalField(pName, m -> mySet);
+
+            /* Fire the action performed */
+            theEventManager.fireEvent(MetisPreferenceEvent.NEWSET, mySet);
+
+            /* Return the PreferenceSet */
+            return mySet;
+
+        } catch (IllegalAccessException
+                | InstantiationException
+                | NoSuchMethodException
+                | SecurityException
+                | IllegalArgumentException
+                | InvocationTargetException e) {
+            LOGGER.error(ERROR_LOAD, e);
+            return null;
+        }
     }
 }

@@ -26,19 +26,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Viewable version of SLF4J Profile data.
  */
 public class MetisProfile
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * number of decimals for elapsed.
      */
@@ -47,32 +45,22 @@ public class MetisProfile
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisProfile.class);
+    private static final MetisDataEosFieldSet<MetisProfile> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisProfile.class);
 
     /**
-     * Task Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_TASK = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_TASK);
-
-    /**
-     * Status Field Id.
-     */
-    private static final MetisDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_STATUS);
-
-    /**
-     * Elapsed Field Id.
-     */
-    private static final MetisDataField FIELD_ELAPSED = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_ELAPSED);
-
-    /**
-     * Hidden Field Id.
-     */
-    private static final MetisDataField FIELD_HIDDEN = FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_HIDDEN);
+    static {
+        FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_TASK, MetisProfile::getName);
+        FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_STATUS, MetisProfile::getStatus);
+        FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_ELAPSED, MetisProfile::getElapsed);
+        FIELD_DEFS.declareLocalField(MetisDataResource.PROFILE_HIDDEN, MetisProfile::getHidden);
+    }
 
     /**
      * Report fields.
      */
-    private final MetisDataFieldSet theFields = new MetisDataFieldSet(MetisProfile.class, FIELD_DEFS);
+    private final MetisDataEosFieldSet<MetisProfile> theFields = MetisDataEosFieldSet.newFieldSet(this);
 
     /**
      * Step name.
@@ -133,42 +121,8 @@ public class MetisProfile
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisProfile> getDataFieldSet() {
         return theFields;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_TASK.equals(pField)) {
-            return theName;
-        }
-        if (FIELD_STATUS.equals(pField)) {
-            return theStatus.isRunning()
-                                         ? theStatus
-                                         : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_ELAPSED.equals(pField)) {
-            return theStatus.isRunning()
-                                         ? MetisDataFieldValue.SKIP
-                                         : theElapsed;
-        }
-        if (FIELD_HIDDEN.equals(pField)) {
-            return theHidden == null
-                                     ? MetisDataFieldValue.SKIP
-                                     : theHidden;
-        }
-
-        /* Only possible if we have subTasks */
-        if (theSubTasks == null) {
-            return MetisDataFieldValue.UNKNOWN;
-        }
-
-        /* return the value */
-        final int iIndex = pField.getIndex();
-        return (iIndex < 0
-                || iIndex >= theSubTasks.size())
-                                                 ? MetisDataFieldValue.UNKNOWN
-                                                 : theSubTasks.get(iIndex);
     }
 
     /**
@@ -177,6 +131,34 @@ public class MetisProfile
      */
     public String getName() {
         return theName;
+    }
+
+    /**
+     * Obtain the status of the profile.
+     * @return the status
+     */
+    private ProfileStatus getStatus() {
+        return theStatus.isRunning()
+                                     ? theStatus
+                                     : null;
+    }
+
+    /**
+     * Obtain the elapsed time of the profile.
+     * @return the elapsedTime
+     */
+    private TethysDecimal getElapsed() {
+        return theStatus.isRunning()
+                                     ? theElapsed
+                                     : null;
+    }
+
+    /**
+     * Obtain the hidden time of the profile.
+     * @return the hiddenTime
+     */
+    public TethysDecimal getHidden() {
+        return theHidden;
     }
 
     /**
@@ -193,7 +175,7 @@ public class MetisProfile
             /* Create the new task */
             final MetisProfile myTask = new MetisProfile(pName);
             theSubTasks.add(myTask);
-            theFields.declareIndexField(pName);
+            theFields.declareLocalField(pName, p -> myTask);
             theCurrentTask = myTask;
         }
 

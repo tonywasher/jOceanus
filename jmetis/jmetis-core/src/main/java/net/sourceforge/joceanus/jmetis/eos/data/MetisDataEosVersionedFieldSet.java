@@ -69,6 +69,154 @@ public class MetisDataEosVersionedFieldSet<T extends MetisDataEosVersionedItem>
     }
 
     /**
+     * Declare versioned string field.
+     * @param pId the fieldId
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareStringField(final MetisFieldId pId,
+                                                            final int pMaxLength) {
+        return declareEqualityVersionedField(pId, MetisDataType.STRING, pMaxLength);
+    }
+
+    /**
+     * Declare versioned charArray field.
+     * @param pId the fieldId
+     * @param pMaxLength the maximum length of the field
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareCharArrayField(final MetisFieldId pId,
+                                                               final int pMaxLength) {
+        return declareEqualityVersionedField(pId, MetisDataType.CHARARRAY, pMaxLength);
+    }
+
+    /**
+     * Declare versioned short field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareShortField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.SHORT, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned integer field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareIntegerField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.INTEGER, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned long field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareLongField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.LONG, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned boolean field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareBooleanField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.BOOLEAN, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned date field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareDateField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.DATE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned money field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareMoneyField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.MONEY, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned price field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declarePriceField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.PRICE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned units field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareUnitsField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.UNITS, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned rate field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareRateField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.RATE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned ratio field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareRatioField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned dilution field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareDilutionField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.DILUTION, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned dilutedPrice field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareDilutedPriceField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.DILUTEDPRICE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned link field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareLinkField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.LINK, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned linkSet field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisDataEosVersionedField<T> declareLinkSetField(final MetisFieldId pId) {
+        return declareEqualityVersionedField(pId, MetisDataType.LINKSET, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
      * Declare versioned field not used for equality test.
      * @param pId the fieldId
      * @return the field

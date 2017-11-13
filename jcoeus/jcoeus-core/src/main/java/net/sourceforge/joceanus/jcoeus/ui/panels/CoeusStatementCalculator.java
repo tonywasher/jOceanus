@@ -67,15 +67,15 @@ public class CoeusStatementCalculator
      */
     protected void setTotalSet(final CoeusTotalSet pTotalSet) {
         /* Determine the field of interest */
-        MetisDataEosFieldDef myField = FIELD_SET.getField(pTotalSet.getBalanceField());
+        final MetisDataEosFieldDef myField = FIELD_SET.getField(pTotalSet.getBalanceField());
 
         /* Create new filter */
         theFilter = p -> p.getDelta() != null;
 
         /* Loop through all the fields */
-        Iterator<CoeusTotals> myIterator = theTotals.iterator();
+        final Iterator<CoeusTotals> myIterator = theTotals.iterator();
         while (myIterator.hasNext()) {
-            CoeusTotals myTotals = myIterator.next();
+            final CoeusTotals myTotals = myIterator.next();
 
             /* Calculate fields */
             myTotals.calculateFields(myField);

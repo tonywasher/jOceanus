@@ -34,11 +34,9 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarketSnapShot;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -50,26 +48,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Loan MarketCache.
  */
 public class CoeusMarketCache
-        implements TethysEventProvider<CoeusDataEvent>, MetisDataFieldItem {
+        implements TethysEventProvider<CoeusDataEvent>, MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusMarketCache.class);
+    private static final MetisDataEosFieldSet<CoeusMarketCache> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarketCache.class);
 
     /**
-     * MarketSet Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_MARKETSET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKETSET);
-
-    /**
-     * SnapShot Field Id.
-     */
-    private static final MetisDataField FIELD_SNAPSHOT = FIELD_DEFS.declareLocalField(CoeusResource.DATA_SNAPSHOTMAP);
-
-    /**
-     * Annual Field Id.
-     */
-    private static final MetisDataField FIELD_ANNUAL = FIELD_DEFS.declareLocalField(CoeusResource.DATA_ANNUALMAP);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKETSET, CoeusMarketCache::getMarketSet);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_SNAPSHOTMAP, CoeusMarketCache::snapShotMap);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_ANNUALMAP, CoeusMarketCache::annualMap);
+    }
 
     /**
      * The MarketSet.
@@ -131,6 +123,30 @@ public class CoeusMarketCache
     @Override
     public TethysEventRegistrar<CoeusDataEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the market set.
+     * @return the marketSet
+     */
+    private CoeusMarketSet getMarketSet() {
+        return theMarketSet;
+    }
+
+    /**
+     * Obtain the snapShotMap.
+     * @return the map
+     */
+    private Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketSnapShot>> snapShotMap() {
+        return theSnapShotMap;
+    }
+
+    /**
+     * Obtain the annualMap.
+     * @return the map
+     */
+    private Map<CoeusMarketProvider, Map<TethysDate, CoeusMarketAnnual>> annualMap() {
+        return theAnnualMap;
     }
 
     /**
@@ -227,23 +243,6 @@ public class CoeusMarketCache
     }
 
     @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_MARKETSET.equals(pField)) {
-            return theMarketSet;
-        }
-        if (FIELD_SNAPSHOT.equals(pField)) {
-            return theSnapShotMap;
-        }
-        if (FIELD_ANNUAL.equals(pField)) {
-            return theAnnualMap;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
-    }
-
-    @Override
     public String toString() {
         return FIELD_DEFS.getName();
     }
@@ -254,7 +253,7 @@ public class CoeusMarketCache
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusMarketCache> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

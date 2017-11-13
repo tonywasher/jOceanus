@@ -25,14 +25,11 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -41,7 +38,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 
@@ -49,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
  * Metis Table item.
  */
 public class MetisTestTableItem
-        implements MetisDataVersionedItem {
+        extends MetisDataEosVersionedItem {
     /**
      * The Next itemId.
      */
@@ -58,119 +54,47 @@ public class MetisTestTableItem
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisTestTableItem.class);
+    private static final MetisDataEosVersionedFieldSet<MetisTestTableItem> FIELD_DEFS = MetisDataEosVersionedFieldSet.newVersionedFieldSet(MetisTestTableItem.class);
 
     /**
-     * Name Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.NAME.toString()), MetisDataType.STRING, 20);
-
-    /**
-     * Password Field Id.
-     */
-    private static final MetisDataField FIELD_PASSWORD = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.PASSWORD.toString()), MetisDataType.STRING, 30);
-
-    /**
-     * Date Field Id.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.DATE.toString()), MetisDataType.DATE);
-
-    /**
-     * Boolean Field Id.
-     */
-    private static final MetisDataField FIELD_BOOL = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.BOOLEAN.toString()), MetisDataType.BOOLEAN);
-
-    /**
-     * XtraBoolean Field Id.
-     */
-    private static final MetisDataField FIELD_XTRABOOL = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.XTRABOOL.toString()), MetisDataType.BOOLEAN);
-
-    /**
-     * Short Field Id.
-     */
-    private static final MetisDataField FIELD_SHORT = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.SHORT.toString()), MetisDataType.SHORT);
-
-    /**
-     * Integer Field Id.
-     */
-    private static final MetisDataField FIELD_INT = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.INTEGER.toString()), MetisDataType.INTEGER);
-
-    /**
-     * Long Field Id.
-     */
-    private static final MetisDataField FIELD_LONG = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.LONG.toString()), MetisDataType.LONG);
-
-    /**
-     * Money Field Id.
-     */
-    private static final MetisDataField FIELD_MONEY = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.MONEY.toString()), MetisDataType.MONEY);
-
-    /**
-     * Price Field Id.
-     */
-    private static final MetisDataField FIELD_PRICE = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.PRICE.toString()), MetisDataType.PRICE);
-
-    /**
-     * Units Field Id.
-     */
-    private static final MetisDataField FIELD_UNITS = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.UNITS.toString()), MetisDataType.UNITS);
-
-    /**
-     * Rate Field Id.
-     */
-    private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.RATE.toString()), MetisDataType.RATE);
-
-    /**
-     * Dilution Field Id.
-     */
-    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.DILUTION.toString()), MetisDataType.DILUTION);
-
-    /**
-     * Ratio Field Id.
-     */
-    private static final MetisDataField FIELD_RATIO = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.RATIO.toString()), MetisDataType.RATIO);
-
-    /**
-     * DilutedPrice Field Id.
-     */
-    private static final MetisDataField FIELD_DILUTEDPRICE = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.DILUTEDPRICE.toString()), MetisDataType.PRICE);
-
-    /**
-     * Scroll Field Id.
-     */
-    private static final MetisDataField FIELD_SCROLL = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.SCROLL.toString()), MetisDataType.LINK);
-
-    /**
-     * List Field Id.
-     */
-    private static final MetisDataField FIELD_LIST = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.LIST.toString()), MetisDataType.LINKSET);
-
-    /**
-     * Updates Field Id.
-     */
-    private static final MetisDataField FIELD_UPDATES = FIELD_DEFS.declareEqualityVersionedField(new MetisSimpleFieldId(TethysDataId.UPDATES.toString()), MetisDataType.INTEGER);
-
-    /**
-     * The version control.
-     */
-    private final MetisDataVersionControl theControl;
+    static {
+        FIELD_DEFS.declareStringField(MetisTestDataField.NAME, 20);
+        FIELD_DEFS.declareCharArrayField(MetisTestDataField.PASSWORD, 50);
+        FIELD_DEFS.declareDateField(MetisTestDataField.DATE);
+        FIELD_DEFS.declareBooleanField(MetisTestDataField.BOOLEAN);
+        FIELD_DEFS.declareShortField(MetisTestDataField.SHORT);
+        FIELD_DEFS.declareIntegerField(MetisTestDataField.INTEGER);
+        FIELD_DEFS.declareLongField(MetisTestDataField.LONG);
+        FIELD_DEFS.declareMoneyField(MetisTestDataField.MONEY);
+        FIELD_DEFS.declarePriceField(MetisTestDataField.PRICE);
+        FIELD_DEFS.declareUnitsField(MetisTestDataField.UNITS);
+        FIELD_DEFS.declareRateField(MetisTestDataField.RATE);
+        FIELD_DEFS.declareRatioField(MetisTestDataField.RATIO);
+        FIELD_DEFS.declareDilutionField(MetisTestDataField.DILUTION);
+        FIELD_DEFS.declareDilutedPriceField(MetisTestDataField.DILUTEDPRICE);
+        FIELD_DEFS.declareLinkField(MetisTestDataField.SCROLL);
+        FIELD_DEFS.declareLinkSetField(MetisTestDataField.LIST);
+        FIELD_DEFS.declareIntegerField(MetisTestDataField.UPDATES);
+    }
 
     /**
      * Constructor.
      */
     public MetisTestTableItem() {
-        /* Create version control */
-        theControl = FIELD_DEFS.newVersionControl(this);
-        theControl.setIndexedId(NEXT_ID.getAndIncrement());
+        /* Set new id */
+        setIndexedId(NEXT_ID.getAndIncrement());
     }
 
     /**
      * Constructor.
      * @param pHelper the Helper
      * @param pName the Name
+     * @throws OceanusException on error
      */
     public void initValues(final TethysScrollUITestHelper<?, ?> pHelper,
-                           final String pName) {
+                           final String pName) throws OceanusException {
         /* Initialise values */
         setName(pName);
         setDate(new TethysDate());
@@ -189,27 +113,9 @@ public class MetisTestTableItem
         setUpdates(new Integer(0));
     }
 
-    /**
-     * Obtain the current valueSet.
-     * @return the valueSet
-     */
-    private MetisDataVersionValues getValueSet() {
-        return theControl.getValueSet();
-    }
-
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisTestTableItem> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_NAME.equals(pField)) {
-            return getName();
-        }
-
-        /* Pass remaining values to the control */
-        return theControl.getFieldValue(pField);
     }
 
     @Override
@@ -217,30 +123,21 @@ public class MetisTestTableItem
         return getDataFieldSet().getName();
     }
 
-    @Override
-    public MetisDataVersionControl getVersionControl() {
-        return theControl;
-    }
-
-    @Override
-    public Integer getIndexedId() {
-        return theControl.getIndexedId();
-    }
-
     /**
      * Obtain the name.
      * @return the name
      */
     public String getName() {
-        return getValueSet().getValue(FIELD_NAME, String.class);
+        return getVersionedField(MetisTestDataField.NAME).getFieldValue(this, String.class);
     }
 
     /**
      * Set the name property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setName(final String pValue) {
-        getValueSet().setValue(FIELD_NAME, pValue);
+    public void setName(final String pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.NAME).setFieldValue(this, pValue);
     }
 
     /**
@@ -248,15 +145,16 @@ public class MetisTestTableItem
      * @return the password property
      */
     public char[] getPassword() {
-        return getValueSet().getValue(FIELD_PASSWORD, char[].class);
+        return getVersionedField(MetisTestDataField.PASSWORD).getFieldValue(this, char[].class);
     }
 
     /**
      * Set the password property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setPassword(final char[] pValue) {
-        getValueSet().setValue(FIELD_PASSWORD, pValue);
+    public void setPassword(final char[] pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.PASSWORD).setFieldValue(this, pValue);
     }
 
     /**
@@ -264,15 +162,16 @@ public class MetisTestTableItem
      * @return the boolean property
      */
     public Boolean getBoolean() {
-        return getValueSet().getValue(FIELD_BOOL, Boolean.class);
+        return getVersionedField(MetisTestDataField.BOOLEAN).getFieldValue(this, Boolean.class);
     }
 
     /**
      * Set the boolean property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setBoolean(final Boolean pValue) {
-        getValueSet().setValue(FIELD_BOOL, pValue);
+    public void setBoolean(final Boolean pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.BOOLEAN).setFieldValue(this, pValue);
     }
 
     /**
@@ -280,15 +179,16 @@ public class MetisTestTableItem
      * @return the boolean property
      */
     public Boolean getXtraBoolean() {
-        return getValueSet().getValue(FIELD_XTRABOOL, Boolean.class);
+        return getVersionedField(MetisTestDataField.XTRABOOL).getFieldValue(this, Boolean.class);
     }
 
     /**
      * Set the extra boolean property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setXtraBoolean(final Boolean pValue) {
-        getValueSet().setValue(FIELD_XTRABOOL, pValue);
+    public void setXtraBoolean(final Boolean pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.XTRABOOL).setFieldValue(this, pValue);
     }
 
     /**
@@ -296,15 +196,16 @@ public class MetisTestTableItem
      * @return the short property
      */
     public Short getShort() {
-        return getValueSet().getValue(FIELD_SHORT, Short.class);
+        return getVersionedField(MetisTestDataField.SHORT).getFieldValue(this, Short.class);
     }
 
     /**
      * Set the short property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setShort(final Short pValue) {
-        getValueSet().setValue(FIELD_SHORT, pValue);
+    public void setShort(final Short pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.SHORT).setFieldValue(this, pValue);
     }
 
     /**
@@ -312,15 +213,16 @@ public class MetisTestTableItem
      * @return the integer property
      */
     public Integer getInteger() {
-        return getValueSet().getValue(FIELD_INT, Integer.class);
+        return getVersionedField(MetisTestDataField.INTEGER).getFieldValue(this, Integer.class);
     }
 
     /**
      * Set the integer property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setInteger(final Integer pValue) {
-        getValueSet().setValue(FIELD_INT, pValue);
+    public void setInteger(final Integer pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.INTEGER).setFieldValue(this, pValue);
     }
 
     /**
@@ -328,15 +230,16 @@ public class MetisTestTableItem
      * @return the long property
      */
     public Long getLong() {
-        return getValueSet().getValue(FIELD_LONG, Long.class);
+        return getVersionedField(MetisTestDataField.LONG).getFieldValue(this, Long.class);
     }
 
     /**
      * Set the long property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setLong(final Long pValue) {
-        getValueSet().setValue(FIELD_LONG, pValue);
+    public void setLong(final Long pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.LONG).setFieldValue(this, pValue);
     }
 
     /**
@@ -344,15 +247,16 @@ public class MetisTestTableItem
      * @return the money property
      */
     public TethysMoney getMoney() {
-        return getValueSet().getValue(FIELD_MONEY, TethysMoney.class);
+        return getVersionedField(MetisTestDataField.MONEY).getFieldValue(this, TethysMoney.class);
     }
 
     /**
      * Set the money property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setMoney(final TethysMoney pValue) {
-        getValueSet().setValue(FIELD_MONEY, pValue);
+    public void setMoney(final TethysMoney pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.MONEY).setFieldValue(this, pValue);
     }
 
     /**
@@ -360,15 +264,16 @@ public class MetisTestTableItem
      * @return the price property
      */
     public TethysPrice getPrice() {
-        return getValueSet().getValue(FIELD_PRICE, TethysPrice.class);
+        return getVersionedField(MetisTestDataField.PRICE).getFieldValue(this, TethysPrice.class);
     }
 
     /**
      * Set the price property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setPrice(final TethysPrice pValue) {
-        getValueSet().setValue(FIELD_PRICE, pValue);
+    public void setPrice(final TethysPrice pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.PRICE).setFieldValue(this, pValue);
     }
 
     /**
@@ -376,15 +281,16 @@ public class MetisTestTableItem
      * @return the units property
      */
     public TethysUnits getUnits() {
-        return getValueSet().getValue(FIELD_UNITS, TethysUnits.class);
+        return getVersionedField(MetisTestDataField.UNITS).getFieldValue(this, TethysUnits.class);
     }
 
     /**
      * Set the units property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setUnits(final TethysUnits pValue) {
-        getValueSet().setValue(FIELD_UNITS, pValue);
+    public void setUnits(final TethysUnits pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.UNITS).setFieldValue(this, pValue);
     }
 
     /**
@@ -392,15 +298,16 @@ public class MetisTestTableItem
      * @return the rate property
      */
     public TethysRate getRate() {
-        return getValueSet().getValue(FIELD_RATE, TethysRate.class);
+        return getVersionedField(MetisTestDataField.RATE).getFieldValue(this, TethysRate.class);
     }
 
     /**
      * Set the rate property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setRate(final TethysRate pValue) {
-        getValueSet().setValue(FIELD_RATE, pValue);
+    public void setRate(final TethysRate pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.RATE).setFieldValue(this, pValue);
     }
 
     /**
@@ -408,15 +315,16 @@ public class MetisTestTableItem
      * @return the ratio property
      */
     public TethysRatio getRatio() {
-        return getValueSet().getValue(FIELD_RATIO, TethysRatio.class);
+        return getVersionedField(MetisTestDataField.RATIO).getFieldValue(this, TethysRatio.class);
     }
 
     /**
      * Set the ratio property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setRatio(final TethysRatio pValue) {
-        getValueSet().setValue(FIELD_RATIO, pValue);
+    public void setRatio(final TethysRatio pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.RATIO).setFieldValue(this, pValue);
     }
 
     /**
@@ -424,15 +332,16 @@ public class MetisTestTableItem
      * @return the dilution property
      */
     public TethysDilution getDilution() {
-        return getValueSet().getValue(FIELD_DILUTION, TethysDilution.class);
+        return getVersionedField(MetisTestDataField.DILUTION).getFieldValue(this, TethysDilution.class);
     }
 
     /**
      * Set the dilution property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setDilution(final TethysDilution pValue) {
-        getValueSet().setValue(FIELD_DILUTION, pValue);
+    public void setDilution(final TethysDilution pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.DILUTION).setFieldValue(this, pValue);
     }
 
     /**
@@ -440,15 +349,16 @@ public class MetisTestTableItem
      * @return the dilutedPrice property
      */
     public TethysDilutedPrice getDilutedPrice() {
-        return getValueSet().getValue(FIELD_DILUTEDPRICE, TethysDilutedPrice.class);
+        return getVersionedField(MetisTestDataField.DILUTEDPRICE).getFieldValue(this, TethysDilutedPrice.class);
     }
 
     /**
      * Set the dilutedPrice property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setDilutedPrice(final TethysDilutedPrice pValue) {
-        getValueSet().setValue(FIELD_DILUTEDPRICE, pValue);
+    public void setDilutedPrice(final TethysDilutedPrice pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.DILUTEDPRICE).setFieldValue(this, pValue);
     }
 
     /**
@@ -456,15 +366,16 @@ public class MetisTestTableItem
      * @return the date property
      */
     public TethysDate getDate() {
-        return getValueSet().getValue(FIELD_DATE, TethysDate.class);
+        return getVersionedField(MetisTestDataField.DATE).getFieldValue(this, TethysDate.class);
     }
 
     /**
      * Set the date property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setDate(final TethysDate pValue) {
-        getValueSet().setValue(FIELD_DATE, pValue);
+    public void setDate(final TethysDate pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.DATE).setFieldValue(this, pValue);
     }
 
     /**
@@ -472,15 +383,16 @@ public class MetisTestTableItem
      * @return the scroll property
      */
     public String getScroll() {
-        return getValueSet().getValue(FIELD_SCROLL, String.class);
+        return getVersionedField(MetisTestDataField.SCROLL).getFieldValue(this, String.class);
     }
 
     /**
      * Set the scroll property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setScroll(final String pValue) {
-        getValueSet().setValue(FIELD_SCROLL, pValue);
+    public void setScroll(final String pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.SCROLL).setFieldValue(this, pValue);
     }
 
     /**
@@ -489,15 +401,16 @@ public class MetisTestTableItem
      */
     @SuppressWarnings("unchecked")
     public List<TethysListId> getList() {
-        return (List<TethysListId>) getValueSet().getValue(FIELD_LIST, List.class);
+        return getVersionedField(MetisTestDataField.LIST).getFieldValue(this, List.class);
     }
 
     /**
      * Set the list property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    public void setList(final List<TethysListId> pValue) {
-        getValueSet().setValue(FIELD_LIST, pValue);
+    public void setList(final List<TethysListId> pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.LIST).setFieldValue(this, pValue);
     }
 
     /**
@@ -505,21 +418,23 @@ public class MetisTestTableItem
      * @return the updates property
      */
     public Integer getUpdates() {
-        return getValueSet().getValue(FIELD_UPDATES, Integer.class);
+        return getVersionedField(MetisTestDataField.UPDATES).getFieldValue(this, Integer.class);
     }
 
     /**
      * increment updates.
+     * @throws OceanusException on error
      */
-    public void incrementUpdates() {
+    public void incrementUpdates() throws OceanusException {
         setUpdates(getUpdates() + 1);
     }
 
     /**
      * Set the updates property.
      * @param pValue the new value
+     * @throws OceanusException on error
      */
-    private void setUpdates(final Integer pValue) {
-        getValueSet().setValue(FIELD_UPDATES, pValue);
+    private void setUpdates(final Integer pValue) throws OceanusException {
+        getVersionedField(MetisTestDataField.UPDATES).setFieldValue(this, pValue);
     }
 }

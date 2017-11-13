@@ -345,7 +345,7 @@ public class MetisDataFieldSet {
      */
     protected void checkUniqueName(final MetisFieldId pId) {
         /* Obtain the name to check */
-        String myName = pId.getId();
+        final String myName = pId.getId();
 
         /* Loop through existing iDs */
         final Iterator<MetisDataField> myIterator = fieldIterator();

@@ -71,7 +71,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet string field.
+     * Declare encrypted versioned string field.
      * @param pId the fieldId
      * @param pMaxLength the maximum length of the field
      * @return the field
@@ -82,7 +82,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet charArray field.
+     * Declare encrypted versioned charArray field.
      * @param pId the fieldId
      * @param pMaxLength the maximum length of the field
      * @return the field
@@ -93,7 +93,16 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet integer field.
+     * Declare encrypted versioned short field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedShortField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.SHORT, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted versioned integer field.
      * @param pId the fieldId
      * @return the field
      */
@@ -102,7 +111,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet long field.
+     * Declare encrypted versioned long field.
      * @param pId the fieldId
      * @return the field
      */
@@ -111,7 +120,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet boolean field.
+     * Declare encrypted versioned boolean field.
      * @param pId the fieldId
      * @return the field
      */
@@ -120,7 +129,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet date field.
+     * Declare encrypted versioned date field.
      * @param pId the fieldId
      * @return the field
      */
@@ -129,7 +138,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet money field.
+     * Declare encrypted versioned money field.
      * @param pId the fieldId
      * @return the field
      */
@@ -138,7 +147,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet price field.
+     * Declare encrypted versioned price field.
      * @param pId the fieldId
      * @return the field
      */
@@ -147,7 +156,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet units field.
+     * Declare encrypted versioned units field.
      * @param pId the fieldId
      * @return the field
      */
@@ -156,7 +165,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet rate field.
+     * Declare encrypted versioned rate field.
      * @param pId the fieldId
      * @return the field
      */
@@ -165,7 +174,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet ratio field.
+     * Declare encrypted versioned ratio field.
      * @param pId the fieldId
      * @return the field
      */
@@ -174,7 +183,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet dilution field.
+     * Declare encrypted versioned dilution field.
      * @param pId the fieldId
      * @return the field
      */
@@ -183,7 +192,16 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
     }
 
     /**
-     * Declare encrypted valueSet field used for equality test.
+     * Declare encrypted versioned dilutedPrice field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public PrometheusEncryptedField<T> declareEncryptedDilutedPriceField(final MetisFieldId pId) {
+        return declareEqualityEncryptedField(pId, MetisDataType.DILUTEDPRICE, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare encrypted versioned field used for equality test.
      * @param pId the fieldId
      * @param pDataType the dataType of the field
      * @param pMaxLength the maximum length of the field

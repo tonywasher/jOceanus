@@ -30,14 +30,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -47,16 +45,19 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <T> the item type
  */
 public class MetisIndexedList<T extends MetisIndexedItem>
-        implements MetisDataList<T>, TethysEventProvider<MetisListEvent>, MetisDataFieldItem {
+        implements MetisDataList<T>, TethysEventProvider<MetisListEvent>, MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisIndexedList.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisDataEosFieldSet<MetisIndexedList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisIndexedList.class);
 
     /**
-     * Size Field Id.
+     * FieldIds.
      */
-    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE);
+    static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE, MetisIndexedList::size);
+    }
 
     /**
      * The First Id.
@@ -106,16 +107,8 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_SIZE.equals(pField)) {
-            return size();
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -126,14 +119,6 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     @Override
     public String toString() {
         return getDataFieldSet().getName() + "(" + size() + ")";
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
     }
 
     /**
@@ -218,7 +203,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
      */
     public void removeById(final Integer pId) {
         /* If the item is present */
-        T myItem = theIdMap.get(pId);
+        final T myItem = theIdMap.get(pId);
         if (myItem != null) {
             /* Remove from the list */
             theIdMap.remove(pId);

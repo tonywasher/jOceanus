@@ -199,13 +199,17 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
         /* Locate the static fieldSet for this class */
         final Class<T> myClazz = (Class<T>) pObject.getClass();
         final String myClassName = myClazz.getCanonicalName();
-        final MetisDataEosFieldSet<?> myParent = FIELDSET_MAP.get(myClassName);
-        if (myParent == null) {
-            throw new IllegalStateException("FieldSet does not exist for " + myClassName);
-        }
 
-        /* Create the new fieldSet */
-        return new MetisDataEosFieldSet<>(myClazz, myParent, false);
+        /* Synchronise on class */
+        synchronized (MetisDataEosFieldSet.class) {
+            MetisDataEosFieldSet<?> myParent = FIELDSET_MAP.get(myClassName);
+            if (myParent == null) {
+                myParent = newFieldSet(myClazz);
+            }
+
+            /* Create the new fieldSet */
+            return new MetisDataEosFieldSet<>(myClazz, myParent, false);
+        }
     }
 
     /**
@@ -290,7 +294,6 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
     /**
      * Declare field used for calculation.
      * @param pId the fieldId
-     * @param pValue the value supplier
      * @return the field
      */
     public MetisDataEosField<T> declareCalculatedField(final MetisFieldId pId) {
@@ -369,7 +372,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      */
     protected void checkUniqueName(final MetisFieldId pId) {
         /* Obtain the name to check */
-        String myName = pId.getId();
+        final String myName = pId.getId();
 
         /* Loop through existing iDs */
         final Iterator<MetisDataEosFieldDef> myIterator = fieldIterator();

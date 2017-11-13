@@ -33,11 +33,9 @@ import java.util.prefs.Preferences;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
@@ -54,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * @param <K> the Key type
  */
 public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
-        implements MetisDataFieldItem, TethysEventProvider<MetisPreferenceEvent> {
+        implements MetisDataEosFieldItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Unknown preference string.
      */
@@ -78,7 +76,8 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Report fields.
      */
-    private final MetisDataFieldSet theFields = new MetisDataFieldSet(MetisPreferenceSet.class);
+    @SuppressWarnings("rawtypes")
+    private final MetisDataEosFieldSet<MetisPreferenceSet> theFields;
 
     /**
      * The Preference node for this set.
@@ -118,7 +117,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     /**
      * Constructor.
      * @param pManager the preference manager
-     * @param pClass the key class
+     * @param pClazz the key class
      * @param pId the resource id for the set name
      * @throws OceanusException on error
      */
@@ -141,6 +140,9 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         /* Store security manager and name */
         theSecurityManager = pManager.getSecurity();
         theName = pName;
+
+        /* Allocate the fields */
+        theFields = MetisDataEosFieldSet.newFieldSet(this);
 
         /* Access the handle */
         theHandle = deriveHandle();
@@ -174,7 +176,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSetDef getDataFieldSet() {
         return theFields;
     }
 
@@ -183,18 +185,13 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         return theFields.getName();
     }
 
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Access preference */
-        final MetisPreferenceItem<K> myPref = getPreference(pField.getFieldId().getId());
-
-        /* Return the value */
-        if (myPref == null) {
-            return MetisDataFieldValue.UNKNOWN;
-        }
-        return myPref.isHidden()
-                                 ? MetisDataFieldValue.SKIP
-                                 : myPref.getValue();
+    /**
+     * Declare preference.
+     * @param pPref the preference to declare
+     */
+    void declarePreference(final MetisPreferenceItem<K> pPref) {
+        /* Create the DataField */
+        theFields.declareLocalField(pPref.getPreferenceName(), s -> pPref.getViewerValue());
     }
 
     @Override
@@ -857,11 +854,6 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         private final String theName;
 
         /**
-         * DataField.
-         */
-        private final MetisDataField theField;
-
-        /**
          * Display Name.
          */
         private final String theDisplay;
@@ -910,7 +902,17 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
             theDisplay = pKey.getDisplay();
 
             /* Create the DataField */
-            theField = theSet.theFields.declareIndexField(theName);
+            theSet.declarePreference(this);
+        }
+
+        /**
+         * Obtain viewer value.
+         * @return the value
+         */
+        Object getViewerValue() {
+            return isHidden
+                            ? null
+                            : getValue();
         }
 
         /**
@@ -959,14 +961,6 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
          */
         public MetisPreferenceType getType() {
             return theType;
-        }
-
-        /**
-         * Obtain the field for the preference.
-         * @return the field for the preference
-         */
-        protected MetisDataField getDataField() {
-            return theField;
         }
 
         /**

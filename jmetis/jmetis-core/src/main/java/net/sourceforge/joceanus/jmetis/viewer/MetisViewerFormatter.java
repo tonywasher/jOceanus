@@ -306,7 +306,7 @@ public class MetisViewerFormatter {
 
     /**
      * Should we skip the value.
-     * @param pObject the object
+     * @param pValue the value
      * @return true/false
      */
     private static boolean skipValue(final Object pValue) {

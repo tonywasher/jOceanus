@@ -365,7 +365,7 @@ public abstract class CoeusTotals
      */
     public void calculateFields(final MetisDataEosFieldDef pField) {
         /* Obtain the balance field value */
-        Object myBalance = pField.getFieldValue(this);
+        final Object myBalance = pField.getFieldValue(this);
 
         /* Make sure that balance is Decimal */
         if (!(myBalance instanceof TethysDecimal)) {
@@ -386,9 +386,9 @@ public abstract class CoeusTotals
      */
     private TethysDecimal calculateDelta(final MetisDataEosFieldDef pField) {
         /* Obtain the previous field value */
-        Object myPrevious = thePrevious == null
-                                                ? null
-                                                : pField.getFieldValue(thePrevious);
+        final Object myPrevious = thePrevious == null
+                                                      ? null
+                                                      : pField.getFieldValue(thePrevious);
 
         /* If we do not have a preceding total */
         if (!(myPrevious instanceof TethysDecimal)) {

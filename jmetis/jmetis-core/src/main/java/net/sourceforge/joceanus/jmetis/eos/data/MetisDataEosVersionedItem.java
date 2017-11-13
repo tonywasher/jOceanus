@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.eos.data;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
@@ -341,5 +342,17 @@ public class MetisDataEosVersionedItem
         return getVersion() == 0
                                  ? MetisDataEditState.CLEAN
                                  : MetisDataEditState.DIRTY;
+    }
+
+    /**
+     * Obtain a versioned field.
+     * @param pId the field id
+     * @return the versioned field
+     */
+    public MetisDataEosVersionedFieldDef getVersionedField(final MetisFieldId pId) {
+        final MetisDataEosFieldDef myField = getDataFieldSet().getField(pId);
+        return myField instanceof MetisDataEosVersionedFieldDef
+                                                                ? (MetisDataEosVersionedFieldDef) myField
+                                                                : null;
     }
 }

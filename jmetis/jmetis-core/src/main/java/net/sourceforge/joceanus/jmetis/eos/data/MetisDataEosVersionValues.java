@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.eos.data;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference.MetisDataDiffers;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
@@ -33,6 +34,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectF
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Set of dataValues.
@@ -179,9 +181,10 @@ public class MetisDataEosVersionValues {
      * Set the value.
      * @param pField the field
      * @param pValue the value
+     * @throws OceanusException on error
      */
     public void setValue(final MetisDataEosFieldDef pField,
-                         final Object pValue) {
+                         final Object pValue) throws OceanusException {
         /* Reject if not in valueSet */
         if (!pField.getStorage().isVersioned()) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
@@ -189,6 +192,22 @@ public class MetisDataEosVersionValues {
 
         /* Check value type */
         checkValueType(pField, pValue);
+
+        /* Store the value */
+        theValues[pField.getIndex()] = pValue;
+    }
+
+    /**
+     * Set the unchecked value.
+     * @param pField the field
+     * @param pValue the value
+     */
+    public void setUncheckedValue(final MetisDataEosFieldDef pField,
+                                  final Object pValue) {
+        /* Reject if not in valueSet */
+        if (!pField.getStorage().isVersioned()) {
+            throw new IllegalArgumentException(ERROR_NOTVERSIONED);
+        }
 
         /* Store the value */
         theValues[pField.getIndex()] = pValue;
@@ -379,9 +398,10 @@ public class MetisDataEosVersionValues {
      * Check the value.
      * @param pField the field
      * @param pValue the value
+     * @throws OceanusException on error
      */
     protected void checkValueType(final MetisDataEosFieldDef pField,
-                                  final Object pValue) {
+                                  final Object pValue) throws OceanusException {
         /* Null/String is always allowed */
         if (pValue == null
             || pValue instanceof String) {
@@ -401,7 +421,7 @@ public class MetisDataEosVersionValues {
 
         /* If we are not allowed */
         if (!bAllowed) {
-            throw new IllegalArgumentException(ERROR_VALUETYPE);
+            throw new MetisDataException(ERROR_VALUETYPE);
         }
     }
 

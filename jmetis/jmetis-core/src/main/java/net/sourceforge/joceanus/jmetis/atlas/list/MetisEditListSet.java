@@ -24,11 +24,9 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -43,12 +41,14 @@ public class MetisEditListSet
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisEditListSet.class, MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<MetisEditListSet> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisEditListSet.class);
 
     /**
      * EditVersion Field Id.
      */
-    private static final MetisDataField FIELD_EDITVERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION);
+    static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_EDITVERSION, MetisEditListSet::getEditVersion);
+    }
 
     /**
      * The Event Manager.
@@ -75,21 +75,8 @@ public class MetisEditListSet
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisEditListSet> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_EDITVERSION.equals(pField)) {
-            return theEditVersion != 0
-                                       ? theEditVersion
-                                       : MetisDataFieldValue.SKIP;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 
     @Override
@@ -98,8 +85,16 @@ public class MetisEditListSet
     }
 
     @Override
-    public MetisEditList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
-        return (MetisEditList<MetisDataVersionedItem>) super.getList(pListKey);
+    public MetisEditList<MetisDataEosVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisEditList<MetisDataEosVersionedItem>) super.getList(pListKey);
+    }
+
+    /**
+     * Obtain the editVersion.
+     * @return the editVersion
+     */
+    private int getEditVersion() {
+        return theEditVersion;
     }
 
     /**
@@ -160,7 +155,7 @@ public class MetisEditListSet
             final Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
                 final MetisListKey myKey = myIterator.next();
-                final MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
+                final MetisEditList<MetisDataEosVersionedItem> myList = getList(myKey);
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -184,7 +179,7 @@ public class MetisEditListSet
             final Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
                 final MetisListKey myKey = myIterator.next();
-                final MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
+                final MetisEditList<MetisDataEosVersionedItem> myList = getList(myKey);
 
                 /* If the list is editing */
                 if (myList.isEditing()) {
@@ -209,7 +204,7 @@ public class MetisEditListSet
             final Iterator<MetisListKey> myIterator = keyIterator();
             while (myIterator.hasNext()) {
                 final MetisListKey myKey = myIterator.next();
-                final MetisEditList<MetisDataVersionedItem> myList = getList(myKey);
+                final MetisEditList<MetisDataEosVersionedItem> myList = getList(myKey);
 
                 /* Commit any pending version */
                 myList.commitEditVersion();
@@ -248,7 +243,7 @@ public class MetisEditListSet
      * @param pList the list
      */
     protected void declareList(final MetisListKey pKey,
-                               final MetisEditList<MetisDataVersionedItem> pList) {
+                               final MetisEditList<MetisDataEosVersionedItem> pList) {
         /* Pass call through */
         super.declareList(pKey, pList);
 
@@ -267,7 +262,7 @@ public class MetisEditListSet
      * Handle list Refresh.
      * @param pList the list
      */
-    private void handleListRefresh(final MetisEditList<MetisDataVersionedItem> pList) {
+    private void handleListRefresh(final MetisEditList<MetisDataEosVersionedItem> pList) {
         reLinkItems(pList.iterator());
     }
 
@@ -278,7 +273,7 @@ public class MetisEditListSet
     private void handleListReWind(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        final MetisListChange<MetisDataVersionedItem> myBaseChange = (MetisListChange<MetisDataVersionedItem>) pChange.getDetails(MetisListChange.class);
+        final MetisListChange<MetisDataEosVersionedItem> myBaseChange = (MetisListChange<MetisDataEosVersionedItem>) pChange.getDetails(MetisListChange.class);
 
         /* ReLink Changed items */
         reLinkItems(myBaseChange.changedIterator());
@@ -291,7 +286,7 @@ public class MetisEditListSet
     private void handleListCommit(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        final MetisListChange<MetisDataVersionedItem> myBaseChange = (MetisListChange<MetisDataVersionedItem>) pChange.getDetails(MetisListChange.class);
+        final MetisListChange<MetisDataEosVersionedItem> myBaseChange = (MetisListChange<MetisDataEosVersionedItem>) pChange.getDetails(MetisListChange.class);
 
         /* ReLink Added and Changed items */
         theBaseSet.reLinkItems(myBaseChange.addedIterator());

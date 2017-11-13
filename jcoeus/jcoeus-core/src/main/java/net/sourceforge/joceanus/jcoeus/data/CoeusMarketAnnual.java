@@ -27,41 +27,29 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Annual Market Totals.
  */
 public class CoeusMarketAnnual
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CoeusMarketAnnual.class);
+    private static final MetisDataEosFieldSet<CoeusMarketAnnual> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarketAnnual.class);
 
     /**
-     * Market Field Id.
+     * Field IDs.
      */
-    private static final MetisDataField FIELD_MARKET = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET);
-
-    /**
-     * Date Field Id.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE);
-
-    /**
-     * Monthly Histories Field Id.
-     */
-    private static final MetisDataField FIELD_MONTHS = FIELD_DEFS.declareLocalField(CoeusResource.DATA_MONTHLYTOTALS);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY);
+    static {
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MARKET, CoeusMarketAnnual::getMarket);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_DATE, CoeusMarketAnnual::getDate);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_MONTHLYTOTALS, CoeusMarketAnnual::monthlyHistories);
+        FIELD_DEFS.declareLocalField(CoeusResource.DATA_HISTORY, CoeusMarketAnnual::getHistory);
+    }
 
     /**
      * Loan Market.
@@ -164,6 +152,14 @@ public class CoeusMarketAnnual
      */
     public Iterator<CoeusHistory> monthlyIterator() {
         return theMonthlyHistories.values().iterator();
+    }
+
+    /**
+     * Obtain the monthly histories.
+     * @return the histories
+     */
+    private Map<Month, CoeusHistory> monthlyHistories() {
+        return theMonthlyHistories;
     }
 
     /**
@@ -280,27 +276,7 @@ public class CoeusMarketAnnual
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<CoeusMarketAnnual> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_MARKET.equals(pField)) {
-            return theMarket;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_MONTHS.equals(pField)) {
-            return theMonthlyHistories;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

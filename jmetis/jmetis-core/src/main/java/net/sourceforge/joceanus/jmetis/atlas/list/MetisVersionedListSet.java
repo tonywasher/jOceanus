@@ -28,40 +28,39 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Set of VersionedLists.
  */
 public class MetisVersionedListSet
-        implements MetisDataFieldItem {
+        implements MetisDataEosFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisVersionedListSet.class);
+    private static final MetisDataEosFieldSet<MetisVersionedListSet> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisVersionedListSet.class);
 
     /**
      * Version Field Id.
      */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION);
+    static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisVersionedListSet::getVersion);
+    }
 
     /**
      * The Local fields.
      */
-    private final MetisDataFieldSet theFields;
+    private final MetisDataEosFieldSet<MetisVersionedListSet> theFields;
 
     /**
      * The VersionedList Map.
      */
-    private final Map<MetisListKey, MetisVersionedList<MetisDataVersionedItem>> theListMap;
+    private final Map<MetisListKey, MetisVersionedList<MetisDataEosVersionedItem>> theListMap;
 
     /**
      * The version of the listSet.
@@ -73,47 +72,12 @@ public class MetisVersionedListSet
      */
     protected MetisVersionedListSet() {
         theListMap = new LinkedHashMap<>();
-        theFields = new MetisDataFieldSet(MetisVersionedListSet.class, FIELD_DEFS);
+        theFields = MetisDataEosFieldSet.newFieldSet(this);
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSetDef getDataFieldSet() {
         return theFields;
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion != 0
-                                   ? theVersion
-                                   : MetisDataFieldValue.SKIP;
-        }
-
-        /* Look for a key of this type */
-        final String myName = pField.getFieldId().getId();
-        for (Map.Entry<MetisListKey, MetisVersionedList<MetisDataVersionedItem>> myEntry : theListMap.entrySet()) {
-            /* If this is the correct value */
-            if (myName.equals(myEntry.getKey().getListName())) {
-                /* Return the list */
-                final MetisVersionedList<?> myList = myEntry.getValue();
-                return myList == null
-                       || myList.isEmpty()
-                                           ? MetisDataFieldValue.SKIP
-                                           : myList;
-            }
-        }
-
-        /* Not found */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -171,7 +135,7 @@ public class MetisVersionedListSet
      * Obtain the List iterator.
      * @return true/false
      */
-    private Iterator<MetisVersionedList<MetisDataVersionedItem>> listIterator() {
+    private Iterator<MetisVersionedList<MetisDataEosVersionedItem>> listIterator() {
         return theListMap.values().iterator();
     }
 
@@ -180,7 +144,7 @@ public class MetisVersionedListSet
      * @param pListKey the list key
      * @return the list (or null)
      */
-    public MetisVersionedList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
+    public MetisVersionedList<MetisDataEosVersionedItem> getList(final MetisListKey pListKey) {
         return theListMap.get(pListKey);
     }
 
@@ -190,7 +154,7 @@ public class MetisVersionedListSet
      */
     public boolean isEmpty() {
         /* Loop through the lists */
-        for (MetisVersionedList<MetisDataVersionedItem> myList : theListMap.values()) {
+        for (MetisVersionedList<MetisDataEosVersionedItem> myList : theListMap.values()) {
             /* Check whether the list is empty */
             if (!myList.isEmpty()) {
                 return false;
@@ -207,12 +171,12 @@ public class MetisVersionedListSet
      * @param pList the list
      */
     protected void declareList(final MetisListKey pKey,
-                               final MetisVersionedList<MetisDataVersionedItem> pList) {
+                               final MetisVersionedList<MetisDataEosVersionedItem> pList) {
         /* Add to the list map */
         theListMap.put(pKey, pList);
 
         /* Create the DataField */
-        theFields.declareIndexField(pKey.getListName());
+        theFields.declareLocalField(pKey.getListName(), k -> pList);
     }
 
     /**
@@ -233,9 +197,9 @@ public class MetisVersionedListSet
      */
     protected void doReWindToVersion(final int pVersion) {
         /* Loop through the lists */
-        final Iterator<MetisVersionedList<MetisDataVersionedItem>> myIterator = listIterator();
+        final Iterator<MetisVersionedList<MetisDataEosVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            final MetisVersionedList<MetisDataVersionedItem> myList = myIterator.next();
+            final MetisVersionedList<MetisDataEosVersionedItem> myList = myIterator.next();
 
             /* If the list needs reWinding */
             if (myList.getVersion() > pVersion) {
@@ -252,10 +216,10 @@ public class MetisVersionedListSet
      * reLink Items.
      * @param pIterator the iterator
      */
-    protected void reLinkItems(final Iterator<MetisDataVersionedItem> pIterator) {
+    protected void reLinkItems(final Iterator<MetisDataEosVersionedItem> pIterator) {
         /* Iterate through the items, reLinking */
         while (pIterator.hasNext()) {
-            final MetisDataVersionedItem myItem = pIterator.next();
+            final MetisDataEosVersionedItem myItem = pIterator.next();
             reLinkItem(myItem);
         }
     }
@@ -264,17 +228,16 @@ public class MetisVersionedListSet
      * reLink values.
      * @param pItem the item
      */
-    private void reLinkItem(final MetisDataVersionedItem pItem) {
+    private void reLinkItem(final MetisDataEosVersionedItem pItem) {
         /* Access details */
-        final MetisDataVersionControl myControl = pItem.getVersionControl();
-        final MetisDataVersionValues myValues = myControl.getValueSet();
-        final MetisDataFieldSet myFields = pItem.getDataFieldSet();
+        final MetisDataEosVersionValues myValues = pItem.getValueSet();
+        final MetisDataEosFieldSetDef myFields = pItem.getDataFieldSet();
 
         /* Loop through the fields */
-        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
+        final Iterator<MetisDataEosFieldDef> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field and value */
-            final MetisDataField myField = myIterator.next();
+            final MetisDataEosFieldDef myField = myIterator.next();
             Object myValue = myField.getStorage().isVersioned()
                                                                 ? myValues.getValue(myField)
                                                                 : null;
@@ -283,7 +246,7 @@ public class MetisVersionedListSet
             if (myValue instanceof MetisIndexedItem) {
                 /* Obtain the reLinked value and store the new value */
                 myValue = reLinkValue((MetisIndexedItem) myValue);
-                myValues.setValue(myField, myValue);
+                myValues.setUncheckedValue(myField, myValue);
             }
         }
     }
@@ -295,7 +258,7 @@ public class MetisVersionedListSet
      */
     private MetisIndexedItem reLinkValue(final MetisIndexedItem pValue) {
         /* Determine the list for the item */
-        final MetisVersionedList<MetisDataVersionedItem> myList = determineListForItem(pValue);
+        final MetisVersionedList<MetisDataEosVersionedItem> myList = determineListForItem(pValue);
 
         /* If we found the list */
         final MetisIndexedItem myNew = myList != null
@@ -313,14 +276,14 @@ public class MetisVersionedListSet
      * @param pItem the item
      * @return the corresponding list (or null)
      */
-    private MetisVersionedList<MetisDataVersionedItem> determineListForItem(final MetisIndexedItem pItem) {
+    private MetisVersionedList<MetisDataEosVersionedItem> determineListForItem(final MetisIndexedItem pItem) {
         /* Loop through the lists */
-        final Iterator<MetisVersionedList<MetisDataVersionedItem>> myIterator = listIterator();
+        final Iterator<MetisVersionedList<MetisDataEosVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            final MetisVersionedList<MetisDataVersionedItem> myList = myIterator.next();
+            final MetisVersionedList<MetisDataEosVersionedItem> myList = myIterator.next();
 
             /* If this is the correct class */
-            if (myList.getTheClazz().isInstance(pItem)) {
+            if (myList.getClazz().isInstance(pItem)) {
                 return myList;
             }
         }

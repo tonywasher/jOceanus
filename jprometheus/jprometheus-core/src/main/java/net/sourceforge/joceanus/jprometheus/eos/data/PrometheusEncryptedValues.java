@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
 import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Prometheus Set of versioned Values.
@@ -72,7 +73,7 @@ public class PrometheusEncryptedValues
 
     @Override
     protected void checkValueType(final MetisDataEosFieldDef pField,
-                                  final Object pValue) {
+                                  final Object pValue) throws OceanusException {
         /* Allow byteArray */
         if (pValue instanceof byte[]) {
             return;

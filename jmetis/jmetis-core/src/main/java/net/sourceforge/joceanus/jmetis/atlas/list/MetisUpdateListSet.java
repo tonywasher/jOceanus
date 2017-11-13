@@ -24,9 +24,9 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisUpdateList.MetisUpdatePhase;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Set of UpdateLists.
@@ -36,7 +36,7 @@ public final class MetisUpdateListSet
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisUpdateListSet.class, MetisVersionedListSet.getBaseFieldSet());
+    private static final MetisDataEosFieldSet<MetisUpdateListSet> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisUpdateListSet.class);
 
     /**
      * Constructor.
@@ -46,13 +46,13 @@ public final class MetisUpdateListSet
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisDataEosFieldSet<MetisUpdateListSet> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public MetisUpdateList<MetisDataVersionedItem> getList(final MetisListKey pListKey) {
-        return (MetisUpdateList<MetisDataVersionedItem>) super.getList(pListKey);
+    public MetisUpdateList<MetisDataEosVersionedItem> getList(final MetisListKey pListKey) {
+        return (MetisUpdateList<MetisDataEosVersionedItem>) super.getList(pListKey);
     }
 
     /**
@@ -74,7 +74,7 @@ public final class MetisUpdateListSet
             final MetisListKey myKey = myIterator.next();
 
             /* If the list is non-empty */
-            final MetisUpdateList<MetisDataVersionedItem> myList = getList(myKey);
+            final MetisUpdateList<MetisDataEosVersionedItem> myList = getList(myKey);
             if (!myList.isEmpty()) {
                 /* Commit the items */
                 myNumItems = myList.commitUpdateBatch(pPhase, pNumItems);
