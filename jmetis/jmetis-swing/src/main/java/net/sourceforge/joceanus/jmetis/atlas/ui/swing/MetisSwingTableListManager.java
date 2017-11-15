@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -37,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Metis swing table list manager.
  * @param <R> the item type
  */
-public class MetisSwingTableListManager<R extends MetisDataEosTableItem> {
+public class MetisSwingTableListManager<R extends MetisFieldTableItem> {
     /**
      * The underlying List.
      */

@@ -31,6 +31,10 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDateItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;
@@ -46,10 +50,6 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFiel
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetShortItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetStringItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetUnitsItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -89,7 +89,7 @@ public class MetisFieldSetPanel<N, I>
     /**
      * The current item.
      */
-    private MetisDataEosFieldItem theItem;
+    private MetisFieldItem theItem;
 
     /**
      * The field elements.
@@ -163,7 +163,7 @@ public class MetisFieldSetPanel<N, I>
      * Set the item.
      * @param pItem the item to set
      */
-    public void setItem(final MetisDataEosFieldItem pItem) {
+    public void setItem(final MetisFieldItem pItem) {
         /* Store the item */
         theItem = pItem;
     }
@@ -172,7 +172,7 @@ public class MetisFieldSetPanel<N, I>
      * obtain the item.
      * @return the item
      */
-    public MetisDataEosFieldItem getItem() {
+    public MetisFieldItem getItem() {
         return theItem;
     }
 
@@ -207,14 +207,14 @@ public class MetisFieldSetPanel<N, I>
         boolean hasVisible = false;
 
         /* access version control */
-        final MetisDataEosVersionedItem myVersioned = theItem instanceof MetisDataEosVersionedItem
-                                                                                                   ? (MetisDataEosVersionedItem) theItem
+        final MetisFieldVersionedItem myVersioned = theItem instanceof MetisFieldVersionedItem
+                                                                                                   ? (MetisFieldVersionedItem) theItem
                                                                                                    : null;
 
         /* If the item is non-null */
         if (theItem != null) {
             /* Obtain the fieldSet definition */
-            final MetisDataEosFieldSetDef myFieldSet = theItem.getDataFieldSet();
+            final MetisFieldSetDef myFieldSet = theItem.getDataFieldSet();
 
             /* Loop through the elements */
             final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
@@ -222,7 +222,7 @@ public class MetisFieldSetPanel<N, I>
                 final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
 
                 /* Obtain the field value */
-                final MetisDataEosFieldDef myField = myFieldSet.getField(myChild.getField());
+                final MetisFieldDef myField = myFieldSet.getField(myChild.getField());
                 final Object myValue = myField.getFieldValue(theItem);
 
                 /* Determine font and colour */

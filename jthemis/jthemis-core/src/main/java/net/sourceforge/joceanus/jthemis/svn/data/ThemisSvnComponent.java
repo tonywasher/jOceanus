@@ -43,14 +43,14 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch.SvnBranchList;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch.ThemisSvnBranchList;
 
 /**
  * Represents a component in the repository.
@@ -86,7 +86,7 @@ public final class ThemisSvnComponent
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnComponent.class, ThemisScmComponent.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisSvnComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnComponent.class);
 
     /**
      * Logger.
@@ -104,18 +104,18 @@ public final class ThemisSvnComponent
         super(pParent, pName);
 
         /* Create branch list */
-        final SvnBranchList myBranches = new SvnBranchList(this);
+        final ThemisSvnBranchList myBranches = new ThemisSvnBranchList(this);
         setBranches(myBranches);
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnComponent> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
-    public SvnBranchList getBranches() {
-        return (SvnBranchList) super.getBranches();
+    public ThemisSvnBranchList getBranches() {
+        return (ThemisSvnBranchList) super.getBranches();
     }
 
     /**
@@ -131,7 +131,7 @@ public final class ThemisSvnComponent
      * @return the iterator
      */
     public ListIterator<ThemisSvnBranch> branchListIterator() {
-        final SvnBranchList myBranches = getBranches();
+        final ThemisSvnBranchList myBranches = getBranches();
         return myBranches.listIterator(myBranches.size());
     }
 
@@ -329,12 +329,12 @@ public final class ThemisSvnComponent
     /**
      * List of components.
      */
-    public static final class SvnComponentList
-            extends ScmComponentList<ThemisSvnComponent, ThemisSvnRepository> {
+    public static final class ThemisSvnComponentList
+            extends ThemisScmComponentList<ThemisSvnComponent, ThemisSvnRepository> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnComponentList.class, ScmComponentList.getBaseFieldSet());
+        private static final MetisFieldSet<ThemisSvnComponentList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnComponentList.class);
 
         /**
          * Parent Repository.
@@ -345,13 +345,13 @@ public final class ThemisSvnComponent
          * Constructor.
          * @param pParent the parent repository
          */
-        public SvnComponentList(final ThemisSvnRepository pParent) {
+        public ThemisSvnComponentList(final ThemisSvnRepository pParent) {
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnComponentList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -392,7 +392,7 @@ public final class ThemisSvnComponent
             while (myIterator.hasNext()) {
                 /* Access the Component */
                 final ThemisSvnComponent myComponent = myIterator.next();
-                final SvnBranchList myBranches = myComponent.getBranches();
+                final ThemisSvnBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
                 pReport.setNewStage("Analysing component " + myComponent.getName());

@@ -31,7 +31,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 
 /**
@@ -468,7 +468,7 @@ public class MetisViewerPage {
         }
 
         /* Handle structured object */
-        if (myObject instanceof MetisDataEosFieldItem
+        if (myObject instanceof MetisFieldItem
             || myObject instanceof MetisDataObjectFormat) {
             return true;
         }

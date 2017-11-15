@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jcoeus.data.zopa;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -36,7 +36,7 @@ public final class CoeusZopaTotals
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusZopaTotals> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaTotals.class);
+    private static final MetisFieldSet<CoeusZopaTotals> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaTotals.class);
 
     /**
      * AssetValue.
@@ -371,7 +371,7 @@ public final class CoeusZopaTotals
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusZopaTotals> getDataFieldSet() {
+    public MetisFieldSet<CoeusZopaTotals> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

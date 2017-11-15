@@ -26,19 +26,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Transaction Totals History.
  */
 public abstract class CoeusHistory
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusHistory> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusHistory.class);
+    private static final MetisFieldSet<CoeusHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusHistory.class);
 
     /**
      * Declare Fields.

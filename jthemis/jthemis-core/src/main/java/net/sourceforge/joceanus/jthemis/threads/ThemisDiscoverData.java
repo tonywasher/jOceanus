@@ -36,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.ThemisSvnWorkingCopySet;
 
 /**
  * Thread to handle analysis of repository.
@@ -53,7 +53,7 @@ public class ThemisDiscoverData<N, I>
     /**
      * The WorkingCopySet.
      */
-    private SvnWorkingCopySet theWorkingCopySet;
+    private ThemisSvnWorkingCopySet theWorkingCopySet;
 
     /**
      * The extract plan map.
@@ -79,7 +79,7 @@ public class ThemisDiscoverData<N, I>
      * Obtain the working copy set.
      * @return the working copy set
      */
-    public SvnWorkingCopySet getWorkingCopySet() {
+    public ThemisSvnWorkingCopySet getWorkingCopySet() {
         return theWorkingCopySet;
     }
 
@@ -134,7 +134,7 @@ public class ThemisDiscoverData<N, I>
 
             /* Discover workingSet details */
             myManager.checkForCancellation();
-            theWorkingCopySet = new SvnWorkingCopySet(theRepository, myManager);
+            theWorkingCopySet = new ThemisSvnWorkingCopySet(theRepository, myManager);
 
             /* Build the Extract Plans */
             myManager.checkForCancellation();

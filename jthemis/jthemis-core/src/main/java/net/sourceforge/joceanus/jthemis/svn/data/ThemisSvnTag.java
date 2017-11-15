@@ -36,15 +36,14 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.SvnRevisionPath;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
 
 /**
  * Represents a tag of a branch.
@@ -59,22 +58,16 @@ public final class ThemisSvnTag
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnTag.class);
+    private static final MetisFieldSet<ThemisSvnTag> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnTag.class);
 
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
-
-    /**
-     * Component field id.
-     */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
-
-    /**
-     * RevisionPath.
-     */
-    private static final MetisDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISIONPATH);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisSvnTag::getRepository);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisSvnTag::getComponent);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISIONPATH, ThemisSvnTag::getRevisionPath);
+    }
 
     /**
      * Logger.
@@ -94,7 +87,7 @@ public final class ThemisSvnTag
     /**
      * RevisionPath.
      */
-    private SvnRevisionPath theRevisionPath;
+    private ThemisSvnRevisionPath theRevisionPath;
 
     /**
      * Constructor.
@@ -112,25 +105,8 @@ public final class ThemisSvnTag
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnTag> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponent;
-        }
-        if (FIELD_REVPATH.equals(pField)) {
-            return theRevisionPath;
-        }
-
-        /* pass onwards */
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -153,7 +129,7 @@ public final class ThemisSvnTag
      * Get the revision path for this branch.
      * @return the revision path
      */
-    public SvnRevisionPath getRevisionPath() {
+    public ThemisSvnRevisionPath getRevisionPath() {
         return theRevisionPath;
     }
 
@@ -205,12 +181,12 @@ public final class ThemisSvnTag
     /**
      * List of tags.
      */
-    public static class SvnTagList
-            extends ScmTagList<ThemisSvnTag, ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
+    public static class ThemisSvnTagList
+            extends ThemisScmTagList<ThemisSvnTag, ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnTagList.class, ScmTagList.getBaseFieldSet());
+        private static final MetisFieldSet<ThemisSvnTagList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnTagList.class);
 
         /**
          * Parent Component.
@@ -221,7 +197,7 @@ public final class ThemisSvnTag
          * Constructor.
          * @param pParent the parent branch
          */
-        protected SvnTagList(final ThemisSvnBranch pParent) {
+        protected ThemisSvnTagList(final ThemisSvnBranch pParent) {
             /* Call super constructor */
             super(pParent);
 
@@ -232,7 +208,7 @@ public final class ThemisSvnTag
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnTagList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.Iterator;
 
@@ -33,42 +33,42 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDat
 /**
  * Set of dataValue Deltas.
  */
-public class MetisDataEosVersionDelta
-        implements MetisDataEosFieldItem {
+public class MetisFieldVersionDelta
+        implements MetisFieldItem {
     /**
      * FieldSet definitions.
      */
-    private static final MetisDataEosFieldSet<MetisDataEosVersionDelta> FIELD_SET = MetisDataEosFieldSet.newFieldSet(MetisDataEosVersionDelta.class);
+    private static final MetisFieldSet<MetisFieldVersionDelta> FIELD_SET = MetisFieldSet.newFieldSet(MetisFieldVersionDelta.class);
 
     /**
      * Initialise the Version Field.
      */
     static {
-        FIELD_SET.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisDataEosVersionDelta::getVersion);
+        FIELD_SET.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisFieldVersionDelta::getVersion);
     }
 
     /**
      * Old ValueSet.
      */
-    private final MetisDataEosVersionValues theOldSet;
+    private final MetisFieldVersionValues theOldSet;
 
     /**
      * New ValueSet.
      */
-    private final MetisDataEosVersionValues theNewSet;
+    private final MetisFieldVersionValues theNewSet;
 
     /**
      * Local fieldSet.
      */
-    private MetisDataEosFieldSet<MetisDataEosVersionDelta> theLocalFields;
+    private MetisFieldSet<MetisFieldVersionDelta> theLocalFields;
 
     /**
      * Constructor.
      * @param pNew the new valueSet.
      * @param pOld the old valueSet.
      */
-    protected MetisDataEosVersionDelta(final MetisDataEosVersionValues pNew,
-                                       final MetisDataEosVersionValues pOld) {
+    protected MetisFieldVersionDelta(final MetisFieldVersionValues pNew,
+                                       final MetisFieldVersionValues pOld) {
         /* Store parameters */
         theOldSet = pOld;
         theNewSet = pNew;
@@ -90,10 +90,10 @@ public class MetisDataEosVersionDelta
                                                                           : 1;
 
         /* Loop through the fields */
-        final Iterator<MetisDataEosFieldDef> myIterator = getDataFieldSet().fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = getDataFieldSet().fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* Skip if the field is not versioned */
             if (!myField.getStorage().isVersioned()) {
@@ -119,7 +119,7 @@ public class MetisDataEosVersionDelta
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         if (theLocalFields == null) {
             theLocalFields = buildLocalFieldSet();
         }
@@ -130,13 +130,13 @@ public class MetisDataEosVersionDelta
      * Build localFieldSet.
      * @return the fieldSet
      */
-    private MetisDataEosFieldSet<MetisDataEosVersionDelta> buildLocalFieldSet() {
+    private MetisFieldSet<MetisFieldVersionDelta> buildLocalFieldSet() {
         /* Access the owning item fields */
-        final MetisDataEosFieldItem myItem = theOldSet.getItem();
-        final MetisDataEosFieldSetDef myFields = myItem.getDataFieldSet();
+        final MetisFieldItem myItem = theOldSet.getItem();
+        final MetisFieldSetDef myFields = myItem.getDataFieldSet();
 
         /* Allocate new local fields */
-        final MetisDataEosFieldSet<MetisDataEosVersionDelta> myLocal = MetisDataEosFieldSet.newFieldSet(this);
+        final MetisFieldSet<MetisFieldVersionDelta> myLocal = MetisFieldSet.newFieldSet(this);
 
         /* If we have a change in deletion status */
         if (theOldSet.isDeletion() != theNewSet.isDeletion()) {
@@ -145,10 +145,10 @@ public class MetisDataEosVersionDelta
         }
 
         /* Loop through the fields */
-        final Iterator<MetisDataEosFieldDef> myIterator = myFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* Skip if the field is not versioned */
             if (!myField.getStorage().isVersioned()) {

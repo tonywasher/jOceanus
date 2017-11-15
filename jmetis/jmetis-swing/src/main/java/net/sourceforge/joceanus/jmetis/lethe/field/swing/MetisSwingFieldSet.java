@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
@@ -46,23 +46,23 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
  * the data.
  * @param <T> the Data Item type
  */
-public class MetisFieldSet<T extends MetisFieldSetItem>
-        extends MetisFieldSetBase {
+public class MetisSwingFieldSet<T extends MetisFieldSetItem>
+        extends MetisLetheFieldSetBase {
     /**
      * The map of fields.
      */
-    private final Map<MetisField, MetisFieldElement<T>> theMap;
+    private final Map<MetisField, MetisSwingFieldElement<T>> theMap;
 
     /**
      * The Render Manager.
      */
-    private final MetisFieldManager theRenderMgr;
+    private final MetisSwingFieldManager theRenderMgr;
 
     /**
      * Constructor.
      * @param pRenderMgr the render manager
      */
-    public MetisFieldSet(final MetisFieldManager pRenderMgr) {
+    public MetisSwingFieldSet(final MetisSwingFieldManager pRenderMgr) {
         /* Call super constructor */
         super(pRenderMgr.getDataFormatter());
 
@@ -83,7 +83,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                 final MetisDataType pClass,
                                 final TethysSwingStringTextField pTextField) {
         /* Create the field */
-        final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pTextField);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pTextField);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -99,7 +99,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                 final MetisDataType pClass,
                                 final TethysSwingScrollPaneManager pScrollPane) {
         /* Create the field */
-        final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pScrollPane);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pScrollPane);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -113,7 +113,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public void addFieldElement(final MetisField pField,
                                 final TethysSwingDateButtonManager pButton) {
         /* Create the field */
-        final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -130,7 +130,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                     final Class<I> pClass,
                                     final TethysSwingScrollButtonManager<I> pButton) {
         /* Create the field */
-        final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -145,7 +145,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public <I extends Comparable<I>> void addFieldElement(final MetisField pField,
                                                           final TethysSwingListButtonManager<I> pButton) {
         /* Create the field */
-        final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -162,7 +162,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
                                     final Class<I> pClass,
                                     final TethysSwingIconButtonManager<I> pButton) {
         /* Create the field */
-        final MetisFieldElement<T> myElement = new MetisFieldElement<>(this, pField, pClass, pButton);
+        final MetisSwingFieldElement<T> myElement = new MetisSwingFieldElement<>(this, pField, pClass, pButton);
 
         /* Add to the map */
         theMap.put(pField, myElement);
@@ -176,7 +176,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public void addFieldToPanel(final MetisField pField,
                                 final JPanel pPanel) {
         /* Access element */
-        final MetisFieldElement<T> myEl = theMap.get(pField);
+        final MetisSwingFieldElement<T> myEl = theMap.get(pField);
         /* If the field exists */
         if (myEl != null) {
             /* Add it to the panel */
@@ -192,7 +192,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public void setVisibility(final MetisField pField,
                               final boolean setVisible) {
         /* Access element */
-        final MetisFieldElement<T> myEl = theMap.get(pField);
+        final MetisSwingFieldElement<T> myEl = theMap.get(pField);
 
         /* If the field exists */
         if (myEl != null) {
@@ -213,7 +213,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
             final MetisField myField = myIterator.next();
 
             /* Determine if the element is visible */
-            final MetisFieldElement<T> myEl = theMap.get(myField);
+            final MetisSwingFieldElement<T> myEl = theMap.get(myField);
             if (myEl != null
                 && myEl.isVisible()) {
                 return true;
@@ -232,7 +232,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public void setEditable(final MetisField pField,
                             final boolean setEditable) {
         /* Access element */
-        final MetisFieldElement<T> myEl = theMap.get(pField);
+        final MetisSwingFieldElement<T> myEl = theMap.get(pField);
 
         /* If the field exists */
         if (myEl != null) {
@@ -247,7 +247,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      */
     public void setEditable(final boolean setEditable) {
         /* Loop through all the map entries */
-        for (MetisFieldElement<T> myEl : theMap.values()) {
+        for (MetisSwingFieldElement<T> myEl : theMap.values()) {
             /* Set the edit-ability of the element */
             myEl.setEditable(setEditable);
         }
@@ -261,7 +261,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
     public void setAssumedCurrency(final MetisField pField,
                                    final Currency pCurrency) {
         /* Access element */
-        final MetisFieldElement<T> myEl = theMap.get(pField);
+        final MetisSwingFieldElement<T> myEl = theMap.get(pField);
 
         /* If the field exists */
         if (myEl != null) {
@@ -283,9 +283,9 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
         }
 
         /* Loop through all the map entries */
-        for (MetisFieldElement<T> myEl : theMap.values()) {
+        for (MetisSwingFieldElement<T> myEl : theMap.values()) {
             /* Determine the renderData */
-            final MetisFieldData myRender = theRenderMgr.determineRenderData(myEl, pItem);
+            final MetisSwingFieldData myRender = theRenderMgr.determineRenderData(myEl, pItem);
 
             /* Render the element */
             myEl.renderData(myRender, pItem);
@@ -297,7 +297,7 @@ public class MetisFieldSet<T extends MetisFieldSetItem>
      */
     public void renderNullSet() {
         /* Loop through all the map entries */
-        for (MetisFieldElement<T> myEl : theMap.values()) {
+        for (MetisSwingFieldElement<T> myEl : theMap.values()) {
             /* Render the element */
             myEl.renderNullData();
         }

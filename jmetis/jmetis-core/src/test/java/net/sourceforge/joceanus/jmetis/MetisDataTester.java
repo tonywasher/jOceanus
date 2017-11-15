@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmetis;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 
 /**
  * Data Tester.
@@ -40,10 +40,10 @@ public class MetisDataTester {
      */
     public static void main(final String[] args) {
         MainClass myClass = new MainClass();
-        MetisDataEosFieldSetDef mySet = myClass.getDataFieldSet();
-        Iterator<MetisDataEosFieldDef> myIterator = mySet.fieldIterator();
+        MetisFieldSetDef mySet = myClass.getDataFieldSet();
+        Iterator<MetisFieldDef> myIterator = mySet.fieldIterator();
         while (myIterator.hasNext()) {
-            MetisDataEosFieldDef myField = myIterator.next();
+            MetisFieldDef myField = myIterator.next();
 
             System.out.println(myField.getFieldId().getId() + '=' + myField.getFieldValue(myClass));
         }
@@ -53,11 +53,11 @@ public class MetisDataTester {
      * Base class
      */
     public static abstract class BaseClass
-            implements MetisDataEosFieldItem {
+            implements MetisFieldItem {
         /**
          * FieldSet.
          */
-        private static MetisDataEosFieldSet<BaseClass> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(BaseClass.class);
+        private static MetisFieldSet<BaseClass> FIELD_DEFS = MetisFieldSet.newFieldSet(BaseClass.class);
 
         /**
          * Declare fields.
@@ -92,7 +92,7 @@ public class MetisDataTester {
         /**
          * FieldSet.
          */
-        private static MetisDataEosFieldSet<MainClass> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MainClass.class);
+        private static MetisFieldSet<MainClass> FIELD_DEFS = MetisFieldSet.newFieldSet(MainClass.class);
 
         /**
          * DataFieldThree.
@@ -104,7 +104,7 @@ public class MetisDataTester {
         /**
          * LocalFields.
          */
-        private final MetisDataEosFieldSet<MainClass> theLocalFields;
+        private final MetisFieldSet<MainClass> theLocalFields;
 
         /**
          * Counter.
@@ -115,7 +115,7 @@ public class MetisDataTester {
          * Constructor.
          */
         public MainClass() {
-            theLocalFields = MetisDataEosFieldSet.newFieldSet(this);
+            theLocalFields = MetisFieldSet.newFieldSet(this);
             theLocalFields.declareLocalField("Four", MainClass::getMainCounter);
         }
 
@@ -128,7 +128,7 @@ public class MetisDataTester {
         }
 
         @Override
-        public MetisDataEosFieldSet<MainClass> getDataFieldSet() {
+        public MetisFieldSet<MainClass> getDataFieldSet() {
             return theLocalFields;
         }
     }

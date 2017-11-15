@@ -29,9 +29,9 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldData;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager.PopulateFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldData;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager.PopulateFieldData;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
@@ -184,7 +184,7 @@ public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & C
 
         /* If we have a null value for an error field, set error description */
         if ((o == null) && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
-            o = MetisFieldValue.ERROR;
+            o = MetisLetheFieldValue.ERROR;
         }
 
         /* Return to caller */
@@ -332,7 +332,7 @@ public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & C
     }
 
     @Override
-    public void populateFieldData(final MetisFieldData pData) {
+    public void populateFieldData(final MetisSwingFieldData pData) {
 
         /* If we have a header decrement the index */
         int iRow = pData.getRow();
@@ -433,7 +433,7 @@ public abstract class PrometheusDataTableModel<T extends PrometheusTableItem & C
         }
 
         @Override
-        public void populateFieldData(final MetisFieldData pData) {
+        public void populateFieldData(final MetisSwingFieldData pData) {
             /* Convert our row # into that of the table */
             int iRow = pData.getRow();
             iRow = theTable.convertRowIndexToModel(iRow);

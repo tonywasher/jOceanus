@@ -20,22 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosVersionedFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Metis Data Versioned Field.
  * @param <T> the data type
  */
-public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
-        extends MetisDataEosField<T>
-        implements MetisDataEosVersionedFieldDef {
+public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
+        extends MetisField<T>
+        implements MetisFieldVersionedDef {
     /**
      * Constructor.
      * @param pAnchor the anchor
@@ -45,25 +45,25 @@ public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
      * @param pEquality the field equality type
      * @param pStorage the field storage type
      */
-    protected MetisDataEosVersionedField(final MetisDataEosVersionedFieldSet<T> pAnchor,
-                                         final MetisFieldId pId,
-                                         final MetisDataType pDataType,
-                                         final Integer pMaxLength,
-                                         final MetisDataFieldEquality pEquality,
-                                         final MetisDataFieldStorage pStorage) {
+    protected MetisFieldVersioned(final MetisFieldVersionedSet<T> pAnchor,
+                                  final MetisFieldId pId,
+                                  final MetisDataType pDataType,
+                                  final Integer pMaxLength,
+                                  final MetisDataFieldEquality pEquality,
+                                  final MetisDataFieldStorage pStorage) {
         /* initialise underlying class */
         super(pAnchor, pId, pDataType, pMaxLength, pEquality, pStorage);
     }
 
     @Override
-    public MetisDataEosVersionedFieldSet<T> getAnchor() {
-        return (MetisDataEosVersionedFieldSet<T>) super.getAnchor();
+    public MetisFieldVersionedSet<T> getAnchor() {
+        return (MetisFieldVersionedSet<T>) super.getAnchor();
     }
 
     @Override
     public Object getFieldValue(final Object pObject) {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
-        final MetisDataEosVersionValues myValues = myObject.getValueSet();
+        final MetisFieldVersionValues myValues = myObject.getValueSet();
         return myValues.getValue(this);
     }
 
@@ -71,7 +71,7 @@ public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
     public void setFieldValue(final Object pObject,
                               final Object pValue) throws OceanusException {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
-        final MetisDataEosVersionValues myValues = myObject.getValueSet();
+        final MetisFieldVersionValues myValues = myObject.getValueSet();
         myValues.setValue(this, pValue);
     }
 
@@ -79,7 +79,7 @@ public class MetisDataEosVersionedField<T extends MetisDataEosVersionedItem>
     public void setFieldUncheckedValue(final Object pObject,
                                        final Object pValue) {
         final T myObject = getAnchor().getFieldClass().cast(pObject);
-        final MetisDataEosVersionValues myValues = myObject.getValueSet();
+        final MetisFieldVersionValues myValues = myObject.getValueSet();
         myValues.setUncheckedValue(this, pValue);
     }
 }

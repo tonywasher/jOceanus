@@ -30,16 +30,16 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Versioned List implementation.
  * @param <T> the item type
  */
-public class MetisVersionedList<T extends MetisDataEosVersionedItem>
+public class MetisVersionedList<T extends MetisFieldVersionedItem>
         extends MetisIndexedList<T> {
     /**
      * Logger.
@@ -55,7 +55,7 @@ public class MetisVersionedList<T extends MetisDataEosVersionedItem>
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisDataEosFieldSet<MetisVersionedList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisVersionedList.class);
+    private static final MetisFieldSet<MetisVersionedList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisVersionedList.class);
 
     /**
      * FieldIds.
@@ -103,7 +103,7 @@ public class MetisVersionedList<T extends MetisDataEosVersionedItem>
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -281,8 +281,8 @@ public class MetisVersionedList<T extends MetisDataEosVersionedItem>
         final T myNew = newListItem(pBase.getIndexedId());
 
         /* Obtain a deleted values set as the current value */
-        MetisDataEosVersionValues myBaseSet = pBase.getValueSet();
-        final MetisDataEosVersionValues mySet = myBaseSet.cloneIt();
+        MetisFieldVersionValues myBaseSet = pBase.getValueSet();
+        final MetisFieldVersionValues mySet = myBaseSet.cloneIt();
         mySet.setDeletion(true);
 
         /* Obtain an undeleted set as the base value */
@@ -309,11 +309,11 @@ public class MetisVersionedList<T extends MetisDataEosVersionedItem>
         final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataEosVersionValues mySet = pCurr.getValueSet();
+        MetisFieldVersionValues mySet = pCurr.getValueSet();
         mySet = mySet.cloneIt();
 
         /* Obtain a clone of the value set as the base value */
-        MetisDataEosVersionValues myBaseSet = pBase.getValueSet();
+        MetisFieldVersionValues myBaseSet = pBase.getValueSet();
         myBaseSet = myBaseSet.cloneIt();
 
         /* Record as the history of the item */
@@ -334,7 +334,7 @@ public class MetisVersionedList<T extends MetisDataEosVersionedItem>
         final T myNew = newListItem(pCurr.getIndexedId());
 
         /* Obtain a clone of the value set as the current value */
-        MetisDataEosVersionValues mySet = pCurr.getValueSet();
+        MetisFieldVersionValues mySet = pCurr.getValueSet();
         mySet = mySet.cloneIt();
         mySet.setVersion(1);
 

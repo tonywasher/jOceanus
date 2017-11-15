@@ -39,11 +39,9 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
@@ -53,7 +51,7 @@ import net.sourceforge.joceanus.jthemis.ThemisResource;
  * @author Tony Washer
  */
 public class ThemisMvnProjectDefinition
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * POM name.
      */
@@ -62,17 +60,15 @@ public class ThemisMvnProjectDefinition
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisMvnProjectDefinition.class);
+    private static final MetisFieldSet<ThemisMvnProjectDefinition> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMvnProjectDefinition.class);
 
     /**
      * Id field id.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ID);
-
-    /**
-     * Dependencies field id.
-     */
-    private static final MetisDataField FIELD_DEPS = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_DEPENDENCIES);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ID, ThemisMvnProjectDefinition::getDefinition);
+        FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_DEPENDENCIES, ThemisMvnProjectDefinition::getDependencies);
+    }
 
     /**
      * POM Model representation.
@@ -131,22 +127,8 @@ public class ThemisMvnProjectDefinition
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisMvnProjectDefinition> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_ID.equals(pField)) {
-            return theDefinition;
-        }
-        if (FIELD_DEPS.equals(pField)) {
-            return theDependencies;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

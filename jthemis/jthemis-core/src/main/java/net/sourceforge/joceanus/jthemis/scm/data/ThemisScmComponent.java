@@ -26,13 +26,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchList;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ThemisScmBranchList;
 
 /**
  * Represents a component in the repository.
@@ -41,26 +39,21 @@ import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ScmBranchList;
  * @param <R> the repository data type
  */
 public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-        implements MetisDataFieldItem, Comparable<C> {
+        implements MetisFieldItem, Comparable<C> {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisScmComponent.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<ThemisScmComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmComponent.class);
 
     /**
-     * Repository field id.
+     * fieldIds.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
-
-    /**
-     * Name field id.
-     */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME);
-
-    /**
-     * Branches field id.
-     */
-    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisScmComponent::getRepository);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmComponent::getName);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES, ThemisScmComponent::getBranches);
+    }
 
     /**
      * Parent Repository.
@@ -75,7 +68,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
     /**
      * BranchList.
      */
-    private ScmBranchList<?, C, R> theBranches;
+    private ThemisScmBranchList<?, C, R> theBranches;
 
     /**
      * Constructor.
@@ -92,31 +85,6 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
     @Override
     public String toString() {
         return theName;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_NAME.equals(pField)) {
-            return theName;
-        }
-        if (FIELD_BRAN.equals(pField)) {
-            return theBranches;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
     }
 
     /**
@@ -139,7 +107,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * Get the branch list for this component.
      * @return the branch list
      */
-    public ScmBranchList<?, C, R> getBranches() {
+    public ThemisScmBranchList<?, C, R> getBranches() {
         return theBranches;
     }
 
@@ -147,7 +115,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * Set the branch list.
      * @param pBranches the branch list
      */
-    protected void setBranches(final ScmBranchList<?, C, R> pBranches) {
+    protected void setBranches(final ThemisScmBranchList<?, C, R> pBranches) {
         theBranches = pBranches;
     }
 
@@ -205,17 +173,20 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * @param <C> the component type
      * @param <R> the repository data type
      */
-    public abstract static class ScmComponentList<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-            implements MetisDataFieldItem, MetisDataList<C> {
+    public abstract static class ThemisScmComponentList<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
+            implements MetisFieldItem, MetisDataList<C> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ScmComponentList.class);
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<ThemisScmComponentList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmComponentList.class);
 
         /**
          * Size field id.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisScmComponentList::size);
+        }
 
         /**
          * Component List.
@@ -225,7 +196,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         /**
          * Constructor.
          */
-        public ScmComponentList() {
+        public ThemisScmComponentList() {
             theList = new ArrayList<>();
         }
 
@@ -237,25 +208,6 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         @Override
         public String toString() {
             return getDataFieldSet().getName();
-        }
-
-        /**
-         * Obtain the base fieldSet.
-         * @return the fieldSet
-         */
-        protected static MetisDataFieldSet getBaseFieldSet() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

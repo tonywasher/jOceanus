@@ -26,9 +26,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
  * Metis Table item.
  */
 public class MetisTestTableItem
-        extends MetisDataEosVersionedItem {
+        extends MetisFieldVersionedItem {
     /**
      * The Next itemId.
      */
@@ -54,7 +54,7 @@ public class MetisTestTableItem
     /**
      * Report fields.
      */
-    private static final MetisDataEosVersionedFieldSet<MetisTestTableItem> FIELD_DEFS = MetisDataEosVersionedFieldSet.newVersionedFieldSet(MetisTestTableItem.class);
+    private static final MetisFieldVersionedSet<MetisTestTableItem> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MetisTestTableItem.class);
 
     /**
      * FieldIds.
@@ -114,7 +114,7 @@ public class MetisTestTableItem
     }
 
     @Override
-    public MetisDataEosFieldSet<MetisTestTableItem> getDataFieldSet() {
+    public MetisFieldSet<MetisTestTableItem> getDataFieldSet() {
         return FIELD_DEFS;
     }
 

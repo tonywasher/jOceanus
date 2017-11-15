@@ -26,20 +26,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 
 /**
  * Difference List.
  * @param <T> the item type
  */
-public final class MetisDifferenceList<T extends MetisDataEosVersionedItem>
+public final class MetisDifferenceList<T extends MetisFieldVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisDataEosFieldSet<MetisDifferenceList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisDifferenceList.class);
+    private static final MetisFieldSet<MetisDifferenceList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisDifferenceList.class);
 
     /**
      * Constructor.
@@ -51,7 +51,7 @@ public final class MetisDifferenceList<T extends MetisDataEosVersionedItem>
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 

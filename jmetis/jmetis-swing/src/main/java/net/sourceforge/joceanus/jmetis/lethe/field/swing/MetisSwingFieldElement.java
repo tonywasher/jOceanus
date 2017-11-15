@@ -33,8 +33,8 @@ import javax.swing.SwingConstants;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldModel.TethysFieldModelString;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel.TethysFieldModelString;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
@@ -47,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
  * data.
  * @param <T> the Data Item type
  */
-public class MetisFieldElement<T extends MetisFieldSetItem> {
+public class MetisSwingFieldElement<T extends MetisFieldSetItem> {
     /**
      * The colon indicator.
      */
@@ -56,7 +56,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     /**
      * The fieldSet.
      */
-    private final MetisFieldSet<T> theFieldSet;
+    private final MetisSwingFieldSet<T> theFieldSet;
 
     /**
      * The field.
@@ -76,12 +76,12 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
     /**
      * The component.
      */
-    private final MetisFieldComponent<T> theComponent;
+    private final MetisSwingFieldComponent<T> theComponent;
 
     /**
      * The model.
      */
-    private final MetisFieldModel<T> theModel;
+    private final MetisLetheFieldModel<T> theModel;
 
     /**
      * Is the element visible?
@@ -95,12 +95,12 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pClass the data type of the value
      * @param pTextField the textField
      */
-    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                 final MetisField pField,
                                 final MetisDataType pClass,
                                 final TethysSwingStringTextField pTextField) {
         /* Initialise with correct component */
-        this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pTextField, pClass));
+        this(pFieldSet, pField, MetisSwingFieldComponent.deriveComponent(pFieldSet, pField, pTextField, pClass));
     }
 
     /**
@@ -110,12 +110,12 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pClass the data type of the value
      * @param pScrollPane the scrollPane
      */
-    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                 final MetisField pField,
                                 final MetisDataType pClass,
                                 final TethysSwingScrollPaneManager pScrollPane) {
         /* Initialise with correct component */
-        this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pScrollPane, pClass));
+        this(pFieldSet, pField, MetisSwingFieldComponent.deriveComponent(pFieldSet, pField, pScrollPane, pClass));
     }
 
     /**
@@ -124,11 +124,11 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pField the field id
      * @param pButton the date button
      */
-    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                 final MetisField pField,
                                 final TethysSwingDateButtonManager pButton) {
         /* Initialise with correct component */
-        this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton));
+        this(pFieldSet, pField, MetisSwingFieldComponent.deriveComponent(pFieldSet, pField, pButton));
     }
 
     /**
@@ -139,12 +139,12 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pClass the class of the button elements
      * @param pButton the scroll button
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected <I> MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                     final MetisField pField,
                                     final Class<I> pClass,
                                     final TethysSwingScrollButtonManager<I> pButton) {
         /* Initialise with correct component */
-        this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton, pClass));
+        this(pFieldSet, pField, MetisSwingFieldComponent.deriveComponent(pFieldSet, pField, pButton, pClass));
     }
 
     /**
@@ -154,11 +154,11 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pField the field id
      * @param pButton the scroll button
      */
-    protected <I extends Comparable<I>> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected <I extends Comparable<I>> MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                                           final MetisField pField,
                                                           final TethysSwingListButtonManager<I> pButton) {
         /* Initialise with correct component */
-        this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton));
+        this(pFieldSet, pField, MetisSwingFieldComponent.deriveComponent(pFieldSet, pField, pButton));
     }
 
     /**
@@ -169,12 +169,12 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pClass the class of the button elements
      * @param pButton the icon button
      */
-    protected <I> MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected <I> MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                     final MetisField pField,
                                     final Class<I> pClass,
                                     final TethysSwingIconButtonManager<I> pButton) {
         /* Initialise with correct component */
-        this(pFieldSet, pField, MetisFieldComponent.deriveComponent(pFieldSet, pField, pButton, pClass));
+        this(pFieldSet, pField, MetisSwingFieldComponent.deriveComponent(pFieldSet, pField, pButton, pClass));
     }
 
     /**
@@ -183,9 +183,9 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pField the field id
      * @param pComponent the component
      */
-    protected MetisFieldElement(final MetisFieldSet<T> pFieldSet,
+    protected MetisSwingFieldElement(final MetisSwingFieldSet<T> pFieldSet,
                                 final MetisField pField,
-                                final MetisFieldComponent<T> pComponent) {
+                                final MetisSwingFieldComponent<T> pComponent) {
         /* Store parameters */
         theFieldSet = pFieldSet;
         theField = pField;
@@ -209,7 +209,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * Obtain FieldSet.
      * @return the fieldSet
      */
-    protected MetisFieldSet<T> getFieldSet() {
+    protected MetisSwingFieldSet<T> getFieldSet() {
         return theFieldSet;
     }
 
@@ -302,7 +302,7 @@ public class MetisFieldElement<T extends MetisFieldSetItem> {
      * @param pRender the render data.
      * @param pItem the item to render
      */
-    protected void renderData(final MetisFieldData pRender,
+    protected void renderData(final MetisSwingFieldData pRender,
                               final T pItem) {
         /* Load data from the item */
         theModel.loadValue(pItem);

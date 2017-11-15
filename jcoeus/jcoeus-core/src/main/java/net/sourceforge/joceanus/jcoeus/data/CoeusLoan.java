@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * Coeus Loan.
  */
 public abstract class CoeusLoan
-        implements MetisDataEosFieldItem, Comparable<CoeusLoan> {
+        implements MetisFieldItem, Comparable<CoeusLoan> {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusLoan.class);
+    private static final MetisFieldSet<CoeusLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusLoan.class);
 
     /**
      * Declare Fields.

@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -45,7 +45,7 @@ public class CoeusZopaMarket
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusZopaMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaMarket.class);
+    private static final MetisFieldSet<CoeusZopaMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaMarket.class);
 
     /**
      * Fields.
@@ -321,7 +321,7 @@ public class CoeusZopaMarket
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusZopaMarket> getDataFieldSet() {
+    public MetisFieldSet<CoeusZopaMarket> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

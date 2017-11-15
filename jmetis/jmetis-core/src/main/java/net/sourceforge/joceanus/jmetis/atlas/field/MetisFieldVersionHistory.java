@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -34,40 +34,40 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
 /**
  * Data Version History.
  */
-public class MetisDataEosVersionHistory
-        implements MetisDataEosFieldItem {
+public class MetisFieldVersionHistory
+        implements MetisFieldItem {
     /**
      * FieldSet definitions.
      */
     static {
-        MetisDataEosFieldSet.newFieldSet(MetisDataEosVersionHistory.class);
+        MetisFieldSet.newFieldSet(MetisFieldVersionHistory.class);
     }
 
     /**
      * The stack of valueSet changes.
      */
-    private final Deque<MetisDataEosVersionValues> theStack;
+    private final Deque<MetisFieldVersionValues> theStack;
 
     /**
      * The stack of valueSetDelta fields.
      */
-    private final Deque<MetisDataEosVersionDelta> theDeltas;
+    private final Deque<MetisFieldVersionDelta> theDeltas;
 
     /**
      * The current set of values for this object.
      */
-    private MetisDataEosVersionValues theCurr;
+    private MetisFieldVersionValues theCurr;
 
     /**
      * The original set of values if any changes have been made.
      */
-    private MetisDataEosVersionValues theOriginal;
+    private MetisFieldVersionValues theOriginal;
 
     /**
      * Constructor.
      * @param pCurr the current values
      */
-    protected MetisDataEosVersionHistory(final MetisDataEosVersionValues pCurr) {
+    protected MetisFieldVersionHistory(final MetisFieldVersionValues pCurr) {
         /* Allocate the values */
         theCurr = pCurr;
         theOriginal = theCurr;
@@ -78,16 +78,16 @@ public class MetisDataEosVersionHistory
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         /* Allocate new local fields */
-        final MetisDataEosFieldSet<MetisDataEosVersionHistory> myLocal = MetisDataEosFieldSet.newFieldSet(this);
+        final MetisFieldSet<MetisFieldVersionHistory> myLocal = MetisFieldSet.newFieldSet(this);
         final String myVersion = MetisDataResource.DATA_VERSION.getValue();
 
         /* Loop through the fields */
-        final Iterator<MetisDataEosVersionDelta> myIterator = theDeltas.descendingIterator();
+        final Iterator<MetisFieldVersionDelta> myIterator = theDeltas.descendingIterator();
         while (myIterator.hasNext()) {
             /* Access the Delta */
-            final MetisDataEosVersionDelta myDelta = myIterator.next();
+            final MetisFieldVersionDelta myDelta = myIterator.next();
 
             /* Declare the field */
             myLocal.declareLocalField(myVersion + "(" + myDelta.getVersion() + ")", f -> myDelta);
@@ -106,7 +106,7 @@ public class MetisDataEosVersionHistory
      * Initialise the current values.
      * @param pValues the current values
      */
-    protected void setValues(final MetisDataEosVersionValues pValues) {
+    protected void setValues(final MetisFieldVersionValues pValues) {
         /* Store details and clear the stack */
         theCurr = pValues;
         theOriginal = theCurr;
@@ -118,7 +118,7 @@ public class MetisDataEosVersionHistory
      * Get the changeable values object for this item.
      * @return the object
      */
-    protected MetisDataEosVersionValues getValueSet() {
+    protected MetisFieldVersionValues getValueSet() {
         return theCurr;
     }
 
@@ -126,7 +126,7 @@ public class MetisDataEosVersionHistory
      * Get original values.
      * @return original values
      */
-    protected MetisDataEosVersionValues getOriginalValues() {
+    protected MetisFieldVersionValues getOriginalValues() {
         return theOriginal;
     }
 
@@ -136,11 +136,11 @@ public class MetisDataEosVersionHistory
      */
     protected void pushHistory(final int pVersion) {
         /* Create a new ValueSet */
-        final MetisDataEosVersionValues mySet = theCurr.cloneIt();
+        final MetisFieldVersionValues mySet = theCurr.cloneIt();
         mySet.setVersion(pVersion);
 
         /* Add the delta to the stack */
-        theDeltas.push(new MetisDataEosVersionDelta(mySet, theCurr));
+        theDeltas.push(new MetisFieldVersionDelta(mySet, theCurr));
 
         /* Add old values to the stack and record new values */
         theStack.push(theCurr);
@@ -208,7 +208,7 @@ public class MetisDataEosVersionHistory
      * Set history explicitly.
      * @param pBase the base item
      */
-    protected void setHistory(final MetisDataEosVersionValues pBase) {
+    protected void setHistory(final MetisFieldVersionValues pBase) {
         theStack.clear();
         theDeltas.clear();
         theOriginal = theCurr.cloneIt();
@@ -217,7 +217,7 @@ public class MetisDataEosVersionHistory
         theCurr.setVersion(1);
 
         /* Add the delta to the stack */
-        theDeltas.push(new MetisDataEosVersionDelta(theCurr, theOriginal));
+        theDeltas.push(new MetisFieldVersionDelta(theCurr, theOriginal));
     }
 
     /**
@@ -246,7 +246,7 @@ public class MetisDataEosVersionHistory
                 theDeltas.pop();
 
                 /* Add the new delta to the stack */
-                theDeltas.push(new MetisDataEosVersionDelta(theCurr, theStack.peek()));
+                theDeltas.push(new MetisFieldVersionDelta(theCurr, theStack.peek()));
             }
         }
     }
@@ -256,7 +256,7 @@ public class MetisDataEosVersionHistory
      * @param pField the field
      * @return the difference
      */
-    protected MetisDataDifference fieldChanged(final MetisDataEosFieldDef pField) {
+    protected MetisDataDifference fieldChanged(final MetisFieldDef pField) {
         /* Handle irrelevant cases */
         if (!pField.getStorage().isVersioned()) {
             return MetisDataDifference.IDENTICAL;

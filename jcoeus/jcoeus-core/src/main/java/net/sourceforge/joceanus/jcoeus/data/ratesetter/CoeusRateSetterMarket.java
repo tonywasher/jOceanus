@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransactionType;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -42,7 +42,7 @@ public class CoeusRateSetterMarket
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusRateSetterMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusRateSetterMarket.class);
+    private static final MetisFieldSet<CoeusRateSetterMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusRateSetterMarket.class);
 
     /**
      * The LoanBook Parser.
@@ -197,7 +197,7 @@ public class CoeusRateSetterMarket
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusRateSetterMarket> getDataFieldSet() {
+    public MetisFieldSet<CoeusRateSetterMarket> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

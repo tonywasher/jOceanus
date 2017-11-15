@@ -31,8 +31,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -53,17 +52,15 @@ public final class ThemisGitTag
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisGitTag.class, ThemisScmTag.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisGitTag> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitTag.class);
 
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
-
-    /**
-     * Component field id.
-     */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitTag::getRepository);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisGitTag::getComponent);
+    }
 
     /**
      * Parent Repository.
@@ -115,22 +112,8 @@ public final class ThemisGitTag
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisGitTag> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponent;
-        }
-
-        /* pass onwards */
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -160,12 +143,12 @@ public final class ThemisGitTag
     /**
      * List of tags.
      */
-    public static class GitTagList
-            extends ScmTagList<ThemisGitTag, ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+    public static class ThemisGitTagList
+            extends ThemisScmTagList<ThemisGitTag, ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(GitTagList.class, ScmTagList.getBaseFieldSet());
+        private static final MetisFieldSet<ThemisGitTagList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitTagList.class);
 
         /**
          * Parent Component.
@@ -176,7 +159,7 @@ public final class ThemisGitTag
          * Constructor.
          * @param pParent the parent branch
          */
-        protected GitTagList(final ThemisGitBranch pParent) {
+        protected ThemisGitTagList(final ThemisGitBranch pParent) {
             /* Call super constructor */
             super(pParent);
 
@@ -187,7 +170,7 @@ public final class ThemisGitTag
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisGitTagList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

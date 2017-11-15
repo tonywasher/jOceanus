@@ -26,8 +26,8 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldConfig;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingThreadManager;
@@ -45,7 +45,7 @@ public class JOceanusSwingUtilitySet
     /**
      * Field Manager.
      */
-    private final MetisFieldManager theEosFieldManager;
+    private final MetisSwingFieldManager theEosFieldManager;
 
     /**
      * Colour Preferences.
@@ -65,7 +65,7 @@ public class JOceanusSwingUtilitySet
         theColorPreferences = getPreferenceManager().getPreferenceSet(MetisColorPreferences.class);
 
         /* Allocate the EosFieldManager */
-        theEosFieldManager = new MetisFieldManager(getGuiFactory(), new MetisFieldConfig(theColorPreferences));
+        theEosFieldManager = new MetisSwingFieldManager(getGuiFactory(), new MetisSwingFieldConfig(theColorPreferences));
 
         /* Process the colour preferences */
         processColorPreferences();
@@ -80,7 +80,7 @@ public class JOceanusSwingUtilitySet
      */
     private void processColorPreferences() {
         /* Update the field manager */
-        theEosFieldManager.setConfig(new MetisFieldConfig(theColorPreferences));
+        theEosFieldManager.setConfig(new MetisSwingFieldConfig(theColorPreferences));
     }
 
     @Override
@@ -102,7 +102,7 @@ public class JOceanusSwingUtilitySet
      * Obtain the field manager.
      * @return the field manager
      */
-    public MetisFieldManager getFieldManager() {
+    public MetisSwingFieldManager getFieldManager() {
         return theEosFieldManager;
     }
 }

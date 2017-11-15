@@ -43,12 +43,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing
  * the data.
  */
-public abstract class MetisFieldSetBase
-        implements TethysEventProvider<MetisFieldEvent> {
+public abstract class MetisLetheFieldSetBase
+        implements TethysEventProvider<MetisLetheFieldEvent> {
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisFieldEvent> theEventManager;
+    private final TethysEventManager<MetisLetheFieldEvent> theEventManager;
 
     /**
      * The Data Formatter.
@@ -64,7 +64,7 @@ public abstract class MetisFieldSetBase
      * Constructor.
      * @param pFormatter the data formatter
      */
-    public MetisFieldSetBase(final MetisDataFormatter pFormatter) {
+    public MetisLetheFieldSetBase(final MetisDataFormatter pFormatter) {
         /* Store the formatter */
         theFormatter = pFormatter;
 
@@ -73,7 +73,7 @@ public abstract class MetisFieldSetBase
     }
 
     @Override
-    public TethysEventRegistrar<MetisFieldEvent> getEventRegistrar() {
+    public TethysEventRegistrar<MetisLetheFieldEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -107,7 +107,7 @@ public abstract class MetisFieldSetBase
             final MetisFieldUpdate myUpdate = new MetisFieldUpdate(pField, pNewValue);
 
             /* Fire the notification */
-            theEventManager.fireEvent(MetisFieldEvent.FIELDUPDATED, myUpdate);
+            theEventManager.fireEvent(MetisLetheFieldEvent.FIELDUPDATED, myUpdate);
         }
     }
 

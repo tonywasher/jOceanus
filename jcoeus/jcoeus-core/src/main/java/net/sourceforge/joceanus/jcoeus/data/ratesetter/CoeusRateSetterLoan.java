@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jcoeus.data.ratesetter;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -37,7 +37,7 @@ public class CoeusRateSetterLoan
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusRateSetterLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusRateSetterLoan.class);
+    private static final MetisFieldSet<CoeusRateSetterLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusRateSetterLoan.class);
 
     /**
      * Fields.
@@ -120,7 +120,7 @@ public class CoeusRateSetterLoan
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusRateSetterLoan> getDataFieldSet() {
+    public MetisFieldSet<CoeusRateSetterLoan> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

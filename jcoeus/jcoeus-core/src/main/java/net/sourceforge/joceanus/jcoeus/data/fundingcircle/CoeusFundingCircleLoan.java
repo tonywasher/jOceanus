@@ -29,7 +29,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -41,7 +41,7 @@ public class CoeusFundingCircleLoan
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusFundingCircleLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusFundingCircleLoan.class);
+    private static final MetisFieldSet<CoeusFundingCircleLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleLoan.class);
 
     /**
      * Fields.
@@ -189,7 +189,7 @@ public class CoeusFundingCircleLoan
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusFundingCircleLoan> getDataFieldSet() {
+    public MetisFieldSet<CoeusFundingCircleLoan> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

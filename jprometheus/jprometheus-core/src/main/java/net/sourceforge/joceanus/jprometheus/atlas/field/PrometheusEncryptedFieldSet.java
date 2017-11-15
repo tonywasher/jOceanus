@@ -20,22 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.eos.data;
+package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedFieldSet;
 
 /**
  * Prometheus Data fieldSet.
  * @param <T> the data type
  */
 public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
-        extends MetisDataEosVersionedFieldSet<T> {
+        extends MetisFieldVersionedSet<T> {
     /**
      * Constructor.
      * @param pClazz the class of the item
@@ -43,7 +43,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
      * @param pParent the parent fields
      */
     PrometheusEncryptedFieldSet(final Class<T> pClazz,
-                                final MetisDataEosFieldSetDef pParent,
+                                final MetisFieldSetDef pParent,
                                 final boolean pStatic) {
         /* Pass call on */
         super(pClazz, pParent, pStatic);
@@ -57,9 +57,9 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
      */
     public static <T extends PrometheusEncryptedItem> PrometheusEncryptedFieldSet<T> newEncryptedFieldSet(final Class<T> pClazz) {
         /* Synchronise on class */
-        synchronized (MetisDataEosFieldSet.class) {
+        synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
-            final MetisDataEosFieldSetDef myParent = lookUpFieldSet(pClazz);
+            final MetisFieldSetDef myParent = lookUpFieldSet(pClazz);
 
             /* Create the new fieldSet and store into map */
             final PrometheusEncryptedFieldSet<T> myFieldSet = new PrometheusEncryptedFieldSet<>(pClazz, myParent, true);

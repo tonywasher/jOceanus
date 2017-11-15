@@ -26,11 +26,9 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
@@ -38,7 +36,7 @@ import net.sourceforge.joceanus.jthemis.ThemisResource;
  * @author Tony Washer
  */
 public final class ThemisMvnProjectId
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * SnapShot indication.
      */
@@ -57,22 +55,16 @@ public final class ThemisMvnProjectId
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisMvnProjectId.class);
+    private static final MetisFieldSet<ThemisMvnProjectId> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMvnProjectId.class);
 
     /**
      * Group field id.
      */
-    private static final MetisDataField FIELD_GROUP = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_GROUP);
-
-    /**
-     * Artifact field id.
-     */
-    private static final MetisDataField FIELD_ARTIFACT = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ARTIFACT);
-
-    /**
-     * Version field id.
-     */
-    private static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_VERSION);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_GROUP, ThemisMvnProjectId::getGroupId);
+        FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ARTIFACT, ThemisMvnProjectId::getArtifactId);
+        FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_VERSION, ThemisMvnProjectId::getVersion);
+    }
 
     /**
      * The groupId.
@@ -169,25 +161,8 @@ public final class ThemisMvnProjectId
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisMvnProjectId> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_GROUP.equals(pField)) {
-            return theGroupId;
-        }
-        if (FIELD_ARTIFACT.equals(pField)) {
-            return theArtifactId;
-        }
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

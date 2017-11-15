@@ -33,13 +33,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.GitTagList;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
@@ -57,12 +56,14 @@ public final class ThemisGitBranch
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisGitBranch.class, ThemisScmBranch.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisGitBranch> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitBranch.class);
 
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitBranch::getRepository);
+    }
 
     /**
      * Parent Repository.
@@ -91,7 +92,7 @@ public final class ThemisGitBranch
         theCommitId = pCommitId;
 
         /* Create tag list */
-        final GitTagList myTags = new GitTagList(this);
+        final ThemisGitTagList myTags = new ThemisGitTagList(this);
         setTags(myTags);
     }
 
@@ -113,7 +114,7 @@ public final class ThemisGitBranch
         theRepository = pParent.getRepository();
 
         /* Create tag list */
-        final GitTagList myTags = new GitTagList(this);
+        final ThemisGitTagList myTags = new ThemisGitTagList(this);
         setTags(myTags);
 
         /* Set as virtual */
@@ -122,19 +123,8 @@ public final class ThemisGitBranch
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisGitBranch> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-
-        /* Unknown */
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -154,8 +144,8 @@ public final class ThemisGitBranch
     }
 
     @Override
-    public GitTagList getTagList() {
-        return (GitTagList) super.getTagList();
+    public ThemisGitTagList getTagList() {
+        return (ThemisGitTagList) super.getTagList();
     }
 
     @Override
@@ -167,8 +157,8 @@ public final class ThemisGitBranch
     /**
      * List of branches.
      */
-    public static final class GitBranchList
-            extends ScmBranchList<ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+    public static final class ThemisGitBranchList
+            extends ThemisScmBranchList<ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
         /**
          * Branch references Prefix.
          */
@@ -177,7 +167,7 @@ public final class ThemisGitBranch
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(GitBranchList.class, ScmBranchList.getBaseFieldSet());
+        private static final MetisFieldSet<ThemisGitBranchList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitBranchList.class);
 
         /**
          * The parent component.
@@ -188,7 +178,7 @@ public final class ThemisGitBranch
          * Discover branch list from repository.
          * @param pParent the parent component
          */
-        protected GitBranchList(final ThemisGitComponent pParent) {
+        protected ThemisGitBranchList(final ThemisGitComponent pParent) {
             /* Call super constructor */
             super(pParent);
 
@@ -197,7 +187,7 @@ public final class ThemisGitBranch
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisGitBranchList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelPair;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
@@ -275,7 +275,7 @@ public abstract class MetisToolkit<N, I> {
      * @param pList the base list
      * @return the table manager
      */
-    public abstract <R extends MetisDataEosTableItem> MetisTableManager<R, N, I> newTableManager(MetisDataEosFieldSet<R> pFieldSet,
+    public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(MetisFieldSet<R> pFieldSet,
                                                                                                  MetisIndexedList<R> pList);
 
     /**

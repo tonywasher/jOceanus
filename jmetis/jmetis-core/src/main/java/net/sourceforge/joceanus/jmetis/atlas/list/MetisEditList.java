@@ -27,10 +27,10 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Edit List.
  * @param <T> the item type
  */
-public class MetisEditList<T extends MetisDataEosVersionedItem>
+public class MetisEditList<T extends MetisFieldVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Logger.
@@ -54,7 +54,7 @@ public class MetisEditList<T extends MetisDataEosVersionedItem>
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisDataEosFieldSet<MetisEditList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisEditList.class);
+    private static final MetisFieldSet<MetisEditList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisEditList.class);
 
     /**
      * FieldIds.
@@ -113,7 +113,7 @@ public class MetisEditList<T extends MetisDataEosVersionedItem>
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -362,7 +362,7 @@ public class MetisEditList<T extends MetisDataEosVersionedItem>
         final T myNew = newListItem(getNextId());
 
         /* Start editing */
-        final MetisDataEosVersionValues myValues = myNew.getValueSet();
+        final MetisFieldVersionValues myValues = myNew.getValueSet();
         myValues.setVersion(theEditVersion);
         myNew.adjustState();
 
@@ -487,11 +487,11 @@ public class MetisEditList<T extends MetisDataEosVersionedItem>
 
         /* Clear history in item and obtain the valueSet */
         pItem.clearHistory();
-        final MetisDataEosVersionValues mySet = pItem.getValueSet();
+        final MetisFieldVersionValues mySet = pItem.getValueSet();
 
         /* Set values in changed item */
         myBase.pushHistory(theNewVersion);
-        final MetisDataEosVersionValues myBaseSet = myBase.getValueSet();
+        final MetisFieldVersionValues myBaseSet = myBase.getValueSet();
         myBaseSet.copyFrom(mySet);
 
         /* Add to the changes */
@@ -509,10 +509,10 @@ public class MetisEditList<T extends MetisDataEosVersionedItem>
         final T myNew = newListItem(pBase.getIndexedId());
 
         /* Access the valueSet */
-        final MetisDataEosVersionValues mySet = myNew.getValueSet();
+        final MetisFieldVersionValues mySet = myNew.getValueSet();
 
         /* Obtain a clone of the value set as the base value */
-        final MetisDataEosVersionValues myBaseSet = pBase.getValueSet();
+        final MetisFieldVersionValues myBaseSet = pBase.getValueSet();
         mySet.copyFrom(myBaseSet);
         pBase.adjustState();
 
@@ -593,10 +593,10 @@ public class MetisEditList<T extends MetisDataEosVersionedItem>
             final T myItem = getItemById(myId);
 
             /* Access set to be changed */
-            final MetisDataEosVersionValues mySet = myItem.getValueSet();
+            final MetisFieldVersionValues mySet = myItem.getValueSet();
 
             /* Access base set */
-            final MetisDataEosVersionValues myBase = myCurr.getValueSet();
+            final MetisFieldVersionValues myBase = myCurr.getValueSet();
 
             /* Reset values in the item */
             mySet.copyFrom(myBase);

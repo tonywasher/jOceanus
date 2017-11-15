@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
  * Render configuration.
  * @author Tony Washer
  */
-public class MetisFieldConfig {
+public class MetisSwingFieldConfig {
     /**
      * The error colour.
      */
@@ -86,7 +86,7 @@ public class MetisFieldConfig {
     /**
      * Constructor.
      */
-    public MetisFieldConfig() {
+    public MetisSwingFieldConfig() {
         theErrorColor = Color.red;
         theChangedColor = Color.magenta.darker();
         theDisabledColor = Color.lightGray;
@@ -103,7 +103,7 @@ public class MetisFieldConfig {
      * Constructor.
      * @param pPreferences the color preferences
      */
-    public MetisFieldConfig(final MetisColorPreferences pPreferences) {
+    public MetisSwingFieldConfig(final MetisColorPreferences pPreferences) {
         theErrorColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.ERROR));
         theChangedColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.CHANGED));
         theDisabledColor = Color.decode(pPreferences.getStringValue(MetisColorPreferenceKey.DISABLED));

@@ -28,10 +28,10 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 
 /**
  * Statement calculator.
@@ -41,7 +41,7 @@ public class CoeusStatementCalculator
     /**
      * The FieldSet.
      */
-    private static final MetisDataEosFieldSet<CoeusTotals> FIELD_SET = CoeusTotals.getTheFieldSet();
+    private static final MetisFieldSet<CoeusTotals> FIELD_SET = CoeusTotals.getTheFieldSet();
 
     /**
      * The totals.
@@ -67,7 +67,7 @@ public class CoeusStatementCalculator
      */
     protected void setTotalSet(final CoeusTotalSet pTotalSet) {
         /* Determine the field of interest */
-        final MetisDataEosFieldDef myField = FIELD_SET.getField(pTotalSet.getBalanceField());
+        final MetisFieldDef myField = FIELD_SET.getField(pTotalSet.getBalanceField());
 
         /* Create new filter */
         theFilter = p -> p.getDelta() != null;
@@ -92,7 +92,7 @@ public class CoeusStatementCalculator
 
     @Override
     public Object calculateValue(final CoeusTotals pTotals,
-                                 final MetisDataEosFieldDef pField) {
+                                 final MetisFieldDef pField) {
         switch ((CoeusTotalsField) pField.getFieldId()) {
             case DELTA:
                 return pTotals.getDelta();

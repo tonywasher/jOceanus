@@ -28,14 +28,13 @@ import java.io.IOException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent.GitComponentList;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent.ThemisGitComponentList;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferenceKey;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
@@ -51,12 +50,14 @@ public class ThemisGitRepository
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisGitRepository.class, ThemisScmRepository.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisGitRepository> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitRepository.class);
 
     /**
-     * Base field id.
+     * fieldIds.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BASE);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_BASE, ThemisGitRepository::getBase);
+    }
 
     /**
      * The Preferences.
@@ -87,7 +88,7 @@ public class ThemisGitRepository
         setName(thePreferences.getStringValue(ThemisGitPreferenceKey.NAME));
 
         /* Create component list */
-        final GitComponentList myComponents = new GitComponentList(this);
+        final ThemisGitComponentList myComponents = new ThemisGitComponentList(this);
         setComponents(myComponents);
 
         /* Report start of analysis */
@@ -103,19 +104,8 @@ public class ThemisGitRepository
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisGitRepository> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_BASE.equals(pField)) {
-            return theBase;
-        }
-
-        /* pass call on */
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -135,8 +125,8 @@ public class ThemisGitRepository
     }
 
     @Override
-    public GitComponentList getComponents() {
-        return (GitComponentList) super.getComponents();
+    public ThemisGitComponentList getComponents() {
+        return (ThemisGitComponentList) super.getComponents();
     }
 
     @Override

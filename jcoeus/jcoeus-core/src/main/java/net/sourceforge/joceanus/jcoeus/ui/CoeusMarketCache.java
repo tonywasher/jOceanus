@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferenceKey;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusPreference.CoeusPreferences;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -48,11 +48,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Loan MarketCache.
  */
 public class CoeusMarketCache
-        implements TethysEventProvider<CoeusDataEvent>, MetisDataEosFieldItem {
+        implements TethysEventProvider<CoeusDataEvent>, MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusMarketCache> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarketCache.class);
+    private static final MetisFieldSet<CoeusMarketCache> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarketCache.class);
 
     /**
      * FieldIds.
@@ -253,7 +253,7 @@ public class CoeusMarketCache
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusMarketCache> getDataFieldSet() {
+    public MetisFieldSet<CoeusMarketCache> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

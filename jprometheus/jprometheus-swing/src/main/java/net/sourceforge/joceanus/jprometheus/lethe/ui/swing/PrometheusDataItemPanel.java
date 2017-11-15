@@ -31,9 +31,9 @@ import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
@@ -107,7 +107,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The Field Set.
      */
-    private final MetisFieldSet<T> theFieldSet;
+    private final MetisSwingFieldSet<T> theFieldSet;
 
     /**
      * The Update Set.
@@ -168,7 +168,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      */
     @SuppressWarnings("unchecked")
     protected PrometheusDataItemPanel(final TethysSwingGuiFactory pFactory,
-                                      final MetisFieldManager pFieldMgr,
+                                      final MetisSwingFieldManager pFieldMgr,
                                       final UpdateSet<E> pUpdateSet,
                                       final MetisErrorPanel<JComponent, Icon> pError) {
         /* Store parameters */
@@ -185,7 +185,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         theFormatter = pFieldMgr.getDataFormatter();
 
         /* Create the New FieldSet */
-        theFieldSet = new MetisFieldSet<>(pFieldMgr);
+        theFieldSet = new MetisSwingFieldSet<>(pFieldMgr);
 
         /* Create the main panel */
         thePanel = new TethysSwingEnablePanel();
@@ -255,7 +255,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Obtain the field Set.
      * @return the FieldSet
      */
-    protected MetisFieldSet<T> getFieldSet() {
+    protected MetisSwingFieldSet<T> getFieldSet() {
         return theFieldSet;
     }
 

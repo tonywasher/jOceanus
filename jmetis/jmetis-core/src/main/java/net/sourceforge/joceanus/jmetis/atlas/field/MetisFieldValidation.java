@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,29 +31,29 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 /**
  * Records errors relating to an item.
  */
-public class MetisDataEosValidation
-        implements MetisDataEosFieldItem {
+public class MetisFieldValidation
+        implements MetisFieldItem {
     /**
      * FieldSet definitions.
      */
     static {
-        MetisDataEosFieldSet.newFieldSet(MetisDataEosValidation.class);
+        MetisFieldSet.newFieldSet(MetisFieldValidation.class);
     }
 
     /**
      * The local fields.
      */
-    private MetisDataEosFieldSet<MetisDataEosValidation> theLocalFields;
+    private MetisFieldSet<MetisFieldValidation> theLocalFields;
 
     /**
      * The first error in the list.
      */
-    private final List<MetisDataEosError> theErrors;
+    private final List<MetisFieldError> theErrors;
 
     /**
      * Constructor.
      */
-    public MetisDataEosValidation() {
+    public MetisFieldValidation() {
         /* Store details */
         theErrors = new ArrayList<>();
         allocateNewFields();
@@ -63,11 +63,11 @@ public class MetisDataEosValidation
      * Allocate new DataFields.
      */
     private void allocateNewFields() {
-        theLocalFields = MetisDataEosFieldSet.newFieldSet(this);
+        theLocalFields = MetisFieldSet.newFieldSet(this);
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return theLocalFields;
     }
 
@@ -78,7 +78,7 @@ public class MetisDataEosValidation
             return mySize
                    + " Errors";
         }
-        final MetisDataEosError myError = theErrors.get(0);
+        final MetisFieldError myError = theErrors.get(0);
         return myError.formatError();
     }
 
@@ -94,7 +94,7 @@ public class MetisDataEosValidation
      * Get the first error in the list.
      * @return the first error or <code>null</code>
      */
-    public MetisDataEosError getFirst() {
+    public MetisFieldError getFirst() {
         return theErrors.isEmpty()
                                    ? null
                                    : theErrors.get(0);
@@ -106,9 +106,9 @@ public class MetisDataEosValidation
      * @param pField the field for the error
      */
     public void addError(final String pText,
-                         final MetisDataEosFieldDef pField) {
+                         final MetisFieldDef pField) {
         /* Create a new error element */
-        final MetisDataEosError myError = new MetisDataEosError(pText, pField);
+        final MetisFieldError myError = new MetisFieldError(pText, pField);
 
         /* Declare error field */
         final int myCount = countFieldErrors(pField);
@@ -124,12 +124,12 @@ public class MetisDataEosValidation
      * @param pField - the field
      * @return <code>true</code> if there are any errors <code>false</code> otherwise
      */
-    public boolean hasErrors(final MetisDataEosFieldDef pField) {
+    public boolean hasErrors(final MetisFieldDef pField) {
         /* Loop through the elements */
-        final Iterator<MetisDataEosError> myIterator = theErrors.iterator();
+        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element and return if related to required field */
-            final MetisDataEosError myCurr = myIterator.next();
+            final MetisFieldError myCurr = myIterator.next();
             if (myCurr.getField().equals(pField)) {
                 return true;
             }
@@ -142,14 +142,14 @@ public class MetisDataEosValidation
      * @param pField - the field
      * @return the error text
      */
-    public String getFieldErrors(final MetisDataEosFieldDef pField) {
+    public String getFieldErrors(final MetisFieldDef pField) {
         final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
-        final Iterator<MetisDataEosError> myIterator = theErrors.iterator();
+        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element */
-            final MetisDataEosError myCurr = myIterator.next();
+            final MetisFieldError myCurr = myIterator.next();
 
             /* If the field matches */
             if (myCurr.getField().equals(pField)) {
@@ -174,14 +174,14 @@ public class MetisDataEosValidation
      * @param pField - the field number to check
      * @return the error count
      */
-    private int countFieldErrors(final MetisDataEosFieldDef pField) {
+    private int countFieldErrors(final MetisFieldDef pField) {
         int myCount = 0;
 
         /* Loop through the elements */
-        final Iterator<MetisDataEosError> myIterator = theErrors.iterator();
+        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element */
-            final MetisDataEosError myCurr = myIterator.next();
+            final MetisFieldError myCurr = myIterator.next();
 
             /* If the field matches */
             if (myCurr.getField().equals(pField)) {
@@ -199,19 +199,19 @@ public class MetisDataEosValidation
      * @param aFields the set of fields
      * @return the error text
      */
-    public String getFieldErrors(final MetisDataEosFieldDef[] aFields) {
+    public String getFieldErrors(final MetisFieldDef[] aFields) {
         final StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
-        final Iterator<MetisDataEosError> myIterator = theErrors.iterator();
+        final Iterator<MetisFieldError> myIterator = theErrors.iterator();
         while (myIterator.hasNext()) {
             /* Access the element and field */
-            final MetisDataEosError myCurr = myIterator.next();
-            final MetisDataEosFieldDef myField = myCurr.getField();
+            final MetisFieldError myCurr = myIterator.next();
+            final MetisFieldDef myField = myCurr.getField();
 
             /* Search the field set */
             boolean bFound = false;
-            for (MetisDataEosFieldDef field : aFields) {
+            for (MetisFieldDef field : aFields) {
                 /* If we have found the field note it and break loop */
                 if ((field != null) && field.equals(myField)) {
                     bFound = true;
@@ -275,7 +275,7 @@ public class MetisDataEosValidation
     /**
      * represents an instance of an error for an object.
      */
-    public static final class MetisDataEosError {
+    public static final class MetisFieldError {
         /**
          * The text of the error.
          */
@@ -284,15 +284,15 @@ public class MetisDataEosValidation
         /**
          * The field for the error.
          */
-        private final MetisDataEosFieldDef theField;
+        private final MetisFieldDef theField;
 
         /**
          * Constructor for the error.
          * @param pError the error text
          * @param pField the field
          */
-        private MetisDataEosError(final String pError,
-                                  final MetisDataEosFieldDef pField) {
+        private MetisFieldError(final String pError,
+                                final MetisFieldDef pField) {
             theError = pError;
             theField = pField;
         }
@@ -309,7 +309,7 @@ public class MetisDataEosValidation
          * Get the field for the error.
          * @return the field
          */
-        public MetisDataEosFieldDef getField() {
+        public MetisFieldDef getField() {
             return theField;
         }
 

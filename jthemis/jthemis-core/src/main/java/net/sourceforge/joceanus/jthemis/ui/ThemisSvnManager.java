@@ -48,7 +48,7 @@ import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraPreference.ThemisJir
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.SvnWorkingCopySet;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.ThemisSvnWorkingCopySet;
 import net.sourceforge.joceanus.jthemis.threads.ThemisCreateGitRepo;
 import net.sourceforge.joceanus.jthemis.threads.ThemisDiscoverData;
 import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionBackup;
@@ -239,7 +239,7 @@ public abstract class ThemisSvnManager<N, I> {
 
         /* Declare WorkingCopySet to data manager */
         final MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
-        final SvnWorkingCopySet myWorkingSet = pData.getWorkingCopySet();
+        final ThemisSvnWorkingCopySet myWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(myWorkingSet);
 
         /* Declare Extract Plans to data manager */

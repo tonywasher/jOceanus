@@ -23,28 +23,11 @@
 package net.sourceforge.joceanus.jmetis.lethe.field;
 
 /**
- * Special values for renderer.
+ * FieldSet events.
  */
-public enum MetisFieldValue {
+public enum MetisLetheFieldEvent {
     /**
-     * Error.
+     * Field Updated.
      */
-    ERROR;
-
-    /**
-     * The String name.
-     */
-    private String theName;
-
-    @Override
-    public String toString() {
-        /* If we have not yet loaded the name */
-        if (theName == null) {
-            /* Load the name */
-            theName = MetisFieldResource.getKeyForFieldValue(this).getValue();
-        }
-
-        /* return the name */
-        return theName;
-    }
+    FIELDUPDATED;
 }

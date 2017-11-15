@@ -36,7 +36,7 @@ import javax.swing.JTable;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldRateCellEditor;
@@ -93,7 +93,7 @@ public class DepositRateTable
     /**
      * The field manager.
      */
-    private final MetisFieldManager theFieldMgr;
+    private final MetisSwingFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -153,7 +153,7 @@ public class DepositRateTable
      * @param pError the error panel
      */
     protected DepositRateTable(final TethysSwingGuiFactory pFactory,
-                               final MetisFieldManager pFieldMgr,
+                               final MetisSwingFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel<JComponent, Icon> pError) {
         /* initialise the underlying class */

@@ -32,8 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -45,7 +45,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @author Tony Washer
  */
 public class MetisPreferenceManager
-        implements MetisDataEosFieldItem, TethysEventProvider<MetisPreferenceEvent> {
+        implements MetisFieldItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Logger.
      */
@@ -54,7 +54,7 @@ public class MetisPreferenceManager
     /**
      * Report fields.
      */
-    private final MetisDataEosFieldSet<MetisPreferenceManager> theFields;
+    private final MetisFieldSet<MetisPreferenceManager> theFields;
 
     /**
      * Load error text.
@@ -89,12 +89,12 @@ public class MetisPreferenceManager
     public MetisPreferenceManager(final MetisViewerManager pViewer) throws OceanusException {
         theViewerManager = pViewer;
         theEventManager = new TethysEventManager<>();
-        theFields = MetisDataEosFieldSet.newFieldSet(MetisPreferenceManager.this);
+        theFields = MetisFieldSet.newFieldSet(MetisPreferenceManager.this);
         theSecurityManager = new MetisPreferenceSecurity(this);
     }
 
     @Override
-    public MetisDataEosFieldSet<MetisPreferenceManager> getDataFieldSet() {
+    public MetisFieldSet<MetisPreferenceManager> getDataFieldSet() {
         return theFields;
     }
 

@@ -28,7 +28,7 @@ import java.util.ListIterator;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -40,7 +40,7 @@ public class CoeusLendingWorksMarket
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusLendingWorksMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusLendingWorksMarket.class);
+    private static final MetisFieldSet<CoeusLendingWorksMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusLendingWorksMarket.class);
 
     /**
      * The Decimal size.
@@ -136,7 +136,7 @@ public class CoeusLendingWorksMarket
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusLendingWorksMarket> getDataFieldSet() {
+    public MetisFieldSet<CoeusLendingWorksMarket> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

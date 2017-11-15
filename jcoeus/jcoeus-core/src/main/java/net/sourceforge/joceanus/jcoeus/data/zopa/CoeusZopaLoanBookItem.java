@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -41,11 +41,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Zopa LoanBook Item.
  */
 public class CoeusZopaLoanBookItem
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusZopaLoanBookItem> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaLoanBookItem.class);
+    private static final MetisFieldSet<CoeusZopaLoanBookItem> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaLoanBookItem.class);
 
     /**
      * Builder buffer length.
@@ -480,7 +480,7 @@ public class CoeusZopaLoanBookItem
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusZopaLoanBookItem> getDataFieldSet() {
+    public MetisFieldSet<CoeusZopaLoanBookItem> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

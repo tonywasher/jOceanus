@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,15 +34,15 @@ import java.util.function.Function;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 
 /**
  * Metis Data FieldSet.
  * @param <T> the data type
  */
-public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
-        implements MetisDataEosFieldSetDef {
+public class MetisFieldSet<T extends MetisFieldItem>
+        implements MetisFieldSetDef {
     /**
      * Hash Prime.
      */
@@ -56,7 +56,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
     /**
      * Map of ClassName to FieldSet.
      */
-    private static final Map<String, MetisDataEosFieldSet<?>> FIELDSET_MAP = new HashMap<>();
+    private static final Map<String, MetisFieldSet<?>> FIELDSET_MAP = new HashMap<>();
 
     /**
      * The Next anchorId.
@@ -76,12 +76,12 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
     /**
      * List of fields.
      */
-    private final List<MetisDataEosField<T>> theFields;
+    private final List<MetisField<T>> theFields;
 
     /**
      * Parent fields.
      */
-    private final MetisDataEosFieldSetDef theParent;
+    private final MetisFieldSetDef theParent;
 
     /**
      * is this a static fieldSet?
@@ -109,9 +109,9 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pStatic is this a static fieldSet?
      * @param pParent the parent fields
      */
-    MetisDataEosFieldSet(final Class<T> pClazz,
-                         final MetisDataEosFieldSetDef pParent,
-                         final boolean pStatic) {
+    MetisFieldSet(final Class<T> pClazz,
+                  final MetisFieldSetDef pParent,
+                  final boolean pStatic) {
         /* Store the parameters */
         theClazz = pClazz;
         theParent = pParent;
@@ -137,14 +137,14 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static <T extends MetisDataEosFieldItem> MetisDataEosFieldSet<T> newFieldSet(final Class<T> pClazz) {
+    public static <T extends MetisFieldItem> MetisFieldSet<T> newFieldSet(final Class<T> pClazz) {
         /* Synchronise on class */
-        synchronized (MetisDataEosFieldSet.class) {
+        synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
-            final MetisDataEosFieldSetDef myParent = lookUpFieldSet(pClazz);
+            final MetisFieldSetDef myParent = lookUpFieldSet(pClazz);
 
             /* Create the new fieldSet and store into map */
-            final MetisDataEosFieldSet<T> myFieldSet = new MetisDataEosFieldSet<>(pClazz, myParent, true);
+            final MetisFieldSet<T> myFieldSet = new MetisFieldSet<>(pClazz, myParent, true);
             registerFieldSet(pClazz, myFieldSet);
 
             /* Return the new fieldSet */
@@ -157,7 +157,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static MetisDataEosFieldSetDef lookUpFieldSet(final Class<?> pClazz) {
+    public static MetisFieldSetDef lookUpFieldSet(final Class<?> pClazz) {
         /* Check that the class does not already exist */
         final String myClassName = pClazz.getCanonicalName();
         if (myClassName == null || pClazz.isArray()) {
@@ -182,7 +182,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pFieldSet the fieldSet
      */
     protected static void registerFieldSet(final Class<?> pClazz,
-                                           final MetisDataEosFieldSet<?> pFieldSet) {
+                                           final MetisFieldSet<?> pFieldSet) {
         /* Check that the class does not already exist */
         final String myClassName = pClazz.getCanonicalName();
         FIELDSET_MAP.put(myClassName, pFieldSet);
@@ -195,20 +195,20 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @return the fieldSet.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends MetisDataEosFieldItem> MetisDataEosFieldSet<T> newFieldSet(final T pObject) {
+    public static <T extends MetisFieldItem> MetisFieldSet<T> newFieldSet(final T pObject) {
         /* Locate the static fieldSet for this class */
         final Class<T> myClazz = (Class<T>) pObject.getClass();
         final String myClassName = myClazz.getCanonicalName();
 
         /* Synchronise on class */
-        synchronized (MetisDataEosFieldSet.class) {
-            MetisDataEosFieldSet<?> myParent = FIELDSET_MAP.get(myClassName);
+        synchronized (MetisFieldSet.class) {
+            MetisFieldSet<?> myParent = FIELDSET_MAP.get(myClassName);
             if (myParent == null) {
                 myParent = newFieldSet(myClazz);
             }
 
             /* Create the new fieldSet */
-            return new MetisDataEosFieldSet<>(myClazz, myParent, false);
+            return new MetisFieldSet<>(myClazz, myParent, false);
         }
     }
 
@@ -276,8 +276,8 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
     }
 
     @Override
-    public Iterator<MetisDataEosFieldDef> fieldIterator() {
-        return new MetisDataEosFieldIterator<>(this);
+    public Iterator<MetisFieldDef> fieldIterator() {
+        return new MetisFieldIterator<>(this);
     }
 
     /**
@@ -286,8 +286,8 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pValue the value supplier
      * @return the field
      */
-    public MetisDataEosField<T> declareLocalField(final MetisFieldId pId,
-                                                  final Function<T, Object> pValue) {
+    public MetisField<T> declareLocalField(final MetisFieldId pId,
+                                           final Function<T, Object> pValue) {
         return declareDataField(pId, pValue, MetisDataFieldStorage.LOCAL);
     }
 
@@ -296,7 +296,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisDataEosField<T> declareCalculatedField(final MetisFieldId pId) {
+    public MetisField<T> declareCalculatedField(final MetisFieldId pId) {
         return declareDataField(pId, null, MetisDataFieldStorage.CALCULATED);
     }
 
@@ -306,8 +306,8 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pValue the value supplier
      * @return the field
      */
-    public MetisDataEosField<T> declareLocalField(final String pName,
-                                                  final Function<T, Object> pValue) {
+    public MetisField<T> declareLocalField(final String pName,
+                                           final Function<T, Object> pValue) {
         /* Only allowed for dynamic fieldSet */
         if (isStatic) {
             throw new IllegalArgumentException("Only allowed for dynamic fieldSets");
@@ -322,11 +322,11 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * @param pStorage the field storage type
      * @return the field
      */
-    private MetisDataEosField<T> declareDataField(final MetisFieldId pId,
-                                                  final Function<T, Object> pValue,
-                                                  final MetisDataFieldStorage pStorage) {
+    private MetisField<T> declareDataField(final MetisFieldId pId,
+                                           final Function<T, Object> pValue,
+                                           final MetisDataFieldStorage pStorage) {
         /* Create the field */
-        final MetisDataEosField<T> myField = new MetisDataEosField<>(this, pId, pValue, pStorage);
+        final MetisField<T> myField = new MetisField<>(this, pId, pValue, pStorage);
 
         /* Register the field */
         registerField(myField);
@@ -339,7 +339,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * Register the field.
      * @param pField the field
      */
-    protected void registerField(final MetisDataEosField<T> pField) {
+    protected void registerField(final MetisField<T> pField) {
         /* Reject if we are locked */
         if (isLocked) {
             throw new IllegalStateException("Already locked");
@@ -375,9 +375,9 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
         final String myName = pId.getId();
 
         /* Loop through existing iDs */
-        final Iterator<MetisDataEosFieldDef> myIterator = fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* If the name exists, throw an exception */
             if (myName.equals(myField.getFieldId().getId())) {
@@ -387,11 +387,11 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
     }
 
     @Override
-    public MetisDataEosFieldDef getField(final MetisFieldId pId) {
+    public MetisFieldDef getField(final MetisFieldId pId) {
         /* Loop through existing iDs */
-        final Iterator<MetisDataEosFieldDef> myIterator = fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* If we have the id, return it */
             if (pId.equals(myField.getFieldId())) {
@@ -414,12 +414,12 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
         }
 
         /* Check class */
-        if (!(pThat instanceof MetisDataEosFieldSet)) {
+        if (!(pThat instanceof MetisFieldSet)) {
             return false;
         }
 
         /* Access as MetisDataFieldSet */
-        final MetisDataEosFieldSet<?> myThat = (MetisDataEosFieldSet<?>) pThat;
+        final MetisFieldSet<?> myThat = (MetisFieldSet<?>) pThat;
 
         /* Must have same anchor id */
         return theAnchorId == myThat.getAnchorId();
@@ -434,28 +434,28 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
      * Iterator class.
      * @param <T> the item type
      */
-    private static final class MetisDataEosFieldIterator<T extends MetisDataEosFieldItem>
-            implements Iterator<MetisDataEosFieldDef> {
+    private static final class MetisFieldIterator<T extends MetisFieldItem>
+            implements Iterator<MetisFieldDef> {
         /**
          * Preceding iterator.
          */
-        private final Iterator<MetisDataEosFieldDef> thePreceding;
+        private final Iterator<MetisFieldDef> thePreceding;
 
         /**
          * Local iterator.
          */
-        private final Iterator<MetisDataEosField<T>> theIterator;
+        private final Iterator<MetisField<T>> theIterator;
 
         /**
          * Constructor.
          * @param pFields the fields
          */
-        private MetisDataEosFieldIterator(final MetisDataEosFieldSet<T> pFields) {
+        private MetisFieldIterator(final MetisFieldSet<T> pFields) {
             /* Allocate iterator */
             theIterator = pFields.theFields.iterator();
 
             /* Allocate preceding iterator */
-            final MetisDataEosFieldSetDef myParent = pFields.theParent;
+            final MetisFieldSetDef myParent = pFields.theParent;
             thePreceding = myParent == null
                                             ? null
                                             : myParent.fieldIterator();
@@ -474,7 +474,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
         }
 
         @Override
-        public MetisDataEosFieldDef next() {
+        public MetisFieldDef next() {
             /* Check for preceding entry */
             if (thePreceding != null
                 && thePreceding.hasNext()) {
@@ -491,7 +491,7 @@ public class MetisDataEosFieldSet<T extends MetisDataEosFieldItem>
         }
 
         @Override
-        public void forEachRemaining(final Consumer<? super MetisDataEosFieldDef> pAction) {
+        public void forEachRemaining(final Consumer<? super MetisFieldDef> pAction) {
             while (hasNext()) {
                 pAction.accept(next());
             }

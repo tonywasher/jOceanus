@@ -33,15 +33,15 @@ import javafx.beans.property.SimpleObjectProperty;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
 
 /**
  * Table FieldSet.
  * @param <R> the item type
  */
-public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
+public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
     /**
      * List Fields.
      */
@@ -55,7 +55,7 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
     /**
      * The Map of Field ID to Observable Object.
      */
-    private final Map<MetisDataEosFieldDef, ObjectProperty<Object>> thePropertyMap;
+    private final Map<MetisFieldDef, ObjectProperty<Object>> thePropertyMap;
 
     /**
      * The Array of Observable properties.
@@ -99,7 +99,7 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      * @param pField the field
      * @return the property
      */
-    protected ObjectProperty<Object> getPropertyForField(final MetisDataEosFieldDef pField) {
+    protected ObjectProperty<Object> getPropertyForField(final MetisFieldDef pField) {
         return thePropertyMap.get(pField);
     }
 
@@ -108,16 +108,16 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      * @param pFields the fields
      * @return the observable array
      */
-    private Observable[] initialiseMap(final List<MetisDataEosFieldDef> pFields) {
+    private Observable[] initialiseMap(final List<MetisFieldDef> pFields) {
         /* Create the observable array */
         final int myMax = pFields.size();
         final Observable[] myObservables = new Observable[myMax];
         int myNumFields = 0;
 
         /* Iterate through the fields */
-        final Iterator<MetisDataEosFieldDef> myIterator = pFields.iterator();
+        final Iterator<MetisFieldDef> myIterator = pFields.iterator();
         while (myIterator.hasNext()) {
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* Create the property */
             final ObjectProperty<Object> myProperty = new SimpleObjectProperty<>();
@@ -139,10 +139,10 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      */
     protected void updateValues() {
         /* Iterate through the entries */
-        final Iterator<Map.Entry<MetisDataEosFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        final Iterator<Map.Entry<MetisFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<MetisDataEosFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
-            final MetisDataEosFieldDef myField = myEntry.getKey();
+            final Map.Entry<MetisFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
+            final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is changeable */
             final MetisDataFieldStorage myStorage = myField.getStorage();
@@ -159,10 +159,10 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      */
     protected void recalculateValues() {
         /* Iterate through the entries */
-        final Iterator<Map.Entry<MetisDataEosFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
+        final Iterator<Map.Entry<MetisFieldDef, ObjectProperty<Object>>> myIterator = thePropertyMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<MetisDataEosFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
-            final MetisDataEosFieldDef myField = myEntry.getKey();
+            final Map.Entry<MetisFieldDef, ObjectProperty<Object>> myEntry = myIterator.next();
+            final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is calculated */
             final MetisDataFieldStorage myStorage = myField.getStorage();
@@ -178,7 +178,7 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      * @param pField the field
      * @param pProperty the property
      */
-    private void setValue(final MetisDataEosFieldDef pField,
+    private void setValue(final MetisFieldDef pField,
                           final ObjectProperty<Object> pProperty) {
         if (pField.getStorage().isCalculated()) {
             setCalculatedValue(pField, pProperty);
@@ -192,7 +192,7 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      * @param pField the field
      * @param pProperty the property
      */
-    private void setStandardValue(final MetisDataEosFieldDef pField,
+    private void setStandardValue(final MetisFieldDef pField,
                                   final ObjectProperty<Object> pProperty) {
         /* Obtain the value */
         Object myValue = pField.getFieldValue(theItem);
@@ -212,7 +212,7 @@ public class MetisFXTableFieldSet<R extends MetisDataEosTableItem> {
      * @param pField the field
      * @param pProperty the property
      */
-    private void setCalculatedValue(final MetisDataEosFieldDef pField,
+    private void setCalculatedValue(final MetisFieldDef pField,
                                     final ObjectProperty<Object> pProperty) {
         /* Obtain the value */
         final MetisTableCalculator<R> myCalculator = theFields.getCalculator();

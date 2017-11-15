@@ -37,11 +37,9 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -49,48 +47,30 @@ import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnUpdateStatus.UpdateStatusList;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnUpdateStatus.ThemisUpdateStatusList;
 
 /**
  * Represents a Working extract copy of subversion.
  * @author Tony Washer
  */
 public final class ThemisSvnWorkingCopy
-        implements MetisDataFieldItem, Comparable<ThemisSvnWorkingCopy> {
+        implements MetisFieldItem, Comparable<ThemisSvnWorkingCopy> {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnWorkingCopy.class);
+    private static final MetisFieldSet<ThemisSvnWorkingCopy> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnWorkingCopy.class);
 
     /**
-     * Component field id.
+     * fieldIds.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
-
-    /**
-     * Branch field id.
-     */
-    private static final MetisDataField FIELD_BRAN = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCH);
-
-    /**
-     * Alias field id.
-     */
-    private static final MetisDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ALIAS);
-
-    /**
-     * Revision field id.
-     */
-    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
-
-    /**
-     * Project field id.
-     */
-    private static final MetisDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT);
-
-    /**
-     * Update list field id.
-     */
-    private static final MetisDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField(ThemisResource.SVN_UPDATES);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisSvnWorkingCopy::getComponent);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCH, ThemisSvnWorkingCopy::getBranch);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_ALIAS, ThemisSvnWorkingCopy::getAlias);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnWorkingCopy::getRevision);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT, ThemisSvnWorkingCopy::getProjectDefinition);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_UPDATES, ThemisSvnWorkingCopy::getUpdates);
+    }
 
     /**
      * The branch associated with the working copy.
@@ -115,7 +95,7 @@ public final class ThemisSvnWorkingCopy
     /**
      * The updates.
      */
-    private final UpdateStatusList theUpdates;
+    private final ThemisUpdateStatusList theUpdates;
 
     /**
      * The project definition.
@@ -137,7 +117,7 @@ public final class ThemisSvnWorkingCopy
         theLocation = pLocation;
         theAlias = theLocation.getName();
         theRevision = pRevision.getNumber();
-        theUpdates = new UpdateStatusList();
+        theUpdates = new ThemisUpdateStatusList();
 
         /* Determine the location of the project definition */
         final File myPom = ThemisMvnProjectDefinition.getProjectDefFile(theLocation);
@@ -152,38 +132,16 @@ public final class ThemisSvnWorkingCopy
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnWorkingCopy> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_ALIAS.equals(pField)) {
-            return getComponentName().equals(theAlias)
-                                                       ? MetisDataFieldValue.SKIP
-                                                       : theAlias;
-        }
-        if (FIELD_BRAN.equals(pField)) {
-            return theBranch;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theBranch.getComponent();
-        }
-        if (FIELD_PROJECT.equals(pField)) {
-            return theProject;
-        }
-        if (FIELD_REVISION.equals(pField)) {
-            return theRevision;
-        }
-        if (FIELD_UPDATES.equals(pField)) {
-            return theUpdates.isEmpty()
-                                        ? MetisDataFieldValue.SKIP
-                                        : theUpdates;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
+    /**
+     * Get component.
+     * @return the component
+     */
+    public ThemisSvnComponent getComponent() {
+        return theBranch.getComponent();
     }
 
     /**
@@ -240,6 +198,14 @@ public final class ThemisSvnWorkingCopy
      */
     public ThemisMvnProjectDefinition getProjectDefinition() {
         return theProject;
+    }
+
+    /**
+     * Get updates.
+     * @return the branch
+     */
+    private ThemisUpdateStatusList getUpdates() {
+        return theUpdates;
     }
 
     /**
@@ -378,27 +344,21 @@ public final class ThemisSvnWorkingCopy
     /**
      * Working Copy Set.
      */
-    public static final class SvnWorkingCopySet
-            implements MetisDataFieldItem, MetisDataList<ThemisSvnWorkingCopy> {
+    public static final class ThemisSvnWorkingCopySet
+            implements MetisFieldItem, MetisDataList<ThemisSvnWorkingCopy> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnWorkingCopySet.class);
+        private static final MetisFieldSet<ThemisSvnWorkingCopySet> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnWorkingCopySet.class);
 
         /**
-         * Size field id.
+         * fieldIds.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
-
-        /**
-         * Repository field id.
-         */
-        private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
-
-        /**
-         * Location field id.
-         */
-        private static final MetisDataField FIELD_LOC = FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOCATION);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnWorkingCopySet::size);
+            FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisSvnWorkingCopySet::getRepository);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOCATION, ThemisSvnWorkingCopySet::getLocation);
+        }
 
         /**
          * The repository for which these are working sets.
@@ -422,9 +382,9 @@ public final class ThemisSvnWorkingCopy
          * @param pReport the report object
          * @throws OceanusException on error
          */
-        public SvnWorkingCopySet(final ThemisSvnRepository pRepository,
-                                 final File pLocation,
-                                 final MetisThreadStatusReport pReport) throws OceanusException {
+        public ThemisSvnWorkingCopySet(final ThemisSvnRepository pRepository,
+                                       final File pLocation,
+                                       final MetisThreadStatusReport pReport) throws OceanusException {
             /* Store parameters */
             theRepository = pRepository;
             theLocation = pLocation;
@@ -440,8 +400,8 @@ public final class ThemisSvnWorkingCopy
          * @param pReport the report object
          * @throws OceanusException on error
          */
-        public SvnWorkingCopySet(final ThemisSvnRepository pRepository,
-                                 final MetisThreadStatusReport pReport) throws OceanusException {
+        public ThemisSvnWorkingCopySet(final ThemisSvnRepository pRepository,
+                                       final MetisThreadStatusReport pReport) throws OceanusException {
             /* Store parameters */
             theRepository = pRepository;
 
@@ -466,25 +426,8 @@ public final class ThemisSvnWorkingCopy
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnWorkingCopySet> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            if (FIELD_REPO.equals(pField)) {
-                return theRepository;
-            }
-            if (FIELD_LOC.equals(pField)) {
-                return theLocation.getAbsolutePath();
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

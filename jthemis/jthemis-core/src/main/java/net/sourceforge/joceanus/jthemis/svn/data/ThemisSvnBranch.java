@@ -36,16 +36,15 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.SvnRevisionPath;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag.SvnTagList;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag.ThemisSvnTagList;
 
 /**
  * Represents a branch of a component in the repository.
@@ -56,17 +55,15 @@ public final class ThemisSvnBranch
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnBranch.class, ThemisScmBranch.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisSvnBranch> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnBranch.class);
 
     /**
      * Repository field id.
      */
-    private static final MetisDataField FIELD_REPO = FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY);
-
-    /**
-     * RevisionPath.
-     */
-    private static final MetisDataField FIELD_REVPATH = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISIONPATH);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisSvnBranch::getRepository);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISIONPATH, ThemisSvnBranch::getRevisionPath);
+    }
 
     /**
      * Logger.
@@ -81,7 +78,7 @@ public final class ThemisSvnBranch
     /**
      * RevisionPath.
      */
-    private SvnRevisionPath theRevisionPath;
+    private ThemisSvnRevisionPath theRevisionPath;
 
     /**
      * Constructor.
@@ -97,7 +94,7 @@ public final class ThemisSvnBranch
         theRepository = pParent.getRepository();
 
         /* Create tag list */
-        final SvnTagList myTags = new SvnTagList(this);
+        final ThemisSvnTagList myTags = new ThemisSvnTagList(this);
         setTags(myTags);
     }
 
@@ -119,7 +116,7 @@ public final class ThemisSvnBranch
         theRepository = pParent.getRepository();
 
         /* Create tag list */
-        final SvnTagList myTags = new SvnTagList(this);
+        final ThemisSvnTagList myTags = new ThemisSvnTagList(this);
         setTags(myTags);
     }
 
@@ -135,7 +132,7 @@ public final class ThemisSvnBranch
      * Get the revision path for this branch.
      * @return the revision path
      */
-    public SvnRevisionPath getRevisionPath() {
+    public ThemisSvnRevisionPath getRevisionPath() {
         return theRevisionPath;
     }
 
@@ -148,27 +145,13 @@ public final class ThemisSvnBranch
     }
 
     @Override
-    public SvnTagList getTagList() {
-        return (SvnTagList) super.getTagList();
+    public ThemisSvnTagList getTagList() {
+        return (ThemisSvnTagList) super.getTagList();
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnBranch> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_REPO.equals(pField)) {
-            return theRepository;
-        }
-        if (FIELD_REVPATH.equals(pField)) {
-            return theRevisionPath;
-        }
-
-        /* Unknown */
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -262,12 +245,12 @@ public final class ThemisSvnBranch
     /**
      * List of branches.
      */
-    public static final class SvnBranchList
-            extends ScmBranchList<ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
+    public static final class ThemisSvnBranchList
+            extends ThemisScmBranchList<ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnBranchList.class, ScmBranchList.getBaseFieldSet());
+        private static final MetisFieldSet<ThemisSvnBranchList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnBranchList.class);
 
         /**
          * The parent component.
@@ -278,7 +261,7 @@ public final class ThemisSvnBranch
          * Discover branch list from repository.
          * @param pParent the parent component
          */
-        protected SvnBranchList(final ThemisSvnComponent pParent) {
+        protected ThemisSvnBranchList(final ThemisSvnComponent pParent) {
             /* Call super constructor */
             super(pParent);
 
@@ -287,7 +270,7 @@ public final class ThemisSvnBranch
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnBranchList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

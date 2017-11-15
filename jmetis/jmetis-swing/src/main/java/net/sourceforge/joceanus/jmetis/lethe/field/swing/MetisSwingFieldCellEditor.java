@@ -41,7 +41,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldValue;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldValue;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -121,7 +121,7 @@ public final class MetisSwingFieldCellEditor {
 
             /* Set the text */
             theField.setText(((pValue == null)
-                              || (MetisFieldValue.ERROR.equals(pValue)))
+                              || (MetisLetheFieldValue.ERROR.equals(pValue)))
                                                                          ? STR_EMPTY
                                                                          : (String) pValue);
             return theField;

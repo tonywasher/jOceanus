@@ -27,10 +27,10 @@ import java.util.Iterator;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
  * Table FieldSet.
  * @param <R> the item type
  */
-public class MetisFXTableList<R extends MetisDataEosTableItem>
+public class MetisFXTableList<R extends MetisFieldTableItem>
         implements MetisDataList<R> {
     /**
      * The core List.

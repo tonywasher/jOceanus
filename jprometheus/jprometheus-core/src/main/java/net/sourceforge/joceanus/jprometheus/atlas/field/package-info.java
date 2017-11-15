@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jPrometheus: Application Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.lethe.field;
-
 /**
- * FieldSet events.
+ * Data definitions.
  */
-public enum MetisFieldEvent {
-    /**
-     * Field Updated.
-     */
-    FIELDUPDATED;
-}
+package net.sourceforge.joceanus.jprometheus.atlas.field;

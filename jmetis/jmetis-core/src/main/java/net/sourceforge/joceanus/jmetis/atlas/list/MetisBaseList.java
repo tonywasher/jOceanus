@@ -26,22 +26,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
 
 /**
  * Base List implementation.
  * @param <T> the item type
  */
-public class MetisBaseList<T extends MetisDataEosVersionedItem>
+public class MetisBaseList<T extends MetisFieldVersionedItem>
         extends MetisVersionedList<T> {
     /**
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisDataEosFieldSet<MetisBaseList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisBaseList.class);
+    private static final MetisFieldSet<MetisBaseList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisBaseList.class);
 
     /**
      * Constructor.
@@ -52,7 +52,7 @@ public class MetisBaseList<T extends MetisDataEosVersionedItem>
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -129,7 +129,7 @@ public class MetisBaseList<T extends MetisDataEosVersionedItem>
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* ReBase the history */
-                    final MetisDataEosVersionValues myBase = myItem.getValueSet().cloneIt();
+                    final MetisFieldVersionValues myBase = myItem.getValueSet().cloneIt();
                     myCurr.setHistory(myBase);
                     hasChanges = true;
                 }

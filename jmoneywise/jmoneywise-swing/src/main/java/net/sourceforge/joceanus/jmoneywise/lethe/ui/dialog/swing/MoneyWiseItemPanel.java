@@ -41,7 +41,7 @@ import javax.swing.SpringLayout;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.CategoryBase;
@@ -107,7 +107,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * @param pError the error panel
      */
     protected MoneyWiseItemPanel(final TethysSwingGuiFactory pFactory,
-                                 final MetisFieldManager pFieldMgr,
+                                 final MetisSwingFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                  final MetisErrorPanel<JComponent, Icon> pError) {
         super(pFactory, pFieldMgr, pUpdateSet, pError);

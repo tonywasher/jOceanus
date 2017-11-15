@@ -33,9 +33,9 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -45,12 +45,12 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <T> the item type
  */
 public class MetisIndexedList<T extends MetisIndexedItem>
-        implements MetisDataList<T>, TethysEventProvider<MetisListEvent>, MetisDataEosFieldItem {
+        implements MetisDataList<T>, TethysEventProvider<MetisListEvent>, MetisFieldItem {
     /**
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisDataEosFieldSet<MetisIndexedList> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisIndexedList.class);
+    private static final MetisFieldSet<MetisIndexedList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisIndexedList.class);
 
     /**
      * FieldIds.
@@ -107,7 +107,7 @@ public class MetisIndexedList<T extends MetisIndexedItem>
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 

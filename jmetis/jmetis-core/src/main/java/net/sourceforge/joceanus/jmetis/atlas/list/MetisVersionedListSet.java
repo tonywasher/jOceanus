@@ -30,20 +30,20 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 
 /**
  * Set of VersionedLists.
  */
 public class MetisVersionedListSet
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<MetisVersionedListSet> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisVersionedListSet.class);
+    private static final MetisFieldSet<MetisVersionedListSet> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisVersionedListSet.class);
 
     /**
      * Version Field Id.
@@ -55,12 +55,12 @@ public class MetisVersionedListSet
     /**
      * The Local fields.
      */
-    private final MetisDataEosFieldSet<MetisVersionedListSet> theFields;
+    private final MetisFieldSet<MetisVersionedListSet> theFields;
 
     /**
      * The VersionedList Map.
      */
-    private final Map<MetisListKey, MetisVersionedList<MetisDataEosVersionedItem>> theListMap;
+    private final Map<MetisListKey, MetisVersionedList<MetisFieldVersionedItem>> theListMap;
 
     /**
      * The version of the listSet.
@@ -72,11 +72,11 @@ public class MetisVersionedListSet
      */
     protected MetisVersionedListSet() {
         theListMap = new LinkedHashMap<>();
-        theFields = MetisDataEosFieldSet.newFieldSet(this);
+        theFields = MetisFieldSet.newFieldSet(this);
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return theFields;
     }
 
@@ -135,7 +135,7 @@ public class MetisVersionedListSet
      * Obtain the List iterator.
      * @return true/false
      */
-    private Iterator<MetisVersionedList<MetisDataEosVersionedItem>> listIterator() {
+    private Iterator<MetisVersionedList<MetisFieldVersionedItem>> listIterator() {
         return theListMap.values().iterator();
     }
 
@@ -144,7 +144,7 @@ public class MetisVersionedListSet
      * @param pListKey the list key
      * @return the list (or null)
      */
-    public MetisVersionedList<MetisDataEosVersionedItem> getList(final MetisListKey pListKey) {
+    public MetisVersionedList<MetisFieldVersionedItem> getList(final MetisListKey pListKey) {
         return theListMap.get(pListKey);
     }
 
@@ -154,7 +154,7 @@ public class MetisVersionedListSet
      */
     public boolean isEmpty() {
         /* Loop through the lists */
-        for (MetisVersionedList<MetisDataEosVersionedItem> myList : theListMap.values()) {
+        for (MetisVersionedList<MetisFieldVersionedItem> myList : theListMap.values()) {
             /* Check whether the list is empty */
             if (!myList.isEmpty()) {
                 return false;
@@ -171,7 +171,7 @@ public class MetisVersionedListSet
      * @param pList the list
      */
     protected void declareList(final MetisListKey pKey,
-                               final MetisVersionedList<MetisDataEosVersionedItem> pList) {
+                               final MetisVersionedList<MetisFieldVersionedItem> pList) {
         /* Add to the list map */
         theListMap.put(pKey, pList);
 
@@ -197,9 +197,9 @@ public class MetisVersionedListSet
      */
     protected void doReWindToVersion(final int pVersion) {
         /* Loop through the lists */
-        final Iterator<MetisVersionedList<MetisDataEosVersionedItem>> myIterator = listIterator();
+        final Iterator<MetisVersionedList<MetisFieldVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            final MetisVersionedList<MetisDataEosVersionedItem> myList = myIterator.next();
+            final MetisVersionedList<MetisFieldVersionedItem> myList = myIterator.next();
 
             /* If the list needs reWinding */
             if (myList.getVersion() > pVersion) {
@@ -216,10 +216,10 @@ public class MetisVersionedListSet
      * reLink Items.
      * @param pIterator the iterator
      */
-    protected void reLinkItems(final Iterator<MetisDataEosVersionedItem> pIterator) {
+    protected void reLinkItems(final Iterator<MetisFieldVersionedItem> pIterator) {
         /* Iterate through the items, reLinking */
         while (pIterator.hasNext()) {
-            final MetisDataEosVersionedItem myItem = pIterator.next();
+            final MetisFieldVersionedItem myItem = pIterator.next();
             reLinkItem(myItem);
         }
     }
@@ -228,16 +228,16 @@ public class MetisVersionedListSet
      * reLink values.
      * @param pItem the item
      */
-    private void reLinkItem(final MetisDataEosVersionedItem pItem) {
+    private void reLinkItem(final MetisFieldVersionedItem pItem) {
         /* Access details */
-        final MetisDataEosVersionValues myValues = pItem.getValueSet();
-        final MetisDataEosFieldSetDef myFields = pItem.getDataFieldSet();
+        final MetisFieldVersionValues myValues = pItem.getValueSet();
+        final MetisFieldSetDef myFields = pItem.getDataFieldSet();
 
         /* Loop through the fields */
-        final Iterator<MetisDataEosFieldDef> myIterator = myFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field and value */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
             Object myValue = myField.getStorage().isVersioned()
                                                                 ? myValues.getValue(myField)
                                                                 : null;
@@ -258,7 +258,7 @@ public class MetisVersionedListSet
      */
     private MetisIndexedItem reLinkValue(final MetisIndexedItem pValue) {
         /* Determine the list for the item */
-        final MetisVersionedList<MetisDataEosVersionedItem> myList = determineListForItem(pValue);
+        final MetisVersionedList<MetisFieldVersionedItem> myList = determineListForItem(pValue);
 
         /* If we found the list */
         final MetisIndexedItem myNew = myList != null
@@ -276,11 +276,11 @@ public class MetisVersionedListSet
      * @param pItem the item
      * @return the corresponding list (or null)
      */
-    private MetisVersionedList<MetisDataEosVersionedItem> determineListForItem(final MetisIndexedItem pItem) {
+    private MetisVersionedList<MetisFieldVersionedItem> determineListForItem(final MetisIndexedItem pItem) {
         /* Loop through the lists */
-        final Iterator<MetisVersionedList<MetisDataEosVersionedItem>> myIterator = listIterator();
+        final Iterator<MetisVersionedList<MetisFieldVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {
-            final MetisVersionedList<MetisDataEosVersionedItem> myList = myIterator.next();
+            final MetisVersionedList<MetisFieldVersionedItem> myList = myIterator.next();
 
             /* If this is the correct class */
             if (myList.getClazz().isInstance(pItem)) {

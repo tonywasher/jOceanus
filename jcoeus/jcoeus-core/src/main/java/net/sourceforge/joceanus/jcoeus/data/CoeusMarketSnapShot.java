@@ -28,19 +28,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Loan Market SnapShot.
  */
 public class CoeusMarketSnapShot
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusMarketSnapShot> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarketSnapShot.class);
+    private static final MetisFieldSet<CoeusMarketSnapShot> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarketSnapShot.class);
 
     /**
      * Field Ids.
@@ -254,7 +254,7 @@ public class CoeusMarketSnapShot
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusMarketSnapShot> getDataFieldSet() {
+    public MetisFieldSet<CoeusMarketSnapShot> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

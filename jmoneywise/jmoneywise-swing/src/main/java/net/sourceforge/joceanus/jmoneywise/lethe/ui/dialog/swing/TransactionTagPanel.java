@@ -28,9 +28,9 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
@@ -52,7 +52,7 @@ public class TransactionTagPanel
      * @param pError the error panel
      */
     public TransactionTagPanel(final TethysSwingGuiFactory pFactory,
-                               final MetisFieldManager pFieldMgr,
+                               final MetisSwingFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
                                final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
@@ -89,7 +89,7 @@ public class TransactionTagPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisFieldSet<TransactionTag> myFieldSet = getFieldSet();
+        final MetisSwingFieldSet<TransactionTag> myFieldSet = getFieldSet();
 
         /* Determine whether the description field should be visible */
         final boolean bShowDesc = isEditable || getItem().getDesc() != null;

@@ -37,52 +37,40 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnSourceDir;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.SvnRevisionPath;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
 
 /**
  * Extract plan for path.
  * @author Tony Washer
  */
 public class ThemisSvnExtract
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * DataFields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnExtract.class);
+    private static final MetisFieldSet<ThemisSvnExtract> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtract.class);
 
     /**
-     * Component field.
+     * fieldIds.
      */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
-
-    /**
-     * Trunk field.
-     */
-    private static final MetisDataField FIELD_TRUNK = FIELD_DEFS.declareLocalField(ThemisResource.SVN_TRUNK);
-
-    /**
-     * Branches field.
-     */
-    private static final MetisDataField FIELD_BRANCHES = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES);
-
-    /**
-     * Tags field.
-     */
-    private static final MetisDataField FIELD_TAGS = FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisSvnExtract::getComponent);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_TRUNK, ThemisSvnExtract::getTrunkPlan);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES, ThemisSvnExtract::getBranches);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisSvnExtract::getTags);
+    }
 
     /**
      * Component.
@@ -92,17 +80,17 @@ public class ThemisSvnExtract
     /**
      * Trunk extract list.
      */
-    private final SvnBranchExtractPlan theTrunk;
+    private final ThemisSvnBranchExtractPlan theTrunk;
 
     /**
      * List of non-trunk Branch Extracts.
      */
-    private final SvnBranchExtractPlanList theBranches;
+    private final ThemisSvnBranchExtractPlanList theBranches;
 
     /**
      * List of tag Extracts.
      */
-    private final SvnTagExtractPlanList theTags;
+    private final ThemisSvnTagExtractPlanList theTags;
 
     /**
      * Constructor.
@@ -114,12 +102,12 @@ public class ThemisSvnExtract
         theComponent = pComponent;
 
         /* Allocate lists */
-        theBranches = new SvnBranchExtractPlanList();
-        theTags = new SvnTagExtractPlanList();
+        theBranches = new ThemisSvnBranchExtractPlanList();
+        theTags = new ThemisSvnTagExtractPlanList();
 
         /* Obtain the trunk branch */
         final ThemisSvnBranch myTrunk = theComponent.getTrunk();
-        theTrunk = new SvnBranchExtractPlan(myTrunk);
+        theTrunk = new ThemisSvnBranchExtractPlan(myTrunk);
         theTrunk.buildView();
 
         /* Build tags */
@@ -138,15 +126,15 @@ public class ThemisSvnExtract
             /* If non-virtual */
             if (!myBranch.isVirtual()) {
                 /* Build the plan */
-                final SvnBranchExtractPlan myPlan = new SvnBranchExtractPlan(myBranch);
+                final ThemisSvnBranchExtractPlan myPlan = new ThemisSvnBranchExtractPlan(myBranch);
                 theBranches.add(myPlan);
                 myPlan.buildView();
 
                 /* If the plan is not anchored */
                 if (!myPlan.isAnchored()) {
                     /* Obtain the origin view of this and the trunk */
-                    final SvnExtractView myView = myPlan.viewIterator().next();
-                    final SvnExtractView myTrunkView = theTrunk.viewIterator().next();
+                    final ThemisSvnExtractView myView = myPlan.viewIterator().next();
+                    final ThemisSvnExtractView myTrunkView = theTrunk.viewIterator().next();
 
                     /* Reject if not possible to repair */
                     final SVNRevision myRev = myView.getRevision();
@@ -170,25 +158,8 @@ public class ThemisSvnExtract
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnExtract> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_COMP.equals(pField)) {
-            return theComponent;
-        }
-        if (FIELD_TRUNK.equals(pField)) {
-            return theTrunk;
-        }
-        if (FIELD_BRANCHES.equals(pField)) {
-            return theBranches;
-        }
-        if (FIELD_TAGS.equals(pField)) {
-            return theTags;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -200,27 +171,51 @@ public class ThemisSvnExtract
     }
 
     /**
+     * Obtain the component.
+     * @return the component
+     */
+    private ThemisSvnComponent getComponent() {
+        return theComponent;
+    }
+
+    /**
      * Obtain the trunk extract plan.
      * @return the trunk plan
      */
-    public SvnBranchExtractPlan getTrunkPlan() {
+    public ThemisSvnBranchExtractPlan getTrunkPlan() {
         return theTrunk;
     }
 
     /**
      * Obtain the branch extract plan iterator.
-     * @return the trunk plan
+     * @return the iterator
      */
-    public Iterator<SvnBranchExtractPlan> branchIterator() {
+    public Iterator<ThemisSvnBranchExtractPlan> branchIterator() {
         return theBranches.iterator();
     }
 
     /**
-     * Obtain the tag extract plan iterator.
-     * @return the trunk plan
+     * Obtain the branch extract plan list.
+     * @return the list
      */
-    public Iterator<SvnTagExtractPlan> tagIterator() {
+    private ThemisSvnBranchExtractPlanList getBranches() {
+        return theBranches;
+    }
+
+    /**
+     * Obtain the tag extract plan iterator.
+     * @return the iterator
+     */
+    public Iterator<ThemisSvnTagExtractPlan> tagIterator() {
         return theTags.iterator();
+    }
+
+    /**
+     * Obtain the tag extract plan list.
+     * @return the list
+     */
+    private ThemisSvnTagExtractPlanList getTags() {
+        return theTags;
     }
 
     /**
@@ -243,7 +238,7 @@ public class ThemisSvnExtract
             final ThemisSvnTag myTag = myIterator.next();
 
             /* Build the plan */
-            final SvnTagExtractPlan myPlan = new SvnTagExtractPlan(myTag);
+            final ThemisSvnTagExtractPlan myPlan = new ThemisSvnTagExtractPlan(myTag);
             theTags.add(myPlan);
             myPlan.buildView();
 
@@ -266,18 +261,18 @@ public class ThemisSvnExtract
                 .append(theTrunk.toString());
 
         /* Add Branches */
-        final Iterator<SvnBranchExtractPlan> myBrnIterator = theBranches.iterator();
+        final Iterator<ThemisSvnBranchExtractPlan> myBrnIterator = theBranches.iterator();
         while (myBrnIterator.hasNext()) {
-            final SvnBranchExtractPlan myBranch = myBrnIterator.next();
+            final ThemisSvnBranchExtractPlan myBranch = myBrnIterator.next();
 
             /* Add to output */
             myBuilder.append(myBranch.toString());
         }
 
         /* Add Tags */
-        final Iterator<SvnTagExtractPlan> myTagIterator = theTags.iterator();
+        final Iterator<ThemisSvnTagExtractPlan> myTagIterator = theTags.iterator();
         while (myTagIterator.hasNext()) {
-            final SvnTagExtractPlan myTag = myTagIterator.next();
+            final ThemisSvnTagExtractPlan myTag = myTagIterator.next();
 
             /* Add to output */
             myBuilder.append(myTag.toString());
@@ -290,7 +285,7 @@ public class ThemisSvnExtract
     /**
      * Extract List.
      */
-    public static final class SvnExtractAnchor
+    public static final class ThemisSvnExtractAnchor
             implements MetisDataObjectFormat {
         /**
          * The owner.
@@ -307,8 +302,8 @@ public class ThemisSvnExtract
          * @param pOwner the Owner
          * @param pRevision the revision
          */
-        public SvnExtractAnchor(final Object pOwner,
-                                final SVNRevision pRevision) {
+        public ThemisSvnExtractAnchor(final Object pOwner,
+                                      final SVNRevision pRevision) {
             /* store parameters */
             theOwner = pOwner;
             theRevision = pRevision;
@@ -339,32 +334,34 @@ public class ThemisSvnExtract
     /**
      * Branch Extract Plan list.
      */
-    public static final class SvnBranchExtractPlanList
-            implements MetisDataFieldItem, MetisDataList<SvnBranchExtractPlan> {
+    public static final class ThemisSvnBranchExtractPlanList
+            implements MetisFieldItem, MetisDataList<ThemisSvnBranchExtractPlan> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnBranchExtractPlanList.class);
+        private static final MetisFieldSet<ThemisSvnBranchExtractPlanList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnBranchExtractPlanList.class);
 
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnBranchExtractPlanList::size);
+        }
 
         /**
          * Plan List.
          */
-        private final List<SvnBranchExtractPlan> thePlanList;
+        private final List<ThemisSvnBranchExtractPlan> thePlanList;
 
         /**
          * Constructor.
          */
-        private SvnBranchExtractPlanList() {
+        private ThemisSvnBranchExtractPlanList() {
             thePlanList = new ArrayList<>();
         }
 
         @Override
-        public List<SvnBranchExtractPlan> getUnderlyingList() {
+        public List<ThemisSvnBranchExtractPlan> getUnderlyingList() {
             return thePlanList;
         }
 
@@ -374,40 +371,32 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnBranchExtractPlanList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
     /**
      * Branch Extract Plan.
      */
-    public static class SvnBranchExtractPlan
-            extends SvnExtractPlan<ThemisSvnBranch> {
+    public static class ThemisSvnBranchExtractPlan
+            extends ThemisSvnExtractPlan<ThemisSvnBranch> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnBranchExtractPlan.class, SvnExtractPlan.FIELD_DEFS);
+        private static final MetisFieldSet<ThemisSvnBranchExtractPlan> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnBranchExtractPlan.class);
 
         /**
          * Constructor.
          * @param pBranch the branch
          */
-        public SvnBranchExtractPlan(final ThemisSvnBranch pBranch) {
+        public ThemisSvnBranchExtractPlan(final ThemisSvnBranch pBranch) {
             /* Call super-constructor */
             super(pBranch.getRepository(), pBranch);
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnBranchExtractPlan> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -424,64 +413,58 @@ public class ThemisSvnExtract
     /**
      * Tag Extract Plan list.
      */
-    public static final class SvnTagExtractPlanList
-            implements MetisDataFieldItem, MetisDataList<SvnTagExtractPlan> {
+    public static final class ThemisSvnTagExtractPlanList
+            implements MetisFieldItem, MetisDataList<ThemisSvnTagExtractPlan> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnTagExtractPlanList.class);
+        private static final MetisFieldSet<ThemisSvnTagExtractPlanList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnTagExtractPlanList.class);
 
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnTagExtractPlanList::size);
+        }
 
         /**
          * Plan List.
          */
-        private final List<SvnTagExtractPlan> thePlanList;
+        private final List<ThemisSvnTagExtractPlan> thePlanList;
 
         /**
          * Constructor.
          */
-        private SvnTagExtractPlanList() {
+        private ThemisSvnTagExtractPlanList() {
             thePlanList = new ArrayList<>();
         }
 
         @Override
-        public List<SvnTagExtractPlan> getUnderlyingList() {
+        public List<ThemisSvnTagExtractPlan> getUnderlyingList() {
             return thePlanList;
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnTagExtractPlanList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
     /**
      * Tag Extract Plan.
      */
-    public static class SvnTagExtractPlan
-            extends SvnExtractPlan<ThemisSvnTag> {
+    public static class ThemisSvnTagExtractPlan
+            extends ThemisSvnExtractPlan<ThemisSvnTag> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnTagExtractPlan.class, SvnExtractPlan.FIELD_DEFS);
+        private static final MetisFieldSet<ThemisSvnTagExtractPlan> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnTagExtractPlan.class);
 
         /**
          * Constructor.
          * @param pTag the tag
          */
-        public SvnTagExtractPlan(final ThemisSvnTag pTag) {
+        public ThemisSvnTagExtractPlan(final ThemisSvnTag pTag) {
             /* Call super-constructor */
             super(pTag.getRepository(), pTag);
         }
@@ -492,7 +475,7 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnTagExtractPlan> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -510,27 +493,22 @@ public class ThemisSvnExtract
      * Extract Plan.
      * @param <T> owner data type
      */
-    private abstract static class SvnExtractPlan<T>
-            implements MetisDataFieldItem {
+    private abstract static class ThemisSvnExtractPlan<T>
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractPlan.class);
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<ThemisSvnExtractPlan> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtractPlan.class);
 
         /**
-         * Owner field.
+         * fieldIds.
          */
-        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER);
-
-        /**
-         * Anchor field.
-         */
-        private static final MetisDataField FIELD_ANCHOR = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHOR);
-
-        /**
-         * Views field.
-         */
-        private static final MetisDataField FIELD_VIEWS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_VIEWS);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER, ThemisSvnExtractPlan::getOwner);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHOR, ThemisSvnExtractPlan::getAnchor);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_VIEWS, ThemisSvnExtractPlan::getViews);
+        }
 
         /**
          * Repository.
@@ -545,12 +523,12 @@ public class ThemisSvnExtract
         /**
          * The list of views.
          */
-        private final SvnExtractViewList theViews;
+        private final ThemisSvnExtractViewList theViews;
 
         /**
          * The anchor point.
          */
-        private SvnExtractAnchor theAnchor;
+        private ThemisSvnExtractAnchor theAnchor;
 
         /**
          * Have we extracted this plan.
@@ -562,29 +540,15 @@ public class ThemisSvnExtract
          * @param pRepo the repository
          * @param pOwner the owner
          */
-        protected SvnExtractPlan(final ThemisSvnRepository pRepo,
-                                 final T pOwner) {
+        protected ThemisSvnExtractPlan(final ThemisSvnRepository pRepo,
+                                       final T pOwner) {
             /* Store parameters */
             theOwner = pOwner;
             theRepo = pRepo;
             haveExtracted = false;
 
             /* Create the list */
-            theViews = new SvnExtractViewList();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_OWNER.equals(pField)) {
-                return theOwner;
-            }
-            if (FIELD_ANCHOR.equals(pField)) {
-                return theAnchor;
-            }
-            if (FIELD_VIEWS.equals(pField)) {
-                return theViews;
-            }
-            return MetisDataFieldValue.UNKNOWN;
+            theViews = new ThemisSvnExtractViewList();
         }
 
         /**
@@ -599,7 +563,7 @@ public class ThemisSvnExtract
          * Obtain the anchor.
          * @return the anchor
          */
-        public SvnExtractAnchor getAnchor() {
+        public ThemisSvnExtractAnchor getAnchor() {
             return theAnchor;
         }
 
@@ -630,8 +594,16 @@ public class ThemisSvnExtract
          * Obtain the element iterator.
          * @return the iterator
          */
-        public Iterator<SvnExtractView> viewIterator() {
+        public Iterator<ThemisSvnExtractView> viewIterator() {
             return theViews.iterator();
+        }
+
+        /**
+         * Obtain the element list.
+         * @return the list
+         */
+        private ThemisSvnExtractViewList getViews() {
+            return theViews;
         }
 
         /**
@@ -658,9 +630,9 @@ public class ThemisSvnExtract
             }
 
             /* Add Elements */
-            final Iterator<SvnExtractView> myIterator = theViews.iterator();
+            final Iterator<ThemisSvnExtractView> myIterator = theViews.iterator();
             while (myIterator.hasNext()) {
-                final SvnExtractView myView = myIterator.next();
+                final ThemisSvnExtractView myView = myIterator.next();
 
                 /* Add to output */
                 myBuilder.append(myView.toString());
@@ -675,7 +647,7 @@ public class ThemisSvnExtract
          * @param pPath the revision path
          * @throws OceanusException on error
          */
-        protected void buildView(final SvnRevisionPath pPath) throws OceanusException {
+        protected void buildView(final ThemisSvnRevisionPath pPath) throws OceanusException {
             /* Create a sourceDirs list */
             final List<ThemisSvnRevisionHistory> mySourceDirs = new ArrayList<>();
 
@@ -686,7 +658,7 @@ public class ThemisSvnExtract
                 if (!theOwner.equals(myEntry.getOwner())) {
                     /* Create anchor point */
                     final SvnRevisionKey myKey = myEntry.getRevisionKey();
-                    theAnchor = new SvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
+                    theAnchor = new ThemisSvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
 
                     /* Break the loop */
                     break;
@@ -700,7 +672,7 @@ public class ThemisSvnExtract
 
                 /* Declare the view */
                 final SvnRevisionKey myKey = myEntry.getRevisionKey();
-                final SvnExtractView myView = new SvnExtractView(theRepo, myKey.getRevision(), myEntry);
+                final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, myKey.getRevision(), myEntry);
                 final String myBase = myKey.getPath();
                 myView.setBaseDir(theRepo.getURL(myBase));
                 theViews.add(0, myView);
@@ -731,9 +703,9 @@ public class ThemisSvnExtract
                 final SVNRevision myRev = myHist.getRevision();
 
                 /* Loop through the source directories */
-                final Iterator<SvnSourceDir> myIterator = myHist.sourceDirIterator();
+                final Iterator<ThemisSvnSourceDir> myIterator = myHist.sourceDirIterator();
                 while (myIterator.hasNext()) {
-                    final SvnSourceDir myDir = myIterator.next();
+                    final ThemisSvnSourceDir myDir = myIterator.next();
 
                     /* Process the source directory */
                     processSourceDir(myRev, myDir, myHist);
@@ -749,7 +721,7 @@ public class ThemisSvnExtract
          * @throws OceanusException on error
          */
         private void processSourceDir(final SVNRevision pStartRev,
-                                      final SvnSourceDir pDir,
+                                      final ThemisSvnSourceDir pDir,
                                       final ThemisSvnRevisionHistory pEntry) throws OceanusException {
             /* Access the required view */
             SvnRevisionKey mySource = pDir.getSource();
@@ -781,7 +753,7 @@ public class ThemisSvnExtract
                 if (!theOwner.equals(myEntry.getOwner())) {
                     /* Create anchor point */
                     final SvnRevisionKey myKey = myEntry.getRevisionKey();
-                    theAnchor = new SvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
+                    theAnchor = new ThemisSvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
 
                     /* Break the loop */
                     break;
@@ -835,9 +807,9 @@ public class ThemisSvnExtract
 
             /* Loop through the views in descending order */
             final int mySize = theViews.size();
-            final ListIterator<SvnExtractView> myIterator = theViews.listIterator(mySize);
+            final ListIterator<ThemisSvnExtractView> myIterator = theViews.listIterator(mySize);
             while (myIterator.hasPrevious()) {
-                SvnExtractView myView = myIterator.previous();
+                ThemisSvnExtractView myView = myIterator.previous();
 
                 /* Obtain revision and skip over if too recent */
                 final long myCurr = myView.getRevision().getNumber();
@@ -855,7 +827,7 @@ public class ThemisSvnExtract
                 /* If this is beyond the desired revision */
                 if (myCurr < myRev) {
                     /* Need an intermediate view, so allocate new view */
-                    myView = new SvnExtractView(myView, myRevision, pEntry);
+                    myView = new ThemisSvnExtractView(myView, myRevision, pEntry);
                     myIterator.next();
                     myIterator.add(myView);
                 }
@@ -866,7 +838,7 @@ public class ThemisSvnExtract
             }
 
             /* None found before end of list, so allocate new view */
-            final SvnExtractView myView = new SvnExtractView(theRepo, myRevision, pEntry);
+            final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, myRevision, pEntry);
             theViews.add(0, myView);
             myView.addDirectory(pComp, theRepo.getURL(myBase));
         }
@@ -877,16 +849,16 @@ public class ThemisSvnExtract
          * @param pTarget the target plan to migrate to
          * @throws OceanusException on error
          */
-        protected void migrateView(final SvnExtractView pView,
-                                   final SvnExtractPlan<T> pTarget) throws OceanusException {
+        protected void migrateView(final ThemisSvnExtractView pView,
+                                   final ThemisSvnExtractPlan<T> pTarget) throws OceanusException {
             /* Remove from view list */
             theViews.remove(pView);
 
             /* Set as anchor */
-            theAnchor = new SvnExtractAnchor(theOwner, pView.getRevision());
+            theAnchor = new ThemisSvnExtractAnchor(theOwner, pView.getRevision());
 
             /* Add to target plan */
-            final SvnExtractMigratedView myMigrate = new SvnExtractMigratedView(theOwner, pView);
+            final ThemisSvnExtractMigratedView myMigrate = new ThemisSvnExtractMigratedView(theOwner, pView);
             pTarget.theViews.add(0, myMigrate);
         }
     }
@@ -894,32 +866,34 @@ public class ThemisSvnExtract
     /**
      * Extract View list.
      */
-    public static final class SvnExtractViewList
-            implements MetisDataFieldItem, MetisDataList<SvnExtractView> {
+    public static final class ThemisSvnExtractViewList
+            implements MetisFieldItem, MetisDataList<ThemisSvnExtractView> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractViewList.class);
+        private static final MetisFieldSet<ThemisSvnExtractViewList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtractViewList.class);
 
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnExtractViewList::size);
+        }
 
         /**
          * View List.
          */
-        private final List<SvnExtractView> theViewList;
+        private final List<ThemisSvnExtractView> theViewList;
 
         /**
          * Constructor.
          */
-        private SvnExtractViewList() {
+        private ThemisSvnExtractViewList() {
             theViewList = new ArrayList<>();
         }
 
         @Override
-        public List<SvnExtractView> getUnderlyingList() {
+        public List<ThemisSvnExtractView> getUnderlyingList() {
             return theViewList;
         }
 
@@ -929,33 +903,27 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnExtractViewList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
     /**
      * Migrated Extract View.
      */
-    public static final class SvnExtractMigratedView
-            extends SvnExtractView {
+    public static final class ThemisSvnExtractMigratedView
+            extends ThemisSvnExtractView {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractMigratedView.class, SvnExtractView.FIELD_DEFS);
+        private static final MetisFieldSet<ThemisSvnExtractMigratedView> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtractMigratedView.class);
 
         /**
          * Owner field.
          */
-        private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER, ThemisSvnExtractMigratedView::getOwner);
+        }
 
         /**
          * Original owner.
@@ -968,8 +936,8 @@ public class ThemisSvnExtract
          * @param pSource the original view
          * @throws OceanusException on error
          */
-        private SvnExtractMigratedView(final Object pOwner,
-                                       final SvnExtractView pSource) throws OceanusException {
+        private ThemisSvnExtractMigratedView(final Object pOwner,
+                                             final ThemisSvnExtractView pSource) throws OceanusException {
             /* Call the super-constructor */
             super(pSource);
 
@@ -978,16 +946,8 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSetDef getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_OWNER.equals(pField)) {
-                return theOwner;
-            }
-            return super.getFieldValue(pField);
         }
 
         /**
@@ -1002,32 +962,22 @@ public class ThemisSvnExtract
     /**
      * Extract View.
      */
-    public static class SvnExtractView
-            implements MetisDataFieldItem {
+    public static class ThemisSvnExtractView
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractView.class);
+        private static final MetisFieldSet<ThemisSvnExtractView> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtractView.class);
 
         /**
-         * Revision field.
+         * fieldIds.
          */
-        private static final MetisDataField FIELD_REV = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
-
-        /**
-         * Date field.
-         */
-        private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE);
-
-        /**
-         * Message field.
-         */
-        private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG);
-
-        /**
-         * Items field.
-         */
-        private static final MetisDataField FIELD_ITEMS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ITEMS);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnExtractView::getRevision);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnExtractView::getDate);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnExtractView::getLogMessage);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_ITEMS, ThemisSvnExtractView::getItems);
+        }
 
         /**
          * Repository.
@@ -1052,7 +1002,7 @@ public class ThemisSvnExtract
         /**
          * Extract item list.
          */
-        private final SvnExtractItemList theItems;
+        private final ThemisSvnExtractItemList theItems;
 
         /**
          * Constructor.
@@ -1060,9 +1010,9 @@ public class ThemisSvnExtract
          * @param pRevision the revision
          * @param pEntry the history details
          */
-        private SvnExtractView(final ThemisSvnRepository pRepo,
-                               final SVNRevision pRevision,
-                               final ThemisSvnRevisionHistory pEntry) {
+        private ThemisSvnExtractView(final ThemisSvnRepository pRepo,
+                                     final SVNRevision pRevision,
+                                     final ThemisSvnRevisionHistory pEntry) {
             /* Store parameters */
             theRepo = pRepo;
             theRevision = pRevision;
@@ -1072,7 +1022,7 @@ public class ThemisSvnExtract
             theLogMessage = pEntry.getLogMessage();
 
             /* Create the list */
-            theItems = new SvnExtractItemList();
+            theItems = new ThemisSvnExtractItemList();
         }
 
         /**
@@ -1082,16 +1032,16 @@ public class ThemisSvnExtract
          * @param pEntry the history details
          * @throws OceanusException on error
          */
-        private SvnExtractView(final SvnExtractView pView,
-                               final SVNRevision pRevision,
-                               final ThemisSvnRevisionHistory pEntry) throws OceanusException {
+        private ThemisSvnExtractView(final ThemisSvnExtractView pView,
+                                     final SVNRevision pRevision,
+                                     final ThemisSvnRevisionHistory pEntry) throws OceanusException {
             /* Initialise item */
             this(pView.theRepo, pRevision, pEntry);
 
             /* Loop through the underlying items */
-            final Iterator<SvnExtractItem> myIterator = pView.elementIterator();
+            final Iterator<ThemisSvnExtractItem> myIterator = pView.elementIterator();
             while (myIterator.hasNext()) {
-                final SvnExtractItem myItem = myIterator.next();
+                final ThemisSvnExtractItem myItem = myIterator.next();
 
                 /* Add the item */
                 theItems.addItem(myItem);
@@ -1103,7 +1053,7 @@ public class ThemisSvnExtract
          * @param pView the view to copy from
          * @throws OceanusException on error
          */
-        protected SvnExtractView(final SvnExtractView pView) throws OceanusException {
+        protected ThemisSvnExtractView(final ThemisSvnExtractView pView) throws OceanusException {
             /* Store parameters */
             theRepo = pView.theRepo;
             theRevision = pView.getRevision();
@@ -1113,12 +1063,12 @@ public class ThemisSvnExtract
             theLogMessage = pView.getLogMessage();
 
             /* Create the list */
-            theItems = new SvnExtractItemList();
+            theItems = new ThemisSvnExtractItemList();
 
             /* Loop through the underlying items */
-            final Iterator<SvnExtractItem> myIterator = pView.elementIterator();
+            final Iterator<ThemisSvnExtractItem> myIterator = pView.elementIterator();
             while (myIterator.hasNext()) {
-                final SvnExtractItem myItem = myIterator.next();
+                final ThemisSvnExtractItem myItem = myIterator.next();
 
                 /* Add the item */
                 theItems.addItem(myItem);
@@ -1126,30 +1076,13 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSetDef getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return theRevision.toString();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_REV.equals(pField)) {
-                return theRevision.toString();
-            }
-            if (FIELD_DATE.equals(pField)) {
-                return getDate();
-            }
-            if (FIELD_MESSAGE.equals(pField)) {
-                return theLogMessage;
-            }
-            if (FIELD_ITEMS.equals(pField)) {
-                return theItems;
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1182,8 +1115,16 @@ public class ThemisSvnExtract
          * Obtain the item iterator.
          * @return the iterator
          */
-        public Iterator<SvnExtractItem> elementIterator() {
+        public Iterator<ThemisSvnExtractItem> elementIterator() {
             return theItems.iterator();
+        }
+
+        /**
+         * Obtain the item list.
+         * @return the list
+         */
+        private ThemisSvnExtractItemList getItems() {
+            return theItems;
         }
 
         @Override
@@ -1196,9 +1137,9 @@ public class ThemisSvnExtract
             myBuilder.append(theRevision.toString());
 
             /* Add Elements */
-            final Iterator<SvnExtractItem> myIterator = theItems.iterator();
+            final Iterator<ThemisSvnExtractItem> myIterator = theItems.iterator();
             while (myIterator.hasNext()) {
-                final SvnExtractItem myEl = myIterator.next();
+                final ThemisSvnExtractItem myEl = myIterator.next();
 
                 /* Add to output */
                 myBuilder.append("\n");
@@ -1215,7 +1156,7 @@ public class ThemisSvnExtract
          * @throws OceanusException on error
          */
         private void setBaseDir(final SVNURL pBaseDir) throws OceanusException {
-            final SvnExtractItem myItem = new SvnExtractItem(pBaseDir);
+            final ThemisSvnExtractItem myItem = new ThemisSvnExtractItem(pBaseDir);
             theItems.addItem(myItem);
         }
 
@@ -1227,7 +1168,7 @@ public class ThemisSvnExtract
          */
         private void addDirectory(final String pTarget,
                                   final SVNURL pBaseDir) throws OceanusException {
-            final SvnExtractItem myItem = new SvnExtractItem(pTarget, pBaseDir);
+            final ThemisSvnExtractItem myItem = new ThemisSvnExtractItem(pTarget, pBaseDir);
             theItems.addItem(myItem);
         }
 
@@ -1250,9 +1191,9 @@ public class ThemisSvnExtract
             /* Protect against exceptions */
             try {
                 /* Loop through the items */
-                final Iterator<SvnExtractItem> myIterator = elementIterator();
+                final Iterator<ThemisSvnExtractItem> myIterator = elementIterator();
                 while (myIterator.hasNext()) {
-                    final SvnExtractItem myItem = myIterator.next();
+                    final ThemisSvnExtractItem myItem = myIterator.next();
 
                     /* Determine the target */
                     final File myTarget = myItem.getTarget(pTarget);
@@ -1272,22 +1213,20 @@ public class ThemisSvnExtract
     /**
      * Extract Item.
      */
-    public static final class SvnExtractItem
-            implements MetisDataFieldItem {
+    public static final class ThemisSvnExtractItem
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractItem.class);
+        private static final MetisFieldSet<ThemisSvnExtractItem> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtractItem.class);
 
         /**
-         * Target field.
+         * fieldIds.
          */
-        private static final MetisDataField FIELD_TARGET = FIELD_DEFS.declareLocalField(ThemisResource.SVN_TARGET);
-
-        /**
-         * Source field.
-         */
-        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_TARGET, ThemisSvnExtractItem::getTarget);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE, ThemisSvnExtractItem::getSource);
+        }
 
         /**
          * Target path.
@@ -1304,8 +1243,8 @@ public class ThemisSvnExtract
          * @param pTarget the target for the element
          * @param pSource the source for the element
          */
-        private SvnExtractItem(final String pTarget,
-                               final SVNURL pSource) {
+        private ThemisSvnExtractItem(final String pTarget,
+                                     final SVNURL pSource) {
             /* Store parameters */
             theTarget = pTarget;
             theSource = pSource;
@@ -1315,24 +1254,13 @@ public class ThemisSvnExtract
          * Constructor.
          * @param pSource the source for the element
          */
-        private SvnExtractItem(final SVNURL pSource) {
+        private ThemisSvnExtractItem(final SVNURL pSource) {
             this(null, pSource);
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnExtractItem> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_TARGET.equals(pField)) {
-                return theTarget;
-            }
-            if (FIELD_SOURCE.equals(pField)) {
-                return theSource.toString();
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1382,32 +1310,34 @@ public class ThemisSvnExtract
     /**
      * Extract Item list.
      */
-    public static final class SvnExtractItemList
-            implements MetisDataFieldItem, MetisDataList<SvnExtractItem> {
+    public static final class ThemisSvnExtractItemList
+            implements MetisFieldItem, MetisDataList<ThemisSvnExtractItem> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnExtractItemList.class);
+        private static final MetisFieldSet<ThemisSvnExtractItemList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnExtractItemList.class);
 
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnExtractItemList::size);
+        }
 
         /**
          * Item List.
          */
-        private final List<SvnExtractItem> theItemList;
+        private final List<ThemisSvnExtractItem> theItemList;
 
         /**
          * Constructor.
          */
-        private SvnExtractItemList() {
+        private ThemisSvnExtractItemList() {
             theItemList = new ArrayList<>();
         }
 
         @Override
-        public List<SvnExtractItem> getUnderlyingList() {
+        public List<ThemisSvnExtractItem> getUnderlyingList() {
             return theItemList;
         }
 
@@ -1422,9 +1352,9 @@ public class ThemisSvnExtract
             final StringBuilder myBuilder = new StringBuilder();
 
             /* Add Branches */
-            final Iterator<SvnExtractItem> myIterator = theItemList.iterator();
+            final Iterator<ThemisSvnExtractItem> myIterator = theItemList.iterator();
             while (myIterator.hasNext()) {
-                final SvnExtractItem myItem = myIterator.next();
+                final ThemisSvnExtractItem myItem = myIterator.next();
 
                 /* Add to output */
                 myBuilder.append('\n');
@@ -1436,16 +1366,8 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnExtractItemList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1453,11 +1375,11 @@ public class ThemisSvnExtract
          * @param pItem the item to add.
          * @throws OceanusException on error
          */
-        private void addItem(final SvnExtractItem pItem) throws OceanusException {
+        private void addItem(final ThemisSvnExtractItem pItem) throws OceanusException {
             /* Loop through the existing items */
-            final Iterator<SvnExtractItem> myIterator = theItemList.iterator();
+            final Iterator<ThemisSvnExtractItem> myIterator = theItemList.iterator();
             while (myIterator.hasNext()) {
-                final SvnExtractItem myEntry = myIterator.next();
+                final ThemisSvnExtractItem myEntry = myIterator.next();
 
                 /* If we have matching target */
                 if (MetisDataDifference.isEqual(myEntry.getTarget(), pItem.getTarget())) {

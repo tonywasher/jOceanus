@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,24 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.eos.data;
-
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
-
 /**
- * Encrypted Data Item.
+ * Experimental Data Package.
  */
-public class PrometheusEncryptedItem
-        extends MetisDataEosVersionedItem {
-    /**
-     * Report fields.
-     */
-    static {
-        PrometheusEncryptedFieldSet.newEncryptedFieldSet(PrometheusEncryptedItem.class);
-    }
-
-    @Override
-    protected PrometheusEncryptedValues newVersionValues() {
-        return new PrometheusEncryptedValues(this);
-    }
-}
+package net.sourceforge.joceanus.jmetis.atlas.field;

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.Iterator;
 
@@ -35,18 +35,18 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * FieldItem Interface.
  */
-public interface MetisDataEosFieldItem
+public interface MetisFieldItem
         extends MetisDataObjectFormat {
     /**
      * Obtain the fieldSet.
      * @return the fieldSet
      */
-    MetisDataEosFieldSetDef getDataFieldSet();
+    MetisFieldSetDef getDataFieldSet();
 
     /**
      * Field interface.
      */
-    interface MetisDataEosFieldDef {
+    interface MetisFieldDef {
         /**
          * Obtain the id of the field.
          * @return the name of the field.
@@ -104,8 +104,8 @@ public interface MetisDataEosFieldItem
     /**
      * Versioned Field interface.
      */
-    interface MetisDataEosVersionedFieldDef
-            extends MetisDataEosFieldDef {
+    interface MetisFieldVersionedDef
+            extends MetisFieldDef {
         /**
          * Set the value of a field.
          * @param pObject the object
@@ -127,7 +127,7 @@ public interface MetisDataEosFieldItem
     /**
      * FieldSet interface.
      */
-    interface MetisDataEosFieldSetDef {
+    interface MetisFieldSetDef {
         /**
          * Obtain the name of the fieldSet.
          * @return the name of the fieldSet.
@@ -144,7 +144,7 @@ public interface MetisDataEosFieldItem
          * Obtain the iterator over the fields.
          * @return the iterator
          */
-        Iterator<MetisDataEosFieldDef> fieldIterator();
+        Iterator<MetisFieldDef> fieldIterator();
 
         /**
          * Does the item have versioned values?
@@ -163,13 +163,13 @@ public interface MetisDataEosFieldItem
          * @return the corresponding field
          * @throws IllegalArgumentException if name is not present
          */
-        MetisDataEosFieldDef getField(MetisFieldId pId);
+        MetisFieldDef getField(MetisFieldId pId);
     }
 
     /**
      * Table Item.
      */
-    public interface MetisDataEosTableItem
-            extends MetisDataEosFieldItem, MetisIndexedItem {
+    public interface MetisFieldTableItem
+            extends MetisFieldItem, MetisIndexedItem {
     }
 }

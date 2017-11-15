@@ -29,10 +29,10 @@ import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDisableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -58,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableValidat
  * @param <N> the node type
  * @param <I> the icon type
  */
-public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
+public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
         implements TethysNode<N> {
     /**
      * The underlying table.
@@ -68,7 +68,7 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
     /**
      * The fieldSet for the item.
      */
-    private final MetisDataEosFieldSet<R> theFieldSet;
+    private final MetisFieldSet<R> theFieldSet;
 
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
      * @param pFieldSet the fieldSet
      */
     protected MetisTableManager(final TethysGuiFactory<N, I> pFactory,
-                                final MetisDataEosFieldSet<R> pFieldSet) {
+                                final MetisFieldSet<R> pFieldSet) {
         /* Store parameters */
         theFieldSet = pFieldSet;
 
@@ -122,7 +122,7 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
      * @param pId the field id
      * @return the field
      */
-    public MetisDataEosFieldDef getFieldForId(final MetisFieldId pId) {
+    public MetisFieldDef getFieldForId(final MetisFieldId pId) {
         return theFieldSet.getField(pId);
     }
 
@@ -363,10 +363,10 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
      * @return true/false
      */
     private static boolean isFieldInError(final MetisFieldId pField,
-                                          final MetisDataEosTableItem pItem) {
-        if (pItem instanceof MetisDataEosVersionedItem) {
-            final MetisDataEosVersionedItem myVersioned = (MetisDataEosVersionedItem) pItem;
-            final MetisDataEosFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
+                                          final MetisFieldTableItem pItem) {
+        if (pItem instanceof MetisFieldVersionedItem) {
+            final MetisFieldVersionedItem myVersioned = (MetisFieldVersionedItem) pItem;
+            final MetisFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
             return myVersioned.getValidation().hasErrors(myField);
         }
         return false;
@@ -379,10 +379,10 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
      * @return true/false
      */
     private static boolean isFieldChanged(final MetisFieldId pField,
-                                          final MetisDataEosTableItem pItem) {
-        if (pItem instanceof MetisDataEosVersionedItem) {
-            final MetisDataEosVersionedItem myVersioned = (MetisDataEosVersionedItem) pItem;
-            final MetisDataEosFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
+                                          final MetisFieldTableItem pItem) {
+        if (pItem instanceof MetisFieldVersionedItem) {
+            final MetisFieldVersionedItem myVersioned = (MetisFieldVersionedItem) pItem;
+            final MetisFieldDef myField = myVersioned.getDataFieldSet().getField(pField);
             return myVersioned.fieldChanged(myField).isDifferent();
         }
         return false;
@@ -393,7 +393,7 @@ public abstract class MetisTableManager<R extends MetisDataEosTableItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private static boolean isItemDisabled(final MetisDataEosTableItem pItem) {
+    private static boolean isItemDisabled(final MetisFieldTableItem pItem) {
         if (pItem instanceof MetisDisableItem) {
             final MetisDisableItem myItem = (MetisDisableItem) pItem;
             return myItem.isDisabled();

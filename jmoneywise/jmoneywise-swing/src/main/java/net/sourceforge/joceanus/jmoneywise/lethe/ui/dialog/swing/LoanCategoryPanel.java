@@ -30,9 +30,9 @@ import javax.swing.JComponent;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldSetBase.MetisFieldUpdate;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.LoanCategory.LoanCategoryList;
@@ -60,7 +60,7 @@ public class LoanCategoryPanel
      * @param pError the error panel
      */
     public LoanCategoryPanel(final TethysSwingGuiFactory pFactory,
-                             final MetisFieldManager pFieldMgr,
+                             final MetisSwingFieldManager pFieldMgr,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
                              final MetisErrorPanel<JComponent, Icon> pError) {
         /* Initialise the panel */
@@ -109,7 +109,7 @@ public class LoanCategoryPanel
     @Override
     protected void adjustFields(final boolean isEditable) {
         /* Access the fieldSet */
-        final MetisFieldSet<LoanCategory> myFieldSet = getFieldSet();
+        final MetisSwingFieldSet<LoanCategory> myFieldSet = getFieldSet();
 
         /* Determine whether parent/full-name fields are visible */
         final LoanCategory myCategory = getItem();

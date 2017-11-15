@@ -27,19 +27,19 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
  * Annual Market Totals.
  */
 public class CoeusMarketAnnual
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusMarketAnnual> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarketAnnual.class);
+    private static final MetisFieldSet<CoeusMarketAnnual> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarketAnnual.class);
 
     /**
      * Field IDs.
@@ -276,7 +276,7 @@ public class CoeusMarketAnnual
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusMarketAnnual> getDataFieldSet() {
+    public MetisFieldSet<CoeusMarketAnnual> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

@@ -30,20 +30,20 @@ import java.util.Map;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
 
 /**
  * Table List fields.
  * @param <R> the item type
  */
-public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
+public class MetisFXTableListFields<R extends MetisFieldTableItem> {
     /**
      * The fieldSet.
      */
-    private final List<MetisDataEosFieldDef> theFields;
+    private final List<MetisFieldDef> theFields;
 
     /**
      * The fieldSet Map.
@@ -68,7 +68,7 @@ public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
      * Obtain the fields.
      * @return the fields
      */
-    protected List<MetisDataEosFieldDef> getFields() {
+    protected List<MetisFieldDef> getFields() {
         return theFields;
     }
 
@@ -93,7 +93,7 @@ public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
      * Declare field.
      * @param pField the field
      */
-    protected void declareField(final MetisDataEosFieldDef pField) {
+    protected void declareField(final MetisFieldDef pField) {
         theFields.add(pField);
     }
 
@@ -126,7 +126,7 @@ public class MetisFXTableListFields<R extends MetisDataEosTableItem> {
      */
     @SuppressWarnings("unchecked")
     protected <T> ObjectProperty<T> getObjectProperty(final R pItem,
-                                                      final MetisDataEosFieldDef pField) {
+                                                      final MetisFieldDef pField) {
         final MetisFXTableFieldSet<R> myFieldSet = getFieldSet(pItem);
         return (ObjectProperty<T>) myFieldSet.getPropertyForField(pField);
     }

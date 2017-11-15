@@ -20,20 +20,20 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.eos.data;
+package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersioned;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionedField;
 
 /**
  * Prometheus Data fields.
  * @param <T> the data type
  */
 public class PrometheusEncryptedField<T extends PrometheusEncryptedItem>
-        extends MetisDataEosVersionedField<T> {
+        extends MetisFieldVersioned<T> {
     /**
      * Constructor.
      * @param pAnchor the anchor

@@ -25,15 +25,13 @@ package net.sourceforge.joceanus.jthemis.scm.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent.ScmComponentList;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent.ThemisScmComponentList;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 
 /**
@@ -42,7 +40,7 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
  * @param <R> the data type
  */
 public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
-        implements MetisDataFieldItem, Comparable<R> {
+        implements MetisFieldItem, Comparable<R> {
     /**
      * The Hash Prime.
      */
@@ -51,27 +49,18 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisScmRepository.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<ThemisScmRepository> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmRepository.class);
 
     /**
-     * Name field id.
+     * fieldIds.
      */
-    private static final MetisDataField FIELD_NAME = FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME);
-
-    /**
-     * Components field id.
-     */
-    private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENTS);
-
-    /**
-     * BranchMap field id.
-     */
-    private static final MetisDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES);
-
-    /**
-     * TagMap field id.
-     */
-    private static final MetisDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmRepository::getName);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENTS, ThemisScmRepository::getComponents);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES, ThemisScmRepository::getBranches);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisScmRepository::getTags);
+    }
 
     /**
      * The Preference Manager.
@@ -86,7 +75,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * ComponentList.
      */
-    private ScmComponentList<?, R> theComponents;
+    private ThemisScmComponentList<?, R> theComponents;
 
     /**
      * Branch Map.
@@ -111,34 +100,6 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         theTagMap = new ThemisTagMap();
     }
 
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_NAME.equals(pField)) {
-            return theName;
-        }
-        if (FIELD_COMP.equals(pField)) {
-            return theComponents;
-        }
-        if (FIELD_BRNMAP.equals(pField)) {
-            return theBranchMap;
-        }
-        if (FIELD_TAGMAP.equals(pField)) {
-            return theTagMap;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
     /**
      * Obtain the repository name.
      * @return the name
@@ -159,8 +120,24 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * Get the component list for this repository.
      * @return the component list
      */
-    public ScmComponentList<?, R> getComponents() {
+    public ThemisScmComponentList<?, R> getComponents() {
         return theComponents;
+    }
+
+    /**
+     * Get the branch map list for this repository.
+     * @return the branch map
+     */
+    private ThemisBranchMap getBranches() {
+        return theBranchMap;
+    }
+
+    /**
+     * Get the tag map for this repository.
+     * @return the tag map
+     */
+    private ThemisTagMap getTags() {
+        return theTagMap;
     }
 
     /**
@@ -175,7 +152,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * Set the component list.
      * @param pComponents the component list
      */
-    protected void setComponents(final ScmComponentList<?, R> pComponents) {
+    protected void setComponents(final ThemisScmComponentList<?, R> pComponents) {
         theComponents = pComponents;
     }
 

@@ -28,15 +28,15 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
 /**
  * Viewable version of SLF4J Profile data.
  */
 public class MetisProfile
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * number of decimals for elapsed.
      */
@@ -45,7 +45,7 @@ public class MetisProfile
     /**
      * Local Report fields.
      */
-    private static final MetisDataEosFieldSet<MetisProfile> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(MetisProfile.class);
+    private static final MetisFieldSet<MetisProfile> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisProfile.class);
 
     /**
      * FieldIds.
@@ -60,7 +60,7 @@ public class MetisProfile
     /**
      * Report fields.
      */
-    private final MetisDataEosFieldSet<MetisProfile> theFields = MetisDataEosFieldSet.newFieldSet(this);
+    private final MetisFieldSet<MetisProfile> theFields = MetisFieldSet.newFieldSet(this);
 
     /**
      * Step name.
@@ -121,7 +121,7 @@ public class MetisProfile
     }
 
     @Override
-    public MetisDataEosFieldSet<MetisProfile> getDataFieldSet() {
+    public MetisFieldSet<MetisProfile> getDataFieldSet() {
         return theFields;
     }
 

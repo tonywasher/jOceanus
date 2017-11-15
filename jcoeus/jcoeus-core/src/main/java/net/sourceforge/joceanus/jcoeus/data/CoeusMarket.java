@@ -30,8 +30,8 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -39,11 +39,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * Loan Market.
  */
 public abstract class CoeusMarket
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusMarket.class);
+    private static final MetisFieldSet<CoeusMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusMarket.class);
 
     /**
      * Declare Fields.

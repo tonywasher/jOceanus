@@ -44,11 +44,11 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.GitBranchList;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.ThemisGitBranchList;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
@@ -73,7 +73,7 @@ public final class ThemisGitComponent
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisGitComponent.class, ThemisScmComponent.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisGitComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitComponent.class);
 
     /**
      * Logger.
@@ -100,12 +100,12 @@ public final class ThemisGitComponent
         theGitRepo = getRepositoryAccess();
 
         /* Create branch list */
-        final GitBranchList myBranches = new GitBranchList(this);
+        final ThemisGitBranchList myBranches = new ThemisGitBranchList(this);
         setBranches(myBranches);
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisGitComponent> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -127,8 +127,8 @@ public final class ThemisGitComponent
     }
 
     @Override
-    public GitBranchList getBranches() {
-        return (GitBranchList) super.getBranches();
+    public ThemisGitBranchList getBranches() {
+        return (ThemisGitBranchList) super.getBranches();
     }
 
     /**
@@ -272,12 +272,12 @@ public final class ThemisGitComponent
     /**
      * List of components.
      */
-    public static final class GitComponentList
-            extends ScmComponentList<ThemisGitComponent, ThemisGitRepository> {
+    public static final class ThemisGitComponentList
+            extends ThemisScmComponentList<ThemisGitComponent, ThemisGitRepository> {
         /**
          * Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(GitComponentList.class, ScmComponentList.getBaseFieldSet());
+        private static final MetisFieldSet<ThemisGitComponentList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitComponentList.class);
 
         /**
          * Parent Repository.
@@ -288,13 +288,13 @@ public final class ThemisGitComponent
          * Constructor.
          * @param pParent the parent repository
          */
-        public GitComponentList(final ThemisGitRepository pParent) {
+        public ThemisGitComponentList(final ThemisGitRepository pParent) {
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisGitComponentList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -332,7 +332,7 @@ public final class ThemisGitComponent
             while (myIterator.hasNext()) {
                 /* Access the Component */
                 final ThemisGitComponent myComponent = myIterator.next();
-                final GitBranchList myBranches = myComponent.getBranches();
+                final ThemisGitBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
                 pReport.setNewStage("Analysing component " + myComponent.getName());

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,14 +32,14 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Set of dataValues.
  */
-public class MetisDataEosVersionValues {
+public class MetisFieldVersionValues {
     /**
      * The hash value for deletion flag.
      */
@@ -58,12 +58,12 @@ public class MetisDataEosVersionValues {
     /**
      * The item to which the valueSet belongs.
      */
-    private final MetisDataEosVersionedItem theItem;
+    private final MetisFieldVersionedItem theItem;
 
     /**
      * The fields for this valueSet.
      */
-    private final MetisDataEosFieldSetDef theFields;
+    private final MetisFieldSetDef theFields;
 
     /**
      * The number of values.
@@ -89,7 +89,7 @@ public class MetisDataEosVersionValues {
      * Constructor.
      * @param pItem the associated item
      */
-    protected MetisDataEosVersionValues(final MetisDataEosVersionedItem pItem) {
+    protected MetisFieldVersionValues(final MetisFieldVersionedItem pItem) {
         /* Create the values array and initialise to null */
         theItem = pItem;
         theFields = pItem.getDataFieldSet();
@@ -101,7 +101,7 @@ public class MetisDataEosVersionValues {
      * Obtain the field definitions.
      * @return the field definitions
      */
-    public MetisDataEosFieldSetDef getFields() {
+    public MetisFieldSetDef getFields() {
         return theFields;
     }
 
@@ -109,7 +109,7 @@ public class MetisDataEosVersionValues {
      * Obtain the underlying item.
      * @return the item
      */
-    protected MetisDataEosVersionedItem getItem() {
+    protected MetisFieldVersionedItem getItem() {
         return theItem;
     }
 
@@ -149,9 +149,9 @@ public class MetisDataEosVersionValues {
      * Clone this ValueSet.
      * @return the cloned set
      */
-    public MetisDataEosVersionValues cloneIt() {
+    public MetisFieldVersionValues cloneIt() {
         /* Create the valueSet and initialise to existing values */
-        final MetisDataEosVersionValues mySet = new MetisDataEosVersionValues(theItem);
+        final MetisFieldVersionValues mySet = new MetisFieldVersionValues(theItem);
         mySet.copyFrom(this);
         return mySet;
     }
@@ -160,7 +160,7 @@ public class MetisDataEosVersionValues {
      * Initialise values from a previous set.
      * @param pPrevious the previous valueSet
      */
-    public void copyFrom(final MetisDataEosVersionValues pPrevious) {
+    public void copyFrom(final MetisFieldVersionValues pPrevious) {
         /* Copy deletion flag */
         isDeletion = pPrevious.isDeletion();
 
@@ -183,7 +183,7 @@ public class MetisDataEosVersionValues {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    public void setValue(final MetisDataEosFieldDef pField,
+    public void setValue(final MetisFieldDef pField,
                          final Object pValue) throws OceanusException {
         /* Reject if not in valueSet */
         if (!pField.getStorage().isVersioned()) {
@@ -202,7 +202,7 @@ public class MetisDataEosVersionValues {
      * @param pField the field
      * @param pValue the value
      */
-    public void setUncheckedValue(final MetisDataEosFieldDef pField,
+    public void setUncheckedValue(final MetisFieldDef pField,
                                   final Object pValue) {
         /* Reject if not in valueSet */
         if (!pField.getStorage().isVersioned()) {
@@ -218,7 +218,7 @@ public class MetisDataEosVersionValues {
      * @param pField the field
      * @return the value
      */
-    public Object getValue(final MetisDataEosFieldDef pField) {
+    public Object getValue(final MetisFieldDef pField) {
         /* Reject if not in valueSet */
         if (!pField.getStorage().isVersioned()) {
             throw new IllegalArgumentException(ERROR_NOTVERSIONED);
@@ -235,7 +235,7 @@ public class MetisDataEosVersionValues {
      * @param pClazz the class
      * @return the value
      */
-    public <X> X getValue(final MetisDataEosFieldDef pField,
+    public <X> X getValue(final MetisFieldDef pField,
                           final Class<X> pClazz) {
         /* Access the value */
         Object myValue = getValue(pField);
@@ -269,7 +269,7 @@ public class MetisDataEosVersionValues {
         }
 
         /* Access the object as a ValueSet */
-        final MetisDataEosVersionValues mySet = (MetisDataEosVersionValues) pThat;
+        final MetisFieldVersionValues mySet = (MetisFieldVersionValues) pThat;
         final Object[] myObj = mySet.theValues;
 
         /* Check for deletion flag and # of values */
@@ -279,10 +279,10 @@ public class MetisDataEosVersionValues {
         }
 
         /* Loop through the values */
-        final Iterator<MetisDataEosFieldDef> myIterator = theFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
             if (!myField.getEquality().isEquality()
                 || !myField.getStorage().isVersioned()) {
                 continue;
@@ -307,10 +307,10 @@ public class MetisDataEosVersionValues {
                                    : 1;
 
         /* Loop through the values */
-        final Iterator<MetisDataEosFieldDef> myIterator = theFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
             if (!myField.getEquality().isEquality()
                 || !myField.getStorage().isVersioned()) {
                 continue;
@@ -335,7 +335,7 @@ public class MetisDataEosVersionValues {
      * @param pOriginal the object to check for differences
      * @return the difference
      */
-    public MetisDataDifference differs(final MetisDataEosVersionValues pOriginal) {
+    public MetisDataDifference differs(final MetisFieldVersionValues pOriginal) {
         boolean isSecureDiff = false;
 
         /* Access the test values */
@@ -348,10 +348,10 @@ public class MetisDataEosVersionValues {
         }
 
         /* Loop through the values */
-        final Iterator<MetisDataEosFieldDef> myIterator = theFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = theFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Ignore non-equality and non-versioned fields */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
             if (!myField.getEquality().isEquality()
                 || !myField.getStorage().isVersioned()) {
                 continue;
@@ -380,8 +380,8 @@ public class MetisDataEosVersionValues {
      * @param pOriginal the original value set
      * @return the difference
      */
-    public MetisDataDifference fieldChanged(final MetisDataEosFieldDef pField,
-                                            final MetisDataEosVersionValues pOriginal) {
+    public MetisDataDifference fieldChanged(final MetisFieldDef pField,
+                                            final MetisFieldVersionValues pOriginal) {
         /* No difference if field does not exist, is not-equality or is not versioned */
         if (pField == null
             || !pField.getEquality().isEquality()
@@ -400,7 +400,7 @@ public class MetisDataEosVersionValues {
      * @param pValue the value
      * @throws OceanusException on error
      */
-    protected void checkValueType(final MetisDataEosFieldDef pField,
+    protected void checkValueType(final MetisFieldDef pField,
                                   final Object pValue) throws OceanusException {
         /* Null/String is always allowed */
         if (pValue == null

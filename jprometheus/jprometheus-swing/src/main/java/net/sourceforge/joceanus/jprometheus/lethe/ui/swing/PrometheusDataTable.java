@@ -36,7 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
@@ -88,7 +88,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
     /**
      * FieldManager.
      */
-    private MetisFieldManager theFieldMgr;
+    private MetisSwingFieldManager theFieldMgr;
 
     /**
      * Data Table Model.
@@ -187,7 +187,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * Obtain the field manager.
      * @return the field manager
      */
-    public MetisFieldManager getFieldMgr() {
+    public MetisSwingFieldManager getFieldMgr() {
         return theFieldMgr;
     }
 
@@ -365,7 +365,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * Set the field manager for the table.
      * @param pFieldMgr the field manager
      */
-    protected void setFieldMgr(final MetisFieldManager pFieldMgr) {
+    protected void setFieldMgr(final MetisSwingFieldManager pFieldMgr) {
         theFieldMgr = pFieldMgr;
     }
 

@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -36,7 +36,7 @@ public class CoeusLendingWorksLoan
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusLendingWorksLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusLendingWorksLoan.class);
+    private static final MetisFieldSet<CoeusLendingWorksLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusLendingWorksLoan.class);
 
     /**
      * The loanId.
@@ -85,7 +85,7 @@ public class CoeusLendingWorksLoan
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusLendingWorksLoan> getDataFieldSet() {
+    public MetisFieldSet<CoeusLendingWorksLoan> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

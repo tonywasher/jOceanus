@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,31 @@
  * $Author$
  * $Date$
  ******************************************************************************/
+package net.sourceforge.joceanus.jmetis.lethe.field;
+
 /**
- * Data definitions.
+ * Special values for renderer.
  */
-package net.sourceforge.joceanus.jprometheus.eos.data;
+public enum MetisLetheFieldValue {
+    /**
+     * Error.
+     */
+    ERROR;
+
+    /**
+     * The String name.
+     */
+    private String theName;
+
+    @Override
+    public String toString() {
+        /* If we have not yet loaded the name */
+        if (theName == null) {
+            /* Load the name */
+            theName = MetisLetheFieldResource.getKeyForFieldValue(this).getValue();
+        }
+
+        /* return the name */
+        return theName;
+    }
+}

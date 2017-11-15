@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.swing;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisFieldManager;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.uk.MoneyWiseUKTaxYearCache;
@@ -57,7 +57,7 @@ public class SwingView
      * Obtain the field manager.
      * @return the field manager
      */
-    public MetisFieldManager getFieldManager() {
+    public MetisSwingFieldManager getFieldManager() {
         return getUtilitySet().getFieldManager();
     }
 

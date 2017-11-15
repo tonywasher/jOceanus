@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.eos.data;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
@@ -33,35 +33,35 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 /**
  * Data Version Control.
  */
-public class MetisDataEosVersionedItem
-        implements MetisDataEosFieldItem, MetisIndexedItem {
+public class MetisFieldVersionedItem
+        implements MetisFieldItem, MetisIndexedItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosVersionedFieldSet<MetisDataEosVersionedItem> FIELD_DEFS = MetisDataEosVersionedFieldSet.newVersionedFieldSet(MetisDataEosVersionedItem.class);
+    private static final MetisFieldVersionedSet<MetisFieldVersionedItem> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MetisFieldVersionedItem.class);
 
     /**
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID.getValue(), MetisDataEosVersionedItem::getIndexedId);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisDataEosVersionedItem::getVersion);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED.getValue(), MetisDataEosVersionedItem::isDeleted);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE.getValue(), MetisDataEosVersionedItem::getState);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_EDITSTATE.getValue(), MetisDataEosVersionedItem::getEditState);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_HISTORY.getValue(), MetisDataEosVersionedItem::getHistory);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS.getValue(), MetisDataEosVersionedItem::getValidation);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID.getValue(), MetisFieldVersionedItem::getIndexedId);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisFieldVersionedItem::getVersion);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED.getValue(), MetisFieldVersionedItem::isDeleted);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE.getValue(), MetisFieldVersionedItem::getState);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_EDITSTATE.getValue(), MetisFieldVersionedItem::getEditState);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_HISTORY.getValue(), MetisFieldVersionedItem::getHistory);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS.getValue(), MetisFieldVersionedItem::getValidation);
     }
 
     /**
      * The history of values for this object.
      */
-    private final MetisDataEosVersionHistory theHistory;
+    private final MetisFieldVersionHistory theHistory;
 
     /**
      * The Item Validation.
      */
-    private final MetisDataEosValidation theValidation;
+    private final MetisFieldValidation theValidation;
 
     /**
      * The id.
@@ -81,33 +81,33 @@ public class MetisDataEosVersionedItem
     /**
      * Constructor.
      */
-    protected MetisDataEosVersionedItem() {
+    protected MetisFieldVersionedItem() {
         /* Allocate the history */
-        final MetisDataEosVersionValues myValues = newVersionValues();
-        theHistory = new MetisDataEosVersionHistory(myValues);
+        final MetisFieldVersionValues myValues = newVersionValues();
+        theHistory = new MetisFieldVersionHistory(myValues);
 
         /* Allocate the validation */
-        theValidation = new MetisDataEosValidation();
+        theValidation = new MetisFieldValidation();
     }
 
     /**
      * Constructor.
      * @param pValues the initial values
      */
-    protected MetisDataEosVersionedItem(final MetisDataEosVersionValues pValues) {
+    protected MetisFieldVersionedItem(final MetisFieldVersionValues pValues) {
         /* Allocate the history */
-        theHistory = new MetisDataEosVersionHistory(pValues);
+        theHistory = new MetisFieldVersionHistory(pValues);
 
         /* Allocate the validation */
-        theValidation = new MetisDataEosValidation();
+        theValidation = new MetisFieldValidation();
     }
 
     /**
      * Obtain new version values.
      * @return new values
      */
-    protected MetisDataEosVersionValues newVersionValues() {
-        return new MetisDataEosVersionValues(this);
+    protected MetisFieldVersionValues newVersionValues() {
+        return new MetisFieldVersionValues(this);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class MetisDataEosVersionedItem
      * Obtain the DataVersionHistory.
      * @return the validation
      */
-    public MetisDataEosVersionHistory getHistory() {
+    public MetisFieldVersionHistory getHistory() {
         return theHistory;
     }
 
@@ -151,7 +151,7 @@ public class MetisDataEosVersionedItem
      * Obtain the Validation.
      * @return the validation
      */
-    public MetisDataEosValidation getValidation() {
+    public MetisFieldValidation getValidation() {
         return theValidation;
     }
 
@@ -159,7 +159,7 @@ public class MetisDataEosVersionedItem
      * Obtain the current ValueSet of item.
      * @return the current valueSet
      */
-    public MetisDataEosVersionValues getValueSet() {
+    public MetisFieldVersionValues getValueSet() {
         return theHistory.getValueSet();
     }
 
@@ -167,7 +167,7 @@ public class MetisDataEosVersionedItem
      * Get original values.
      * @return original values
      */
-    public MetisDataEosVersionValues getOriginalValues() {
+    public MetisFieldVersionValues getOriginalValues() {
         return theHistory.getOriginalValues();
     }
 
@@ -196,7 +196,7 @@ public class MetisDataEosVersionedItem
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -209,7 +209,7 @@ public class MetisDataEosVersionedItem
      * Initialise the current values.
      * @param pValues the current values
      */
-    public void setValues(final MetisDataEosVersionValues pValues) {
+    public void setValues(final MetisFieldVersionValues pValues) {
         theHistory.setValues(pValues);
         adjustState();
     }
@@ -265,7 +265,7 @@ public class MetisDataEosVersionedItem
      * Set history explicitly.
      * @param pBase the base item
      */
-    public void setHistory(final MetisDataEosVersionValues pBase) {
+    public void setHistory(final MetisFieldVersionValues pBase) {
         theHistory.setHistory(pBase);
         adjustState();
     }
@@ -283,7 +283,7 @@ public class MetisDataEosVersionedItem
      * @param pField the field
      * @return the difference
      */
-    public MetisDataDifference fieldChanged(final MetisDataEosFieldDef pField) {
+    public MetisDataDifference fieldChanged(final MetisFieldDef pField) {
         return theHistory.fieldChanged(pField);
     }
 
@@ -300,8 +300,8 @@ public class MetisDataEosVersionedItem
      * @return the dataState
      */
     private MetisDataState determineState() {
-        final MetisDataEosVersionValues myCurr = getValueSet();
-        final MetisDataEosVersionValues myOriginal = getOriginalValues();
+        final MetisFieldVersionValues myCurr = getValueSet();
+        final MetisFieldVersionValues myOriginal = getOriginalValues();
 
         /* If we are a new element */
         if (myOriginal.getVersion() > 0) {
@@ -349,10 +349,10 @@ public class MetisDataEosVersionedItem
      * @param pId the field id
      * @return the versioned field
      */
-    public MetisDataEosVersionedFieldDef getVersionedField(final MetisFieldId pId) {
-        final MetisDataEosFieldDef myField = getDataFieldSet().getField(pId);
-        return myField instanceof MetisDataEosVersionedFieldDef
-                                                                ? (MetisDataEosVersionedFieldDef) myField
-                                                                : null;
+    public MetisFieldVersionedDef getVersionedField(final MetisFieldId pId) {
+        final MetisFieldDef myField = getDataFieldSet().getField(pId);
+        return myField instanceof MetisFieldVersionedDef
+                                                         ? (MetisFieldVersionedDef) myField
+                                                         : null;
     }
 }

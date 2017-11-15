@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jcoeus.data.zopa;
 import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -36,7 +36,7 @@ public class CoeusZopaHistory
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusZopaHistory> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaHistory.class);
+    private static final MetisFieldSet<CoeusZopaHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaHistory.class);
 
     /**
      * Constructor for zeroed market totals.
@@ -86,7 +86,7 @@ public class CoeusZopaHistory
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusZopaHistory> getDataFieldSet() {
+    public MetisFieldSet<CoeusZopaHistory> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

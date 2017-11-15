@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -183,7 +183,7 @@ public class MetisFieldSetPanelPair<N, I>
      * Set the item.
      * @param pItem the item to set
      */
-    public void setItem(final MetisDataEosFieldItem pItem) {
+    public void setItem(final MetisFieldItem pItem) {
         /* Declare to the main panel */
         theMainPanel.setItem(pItem);
 
@@ -199,7 +199,7 @@ public class MetisFieldSetPanelPair<N, I>
      * obtain the item.
      * @return the item
      */
-    public MetisDataEosFieldItem getItem() {
+    public MetisFieldItem getItem() {
         return theMainPanel.getItem();
     }
 
@@ -367,7 +367,7 @@ public class MetisFieldSetPanelPair<N, I>
          * Set the item.
          * @param pItem the item to set
          */
-        private void setItem(final MetisDataEosFieldItem pItem) {
+        private void setItem(final MetisFieldItem pItem) {
             thePanel.setItem(pItem);
         }
 

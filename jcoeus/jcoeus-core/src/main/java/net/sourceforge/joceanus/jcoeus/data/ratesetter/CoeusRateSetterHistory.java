@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jcoeus.data.ratesetter;
 import net.sourceforge.joceanus.jcoeus.data.CoeusHistory;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
 /**
@@ -36,7 +36,7 @@ public class CoeusRateSetterHistory
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusRateSetterHistory> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusRateSetterHistory.class);
+    private static final MetisFieldSet<CoeusRateSetterHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusRateSetterHistory.class);
 
     /**
      * Constructor for zeroed market totals.
@@ -86,7 +86,7 @@ public class CoeusRateSetterHistory
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusRateSetterHistory> getDataFieldSet() {
+    public MetisFieldSet<CoeusRateSetterHistory> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

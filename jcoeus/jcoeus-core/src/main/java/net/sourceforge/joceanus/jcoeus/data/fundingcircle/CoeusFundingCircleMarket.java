@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -45,7 +45,7 @@ public class CoeusFundingCircleMarket
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusFundingCircleMarket> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusFundingCircleMarket.class);
+    private static final MetisFieldSet<CoeusFundingCircleMarket> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleMarket.class);
 
     /**
      * AuctionMap Field Id.
@@ -270,7 +270,7 @@ public class CoeusFundingCircleMarket
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusFundingCircleMarket> getDataFieldSet() {
+    public MetisFieldSet<CoeusFundingCircleMarket> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

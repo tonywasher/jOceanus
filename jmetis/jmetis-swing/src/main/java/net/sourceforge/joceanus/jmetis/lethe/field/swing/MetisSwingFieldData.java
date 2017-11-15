@@ -35,11 +35,11 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 /**
  * The Render Data class.
  */
-public final class MetisFieldData {
+public final class MetisSwingFieldData {
     /**
      * The Manager.
      */
-    private final MetisFieldManager theManager;
+    private final MetisSwingFieldManager theManager;
 
     /**
      * The toolTip text.
@@ -91,7 +91,7 @@ public final class MetisFieldData {
      * @param pManager the field manager
      * @param pFixed is the item fixed width?
      */
-    protected MetisFieldData(final MetisFieldManager pManager,
+    protected MetisSwingFieldData(final MetisSwingFieldManager pManager,
                              final boolean pFixed) {
         /* Record parameters */
         theManager = pManager;
@@ -293,7 +293,7 @@ public final class MetisFieldData {
      * @param pElement the fieldSet element
      * @param pItem the data item
      */
-    protected <X extends MetisFieldSetItem> void determineData(final MetisFieldElement<X> pElement,
+    protected <X extends MetisFieldSetItem> void determineData(final MetisSwingFieldElement<X> pElement,
                                                                final X pItem) {
         /* Determine whether we have a null item */
         final boolean isNull = pItem == null;

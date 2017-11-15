@@ -34,8 +34,8 @@ import java.util.prefs.Preferences;
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
@@ -52,7 +52,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * @param <K> the Key type
  */
 public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
-        implements MetisDataEosFieldItem, TethysEventProvider<MetisPreferenceEvent> {
+        implements MetisFieldItem, TethysEventProvider<MetisPreferenceEvent> {
     /**
      * Unknown preference string.
      */
@@ -77,7 +77,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private final MetisDataEosFieldSet<MetisPreferenceSet> theFields;
+    private final MetisFieldSet<MetisPreferenceSet> theFields;
 
     /**
      * The Preference node for this set.
@@ -142,7 +142,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
         theName = pName;
 
         /* Allocate the fields */
-        theFields = MetisDataEosFieldSet.newFieldSet(this);
+        theFields = MetisFieldSet.newFieldSet(this);
 
         /* Access the handle */
         theHandle = deriveHandle();
@@ -176,7 +176,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
     }
 
     @Override
-    public MetisDataEosFieldSetDef getDataFieldSet() {
+    public MetisFieldSetDef getDataFieldSet() {
         return theFields;
     }
 

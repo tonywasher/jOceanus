@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosTableItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Transaction Totals.
  */
 public abstract class CoeusTotals
-        implements MetisDataEosTableItem {
+        implements MetisFieldTableItem {
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusTotals> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusTotals.class);
+    private static final MetisFieldSet<CoeusTotals> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusTotals.class);
 
     /**
      * Declare Fields.
@@ -140,7 +140,7 @@ public abstract class CoeusTotals
      * Obtain the fieldSet.
      * @return the fieldSet.
      */
-    public static MetisDataEosFieldSet<CoeusTotals> getTheFieldSet() {
+    public static MetisFieldSet<CoeusTotals> getTheFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -363,7 +363,7 @@ public abstract class CoeusTotals
      * Calculate the fields.
      * @param pField the field
      */
-    public void calculateFields(final MetisDataEosFieldDef pField) {
+    public void calculateFields(final MetisFieldDef pField) {
         /* Obtain the balance field value */
         final Object myBalance = pField.getFieldValue(this);
 
@@ -384,7 +384,7 @@ public abstract class CoeusTotals
      * @param pField the field
      * @return the delta
      */
-    private TethysDecimal calculateDelta(final MetisDataEosFieldDef pField) {
+    private TethysDecimal calculateDelta(final MetisFieldDef pField) {
         /* Obtain the previous field value */
         final Object myPrevious = thePrevious == null
                                                       ? null

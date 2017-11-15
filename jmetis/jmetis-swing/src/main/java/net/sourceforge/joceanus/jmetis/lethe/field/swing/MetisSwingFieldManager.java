@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.MetisFieldEvent;
+import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldEvent;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
@@ -59,8 +59,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 /**
  * Class to determine rendering details for an item.
  */
-public class MetisFieldManager
-        implements TethysEventProvider<MetisFieldEvent> {
+public class MetisSwingFieldManager
+        implements TethysEventProvider<MetisLetheFieldEvent> {
     /**
      * Money accounting format width.
      */
@@ -134,7 +134,7 @@ public class MetisFieldManager
     /**
      * The Event Manager.
      */
-    private final TethysEventManager<MetisFieldEvent> theEventManager;
+    private final TethysEventManager<MetisLetheFieldEvent> theEventManager;
 
     /**
      * General formatter.
@@ -144,7 +144,7 @@ public class MetisFieldManager
     /**
      * The Configuration.
      */
-    private MetisFieldConfig theConfig;
+    private MetisSwingFieldConfig theConfig;
 
     /**
      * The Error Border.
@@ -156,8 +156,8 @@ public class MetisFieldManager
      * @param pGuiFactory the gui factory
      * @param pConfig the render configuration
      */
-    public MetisFieldManager(final TethysSwingGuiFactory pGuiFactory,
-                             final MetisFieldConfig pConfig) {
+    public MetisSwingFieldManager(final TethysSwingGuiFactory pGuiFactory,
+                             final MetisSwingFieldConfig pConfig) {
         /* Store the parameters */
         theFactory = pGuiFactory;
         theConfig = pConfig;
@@ -171,7 +171,7 @@ public class MetisFieldManager
     }
 
     @Override
-    public TethysEventRegistrar<MetisFieldEvent> getEventRegistrar() {
+    public TethysEventRegistrar<MetisLetheFieldEvent> getEventRegistrar() {
         return theEventManager.getEventRegistrar();
     }
 
@@ -187,7 +187,7 @@ public class MetisFieldManager
      * Obtain the configuration.
      * @return the configuration
      */
-    public MetisFieldConfig getConfig() {
+    public MetisSwingFieldConfig getConfig() {
         return theConfig;
     }
 
@@ -208,14 +208,14 @@ public class MetisFieldManager
          * Get field data for row.
          * @param pData the Field details
          */
-        void populateFieldData(MetisFieldData pData);
+        void populateFieldData(MetisSwingFieldData pData);
     }
 
     /**
      * Set configuration.
      * @param pConfig the render configuration
      */
-    public void setConfig(final MetisFieldConfig pConfig) {
+    public void setConfig(final MetisSwingFieldConfig pConfig) {
         /* Store the parameters */
         theConfig = pConfig;
 
@@ -223,7 +223,7 @@ public class MetisFieldManager
         theErrorBorder = BorderFactory.createLineBorder(theConfig.getErrorColor());
 
         /* Fire event */
-        theEventManager.fireEvent(MetisFieldEvent.FIELDUPDATED);
+        theEventManager.fireEvent(MetisLetheFieldEvent.FIELDUPDATED);
     }
 
     /**
@@ -231,9 +231,9 @@ public class MetisFieldManager
      * @param isFixed is the data fixed width
      * @return the render data
      */
-    protected MetisFieldData allocateRenderData(final boolean isFixed) {
+    protected MetisSwingFieldData allocateRenderData(final boolean isFixed) {
         /* Return a new RenderData object */
-        return new MetisFieldData(this, isFixed);
+        return new MetisSwingFieldData(this, isFixed);
     }
 
     /**
@@ -243,10 +243,10 @@ public class MetisFieldManager
      * @param pItem the data item
      * @return the render data
      */
-    protected <X extends MetisFieldSetItem> MetisFieldData determineRenderData(final MetisFieldElement<X> pElement,
+    protected <X extends MetisFieldSetItem> MetisSwingFieldData determineRenderData(final MetisSwingFieldElement<X> pElement,
                                                                                final X pItem) {
         /* Allocate the render data */
-        final MetisFieldData myData = new MetisFieldData(this, pElement.isFixedWidth());
+        final MetisSwingFieldData myData = new MetisSwingFieldData(this, pElement.isFixedWidth());
 
         /* Determine the render data */
         myData.determineData(pElement, pItem);

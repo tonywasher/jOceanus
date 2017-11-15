@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -42,7 +42,7 @@ public class CoeusZopaLoan
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusZopaLoan> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusZopaLoan.class);
+    private static final MetisFieldSet<CoeusZopaLoan> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusZopaLoan.class);
 
     /**
      * Fields.
@@ -274,7 +274,7 @@ public class CoeusZopaLoan
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusZopaLoan> getDataFieldSet() {
+    public MetisFieldSet<CoeusZopaLoan> getDataFieldSet() {
         return FIELD_DEFS;
     }
 

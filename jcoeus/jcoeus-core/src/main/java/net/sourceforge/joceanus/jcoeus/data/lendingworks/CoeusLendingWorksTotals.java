@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jcoeus.data.lendingworks;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTransaction;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 
@@ -36,7 +36,7 @@ public final class CoeusLendingWorksTotals
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusLendingWorksTotals> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusLendingWorksTotals.class);
+    private static final MetisFieldSet<CoeusLendingWorksTotals> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusLendingWorksTotals.class);
 
     /**
      * AssetValue.
@@ -270,7 +270,7 @@ public final class CoeusLendingWorksTotals
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusLendingWorksTotals> getDataFieldSet() {
+    public MetisFieldSet<CoeusLendingWorksTotals> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

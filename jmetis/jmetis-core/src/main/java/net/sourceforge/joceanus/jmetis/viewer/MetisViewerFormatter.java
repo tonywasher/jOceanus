@@ -36,10 +36,10 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldSetDef;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
@@ -151,8 +151,8 @@ public class MetisViewerFormatter {
             formatHTMLVersionedItem((MetisDataVersionedItem) myObject);
 
             /* If we are DataEosFieldItem */
-        } else if (myObject instanceof MetisDataEosFieldItem) {
-            formatHTMLEosFieldItem((MetisDataEosFieldItem) myObject);
+        } else if (myObject instanceof MetisFieldItem) {
+            formatHTMLEosFieldItem((MetisFieldItem) myObject);
 
             /* If we are DataFieldItem */
         } else if (myObject instanceof MetisDataFieldItem) {
@@ -270,9 +270,9 @@ public class MetisViewerFormatter {
      * Build HTML table describing DataEosFieldItem.
      * @param pItem the item
      */
-    private void formatHTMLEosFieldItem(final MetisDataEosFieldItem pItem) {
+    private void formatHTMLEosFieldItem(final MetisFieldItem pItem) {
         /* Access details */
-        final MetisDataEosFieldSetDef myFields = pItem.getDataFieldSet();
+        final MetisFieldSetDef myFields = pItem.getDataFieldSet();
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -281,10 +281,10 @@ public class MetisViewerFormatter {
         theBuilder.newTitleCell(COLUMN_VALUE);
 
         /* Loop through the fields */
-        final Iterator<MetisDataEosFieldDef> myIterator = myFields.fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = myFields.fieldIterator();
         while (myIterator.hasNext()) {
             /* Access Field */
-            final MetisDataEosFieldDef myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
             final MetisDataFieldStorage myStorage = myField.getStorage();
 
             /* Access the value */

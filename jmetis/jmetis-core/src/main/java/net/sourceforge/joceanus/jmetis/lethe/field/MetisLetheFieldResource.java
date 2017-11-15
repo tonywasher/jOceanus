@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 /**
  * Resource IDs for JMetis Field.
  */
-public enum MetisFieldResource implements TethysResourceId {
+public enum MetisLetheFieldResource implements TethysResourceId {
     /**
      * FieldColor Standard.
      */
@@ -119,7 +119,7 @@ public enum MetisFieldResource implements TethysResourceId {
      * Constructor.
      * @param pKeyName the key name
      */
-    MetisFieldResource(final String pKeyName) {
+    MetisLetheFieldResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 
@@ -150,8 +150,8 @@ public enum MetisFieldResource implements TethysResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForFieldValue(final MetisFieldValue pValue) {
-        if (MetisFieldValue.ERROR.equals(pValue)) {
+    protected static TethysResourceId getKeyForFieldValue(final MetisLetheFieldValue pValue) {
+        if (MetisLetheFieldValue.ERROR.equals(pValue)) {
             return FIELDVALUE_ERROR;
         }
         throw new IllegalArgumentException(TethysResourceBuilder.getErrorNoResource(pValue));

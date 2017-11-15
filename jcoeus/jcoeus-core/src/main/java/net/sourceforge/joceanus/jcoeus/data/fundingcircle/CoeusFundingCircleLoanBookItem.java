@@ -30,8 +30,8 @@ import net.sourceforge.joceanus.jcoeus.data.CoeusLoanRisk;
 import net.sourceforge.joceanus.jcoeus.data.CoeusLoanStatus;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * FundingCircle Loan Book Item.
  */
 public class CoeusFundingCircleLoanBookItem
-        implements MetisDataEosFieldItem {
+        implements MetisFieldItem {
     /**
      * Report fields.
      */
@@ -54,7 +54,7 @@ public class CoeusFundingCircleLoanBookItem
     /**
      * Report fields.
      */
-    private static final MetisDataEosFieldSet<CoeusFundingCircleLoanBookItem> FIELD_DEFS = MetisDataEosFieldSet.newFieldSet(CoeusFundingCircleLoanBookItem.class);
+    private static final MetisFieldSet<CoeusFundingCircleLoanBookItem> FIELD_DEFS = MetisFieldSet.newFieldSet(CoeusFundingCircleLoanBookItem.class);
 
     /**
      * Fields.
@@ -357,7 +357,7 @@ public class CoeusFundingCircleLoanBookItem
     }
 
     @Override
-    public MetisDataEosFieldSet<CoeusFundingCircleLoanBookItem> getDataFieldSet() {
+    public MetisFieldSet<CoeusFundingCircleLoanBookItem> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

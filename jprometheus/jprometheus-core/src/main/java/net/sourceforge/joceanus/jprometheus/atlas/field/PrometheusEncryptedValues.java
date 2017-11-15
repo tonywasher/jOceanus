@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.eos.data;
+package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Prometheus Set of versioned Values.
  */
 public class PrometheusEncryptedValues
-        extends MetisDataEosVersionValues {
+        extends MetisFieldVersionValues {
     /**
      * The KeySet.
      */
@@ -60,7 +60,7 @@ public class PrometheusEncryptedValues
     }
 
     @Override
-    public void copyFrom(final MetisDataEosVersionValues pPrevious) {
+    public void copyFrom(final MetisFieldVersionValues pPrevious) {
         /* Perform main copy */
         super.copyFrom(pPrevious);
 
@@ -72,7 +72,7 @@ public class PrometheusEncryptedValues
     }
 
     @Override
-    protected void checkValueType(final MetisDataEosFieldDef pField,
+    protected void checkValueType(final MetisFieldDef pField,
                                   final Object pValue) throws OceanusException {
         /* Allow byteArray */
         if (pValue instanceof byte[]) {

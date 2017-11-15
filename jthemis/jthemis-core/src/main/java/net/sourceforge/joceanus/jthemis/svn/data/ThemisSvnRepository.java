@@ -26,8 +26,7 @@ import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -35,7 +34,7 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent.SvnComponentList;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent.ThemisSvnComponentList;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 
@@ -63,17 +62,15 @@ public class ThemisSvnRepository
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnRepository.class, ThemisScmRepository.getBaseFieldSet());
+    private static final MetisFieldSet<ThemisSvnRepository> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnRepository.class);
 
     /**
      * Base field id.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(ThemisResource.SCM_BASE);
-
-    /**
-     * HistoryMap field id.
-     */
-    private static final MetisDataField FIELD_HISTMAP = FIELD_DEFS.declareLocalField(ThemisResource.SVN_HISTORY);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_BASE, ThemisSvnRepository::getBase);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_HISTORY, ThemisSvnRepository::getHistoryMap);
+    }
 
     /**
      * The Preferences.
@@ -117,7 +114,7 @@ public class ThemisSvnRepository
         theClientMgrPool = new ThemisSvnClientManager(thePreferences);
 
         /* Create component list */
-        final SvnComponentList myComponents = new SvnComponentList(this);
+        final ThemisSvnComponentList myComponents = new ThemisSvnComponentList(this);
         setComponents(myComponents);
 
         /* Create RevisionHistoryMap */
@@ -136,22 +133,8 @@ public class ThemisSvnRepository
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnRepository> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_BASE.equals(pField)) {
-            return theBase;
-        }
-        if (FIELD_HISTMAP.equals(pField)) {
-            return theRevisionHistory;
-        }
-
-        /* pass call on */
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -187,8 +170,8 @@ public class ThemisSvnRepository
     }
 
     @Override
-    public SvnComponentList getComponents() {
-        return (SvnComponentList) super.getComponents();
+    public ThemisSvnComponentList getComponents() {
+        return (ThemisSvnComponentList) super.getComponents();
     }
 
     /**

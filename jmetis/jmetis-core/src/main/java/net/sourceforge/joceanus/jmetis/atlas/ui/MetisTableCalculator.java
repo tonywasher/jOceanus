@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
-import net.sourceforge.joceanus.jmetis.eos.data.MetisDataEosFieldItem.MetisDataEosFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 
 /**
  * Table Calculator.
@@ -37,5 +37,5 @@ public interface MetisTableCalculator<R> {
      * @return the value
      */
     Object calculateValue(R pRow,
-                          MetisDataEosFieldDef pField);
+                          MetisFieldDef pField);
 }

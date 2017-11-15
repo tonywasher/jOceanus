@@ -34,13 +34,11 @@ import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
@@ -50,51 +48,25 @@ import net.sourceforge.joceanus.jthemis.ThemisResource;
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistory
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * DataFields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(ThemisSvnRevisionHistory.class);
+    private static final MetisFieldSet<ThemisSvnRevisionHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnRevisionHistory.class);
 
     /**
-     * Owner field.
+     * fieldIds.
      */
-    private static final MetisDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER);
-
-    /**
-     * Date field.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE);
-
-    /**
-     * Revision field.
-     */
-    private static final MetisDataField FIELD_REVISION = FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION);
-
-    /**
-     * Message field.
-     */
-    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG);
-
-    /**
-     * Origin field.
-     */
-    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGIN);
-
-    /**
-     * Origin definition.
-     */
-    private static final MetisDataField FIELD_ORIGINDEF = FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGINDEF);
-
-    /**
-     * CopyDirs field.
-     */
-    private static final MetisDataField FIELD_SOURCEDIRS = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCEDIRS);
-
-    /**
-     * BasedOn field.
-     */
-    private static final MetisDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField(ThemisResource.SVN_BASEDON);
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER, ThemisSvnRevisionHistory::getOwner);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnRevisionHistory::getDate);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevisionHistory::getRevision);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnRevisionHistory::getLogMessage);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGIN, ThemisSvnRevisionHistory::getOrigin);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGINDEF, ThemisSvnRevisionHistory::getOriginDefinition);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCEDIRS, ThemisSvnRevisionHistory::sourceDirs);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_BASEDON, ThemisSvnRevisionHistory::getBasedOn);
+    }
 
     /**
      * The owner.
@@ -144,7 +116,7 @@ public class ThemisSvnRevisionHistory
     /**
      * The origin source definition.
      */
-    private SvnSourceDefinition theOriginDef;
+    private ThemisSvnSourceDefinition theOriginDef;
 
     /**
      * The basedOn history.
@@ -154,7 +126,7 @@ public class ThemisSvnRevisionHistory
     /**
      * The Source Directory list.
      */
-    private final SvnSourceDirList theSourceDirs;
+    private final ThemisSvnSourceDirList theSourceDirs;
 
     /**
      * Constructor.
@@ -174,7 +146,7 @@ public class ThemisSvnRevisionHistory
         theUnderlying = pEntry;
 
         /* Allocate the sourceDir list */
-        theSourceDirs = new SvnSourceDirList();
+        theSourceDirs = new ThemisSvnSourceDirList();
 
         /* Set the revision key */
         theRevisionKey = new SvnRevisionKey(pPath, theRevision);
@@ -212,13 +184,13 @@ public class ThemisSvnRevisionHistory
 
                             /* Record the origin */
                             theOrigin = new SvnRevisionKey(myDetail);
-                            theOriginDef = new SvnSourceDefinition(myCopyPath);
+                            theOriginDef = new ThemisSvnSourceDefinition(myCopyPath);
                             isOrigin = true;
 
                             /* else if this a copy into the directory */
                         } else if (!myCopyPath.startsWith(pPath)) {
                             /* Record the copyDir */
-                            theSourceDirs.addItem(new SvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
+                            theSourceDirs.addItem(new ThemisSvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
                         }
                     }
                 }
@@ -239,7 +211,7 @@ public class ThemisSvnRevisionHistory
                 /* Record the origin */
                 final String myNewPath = myBuilder.toString();
                 theOrigin = new SvnRevisionKey(myNewPath, SVNRevision.create(myDetail.getCopyRevision()));
-                theOriginDef = new SvnSourceDefinition(myNewPath);
+                theOriginDef = new ThemisSvnSourceDefinition(myNewPath);
                 isOrigin = true;
             }
         }
@@ -331,7 +303,7 @@ public class ThemisSvnRevisionHistory
      * Obtain the origin definition.
      * @return the key
      */
-    public SvnSourceDefinition getOriginDefinition() {
+    public ThemisSvnSourceDefinition getOriginDefinition() {
         return theOriginDef;
     }
 
@@ -344,10 +316,18 @@ public class ThemisSvnRevisionHistory
     }
 
     /**
+     * Obtain the copyDirs list.
+     * @return the list
+     */
+    private ThemisSvnSourceDirList sourceDirs() {
+        return theSourceDirs;
+    }
+
+    /**
      * Obtain the copyDirs iterator.
      * @return the iterator
      */
-    public Iterator<SvnSourceDir> sourceDirIterator() {
+    public Iterator<ThemisSvnSourceDir> sourceDirIterator() {
         return theSourceDirs.iterator();
     }
 
@@ -379,9 +359,9 @@ public class ThemisSvnRevisionHistory
                 .append(theLogMessage);
 
         /* Add SourceDirs */
-        final Iterator<SvnSourceDir> myIterator = theSourceDirs.iterator();
+        final Iterator<ThemisSvnSourceDir> myIterator = theSourceDirs.iterator();
         while (myIterator.hasNext()) {
-            final SvnSourceDir myDir = myIterator.next();
+            final ThemisSvnSourceDir myDir = myIterator.next();
 
             /* Add to output */
             myBuilder.append(myDir.toString());
@@ -392,45 +372,8 @@ public class ThemisSvnRevisionHistory
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<ThemisSvnRevisionHistory> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_OWNER.equals(pField)) {
-            return theOwner;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return getDate();
-        }
-        if (FIELD_REVISION.equals(pField)) {
-            return theRevisionKey;
-        }
-        if (FIELD_MESSAGE.equals(pField)) {
-            return theLogMessage;
-        }
-        if (FIELD_ORIGIN.equals(pField)) {
-            return theOrigin != null
-                                     ? theOrigin
-                                     : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_ORIGINDEF.equals(pField)) {
-            return theOriginDef != null
-                                        ? theOriginDef
-                                        : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_BASEDON.equals(pField)) {
-            return theBasedOn != null
-                                      ? theBasedOn
-                                      : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_SOURCEDIRS.equals(pField)) {
-            return theSourceDirs.isEmpty()
-                                           ? MetisDataFieldValue.SKIP
-                                           : theSourceDirs;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -529,27 +472,20 @@ public class ThemisSvnRevisionHistory
     /**
      * SvnSourceDir entry.
      */
-    public static final class SvnSourceDir
-            implements MetisDataFieldItem {
+    public static final class ThemisSvnSourceDir
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnSourceDir.class);
+        private static final MetisFieldSet<ThemisSvnSourceDir> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnSourceDir.class);
 
         /**
          * Component field.
          */
-        private static final MetisDataField FIELD_COMPONENT = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
-
-        /**
-         * Source field.
-         */
-        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE);
-
-        /**
-         * BasedOn field.
-         */
-        private static final MetisDataField FIELD_BASEDON = FIELD_DEFS.declareLocalField(ThemisResource.SVN_BASEDON);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisSvnSourceDir::getComponent);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_BASEDON, ThemisSvnSourceDir::getBasedOn);
+        }
 
         /**
          * Component.
@@ -572,10 +508,10 @@ public class ThemisSvnRevisionHistory
          * @param pRevision the source revision
          * @throws OceanusException on error
          */
-        SvnSourceDir(final String pSource,
-                     final long pRevision) throws OceanusException {
+        ThemisSvnSourceDir(final String pSource,
+                           final long pRevision) throws OceanusException {
             /* Split according to directory parts */
-            final SvnSourceDefinition mySource = new SvnSourceDefinition(pSource);
+            final ThemisSvnSourceDefinition mySource = new ThemisSvnSourceDefinition(pSource);
 
             /* Store details */
             theComponent = mySource.getComponent();
@@ -635,56 +571,42 @@ public class ThemisSvnRevisionHistory
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnSourceDir> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_COMPONENT.equals(pField)) {
-                return theComponent;
-            }
-            if (FIELD_SOURCE.equals(pField)) {
-                return theSource;
-            }
-            if (FIELD_BASEDON.equals(pField)) {
-                return theBasedOn != null
-                                          ? theBasedOn
-                                          : MetisDataFieldValue.SKIP;
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
     }
 
     /**
      * Source Directory list.
      */
-    public static final class SvnSourceDirList
-            implements MetisDataFieldItem, MetisDataList<SvnSourceDir> {
+    public static final class ThemisSvnSourceDirList
+            implements MetisFieldItem, MetisDataList<ThemisSvnSourceDir> {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnSourceDirList.class);
+        private static final MetisFieldSet<ThemisSvnSourceDirList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnSourceDirList.class);
 
         /**
          * Size field.
          */
-        private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnSourceDirList::size);
+        }
 
         /**
          * Directory List.
          */
-        private final List<SvnSourceDir> theDirList;
+        private final List<ThemisSvnSourceDir> theDirList;
 
         /**
          * Constructor.
          */
-        SvnSourceDirList() {
+        ThemisSvnSourceDirList() {
             theDirList = new ArrayList<>();
         }
 
         @Override
-        public List<SvnSourceDir> getUnderlyingList() {
+        public List<ThemisSvnSourceDir> getUnderlyingList() {
             return theDirList;
         }
 
@@ -694,16 +616,8 @@ public class ThemisSvnRevisionHistory
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnSourceDirList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -711,11 +625,11 @@ public class ThemisSvnRevisionHistory
          * @param pDir the directory to add.
          * @throws OceanusException on error
          */
-        void addItem(final SvnSourceDir pDir) throws OceanusException {
+        void addItem(final ThemisSvnSourceDir pDir) throws OceanusException {
             /* Loop through the existing items */
-            final Iterator<SvnSourceDir> myIterator = iterator();
+            final Iterator<ThemisSvnSourceDir> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final SvnSourceDir myEntry = myIterator.next();
+                final ThemisSvnSourceDir myEntry = myIterator.next();
 
                 /* If we have matching component */
                 if (MetisDataDifference.isEqual(myEntry.getComponent(), pDir.getComponent())) {
@@ -737,7 +651,7 @@ public class ThemisSvnRevisionHistory
     /**
      * Source type.
      */
-    public enum SvnSourceType {
+    public enum ThemisSvnSourceType {
         /**
          * Trunk.
          */
@@ -763,45 +677,39 @@ public class ThemisSvnRevisionHistory
          * @param pPath the path type
          * @return the branch type
          */
-        private static SvnSourceType getSourceType(final String pPath) {
+        private static ThemisSvnSourceType getSourceType(final String pPath) {
             /* Check for structure */
             if (pPath.equals(ThemisSvnComponent.DIR_TRUNK)) {
-                return SvnSourceType.TRUNK;
+                return ThemisSvnSourceType.TRUNK;
             }
             if (pPath.equals(ThemisSvnComponent.DIR_BRANCHES)) {
-                return SvnSourceType.BRANCH;
+                return ThemisSvnSourceType.BRANCH;
             }
             if (pPath.equals(ThemisSvnComponent.DIR_TAGS)) {
-                return SvnSourceType.TAG;
+                return ThemisSvnSourceType.TAG;
             }
-            return SvnSourceType.UNKNOWN;
+            return ThemisSvnSourceType.UNKNOWN;
         }
     }
 
     /**
      * Source definition.
      */
-    public static class SvnSourceDefinition
-            implements MetisDataFieldItem {
+    public static class ThemisSvnSourceDefinition
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SvnSourceDefinition.class);
+        private static final MetisFieldSet<ThemisSvnSourceDefinition> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnSourceDefinition.class);
 
         /**
          * Component field.
          */
-        private static final MetisDataField FIELD_COMP = FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT);
-
-        /**
-         * Type field.
-         */
-        private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_TYPE);
-
-        /**
-         * Source field.
-         */
-        private static final MetisDataField FIELD_SOURCE = FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE);
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisSvnSourceDefinition::getComponent);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_TYPE, ThemisSvnSourceDefinition::getSourceType);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE, ThemisSvnSourceDefinition::getSource);
+        }
 
         /**
          * Component.
@@ -811,7 +719,7 @@ public class ThemisSvnRevisionHistory
         /**
          * Branch type.
          */
-        private final SvnSourceType theType;
+        private final ThemisSvnSourceType theType;
 
         /**
          * Source.
@@ -823,7 +731,7 @@ public class ThemisSvnRevisionHistory
          * @param pSource the source path
          * @throws OceanusException on error
          */
-        public SvnSourceDefinition(final String pSource) throws OceanusException {
+        public ThemisSvnSourceDefinition(final String pSource) throws OceanusException {
             /* First character must be Separator */
             if (pSource.charAt(0) != ThemisSvnRepository.SEP_URL) {
                 throw new ThemisDataException(pSource, "Invalid source");
@@ -841,21 +749,21 @@ public class ThemisSvnRevisionHistory
                 int myLen = 0;
 
                 /* Obtain source type assuming null component */
-                SvnSourceType mySrcType = SvnSourceType.getSourceType(myBase);
+                ThemisSvnSourceType mySrcType = ThemisSvnSourceType.getSourceType(myBase);
 
                 /* If there must be a component */
-                if (mySrcType == SvnSourceType.UNKNOWN) {
+                if (mySrcType == ThemisSvnSourceType.UNKNOWN) {
                     /* Switch things around */
                     mySubComp = myBase;
                     myBase = myVers;
 
                     /* Obtain source type assuming component */
-                    mySrcType = SvnSourceType.getSourceType(myBase);
+                    mySrcType = ThemisSvnSourceType.getSourceType(myBase);
 
                     /* Unknown source type implies that we are outside the standard structure. */
-                    if (mySrcType == SvnSourceType.UNKNOWN) {
+                    if (mySrcType == ThemisSvnSourceType.UNKNOWN) {
                         /* Record as trunk with no base */
-                        mySrcType = SvnSourceType.TRUNK;
+                        mySrcType = ThemisSvnSourceType.TRUNK;
                         myBase = null;
 
                         /* else record version */
@@ -871,7 +779,7 @@ public class ThemisSvnRevisionHistory
                 if (myBase != null) {
                     myLen += myBase.length() + 1;
                 }
-                if (mySrcType != SvnSourceType.TRUNK) {
+                if (mySrcType != ThemisSvnSourceType.TRUNK) {
                     myLen += myVers.length() + 1;
                 }
 
@@ -891,22 +799,8 @@ public class ThemisSvnRevisionHistory
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<ThemisSvnSourceDefinition> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_COMP.equals(pField)) {
-                return theComponent;
-            }
-            if (FIELD_TYPE.equals(pField)) {
-                return theType;
-            }
-            if (FIELD_SOURCE.equals(pField)) {
-                return theSource;
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -921,7 +815,7 @@ public class ThemisSvnRevisionHistory
          * Obtain the source type.
          * @return the type
          */
-        public SvnSourceType getSourceType() {
+        public ThemisSvnSourceType getSourceType() {
             return theType;
         }
 
