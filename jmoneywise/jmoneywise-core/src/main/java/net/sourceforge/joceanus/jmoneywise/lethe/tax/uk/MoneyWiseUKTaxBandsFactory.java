@@ -346,6 +346,15 @@ public final class MoneyWiseUKTaxBandsFactory {
             new MoneyWiseTaxBand(getAmount(5000), getRate(0)));
 
     /**
+     * The 2019 TaxBands.
+     */
+    protected static final MoneyWiseUKTaxBands BANDS_2019 = new MoneyWiseUKTaxBands(new MoneyWiseTaxBandSet(
+            new MoneyWiseTaxBand(getAmount(34500), getRate(20)),
+            new MoneyWiseTaxBand(getAmount(115500), getRate(40)),
+            new MoneyWiseTaxBand(getRate(45))),
+            new MoneyWiseTaxBand(getAmount(5000), getRate(0)));
+
+    /**
      * Private Constructor.
      */
     private MoneyWiseUKTaxBandsFactory() {

@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jprometheus.atlas.field;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedSet;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 
 /**
  * Prometheus Data fieldSet.
@@ -59,7 +59,7 @@ public class PrometheusEncryptedFieldSet<T extends PrometheusEncryptedItem>
         /* Synchronise on class */
         synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
-            final MetisFieldSetDef myParent = lookUpFieldSet(pClazz);
+            final MetisFieldSetDef myParent = lookUpParentFieldSet(pClazz);
 
             /* Create the new fieldSet and store into map */
             final PrometheusEncryptedFieldSet<T> myFieldSet = new PrometheusEncryptedFieldSet<>(pClazz, myParent, true);

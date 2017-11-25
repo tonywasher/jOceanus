@@ -31,6 +31,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.util.Callback;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -461,14 +462,21 @@ public class TethysFXTableCellFactory<C, R> {
         public void commitEdit(final T pNewValue) {
             /* If we have no error */
             if (!isCellInError()) {
-                /* Call the commit hook */
-                theColumn.processOnCommit(getActiveRow(), pNewValue);
+                /* Protect against exceptions */
+                try {
+                    /* Call the commit hook */
+                    theColumn.processOnCommit(getActiveRow(), pNewValue);
 
-                /* Repaint any cells necessary */
-                getTable().rePaintOnCommit(this);
+                    /* Repaint any cells necessary */
+                    getTable().rePaintOnCommit(this);
 
-                /* Note that we are no longer editing */
-                cancelEdit();
+                    /* Note that we are no longer editing */
+                    cancelEdit();
+
+                    /* If we had an exception, report it */
+                } catch (OceanusException e) {
+                    getTable().processOnCommitError(e);
+                }
             }
         }
 

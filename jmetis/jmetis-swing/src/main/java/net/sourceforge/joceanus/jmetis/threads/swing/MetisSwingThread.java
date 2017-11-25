@@ -111,6 +111,7 @@ public class MetisSwingThread<T>
      * @throws OceanusException on error
      */
     protected void processResult() throws OceanusException {
+        theManager.resultTask();
         theThread.processResult(theResult);
     }
 

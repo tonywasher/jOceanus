@@ -141,7 +141,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         /* Synchronise on class */
         synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
-            final MetisFieldSetDef myParent = lookUpFieldSet(pClazz);
+            final MetisFieldSetDef myParent = lookUpParentFieldSet(pClazz);
 
             /* Create the new fieldSet and store into map */
             final MetisFieldSet<T> myFieldSet = new MetisFieldSet<>(pClazz, myParent, true);
@@ -153,11 +153,11 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     /**
-     * LookUp a FieldSet.
+     * LookUp a Parent FieldSet.
      * @param pClazz the class of the fieldSet
      * @return the fieldSet.
      */
-    public static MetisFieldSetDef lookUpFieldSet(final Class<?> pClazz) {
+    public static MetisFieldSetDef lookUpParentFieldSet(final Class<?> pClazz) {
         /* Check that the class does not already exist */
         final String myClassName = pClazz.getCanonicalName();
         if (myClassName == null || pClazz.isArray()) {
@@ -174,6 +174,30 @@ public class MetisFieldSet<T extends MetisFieldItem>
         return myParentClass == null
                                      ? null
                                      : FIELDSET_MAP.get(myParentClass.getCanonicalName());
+    }
+
+    /**
+     * LookUp a static FieldSet.
+     * @param <T> the itemType
+     * @param pClazz the class of the fieldSet
+     * @return the fieldSet.
+     */
+    public static <T extends MetisFieldItem> MetisFieldSet<T> lookUpFieldSet(final Class<T> pClazz) {
+        /* Look up the definition */
+        final String myClassName = pClazz.getCanonicalName();
+        try {
+            Class.forName(myClassName);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Invalid class " + myClassName);
+        }
+
+        /* Look up the FieldSet for the class and return it */
+        @SuppressWarnings("unchecked")
+        final MetisFieldSet<T> myFieldSet = (MetisFieldSet<T>) FIELDSET_MAP.get(myClassName);
+        if (myFieldSet == null) {
+            throw new IllegalStateException("FieldSet not found " + myClassName);
+        }
+        return myFieldSet;
     }
 
     /**

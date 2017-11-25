@@ -428,7 +428,7 @@ public class TethysFXTableManager<C, R>
      */
     public abstract static class TethysFXTableValidatedColumn<T, C, R>
             extends TethysFXTableColumn<T, C, R>
-            implements TethysTableValidatedColumn<T, C, R, Node, Node> {
+            implements TethysTableValidatedColumn<T, R> {
         /**
          * The validator.
          */
@@ -455,8 +455,11 @@ public class TethysFXTableManager<C, R>
             theValidator = pValidator;
         }
 
-        @Override
-        public BiFunction<T, R, String> getValidator() {
+        /**
+         * Get the validity tester.
+         * @return the current tester
+         */
+        protected BiFunction<T, R, String> getValidator() {
             return theValidator;
         }
     }
@@ -467,7 +470,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableStringColumn<C, R>
-            extends TethysFXTableValidatedColumn<String, C, R> {
+            extends TethysFXTableValidatedColumn<String, C, R>
+            implements TethysTableStringColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -486,7 +490,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableCharArrayColumn<C, R>
-            extends TethysFXTableValidatedColumn<char[], C, R> {
+            extends TethysFXTableValidatedColumn<char[], C, R>
+            implements TethysTableCharArrayColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -505,7 +510,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableShortColumn<C, R>
-            extends TethysFXTableValidatedColumn<Short, C, R> {
+            extends TethysFXTableValidatedColumn<Short, C, R>
+            implements TethysTableShortColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -524,7 +530,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableIntegerColumn<C, R>
-            extends TethysFXTableValidatedColumn<Integer, C, R> {
+            extends TethysFXTableValidatedColumn<Integer, C, R>
+            implements TethysTableIntegerColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -543,7 +550,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableLongColumn<C, R>
-            extends TethysFXTableValidatedColumn<Long, C, R> {
+            extends TethysFXTableValidatedColumn<Long, C, R>
+            implements TethysTableLongColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -602,7 +610,7 @@ public class TethysFXTableManager<C, R>
      */
     public static class TethysFXTableMoneyColumn<C, R>
             extends TethysFXTableValidatedColumn<TethysMoney, C, R>
-            implements TethysTableCurrencyColumn<TethysMoney, C, R, Node, Node> {
+            implements TethysTableMoneyColumn<C, R, Node, Node> {
         /**
          * Currency supplier.
          */
@@ -641,7 +649,7 @@ public class TethysFXTableManager<C, R>
      */
     public static class TethysFXTablePriceColumn<C, R>
             extends TethysFXTableValidatedColumn<TethysPrice, C, R>
-            implements TethysTableCurrencyColumn<TethysPrice, C, R, Node, Node> {
+            implements TethysTablePriceColumn<C, R, Node, Node> {
         /**
          * Currency supplier.
          */
@@ -679,7 +687,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRateColumn<C, R>
-            extends TethysFXTableValidatedColumn<TethysRate, C, R> {
+            extends TethysFXTableValidatedColumn<TethysRate, C, R>
+            implements TethysTableRateColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -698,7 +707,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableUnitsColumn<C, R>
-            extends TethysFXTableValidatedColumn<TethysUnits, C, R> {
+            extends TethysFXTableValidatedColumn<TethysUnits, C, R>
+            implements TethysTableUnitsColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -717,7 +727,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableDilutionColumn<C, R>
-            extends TethysFXTableValidatedColumn<TethysDilution, C, R> {
+            extends TethysFXTableValidatedColumn<TethysDilution, C, R>
+            implements TethysTableDilutionColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -736,7 +747,8 @@ public class TethysFXTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysFXTableRatioColumn<C, R>
-            extends TethysFXTableValidatedColumn<TethysRatio, C, R> {
+            extends TethysFXTableValidatedColumn<TethysRatio, C, R>
+            implements TethysTableRatioColumn<C, R, Node, Node> {
         /**
          * Constructor.
          * @param pTable the table
@@ -756,7 +768,7 @@ public class TethysFXTableManager<C, R>
      */
     public static class TethysFXTableDilutedPriceColumn<C, R>
             extends TethysFXTableValidatedColumn<TethysDilutedPrice, C, R>
-            implements TethysTableCurrencyColumn<TethysDilutedPrice, C, R, Node, Node> {
+            implements TethysTableDilutedPriceColumn<C, R, Node, Node> {
         /**
          * Currency supplier.
          */

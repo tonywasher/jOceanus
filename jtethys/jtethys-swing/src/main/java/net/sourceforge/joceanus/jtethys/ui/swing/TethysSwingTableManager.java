@@ -41,6 +41,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -586,8 +587,15 @@ public class TethysSwingTableManager<C, R>
             /* Set the active row */
             theCell.setActiveRow(pIndex);
 
-            /* Call the commit hook */
-            processOnCommit(theCell.getActiveRow(), theCell.getCastValue(pValue));
+            /* Handle exceptions */
+            try {
+                /* Call the commit hook */
+                processOnCommit(theCell.getActiveRow(), theCell.getCastValue(pValue));
+
+                /* If we had an exception, report it */
+            } catch (OceanusException e) {
+                getTable().processOnCommitError(e);
+            }
         }
 
         /**
@@ -627,7 +635,7 @@ public class TethysSwingTableManager<C, R>
      */
     public abstract static class TethysSwingTableValidatedColumn<T, C, R>
             extends TethysSwingTableColumn<T, C, R>
-            implements TethysTableValidatedColumn<T, C, R, JComponent, Icon> {
+            implements TethysTableValidatedColumn<T, R> {
         /**
          * The validator.
          */
@@ -654,8 +662,11 @@ public class TethysSwingTableManager<C, R>
             theValidator = pValidator;
         }
 
-        @Override
-        public BiFunction<T, R, String> getValidator() {
+        /**
+         * Obtain the validator.
+         * @return the validator
+         */
+        protected BiFunction<T, R, String> getValidator() {
             return theValidator;
         }
     }
@@ -666,7 +677,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableStringColumn<C, R>
-            extends TethysSwingTableValidatedColumn<String, C, R> {
+            extends TethysSwingTableValidatedColumn<String, C, R>
+            implements TethysTableStringColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -685,7 +697,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableCharArrayColumn<C, R>
-            extends TethysSwingTableValidatedColumn<char[], C, R> {
+            extends TethysSwingTableValidatedColumn<char[], C, R>
+            implements TethysTableCharArrayColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -704,7 +717,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableShortColumn<C, R>
-            extends TethysSwingTableValidatedColumn<Short, C, R> {
+            extends TethysSwingTableValidatedColumn<Short, C, R>
+            implements TethysTableShortColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -723,7 +737,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableIntegerColumn<C, R>
-            extends TethysSwingTableValidatedColumn<Integer, C, R> {
+            extends TethysSwingTableValidatedColumn<Integer, C, R>
+            implements TethysTableIntegerColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -742,7 +757,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableLongColumn<C, R>
-            extends TethysSwingTableValidatedColumn<Long, C, R> {
+            extends TethysSwingTableValidatedColumn<Long, C, R>
+            implements TethysTableLongColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -801,7 +817,7 @@ public class TethysSwingTableManager<C, R>
      */
     public static class TethysSwingTableMoneyColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysMoney, C, R>
-            implements TethysTableCurrencyColumn<TethysMoney, C, R, JComponent, Icon> {
+            implements TethysTableMoneyColumn<C, R, JComponent, Icon> {
         /**
          * Currency supplier.
          */
@@ -840,7 +856,7 @@ public class TethysSwingTableManager<C, R>
      */
     public static class TethysSwingTablePriceColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysPrice, C, R>
-            implements TethysTableCurrencyColumn<TethysPrice, C, R, JComponent, Icon> {
+            implements TethysTablePriceColumn<C, R, JComponent, Icon> {
         /**
          * Currency supplier.
          */
@@ -878,7 +894,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableRateColumn<C, R>
-            extends TethysSwingTableValidatedColumn<TethysRate, C, R> {
+            extends TethysSwingTableValidatedColumn<TethysRate, C, R>
+            implements TethysTableRateColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -897,7 +914,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableUnitsColumn<C, R>
-            extends TethysSwingTableValidatedColumn<TethysUnits, C, R> {
+            extends TethysSwingTableValidatedColumn<TethysUnits, C, R>
+            implements TethysTableUnitsColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -916,7 +934,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableDilutionColumn<C, R>
-            extends TethysSwingTableValidatedColumn<TethysDilution, C, R> {
+            extends TethysSwingTableValidatedColumn<TethysDilution, C, R>
+            implements TethysTableDilutionColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -935,7 +954,8 @@ public class TethysSwingTableManager<C, R>
      * @param <R> the table item class
      */
     public static class TethysSwingTableRatioColumn<C, R>
-            extends TethysSwingTableValidatedColumn<TethysRatio, C, R> {
+            extends TethysSwingTableValidatedColumn<TethysRatio, C, R>
+            implements TethysTableRatioColumn<C, R, JComponent, Icon> {
         /**
          * Constructor.
          * @param pTable the table
@@ -955,7 +975,7 @@ public class TethysSwingTableManager<C, R>
      */
     public static class TethysSwingTableDilutedPriceColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysDilutedPrice, C, R>
-            implements TethysTableCurrencyColumn<TethysDilutedPrice, C, R, JComponent, Icon> {
+            implements TethysTableDilutedPriceColumn<C, R, JComponent, Icon> {
         /**
          * Currency supplier.
          */

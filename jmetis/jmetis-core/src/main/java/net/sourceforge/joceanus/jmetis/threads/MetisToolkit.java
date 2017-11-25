@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -271,12 +270,12 @@ public abstract class MetisToolkit<N, I> {
     /**
      * Create a TableManager.
      * @param <R> the row type
-     * @param pFieldSet the fieldSet
+     * @param pClazz the cxlass of the item
      * @param pList the base list
      * @return the table manager
      */
-    public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(MetisFieldSet<R> pFieldSet,
-                                                                                                 MetisIndexedList<R> pList);
+    public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(Class<R> pClazz,
+                                                                                               MetisIndexedList<R> pList);
 
     /**
      * Create an ErrorPanel.

@@ -144,6 +144,7 @@ public class MetisFXThreadManager
         /* Handle exceptions */
         try {
             /* Complete the thread */
+            resultTask();
             theWorker.processResult();
 
             /* Record the completion */

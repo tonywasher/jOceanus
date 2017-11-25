@@ -293,6 +293,13 @@ public final class MoneyWiseUKTaxYearFactory {
             MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
 
     /**
+     * The 2019 TaxYear.
+     */
+    protected static final MoneyWiseUKTaxYear YEAR_2019 = new MoneyWiseUKTaxYear(2019,
+            MoneyWiseUKAllowanceFactory.ALLOWANCE_2019, MoneyWiseUKTaxBandsFactory.BANDS_2019,
+            MoneyWiseUKSchemeFactory.INTEREST_BASE, MoneyWiseUKSchemeFactory.DIVIDEND_NOTAXCREDIT, MoneyWiseUKSchemeFactory.CAPITAL_RESIDENTIAL);
+
+    /**
      * Private Constructor.
      */
     private MoneyWiseUKTaxYearFactory() {

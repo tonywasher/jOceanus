@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -93,7 +94,12 @@ public abstract class TethysTableManager<C, R, N, I>
     /**
      * The OnCommit Consumer.
      */
-    private Consumer<R> theOnCommit;
+    private TethysOnRowCommit<R> theOnCommit;
+
+    /**
+     * The OnCommitError Consumer.
+     */
+    private Consumer<OceanusException> theOnCommitError;
 
     /**
      * The Comparator.
@@ -256,19 +262,40 @@ public abstract class TethysTableManager<C, R, N, I>
      * Set the on-commit consumer.
      * @param pOnCommit the consumer
      */
-    public void setOnCommit(final Consumer<R> pOnCommit) {
+    public void setOnCommit(final TethysOnRowCommit<R> pOnCommit) {
         theOnCommit = pOnCommit;
     }
 
     /**
      * process onCommit.
      * @param pRow the row
+     * @throws OceanusException on error
      */
-    public void processOnCommit(final R pRow) {
+    void processOnCommit(final R pRow) throws OceanusException {
         /* If we have an onCommit consumer */
         if (theOnCommit != null) {
             /* call it */
-            theOnCommit.accept(pRow);
+            theOnCommit.commitRow(pRow);
+        }
+    }
+
+    /**
+     * Set the on-commitError consumer.
+     * @param pOnCommitError the consumer
+     */
+    public void setOnCommitError(final Consumer<OceanusException> pOnCommitError) {
+        theOnCommitError = pOnCommitError;
+    }
+
+    /**
+     * process onCommitError.
+     * @param pError the error
+     */
+    public void processOnCommitError(final OceanusException pError) {
+        /* If we have an onCommitError consumer */
+        if (theOnCommitError != null) {
+            /* call it */
+            theOnCommitError.accept(pError);
         }
     }
 
@@ -355,35 +382,35 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<String, C, R, N, I> declareStringColumn(C pId);
+    public abstract TethysTableStringColumn<C, R, N, I> declareStringColumn(C pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<char[], C, R, N, I> declareCharArrayColumn(C pId);
+    public abstract TethysTableCharArrayColumn<C, R, N, I> declareCharArrayColumn(C pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<Short, C, R, N, I> declareShortColumn(C pId);
+    public abstract TethysTableShortColumn<C, R, N, I> declareShortColumn(C pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<Integer, C, R, N, I> declareIntegerColumn(C pId);
+    public abstract TethysTableIntegerColumn<C, R, N, I> declareIntegerColumn(C pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<Long, C, R, N, I> declareLongColumn(C pId);
+    public abstract TethysTableLongColumn<C, R, N, I> declareLongColumn(C pId);
 
     /**
      * Declare rawDecimal column.
@@ -397,49 +424,49 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCurrencyColumn<TethysMoney, C, R, N, I> declareMoneyColumn(C pId);
+    public abstract TethysTableMoneyColumn<C, R, N, I> declareMoneyColumn(C pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCurrencyColumn<TethysPrice, C, R, N, I> declarePriceColumn(C pId);
+    public abstract TethysTablePriceColumn<C, R, N, I> declarePriceColumn(C pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysRate, C, R, N, I> declareRateColumn(C pId);
+    public abstract TethysTableRateColumn<C, R, N, I> declareRateColumn(C pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysUnits, C, R, N, I> declareUnitsColumn(C pId);
+    public abstract TethysTableUnitsColumn<C, R, N, I> declareUnitsColumn(C pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysDilution, C, R, N, I> declareDilutionColumn(C pId);
+    public abstract TethysTableDilutionColumn<C, R, N, I> declareDilutionColumn(C pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysRatio, C, R, N, I> declareRatioColumn(C pId);
+    public abstract TethysTableRatioColumn<C, R, N, I> declareRatioColumn(C pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCurrencyColumn<TethysDilutedPrice, C, R, N, I> declareDilutedPriceColumn(C pId);
+    public abstract TethysTableDilutedPriceColumn<C, R, N, I> declareDilutedPriceColumn(C pId);
 
     /**
      * Declare date column.
@@ -562,41 +589,107 @@ public abstract class TethysTableManager<C, R, N, I>
          * Set the on-commit consumer.
          * @param pOnCommit the consumer
          */
-        void setOnCommit(BiConsumer<R, T> pOnCommit);
+        void setOnCommit(TethysOnColumnCommit<R, T> pOnCommit);
+
+        /**
+         * do we rePaintColumn on commit?
+         * @return true/false
+         */
+        boolean doRePaintColumnOnCommit();
+
+        /**
+         * Set repaintColumn on Commit.
+         * @param pRePaint the flag
+         */
+        void setRepaintColumnOnCommit(boolean pRePaint);
+
+        /**
+         * get the column id which forces a rePaint.
+         * @return the column id
+         */
+        C getRePaintColumnId();
+
+        /**
+         * Set repaintColumnId.
+         * @param pRePaintId the repaint id
+         */
+        void setRepaintColumnId(C pRePaintId);
     }
 
     /**
      * Validated Column Definition.
      * @param <T> the data type
-     * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableValidatedColumn<T, C, R, N, I>
-            extends TethysTableColumn<T, C, R, N, I> {
+    public interface TethysTableValidatedColumn<T, R> {
         /**
          * Set the validity tester.
          * @param pValidator the validator
          */
         void setValidator(BiFunction<T, R, String> pValidator);
-
-        /**
-         * Get the validity tester.
-         * @return the current tester
-         */
-        BiFunction<T, R, String> getValidator();
     }
 
     /**
-     * RawDecimalTableColumn.
+     * String Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the Node type
-     * @param <I> the Icon type
+     * @param <N> the node type
+     * @param <I> the icon type
      */
-    public interface TethysTableRawDecimalColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<TethysDecimal, C, R, N, I> {
+    public interface TethysTableStringColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<String, R>, TethysTableColumn<String, C, R, N, I> {
+    }
+
+    /**
+     * CharArray Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableCharArrayColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<char[], R>, TethysTableColumn<char[], C, R, N, I> {
+    }
+
+    /**
+     * Short Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableShortColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<Short, R>, TethysTableColumn<Short, C, R, N, I> {
+    }
+
+    /**
+     * Integer Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableIntegerColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<Integer, R>, TethysTableColumn<Integer, C, R, N, I> {
+    }
+
+    /**
+     * Long Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableLongColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<Long, R>, TethysTableColumn<Long, C, R, N, I> {
+    }
+
+    /**
+     * DecimalTableColumn.
+     * @param <R> the row type
+     */
+    public interface TethysTableDecimalColumn<R>
+            extends TethysTableValidatedColumn<TethysDecimal, R> {
         /**
          * Set the Number of decimals supplier.
          * @param pSupplier the supplier
@@ -606,19 +699,117 @@ public abstract class TethysTableManager<C, R, N, I>
 
     /**
      * CurrencyTableColumn.
-     * @param <T> the data type
-     * @param <C> the column identity
+     * @param <T> the money type
      * @param <R> the row type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    public interface TethysTableCurrencyColumn<T extends TethysMoney, C, R, N, I>
-            extends TethysTableValidatedColumn<T, C, R, N, I> {
+    public interface TethysTableCurrencyColumn<T extends TethysMoney, R>
+            extends TethysTableValidatedColumn<T, R> {
         /**
          * Set the Deemed Currency supplier.
          * @param pSupplier the supplier
          */
         void setDeemedCurrency(Function<R, Currency> pSupplier);
+    }
+
+    /**
+     * RawDecimal Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableRawDecimalColumn<C, R, N, I>
+            extends TethysTableDecimalColumn<R>, TethysTableColumn<TethysDecimal, C, R, N, I> {
+    }
+
+    /**
+     * Money Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableMoneyColumn<C, R, N, I>
+            extends TethysTableCurrencyColumn<TethysMoney, R>, TethysTableColumn<TethysMoney, C, R, N, I> {
+    }
+
+    /**
+     * Price Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTablePriceColumn<C, R, N, I>
+            extends TethysTableCurrencyColumn<TethysPrice, R>, TethysTableColumn<TethysPrice, C, R, N, I> {
+    }
+
+    /**
+     * Units Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableUnitsColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<TethysUnits, R>, TethysTableColumn<TethysUnits, C, R, N, I> {
+    }
+
+    /**
+     * Rate Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableRateColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<TethysRate, R>, TethysTableColumn<TethysRate, C, R, N, I> {
+    }
+
+    /**
+     * Dilution Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableDilutionColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<TethysDilution, R>, TethysTableColumn<TethysDilution, C, R, N, I> {
+    }
+
+    /**
+     * Ratio Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableRatioColumn<C, R, N, I>
+            extends TethysTableValidatedColumn<TethysRatio, R>, TethysTableColumn<TethysRatio, C, R, N, I> {
+    }
+
+    /**
+     * DilutedPrice Column Definition.
+     * @param <C> the column identity
+     * @param <R> the row type
+     * @param <N> the node type
+     * @param <I> the icon type
+     */
+    public interface TethysTableDilutedPriceColumn<C, R, N, I>
+            extends TethysTableCurrencyColumn<TethysDilutedPrice, R>, TethysTableColumn<TethysDilutedPrice, C, R, N, I> {
+    }
+
+    /**
+     * IconTableColumn.
+     * @param <T> the data type
+     * @param <R> the row type
+     */
+    public interface TethysTableIconConfig<T, R> {
+        /**
+         * Set the IconMapSet supplier.
+         * @param pSupplier the supplier
+         */
+        void setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
     }
 
     /**
@@ -630,12 +821,19 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableIconColumn<T, C, R, N, I>
-            extends TethysTableColumn<T, C, R, N, I> {
+            extends TethysTableIconConfig<T, R>, TethysTableColumn<T, C, R, N, I> {
+    }
+
+    /**
+     * DateTableColumn.
+     * @param <R> the row type
+     */
+    public interface TethysTableDateConfig<R> {
         /**
-         * Set the IconMapSet supplier.
-         * @param pSupplier the supplier
+         * Set the Date configurator.
+         * @param pConfigurator the configurator
          */
-        void setIconMapSet(Function<R, TethysIconMapSet<T>> pSupplier);
+        void setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
     }
 
     /**
@@ -646,12 +844,21 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableDateColumn<C, R, N, I>
-            extends TethysTableColumn<TethysDate, C, R, N, I> {
+            extends TethysTableDateConfig<R>, TethysTableColumn<TethysDate, C, R, N, I> {
+    }
+
+    /**
+     * ScrollTableColumn.
+     * @param <T> the data type
+     * @param <R> the row type
+     * @param <I> the Icon type
+     */
+    public interface TethysTableScrollConfig<T, R, I> {
         /**
-         * Set the Date configurator.
+         * Set the Menu configurator.
          * @param pConfigurator the configurator
          */
-        void setDateConfigurator(BiConsumer<R, TethysDateConfig> pConfigurator);
+        void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T, I>> pConfigurator);
     }
 
     /**
@@ -663,12 +870,20 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableScrollColumn<T, C, R, N, I>
-            extends TethysTableColumn<T, C, R, N, I> {
+            extends TethysTableScrollConfig<T, R, I>, TethysTableColumn<T, C, R, N, I> {
+    }
+
+    /**
+     * ListTableColumn.
+     * @param <T> the data type
+     * @param <R> the row type
+     */
+    public interface TethysTableListConfig<T extends Comparable<T>, R> {
         /**
-         * Set the Menu configurator.
-         * @param pConfigurator the configurator
+         * Set the selectable supplier.
+         * @param pSelectables the supplier
          */
-        void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T, I>> pConfigurator);
+        void setSelectables(Function<R, Iterator<T>> pSelectables);
     }
 
     /**
@@ -680,12 +895,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableListColumn<T extends Comparable<T>, C, R, N, I>
-            extends TethysTableColumn<List<T>, C, R, N, I> {
-        /**
-         * Set the selectable supplier.
-         * @param pSelectables the supplier
-         */
-        void setSelectables(Function<R, Iterator<T>> pSelectables);
+            extends TethysTableListConfig<T, R>, TethysTableColumn<List<T>, C, R, N, I> {
     }
 
     /**
@@ -744,9 +954,9 @@ public abstract class TethysTableManager<C, R, N, I>
         private Predicate<R> isCellEditable;
 
         /**
-         * The cell-editable predicate.
+         * The cell-commit consumer.
          */
-        private BiConsumer<R, T> theOnCommit;
+        private TethysOnColumnCommit<R, T> theOnCommit;
 
         /**
          * Repaint the column on commit?
@@ -835,34 +1045,22 @@ public abstract class TethysTableManager<C, R, N, I>
             return isEditable;
         }
 
-        /**
-         * do we rePaintColumn on commit?
-         * @return true/false
-         */
+        @Override
         public boolean doRePaintColumnOnCommit() {
             return doRePaintColOnCommit;
         }
 
-        /**
-         * Set repaintColumn on Commit.
-         * @param pRePaint the flag
-         */
+        @Override
         public void setRepaintColumnOnCommit(final boolean pRePaint) {
             doRePaintColOnCommit = pRePaint;
         }
 
-        /**
-         * get the column id which forces a rePaint.
-         * @return the column id
-         */
+        @Override
         public C getRePaintColumnId() {
             return theRePaintId;
         }
 
-        /**
-         * Set repaintColumnId.
-         * @param pRePaintId the repaint id
-         */
+        @Override
         public void setRepaintColumnId(final C pRePaintId) {
             theRePaintId = pRePaintId;
         }
@@ -929,7 +1127,7 @@ public abstract class TethysTableManager<C, R, N, I>
         }
 
         @Override
-        public void setOnCommit(final BiConsumer<R, T> pOnCommit) {
+        public void setOnCommit(final TethysOnColumnCommit<R, T> pOnCommit) {
             theOnCommit = pOnCommit;
         }
 
@@ -937,13 +1135,14 @@ public abstract class TethysTableManager<C, R, N, I>
          * process onCommit.
          * @param pRow the row
          * @param pValue the value
+         * @throws OceanusException on error
          */
         public void processOnCommit(final R pRow,
-                                    final T pValue) {
+                                    final T pValue) throws OceanusException {
             /* If we have an onCommit consumer */
             if (theOnCommit != null) {
                 /* call it */
-                theOnCommit.accept(pRow, pValue);
+                theOnCommit.commitColumn(pRow, pValue);
             }
 
             /* Call the table onCommit */
@@ -1006,5 +1205,35 @@ public abstract class TethysTableManager<C, R, N, I>
          * Row changed during edit.
          */
         void repaintCellRow();
+    }
+
+    /**
+     * OnColumn commit callback.
+     * @param <R> the row type
+     * @param <T> the value type
+     */
+    @FunctionalInterface
+    public interface TethysOnColumnCommit<R, T> {
+        /**
+         * CallBack on a columnCommit.
+         * @param pRow the row that is being committed
+         * @param pValue the new value
+         * @throws OceanusException on error
+         */
+        void commitColumn(R pRow, T pValue) throws OceanusException;
+    }
+
+    /**
+     * OnRow commit callback.
+     * @param <R> the row type
+     */
+    @FunctionalInterface
+    public interface TethysOnRowCommit<R> {
+        /**
+         * CallBack on a rowCommit.
+         * @param pRow the row that is being committed
+         * @throws OceanusException on error
+         */
+        void commitRow(R pRow) throws OceanusException;
     }
 }

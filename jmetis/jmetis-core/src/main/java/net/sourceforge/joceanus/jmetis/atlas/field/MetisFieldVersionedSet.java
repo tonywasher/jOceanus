@@ -57,7 +57,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
         /* Synchronise on class */
         synchronized (MetisFieldSet.class) {
             /* Locate the parent fieldSet if it exists */
-            final MetisFieldSetDef myParent = lookUpFieldSet(pClazz);
+            final MetisFieldSetDef myParent = lookUpParentFieldSet(pClazz);
 
             /* Create the new fieldSet and store into map */
             final MetisFieldVersionedSet<T> myFieldSet = new MetisFieldVersionedSet<>(pClazz, myParent, true);

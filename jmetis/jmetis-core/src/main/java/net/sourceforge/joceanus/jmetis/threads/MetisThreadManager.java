@@ -381,6 +381,13 @@ public abstract class MetisThreadManager<N, I>
     }
 
     /**
+     * Start the process result task.
+     */
+    public void resultTask() {
+        theProfile.startTask("processResult");
+    }
+
+    /**
      * End the active task.
      */
     protected void endTask() {

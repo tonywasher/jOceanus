@@ -30,14 +30,13 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
 
 /**
  * Statement Panel.
@@ -69,7 +68,7 @@ public class CoeusStatementTable<N, I>
     /**
      * The Loan Column.
      */
-    private final TethysTableColumn<CoeusLoan, MetisFieldId, CoeusTotals, N, I> theLoanColumn;
+    private final MetisTableScrollColumn<CoeusLoan, CoeusTotals, N, I> theLoanColumn;
 
     /**
      * The Statement Calculator.
@@ -90,7 +89,7 @@ public class CoeusStatementTable<N, I>
         theList = new MetisIndexedList<>();
 
         /* Create the table */
-        theTable = pToolkit.newTableManager(CoeusTotals.getTheFieldSet(), theList);
+        theTable = pToolkit.newTableManager(CoeusTotals.class, theList);
         theTable.declareDateColumn(CoeusTotalsField.DATE);
         theTable.declareScrollColumn(CoeusTotalsField.TRANSTYPE, CoeusTransactionType.class);
         theTable.declareStringColumn(CoeusTotalsField.DESC);

@@ -24,33 +24,36 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDisableItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
-import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
-import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
-import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
-import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDilutedPriceColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDilutionColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIconColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIntegerColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableListColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableLongColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableMoneyColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTablePriceColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableRateColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableRatioColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableRawDecimalColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShortColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableStringColumn;
+import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableUnitsColumn;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnRowCommit;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableCurrencyColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableDateColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableIconColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableListColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableRawDecimalColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableScrollColumn;
-import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableValidatedColumn;
 
 /**
  * Table Manager.
@@ -73,12 +76,12 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pFieldSet the fieldSet
+     * @param pClazz the class
      */
     protected MetisTableManager(final TethysGuiFactory<N, I> pFactory,
-                                final MetisFieldSet<R> pFieldSet) {
+                                final Class<R> pClazz) {
         /* Store parameters */
-        theFieldSet = pFieldSet;
+        theFieldSet = MetisFieldSet.lookUpFieldSet(pClazz);
 
         /* Create the table */
         theTable = pFactory.newTable();
@@ -139,7 +142,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * Set the on-commit consumer.
      * @param pOnCommit the consumer
      */
-    public void setOnCommit(final Consumer<R> pOnCommit) {
+    public void setOnCommit(final TethysOnRowCommit<R> pOnCommit) {
         theTable.setOnCommit(pOnCommit);
     }
 
@@ -235,98 +238,98 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<String, MetisFieldId, R, N, I> declareStringColumn(MetisFieldId pId);
+    public abstract MetisTableStringColumn<R, N, I> declareStringColumn(MetisFieldId pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<char[], MetisFieldId, R, N, I> declareCharArrayColumn(MetisFieldId pId);
+    public abstract MetisTableCharArrayColumn<R, N, I> declareCharArrayColumn(MetisFieldId pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<Short, MetisFieldId, R, N, I> declareShortColumn(MetisFieldId pId);
+    public abstract MetisTableShortColumn<R, N, I> declareShortColumn(MetisFieldId pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<Integer, MetisFieldId, R, N, I> declareIntegerColumn(MetisFieldId pId);
+    public abstract MetisTableIntegerColumn<R, N, I> declareIntegerColumn(MetisFieldId pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<Long, MetisFieldId, R, N, I> declareLongColumn(MetisFieldId pId);
+    public abstract MetisTableLongColumn<R, N, I> declareLongColumn(MetisFieldId pId);
 
     /**
      * Declare rawDecimal column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableRawDecimalColumn<MetisFieldId, R, N, I> declareRawDecimalColumn(MetisFieldId pId);
+    public abstract MetisTableRawDecimalColumn<R, N, I> declareRawDecimalColumn(MetisFieldId pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCurrencyColumn<TethysMoney, MetisFieldId, R, N, I> declareMoneyColumn(MetisFieldId pId);
+    public abstract MetisTableMoneyColumn<R, N, I> declareMoneyColumn(MetisFieldId pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCurrencyColumn<TethysPrice, MetisFieldId, R, N, I> declarePriceColumn(MetisFieldId pId);
+    public abstract MetisTablePriceColumn<R, N, I> declarePriceColumn(MetisFieldId pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysRate, MetisFieldId, R, N, I> declareRateColumn(MetisFieldId pId);
+    public abstract MetisTableRateColumn<R, N, I> declareRateColumn(MetisFieldId pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysUnits, MetisFieldId, R, N, I> declareUnitsColumn(MetisFieldId pId);
+    public abstract MetisTableUnitsColumn<R, N, I> declareUnitsColumn(MetisFieldId pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysDilution, MetisFieldId, R, N, I> declareDilutionColumn(MetisFieldId pId);
+    public abstract MetisTableDilutionColumn<R, N, I> declareDilutionColumn(MetisFieldId pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableValidatedColumn<TethysRatio, MetisFieldId, R, N, I> declareRatioColumn(MetisFieldId pId);
+    public abstract MetisTableRatioColumn<R, N, I> declareRatioColumn(MetisFieldId pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCurrencyColumn<TethysDilutedPrice, MetisFieldId, R, N, I> declareDilutedPriceColumn(MetisFieldId pId);
+    public abstract MetisTableDilutedPriceColumn<R, N, I> declareDilutedPriceColumn(MetisFieldId pId);
 
     /**
      * Declare date column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableDateColumn<MetisFieldId, R, N, I> declareDateColumn(MetisFieldId pId);
+    public abstract MetisTableDateColumn<R, N, I> declareDateColumn(MetisFieldId pId);
 
     /**
      * Declare scroll column.
@@ -335,8 +338,8 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableScrollColumn<T, MetisFieldId, R, N, I> declareScrollColumn(MetisFieldId pId,
-                                                                                              Class<T> pClass);
+    public abstract <T> MetisTableScrollColumn<T, R, N, I> declareScrollColumn(MetisFieldId pId,
+                                                                               Class<T> pClass);
 
     /**
      * Declare list column.
@@ -344,7 +347,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract <T extends Comparable<T>> TethysTableListColumn<T, MetisFieldId, R, N, I> declareListColumn(MetisFieldId pId);
+    public abstract <T extends Comparable<T>> MetisTableListColumn<T, R, N, I> declareListColumn(MetisFieldId pId);
 
     /**
      * Declare icon column.
@@ -353,8 +356,8 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> TethysTableIconColumn<T, MetisFieldId, R, N, I> declareIconColumn(MetisFieldId pId,
-                                                                                          Class<T> pClass);
+    public abstract <T> MetisTableIconColumn<T, R, N, I> declareIconColumn(MetisFieldId pId,
+                                                                           Class<T> pClass);
 
     /**
      * is field in error?
