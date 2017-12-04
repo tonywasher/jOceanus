@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.atlas.list.MetisListItem.MetisListKey;
 
 /**
  * Set of DifferenceLists.

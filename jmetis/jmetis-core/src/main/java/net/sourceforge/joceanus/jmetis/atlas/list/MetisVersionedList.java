@@ -22,13 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.list;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
@@ -41,11 +37,6 @@ import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent
  */
 public class MetisVersionedList<T extends MetisFieldVersionedItem>
         extends MetisIndexedList<T> {
-    /**
-     * Logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisVersionedList.class);
-
     /**
      * Prime for hashing.
      */
@@ -71,9 +62,9 @@ public class MetisVersionedList<T extends MetisFieldVersionedItem>
     private final Class<T> theClazz;
 
     /**
-     * The constructor for the item.
+     * The supplier constructor for the item.
      */
-    private final Constructor<T> theConstructor;
+    private final Supplier<T> theConstructor;
 
     /**
      * The version of the list.
@@ -83,20 +74,10 @@ public class MetisVersionedList<T extends MetisFieldVersionedItem>
     /**
      * Constructor.
      * @param pClazz the class of the item
-     */
-    protected MetisVersionedList(final Class<T> pClazz) {
-        /* Store parameters */
-        theClazz = pClazz;
-        theConstructor = getConstructor();
-    }
-
-    /**
-     * Constructor.
-     * @param pClazz the class of the item
      * @param pConstructor the constructor
      */
     protected MetisVersionedList(final Class<T> pClazz,
-                                 final Constructor<T> pConstructor) {
+                                 final Supplier<T> pConstructor) {
         /* Store parameters */
         theClazz = pClazz;
         theConstructor = pConstructor;
@@ -124,26 +105,19 @@ public class MetisVersionedList<T extends MetisFieldVersionedItem>
     }
 
     /**
+     * Obtain the constructor.
+     * @return the constructor
+     */
+    protected Supplier<T> getConstructor() {
+        return theConstructor;
+    }
+
+    /**
      * Set version.
      * @param pVersion the version
      */
     protected void setVersion(final int pVersion) {
         theVersion = pVersion;
-    }
-
-    /**
-     * Obtain the standard constructor for the item.
-     * @return the constructor
-     */
-    private Constructor<T> getConstructor() {
-        /* Protect against exceptions */
-        try {
-            return theClazz.getConstructor();
-        } catch (NoSuchMethodException
-                | SecurityException e) {
-            LOGGER.error("Unable to instantiate constructor", e);
-            return null;
-        }
     }
 
     /**
@@ -213,8 +187,8 @@ public class MetisVersionedList<T extends MetisFieldVersionedItem>
      */
     protected void checkReWindVersion(final int pVersion) {
         /* Version must be less than current version and positive */
-        if ((theVersion < pVersion)
-            || (pVersion < 0)) {
+        if (theVersion < pVersion
+            || pVersion < 0) {
             throw new IllegalArgumentException("Invalid Version");
         }
     }
@@ -351,17 +325,8 @@ public class MetisVersionedList<T extends MetisFieldVersionedItem>
      * @return the new item
      */
     protected T newListItem(final Integer pId) {
-        /* Protect against exceptions */
-        try {
-            final T myItem = theConstructor.newInstance();
-            myItem.setIndexedId(pId);
-            return myItem;
-        } catch (InstantiationException
-                | IllegalAccessException
-                | IllegalArgumentException
-                | InvocationTargetException e) {
-            LOGGER.error("Failed to instantiate object", e);
-            return null;
-        }
+        final T myItem = theConstructor.get();
+        myItem.setIndexedId(pId);
+        return myItem;
     }
 }

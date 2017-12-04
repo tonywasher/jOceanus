@@ -158,6 +158,12 @@ public interface MetisFieldItem
         void setLocked();
 
         /**
+         * Obtain the itemType.
+         * @return the itemType
+         */
+        Object getItemType();
+
+        /**
          * Obtain field from fieldId.
          * @param pId the fieldId.
          * @return the corresponding field

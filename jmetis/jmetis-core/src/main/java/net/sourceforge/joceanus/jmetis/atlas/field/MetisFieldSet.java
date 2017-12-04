@@ -104,6 +104,11 @@ public class MetisFieldSet<T extends MetisFieldItem>
     private boolean isLocked;
 
     /**
+     * The itemType.
+     */
+    private Object theItemType;
+
+    /**
      * Constructor.
      * @param pClazz the class of the item
      * @param pStatic is this a static fieldSet?
@@ -123,6 +128,9 @@ public class MetisFieldSet<T extends MetisFieldItem>
             theNextIndex = pParent.getNumVersioned();
             hasVersions = pParent.hasVersions();
             theParent.setLocked();
+            theItemType = isStatic
+                                   ? null
+                                   : pParent.getItemType();
         } else {
             theNextIndex = Integer.valueOf(0);
         }
@@ -246,7 +254,9 @@ public class MetisFieldSet<T extends MetisFieldItem>
 
     @Override
     public String getName() {
-        return theClazz.getSimpleName();
+        return theItemType != null
+                                   ? theItemType.toString()
+                                   : theClazz.getSimpleName();
     }
 
     /**
@@ -297,6 +307,19 @@ public class MetisFieldSet<T extends MetisFieldItem>
     @Override
     public void setLocked() {
         isLocked = true;
+    }
+
+    @Override
+    public Object getItemType() {
+        return theItemType;
+    }
+
+    /**
+     * Set the itemType.
+     * @param pItemType the itemType
+     */
+    public void setItemType(final Object pItemType) {
+        theItemType = pItemType;
     }
 
     @Override

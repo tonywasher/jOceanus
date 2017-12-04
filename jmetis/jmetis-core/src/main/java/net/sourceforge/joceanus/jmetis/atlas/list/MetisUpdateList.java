@@ -68,7 +68,7 @@ public final class MetisUpdateList<T extends MetisFieldVersionedItem>
      */
     protected MetisUpdateList(final MetisBaseList<T> pBase) {
         /* Initialise underlying class */
-        super(pBase.getClazz());
+        super(pBase.getClazz(), pBase.getConstructor());
 
         /* Copy the comparator from the base list */
         theComparator = pBase.getComparator();

@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.atlas.list;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
@@ -44,10 +45,12 @@ public final class MetisDifferenceList<T extends MetisFieldVersionedItem>
     /**
      * Constructor.
      * @param pClass the item type
+     * @param pSupplier the supplier
      */
-    protected MetisDifferenceList(final Class<T> pClass) {
+    protected MetisDifferenceList(final Class<T> pClass,
+                                  final Supplier<T> pSupplier) {
         /* Initialise underlying class */
-        super(pClass);
+        super(pClass, pSupplier);
     }
 
     @Override

@@ -45,4 +45,38 @@ public final class MetisListItem {
          */
         MetisDataItemValidation getValidation();
     }
+
+    /**
+     * Item Definition.
+     */
+    public interface MetisListItemDef {
+        /**
+         * Obtain the item name.
+         * @return the item name
+         */
+        String getItemName();
+
+        /**
+         * Obtain the list name.
+         * @return the list name
+         */
+        String getListName();
+    }
+
+    /**
+     * List Key.
+     */
+    public interface MetisListKey {
+        /**
+         * Obtain the item name.
+         * @return the name of the list
+         */
+        String getItemName();
+
+        /**
+         * Obtain the list name.
+         * @return the name of the list
+         */
+        String getListName();
+    }
 }
