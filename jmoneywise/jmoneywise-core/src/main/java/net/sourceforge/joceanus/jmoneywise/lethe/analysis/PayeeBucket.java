@@ -493,7 +493,7 @@ public final class PayeeBucket
         }
 
         /* If there is National Insurance */
-        final TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
             if (isIncome) {
@@ -646,7 +646,7 @@ public final class PayeeBucket
         }
 
         /* Adjust for national insurance */
-        final TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
         if ((myNatIns != null) && (myNatIns.isNonZero())) {
             if (myAmount == null) {
                 myAmount = new TethysMoney(myNatIns);

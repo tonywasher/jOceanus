@@ -212,11 +212,11 @@ public class TransactionInfoSet
                 return MetisFieldRequired.CANEXIST;
 
             /* NatInsurance and benefit can only occur on salary */
-            case NATINSURANCE:
+            case EMPLOYEENATINS:
             case DEEMEDBENEFIT:
-                return (myClass == TransactionCategoryClass.TAXEDINCOME)
-                                                                         ? MetisFieldRequired.CANEXIST
-                                                                         : MetisFieldRequired.NOTALLOWED;
+                return myClass == TransactionCategoryClass.TAXEDINCOME
+                                                                       ? MetisFieldRequired.CANEXIST
+                                                                       : MetisFieldRequired.NOTALLOWED;
 
             /* Handle Withheld separately */
             case WITHHELD:
@@ -629,7 +629,7 @@ public class TransactionInfoSet
                     myTransaction.addError(TransactionBase.ERROR_CURRENCY, getFieldForClass(pClass));
                 }
                 break;
-            case NATINSURANCE:
+            case EMPLOYEENATINS:
             case DEEMEDBENEFIT:
             case WITHHELD:
                 /* Check value */

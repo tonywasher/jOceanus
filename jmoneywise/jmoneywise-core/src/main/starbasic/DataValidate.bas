@@ -116,4 +116,3 @@ Sub validateYear(ByRef Context As FinanceState, _
     msgBox Year & " is valid"
     End
 End Sub
-

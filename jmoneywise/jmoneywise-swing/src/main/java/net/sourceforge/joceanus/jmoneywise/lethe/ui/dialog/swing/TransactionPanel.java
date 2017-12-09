@@ -263,7 +263,7 @@ public class TransactionPanel
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
-        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE), MetisDataType.MONEY, myNatIns);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS), MetisDataType.MONEY, myNatIns);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
@@ -404,9 +404,9 @@ public class TransactionPanel
         myFieldSet.setAssumedCurrency(myField, myCurrency);
 
         /* Determine whether the natIns field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.NATINSURANCE);
-        bShowField = bEditField || myTrans.getNatInsurance() != null;
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.EMPLOYEENATINS);
+        bShowField = bEditField || myTrans.getEmployeeNatIns() != null;
         myFieldSet.setVisibility(myField, bShowField);
         myFieldSet.setEditable(myField, bEditField);
         myFieldSet.setAssumedCurrency(myField, myCurrency);
@@ -612,8 +612,8 @@ public class TransactionPanel
                 case FOREIGNTAXCREDIT:
                     myTrans.setForeignTaxCredit(pUpdate.getMoney());
                     break;
-                case NATINSURANCE:
-                    myTrans.setNatInsurance(pUpdate.getMoney());
+                case EMPLOYEENATINS:
+                    myTrans.setEmployeeNatIns(pUpdate.getMoney());
                     break;
                 case DEEMEDBENEFIT:
                     myTrans.setBenefit(pUpdate.getMoney());

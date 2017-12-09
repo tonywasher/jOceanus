@@ -251,9 +251,14 @@ public enum StaticDataResource
     TRANSTYPE_VIRTUALINCOME("TransType.VirtualIncome"),
 
     /**
-     * TransType Pension Payment.
+     * TransType GrossIncome.
      */
-    TRANSTYPE_PENSIONPAYMENT("TransType.PensionPayment"),
+    TRANSTYPE_GROSSINCOME("TransType.GrossIncome"),
+
+    /**
+     * TransType PensionContribution.
+     */
+    TRANSTYPE_PENSIONCONTRIB("TransType.PensionContribution"),
 
     /**
      * TransType GiftedIncome.
@@ -821,6 +826,16 @@ public enum StaticDataResource
     TRANSINFO_TAXCREDIT("TransInfoType.TaxCredit"),
 
     /**
+     * TransInfo EmployerNatIns.
+     */
+    TRANSINFO_EMPLOYERNATINS("TransInfoType.EmployerNatIns"),
+
+    /**
+     * TransInfo EmployeeNatIns.
+     */
+    TRANSINFO_EMPLOYEENATINS("TransInfoType.EmployeeNatIns"),
+
+    /**
      * TransInfo Benefit.
      */
     TRANSINFO_BENEFIT("TransInfoType.Benefit"),
@@ -1134,7 +1149,8 @@ public enum StaticDataResource
         myMap.put(TransactionCategoryClass.INTEREST, TRANSTYPE_INTEREST);
         myMap.put(TransactionCategoryClass.DIVIDEND, TRANSTYPE_DIVIDEND);
         myMap.put(TransactionCategoryClass.VIRTUALINCOME, TRANSTYPE_VIRTUALINCOME);
-        myMap.put(TransactionCategoryClass.PENSIONPAYMENT, TRANSTYPE_PENSIONPAYMENT);
+        myMap.put(TransactionCategoryClass.GROSSINCOME, TRANSTYPE_GROSSINCOME);
+        myMap.put(TransactionCategoryClass.PENSIONCONTRIB, TRANSTYPE_PENSIONCONTRIB);
         myMap.put(TransactionCategoryClass.GIFTEDINCOME, TRANSTYPE_GIFTEDINCOME);
         myMap.put(TransactionCategoryClass.INHERITED, TRANSTYPE_INHERITED);
         myMap.put(TransactionCategoryClass.LOANINTERESTEARNED, TRANSTYPE_LOANINTEARNED);
@@ -1317,7 +1333,8 @@ public enum StaticDataResource
         /* Create the map and return it */
         final Map<TransactionInfoClass, TethysResourceId> myMap = new EnumMap<>(TransactionInfoClass.class);
         myMap.put(TransactionInfoClass.TAXCREDIT, TRANSINFO_TAXCREDIT);
-        myMap.put(TransactionInfoClass.NATINSURANCE, TRANSTYPE_NATINS);
+        myMap.put(TransactionInfoClass.EMPLOYERNATINS, TRANSINFO_EMPLOYERNATINS);
+        myMap.put(TransactionInfoClass.EMPLOYEENATINS, TRANSINFO_EMPLOYEENATINS);
         myMap.put(TransactionInfoClass.DEEMEDBENEFIT, TRANSINFO_BENEFIT);
         myMap.put(TransactionInfoClass.WITHHELD, TRANSTYPE_WITHHELD);
         myMap.put(TransactionInfoClass.ACCOUNTDELTAUNITS, TRANSINFO_ACCOUNTDELTAUNITS);

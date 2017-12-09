@@ -598,7 +598,7 @@ public final class TransactionCategoryBucket
             }
 
             /* Adjust for NatInsurance */
-            final TethysMoney myNatIns = pTrans.getNatInsurance();
+            final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
             if (myNatIns != null) {
                 myAmount.addAmount(myNatIns);
             }
@@ -873,7 +873,7 @@ public final class TransactionCategoryBucket
             /* Obtain the implied buckets */
             final TransactionCategoryList myList = theData.getTransCategories();
             theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
-            theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.NATINSURANCE));
+            theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.EMPLOYEENATINS));
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
             theWithheld = getBucket(myList.getEventInfoCategory(TransactionInfoClass.WITHHELD));
             theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
@@ -1113,7 +1113,7 @@ public final class TransactionCategoryBucket
             }
 
             /* Adjust for NatInsurance */
-            final TethysMoney myNatIns = pTrans.getNatInsurance();
+            final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
             if (myNatIns != null) {
                 theNatInsurance.addExpense(pTrans, myNatIns);
                 theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);

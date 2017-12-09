@@ -83,6 +83,7 @@ public final class TransactionValidator {
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
+            case GROSSINCOME:
             case RECOVEREDEXPENSES:
             case OTHERINCOME:
                 /* Taxed/Other income must be to deposit/cash/loan */
@@ -176,6 +177,7 @@ public final class TransactionValidator {
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
+            case GROSSINCOME:
                 /* Cannot refund Taxed Income yet */
                 return pDirection.isFrom();
 
@@ -287,6 +289,7 @@ public final class TransactionValidator {
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TAXEDINCOME:
+            case GROSSINCOME:
                 /* Taxed Income must have a Payee that can provide income */
                 return pPartner instanceof Payee
                        && ((Payee) pPartner).getPayeeTypeClass().canProvideTaxedIncome();

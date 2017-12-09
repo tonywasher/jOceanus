@@ -35,6 +35,7 @@ Public Const acctTaxMan As String = "InlandRevenue"
 Public Const catTaxCredit As String = "Taxes:IncomeTax"
 Public Const catNatInsurance As String = "Taxes:NatInsurance"
 Public Const catBenefit As String = "Income:Benefit"
+Public Const catPensionContrib As String = "Income:PensionContribution"
 Public Const catWithheld As String = "Expenses:Virtual"
 Public Const catMktGrowth As String = "Market:Growth"
 Public Const catCapitalGain	As String = "Market:CapitalGain"
@@ -50,7 +51,8 @@ Sub analyseYear(ByRef Context As FinanceState, _
     Dim myReduction As Double
     Dim myValue As Double
     Dim myTaxCred As Double
-    Dim myNatIns As Double
+    Dim myEeNatIns As Double
+    Dim myErNatIns As Double
     Dim myBenefit As Double
     Dim myWithheld As Double
     Dim myDate As Date
@@ -62,6 +64,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 	Dim myCatInfo As Object
 	Dim myTaxInfo As Object
 	Dim myInsInfo As Object
+	Dim myPensInfo As Object
 	Dim myBenInfo As Object
 	Dim myTaxGainInfo As Object
 	Dim myCharInfo As Object
@@ -76,6 +79,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
     myTaxAcct = getCachedAccount(Context, acctTaxMan) 
     myTaxInfo = getCategoryStats(Context, catTaxCredit) 
     myInsInfo = getCategoryStats(Context, catNatInsurance) 
+    myPensInfo = getCategoryStats(Context, catPensionContrib) 
     myBenInfo = getCategoryStats(Context, catBenefit) 
     myTaxGainInfo = getCategoryStats(Context, catTaxableGain) 
     myWithInfo = getCategoryStats(Context, catWithheld) 
@@ -95,7 +99,8 @@ Sub analyseYear(ByRef Context As FinanceState, _
 		myCatInfo = myEvent.catCategory
 		myValue = myEvent.evtValue
 		myTaxCred = myEvent.evtTaxCredit
-		myNatIns = myEvent.evtNatIns
+		myEeNatIns = myEvent.evtEeNatIns
+		myErNatIns = myEvent.evtErNatIns
 		myBenefit = myEvent.evtBenefit
 		myWithheld = myEvent.evtWithheld
 		myDebUnits = myEvent.evtDebUnits
@@ -105,7 +110,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 		If (myDate > myFinalDate) Then
 			Exit For
 		End If	
-			
+		
     	'If we have a value in the Units cell
 		If ((myDebUnits <> 0) Or (myCredUnits <> 0)) Then
 			'If the debit account has units 
@@ -296,18 +301,18 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				'Else standard transaction
 				Else
 					'Add to income		
-					myDebInfo.acctIncome = myDebInfo.acctIncome + myValue + myTaxCred + myNatIns + myWithheld
+					myDebInfo.acctIncome = myDebInfo.acctIncome + myValue + myTaxCred + myEeNatIns + myErNatIns + myWithheld
 				End If		
 			End If
 			
 			'If there is a TaxCredit
-			If (myTaxCred > 0) Or (myNatIns > 0) Then
+			If (myTaxCred > 0) Or (myEeNatIns > 0) Or (myErNatIns > 0) Then
                 If (myCatInfo.isLoanPay) Then
                     'Adjust taxman expense
                     myTaxAcct.acctExpense = myTaxAcct.acctExpense - myTaxCred
                 Else
 				    'Adjust taxman expense
-                    myTaxAcct.acctExpense = myTaxAcct.acctExpense + myTaxCred + myNatIns
+                    myTaxAcct.acctExpense = myTaxAcct.acctExpense + myTaxCred + myEeNatIns + myErNatIns
                 End If 
 			End If
 			
@@ -316,7 +321,8 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				'Add the amount, tax credit and natInsurance/Benefit
 				myCatInfo.catValue = myCatInfo.catValue + myValue
 				myCatInfo.catTaxCredit = myCatInfo.catTaxCredit + myTaxCred
-				myCatInfo.catNatInsurance = myCatInfo.catNatInsurance + myNatIns
+				myCatInfo.catEeNatIns = myCatInfo.catEeNatIns + myEeNatIns
+				myCatInfo.catErNatIns = myCatInfo.catErNatIns + myErNatIns
 				myCatInfo.catWithheld = myCatInfo.catWithheld + myWithheld
 				
 				'Add the tax credit and Nat Insurance
@@ -325,9 +331,10 @@ Sub analyseYear(ByRef Context As FinanceState, _
    				Else 
     				myTaxInfo.catValue = myTaxInfo.catValue + myTaxCred
    				End If
-				myInsInfo.catValue = myInsInfo.catValue + myNatIns				
+				myInsInfo.catValue = myInsInfo.catValue + myEeNatIns				
+				myPensInfo.catValue = myPensInfo.catValue + myErNatIns				
 				myBenInfo.catValue = myBenInfo.catValue + myBenefit
-				myWithInfo.catValue = myWithInfo.catValue + myBenefit + myWithheld 
+				myWithInfo.catValue = myWithInfo.catValue + myBenefit + myErNatIns + myWithheld
 			End If
 
         'If we have a Stock Demerger

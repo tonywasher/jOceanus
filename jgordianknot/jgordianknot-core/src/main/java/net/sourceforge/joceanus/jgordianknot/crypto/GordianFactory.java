@@ -179,6 +179,11 @@ public abstract class GordianFactory {
             final GordianDigestType myDigestType = myDigestTypes[myInt];
             final GordianDigestSpec mySpec = new GordianDigestSpec(myDigestType, GordianLength.LEN_512);
 
+            /* For the present, ignore KUPYNA due to poor performance */
+            if (GordianDigestType.KUPYNA.equals(myDigestType)) {
+                continue;
+            }
+
             /* If this is a valid digestSpec, return it */
             if (myPredicate.test(mySpec)) {
                 return new GordianRandomSpec(myType, new GordianDigestSpec(myDigestTypes[myInt]));

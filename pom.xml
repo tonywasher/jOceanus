@@ -105,7 +105,7 @@
     <ProjectInfoPluginVersion>2.9</ProjectInfoPluginVersion>
     <JxrPluginVersion>2.5</JxrPluginVersion>
     <JavaDocPluginVersion>3.0.0-M1</JavaDocPluginVersion>
-    <SonarQubePluginVersion>3.3.0.603</SonarQubePluginVersion>
+    <SonarQubePluginVersion>3.4.0.905</SonarQubePluginVersion>
     <CheckStylePluginVersion>2.17</CheckStylePluginVersion>
     <PMDPluginVersion>3.8</PMDPluginVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>

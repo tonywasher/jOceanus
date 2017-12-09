@@ -61,256 +61,261 @@ public enum TransactionCategoryClass implements CategoryInterface {
     VIRTUALINCOME(6, 9),
 
     /**
-     * PensionPayment.
+     * GrossIncome.
      */
-    PENSIONPAYMENT(7, 10),
+    GROSSINCOME(7, 10),
+
+    /**
+     * PensionContribution.
+     */
+    PENSIONCONTRIB(8, 11),
 
     /**
      * Gifted Income.
      */
-    GIFTEDINCOME(8, 11),
+    GIFTEDINCOME(9, 12),
 
     /**
      * Inheritance.
      */
-    INHERITED(9, 12),
+    INHERITED(10, 13),
 
     /**
      * Interest earned on Loans.
      */
-    LOANINTERESTEARNED(10, 13),
+    LOANINTERESTEARNED(11, 14),
 
     /**
      * Loyalty Bonus.
      */
-    LOYALTYBONUS(11, 14),
+    LOYALTYBONUS(12, 15),
 
     /**
      * CashBack.
      */
-    CASHBACK(12, 15),
+    CASHBACK(13, 16),
 
     /**
      * Recovered Expenses.
      */
-    RECOVEREDEXPENSES(13, 16),
+    RECOVEREDEXPENSES(14, 17),
 
     /**
      * Other Income.
      */
-    OTHERINCOME(14, 17),
+    OTHERINCOME(15, 18),
 
     /**
      * Stock Options Exercised.
      */
-    OPTIONSEXERCISE(15, 18),
+    OPTIONSEXERCISE(16, 19),
 
     /**
      * Stock Units Adjustment.
      */
-    UNITSADJUST(16, 19),
+    UNITSADJUST(17, 20),
 
     /**
      * Stock Split.
      */
-    STOCKSPLIT(17, 20),
+    STOCKSPLIT(18, 21),
 
     /**
      * Stock DeMerger.
      */
-    STOCKDEMERGER(18, 21),
+    STOCKDEMERGER(19, 22),
 
     /**
      * Security Replacement.
      */
-    SECURITYREPLACE(19, 22),
+    SECURITYREPLACE(20, 23),
 
     /**
      * Security Closure.
      */
-    SECURITYCLOSURE(20, 23),
+    SECURITYCLOSURE(21, 24),
 
     /**
      * Stock TakeOver.
      */
-    STOCKTAKEOVER(21, 24),
+    STOCKTAKEOVER(22, 25),
 
     /**
      * Stock Rights Issue.
      */
-    STOCKRIGHTSISSUE(22, 25),
+    STOCKRIGHTSISSUE(23, 26),
 
     /**
      * PortfolioXfer.
      */
-    PORTFOLIOXFER(23, 26),
+    PORTFOLIOXFER(24, 27),
 
     /**
      * Stock Options Granted.
      */
-    OPTIONSGRANT(24, 27),
+    OPTIONSGRANT(25, 28),
 
     /**
      * Stock Options Vested.
      */
-    OPTIONSVEST(25, 28),
+    OPTIONSVEST(26, 29),
 
     /**
      * Stock Options Expired.
      */
-    OPTIONSEXPIRE(26, 29),
+    OPTIONSEXPIRE(27, 30),
 
     /**
      * Pension Drawdown.
      */
-    PENSIONDRAWDOWN(27, 30),
+    PENSIONDRAWDOWN(28, 31),
 
     /**
      * Pension TaxFree.
      */
-    PENSIONTAXFREE(28, 31),
+    PENSIONTAXFREE(29, 32),
 
     /**
      * Transfer.
      */
-    TRANSFER(29, 32),
+    TRANSFER(30, 33),
 
     /**
      * Expense.
      */
-    EXPENSE(30, 33),
+    EXPENSE(31, 34),
 
     /**
      * BadDebtCapital.
      */
-    BADDEBTCAPITAL(31, 34),
+    BADDEBTCAPITAL(32, 35),
 
     /**
      * BadDebtInterest.
      */
-    BADDEBTINTEREST(32, 35),
+    BADDEBTINTEREST(33, 36),
 
     /**
      * LocalTaxes.
      */
-    LOCALTAXES(33, 36),
+    LOCALTAXES(34, 37),
 
     /**
      * Write Off.
      */
-    WRITEOFF(34, 37),
+    WRITEOFF(35, 38),
 
     /**
      * Interest charged on Loans.
      */
-    LOANINTERESTCHARGED(35, 38),
+    LOANINTERESTCHARGED(36, 39),
 
     /**
      * Rental Expense.
      */
-    RENTALEXPENSE(36, 39),
+    RENTALEXPENSE(37, 40),
 
     /**
      * AnnuityPurchase.
      */
-    ANNUITYPURCHASE(37, 40),
+    ANNUITYPURCHASE(38, 41),
 
     /**
      * Tax Relief.
      */
-    TAXRELIEF(38, 41),
+    TAXRELIEF(39, 42),
 
     /**
      * IncomeTax.
      */
-    INCOMETAX(39, 42),
+    INCOMETAX(40, 43),
 
     /**
      * Taxed Interest.
      */
-    TAXEDINTEREST(40, 43),
+    TAXEDINTEREST(41, 44),
 
     /**
      * Gross Interest.
      */
-    GROSSINTEREST(41, 44),
+    GROSSINTEREST(42, 45),
 
     /**
      * Tax Free Interest.
      */
-    TAXFREEINTEREST(42, 45),
+    TAXFREEINTEREST(43, 46),
 
     /**
      * Share Dividend Income.
      */
-    SHAREDIVIDEND(43, 46),
+    SHAREDIVIDEND(44, 47),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UNITTRUSTDIVIDEND(44, 47),
+    UNITTRUSTDIVIDEND(45, 48),
 
     /**
      * Foreign Dividend.
      */
-    FOREIGNDIVIDEND(45, 48),
+    FOREIGNDIVIDEND(46, 49),
 
     /**
      * Tax Free Dividend.
      */
-    TAXFREEDIVIDEND(46, 49),
+    TAXFREEDIVIDEND(47, 50),
 
     /**
      * Taxed Loyalty Bonus.
      */
-    TAXEDLOYALTYBONUS(47, 50),
+    TAXEDLOYALTYBONUS(48, 51),
 
     /**
      * Gross LoyaltyBonus.
      */
-    GROSSLOYALTYBONUS(48, 51),
+    GROSSLOYALTYBONUS(49, 52),
 
     /**
      * Tax Free LoyaltyBonus.
      */
-    TAXFREELOYALTYBONUS(49, 52),
+    TAXFREELOYALTYBONUS(50, 53),
 
     /**
      * Chargeable Gain.
      */
-    CHARGEABLEGAIN(50, 53),
+    CHARGEABLEGAIN(51, 54),
 
     /**
      * Residential Gain.
      */
-    RESIDENTIALGAIN(51, 54),
+    RESIDENTIALGAIN(52, 55),
 
     /**
      * Capital Gain.
      */
-    CAPITALGAIN(52, 55),
+    CAPITALGAIN(53, 56),
 
     /**
      * TaxFreeCapital Gain.
      */
-    TAXFREEGAIN(53, 56),
+    TAXFREEGAIN(54, 57),
 
     /**
      * Market Growth.
      */
-    MARKETGROWTH(54, 57),
+    MARKETGROWTH(55, 58),
 
     /**
      * CurrencyFluctuation.
      */
-    CURRENCYFLUCTUATION(55, 58),
+    CURRENCYFLUCTUATION(56, 59),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NATINSURANCE(56, 59),
+    NATINSURANCE(57, 60),
 
     /**
      * Withheld.
@@ -318,14 +323,14 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is a singular category catching withheld items such as charity donations associated with
      * interest.
      */
-    WITHHELD(57, 60),
+    WITHHELD(58, 61),
 
     /**
      * OpeningBalance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    OPENINGBALANCE(58, 61),
+    OPENINGBALANCE(59, 62),
 
     /**
      * Income Totals.
@@ -333,7 +338,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(59, 1),
+    INCOMETOTALS(60, 1),
 
     /**
      * Expense Totals.
@@ -341,7 +346,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(60, 2),
+    EXPENSETOTALS(61, 2),
 
     /**
      * Security Parent.
@@ -349,7 +354,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(61, 3),
+    SECURITYPARENT(62, 3),
 
     /**
      * Totals.
@@ -357,7 +362,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(62, 0);
+    TOTALS(63, 0);
 
     /**
      * The String name.
@@ -542,7 +547,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
         switch (this) {
             case TAXEDINCOME:
             case VIRTUALINCOME:
-            case PENSIONPAYMENT:
+            case GROSSINCOME:
+            case PENSIONCONTRIB:
             case LOYALTYBONUS:
             case CASHBACK:
             case OTHERINCOME:

@@ -542,7 +542,7 @@ public final class TransactionCategory
             switch (pInfoClass) {
                 case TAXCREDIT:
                     return getSingularClass(TransactionCategoryClass.INCOMETAX);
-                case NATINSURANCE:
+                case EMPLOYEENATINS:
                     return getSingularClass(TransactionCategoryClass.NATINSURANCE);
                 case DEEMEDBENEFIT:
                     return getSingularClass(TransactionCategoryClass.VIRTUALINCOME);

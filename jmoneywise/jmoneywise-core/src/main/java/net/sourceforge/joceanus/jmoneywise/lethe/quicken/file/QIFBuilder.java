@@ -133,7 +133,7 @@ public class QIFBuilder {
         /* Store categories */
         final TransactionCategoryList myCategories = pData.getTransCategories();
         theTaxCategory = myCategories.getEventInfoCategory(TransactionInfoClass.TAXCREDIT);
-        theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.NATINSURANCE);
+        theNatInsCategory = myCategories.getEventInfoCategory(TransactionInfoClass.EMPLOYEENATINS);
         theBenefitCategory = myCategories.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT);
         theWithheldCategory = myCategories.getEventInfoCategory(TransactionInfoClass.WITHHELD);
         theOpeningCategory = myCategories.getSingularClass(TransactionCategoryClass.OPENINGBALANCE);
@@ -392,7 +392,7 @@ public class QIFBuilder {
         if (pTrans.getTaxCredit() != null) {
             return true;
         }
-        if (pTrans.getNatInsurance() != null) {
+        if (pTrans.getEmployeeNatIns() != null) {
             return true;
         }
         if (pTrans.getDeemedBenefit() != null) {
@@ -485,7 +485,7 @@ public class QIFBuilder {
         }
 
         /* Handle National Insurance */
-        TethysMoney myNatIns = pTrans.getNatInsurance();
+        TethysMoney myNatIns = pTrans.getEmployeeNatIns();
         if (myNatIns != null) {
             /* Add to amount */
             myAmount.addAmount(myNatIns);
@@ -622,7 +622,7 @@ public class QIFBuilder {
         }
 
         /* Handle National Insurance */
-        final TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
         if (myNatIns != null) {
             /* Subtract from amount */
             myAmount.subtractAmount(myNatIns);

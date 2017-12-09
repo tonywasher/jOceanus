@@ -64,7 +64,8 @@ Public Type CategoryStats
 	'Counters
 	catValue As Double
 	catTaxCredit As Double
-	catNatInsurance As Double
+	catEeNatIns As Double
+	catErNatIns As Double
 	catWithheld As Double
 	
 	'Additional three fields declared to fix bug in debugger which loses last three fields
@@ -131,7 +132,8 @@ Private Sub resetCategory(ByRef category As CategoryStats)
 	'Reset counters
 	category.catValue = 0
 	category.catTaxCredit = 0
-	category.catNatInsurance = 0
+	category.catEeNatIns = 0
+	category.catErNatIns = 0
 	category.catWithheld = 0
 End Sub
 

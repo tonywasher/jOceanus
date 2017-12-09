@@ -29,18 +29,19 @@ Public Const colEvtCategory As Integer = 4
 Private Const colEvtReconciled As Integer = 5
 Private Const colEvtComment As Integer = 6
 Private Const colEvtTaxCred As Integer = 7
-Private Const colEvtNatIns As Integer = 8
-Private Const colEvtBenefit As Integer = 9
-Private Const colEvtDebUnits As Integer = 10
-Private Const colEvtCredUnits As Integer = 11
-Private Const colEvtDilution As Integer = 12
-Private Const colEvtRef As Integer = 13
-Private Const colEvtYears As Integer = 14
-Private Const colEvtWithheld As Integer = 15
-Private Const colEvtThirdParty As Integer = 16
-Private Const colEvtThirdPartyAmount As Integer = 17
-Private Const colEvtPartnerAmount As Integer = 18
-Private Const colEvtTags As Integer = 19
+Private Const colEvtEeNatIns As Integer = 8
+Private Const colEvtErNatIns As Integer = 9
+Private Const colEvtBenefit As Integer = 10
+Private Const colEvtDebUnits As Integer = 11
+Private Const colEvtCredUnits As Integer = 12
+Private Const colEvtDilution As Integer = 13
+Private Const colEvtRef As Integer = 14
+Private Const colEvtYears As Integer = 15
+Private Const colEvtWithheld As Integer = 16
+Private Const colEvtThirdParty As Integer = 17
+Private Const colEvtThirdPartyAmount As Integer = 18
+Private Const colEvtPartnerAmount As Integer = 19
+Private Const colEvtTags As Integer = 20
 
 'Hidden categories
 Public Const catTransfer As String = "Transfer"
@@ -76,7 +77,8 @@ Public Type EventInfo
 	evtThirdPartyValue As Double
 	evtPartnerValue As Double
 	evtTaxCredit As Double
-	evtNatIns As Double
+	evtEeNatIns As Double
+	evtErNatIns As Double
 	evtBenefit As Double
 	evtWithheld As Double
 	evtDebUnits As Double
@@ -190,7 +192,8 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	myEvent.evtDebUnits        = eventRow.getCellByPosition(colEvtDebUnits, 0).getValue()
 	myEvent.evtCredUnits       = eventRow.getCellByPosition(colEvtCredUnits, 0).getValue()
 	myEvent.evtTaxCredit       = eventRow.getCellByPosition(colEvtTaxCred, 0).getValue()
-	myEvent.evtNatIns          = eventRow.getCellByPosition(colEvtNatIns, 0).getValue()
+	myEvent.evtEeNatIns        = eventRow.getCellByPosition(colEvtEeNatIns, 0).getValue()
+	myEvent.evtErNatIns        = eventRow.getCellByPosition(colEvtErNatIns, 0).getValue()
 	myEvent.evtBenefit         = eventRow.getCellByPosition(colEvtBenefit, 0).getValue()
 	myEvent.evtDilution        = eventRow.getCellByPosition(colEvtDilution, 0).getValue()
 	myEvent.evtWithheld        = eventRow.getCellByPosition(colEvtWithheld, 0).getValue()

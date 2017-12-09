@@ -541,7 +541,7 @@ public class TaxBasisBucket
         /* Access details */
         final TethysMoney myAmount = pTrans.getCreditAmount();
         final TethysMoney myTaxCredit = pTrans.getTaxCredit();
-        final TethysMoney myNatIns = pTrans.getNatInsurance();
+        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
         final TethysMoney myBenefit = pTrans.getDeemedBenefit();
         final TethysMoney myWithheld = pTrans.getWithheld();
 
@@ -1165,6 +1165,7 @@ public class TaxBasisBucket
             final TaxBasisBucket myBucket;
             switch (pCategory.getCategoryTypeClass()) {
                 case TAXEDINCOME:
+                case GROSSINCOME:
                     /* Adjust the Gross salary bucket */
                     myBucket = getBucket(TaxBasisClass.SALARY);
                     myBucket.addIncomeTransaction(pTrans);
@@ -1221,7 +1222,7 @@ public class TaxBasisBucket
                 case TAXFREEINTEREST:
                 case TAXFREEDIVIDEND:
                 case LOANINTERESTEARNED:
-                case PENSIONPAYMENT:
+                case PENSIONCONTRIB:
                 case INHERITED:
                 case CASHBACK:
                 case LOYALTYBONUS:

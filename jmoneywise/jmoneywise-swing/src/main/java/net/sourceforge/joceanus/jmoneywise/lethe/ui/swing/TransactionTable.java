@@ -34,7 +34,6 @@ import javax.swing.JTable;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldCalendarCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldDilutionCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
@@ -49,6 +48,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIntegerCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
@@ -226,7 +226,7 @@ public class TransactionTable
     /**
      * NatInsurance Column Title.
      */
-    private static final String TITLE_NATINS = TransactionInfoClass.NATINSURANCE.toString();
+    private static final String TITLE_NATINS = TransactionInfoClass.EMPLOYEENATINS.toString();
 
     /**
      * DeemedBenefit Column Title.
@@ -1283,7 +1283,7 @@ public class TransactionTable
                 case COLUMN_TAXCREDIT:
                     return pTrans.getTaxCredit();
                 case COLUMN_NATINS:
-                    return pTrans.getNatInsurance();
+                    return pTrans.getEmployeeNatIns();
                 case COLUMN_BENEFIT:
                     return pTrans.getDeemedBenefit();
                 case COLUMN_WITHHELD:
@@ -1392,7 +1392,7 @@ public class TransactionTable
                     pItem.setTaxCredit((TethysMoney) pValue);
                     break;
                 case COLUMN_NATINS:
-                    pItem.setNatInsurance((TethysMoney) pValue);
+                    pItem.setEmployeeNatIns((TethysMoney) pValue);
                     break;
                 case COLUMN_BENEFIT:
                     pItem.setBenefit((TethysMoney) pValue);
@@ -1442,7 +1442,7 @@ public class TransactionTable
                 case COLUMN_TAXCREDIT:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.TAXCREDIT);
                 case COLUMN_NATINS:
-                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.NATINSURANCE);
+                    return TransactionPanel.isEditableField(pItem, TransactionInfoClass.EMPLOYEENATINS);
                 case COLUMN_BENEFIT:
                     return TransactionPanel.isEditableField(pItem, TransactionInfoClass.DEEMEDBENEFIT);
                 case COLUMN_WITHHELD:
@@ -1509,7 +1509,7 @@ public class TransactionTable
                 case COLUMN_TAXCREDIT:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
                 case COLUMN_NATINS:
-                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.NATINSURANCE);
+                    return TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS);
                 case COLUMN_BENEFIT:
                     return TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT);
                 case COLUMN_WITHHELD:

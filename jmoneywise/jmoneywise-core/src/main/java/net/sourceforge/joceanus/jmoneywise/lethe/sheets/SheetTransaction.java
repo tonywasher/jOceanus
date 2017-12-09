@@ -296,11 +296,18 @@ public class SheetTransaction
             myTaxCredit = myCell.getStringValue();
         }
 
-        /* Handle NatInsurance which may be missing */
+        /* Handle EmployeeNatIns which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myNatInsurance = null;
+        String myEmployeeNatIns = null;
         if (myCell != null) {
-            myNatInsurance = myCell.getStringValue();
+            myEmployeeNatIns = myCell.getStringValue();
+        }
+
+        /* Handle EmployerNatIns which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        String myEmployerNatIns = null;
+        if (myCell != null) {
+            myEmployerNatIns = myCell.getStringValue();
         }
 
         /* Handle Benefit which may be missing */
@@ -403,7 +410,8 @@ public class SheetTransaction
         final TransactionInfoList myInfoList = pData.getTransactionInfo();
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.COMMENTS, myDesc);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.TAXCREDIT, myTaxCredit);
-        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.NATINSURANCE, myNatInsurance);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.EMPLOYEENATINS, myEmployeeNatIns);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.EMPLOYERNATINS, myEmployerNatIns);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.DEEMEDBENEFIT, myBenefit);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.ACCOUNTDELTAUNITS, myDebitUnits);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERDELTAUNITS, myCreditUnits);

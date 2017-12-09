@@ -382,12 +382,22 @@ public class Transaction
     }
 
     /**
-     * Obtain National Insurance.
+     * Obtain Employer National Insurance.
      * @return the NatInsurance
      */
-    public final TethysMoney getNatInsurance() {
+    public final TethysMoney getEmployerNatIns() {
         return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.NATINSURANCE, TethysMoney.class)
+                          ? theInfoSet.getValue(TransactionInfoClass.EMPLOYERNATINS, TethysMoney.class)
+                          : null;
+    }
+
+    /**
+     * Obtain Employee National Insurance.
+     * @return the NatInsurance
+     */
+    public final TethysMoney getEmployeeNatIns() {
+        return hasInfoSet
+                          ? theInfoSet.getValue(TransactionInfoClass.EMPLOYEENATINS, TethysMoney.class)
                           : null;
     }
 
@@ -853,12 +863,21 @@ public class Transaction
     }
 
     /**
-     * Set a new NatInsurance.
+     * Set a new Employer NatInsurance.
      * @param pNatIns the new insurance
      * @throws OceanusException on error
      */
-    public final void setNatInsurance(final TethysMoney pNatIns) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.NATINSURANCE, pNatIns);
+    public final void setEmployerNatIns(final TethysMoney pNatIns) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.EMPLOYERNATINS, pNatIns);
+    }
+
+    /**
+     * Set a new Employee NatInsurance.
+     * @param pNatIns the new insurance
+     * @throws OceanusException on error
+     */
+    public final void setEmployeeNatIns(final TethysMoney pNatIns) throws OceanusException {
+        setInfoSetValue(TransactionInfoClass.EMPLOYEENATINS, pNatIns);
     }
 
     /**

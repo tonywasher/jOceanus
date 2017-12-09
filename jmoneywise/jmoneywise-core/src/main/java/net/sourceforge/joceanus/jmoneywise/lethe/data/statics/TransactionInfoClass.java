@@ -38,89 +38,94 @@ public enum TransactionInfoClass implements DataInfoClass {
     TAXCREDIT(1, 0, MetisDataType.MONEY),
 
     /**
-     * National Insurance.
+     * Employer National Insurance.
      */
-    NATINSURANCE(2, 1, MetisDataType.MONEY),
+    EMPLOYERNATINS(2, 1, MetisDataType.MONEY),
+
+    /**
+     * Employee National Insurance.
+     */
+    EMPLOYEENATINS(3, 2, MetisDataType.MONEY),
 
     /**
      * Deemed Benefit.
      */
-    DEEMEDBENEFIT(3, 2, MetisDataType.MONEY),
+    DEEMEDBENEFIT(4, 3, MetisDataType.MONEY),
 
     /**
      * QualifyingYears.
      */
-    QUALIFYYEARS(4, 3, MetisDataType.INTEGER),
+    QUALIFYYEARS(5, 4, MetisDataType.INTEGER),
 
     /**
      * Account Delta Units.
      */
-    ACCOUNTDELTAUNITS(5, 4, MetisDataType.UNITS),
+    ACCOUNTDELTAUNITS(6, 5, MetisDataType.UNITS),
 
     /**
      * Partner Delta Units.
      */
-    PARTNERDELTAUNITS(6, 5, MetisDataType.UNITS),
+    PARTNERDELTAUNITS(7, 6, MetisDataType.UNITS),
 
     /**
      * Dilution.
      */
-    DILUTION(7, 6, MetisDataType.DILUTION),
+    DILUTION(8, 7, MetisDataType.DILUTION),
 
     /**
      * Reference.
      */
-    REFERENCE(8, 7, MetisDataType.STRING),
+    REFERENCE(9, 8, MetisDataType.STRING),
 
     /**
      * Withheld.
      */
-    WITHHELD(9, 8, MetisDataType.MONEY),
+    WITHHELD(10, 9, MetisDataType.MONEY),
 
     /**
      * Partner Amount.
      */
-    PARTNERAMOUNT(10, 9, MetisDataType.MONEY),
+    PARTNERAMOUNT(11, 10, MetisDataType.MONEY),
 
     /**
      * ThirdParty Amount.
      */
-    RETURNEDCASH(11, 10, MetisDataType.MONEY),
+    RETURNEDCASH(12, 11, MetisDataType.MONEY),
 
     /**
      * ReturnedCashAccount.
      */
-    RETURNEDCASHACCOUNT(12, 11, MetisDataType.LINK),
+    RETURNEDCASHACCOUNT(13, 12, MetisDataType.LINK),
 
     /**
      * Comments.
      */
-    COMMENTS(13, 12, MetisDataType.STRING),
+    COMMENTS(14, 13, MetisDataType.STRING),
 
     /**
      * ForeignTaxCredit.
      */
-    FOREIGNTAXCREDIT(14, 13, MetisDataType.MONEY),
+    FOREIGNTAXCREDIT(15, 14, MetisDataType.MONEY),
 
     /**
      * Price.
      */
-    PRICE(15, 14, MetisDataType.PRICE),
+    PRICE(16, 15, MetisDataType.PRICE),
 
     /**
      * XchangeRate.
      */
-    XCHANGERATE(16, 15, MetisDataType.RATIO),
+    XCHANGERATE(17, 16, MetisDataType.RATIO),
 
     /**
      * Commission.
      */
-    COMMISSION(17, 16, MetisDataType.MONEY),
+    COMMISSION(18, 17, MetisDataType.MONEY),
 
     /**
      * TransactionTag.
      */
-    TRANSTAG(18, 17, MetisDataType.LINKSET);
+    TRANSTAG(19, 18, MetisDataType.LINKSET);
 
     /**
      * The String name.

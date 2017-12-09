@@ -230,11 +230,19 @@ public class TransactionHelper {
     }
 
     /**
-     * Obtain national insurance.
+     * Obtain employer national insurance.
      * @return the national insurance.
      */
-    public TethysMoney getNatInsurance() {
-        return theAccountDetail.getNatInsurance();
+    public TethysMoney getEmployerNatIns() {
+        return theAccountDetail.getEmployerNatIns();
+    }
+
+    /**
+     * Obtain employee national insurance.
+     * @return the national insurance.
+     */
+    public TethysMoney getEmployeeNatIns() {
+        return theAccountDetail.getEmployeeNatIns();
     }
 
     /**
@@ -406,9 +414,14 @@ public class TransactionHelper {
         private final TethysMoney theTaxCredit;
 
         /**
-         * The natInsurance.
+         * The Employer natIns.
          */
-        private final TethysMoney theNatIns;
+        private final TethysMoney theEmployerNatIns;
+
+        /**
+         * The Employee natIns.
+         */
+        private final TethysMoney theEmployeeNatIns;
 
         /**
          * The benefit amount.
@@ -470,7 +483,8 @@ public class TransactionHelper {
             theDirection = theCurrent.getDirection();
             theCategory = theCurrent.getCategory();
             theTaxCredit = theCurrent.getTaxCredit();
-            theNatIns = theCurrent.getNatInsurance();
+            theEmployerNatIns = theCurrent.getEmployerNatIns();
+            theEmployeeNatIns = theCurrent.getEmployeeNatIns();
             theBenefit = theCurrent.getDeemedBenefit();
             theWithheld = theCurrent.getWithheld();
             theReturnedCashAccount = theCurrent.getReturnedCashAccount();
@@ -726,13 +740,23 @@ public class TransactionHelper {
         }
 
         /**
-         * Obtain natInsurance.
+         * Obtain employer natInsurance.
          * @return the national insurance
          */
-        private TethysMoney getNatInsurance() {
+        private TethysMoney getEmployerNatIns() {
             return theForeignAccount != null
-                                             ? theForeignAccount.theNatIns
-                                             : theNatIns;
+                                             ? theForeignAccount.theEmployerNatIns
+                                             : theEmployerNatIns;
+        }
+
+        /**
+         * Obtain employee natInsurance.
+         * @return the national insurance
+         */
+        private TethysMoney getEmployeeNatIns() {
+            return theForeignAccount != null
+                                             ? theForeignAccount.theEmployeeNatIns
+                                             : theEmployeeNatIns;
         }
 
         /**
@@ -805,9 +829,14 @@ public class TransactionHelper {
         private final TethysMoney theTaxCredit;
 
         /**
-         * The natInsurance.
+         * The employer natInsurance.
          */
-        private final TethysMoney theNatIns;
+        private final TethysMoney theEmployerNatIns;
+
+        /**
+         * The employee natInsurance.
+         */
+        private final TethysMoney theEmployeeNatIns;
 
         /**
          * The benefit amount.
@@ -841,26 +870,32 @@ public class TransactionHelper {
 
             /* Obtain tax value */
             TethysMoney myValue = pTrans.theTaxCredit;
-            theTaxCredit = (myValue != null)
-                                             ? myValue.convertCurrency(myCurrency, myRate)
-                                             : null;
-            /* Obtain NatIns */
-            myValue = pTrans.theNatIns;
-            theNatIns = (myValue != null)
-                                          ? myValue.convertCurrency(myCurrency, myRate)
-                                          : null;
+            theTaxCredit = myValue != null
+                                           ? myValue.convertCurrency(myCurrency, myRate)
+                                           : null;
+            /* Obtain Employer NatIns */
+            myValue = pTrans.theEmployerNatIns;
+            theEmployerNatIns = myValue != null
+                                                ? myValue.convertCurrency(myCurrency, myRate)
+                                                : null;
+
+            /* Obtain Employee NatIns */
+            myValue = pTrans.theEmployeeNatIns;
+            theEmployeeNatIns = myValue != null
+                                                ? myValue.convertCurrency(myCurrency, myRate)
+                                                : null;
 
             /* Obtain benefit */
             myValue = pTrans.theBenefit;
-            theBenefit = (myValue != null)
-                                           ? myValue.convertCurrency(myCurrency, myRate)
-                                           : null;
+            theBenefit = myValue != null
+                                         ? myValue.convertCurrency(myCurrency, myRate)
+                                         : null;
 
             /* Obtain withheld */
             myValue = pTrans.theWithheld;
-            theWithheld = (myValue != null)
-                                            ? myValue.convertCurrency(myCurrency, myRate)
-                                            : null;
+            theWithheld = myValue != null
+                                          ? myValue.convertCurrency(myCurrency, myRate)
+                                          : null;
         }
     }
 
