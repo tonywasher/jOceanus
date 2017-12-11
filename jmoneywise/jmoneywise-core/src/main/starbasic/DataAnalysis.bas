@@ -134,6 +134,16 @@ Sub analyseYear(ByRef Context As FinanceState, _
 			End If			
         End If
         
+        'If this is a security Closure, reset units
+        If (myCatInfo.isStockClosure) Then 
+ 		    myDebInfo.acctUnits = 0
+        End If 
+        
+        'If this is the first credit of an autoUnits security, then set units
+        If (myCredInfo.hasUnits And myCredInfo.acctType.isAutoUnits And myCredInfo.acctUnits = 0) Then 
+ 		    myCredInfo.acctUnits = myCredInfo.acctType.numAutoUnits
+        End If 
+        
     	'If we have a value in the Amount cell
 		If (myValue <> 0) Then
 			'Access the statistics for the Credit account
@@ -322,7 +332,6 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				myCatInfo.catValue = myCatInfo.catValue + myValue
 				myCatInfo.catTaxCredit = myCatInfo.catTaxCredit + myTaxCred
 				myCatInfo.catEeNatIns = myCatInfo.catEeNatIns + myEeNatIns
-				myCatInfo.catErNatIns = myCatInfo.catErNatIns + myErNatIns
 				myCatInfo.catWithheld = myCatInfo.catWithheld + myWithheld
 				
 				'Add the tax credit and Nat Insurance

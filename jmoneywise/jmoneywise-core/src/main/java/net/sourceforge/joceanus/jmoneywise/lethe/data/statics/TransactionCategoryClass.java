@@ -745,6 +745,14 @@ public enum TransactionCategoryClass implements CategoryInterface {
         }
     }
 
+    /**
+     * Is this event category a security closure?
+     * @return true/false
+     */
+    public boolean isSecurityClosure() {
+        return this == SECURITYCLOSURE;
+    }
+
     @Override
     public boolean isTotals() {
         return this == TransactionCategoryClass.TOTALS;

@@ -594,6 +594,7 @@ public class TransactionAnalyser
                 break;
             /* Process standard transfer in/out */
             case TRANSFER:
+            case SECURITYCLOSURE:
             case EXPENSE:
             case INHERITED:
             case OTHERINCOME:
@@ -899,7 +900,6 @@ public class TransactionAnalyser
      */
     private void processCreditXferIn(final SecurityHolding pHolding) {
         /* Transfer is to the credit account and may or may not have a change to the units */
-        final TethysUnits myDeltaUnits = theHelper.getCreditUnits();
         TethysMoney myAmount = theHelper.getCreditAmount();
         final TethysRatio myExchangeRate = theHelper.getCreditExchangeRate();
         final Security mySecurity = pHolding.getSecurity();
@@ -921,6 +921,14 @@ public class TransactionAnalyser
         myAsset.adjustCounter(SecurityAttribute.RESIDUALCOST, myAmount);
         myAsset.adjustCounter(SecurityAttribute.INVESTED, myAmount);
 
+        /* Determine the delta units */
+        final SecurityTypeClass mySecClass = mySecurity.getSecurityTypeClass();
+        TethysUnits myDeltaUnits = theHelper.getCreditUnits();
+        TethysUnits myUnits = myAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
+        if (mySecClass.isAutoUnits() && myUnits.isZero()) {
+            myDeltaUnits = TethysUnits.getWholeUnits(mySecClass.getAutoUnits());
+        }
+
         /* If we have new units */
         if (myDeltaUnits != null) {
             /* Record change in units */
@@ -931,7 +939,7 @@ public class TransactionAnalyser
         final TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
 
         /* Determine value of this stock after the transaction */
-        final TethysUnits myUnits = myAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
+        myUnits = myAsset.getValues().getUnitsValue(SecurityAttribute.UNITS);
         TethysMoney myValue = myUnits.valueAtPrice(myPrice);
 
         /* If we are foreign */
@@ -1081,8 +1089,6 @@ public class TransactionAnalyser
         /* Transfer out is from the debit account and may or may not have units */
         final Security myDebit = pHolding.getSecurity();
         TethysMoney myAmount = theHelper.getDebitAmount();
-        TethysUnits myDeltaUnits = theHelper.getDebitUnits();
-        final boolean isCapitalDistribution = myDeltaUnits == null;
         boolean isLargeCash = false;
 
         /* Access the Asset Security Bucket */
@@ -1116,6 +1122,12 @@ public class TransactionAnalyser
         final TethysMoney myCost = myValues.getMoneyValue(SecurityAttribute.RESIDUALCOST);
         TethysRatio myCostDilution = null;
         TethysMoney myConsideration = null;
+
+        /* Determine the delta units */
+        TethysUnits myDeltaUnits = theHelper.getCategoryClass().isSecurityClosure()
+                                                                                    ? myUnits
+                                                                                    : theHelper.getDebitUnits();
+        final boolean isCapitalDistribution = myDeltaUnits == null;
 
         /* If this is not a capital distribution */
         if (!isCapitalDistribution) {

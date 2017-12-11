@@ -125,6 +125,16 @@ public enum SecurityTypeClass implements StaticInterface {
     ASSET(12, 11);
 
     /**
+     * Number of Pension Years for valuation.
+     */
+    private static final int PENSION_YEARS = 20;
+
+    /**
+     * Number of Pension Weeks for valuation.
+     */
+    private static final int PENSION_WEEKS = 52;
+
+    /**
      * The String name.
      */
     private String theName;
@@ -359,5 +369,39 @@ public enum SecurityTypeClass implements StaticInterface {
      */
     public boolean isSingular() {
         return isStatePension();
+    }
+
+    /**
+     * Is this an autoUnits?
+     * @return <code>true</code> if the SecurityType is an autoUnits, <code>false</code> otherwise.
+     */
+    public boolean isAutoUnits() {
+        switch (this) {
+            case ENDOWMENT:
+            case STATEPENSION:
+            case DEFINEDCONTRIBUTION:
+            case DEFINEDBENEFIT:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Obtain autoUnits.
+     * @return the number of units for this security if active.
+     */
+    public Integer getAutoUnits() {
+        switch (this) {
+            case ENDOWMENT:
+            case DEFINEDCONTRIBUTION:
+                return 1;
+            case STATEPENSION:
+                return PENSION_YEARS * PENSION_WEEKS;
+            case DEFINEDBENEFIT:
+                return PENSION_YEARS;
+            default:
+                return null;
+        }
     }
 }

@@ -38,6 +38,7 @@ Private Const colCatAssetEarn As Integer = 10
 Private Const colCatRights As Integer = 11
 Private Const colCatDemerger As Integer = 12
 Private Const colCatTakeover As Integer = 13
+Private Const colCatClosure As Integer = 14
 
 'Statistics for Category
 Public Type CategoryStats
@@ -57,6 +58,7 @@ Public Type CategoryStats
 	isStockDemerger As Boolean
 	isStockTakeover As Boolean
 	isStockRights As Boolean
+	isStockClosure As Boolean
 	
 	'Reporting index
 	idxCategory As Integer
@@ -65,7 +67,6 @@ Public Type CategoryStats
 	catValue As Double
 	catTaxCredit As Double
 	catEeNatIns As Double
-	catErNatIns As Double
 	catWithheld As Double
 	
 	'Additional three fields declared to fix bug in debugger which loses last three fields
@@ -115,6 +116,7 @@ Private Sub loadCategories(ByRef Context As FinanceState)
 	    myCat.isStockRights = myRow.getCellByPosition(colCatRights, 0).getValue()
 	    myCat.isStockDemerger = myRow.getCellByPosition(colCatDemerger, 0).getValue()
 	    myCat.isStockTakeover = myRow.getCellByPosition(colCatTakeover, 0).getValue()
+	    myCat.isStockClosure = myRow.getCellByPosition(colCatClosure, 0).getValue()
 
 		'Initialise index
 		myCat.idxCategory = -1
@@ -133,7 +135,6 @@ Private Sub resetCategory(ByRef category As CategoryStats)
 	category.catValue = 0
 	category.catTaxCredit = 0
 	category.catEeNatIns = 0
-	category.catErNatIns = 0
 	category.catWithheld = 0
 End Sub
 

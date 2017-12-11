@@ -52,8 +52,9 @@ Private Const colAcTpEndowment As Integer = 8
 Private Const colAcTpPortfolio As Integer = 9
 Private Const colAcTpCapital As Integer = 10
 Private Const colAcTpLifeBond As Integer = 11
-Private Const colAcTpTaxFree As Integer = 12
-Private Const colAcTpGross As Integer = 13
+Private Const colAcTpAutoUnits As Integer = 12
+Private Const colAcTpTaxFree As Integer = 13
+Private Const colAcTpGross As Integer = 14
 
 'Account Type
 Public Type AccountType
@@ -73,6 +74,8 @@ Public Type AccountType
 	isPortfolio As Boolean
 	isCapital As Boolean
 	isLifeBond As Boolean	
+	isAutoUnits As Boolean	
+	numAutoUnits As Integer	
 	
 	'Additional three fields declared to fix bug in debugger which loses last three fields
 	idx1 As Integer
@@ -193,7 +196,11 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
 	    myType.isPortfolio = myRow.getCellByPosition(colAcTpPortfolio, 0).getValue()
 	    myType.isTaxFree = myRow.getCellByPosition(colAcTpTaxFree, 0).getValue()
 	    myType.isGross = myRow.getCellByPosition(colAcTpGross, 0).getValue()
-    		
+
+        'Handle autoUnits    		
+	    myType.numAutoUnits = myRow.getCellByPosition(colAcTpAutoUnits, 0).getValue()
+	    myType.isAutoUnits = myType.numAutoUnits <> 0
+	    
     	'Store the account type
     	putHashKey(myMap, myName, myType) 
 	Next

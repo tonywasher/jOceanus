@@ -364,6 +364,14 @@ public class TransactionInfoSet
         if (!(pAccount instanceof SecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
         }
+
+        /* Account cannot be autoUnits */
+        final SecurityHolding myHolding = (SecurityHolding) pAccount;
+        if (myHolding.getSecurity().getSecurityTypeClass().isAutoUnits()) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
+
+        /* Handle different transaction types */
         switch (pClass) {
             case TRANSFER:
             case STOCKDEMERGER:
@@ -399,6 +407,14 @@ public class TransactionInfoSet
         if (!(pPartner instanceof SecurityHolding)) {
             return MetisFieldRequired.NOTALLOWED;
         }
+
+        /* Partner cannot be autoUnits */
+        final SecurityHolding myHolding = (SecurityHolding) pPartner;
+        if (myHolding.getSecurity().getSecurityTypeClass().isAutoUnits()) {
+            return MetisFieldRequired.NOTALLOWED;
+        }
+
+        /* Handle different transaction types */
         switch (pClass) {
             case TRANSFER:
                 return MetisFieldRequired.CANEXIST;

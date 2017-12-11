@@ -99,6 +99,7 @@ public final class TransactionValidator {
                 return myType.isDeposit() || myType.isPortfolio();
 
             case DIVIDEND:
+            case SECURITYCLOSURE:
                 /* Account must be SecurityHolding */
                 return myType.isSecurityHolding();
 
@@ -200,6 +201,7 @@ public final class TransactionValidator {
                 return pDirection.isTo();
 
             case DIVIDEND:
+            case SECURITYCLOSURE:
                 /* Cannot refund Dividend yet */
                 return pDirection.isTo();
 
@@ -352,6 +354,7 @@ public final class TransactionValidator {
                 return checkStockRights(pAccount, pPartner);
 
             case TRANSFER:
+            case SECURITYCLOSURE:
                 return checkTransfer(pAccount, pPartner);
 
             case EXPENSE:

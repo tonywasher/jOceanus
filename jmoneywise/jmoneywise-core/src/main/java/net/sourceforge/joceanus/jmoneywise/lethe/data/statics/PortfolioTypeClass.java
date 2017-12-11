@@ -160,7 +160,7 @@ public enum PortfolioTypeClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the PortfolioType can hold pension securitues.
+     * Determine whether the PortfolioType can hold pension securities.
      * @return <code>true</code> if the PortfolioType owns pensions, <code>false</code> otherwise.
      */
     public boolean holdsPensions() {

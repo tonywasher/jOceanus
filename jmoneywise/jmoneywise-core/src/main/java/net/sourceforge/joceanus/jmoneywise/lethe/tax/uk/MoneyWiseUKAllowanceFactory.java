@@ -266,7 +266,7 @@ public final class MoneyWiseUKAllowanceFactory {
      * The 2019 Allowance.
      */
     protected static final MoneyWiseUKBasicAllowance ALLOWANCE_2019 = new MoneyWiseUKSavingsAllowance(getAmount(11850), NEW_RENTAL,
-            getAmount(11300), getAmount(1000), getAmount(2000), ADDITIONAL_THRESHOLD);
+            getAmount(11700), getAmount(1000), getAmount(2000), ADDITIONAL_THRESHOLD);
 
     /**
      * Constructor.
