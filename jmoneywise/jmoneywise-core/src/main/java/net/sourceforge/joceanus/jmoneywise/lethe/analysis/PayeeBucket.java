@@ -474,7 +474,8 @@ public final class PayeeBucket
 
         /* If there is a non-zero TaxCredit */
         final TethysMoney myTaxCred = pTrans.getTaxCredit();
-        if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
+        if (myTaxCred != null
+            && myTaxCred.isNonZero()) {
             /* Adjust for Tax Credit */
             if (isIncome) {
                 if (myIncome == null) {
@@ -492,9 +493,31 @@ public final class PayeeBucket
             }
         }
 
-        /* If there is National Insurance */
-        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
-        if ((myNatIns != null) && (myNatIns.isNonZero())) {
+        /* If there is Employee National Insurance */
+        TethysMoney myNatIns = pTrans.getEmployeeNatIns();
+        if (myNatIns != null
+            && myNatIns.isNonZero()) {
+            /* Adjust for National Insurance */
+            if (isIncome) {
+                if (myIncome == null) {
+                    myIncome = new TethysMoney(myNatIns);
+                } else {
+                    myIncome.addAmount(myNatIns);
+                }
+            } else {
+                if (myExpense == null) {
+                    myExpense = new TethysMoney(myNatIns);
+                    myExpense.negate();
+                } else {
+                    myExpense.subtractAmount(myNatIns);
+                }
+            }
+        }
+
+        /* If there is Employer National Insurance */
+        myNatIns = pTrans.getEmployerNatIns();
+        if (myNatIns != null
+            && myNatIns.isNonZero()) {
             /* Adjust for National Insurance */
             if (isIncome) {
                 if (myIncome == null) {
@@ -514,7 +537,8 @@ public final class PayeeBucket
 
         /* If there is Withheld */
         final TethysMoney myWithheld = pTrans.getWithheld();
-        if ((myWithheld != null) && (myWithheld.isNonZero())) {
+        if (myWithheld != null
+            && myWithheld.isNonZero()) {
             /* Adjust for Charity Donation */
             if (isIncome) {
                 if (myIncome == null) {
@@ -641,18 +665,9 @@ public final class PayeeBucket
 
         /* Adjust for Tax credit */
         final TethysMoney myTaxCred = pTrans.getTaxCredit();
-        if ((myTaxCred != null) && (myTaxCred.isNonZero())) {
+        if (myTaxCred != null
+            && myTaxCred.isNonZero()) {
             myAmount = new TethysMoney(myTaxCred);
-        }
-
-        /* Adjust for national insurance */
-        final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
-        if ((myNatIns != null) && (myNatIns.isNonZero())) {
-            if (myAmount == null) {
-                myAmount = new TethysMoney(myNatIns);
-            } else {
-                myAmount.addAmount(myNatIns);
-            }
         }
 
         /* If we have payments */

@@ -211,8 +211,14 @@ public class TransactionInfoSet
             case TRANSTAG:
                 return MetisFieldRequired.CANEXIST;
 
-            /* NatInsurance and benefit can only occur on salary */
+            /* NatInsurance and benefit can only occur on salary/pensionContribution */
+            case EMPLOYERNATINS:
             case EMPLOYEENATINS:
+                return myClass.isNatInsurance()
+                                                ? MetisFieldRequired.CANEXIST
+                                                : MetisFieldRequired.NOTALLOWED;
+
+            /* Benefit can only occur on salary */
             case DEEMEDBENEFIT:
                 return myClass == TransactionCategoryClass.TAXEDINCOME
                                                                        ? MetisFieldRequired.CANEXIST
@@ -240,11 +246,11 @@ public class TransactionInfoSet
 
             /* Qualify Years is needed only for Taxable Gain */
             case QUALIFYYEARS:
-                return ((myClass == TransactionCategoryClass.TRANSFER)
-                        && (myAccount instanceof SecurityHolding)
-                        && (((SecurityHolding) myAccount).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)))
-                                                                                                                      ? MetisFieldRequired.MUSTEXIST
-                                                                                                                      : MetisFieldRequired.NOTALLOWED;
+                return myClass == TransactionCategoryClass.TRANSFER
+                       && myAccount instanceof SecurityHolding
+                       && ((SecurityHolding) myAccount).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)
+                                                                                                                  ? MetisFieldRequired.MUSTEXIST
+                                                                                                                  : MetisFieldRequired.NOTALLOWED;
 
             /* Handle ThirdParty separately */
             case RETURNEDCASHACCOUNT:
@@ -323,10 +329,10 @@ public class TransactionInfoSet
                                                        ? MetisFieldRequired.NOTALLOWED
                                                        : MetisFieldRequired.MUSTEXIST;
             case TRANSFER:
-                return (pDebit instanceof SecurityHolding)
-                       && (((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND))
-                                                                                                                 ? MetisFieldRequired.MUSTEXIST
-                                                                                                                 : MetisFieldRequired.NOTALLOWED;
+                return pDebit instanceof SecurityHolding
+                       && ((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)
+                                                                                                               ? MetisFieldRequired.MUSTEXIST
+                                                                                                               : MetisFieldRequired.NOTALLOWED;
             default:
                 return MetisFieldRequired.NOTALLOWED;
         }
@@ -489,7 +495,7 @@ public class TransactionInfoSet
         /* If Partner currency is null or the same as Account then Partner amount is not allowed */
         final AssetCurrency myCurrency = pAccount.getAssetCurrency();
         final AssetCurrency myPartnerCurrency = pPartner.getAssetCurrency();
-        if ((myCurrency == null) || (myPartnerCurrency == null)) {
+        if (myCurrency == null || myPartnerCurrency == null) {
             return MetisFieldRequired.NOTALLOWED;
         }
         return MetisDataDifference.isEqual(myCurrency, myPartnerCurrency)

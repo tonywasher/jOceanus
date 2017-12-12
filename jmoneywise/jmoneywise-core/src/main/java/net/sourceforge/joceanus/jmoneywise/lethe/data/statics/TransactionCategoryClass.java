@@ -524,6 +524,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case CURRENCYFLUCTUATION:
             case INCOMETAX:
             case NATINSURANCE:
+            case PENSIONCONTRIB:
             case VIRTUALINCOME:
             case WITHHELD:
             case RESIDENTIALGAIN:
@@ -717,6 +718,20 @@ public enum TransactionCategoryClass implements CategoryInterface {
         return this == TRANSFER
                                 ? true
                                 : isSecurityTransfer();
+    }
+
+    /**
+     * Is this event category a NatInsurance event?
+     * @return true/false
+     */
+    public boolean isNatInsurance() {
+        switch (this) {
+            case TAXEDINCOME:
+            case PENSIONCONTRIB:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

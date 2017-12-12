@@ -569,26 +569,30 @@ public class TaxBasisBucket
             myNett.subtractAmount(myAmount);
 
             /* If we have a tax credit */
-            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+            if (myTaxCredit != null
+                && myTaxCredit.isNonZero()) {
                 /* Adjust the gross */
                 myGross.subtractAmount(myTaxCredit);
                 myTax.subtractAmount(myTaxCredit);
             }
 
             /* If we have a natInsurance payment */
-            if ((myNatIns != null) && (myNatIns.isNonZero())) {
+            if (myNatIns != null
+                && myNatIns.isNonZero()) {
                 /* Adjust the gross */
                 myGross.subtractAmount(myNatIns);
             }
 
             /* If we have a Benefit payment */
-            if ((myBenefit != null) && (myBenefit.isNonZero())) {
+            if (myBenefit != null
+                && myBenefit.isNonZero()) {
                 /* Adjust the gross */
                 myGross.subtractAmount(myBenefit);
             }
 
             /* If we have a Withheld */
-            if ((myWithheld != null) && (myWithheld.isNonZero())) {
+            if (myWithheld != null
+                && myWithheld.isNonZero()) {
                 /* Adjust the gross and net */
                 myGross.subtractAmount(myWithheld);
                 myNett.subtractAmount(myWithheld);
@@ -601,29 +605,87 @@ public class TaxBasisBucket
             myNett.addAmount(myAmount);
 
             /* If we have a tax credit */
-            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+            if (myTaxCredit != null
+                && myTaxCredit.isNonZero()) {
                 /* Adjust the values */
                 myGross.addAmount(myTaxCredit);
                 myTax.addAmount(myTaxCredit);
             }
 
             /* If we have a natInsurance payment */
-            if ((myNatIns != null) && (myNatIns.isNonZero())) {
+            if (myNatIns != null
+                && myNatIns.isNonZero()) {
                 /* Adjust the gross */
                 myGross.addAmount(myNatIns);
             }
 
             /* If we have a Benefit payment */
-            if ((myBenefit != null) && (myBenefit.isNonZero())) {
+            if (myBenefit != null
+                && myBenefit.isNonZero()) {
                 /* Adjust the gross */
                 myGross.addAmount(myBenefit);
             }
 
             /* If we have a Withheld */
-            if ((myWithheld != null) && (myWithheld.isNonZero())) {
+            if (myWithheld != null
+                && myWithheld.isNonZero()) {
                 /* Adjust the gross and net */
                 myGross.addAmount(myWithheld);
                 myNett.addAmount(myWithheld);
+            }
+        }
+
+        /* Register the delta values */
+        registerDeltaValues(pTrans, myGross, myNett, myTax);
+
+        /* If we have accounts */
+        if (hasAccounts) {
+            /* register the changes against the accounts */
+            theAccounts.registerDeltaValues(pTrans, myGross, myNett, myTax);
+        }
+    }
+
+    /**
+     * Add income transaction.
+     * @param pTrans the transaction
+     */
+    protected void addEmployerNatIns(final TransactionHelper pTrans) {
+        /* Access details */
+        final TethysMoney myNatIns = pTrans.getEmployerNatIns();
+
+        /* Determine style of transaction */
+        AssetDirection myDir = pTrans.getDirection();
+
+        /* If the account is special */
+        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
+        if (myClass.isSwitchDirection()) {
+            /* switch the direction */
+            myDir = myDir.reverse();
+        }
+
+        /* Obtain zeroed counters */
+        TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+        myGross = new TethysMoney(myGross);
+        myGross.setZero();
+        final TethysMoney myNett = new TethysMoney(myGross);
+        final TethysMoney myTax = new TethysMoney(myGross);
+
+        /* If this is an expense */
+        if (myDir.isTo()) {
+            /* If we have a natInsurance payment */
+            if (myNatIns != null
+                && myNatIns.isNonZero()) {
+                /* Adjust the gross */
+                myGross.subtractAmount(myNatIns);
+            }
+
+            /* else this is a standard income */
+        } else {
+            /* If we have a natInsurance payment */
+            if (myNatIns != null
+                && myNatIns.isNonZero()) {
+                /* Adjust the gross */
+                myGross.addAmount(myNatIns);
             }
         }
 
@@ -663,7 +725,8 @@ public class TaxBasisBucket
             myNett.addAmount(myAmount);
 
             /* If we have a tax relief */
-            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+            if (myTaxCredit != null
+                && myTaxCredit.isNonZero()) {
                 /* Adjust the values */
                 myGross.addAmount(myTaxCredit);
                 myNett.addAmount(myTaxCredit);
@@ -677,7 +740,8 @@ public class TaxBasisBucket
             myNett.subtractAmount(myAmount);
 
             /* If we have a tax relief */
-            if ((myTaxCredit != null) && (myTaxCredit.isNonZero())) {
+            if (myTaxCredit != null
+                && myTaxCredit.isNonZero()) {
                 /* Adjust the values */
                 myGross.subtractAmount(myTaxCredit);
                 myNett.subtractAmount(myTaxCredit);
@@ -741,11 +805,13 @@ public class TaxBasisBucket
      * Adjust transaction value.
      * @param pTrans the transaction
      * @param pValue the value
+     * @param pAdjust adjustment control
      */
     protected void adjustValue(final TransactionHelper pTrans,
-                               final TethysMoney pValue) {
+                               final TethysMoney pValue,
+                               final TaxBasisAdjust pAdjust) {
         /* Adjust the value */
-        adjustValue(pValue);
+        adjustValue(pValue, pAdjust);
 
         /* Register the transaction */
         registerTransaction(pTrans);
@@ -753,35 +819,50 @@ public class TaxBasisBucket
         /* If we have accounts */
         if (hasAccounts) {
             /* register the adjustment against the accounts */
-            theAccounts.adjustValue(pTrans, pValue);
+            theAccounts.adjustValue(pTrans, pValue, pAdjust);
         }
     }
 
     /**
      * Adjust value.
      * @param pValue the value
+     * @param pAdjust adjustment control
      */
-    private void adjustValue(final TethysMoney pValue) {
-        /* Access the counters */
-        TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-        myGross = new TethysMoney(myGross);
-        TethysMoney myNet = theValues.getMoneyValue(TaxBasisAttribute.NETT);
-        myNet = new TethysMoney(myNet);
+    private void adjustValue(final TethysMoney pValue,
+                             final TaxBasisAdjust pAdjust) {
+        /* If we are adjusting Gross */
+        if (pAdjust.adjustGross()) {
+            /* Access the existing value */
+            TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
+            myGross = new TethysMoney(myGross);
 
-        /* If we are an expense bucket */
-        if (isExpense) {
-            /* Adjust the gross and net */
-            myGross.subtractAmount(pValue);
-            myNet.subtractAmount(pValue);
-        } else {
-            /* Adjust the gross and net */
-            myGross.addAmount(pValue);
-            myNet.addAmount(pValue);
+            /* Subtract or add the value depending as to whether we are an expense bucket */
+            if (isExpense) {
+                myGross.subtractAmount(pValue);
+            } else {
+                myGross.addAmount(pValue);
+            }
+
+            /* Record the new value */
+            setValue(TaxBasisAttribute.GROSS, myGross);
         }
 
-        /* Set the values */
-        setValue(TaxBasisAttribute.GROSS, myGross);
-        setValue(TaxBasisAttribute.NETT, myNet);
+        /* If we are adjusting Nett */
+        if (pAdjust.adjustNett()) {
+            /* Access the existing value */
+            TethysMoney myNett = theValues.getMoneyValue(TaxBasisAttribute.NETT);
+            myNett = new TethysMoney(myNett);
+
+            /* Subtract or add the value depending as to whether we are an expense bucket */
+            if (isExpense) {
+                myNett.subtractAmount(pValue);
+            } else {
+                myNett.addAmount(pValue);
+            }
+
+            /* Record the new value */
+            setValue(TaxBasisAttribute.NETT, myNett);
+        }
     }
 
     /**
@@ -820,6 +901,42 @@ public class TaxBasisBucket
      */
     public boolean isActive() {
         return theValues.isActive();
+    }
+
+    /**
+     * Value adjust Modes.
+     */
+    protected enum TaxBasisAdjust {
+        /**
+         * Adjust both Gross and Nett.
+         */
+        STANDARD,
+
+        /**
+         * Only adjust Nett figure.
+         */
+        NETT,
+
+        /**
+         * Only adjust Gross figure.
+         */
+        GROSS;
+
+        /**
+         * should we adjust Gross?
+         * @return true/false
+         */
+        private boolean adjustGross() {
+            return this != NETT;
+        }
+
+        /**
+         * should we adjust Nett?
+         * @return true/false
+         */
+        private boolean adjustNett() {
+            return this != GROSS;
+        }
     }
 
     /**
@@ -1162,85 +1279,60 @@ public class TaxBasisBucket
         protected void adjustBasis(final TransactionHelper pTrans,
                                    final TransactionCategory pCategory) {
             /* Switch on the category type */
-            final TaxBasisBucket myBucket;
             switch (pCategory.getCategoryTypeClass()) {
                 case TAXEDINCOME:
                 case GROSSINCOME:
-                    /* Adjust the Gross salary bucket */
-                    myBucket = getBucket(TaxBasisClass.SALARY);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.SALARY);
                     break;
                 case OTHERINCOME:
-                    /* Adjust the Gross salary bucket */
-                    myBucket = getBucket(TaxBasisClass.OTHERINCOME);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.OTHERINCOME);
                     break;
                 case INTEREST:
                 case TAXEDINTEREST:
                 case TAXEDLOYALTYBONUS:
-                    /* Adjust the Gross interest bucket */
-                    myBucket = getBucket(TaxBasisClass.TAXEDINTEREST);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.TAXEDINTEREST);
                     break;
                 case GROSSINTEREST:
                 case GROSSLOYALTYBONUS:
-                    /* Adjust the Gross interest bucket */
-                    myBucket = getBucket(TaxBasisClass.UNTAXEDINTEREST);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.UNTAXEDINTEREST);
                     break;
                 case DIVIDEND:
                 case SHAREDIVIDEND:
-                    /* Adjust the Gross dividend bucket */
-                    myBucket = getBucket(TaxBasisClass.DIVIDEND);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.DIVIDEND);
                     break;
                 case UNITTRUSTDIVIDEND:
-                    /* Adjust the Gross UT dividend bucket */
-                    myBucket = getBucket(TaxBasisClass.UNITTRUSTDIVIDEND);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.UNITTRUSTDIVIDEND);
                     break;
                 case FOREIGNDIVIDEND:
-                    /* Adjust the Gross Foreign dividend bucket */
-                    myBucket = getBucket(TaxBasisClass.FOREIGNDIVIDEND);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.FOREIGNDIVIDEND);
                     break;
                 case RENTALINCOME:
-                    /* Adjust the Gross rental bucket */
-                    myBucket = getBucket(TaxBasisClass.RENTALINCOME);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.RENTALINCOME);
                     break;
                 case ROOMRENTALINCOME:
-                    /* Adjust the Gross roomRental bucket */
-                    myBucket = getBucket(TaxBasisClass.ROOMRENTAL);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.ROOMRENTAL);
                     break;
                 case INCOMETAX:
-                    /* Adjust the Tax Paid bucket */
-                    myBucket = getBucket(TaxBasisClass.TAXPAID);
-                    myBucket.addExpenseTransaction(pTrans);
+                    addExpense(pTrans, TaxBasisClass.TAXPAID);
                     break;
                 case TAXFREEINTEREST:
                 case TAXFREEDIVIDEND:
                 case LOANINTERESTEARNED:
-                case PENSIONCONTRIB:
                 case INHERITED:
                 case CASHBACK:
                 case LOYALTYBONUS:
                 case TAXFREELOYALTYBONUS:
                 case GIFTEDINCOME:
-                    /* Adjust the Tax Free bucket */
-                    myBucket = getBucket(TaxBasisClass.TAXFREE);
-                    myBucket.addIncomeTransaction(pTrans);
+                    addIncome(pTrans, TaxBasisClass.TAXFREE);
+                    break;
+                case PENSIONCONTRIB:
+                    addIncome(pTrans, TaxBasisClass.TAXFREE);
                     break;
                 case BADDEBTCAPITAL:
-                    /* Adjust the BadDebtCapital bucket */
-                    myBucket = getBucket(TaxBasisClass.BADDEBTCAPITAL);
-                    myBucket.addExpenseTransaction(pTrans);
+                    addExpense(pTrans, TaxBasisClass.BADDEBTCAPITAL);
                     break;
                 case BADDEBTINTEREST:
-                    /* Adjust the BadDebtInterest bucket */
-                    myBucket = getBucket(TaxBasisClass.BADDEBTINTEREST);
-                    myBucket.addExpenseTransaction(pTrans);
+                    addExpense(pTrans, TaxBasisClass.BADDEBTINTEREST);
                     break;
                 case EXPENSE:
                 case LOCALTAXES:
@@ -1248,14 +1340,10 @@ public class TaxBasisBucket
                 case LOANINTERESTCHARGED:
                 case TAXRELIEF:
                 case RECOVEREDEXPENSES:
-                    /* Adjust the Expense bucket */
-                    myBucket = getBucket(TaxBasisClass.EXPENSE);
-                    myBucket.addExpenseTransaction(pTrans);
+                    addExpense(pTrans, TaxBasisClass.EXPENSE);
                     break;
                 case RENTALEXPENSE:
-                    /* Adjust the RentalIncome bucket */
-                    myBucket = getBucket(TaxBasisClass.RENTALINCOME);
-                    myBucket.addExpenseTransaction(pTrans);
+                    addExpense(pTrans, TaxBasisClass.RENTALINCOME);
                     break;
                 case UNITSADJUST:
                 case SECURITYREPLACE:
@@ -1271,6 +1359,30 @@ public class TaxBasisBucket
         }
 
         /**
+         * Adjust basis for income.
+         * @param pClass the class
+         * @param pTrans the transaction
+         */
+        private void addIncome(final TransactionHelper pTrans,
+                               final TaxBasisClass pClass) {
+            /* Access the bucket and adjust it */
+            final TaxBasisBucket myBucket = getBucket(pClass);
+            myBucket.addIncomeTransaction(pTrans);
+        }
+
+        /**
+         * Adjust basis for expense.
+         * @param pClass the class
+         * @param pTrans the transaction
+         */
+        private void addExpense(final TransactionHelper pTrans,
+                                final TaxBasisClass pClass) {
+            /* Access the bucket and adjust it */
+            final TaxBasisBucket myBucket = getBucket(pClass);
+            myBucket.addExpenseTransaction(pTrans);
+        }
+
+        /**
          * Adjust basis buckets.
          * @param pTrans the transaction
          * @param pClass the class
@@ -1281,7 +1393,35 @@ public class TaxBasisBucket
                                    final TethysMoney pIncome) {
             /* Access the bucket and adjust it */
             final TaxBasisBucket myBucket = getBucket(pClass);
-            myBucket.adjustValue(pTrans, pIncome);
+            myBucket.adjustValue(pTrans, pIncome, TaxBasisAdjust.STANDARD);
+        }
+
+        /**
+         * Adjust basis buckets for Gross only.
+         * @param pTrans the transaction
+         * @param pClass the class
+         * @param pIncome the income
+         */
+        protected void adjustGrossValue(final TransactionHelper pTrans,
+                                        final TaxBasisClass pClass,
+                                        final TethysMoney pIncome) {
+            /* Access the bucket and adjust it */
+            final TaxBasisBucket myBucket = getBucket(pClass);
+            myBucket.adjustValue(pTrans, pIncome, TaxBasisAdjust.GROSS);
+        }
+
+        /**
+         * Adjust basis buckets for Gross only.
+         * @param pTrans the transaction
+         * @param pClass the class
+         * @param pIncome the income
+         */
+        protected void adjustNettValue(final TransactionHelper pTrans,
+                                       final TaxBasisClass pClass,
+                                       final TethysMoney pIncome) {
+            /* Access the bucket and adjust it */
+            final TaxBasisBucket myBucket = getBucket(pClass);
+            myBucket.adjustValue(pTrans, pIncome, TaxBasisAdjust.NETT);
         }
 
         /**
@@ -1300,7 +1440,7 @@ public class TaxBasisBucket
 
             /* Access the bucket and adjust it */
             final TaxBasisBucket myBucket = getBucket(TaxBasisClass.EXPENSE);
-            myBucket.adjustValue(pTrans, myAmount);
+            myBucket.adjustValue(pTrans, myAmount, TaxBasisAdjust.STANDARD);
         }
 
         /**
@@ -1316,7 +1456,7 @@ public class TaxBasisBucket
 
             /* Access the bucket and adjust it */
             final TaxBasisBucket myBucket = getBucket(TaxBasisClass.MARKET);
-            myBucket.adjustValue(myDelta);
+            myBucket.adjustValue(myDelta, TaxBasisAdjust.STANDARD);
         }
 
         /**

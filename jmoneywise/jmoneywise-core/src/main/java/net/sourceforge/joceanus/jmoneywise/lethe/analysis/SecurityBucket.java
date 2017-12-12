@@ -848,6 +848,49 @@ public final class SecurityBucket
     }
 
     /**
+     * Adjust security for natInsurance payments.
+     * @param pTrans the transaction causing the payments
+     */
+    protected void adjustForNIPayments(final TransactionHelper pTrans) {
+        /* Assume no NatInsurance */
+        TethysMoney myAmount = null;
+
+        /* Access Employer NatInsurance */
+        TethysMoney myNatIns = pTrans.getEmployerNatIns();
+        if (myNatIns != null
+            && myNatIns.isNonZero()) {
+            myAmount = new TethysMoney(myNatIns);
+        }
+
+        /* Access Employee natInsurance */
+        myNatIns = pTrans.getEmployeeNatIns();
+        if (myNatIns != null
+            && myNatIns.isNonZero()) {
+            if (myAmount == null) {
+                myAmount = new TethysMoney(myNatIns);
+            } else {
+                myAmount.addAmount(myNatIns);
+            }
+        }
+
+        /* If we have natInsurance */
+        if (myAmount != null) {
+            /* Handle autoUnits */
+            TethysUnits myUnits = getValues().getUnitsValue(SecurityAttribute.UNITS);
+            if (myUnits.isZero()) {
+                myUnits = TethysUnits.getWholeUnits(theSecurity.getSecurityTypeClass().getAutoUnits());
+                setValue(SecurityAttribute.UNITS, myUnits);
+            }
+
+            /* Adjust invested */
+            adjustCounter(SecurityAttribute.INVESTED, myAmount);
+
+            /* Register the transaction in the history */
+            registerTransaction(pTrans);
+        }
+    }
+
+    /**
      * Is the bucket active?
      * @return true/false
      */

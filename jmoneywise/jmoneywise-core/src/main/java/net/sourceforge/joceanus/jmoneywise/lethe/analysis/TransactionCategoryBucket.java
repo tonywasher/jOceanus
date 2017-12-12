@@ -827,9 +827,9 @@ public final class TransactionCategoryBucket
         private final TransactionCategoryBucket theTaxRelief;
 
         /**
-         * The NatInsurance.
+         * The PensionContributions.
          */
-        private final TransactionCategoryBucket theNatInsurance;
+        private final TransactionCategoryBucket thePensionContrib;
 
         /**
          * The DeemedBenefit.
@@ -873,7 +873,7 @@ public final class TransactionCategoryBucket
             /* Obtain the implied buckets */
             final TransactionCategoryList myList = theData.getTransCategories();
             theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
-            theNatInsurance = getBucket(myList.getEventInfoCategory(TransactionInfoClass.EMPLOYEENATINS));
+            thePensionContrib = getBucket(myList.getSingularClass(TransactionCategoryClass.PENSIONCONTRIB));
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
             theWithheld = getBucket(myList.getEventInfoCategory(TransactionInfoClass.WITHHELD));
             theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
@@ -900,7 +900,7 @@ public final class TransactionCategoryBucket
             /* Don't use implied buckets */
             theTaxBasis = null;
             theTaxCredit = null;
-            theNatInsurance = null;
+            thePensionContrib = null;
             theDeemedBenefit = null;
             theWithheld = null;
             theTaxRelief = null;
@@ -942,7 +942,7 @@ public final class TransactionCategoryBucket
             /* Don't use implied buckets */
             theTaxBasis = null;
             theTaxCredit = null;
-            theNatInsurance = null;
+            thePensionContrib = null;
             theDeemedBenefit = null;
             theWithheld = null;
             theTaxRelief = null;
@@ -1108,15 +1108,24 @@ public final class TransactionCategoryBucket
                     theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myTaxCredit);
                 } else {
                     theTaxCredit.addExpense(pTrans, myTaxCredit);
-                    theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
+                    theTaxBasis.adjustGrossValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
                 }
             }
 
-            /* Adjust for NatInsurance */
-            final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
+            /* Adjust for EmployeeNatInsurance */
+            TethysMoney myNatIns = pTrans.getEmployeeNatIns();
             if (myNatIns != null) {
-                theNatInsurance.addExpense(pTrans, myNatIns);
-                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
+                myNatIns = new TethysMoney(myNatIns);
+                myNatIns.negate();
+                theTaxBasis.adjustNettValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
+            }
+
+            /* Adjust for EmployerNatInsurance */
+            myNatIns = pTrans.getEmployerNatIns();
+            if (myNatIns != null) {
+                thePensionContrib.addIncome(pTrans, myNatIns);
+                theTaxBasis.adjustGrossValue(pTrans, TaxBasisClass.TAXFREE, myNatIns);
+                theTaxBasis.adjustNettValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
             }
 
             /* Adjust for DeemedBenefit */
@@ -1124,7 +1133,7 @@ public final class TransactionCategoryBucket
             if (myBenefit != null) {
                 theDeemedBenefit.addIncome(pTrans, myBenefit);
                 theWithheld.addExpense(pTrans, myBenefit);
-                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myBenefit);
+                theTaxBasis.adjustGrossValue(pTrans, TaxBasisClass.VIRTUAL, myBenefit);
             }
 
             /* Adjust for Withheld */
@@ -1188,10 +1197,10 @@ public final class TransactionCategoryBucket
                 theTaxCredit.addExpense(pTrans, myTaxCredit);
 
                 /* Adjust tax basis */
-                theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
+                theTaxBasis.adjustGrossValue(pTrans, TaxBasisClass.TAXPAID, myTaxCredit);
                 myTaxCredit = new TethysMoney(myTaxCredit);
                 myTaxCredit.negate();
-                theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myTaxCredit);
+                theTaxBasis.adjustGrossValue(pTrans, TaxBasisClass.VIRTUAL, myTaxCredit);
             }
 
             /* Adjust tax basis */

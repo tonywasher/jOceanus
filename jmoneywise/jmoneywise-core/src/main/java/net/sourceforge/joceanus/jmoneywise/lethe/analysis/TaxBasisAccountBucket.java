@@ -378,9 +378,11 @@ public final class TaxBasisAccountBucket
          * Adjust value.
          * @param pTrans the transaction
          * @param pGross the gross delta value
+         * @param pAdjust adjustment control
          */
         protected void adjustValue(final TransactionHelper pTrans,
-                                   final TethysMoney pGross) {
+                                   final TethysMoney pGross,
+                                   final TaxBasisAdjust pAdjust) {
             /* Determine required asset */
             final TransactionAsset myAsset = deriveAsset(pTrans);
 
@@ -388,7 +390,7 @@ public final class TaxBasisAccountBucket
             final TaxBasisAccountBucket myBucket = getBucket(myAsset);
 
             /* adjust value */
-            myBucket.adjustValue(pTrans, pGross);
+            myBucket.adjustValue(pTrans, pGross, pAdjust);
         }
 
         /**

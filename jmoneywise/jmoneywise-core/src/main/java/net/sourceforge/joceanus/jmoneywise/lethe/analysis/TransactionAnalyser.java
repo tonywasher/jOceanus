@@ -66,6 +66,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionCategory;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseCashType;
@@ -180,6 +181,11 @@ public class TransactionAnalyser
     private final PayeeBucket theTaxMan;
 
     /**
+     * The statePension account.
+     */
+    private final SecurityBucket theStatePension;
+
+    /**
      * The dilutions.
      */
     private final DilutionEventMap theDilutions;
@@ -230,6 +236,9 @@ public class TransactionAnalyser
         theTaxBasisBuckets = theAnalysis.getTaxBasis();
         theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
+
+        /* Access the StatePension security holding */
+        theStatePension = getStatePension(pData);
 
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
@@ -298,6 +307,9 @@ public class TransactionAnalyser
         theSecurities = theAnalysis.getSecurities();
         theTaxMan = thePayeeBuckets.getBucket(PayeeTypeClass.TAXMAN);
 
+        /* Access the StatePension security holding */
+        theStatePension = getStatePension(myData);
+
         /* Loop through the Transactions extracting relevant elements */
         myTask.startTask("Transactions");
         final Iterator<Transaction> myIterator = pTransactions.iterator();
@@ -329,6 +341,27 @@ public class TransactionAnalyser
 
         /* Complete the task */
         myTask.end();
+    }
+
+    /**
+     * Obtain statePension bucket.
+     * @param pData the dataSet
+     * @return the statePension bucket
+     */
+    private SecurityBucket getStatePension(final MoneyWiseData pData) {
+        /* Access the singular portfolio and security */
+        final Portfolio myPensionPort = pData.getPortfolios().getSingularClass(PortfolioTypeClass.PENSION);
+        final Security myStatePension = pData.getSecurities().getSingularClass(SecurityTypeClass.STATEPENSION);
+
+        /* If they exist, access the bucket */
+        if (myPensionPort != null
+            && myStatePension != null) {
+            final SecurityHolding myHolding = pData.getSecurityHoldingsMap().declareHolding(myPensionPort, myStatePension);
+            return thePortfolioBuckets.getBucket(myHolding);
+        }
+
+        /* Default to no bucket */
+        return null;
     }
 
     @Override
@@ -420,16 +453,16 @@ public class TransactionAnalyser
             processCreditSecurityTransaction(myDebitAsset, (SecurityHolding) myCreditAsset);
 
             /* Else handle the portfolio transfer */
-        } else if ((myDebitAsset instanceof Portfolio)
-                   && (myCreditAsset instanceof Portfolio)
-                   && (pTrans.getCategoryClass() == TransactionCategoryClass.PORTFOLIOXFER)
+        } else if (myDebitAsset instanceof Portfolio
+                   && myCreditAsset instanceof Portfolio
+                   && pTrans.getCategoryClass() == TransactionCategoryClass.PORTFOLIOXFER
                    && !myDebitAsset.equals(myCreditAsset)) {
             /* Process portfolio transfer */
             processPortfolioXfer((Portfolio) myDebitAsset, (Portfolio) myCreditAsset);
 
             /* Else handle the event normally */
-        } else if ((myDebitAsset instanceof AssetBase)
-                   && (myCreditAsset instanceof AssetBase)) {
+        } else if (myDebitAsset instanceof AssetBase
+                   && myCreditAsset instanceof AssetBase) {
             /* Access correctly */
             AssetBase<?> myDebit = (AssetBase<?>) myDebitAsset;
             AssetBase<?> myCredit = (AssetBase<?>) myCreditAsset;
@@ -473,7 +506,8 @@ public class TransactionAnalyser
             }
 
             /* If the debit account is auto-Expense */
-            if ((myDebit instanceof Cash) && (myDebit.getAssetType() == AssetType.AUTOEXPENSE)) {
+            if (myDebit instanceof Cash
+                && myDebit.getAssetType() == AssetType.AUTOEXPENSE) {
                 /* Access debit as cash */
                 final Cash myCash = (Cash) myDebit;
                 final TransactionCategory myAuto = myCash.getAutoExpense();
@@ -489,24 +523,20 @@ public class TransactionAnalyser
                 myCatBucket.subtractExpense(theHelper, myAmount);
                 theTaxBasisBuckets.adjustAutoExpense(theHelper, false);
 
-                /* else handle normally */
+                /* handle Payees */
+            } else if (AssetType.PAYEE.equals(myDebit.getAssetType())) {
+                final PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
+                myPayee.adjustForDebit(theHelper);
+
+                /* handle valued assets */
             } else {
-                /* Determine the type of the debit account */
-                switch (myDebit.getAssetType()) {
-                    case PAYEE:
-                        final PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-                        myPayee.adjustForDebit(theHelper);
-                        break;
-                    default:
-                        final AccountBucket<?> myBucket = getAccountBucket(myDebit);
-                        myBucket.adjustForDebit(theHelper);
-                        break;
-                }
+                final AccountBucket<?> myBucket = getAccountBucket(myDebit);
+                myBucket.adjustForDebit(theHelper);
             }
 
             /* If the credit account is auto-Expense */
-            if ((myCredit instanceof Cash)
-                && (myCredit.getAssetType() == AssetType.AUTOEXPENSE)) {
+            if (myCredit instanceof Cash
+                && myCredit.getAssetType() == AssetType.AUTOEXPENSE) {
                 /* Access credit as cash */
                 final Cash myCash = (Cash) myCredit;
                 final TransactionCategory myAuto = myCash.getAutoExpense();
@@ -522,19 +552,15 @@ public class TransactionAnalyser
                 myCatBucket.addExpense(theHelper, myAmount);
                 theTaxBasisBuckets.adjustAutoExpense(theHelper, true);
 
-                /* else handle normally */
+                /* handle Payees */
+            } else if (AssetType.PAYEE.equals(myCredit.getAssetType())) {
+                final PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
+                myPayee.adjustForCredit(theHelper);
+
+                /* handle valued assets */
             } else {
-                /* Determine the type of the credit account */
-                switch (myCredit.getAssetType()) {
-                    case PAYEE:
-                        final PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
-                        myPayee.adjustForCredit(theHelper);
-                        break;
-                    default:
-                        final AccountBucket<?> myBucket = getAccountBucket(myCredit);
-                        myBucket.adjustForCredit(theHelper);
-                        break;
-                }
+                final AccountBucket<?> myBucket = getAccountBucket(myCredit);
+                myBucket.adjustForCredit(theHelper);
             }
 
             /* If we should register the event with a child */
@@ -544,8 +570,9 @@ public class TransactionAnalyser
                 myBucket.registerTransaction(pTrans);
             }
 
-            /* Adjust the tax payments */
+            /* Adjust the tax and NI payments */
             theTaxMan.adjustForTaxPayments(theHelper);
+            theStatePension.adjustForNIPayments(theHelper);
 
             /* If the event category is not a transfer */
             if (!myCat.isTransfer()) {
@@ -934,6 +961,9 @@ public class TransactionAnalyser
             /* Record change in units */
             myAsset.adjustCounter(SecurityAttribute.UNITS, myDeltaUnits);
         }
+
+        /* Adjust for National Insurance */
+        myAsset.adjustForNIPayments(theHelper);
 
         /* Get the appropriate price for the account */
         final TethysPrice myPrice = thePriceMap.getPriceForDate(mySecurity, theHelper.getDate());
