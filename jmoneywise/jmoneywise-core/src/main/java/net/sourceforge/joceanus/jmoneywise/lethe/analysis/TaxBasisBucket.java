@@ -646,60 +646,6 @@ public class TaxBasisBucket
     }
 
     /**
-     * Add income transaction.
-     * @param pTrans the transaction
-     */
-    protected void addEmployerNatIns(final TransactionHelper pTrans) {
-        /* Access details */
-        final TethysMoney myNatIns = pTrans.getEmployerNatIns();
-
-        /* Determine style of transaction */
-        AssetDirection myDir = pTrans.getDirection();
-
-        /* If the account is special */
-        final TransactionCategoryClass myClass = pTrans.getCategoryClass();
-        if (myClass.isSwitchDirection()) {
-            /* switch the direction */
-            myDir = myDir.reverse();
-        }
-
-        /* Obtain zeroed counters */
-        TethysMoney myGross = theValues.getMoneyValue(TaxBasisAttribute.GROSS);
-        myGross = new TethysMoney(myGross);
-        myGross.setZero();
-        final TethysMoney myNett = new TethysMoney(myGross);
-        final TethysMoney myTax = new TethysMoney(myGross);
-
-        /* If this is an expense */
-        if (myDir.isTo()) {
-            /* If we have a natInsurance payment */
-            if (myNatIns != null
-                && myNatIns.isNonZero()) {
-                /* Adjust the gross */
-                myGross.subtractAmount(myNatIns);
-            }
-
-            /* else this is a standard income */
-        } else {
-            /* If we have a natInsurance payment */
-            if (myNatIns != null
-                && myNatIns.isNonZero()) {
-                /* Adjust the gross */
-                myGross.addAmount(myNatIns);
-            }
-        }
-
-        /* Register the delta values */
-        registerDeltaValues(pTrans, myGross, myNett, myTax);
-
-        /* If we have accounts */
-        if (hasAccounts) {
-            /* register the changes against the accounts */
-            theAccounts.registerDeltaValues(pTrans, myGross, myNett, myTax);
-        }
-    }
-
-    /**
      * Add expense transaction.
      * @param pTrans the transaction
      */
@@ -828,8 +774,8 @@ public class TaxBasisBucket
      * @param pValue the value
      * @param pAdjust adjustment control
      */
-    private void adjustValue(final TethysMoney pValue,
-                             final TaxBasisAdjust pAdjust) {
+    protected void adjustValue(final TethysMoney pValue,
+                               final TaxBasisAdjust pAdjust) {
         /* If we are adjusting Gross */
         if (pAdjust.adjustGross()) {
             /* Access the existing value */
@@ -1008,7 +954,7 @@ public class TaxBasisBucket
             final TethysMoney myGross = super.getMoneyValue(TaxBasisAttribute.GROSS);
             final TethysMoney myNet = super.getMoneyValue(TaxBasisAttribute.NETT);
             final TethysMoney myTax = super.getMoneyValue(TaxBasisAttribute.TAXCREDIT);
-            return (myGross.isNonZero()) || (myNet.isNonZero()) || (myTax.isNonZero());
+            return myGross.isNonZero() || myNet.isNonZero() || myTax.isNonZero();
         }
     }
 
@@ -1411,7 +1357,7 @@ public class TaxBasisBucket
         }
 
         /**
-         * Adjust basis buckets for Gross only.
+         * Adjust basis buckets for Nett only.
          * @param pTrans the transaction
          * @param pClass the class
          * @param pIncome the income

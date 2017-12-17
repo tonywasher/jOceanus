@@ -279,6 +279,27 @@ public enum PayeeTypeClass implements StaticInterface {
     }
 
     /**
+     * Determine whether the PayeeType can contribute to a pension.
+     * @return <code>true</code> if the payee type can contribute to a pension, <code>false</code>
+     * otherwise.
+     */
+    public boolean canContribPension() {
+        switch (this) {
+            case INSTITUTION:
+            case EMPLOYER:
+            case GOVERNMENT:
+            case TAXMAN:
+                return true;
+            case MARKET:
+            case INDIVIDUAL:
+            case PAYEE:
+            case ANNUITY:
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether the PayeeType can provide a taxedIncome.
      * @return <code>true</code> if the payee type can parent a portfolio, <code>false</code>
      * otherwise.

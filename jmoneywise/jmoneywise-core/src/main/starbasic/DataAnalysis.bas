@@ -30,12 +30,14 @@ Public Const acctMarket As String = "Market"
 
 'Well known accounts
 Public Const acctTaxMan As String = "InlandRevenue"
+Public Const acctStatePension As String = "StatePension"
 
 'Hidden Reporting Category Names
 Public Const catTaxCredit As String = "Taxes:IncomeTax"
-Public Const catNatInsurance As String = "Taxes:NatInsurance"
+Public Const catTaxRelief As String = "Taxes:Relief"
 Public Const catBenefit As String = "Income:Benefit"
-Public Const catPensionContrib As String = "Income:PensionContribution"
+Public Const catEmployerNatIns As String = "Income:EmployerNatIns"
+Public Const catEmployeeNatIns As String = "Income:EmployeeNatIns"
 Public Const catWithheld As String = "Expenses:Virtual"
 Public Const catMktGrowth As String = "Market:Growth"
 Public Const catCapitalGain	As String = "Market:CapitalGain"
@@ -58,16 +60,21 @@ Sub analyseYear(ByRef Context As FinanceState, _
     Dim myDate As Date
 	Dim myEvent As Object
 	Dim myLastEvent As Object
-	Dim myDebInfo As Object
-	Dim myCredInfo As Object
-	Dim myParInfo As Object
+	Dim myDebAcct As Object
+	Dim myCredAcct As Object
+	Dim myParAcct As Object
 	Dim myCatInfo As Object
 	Dim myTaxInfo As Object
-	Dim myInsInfo As Object
-	Dim myPensInfo As Object
+	Dim myTaxReliefInfo As Object
+	Dim myErNatInsInfo As Object
+	Dim myEeNatInsInfo As Object
 	Dim myBenInfo As Object
+	Dim myWithInfo As Object
 	Dim myTaxGainInfo As Object
 	Dim myCharInfo As Object
+	Dim myTaxAcct As Object
+	Dim myPensionAcct As Object
+	Dim myNIAcct As Object
 	             
 	'Access the current workbook
 	myDoc = Context.docBook
@@ -77,9 +84,11 @@ Sub analyseYear(ByRef Context As FinanceState, _
 	
 	'Access the TaxCredit and Taxable Gain information
     myTaxAcct = getCachedAccount(Context, acctTaxMan) 
+    myPensionAcct = getCachedAccount(Context, acctStatePension) 
     myTaxInfo = getCategoryStats(Context, catTaxCredit) 
-    myInsInfo = getCategoryStats(Context, catNatInsurance) 
-    myPensInfo = getCategoryStats(Context, catPensionContrib) 
+    myTaxReliefInfo = getCategoryStats(Context, catTaxRelief) 
+    myErNatInsInfo = getCategoryStats(Context, catEmployerNatIns) 
+    myEeNatInsInfo = getCategoryStats(Context, catEmployeeNatIns) 
     myBenInfo = getCategoryStats(Context, catBenefit) 
     myTaxGainInfo = getCategoryStats(Context, catTaxableGain) 
     myWithInfo = getCategoryStats(Context, catWithheld) 
@@ -94,8 +103,8 @@ Sub analyseYear(ByRef Context As FinanceState, _
 							
 		'Access the information from the event
 		myDate = myEvent.dtDate
-		myCredInfo = myEvent.acctCredit
-		myDebInfo = myEvent.acctDebit
+		myCredAcct = myEvent.acctCredit
+		myDebAcct = myEvent.acctDebit
 		myCatInfo = myEvent.catCategory
 		myValue = myEvent.evtValue
 		myTaxCred = myEvent.evtTaxCredit
@@ -114,145 +123,145 @@ Sub analyseYear(ByRef Context As FinanceState, _
     	'If we have a value in the Units cell
 		If ((myDebUnits <> 0) Or (myCredUnits <> 0)) Then
 			'If the debit account has units 
-			If (myDebInfo.hasUnits) Then
+			If (myDebAcct.hasUnits) Then
 				'Subtract from units
-				myDebInfo.acctUnits = myDebInfo.acctUnits - myDebUnits
-				myDebInfo.isActive = True()
+				myDebAcct.acctUnits = myDebAcct.acctUnits - myDebUnits
+				myDebAcct.isActive = True()
 			End If
 
 			'If the credit account has units 
-			If (myCredInfo.hasUnits) Then
+			If (myCredAcct.hasUnits) Then
 				'Add to units
-				myCredInfo.acctUnits = myCredInfo.acctUnits + myCredUnits
-				myCredInfo.isActive = True()
+				myCredAcct.acctUnits = myCredAcct.acctUnits + myCredUnits
+				myCredAcct.isActive = True()
 				
 				'If this is a Stock Takeover
 				If (myCatInfo.isStockTakeover) Then
 					'Set the debit units to zero
-					myDebInfo.acctUnits = 0
+					myDebAcct.acctUnits = 0
 				End If
 			End If			
         End If
         
         'If this is a security Closure, reset units
         If (myCatInfo.isStockClosure) Then 
- 		    myDebInfo.acctUnits = 0
+ 		    myDebAcct.acctUnits = 0
         End If 
         
         'If this is the first credit of an autoUnits security, then set units
-        If (myCredInfo.hasUnits And myCredInfo.acctType.isAutoUnits And myCredInfo.acctUnits = 0) Then 
- 		    myCredInfo.acctUnits = myCredInfo.acctType.numAutoUnits
+        If (myCredAcct.hasUnits And myCredAcct.acctType.isAutoUnits And myCredAcct.acctUnits = 0) Then 
+ 		    myCredAcct.acctUnits = myCredAcct.acctType.numAutoUnits
         End If 
         
     	'If we have a value in the Amount cell
 		If (myValue <> 0) Then
 			'Access the statistics for the Credit account
-			myCredInfo.isActive = True()
+			myCredAcct.isActive = True()
 			
 			'If the credit account has value 
-			If (myCredInfo.hasValue) Then
+			If (myCredAcct.hasValue) Then
 				'If we have autoExpense
-				If (myCredInfo.isAutoExpense) Then
+				If (myCredAcct.isAutoExpense) Then
 					'Add to expense
-					myAutoExpense = myCredInfo.catAutoExpense
+					myAutoExpense = myCredAcct.catAutoExpense
 					myAutoExpense.catValue = myAutoExpense.catValue + myValue				
-					myCredInfo.acctExpense = myCredInfo.acctExpense + myValue		
+					myCredAcct.acctExpense = myCredAcct.acctExpense + myValue		
 				'If this is Loan payment
 				ElseIf (myCatInfo.isLoanPay) Then
 					'Access the parent account
-					myParInfo = myCredInfo.acctParent					
+					myParAcct = myCredAcct.acctParent					
 					
 					'Adjust parent expense
-					myParInfo.acctExpense = myParInfo.acctExpense + myTaxCred + myValue
+					myParAcct.acctExpense = myParAcct.acctExpense + myTaxCred + myValue
 				Else
 					'Add to value
-					myCredInfo.acctValue = myCredInfo.acctValue + myValue
+					myCredAcct.acctValue = myCredAcct.acctValue + myValue
 				EndIf
 				
 			'Else If the credit account has units 
-			ElseIf myCredInfo.hasUnits Then
+			ElseIf myCredAcct.hasUnits Then
 				'Add to investment
-				myCredInfo.acctInvestment = myCredInfo.acctInvestment + myValue
+				myCredAcct.acctInvestment = myCredAcct.acctInvestment + myValue
 
 				'Add to cost
-				myCredInfo.acctCost = myCredInfo.acctCost + myValue
+				myCredAcct.acctCost = myCredAcct.acctCost + myValue
 									
 			'Else this is an expense
 			Else
 				'Add to expense
-				myCredInfo.acctExpense = myCredInfo.acctExpense + myValue		
+				myCredAcct.acctExpense = myCredAcct.acctExpense + myValue		
 			End If
 				
 			'Access the statistics for the Debit account
-			myDebInfo.isActive = True()
+			myDebAcct.isActive = True()
 			
 			'If the debit account has value 
-			If myDebInfo.hasValue Then
+			If (myDebAcct.hasValue) Then
 				'If this is interest
 				If (myCatInfo.isInterest) Then
 					'Access the parent account
-					myParInfo = myDebInfo.acctParent					
+					myParAcct = myDebAcct.acctParent					
 					
 					'Adjust parent income
-					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred + myWithheld
-					myParInfo.acctExpense = myParInfo.acctExpense + myWithheld
+					myParAcct.acctIncome = myParAcct.acctIncome + myValue + myTaxCred + myWithheld
+					myParAcct.acctExpense = myParAcct.acctExpense + myWithheld
 				'If this is asset earnings
 				ElseIf (myCatInfo.isAssetEarn) Then
 					'Access the parent account
-					myParInfo = myDebInfo.acctParent					
+					myParAcct = myDebAcct.acctParent					
 					
 					'Adjust parent income
-					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred
+					myParAcct.acctIncome = myParAcct.acctIncome + myValue + myTaxCred
 				ElseIf (myCatInfo.isRental) Then
 					'Access the parent account (of credit!!)
-					myParInfo = myCredInfo.acctParent					
+					myParAcct = myCredAcct.acctParent					
 					
 					'Adjust parent income
-					myParInfo.acctIncome = myParInfo.acctIncome + myValue
+					myParAcct.acctIncome = myParAcct.acctIncome + myValue
 				'If we have autoExpense
-				ElseIf (myDebInfo.isAutoExpense) Then
+				ElseIf (myDebAcct.isAutoExpense) Then
 					'Subtract from expense
-					myAutoExpense = myDebInfo.catAutoExpense
+					myAutoExpense = myDebAcct.catAutoExpense
 					myAutoExpense.catValue = myAutoExpense.catValue - myValue
-					myDebInfo.acctExpense = myDebInfo.acctExpense - myValue		
+					myDebAcct.acctExpense = myDebAcct.acctExpense - myValue		
 				Else
 					'Subtract from Value
-					myDebInfo.acctValue = myDebInfo.acctValue - myValue
-					myDebInfo.acctExpense = myDebInfo.acctIncome - myValue
+					myDebAcct.acctValue = myDebAcct.acctValue - myValue
+					myDebAcct.acctExpense = myDebAcct.acctIncome - myValue
 				EndIf
 				
 			'If the debit account has units 
-			ElseIf (myDebInfo.hasUnits) Then
+			ElseIf (myDebAcct.hasUnits) Then
 				'If this is a dividend
 				If (myCatInfo.isDividend) Then
 					'Add to Dividend value
-					myDebInfo.acctDividends = myDebInfo.acctDividends + myValue + myTaxCred
+					myDebAcct.acctDividends = myDebAcct.acctDividends + myValue + myTaxCred
 
 					'Access the parent account
-					myParInfo = myDebInfo.acctParent
+					myParAcct = myDebAcct.acctParent
 					
 					'Adjust parent income
-					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred
+					myParAcct.acctIncome = myParAcct.acctIncome + myValue + myTaxCred
 					
 				'Else it is not a dividend or cash takeover
 				Else
 					'Subtract from investment value
-					myDebInfo.acctInvestment = myDebInfo.acctInvestment - myValue - myTaxCred
+					myDebAcct.acctInvestment = myDebAcct.acctInvestment - myValue - myTaxCred
 
 					'Assume the reduction is the full value taken
 					myReduction = myValue
-					myCost = myDebInfo.acctCost
+					myCost = myDebAcct.acctCost
 					
 					'If we are reducing units in the account
 					If (myDebUnits > 0) Then
 						'Calculate the reduction
 						myReduction = myCost * myDebUnits
-						myReduction = myReduction / (myDebUnits + myDebInfo.acctUnits)
+						myReduction = myReduction / (myDebUnits + myDebAcct.acctUnits)
 						
 					'Else if this is a stocks rights that is waived
 					ElseIf (myCatInfo.isStockRights) Then 
 						'Calculate the existing value of the stock
-						myShares = getAssetValueForDate(Context, myDebInfo, myDate)
+						myShares = getAssetValueForDate(Context, myDebAcct, myDate)
 						
 						'If this is a large stocks rights waiver(>£3000 and > 5% stock value)
 						If (myValue > 3000) And ((myValue * 20) > myShares) Then
@@ -273,7 +282,7 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					End If
 						
 					'If this is a Taxable Gain
-					If (myDebInfo.isLifeBond) Then
+					If (myDebAcct.isLifeBond) Then
 						'Add the amount and tax credit
 						myTaxGainInfo.catValue = myTaxGainInfo.catValue + myValue
 						myTaxGainInfo.catValue = myTaxGainInfo.catValue - myReduction
@@ -283,95 +292,114 @@ Sub analyseYear(ByRef Context As FinanceState, _
 						myTaxInfo.catValue = myTaxInfo.catValue + myTaxCred
 						
 						'Add the tax credit to the Gains
-						myDebInfo.acctGains = myDebInfo.acctGains + myTaxCred
+						myDebAcct.acctGains = myDebAcct.acctGains + myTaxCred
 					End If
 					
 					'Add to gains (allowing for cost reduction)
-					myDebInfo.acctGains = myDebInfo.acctGains + myValue
-					myDebInfo.acctGains = myDebInfo.acctGains - myReduction
+					myDebAcct.acctGains = myDebAcct.acctGains + myValue
+					myDebAcct.acctGains = myDebAcct.acctGains - myReduction
 
 					'Remove from cost
-					myDebInfo.acctCost = myDebInfo.acctCost - myReduction
+					myDebAcct.acctCost = myDebAcct.acctCost - myReduction
 				End If
 
 			'Else this is an income
 			Else
 				'If this is income from a portfolio
-				If (myDebInfo.isPortfolio) Then
+				If (myDebAcct.isPortfolio) Then
 					'Switch to the parent account
-					myDebInfo = myDebInfo.acctParent
+					myDebAcct = myDebAcct.acctParent
 				End If
 				
 				'If this is a recovered transaction
 				If Not (myCatInfo.isIncome) Then
 					'Subtract from expense and reverse sign
-					myDebInfo.acctExpense = myDebInfo.acctExpense - myValue
+					myDebAcct.acctExpense = myDebAcct.acctExpense - myValue
 					myValue = -myValue
 					
 				'Else standard transaction
 				Else
 					'Add to income		
-					myDebInfo.acctIncome = myDebInfo.acctIncome + myValue + myTaxCred + myEeNatIns + myErNatIns + myWithheld
+					myDebAcct.acctIncome = myDebAcct.acctIncome + myValue + myTaxCred + myEeNatIns + myErNatIns + myWithheld
 				End If		
 			End If
 			
 			'If there is a TaxCredit
-			If (myTaxCred > 0) Or (myEeNatIns > 0) Or (myErNatIns > 0) Then
+			If (myTaxCred > 0) Then
                 If (myCatInfo.isLoanPay) Then
                     'Adjust taxman expense
                     myTaxAcct.acctExpense = myTaxAcct.acctExpense - myTaxCred
                 Else
 				    'Adjust taxman expense
-                    myTaxAcct.acctExpense = myTaxAcct.acctExpense + myTaxCred + myEeNatIns + myErNatIns
+                    myTaxAcct.acctExpense = myTaxAcct.acctExpense + myTaxCred
                 End If 
 			End If
 			
 			'If this is not a transfer or taxable gain
 			If Not (myCatInfo.isTransfer) Then				
-				'Add the amount, tax credit and natInsurance/Benefit
+				'Add the amount
 				myCatInfo.catValue = myCatInfo.catValue + myValue
-				myCatInfo.catTaxCredit = myCatInfo.catTaxCredit + myTaxCred
-				myCatInfo.catEeNatIns = myCatInfo.catEeNatIns + myEeNatIns
-				myCatInfo.catWithheld = myCatInfo.catWithheld + myWithheld
 				
-				'Add the tax credit and Nat Insurance
-                If (myCatInfo.isLoanPay) Then
-    				myTaxInfo.catValue = myTaxInfo.catValue - myTaxCred
-   				Else 
-    				myTaxInfo.catValue = myTaxInfo.catValue + myTaxCred
+				'Handle TaxCredit
+				If (myTaxCred <> 0) Then
+				    myCatInfo.catTaxCredit = myCatInfo.catTaxCredit + myTaxCred
+                    If (myCatInfo.isLoanPay) Then
+    				    myTaxReliefInfo.catValue = myTaxReliefInfo.catValue - myTaxCred
+   				    Else 
+    				    myTaxInfo.catValue = myTaxInfo.catValue + myTaxCred
+   				    End If
    				End If
-				myInsInfo.catValue = myInsInfo.catValue + myEeNatIns				
-				myPensInfo.catValue = myPensInfo.catValue + myErNatIns				
-				myBenInfo.catValue = myBenInfo.catValue + myBenefit
-				myWithInfo.catValue = myWithInfo.catValue + myBenefit + myErNatIns + myWithheld
+
+				'Handle Benefit/Withheld
+				If (myBenefit <> 0) Or (myWithheld <> 0) Then
+  				    myCatInfo.catWithheld = myCatInfo.catWithheld + myWithheld
+				    myBenInfo.catValue = myBenInfo.catValue + myBenefit
+				    myWithInfo.catValue = myWithInfo.catValue + myBenefit + myWithheld
+				End If
+				
+				'Handle National insurance
+				If (myEeNatIns <> 0) Or (myErNatIns <> 0) Then
+  				    myErNatInsInfo.catValue = myErNatInsInfo.catValue + myErNatIns				
+				    myEeNatInsInfo.catValue = myEeNatInsInfo.catValue + myEeNatIns				
+  				    myNIAcct = myCredAcct
+   				    If Not(myNIAcct.isPension) Then
+				        myNIAcct = myPensionAcct
+				    End If
+  				    myNIAcct.isActive = True()
+				    myNIAcct.acctInvestment = myNIAcct.acctInvestment + myEeNatIns + myErNatIns
+				    myNIAcct.acctCost = myNIAcct.acctCost + myEeNatIns + myErNatIns
+                    If (myNIAcct.acctUnits = 0) Then 
+       		            myNIAcct.acctUnits = myNIAcct.acctType.numAutoUnits
+                    End If 								
+                End If 
 			End If
 
         'If we have a Stock Demerger
         ElseIf (myCatInfo.isStockDemerger) Then
 			'Access the Existing Cost
-			myCost = myDebInfo.acctCost
+			myCost = myDebAcct.acctCost
 			
 			'Calculate the transfer cost information
-			myCost = myDebInfo.acctCost * myDilution
-			myTransfer = myDebInfo.acctCost - myCost
+			myCost = myDebAcct.acctCost * myDilution
+			myTransfer = myDebAcct.acctCost - myCost
 			
 			'Adjust the costs
-			myCredInfo.acctCost = myCredInfo.acctCost + myTransfer
-			myDebInfo.acctCost = myDebInfo.acctCost - myTransfer
+			myCredAcct.acctCost = myCredAcct.acctCost + myTransfer
+			myDebAcct.acctCost = myDebAcct.acctCost - myTransfer
 			
 			'Adjust the investments
-			myCredInfo.acctInvestment = myCredInfo.acctInvestment + myTransfer
-			myDebInfo.acctInvestment = myDebInfo.acctInvestment - myTransfer
+			myCredAcct.acctInvestment = myCredAcct.acctInvestment + myTransfer
+			myDebAcct.acctInvestment = myDebAcct.acctInvestment - myTransfer
 		End If
 
         'If we have a Stock Takeover
         If (myCatInfo.isStockTakeover) Then
 			'Access the Existing Cost and any cash element of takeover
-			myCost = myDebInfo.acctCost
+			myCost = myDebAcct.acctCost
 			myCash = myEvent.evtThirdPartyValue
 
 			'Access the value of shares used in the takeover on this date
-			myShares = getAssetValueForDate(Context, myCredInfo, myDate)						
+			myShares = getAssetValueForDate(Context, myCredAcct, myDate)						
 			
 			'Apportion the cost between the stock and shares part
 			myProportion = myShares / (myShares + myCash)
@@ -382,13 +410,13 @@ Sub analyseYear(ByRef Context As FinanceState, _
 			myGains = myCash - myCashCost
 						
 			'Adjust the costs and gains
-			myCredInfo.acctCost = myCredInfo.acctCost + myStockCost
-			myDebInfo.acctGains = myDebInfo.acctGains + myGains
-			myDebInfo.acctInvestment = myDebInfo.acctInvestment - myCash
-			myDebInfo.acctCost = 0
+			myCredAcct.acctCost = myCredAcct.acctCost + myStockCost
+			myDebAcct.acctGains = myDebAcct.acctGains + myGains
+			myDebAcct.acctInvestment = myDebAcct.acctInvestment - myCash
+			myDebAcct.acctCost = 0
 			If (myCash <> 0) Then
-			    myCredInfo = myEvent.acctThirdParty
-			    myCredInfo.acctValue = myCredInfo.acctValue + myCash
+			    myCredAcct = myEvent.acctThirdParty
+			    myCredAcct.acctValue = myCredAcct.acctValue + myCash
 			End If
         End If
         
@@ -430,7 +458,7 @@ Sub valuePricedAssets(ByRef Context As FinanceState, _
 		myAccount = hashNext(myIterator)
 		
 		'If the element has Units 
-		If (myAccount.hasUnits) And	(myAccount.isActive) Then
+	    If (myAccount.hasUnits) And	(myAccount.isActive) Then
 		    'Determine the column index to use
     		myCol = getSpotPriceIndexForAcct(Context, myAccount)
     		 

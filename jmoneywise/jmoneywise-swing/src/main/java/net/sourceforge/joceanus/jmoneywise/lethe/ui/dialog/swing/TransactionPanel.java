@@ -256,14 +256,16 @@ public class TransactionPanel
         /* Allocate fields */
         final TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
         final TethysSwingStringTextField myForeignTaxCredit = pFactory.newStringField();
-        final TethysSwingStringTextField myNatIns = pFactory.newStringField();
+        final TethysSwingStringTextField myEeNatIns = pFactory.newStringField();
+        final TethysSwingStringTextField myErNatIns = pFactory.newStringField();
         final TethysSwingStringTextField myBenefit = pFactory.newStringField();
         final TethysSwingStringTextField myWithheld = pFactory.newStringField();
         final TethysSwingStringTextField myYears = pFactory.newStringField();
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT), MetisDataType.MONEY, myTaxCredit);
-        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS), MetisDataType.MONEY, myNatIns);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS), MetisDataType.MONEY, myEeNatIns);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYERNATINS), MetisDataType.MONEY, myErNatIns);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
@@ -395,7 +397,7 @@ public class TransactionPanel
         myFieldSet.setEditable(myField, bEditField);
         myFieldSet.setAssumedCurrency(myField, myCurrency);
 
-        /* Determine whether the taxCredit field should be visible */
+        /* Determine whether the foreign taxCredit field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.FOREIGNTAXCREDIT);
         bShowField = bEditField || myTrans.getForeignTaxCredit() != null;
@@ -403,10 +405,18 @@ public class TransactionPanel
         myFieldSet.setEditable(myField, bEditField);
         myFieldSet.setAssumedCurrency(myField, myCurrency);
 
-        /* Determine whether the natIns field should be visible */
+        /* Determine whether the EeNatIns field should be visible */
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYEENATINS);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.EMPLOYEENATINS);
         bShowField = bEditField || myTrans.getEmployeeNatIns() != null;
+        myFieldSet.setVisibility(myField, bShowField);
+        myFieldSet.setEditable(myField, bEditField);
+        myFieldSet.setAssumedCurrency(myField, myCurrency);
+
+        /* Determine whether the ErnatIns field should be visible */
+        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.EMPLOYERNATINS);
+        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.EMPLOYERNATINS);
+        bShowField = bEditField || myTrans.getEmployerNatIns() != null;
         myFieldSet.setVisibility(myField, bShowField);
         myFieldSet.setEditable(myField, bEditField);
         myFieldSet.setAssumedCurrency(myField, myCurrency);

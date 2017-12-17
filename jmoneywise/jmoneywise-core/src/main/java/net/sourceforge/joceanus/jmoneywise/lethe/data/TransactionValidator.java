@@ -89,6 +89,11 @@ public final class TransactionValidator {
                 /* Taxed/Other income must be to deposit/cash/loan */
                 return myType.isValued();
 
+            case PENSIONCONTRIB:
+                /* Pension contribution must be to a Pension holding */
+                return (pAccount instanceof SecurityHolding)
+                       && ((SecurityHolding) pAccount).getSecurity().getSecurityTypeClass().isPension();
+
             case GIFTEDINCOME:
             case INHERITED:
                 /* Inheritance/Gifted must be to asset */
@@ -180,6 +185,10 @@ public final class TransactionValidator {
             case TAXEDINCOME:
             case GROSSINCOME:
                 /* Cannot refund Taxed Income yet */
+                return pDirection.isFrom();
+
+            case PENSIONCONTRIB:
+                /* Cannot refund Pension Contribution */
                 return pDirection.isFrom();
 
             case GIFTEDINCOME:
@@ -296,6 +305,11 @@ public final class TransactionValidator {
                 return pPartner instanceof Payee
                        && ((Payee) pPartner).getPayeeTypeClass().canProvideTaxedIncome();
 
+            case PENSIONCONTRIB:
+                /* Pension Contribution must be a payee that can parent */
+                return pPartner instanceof Payee
+                       && ((Payee) pPartner).getPayeeTypeClass().canContribPension();
+
             case OTHERINCOME:
             case RECOVEREDEXPENSES:
                 /* Other Income must have a Payee partner */
@@ -354,8 +368,10 @@ public final class TransactionValidator {
                 return checkStockRights(pAccount, pPartner);
 
             case TRANSFER:
-            case SECURITYCLOSURE:
                 return checkTransfer(pAccount, pPartner);
+
+            case SECURITYCLOSURE:
+                return checkSecurityClosure(pAccount, pPartner);
 
             case EXPENSE:
                 /* Expense must have a Payee partner */
@@ -452,8 +468,8 @@ public final class TransactionValidator {
     private static boolean checkStockRights(final TransactionAsset pAccount,
                                             final TransactionAsset pPartner) {
         /* If this is security -> portfolio */
-        if ((pAccount instanceof SecurityHolding)
-            && (pPartner instanceof Portfolio)) {
+        if (pAccount instanceof SecurityHolding
+            && pPartner instanceof Portfolio) {
             /* Must be same portfolios */
             final SecurityHolding myHolding = (SecurityHolding) pAccount;
             return MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner);
@@ -507,8 +523,8 @@ public final class TransactionValidator {
     private static boolean checkLoyaltyBonus(final TransactionAsset pAccount,
                                              final TransactionAsset pPartner) {
         /* If this is portfolio -> security holding */
-        if ((pAccount instanceof Portfolio)
-            && (pPartner instanceof SecurityHolding)) {
+        if (pAccount instanceof Portfolio
+            && pPartner instanceof SecurityHolding) {
             /* Must be same portfolios */
             final SecurityHolding myHolding = (SecurityHolding) pPartner;
             return MetisDataDifference.isEqual(myHolding.getPortfolio(), pAccount);
@@ -532,8 +548,8 @@ public final class TransactionValidator {
         }
 
         /* If this is security -> portfolio */
-        if ((pAccount instanceof SecurityHolding)
-            && (pPartner instanceof Portfolio)) {
+        if (pAccount instanceof SecurityHolding
+            && pPartner instanceof Portfolio) {
             /* Must be same portfolios */
             final SecurityHolding myHolding = (SecurityHolding) pAccount;
             if (!MetisDataDifference.isEqual(myHolding.getPortfolio(), pPartner)) {
@@ -542,8 +558,8 @@ public final class TransactionValidator {
         }
 
         /* If this is security <- portfolio */
-        if ((pPartner instanceof SecurityHolding)
-            && (pAccount instanceof Portfolio)) {
+        if (pPartner instanceof SecurityHolding
+            && pAccount instanceof Portfolio) {
             /* Must be same portfolios */
             final SecurityHolding myHolding = (SecurityHolding) pPartner;
             if (!MetisDataDifference.isEqual(myHolding.getPortfolio(), pAccount)) {
@@ -553,6 +569,23 @@ public final class TransactionValidator {
 
         /* partner must be asset */
         return pPartner.getAssetType().isAsset();
+    }
+
+    /**
+     * Check securityClosure.
+     * @param pAccount the account being closed.
+     * @param pPartner the partner
+     * @return valid true/false
+     */
+    private static boolean checkSecurityClosure(final TransactionAsset pAccount,
+                                                final TransactionAsset pPartner) {
+        /* Must not be recursive */
+        if (MetisDataDifference.isEqual(pAccount, pPartner)) {
+            return false;
+        }
+
+        /* partner must be valued */
+        return pPartner.getAssetType().isValued();
     }
 
     /**

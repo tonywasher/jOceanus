@@ -52,9 +52,10 @@ Private Const colAcTpEndowment As Integer = 8
 Private Const colAcTpPortfolio As Integer = 9
 Private Const colAcTpCapital As Integer = 10
 Private Const colAcTpLifeBond As Integer = 11
-Private Const colAcTpAutoUnits As Integer = 12
-Private Const colAcTpTaxFree As Integer = 13
-Private Const colAcTpGross As Integer = 14
+Private Const colAcTpPension As Integer = 12
+Private Const colAcTpAutoUnits As Integer = 13
+Private Const colAcTpTaxFree As Integer = 14
+Private Const colAcTpGross As Integer = 15
 
 'Account Type
 Public Type AccountType
@@ -74,6 +75,7 @@ Public Type AccountType
 	isPortfolio As Boolean
 	isCapital As Boolean
 	isLifeBond As Boolean	
+	isPension As Boolean	
 	isAutoUnits As Boolean	
 	numAutoUnits As Integer	
 	
@@ -116,6 +118,7 @@ Public Type AccountStats
 	isLifeBond As Boolean
 	isEndowment As Boolean
 	isUnitTrust As Boolean
+	isPension As Boolean
 	isPortfolio As Boolean
 	
 	'Reporting indices
@@ -194,6 +197,7 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
 	    myType.isLifeBond = myRow.getCellByPosition(colAcTpLifeBond, 0).getValue()
 	    myType.isEndowment = myRow.getCellByPosition(colAcTpEndowment, 0).getValue()
 	    myType.isPortfolio = myRow.getCellByPosition(colAcTpPortfolio, 0).getValue()
+	    myType.isPension = myRow.getCellByPosition(colAcTpPension, 0).getValue()
 	    myType.isTaxFree = myRow.getCellByPosition(colAcTpTaxFree, 0).getValue()
 	    myType.isGross = myRow.getCellByPosition(colAcTpGross, 0).getValue()
 
@@ -247,6 +251,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		myAcct.isLifeBond = myType.isLifeBond
 		myAcct.isEndowment = myType.isEndowment
 		myAcct.isPortfolio = myType.isPortfolio
+		myAcct.isPension = myType.isPension
 		myAcct.isTaxFree = myType.isTaxFree
 		myAcct.isGross = myType.isGross
 		myAcct.isActive = True()

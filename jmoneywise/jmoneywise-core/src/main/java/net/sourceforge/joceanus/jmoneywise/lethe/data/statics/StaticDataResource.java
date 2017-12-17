@@ -501,11 +501,6 @@ public enum StaticDataResource
     TRANSTYPE_CURRFLUCT("TransType.CurrencyFluctuation"),
 
     /**
-     * TransType NatInsurance.
-     */
-    TRANSTYPE_NATINS("TransType.NatInsurance"),
-
-    /**
      * TransType Withheld.
      */
     TRANSTYPE_WITHHELD("TransType.Withheld"),
@@ -514,6 +509,16 @@ public enum StaticDataResource
      * TransType OpeningBalance.
      */
     TRANSTYPE_OPENINGBALANCE("TransType.OpeningBalance"),
+
+    /**
+     * TransInfo EmployerNatIns.
+     */
+    TRANSTYPE_EMPLOYERNATINS("TransType.EmployerNatIns"),
+
+    /**
+     * TransInfo EmployeeNatIns.
+     */
+    TRANSTYPE_EMPLOYEENATINS("TransType.EmployeeNatIns"),
 
     /**
      * TransType IncomeTotals.
@@ -824,16 +829,6 @@ public enum StaticDataResource
      * TransInfo TaxCredit.
      */
     TRANSINFO_TAXCREDIT("TransInfoType.TaxCredit"),
-
-    /**
-     * TransInfo EmployerNatIns.
-     */
-    TRANSINFO_EMPLOYERNATINS("TransInfoType.EmployerNatIns"),
-
-    /**
-     * TransInfo EmployeeNatIns.
-     */
-    TRANSINFO_EMPLOYEENATINS("TransInfoType.EmployeeNatIns"),
 
     /**
      * TransInfo Benefit.
@@ -1199,8 +1194,9 @@ public enum StaticDataResource
         myMap.put(TransactionCategoryClass.CAPITALGAIN, TRANSTYPE_CAPITALGAIN);
         myMap.put(TransactionCategoryClass.MARKETGROWTH, TRANSTYPE_MARKETGROWTH);
         myMap.put(TransactionCategoryClass.CURRENCYFLUCTUATION, TRANSTYPE_CURRFLUCT);
-        myMap.put(TransactionCategoryClass.NATINSURANCE, TRANSTYPE_NATINS);
         myMap.put(TransactionCategoryClass.WITHHELD, TRANSTYPE_WITHHELD);
+        myMap.put(TransactionCategoryClass.EMPLOYERNATINS, TRANSTYPE_EMPLOYERNATINS);
+        myMap.put(TransactionCategoryClass.EMPLOYEENATINS, TRANSTYPE_EMPLOYEENATINS);
         myMap.put(TransactionCategoryClass.OPENINGBALANCE, TRANSTYPE_OPENINGBALANCE);
         myMap.put(TransactionCategoryClass.INCOMETOTALS, TRANSTYPE_INCOMETOTALS);
         myMap.put(TransactionCategoryClass.EXPENSETOTALS, TRANSTYPE_EXPENSETOTALS);
@@ -1333,8 +1329,8 @@ public enum StaticDataResource
         /* Create the map and return it */
         final Map<TransactionInfoClass, TethysResourceId> myMap = new EnumMap<>(TransactionInfoClass.class);
         myMap.put(TransactionInfoClass.TAXCREDIT, TRANSINFO_TAXCREDIT);
-        myMap.put(TransactionInfoClass.EMPLOYERNATINS, TRANSINFO_EMPLOYERNATINS);
-        myMap.put(TransactionInfoClass.EMPLOYEENATINS, TRANSINFO_EMPLOYEENATINS);
+        myMap.put(TransactionInfoClass.EMPLOYERNATINS, TRANSTYPE_EMPLOYERNATINS);
+        myMap.put(TransactionInfoClass.EMPLOYEENATINS, TRANSTYPE_EMPLOYEENATINS);
         myMap.put(TransactionInfoClass.DEEMEDBENEFIT, TRANSINFO_BENEFIT);
         myMap.put(TransactionInfoClass.WITHHELD, TRANSTYPE_WITHHELD);
         myMap.put(TransactionInfoClass.ACCOUNTDELTAUNITS, TRANSINFO_ACCOUNTDELTAUNITS);

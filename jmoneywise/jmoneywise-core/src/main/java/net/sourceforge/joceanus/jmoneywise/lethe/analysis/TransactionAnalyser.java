@@ -708,6 +708,7 @@ public class TransactionAnalyser
             case EXPENSE:
             case INHERITED:
             case OTHERINCOME:
+            case PENSIONCONTRIB:
                 processTransferIn(myDebit, pCredit);
                 break;
             /* Throw an Exception */

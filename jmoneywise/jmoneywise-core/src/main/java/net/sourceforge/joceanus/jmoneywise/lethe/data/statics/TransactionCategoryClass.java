@@ -311,26 +311,33 @@ public enum TransactionCategoryClass implements CategoryInterface {
     CURRENCYFLUCTUATION(56, 59),
 
     /**
-     * National Insurance.
-     * <p>
-     * This is a singular category catching national insurance payments associated with an event.
-     */
-    NATINSURANCE(57, 60),
-
-    /**
      * Withheld.
      * <p>
      * This is a singular category catching withheld items such as charity donations associated with
      * interest.
      */
-    WITHHELD(58, 61),
+    WITHHELD(57, 60),
 
     /**
      * OpeningBalance.
      * <p>
      * This is a singular category catching opening balances.
      */
-    OPENINGBALANCE(59, 62),
+    OPENINGBALANCE(58, 61),
+
+    /**
+     * EmployeeNatInsurance.
+     * <p>
+     * This is a singular category catching opening balances.
+     */
+    EMPLOYEENATINS(59, 62),
+
+    /**
+     * EmployeeNatInsurance.
+     * <p>
+     * This is a singular category catching opening balances.
+     */
+    EMPLOYERNATINS(60, 63),
 
     /**
      * Income Totals.
@@ -338,7 +345,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of income sub-categories and is used
      * purely for reporting purposes.
      */
-    INCOMETOTALS(60, 1),
+    INCOMETOTALS(61, 1),
 
     /**
      * Expense Totals.
@@ -346,7 +353,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of expense sub-categories and is used
      * purely for reporting purposes.
      */
-    EXPENSETOTALS(61, 2),
+    EXPENSETOTALS(62, 2),
 
     /**
      * Security Parent.
@@ -354,7 +361,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for categories which simply own a set of security transfer sub-categories and is
      * used purely for holding purposes.
      */
-    SECURITYPARENT(62, 3),
+    SECURITYPARENT(63, 3),
 
     /**
      * Totals.
@@ -362,7 +369,7 @@ public enum TransactionCategoryClass implements CategoryInterface {
      * This is used for the total of all non-transfer categories and is used purely for reporting
      * purposes.
      */
-    TOTALS(63, 0);
+    TOTALS(64, 0);
 
     /**
      * The String name.
@@ -445,13 +452,14 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case TAXFREELOYALTYBONUS:
             case MARKETGROWTH:
             case CURRENCYFLUCTUATION:
-            case NATINSURANCE:
             case WITHHELD:
             case TAXRELIEF:
             case CHARGEABLEGAIN:
             case RESIDENTIALGAIN:
             case CAPITALGAIN:
             case TAXFREEGAIN:
+            case EMPLOYEENATINS:
+            case EMPLOYERNATINS:
             case OPENINGBALANCE:
             case TOTALS:
                 return true;
@@ -523,8 +531,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case MARKETGROWTH:
             case CURRENCYFLUCTUATION:
             case INCOMETAX:
-            case NATINSURANCE:
-            case PENSIONCONTRIB:
+            case EMPLOYEENATINS:
+            case EMPLOYERNATINS:
             case VIRTUALINCOME:
             case WITHHELD:
             case RESIDENTIALGAIN:
@@ -572,6 +580,8 @@ public enum TransactionCategoryClass implements CategoryInterface {
             case RENTALINCOME:
             case ROOMRENTALINCOME:
             case OPTIONSEXERCISE:
+            case EMPLOYEENATINS:
+            case EMPLOYERNATINS:
             case OPENINGBALANCE:
             case INCOMETOTALS:
                 return true;

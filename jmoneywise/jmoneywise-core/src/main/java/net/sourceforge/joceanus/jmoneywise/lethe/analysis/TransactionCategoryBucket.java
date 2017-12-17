@@ -597,12 +597,6 @@ public final class TransactionCategoryBucket
                 myAmount.addAmount(myTaxCredit);
             }
 
-            /* Adjust for NatInsurance */
-            final TethysMoney myNatIns = pTrans.getEmployeeNatIns();
-            if (myNatIns != null) {
-                myAmount.addAmount(myNatIns);
-            }
-
             /* Adjust for Withheld */
             final TethysMoney myWithheld = pTrans.getWithheld();
             if (myWithheld != null) {
@@ -827,9 +821,14 @@ public final class TransactionCategoryBucket
         private final TransactionCategoryBucket theTaxRelief;
 
         /**
-         * The PensionContributions.
+         * The EmployeeNatIns.
          */
-        private final TransactionCategoryBucket thePensionContrib;
+        private final TransactionCategoryBucket theEmployeeNatIns;
+
+        /**
+         * The EmployerNatIns.
+         */
+        private final TransactionCategoryBucket theEmployerNatIns;
 
         /**
          * The DeemedBenefit.
@@ -873,7 +872,8 @@ public final class TransactionCategoryBucket
             /* Obtain the implied buckets */
             final TransactionCategoryList myList = theData.getTransCategories();
             theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
-            thePensionContrib = getBucket(myList.getSingularClass(TransactionCategoryClass.PENSIONCONTRIB));
+            theEmployeeNatIns = getBucket(myList.getEventInfoCategory(TransactionInfoClass.EMPLOYEENATINS));
+            theEmployerNatIns = getBucket(myList.getEventInfoCategory(TransactionInfoClass.EMPLOYERNATINS));
             theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
             theWithheld = getBucket(myList.getEventInfoCategory(TransactionInfoClass.WITHHELD));
             theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
@@ -900,7 +900,8 @@ public final class TransactionCategoryBucket
             /* Don't use implied buckets */
             theTaxBasis = null;
             theTaxCredit = null;
-            thePensionContrib = null;
+            theEmployeeNatIns = null;
+            theEmployerNatIns = null;
             theDeemedBenefit = null;
             theWithheld = null;
             theTaxRelief = null;
@@ -942,7 +943,8 @@ public final class TransactionCategoryBucket
             /* Don't use implied buckets */
             theTaxBasis = null;
             theTaxCredit = null;
-            thePensionContrib = null;
+            theEmployeeNatIns = null;
+            theEmployerNatIns = null;
             theDeemedBenefit = null;
             theWithheld = null;
             theTaxRelief = null;
@@ -1093,10 +1095,6 @@ public final class TransactionCategoryBucket
                                         final TransactionCategory pCategory) {
             /* Adjust the primary category bucket */
             final TransactionCategoryBucket myCatBucket = getBucket(pCategory);
-            myCatBucket.adjustValues(pTrans);
-
-            /* Adjust tax basis */
-            theTaxBasis.adjustBasis(pTrans, pCategory);
 
             /* Adjust for Tax Credit */
             TethysMoney myTaxCredit = pTrans.getTaxCredit();
@@ -1113,8 +1111,14 @@ public final class TransactionCategoryBucket
             }
 
             /* Adjust for EmployeeNatInsurance */
+            final boolean isPension = pCategory.isCategoryClass(TransactionCategoryClass.PENSIONCONTRIB);
             TethysMoney myNatIns = pTrans.getEmployeeNatIns();
-            if (myNatIns != null) {
+            if (myNatIns != null && myNatIns.isNonZero()) {
+                if (!isPension) {
+                    theEmployeeNatIns.addIncome(pTrans, myNatIns);
+                } else {
+                    myCatBucket.addIncome(myNatIns);
+                }
                 myNatIns = new TethysMoney(myNatIns);
                 myNatIns.negate();
                 theTaxBasis.adjustNettValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
@@ -1123,9 +1127,12 @@ public final class TransactionCategoryBucket
             /* Adjust for EmployerNatInsurance */
             myNatIns = pTrans.getEmployerNatIns();
             if (myNatIns != null) {
-                thePensionContrib.addIncome(pTrans, myNatIns);
-                theTaxBasis.adjustGrossValue(pTrans, TaxBasisClass.TAXFREE, myNatIns);
-                theTaxBasis.adjustNettValue(pTrans, TaxBasisClass.VIRTUAL, myNatIns);
+                if (!isPension) {
+                    theEmployerNatIns.addIncome(pTrans, myNatIns);
+                } else {
+                    myCatBucket.addIncome(myNatIns);
+                }
+                theTaxBasis.adjustValue(pTrans, TaxBasisClass.TAXFREE, myNatIns);
             }
 
             /* Adjust for DeemedBenefit */
@@ -1142,6 +1149,12 @@ public final class TransactionCategoryBucket
                 theWithheld.addExpense(pTrans, myWithheld);
                 theTaxBasis.adjustValue(pTrans, TaxBasisClass.VIRTUAL, myWithheld);
             }
+
+            /* Adjust the category bucket */
+            myCatBucket.adjustValues(pTrans);
+
+            /* Adjust tax basis */
+            theTaxBasis.adjustBasis(pTrans, pCategory);
         }
 
         /**
