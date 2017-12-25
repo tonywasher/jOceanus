@@ -275,6 +275,12 @@ public final class SecurityHolding
         return getAssetCurrency().getCurrency();
     }
 
+    @Override
+    public Boolean isForeign() {
+        final AssetCurrency myDefault = thePortfolio.getDataSet().getDefaultCurrency();
+        return !myDefault.equals(getAssetCurrency());
+    }
+
     /**
      * Generate the name.
      * @return the name.

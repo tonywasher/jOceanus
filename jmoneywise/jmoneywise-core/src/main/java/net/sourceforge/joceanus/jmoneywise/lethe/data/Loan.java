@@ -312,9 +312,9 @@ public class Loan
      */
     public Integer getParentId() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getId();
+        return myParent == null
+                                ? null
+                                : myParent.getId();
     }
 
     /**
@@ -323,9 +323,9 @@ public class Loan
      */
     public String getParentName() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getName();
+        return myParent == null
+                                ? null
+                                : myParent.getName();
     }
 
     /**
@@ -342,9 +342,9 @@ public class Loan
      */
     public Integer getCategoryId() {
         final LoanCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getId();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getId();
     }
 
     /**
@@ -353,9 +353,9 @@ public class Loan
      */
     public String getCategoryName() {
         final LoanCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getName();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getName();
     }
 
     /**
@@ -364,14 +364,20 @@ public class Loan
      */
     public LoanCategoryClass getCategoryClass() {
         final LoanCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getCategoryTypeClass();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getCategoryTypeClass();
     }
 
     @Override
     public AssetCurrency getAssetCurrency() {
         return getAssetCurrency(getValueSet());
+    }
+
+    @Override
+    public Boolean isForeign() {
+        final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
+        return !myDefault.equals(getAssetCurrency());
     }
 
     /**

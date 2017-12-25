@@ -191,6 +191,7 @@ public class TransactionInfoSet
     public MetisFieldRequired isClassRequired(final TransactionInfoClass pClass) {
         /* Access details about the Transaction */
         final Transaction myTransaction = getOwner();
+        final MoneyWiseData myData = myTransaction.getDataSet();
         final TransactionAsset myAccount = myTransaction.getAccount();
         final TransactionAsset myPartner = myTransaction.getPartner();
         final AssetDirection myDir = myTransaction.getDirection();
@@ -259,11 +260,10 @@ public class TransactionInfoSet
                 return isReturnedCashRequired(myTransaction);
 
             case PARTNERAMOUNT:
-                // case XCHANGERATE:
                 return isPartnerAmountClassRequired(myClass, myAccount, myPartner);
 
-            case FOREIGNTAXCREDIT:
-                return isForeignTaxCreditClassRequired(myClass, myAccount, myPartner);
+            case XCHANGERATE:
+                return isXchangeRateClassRequired(myClass, myAccount, myData.getDefaultCurrency());
 
             case PRICE:
                 return isPriceClassRequired(myClass, myAccount, myPartner);
@@ -324,10 +324,10 @@ public class TransactionInfoSet
                                                        ? MetisFieldRequired.NOTALLOWED
                                                        : MetisFieldRequired.MUSTEXIST;
             case DIVIDEND:
-                return pDebit.isTaxFree()
-                       || !pYear.isTaxCreditRequired()
-                                                       ? MetisFieldRequired.NOTALLOWED
-                                                       : MetisFieldRequired.MUSTEXIST;
+                return !pDebit.isTaxFree()
+                       && (pYear.isTaxCreditRequired() || pDebit.isForeign())
+                                                                              ? MetisFieldRequired.MUSTEXIST
+                                                                              : MetisFieldRequired.NOTALLOWED;
             case TRANSFER:
                 return pDebit instanceof SecurityHolding
                        && ((SecurityHolding) pDebit).getSecurity().isSecurityClass(SecurityTypeClass.LIFEBOND)
@@ -504,17 +504,19 @@ public class TransactionInfoSet
     }
 
     /**
-     * Determine if a ForeignTaxCredit infoSet class is required.
+     * Determine if an XchangeRate infoSet class is required.
      * @param pCategory the category
      * @param pAccount the account
-     * @param pPartner the partner
+     * @param pCurrency the reporting currency
      * @return the status
      */
-    private static MetisFieldRequired isForeignTaxCreditClassRequired(final TransactionCategoryClass pCategory,
-                                                                      final TransactionAsset pAccount,
-                                                                      final TransactionAsset pPartner) {
-        /* Don't allow yet */
-        return MetisFieldRequired.NOTALLOWED;
+    private static MetisFieldRequired isXchangeRateClassRequired(final TransactionCategoryClass pCategory,
+                                                                 final TransactionAsset pAccount,
+                                                                 final AssetCurrency pCurrency) {
+        return pCategory.isDividend()
+               && !pAccount.getAssetCurrency().equals(pCurrency)
+                                                                 ? MetisFieldRequired.MUSTEXIST
+                                                                 : MetisFieldRequired.NOTALLOWED;
     }
 
     /**

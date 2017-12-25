@@ -103,29 +103,24 @@ public enum TransactionInfoClass implements DataInfoClass {
     COMMENTS(14, 13, MetisDataType.STRING),
 
     /**
-     * ForeignTaxCredit.
-     */
-    FOREIGNTAXCREDIT(15, 14, MetisDataType.MONEY),
-
-    /**
      * Price.
      */
-    PRICE(16, 15, MetisDataType.PRICE),
+    PRICE(15, 14, MetisDataType.PRICE),
 
     /**
      * XchangeRate.
      */
-    XCHANGERATE(17, 16, MetisDataType.RATIO),
+    XCHANGERATE(16, 15, MetisDataType.RATIO),
 
     /**
      * Commission.
      */
-    COMMISSION(18, 17, MetisDataType.MONEY),
+    COMMISSION(17, 16, MetisDataType.MONEY),
 
     /**
      * TransactionTag.
      */
-    TRANSTAG(19, 18, MetisDataType.LINKSET);
+    TRANSTAG(18, 17, MetisDataType.LINKSET);
 
     /**
      * The String name.

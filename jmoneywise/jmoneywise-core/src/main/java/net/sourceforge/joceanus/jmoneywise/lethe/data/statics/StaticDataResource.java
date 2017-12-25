@@ -841,11 +841,6 @@ public enum StaticDataResource
     TRANSINFO_RETURNEDCASHACCOUNT("TransInfoType.ReturnedCashAccount"),
 
     /**
-     * TransInfo ForeignTaxCredit.
-     */
-    TRANSINFO_FOREIGNTAXCREDIT("TransInfoType.ForeignTaxCredit"),
-
-    /**
      * TransInfo Price.
      */
     TRANSINFO_PRICE("TransInfoType.Price"),
@@ -1342,7 +1337,6 @@ public enum StaticDataResource
         myMap.put(TransactionInfoClass.REFERENCE, TRANSINFO_REFERENCE);
         myMap.put(TransactionInfoClass.COMMENTS, TRANSINFO_COMMENTS);
         myMap.put(TransactionInfoClass.RETURNEDCASHACCOUNT, TRANSINFO_RETURNEDCASHACCOUNT);
-        myMap.put(TransactionInfoClass.FOREIGNTAXCREDIT, TRANSINFO_FOREIGNTAXCREDIT);
         myMap.put(TransactionInfoClass.PRICE, TRANSINFO_PRICE);
         myMap.put(TransactionInfoClass.XCHANGERATE, TRANSINFO_XCHANGERATE);
         myMap.put(TransactionInfoClass.COMMISSION, TRANSINFO_COMMISSION);

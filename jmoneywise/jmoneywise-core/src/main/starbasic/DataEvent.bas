@@ -41,7 +41,8 @@ Private Const colEvtWithheld As Integer = 16
 Private Const colEvtThirdParty As Integer = 17
 Private Const colEvtThirdPartyAmount As Integer = 18
 Private Const colEvtPartnerAmount As Integer = 19
-Private Const colEvtTags As Integer = 20
+Private Const colEvtXchangeRate As Integer = 20
+Private Const colEvtTags As Integer = 21
 
 'Hidden categories
 Public Const catTransfer As String = "Transfer"
@@ -84,6 +85,7 @@ Public Type EventInfo
 	evtDebUnits As Double
 	evtCredUnits As Double
 	evtDilution As Double
+	evtXchangeRate As Double
 	evtYears As Integer
 		
 	'Additional three fields declared to fix bug in debugger which loses last three fields
@@ -198,6 +200,7 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	myEvent.evtDilution        = eventRow.getCellByPosition(colEvtDilution, 0).getValue()
 	myEvent.evtWithheld        = eventRow.getCellByPosition(colEvtWithheld, 0).getValue()
 	myEvent.evtThirdPartyValue = eventRow.getCellByPosition(colEvtThirdPartyAmount, 0).getValue()
+	myEvent.evtXchangeRate     = eventRow.getCellByPosition(colEvtXchangeRate, 0).getValue()
 	myEvent.evtPartnerValue    = eventRow.getCellByPosition(colEvtPartnerAmount, 0).getValue()
 	
 	'Return the event

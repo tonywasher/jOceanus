@@ -332,16 +332,6 @@ public class Transaction
     }
 
     /**
-     * Obtain Foreign Tax Credit.
-     * @return the Tax Credit
-     */
-    public final TethysMoney getForeignTaxCredit() {
-        return hasInfoSet
-                          ? theInfoSet.getValue(TransactionInfoClass.FOREIGNTAXCREDIT, TethysMoney.class)
-                          : null;
-    }
-
-    /**
      * Obtain Price.
      * @return the Price
      */
@@ -815,15 +805,6 @@ public class Transaction
      */
     public final void setTaxCredit(final TethysMoney pCredit) throws OceanusException {
         setInfoSetValue(TransactionInfoClass.TAXCREDIT, pCredit);
-    }
-
-    /**
-     * Set a new ForeignTaxCredit.
-     * @param pCredit the new credit
-     * @throws OceanusException on error
-     */
-    public final void setForeignTaxCredit(final TethysMoney pCredit) throws OceanusException {
-        setInfoSetValue(TransactionInfoClass.FOREIGNTAXCREDIT, pCredit);
     }
 
     /**

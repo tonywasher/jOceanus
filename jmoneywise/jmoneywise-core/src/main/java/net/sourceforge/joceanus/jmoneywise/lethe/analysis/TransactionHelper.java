@@ -498,12 +498,12 @@ public class TransactionHelper {
             final TethysMoney myReturnedCash = theCurrent.getReturnedCash();
 
             /* Determine account prices */
-            theAccountPrice = (theAccount instanceof SecurityHolding)
-                                                                      ? thePriceCursor.getSecurityPrice(((SecurityHolding) theAccount).getSecurity(), theDate)
-                                                                      : null;
-            thePartnerPrice = (thePartner instanceof SecurityHolding)
-                                                                      ? thePriceCursor.getSecurityPrice(((SecurityHolding) thePartner).getSecurity(), theDate)
-                                                                      : null;
+            theAccountPrice = theAccount instanceof SecurityHolding
+                                                                    ? thePriceCursor.getSecurityPrice(((SecurityHolding) theAccount).getSecurity(), theDate)
+                                                                    : null;
+            thePartnerPrice = thePartner instanceof SecurityHolding
+                                                                    ? thePriceCursor.getSecurityPrice(((SecurityHolding) thePartner).getSecurity(), theDate)
+                                                                    : null;
 
             /* Determine foreign account detail */
             AssetCurrency myActCurrency = theAccount.getAssetCurrency();
@@ -859,8 +859,11 @@ public class TransactionHelper {
                                      final TethysMoney pAmount) {
             /* Obtain the required exchange rate */
             theBase = pAmount;
-            theExchangeRate = theRateCursor.getExchangeRate(pCurrency, theDate);
-            final TethysRatio myRate = theExchangeRate;
+            final TethysRatio myEventRate = theCurrent.getExchangeRate();
+            final TethysRatio myRate = myEventRate == null
+                                                           ? theRateCursor.getExchangeRate(pCurrency, theDate)
+                                                           : myEventRate;
+            theExchangeRate = myRate;
             final Currency myCurrency = theCurrency.getCurrency();
 
             /* Obtain local amount */

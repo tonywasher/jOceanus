@@ -74,6 +74,11 @@ public final class CoeusLendingWorksTotals
     private final TethysDecimal theInterest;
 
     /**
+     * CashBack.
+     */
+    private final TethysDecimal theCashBack;
+
+    /**
      * Constructor for zeroed totals.
      * @param pMarket the market
      */
@@ -129,6 +134,7 @@ public final class CoeusLendingWorksTotals
         theInvested = new TethysDecimal(getZero());
         theEarnings = new TethysDecimal(getZero());
         theInterest = new TethysDecimal(getZero());
+        theCashBack = new TethysDecimal(getZero());
     }
 
     /**
@@ -149,6 +155,7 @@ public final class CoeusLendingWorksTotals
         theInvested = new TethysDecimal(pTotals.getInvested());
         theEarnings = new TethysDecimal(pTotals.getEarnings());
         theInterest = new TethysDecimal(pTotals.getInterest());
+        theCashBack = new TethysDecimal(pTotals.getCashBack());
     }
 
     @Override
@@ -161,6 +168,7 @@ public final class CoeusLendingWorksTotals
         theInvested.addValue(pTotals.getInvested());
         theEarnings.addValue(pTotals.getEarnings());
         theInterest.addValue(pTotals.getInterest());
+        theCashBack.addValue(pTotals.getCashBack());
     }
 
     @Override
@@ -170,10 +178,12 @@ public final class CoeusLendingWorksTotals
         theHolding.addValue(pTransaction.getHolding());
         theLoanBook.addValue(pTransaction.getLoanBook());
         theInterest.addValue(pTransaction.getInterest());
+        theCashBack.addValue(pTransaction.getCashBack());
 
         /* Adjust earnings */
         theEarnings.addValue(pTransaction.getInterest());
         theEarnings.subtractValue(pTransaction.getFees());
+        theEarnings.addValue(pTransaction.getCashBack());
 
         /* Adjust asset values */
         theAssetValue.addValue(pTransaction.getHolding());
@@ -182,6 +192,7 @@ public final class CoeusLendingWorksTotals
         /* Adjust source values */
         theSourceValue.addValue(pTransaction.getInvested());
         theSourceValue.addValue(pTransaction.getInterest());
+        theSourceValue.addValue(pTransaction.getCashBack());
     }
 
     @Override
@@ -251,7 +262,7 @@ public final class CoeusLendingWorksTotals
 
     @Override
     public TethysDecimal getCashBack() {
-        return getZero();
+        return theCashBack;
     }
 
     @Override

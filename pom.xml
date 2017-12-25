@@ -90,7 +90,7 @@
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
     <CheckStyleVersion>8.5</CheckStyleVersion>
-    <PMDVersion>5.8.1</PMDVersion>
+    <PMDVersion>6.0.0</PMDVersion>
     <CleanPluginVersion>3.0.0</CleanPluginVersion>
     <InstallPluginVersion>2.5.2</InstallPluginVersion>
     <SitePluginVersion>3.6</SitePluginVersion>

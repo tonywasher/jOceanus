@@ -64,6 +64,9 @@ Public Type AccountType
 	strAccountClass As String
 	strAccountParent As String
 	
+	'Sort index
+	idxSort As Integer
+	
 	'Account flags
 	hasUnits As Boolean
 	hasValue As Boolean
@@ -120,6 +123,7 @@ Public Type AccountStats
 	isUnitTrust As Boolean
 	isPension As Boolean
 	isPortfolio As Boolean
+	isForeign As Boolean
 	
 	'Reporting indices
 	idxAssets As Integer
@@ -177,6 +181,9 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
     'Access the Account info
     Set myRange = myDoc.NamedRanges.getByName(rangeAccountCategories).getReferredCells()
     
+    'Set sort index 
+    mySortIdx = 1
+    
 	'Loop through the rows in the range    
     For Each myRow in myRange.getRows()
 		'Allocate the new account Type    
@@ -200,6 +207,9 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
 	    myType.isPension = myRow.getCellByPosition(colAcTpPension, 0).getValue()
 	    myType.isTaxFree = myRow.getCellByPosition(colAcTpTaxFree, 0).getValue()
 	    myType.isGross = myRow.getCellByPosition(colAcTpGross, 0).getValue()
+	    
+	    'Record the sort index
+	    myType.idxSort = mySortIdx 
 
         'Handle autoUnits    		
 	    myType.numAutoUnits = myRow.getCellByPosition(colAcTpAutoUnits, 0).getValue()
@@ -207,6 +217,9 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
 	    
     	'Store the account type
     	putHashKey(myMap, myName, myType) 
+    	
+    	'Increment sort index
+    	mySortIdx = mySortIdx + 1
 	Next
 End Sub
 
@@ -254,7 +267,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		myAcct.isPension = myType.isPension
 		myAcct.isTaxFree = myType.isTaxFree
 		myAcct.isGross = myType.isGross
-		myAcct.isActive = True()
+		myAcct.isActive = True()    		
     		
 		'Handle value accounts
 		myAcct.isAutoExpense = False()
@@ -278,6 +291,9 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		    myAcct.strRegion = myRow.getCellByPosition(colAcctRegion, 0).getString()
 		End If 
 		
+		' Determine whether the account is foreign
+	    myAcct.isForeign = Not(myAcct.strCurrency = "")
+   		    
 		'Initialise indices
 		myAcct.idxAssets = -1
 		myAcct.idxIncome = -1

@@ -323,6 +323,11 @@ public abstract class AssetBase<T extends AssetBase<T>>
         return Boolean.FALSE;
     }
 
+    @Override
+    public Boolean isForeign() {
+        return Boolean.FALSE;
+    }
+
     /**
      * Get the close Date of the account.
      * @return the closeDate

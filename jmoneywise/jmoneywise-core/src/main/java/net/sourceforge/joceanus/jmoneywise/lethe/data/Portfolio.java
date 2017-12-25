@@ -363,9 +363,9 @@ public class Portfolio
      */
     public Integer getParentId() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getId();
+        return myParent == null
+                                ? null
+                                : myParent.getId();
     }
 
     /**
@@ -374,9 +374,9 @@ public class Portfolio
      */
     public String getParentName() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getName();
+        return myParent == null
+                                ? null
+                                : myParent.getName();
     }
 
     /**
@@ -393,9 +393,9 @@ public class Portfolio
      */
     public Integer getPortfolioTypeId() {
         final PortfolioType myType = getPortfolioType();
-        return (myType == null)
-                                ? null
-                                : myType.getId();
+        return myType == null
+                              ? null
+                              : myType.getId();
     }
 
     /**
@@ -404,9 +404,9 @@ public class Portfolio
      */
     public String getPortfolioTypeName() {
         final PortfolioType myType = getPortfolioType();
-        return (myType == null)
-                                ? null
-                                : myType.getName();
+        return myType == null
+                              ? null
+                              : myType.getName();
     }
 
     /**
@@ -415,9 +415,9 @@ public class Portfolio
      */
     public PortfolioTypeClass getPortfolioTypeClass() {
         final PortfolioType myType = getPortfolioType();
-        return (myType == null)
-                                ? null
-                                : myType.getPortfolioClass();
+        return myType == null
+                              ? null
+                              : myType.getPortfolioClass();
     }
 
     @Override
@@ -428,9 +428,15 @@ public class Portfolio
     @Override
     public Boolean isTaxFree() {
         final PortfolioType myType = getPortfolioType();
-        return (myType == null)
-                                ? Boolean.FALSE
-                                : myType.getPortfolioClass().isTaxFree();
+        return myType == null
+                              ? Boolean.FALSE
+                              : myType.getPortfolioClass().isTaxFree();
+    }
+
+    @Override
+    public Boolean isForeign() {
+        final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
+        return !myDefault.equals(getAssetCurrency());
     }
 
     /**
@@ -458,6 +464,16 @@ public class Portfolio
      */
     public static AssetCurrency getAssetCurrency(final MetisValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CURRENCY, AssetCurrency.class);
+    }
+
+    /**
+     * Is this portfolio the required class.
+     * @param pClass the required portfolio class.
+     * @return true/false
+     */
+    public boolean isPortfolioClass(final PortfolioTypeClass pClass) {
+        /* Check for match */
+        return getPortfolioTypeClass() == pClass;
     }
 
     /**

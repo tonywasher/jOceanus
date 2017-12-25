@@ -359,11 +359,13 @@ Sub analyseYear(ByRef Context As FinanceState, _
 				
 				'Handle National insurance
 				If (myEeNatIns <> 0) Or (myErNatIns <> 0) Then
-  				    myErNatInsInfo.catValue = myErNatInsInfo.catValue + myErNatIns				
-				    myEeNatInsInfo.catValue = myEeNatInsInfo.catValue + myEeNatIns				
   				    myNIAcct = myCredAcct
    				    If Not(myNIAcct.isPension) Then
 				        myNIAcct = myPensionAcct
+    				    myErNatInsInfo.catValue = myErNatInsInfo.catValue + myErNatIns				
+    				    myEeNatInsInfo.catValue = myEeNatInsInfo.catValue + myEeNatIns				
+    				Else
+    				    myCatInfo.catValue = myCatInfo.catValue + myErNatIns + myEeNatIns				    				
 				    End If
   				    myNIAcct.isActive = True()
 				    myNIAcct.acctInvestment = myNIAcct.acctInvestment + myEeNatIns + myErNatIns
@@ -481,7 +483,7 @@ Sub valuePricedAssets(ByRef Context As FinanceState, _
 			myAccount.acctValue = myAccount.acctPrice * myAccount.acctUnits
 			
  	        'If the asset is in a foreign currency
-	        if Not (myAccount.strCurrency = "") Then
+	        If (myAccount.isForeign) Then
   	            myAccount.acctValue = getAdjustedValueForDateAndCurrency(Context, myAccount, myAccount.acctValue, myDate)
         	End If
 	
@@ -601,9 +603,9 @@ Sub TotalIt()
 		myDoc.enableAutomaticCalculation(False())
 	End If
 
-	'Report Opening Balances
-	reportOpeningBalances(myContext)
-	
+    'PreProcess reports
+    preProcessReports(myContext)
+    	
 	'Loop through the years
 	For myIndex = myRange.getColumns().Count To 1 Step -1
 		'Access the year
@@ -632,6 +634,9 @@ Sub TotalIt()
 		myCell.CellBackColor = colorWhite
 	Next
 	
+    'PostProcess reports
+    postProcessReports(myContext)
+    	
 	'Reswitch on AutoCalc
 	If isAutoCalc Then
 		myDoc.calculateAll()

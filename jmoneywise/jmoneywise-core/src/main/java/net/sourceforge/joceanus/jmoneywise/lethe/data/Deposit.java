@@ -334,9 +334,9 @@ public class Deposit
      */
     public Integer getParentId() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getId();
+        return myParent == null
+                                ? null
+                                : myParent.getId();
     }
 
     /**
@@ -345,9 +345,9 @@ public class Deposit
      */
     public String getParentName() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getName();
+        return myParent == null
+                                ? null
+                                : myParent.getName();
     }
 
     /**
@@ -364,9 +364,9 @@ public class Deposit
      */
     public Integer getCategoryId() {
         final DepositCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getId();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getId();
     }
 
     /**
@@ -375,9 +375,9 @@ public class Deposit
      */
     public String getCategoryName() {
         final DepositCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getName();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getName();
     }
 
     /**
@@ -386,9 +386,9 @@ public class Deposit
      */
     public DepositCategoryClass getCategoryClass() {
         final DepositCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getCategoryTypeClass();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getCategoryTypeClass();
     }
 
     @Override
@@ -399,17 +399,23 @@ public class Deposit
     @Override
     public Boolean isGross() {
         final DepositCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? Boolean.FALSE
-                                    : myCategory.getCategoryTypeClass().isGross();
+        return myCategory == null
+                                  ? Boolean.FALSE
+                                  : myCategory.getCategoryTypeClass().isGross();
     }
 
     @Override
     public Boolean isTaxFree() {
         final DepositCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? Boolean.FALSE
-                                    : myCategory.getCategoryTypeClass().isTaxFree();
+        return myCategory == null
+                                  ? Boolean.FALSE
+                                  : myCategory.getCategoryTypeClass().isTaxFree();
+    }
+
+    @Override
+    public Boolean isForeign() {
+        final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
+        return !myDefault.equals(getAssetCurrency());
     }
 
     /**

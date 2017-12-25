@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.DepositCategoryClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
+import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 
@@ -90,9 +91,11 @@ public final class TransactionValidator {
                 return myType.isValued();
 
             case PENSIONCONTRIB:
-                /* Pension contribution must be to a Pension holding */
-                return (pAccount instanceof SecurityHolding)
-                       && ((SecurityHolding) pAccount).getSecurity().getSecurityTypeClass().isPension();
+                /* Pension contribution must be to a Pension holding or to a SIPP */
+                return (pAccount instanceof SecurityHolding
+                        && ((SecurityHolding) pAccount).getSecurity().getSecurityTypeClass().isPension())
+                       || (pAccount instanceof Portfolio
+                           && ((Portfolio) pAccount).isPortfolioClass(PortfolioTypeClass.SIPP));
 
             case GIFTEDINCOME:
             case INHERITED:

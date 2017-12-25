@@ -224,19 +224,19 @@ public class TransactionPanel
 
         /* Allocate fields */
         final TethysSwingStringTextField myAmount = pFactory.newStringField();
-        final TethysSwingStringTextField myRate = pFactory.newStringField();
         final TethysSwingStringTextField myComments = pFactory.newStringField();
         final TethysSwingStringTextField myReference = pFactory.newStringField();
+        final TethysSwingStringTextField myRate = pFactory.newStringField();
 
         /* Create the buttons */
         final TethysSwingListButtonManager<TransactionTag> myTagButton = pFactory.newListButton();
 
         /* Assign the fields to the panel */
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.PARTNERAMOUNT), MetisDataType.MONEY, myAmount);
-        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.COMMENTS), MetisDataType.STRING, myComments);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.REFERENCE), MetisDataType.STRING, myReference);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.TRANSTAG), myTagButton);
+        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.XCHANGERATE), MetisDataType.RATIO, myRate);
 
         /* Layout the panel */
         myTab.compactPanel();
@@ -255,7 +255,6 @@ public class TransactionPanel
 
         /* Allocate fields */
         final TethysSwingStringTextField myTaxCredit = pFactory.newStringField();
-        final TethysSwingStringTextField myForeignTaxCredit = pFactory.newStringField();
         final TethysSwingStringTextField myEeNatIns = pFactory.newStringField();
         final TethysSwingStringTextField myErNatIns = pFactory.newStringField();
         final TethysSwingStringTextField myBenefit = pFactory.newStringField();
@@ -269,7 +268,6 @@ public class TransactionPanel
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.DEEMEDBENEFIT), MetisDataType.MONEY, myBenefit);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.WITHHELD), MetisDataType.MONEY, myWithheld);
         myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.QUALIFYYEARS), MetisDataType.INTEGER, myYears);
-        myTab.addField(TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT), MetisDataType.MONEY, myForeignTaxCredit);
 
         /* Layout the panel */
         myTab.compactPanel();
@@ -393,14 +391,6 @@ public class TransactionPanel
         myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.TAXCREDIT);
         bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.TAXCREDIT);
         bShowField = bEditField || myTrans.getTaxCredit() != null;
-        myFieldSet.setVisibility(myField, bShowField);
-        myFieldSet.setEditable(myField, bEditField);
-        myFieldSet.setAssumedCurrency(myField, myCurrency);
-
-        /* Determine whether the foreign taxCredit field should be visible */
-        myField = TransactionInfoSet.getFieldForClass(TransactionInfoClass.FOREIGNTAXCREDIT);
-        bEditField = isEditable && isEditableField(myTrans, TransactionInfoClass.FOREIGNTAXCREDIT);
-        bShowField = bEditField || myTrans.getForeignTaxCredit() != null;
         myFieldSet.setVisibility(myField, bShowField);
         myFieldSet.setEditable(myField, bEditField);
         myFieldSet.setAssumedCurrency(myField, myCurrency);
@@ -619,11 +609,11 @@ public class TransactionPanel
                 case TAXCREDIT:
                     myTrans.setTaxCredit(pUpdate.getMoney());
                     break;
-                case FOREIGNTAXCREDIT:
-                    myTrans.setForeignTaxCredit(pUpdate.getMoney());
-                    break;
                 case EMPLOYEENATINS:
                     myTrans.setEmployeeNatIns(pUpdate.getMoney());
+                    break;
+                case EMPLOYERNATINS:
+                    myTrans.setEmployerNatIns(pUpdate.getMoney());
                     break;
                 case DEEMEDBENEFIT:
                     myTrans.setBenefit(pUpdate.getMoney());

@@ -383,6 +383,13 @@ public class SheetTransaction
             myPartnerAmount = myCell.getStringValue();
         }
 
+        /* Handle XchangeRate which may be missing */
+        myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        String myXchangeRate = null;
+        if (myCell != null) {
+            myXchangeRate = myCell.getStringValue();
+        }
+
         /* Handle TagList which may be missing */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         String myTagList = null;
@@ -422,6 +429,7 @@ public class SheetTransaction
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASHACCOUNT, myReturnedCashAccount);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.RETURNEDCASH, myReturnedCash);
         myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.PARTNERAMOUNT, myPartnerAmount);
+        myInfoList.addInfoItem(null, myTrans, TransactionInfoClass.XCHANGERATE, myXchangeRate);
 
         /* If we have a TagList */
         if (myTagList != null) {

@@ -38,6 +38,128 @@ Public Const rangeUnitsNames As String = "UnitsNames"
 Public Const rangeUnitsData As String = "UnitsData"
 Public Const rangeOpenBalance As String = "OpeningBalances"
 
+Private Const colSort = 1
+Private Const colSortLast = 1000000
+
+'PreProcess reports
+Public Sub preProcessReports(ByRef Context As FinanceState)
+	'Access the current workbook
+	Set myDoc = Context.docBook
+	
+    'Reset sort indexes for assets
+    Set myData = myDoc.NamedRanges.getByName(rangeAssetsData).getReferredCells()
+	resetSortIndexes(myData)
+
+    'Reset sort indexes for income
+    Set myData = myDoc.NamedRanges.getByName(rangeIncomeData).getReferredCells()
+	resetSortIndexes(myData)
+
+    'Reset sort indexes for expenses
+    Set myData = myDoc.NamedRanges.getByName(rangeExpenseData).getReferredCells()
+	resetSortIndexes(myData)
+
+    'Reset sort indexes for categories
+    Set myData = myDoc.NamedRanges.getByName(rangeCategoryData).getReferredCells()
+	resetSortIndexes(myData)
+
+    'Reset sort indexes for units
+    Set myData = myDoc.NamedRanges.getByName(rangeUnitsData).getReferredCells()
+	resetSortIndexes(myData)
+
+	'Report Opening Balances
+	reportOpeningBalances(Context)
+End Sub
+							
+'Reset sortIndexes
+Private Sub resetSortIndexes(ByRef Range As Object)
+    'Reset sort indexes for range
+	clearResults(Range, colSort)
+	
+	'Determine the last row of the range
+	myLast = Range.getRows().Count - 1
+	
+	'Set the sort index to the maximum to ensure it stays last
+	myCell = Range.getCellByPosition(colSort, myLast)
+    myCell.setValue(colSortLast)
+End Sub
+
+'PostProcess reports
+Public Sub postProcessReports(ByRef Context As FinanceState)
+	'Access the current workbook
+	Set myDoc = Context.docBook
+	
+    'Sort the assets report
+    Set myData = myDoc.NamedRanges.getByName(rangeAssetsData).getReferredCells()
+	sortReport(myData)
+
+    'Sort the income report
+    Set myData = myDoc.NamedRanges.getByName(rangeIncomeData).getReferredCells()
+	sortReport(myData)
+
+    'Sort the expenses report
+    Set myData = myDoc.NamedRanges.getByName(rangeExpenseData).getReferredCells()
+	sortReport(myData)
+
+    'Sort the categories report
+    Set myData = myDoc.NamedRanges.getByName(rangeCategoryData).getReferredCells()
+	sortReport(myData)
+
+    'Sort the units report
+    Set myData = myDoc.NamedRanges.getByName(rangeUnitsData).getReferredCells()
+	sortReport(myData)
+End Sub
+
+'Sort report
+Private Sub sortReport(ByRef Range As Object)
+    ' First remove any unused Rows
+    removeUnusedRows(Range)
+    
+    ' allocate the variables
+    Dim sortFields(1) As New com.sun.star.util.SortField
+    Dim sortProperties(0) As New com.sun.star.beans.PropertyValue
+
+    ' set the sort fields for the sort columns	
+    sortFields(0).Field = colSort
+    sortFields(0).SortAscending = TRUE
+    sortFields(0).FieldType = com.sun.star.util.SortFieldType.NUMERIC
+    sortFields(1).Field = 0
+    sortFields(1).SortAscending = TRUE
+    sortFields(1).FieldType = com.sun.star.util.SortFieldType.ALPHANUMERIC
+    
+    ' set the sort descriptor 
+    sortProperties(0).Name = "SortFields"
+    sortProperties(0).Value = sortFields()
+
+    ' sort on columns
+    Range.Sort(sortProperties())    
+End Sub
+
+'remove unused rows
+Private Sub removeUnusedRows(ByRef Range As Object)
+    'obtain the sheet
+    Set myDoc = ThisComponent
+    Set myCell = Range.getCellByPosition(0, 0)
+    Set myAddress = myCell.getCellAddress()
+    Set mySheet = myDoc.Sheets(myAddress.Sheet)
+    
+    'obtain the first row 
+    myBaseRow = myAddress.Row
+    
+	'Create result table for accounts
+	myRow = Range.getRows().Count - 1
+	
+	'Loop through the Results table 
+	For myIndex = myRow - 1 to 0 Step -1
+		'Access the cell
+		Set myCell = Range.getCellByPosition(colSort, myIndex)
+			
+		'If the cell is empty
+		If (myCell.Type = com.sun.star.table.CellContentType.EMPTY) Then
+		    mySheet.Rows.removeByIndex(myBaseRow + myIndex, 1)
+		End If
+	Next
+End Sub
+
 'Report on Units Data for the Year
 Private Sub reportUnitsYear(ByRef Context As FinanceState, _
 							ByRef Year As String)
@@ -55,6 +177,9 @@ Private Sub reportUnitsYear(ByRef Context As FinanceState, _
     
     'Determine the column to use
     myCol = getHorizontalIndex(Context, rangeUnitsYears, Year)
+    
+    'Adjust to pass over name and sort index
+    myCol = myCol + colSort + 1
 
 	'Clear results
 	clearResults(myData, myCol)
@@ -73,6 +198,10 @@ Private Sub reportUnitsYear(ByRef Context As FinanceState, _
     			'Look up the index
     			myRow = allocateVerticalIndex(Context, rangeUnitsNames, myAccount.strAccount)
   				myAccount.idxUnits = myRow
+  				
+  				'Record the sort index
+  				myCell = myData.getCellByPosition(colSort, myRow)
+  				myCell.setValue(myAccount.acctType.idxSort)
     		End If
     		 
 			'Access the cell
@@ -94,6 +223,7 @@ Private Sub reportOpeningBalances(ByRef Context As FinanceState)
 	
     'Access the ranges
     Set myData = myDoc.NamedRanges.getByName(rangeOpenBalance).getReferredCells()
+    Set myAssets = myDoc.NamedRanges.getByName(rangeAssetsData).getReferredCells()
     
 	'Clear results
 	clearResults(myData, 0)
@@ -112,6 +242,10 @@ Private Sub reportOpeningBalances(ByRef Context As FinanceState)
     			'Look up the index
     			myRow = allocateVerticalIndex(Context, rangeAssetsNames, myAccount.strAccount)
    				myAccount.idxAssets = myRow
+  				
+  				'Record the sort index
+  				myCell = myAssets.getCellByPosition(colSort, myRow)
+  				myCell.setValue(myAccount.acctType.idxSort)
     		End If
     		 
 			'Access the cell
@@ -142,6 +276,9 @@ Private Sub reportAssetsYear(ByRef Context As FinanceState, _
     'Determine the column to use
     myCol = getHorizontalIndex(Context, rangeAssetsYears, Year)
 
+    'Adjust to pass over name and sort index
+    myCol = myCol + colSort + 1
+
 	'Clear results
 	clearResults(myData, myCol)
 	
@@ -159,6 +296,10 @@ Private Sub reportAssetsYear(ByRef Context As FinanceState, _
     			'Look up the index
     			myRow = allocateVerticalIndex(Context, rangeAssetsNames, myAccount.strAccount)
    				myAccount.idxAssets = myRow
+  				
+  				'Record the sort index
+  				myCell = myData.getCellByPosition(colSort, myRow)
+  				myCell.setValue(myAccount.acctType.idxSort)
     		End If
     		 
 			'Access the cell
@@ -186,6 +327,9 @@ Sub reportIncomeYear(ByRef Context As FinanceState, _
     'Determine the column to use
     myCol = getHorizontalIndex(Context, rangeIncomeYears, Year)
 
+    'Adjust to pass over name and sort index
+    myCol = myCol + colSort + 1
+    
 	'Clear results
 	clearResults(myData, myCol)
 	
@@ -203,6 +347,10 @@ Sub reportIncomeYear(ByRef Context As FinanceState, _
     			'Look up the index
     			myRow = allocateVerticalIndex(Context, rangeIncomeNames, myAccount.strAccount)
   				myAccount.idxIncome = myRow
+  				
+  				'Record the sort index
+  				myCell = myData.getCellByPosition(colSort, myRow)
+  				myCell.setValue(myAccount.acctType.idxSort)
     		End If
     		 
 			'Access the cell
@@ -230,6 +378,9 @@ Sub reportExpenseYear(ByRef Context As FinanceState, _
     'Determine the column to use
     myCol = getHorizontalIndex(Context, rangeExpenseYears, Year)
 
+    'Adjust to pass over name and sort index
+    myCol = myCol + colSort + 1
+
 	'Clear results
 	clearResults(myData, myCol)
 	
@@ -247,6 +398,10 @@ Sub reportExpenseYear(ByRef Context As FinanceState, _
     			'Look up the index
     			myRow = allocateVerticalIndex(Context, rangeExpenseNames, myAccount.strAccount)
  				myAccount.idxExpense = myRow
+  				
+  				'Record the sort index
+  				myCell = myData.getCellByPosition(colSort, myRow)
+  				myCell.setValue(myAccount.acctType.idxSort)
 			End If
 			    		
 			'Access the cell
@@ -275,6 +430,9 @@ Sub reportCategoryYear(ByRef Context As FinanceData, _
     'Determine the column to use
     myCol = getHorizontalIndex(Context, rangeCategoryYears, Year)
 
+    'Adjust to pass over name and sort index
+    myCol = myCol + colSort + 1
+
 	'Clear results
 	clearResults(myData, myCol)
 	
@@ -297,12 +455,19 @@ Sub reportCategoryYear(ByRef Context As FinanceData, _
    				'Look up the index
 	   			myRow = allocateVerticalIndex(Context, rangeCategoryNames, myCategory.strCategory)
    				myCategory.idxCategory = myRow
+  				
+  				'Record the sort index
+  				myCell = myData.getCellByPosition(colSort, myRow)
+  				myCell.setValue(myCategory.idxSort)
     		End If
 
 			'Access the cell
 			myCell = myData.getCellByPosition(myCol, myRow)
 			myValue = myCategory.catValue + myCategory.catTaxCredit _
 						+ myCategory.catWithheld
+            If Not(myCategory.isIncome) And Not(myCategory.isMarket) Then
+                myValue = -myValue
+            End If
 			myCell.setValue(myValue)
 		End If
 	Wend

@@ -29,16 +29,17 @@ Private Const colCatClass As Integer = 1
 Private Const colCatParent As Integer = 2
 Private Const colCatHidden As Integer = 3
 Private Const colCatIncome As Integer = 4
-Private Const colCatTransfer As Integer = 5
-Private Const colCatInterest As Integer = 6
-Private Const colCatDividend As Integer = 7
-Private Const colCatRental As Integer = 8
-Private Const colCatLoanPay As Integer = 9
-Private Const colCatAssetEarn As Integer = 10
-Private Const colCatRights As Integer = 11
-Private Const colCatDemerger As Integer = 12
-Private Const colCatTakeover As Integer = 13
-Private Const colCatClosure As Integer = 14
+Private Const colCatMarket As Integer = 5
+Private Const colCatTransfer As Integer = 6
+Private Const colCatInterest As Integer = 7
+Private Const colCatDividend As Integer = 8
+Private Const colCatRental As Integer = 9
+Private Const colCatLoanPay As Integer = 10
+Private Const colCatAssetEarn As Integer = 11
+Private Const colCatRights As Integer = 12
+Private Const colCatDemerger As Integer = 13
+Private Const colCatTakeover As Integer = 14
+Private Const colCatClosure As Integer = 15
 
 'Statistics for Category
 Public Type CategoryStats
@@ -51,6 +52,7 @@ Public Type CategoryStats
 	isInterest As Boolean
 	isDividend As Boolean
 	isIncome As Boolean
+	isMarket As Boolean
 	isTransfer As Boolean
 	isRental As Boolean
 	isLoanPay As Boolean
@@ -62,6 +64,9 @@ Public Type CategoryStats
 	
 	'Reporting index
 	idxCategory As Integer
+	
+	'Sort index
+	idxSort As Integer
 	
 	'Counters
 	catValue As Double
@@ -93,6 +98,9 @@ Private Sub loadCategories(ByRef Context As FinanceState)
     'Access the Category info
     Set myRange = myDoc.NamedRanges.getByName(rangeCategoryInfo).getReferredCells()
     
+    'Set sort index 
+    mySortIdx = 1
+    
 	'Loop through the rows in the range    
     For Each myRow in myRange.getRows()
 		'Allocate the new category    
@@ -106,6 +114,7 @@ Private Sub loadCategories(ByRef Context As FinanceState)
 	    myCat.strCatClass = myRow.getCellByPosition(colCatClass, 0).getString()
 	    myCat.strCatParent = myRow.getCellByPosition(colCatParent, 0).getString()
 	    myCat.isIncome = myRow.getCellByPosition(colCatIncome, 0).getValue()
+	    myCat.isMarket = myRow.getCellByPosition(colCatMarket, 0).getValue()
 	    myCat.isTransfer = myRow.getCellByPosition(colCatTransfer, 0).getValue()
 	    myCat.isInterest = myRow.getCellByPosition(colCatInterest, 0).getValue()
 	    myCat.isDividend = myRow.getCellByPosition(colCatDividend, 0).getValue()
@@ -120,11 +129,17 @@ Private Sub loadCategories(ByRef Context As FinanceState)
 		'Initialise index
 		myCat.idxCategory = -1
 		
+	    'Record the sort index
+	    myCat.idxSort = mySortIdx 
+
 		'Reset the category
 		resetCategory(myCat)
 		    		
     	'Store the category
     	putHashKey(myMap, myName, myCat) 
+    	
+    	'Increment sort index
+    	mySortIdx = mySortIdx + 1
 	Next
 End Sub
 

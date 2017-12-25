@@ -76,6 +76,12 @@ public interface TransactionAsset
     Boolean isGross();
 
     /**
+     * Is the Asset foreign?
+     * @return true/false
+     */
+    Boolean isForeign();
+
+    /**
      * Touch underlying item.
      * @param pItem the object that is touching the item
      */

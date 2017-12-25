@@ -60,6 +60,11 @@ public final class CoeusLendingWorksTransaction
     private static final String PFIX_LOAN2 = "Loan chunk acquired via Quick Withdraw";
 
     /**
+     * Loan3 prefix.
+     */
+    private static final String PFIX_LOAN3 = "Loan chunk increased via Quick Withdraw";
+
+    /**
      * CancelLoan prefix.
      */
     private static final String PFIX_CANCELLOAN = "Right to withdraw: Chunk created";
@@ -73,6 +78,11 @@ public final class CoeusLendingWorksTransaction
      * Capital prefix.
      */
     private static final String PFIX_CAPITAL = "Capital repayment received";
+
+    /**
+     * CashBack prefix.
+     */
+    private static final String PFIX_CASHBACK = "Other account credit";
 
     /**
      * ZERO for BadDebt/CashBack.
@@ -125,6 +135,11 @@ public final class CoeusLendingWorksTransaction
     private final TethysDecimal theInterest;
 
     /**
+     * CashBack.
+     */
+    private final TethysDecimal theCashBack;
+
+    /**
      * Constructor.
      * @param pParser the parser
      * @param pFields the fields
@@ -164,6 +179,9 @@ public final class CoeusLendingWorksTransaction
         /* Handle Invested correctly */
         theInvested = determineInvestedDelta();
 
+        /* Handle CashBack correctly */
+        theCashBack = determineCashBackDelta();
+
         /* Check transaction validity */
         checkValidity();
     }
@@ -181,6 +199,7 @@ public final class CoeusLendingWorksTransaction
 
         /* Subtract the invested and interest */
         myMoney.subtractValue(theInterest);
+        myMoney.subtractValue(theCashBack);
         myMoney.subtractValue(theInvested);
 
         /* We should now be zero */
@@ -263,7 +282,7 @@ public final class CoeusLendingWorksTransaction
 
     @Override
     public TethysDecimal getCashBack() {
-        return ZERO_MONEY;
+        return theCashBack;
     }
 
     @Override
@@ -294,7 +313,8 @@ public final class CoeusLendingWorksTransaction
     private CoeusTransactionType determineTransactionType() throws OceanusException {
         /* If the description is Lend Order */
         if (PFIX_LOAN.equals(theDesc)
-            || PFIX_LOAN2.equals(theDesc)) {
+            || PFIX_LOAN2.equals(theDesc)
+            || PFIX_LOAN3.equals(theDesc)) {
             return CoeusTransactionType.CAPITALLOAN;
         }
 
@@ -312,6 +332,11 @@ public final class CoeusLendingWorksTransaction
         /* If the description is Interest */
         if (PFIX_INTEREST.equals(theDesc)) {
             return CoeusTransactionType.INTEREST;
+        }
+
+        /* If the description is CashBack */
+        if (PFIX_CASHBACK.equals(theDesc)) {
+            return CoeusTransactionType.CASHBACK;
         }
 
         /* Not recognised */
@@ -397,6 +422,23 @@ public final class CoeusLendingWorksTransaction
 
         /* Return the Invested */
         return myInvested;
+    }
+
+    /**
+     * determine cashBack delta.
+     * @return the delta
+     */
+    private TethysDecimal determineCashBackDelta() {
+        /* Obtain change in holding account */
+        final TethysDecimal myCashBack = new TethysDecimal(theHolding);
+
+        /* Interest are increased by any increase the holding account */
+        if (!CoeusTransactionType.CASHBACK.equals(theTransType)) {
+            myCashBack.setZero();
+        }
+
+        /* Return the Invested */
+        return myCashBack;
     }
 
     /**

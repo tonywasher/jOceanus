@@ -319,9 +319,9 @@ public class Security
      */
     public Integer getParentId() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getId();
+        return myParent == null
+                                ? null
+                                : myParent.getId();
     }
 
     /**
@@ -330,9 +330,9 @@ public class Security
      */
     public String getParentName() {
         final Payee myParent = getParent();
-        return (myParent == null)
-                                  ? null
-                                  : myParent.getName();
+        return myParent == null
+                                ? null
+                                : myParent.getName();
     }
 
     /**
@@ -349,9 +349,9 @@ public class Security
      */
     public Integer getSecurityTypeId() {
         final SecurityType myType = getSecurityType();
-        return (myType == null)
-                                ? null
-                                : myType.getId();
+        return myType == null
+                              ? null
+                              : myType.getId();
     }
 
     /**
@@ -360,9 +360,9 @@ public class Security
      */
     public String getSecurityTypeName() {
         final SecurityType myType = getSecurityType();
-        return (myType == null)
-                                ? null
-                                : myType.getName();
+        return myType == null
+                              ? null
+                              : myType.getName();
     }
 
     /**
@@ -371,14 +371,20 @@ public class Security
      */
     public SecurityTypeClass getSecurityTypeClass() {
         final SecurityType myType = getSecurityType();
-        return (myType == null)
-                                ? null
-                                : myType.getSecurityClass();
+        return myType == null
+                              ? null
+                              : myType.getSecurityClass();
     }
 
     @Override
     public AssetCurrency getAssetCurrency() {
         return getAssetCurrency(getValueSet());
+    }
+
+    @Override
+    public Boolean isForeign() {
+        final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
+        return !myDefault.equals(getAssetCurrency());
     }
 
     /**
@@ -854,6 +860,9 @@ public class Security
         /* Switch on category type */
         if (TransactionCategoryClass.DIVIDEND.equals(pCategory.getCategoryTypeClass())) {
             final TransactionCategoryList myCategories = getDataSet().getTransCategories();
+            if (isForeign()) {
+                return myCategories.getSingularClass(TransactionCategoryClass.FOREIGNDIVIDEND);
+            }
             return myCategories.getSingularClass(getSecurityTypeClass().isUnitTrust()
                                                                                       ? TransactionCategoryClass.UNITTRUSTDIVIDEND
                                                                                       : TransactionCategoryClass.SHAREDIVIDEND);

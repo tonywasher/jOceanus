@@ -289,9 +289,9 @@ public class Cash
      */
     public Integer getCategoryId() {
         final CashCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getId();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getId();
     }
 
     /**
@@ -300,9 +300,9 @@ public class Cash
      */
     public String getCategoryName() {
         final CashCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getName();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getName();
     }
 
     /**
@@ -311,14 +311,20 @@ public class Cash
      */
     public CashCategoryClass getCategoryClass() {
         final CashCategory myCategory = getCategory();
-        return (myCategory == null)
-                                    ? null
-                                    : myCategory.getCategoryTypeClass();
+        return myCategory == null
+                                  ? null
+                                  : myCategory.getCategoryTypeClass();
     }
 
     @Override
     public AssetCurrency getAssetCurrency() {
         return getCurrency(getValueSet());
+    }
+
+    @Override
+    public Boolean isForeign() {
+        final AssetCurrency myDefault = getDataSet().getDefaultCurrency();
+        return !isAutoExpense() && !myDefault.equals(getAssetCurrency());
     }
 
     /**
