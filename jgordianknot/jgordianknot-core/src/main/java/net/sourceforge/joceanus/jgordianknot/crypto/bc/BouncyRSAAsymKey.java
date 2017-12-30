@@ -400,6 +400,11 @@ public final class BouncyRSAAsymKey {
             theSigner.update(pBytes, 0, pBytes.length);
         }
 
+        @Override
+        public void reset() {
+            theSigner.reset();
+        }
+
         /**
          * Obtain RSASigner.
          * @param pFactory the factory

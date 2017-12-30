@@ -570,7 +570,7 @@ public class GordianIdManager {
                 return GordianMacSpec.skeinMac(mySpec.getStateLength(), mySpec.getDigestLength());
             case BLAKE:
                 mySpec = deriveDigestSpecFromEncodedId(myCode);
-                return GordianMacSpec.blakeMac(mySpec.getDigestLength());
+                return GordianMacSpec.blakeMac(mySpec.getStateLength(), mySpec.getDigestLength());
             case KUPYNA:
                 mySpec = deriveDigestSpecFromEncodedId(myCode);
                 return GordianMacSpec.kupynaMac(mySpec.getDigestLength());

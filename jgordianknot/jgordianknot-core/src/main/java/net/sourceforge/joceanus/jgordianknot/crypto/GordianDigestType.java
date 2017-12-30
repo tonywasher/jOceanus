@@ -84,7 +84,7 @@ public enum GordianDigestType {
     /**
      * Blake2B.
      */
-    BLAKE(GordianLength.LEN_512, GordianLength.LEN_160, GordianLength.LEN_256, GordianLength.LEN_384),
+    BLAKE(GordianLength.LEN_512, GordianLength.LEN_128, GordianLength.LEN_160, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
 
     /**
      * SHA1.
@@ -177,14 +177,18 @@ public enum GordianDigestType {
         switch (this) {
             case SHA2:
                 return pStateLength == null
-                       || pStateLength.equals(pLength.getSha2ExtendedState());
+                       || pStateLength.equals(getAlternateSha2StateForLength(pLength));
             case SHAKE:
                 return pStateLength != null
-                       && pStateLength.equals(pLength.getSHAKEState());
+                       && pStateLength.equals(getSHAKEStateForLength(pLength));
             case SKEIN:
                 return pStateLength != null
-                       && (pStateLength.equals(pLength.getSkeinState())
-                           || pStateLength.equals(pLength.getSkeinExtendedState()));
+                       && (pStateLength.equals(getSkeinStateForLength(pLength))
+                           || pStateLength.equals(getAlternateSkeinStateForLength(pLength)));
+            case BLAKE:
+                return pStateLength != null
+                       && (pStateLength.equals(getBLAKEStateForLength(pLength))
+                           || pStateLength.equals(getAlternateBLAKEStateForLength(pLength)));
             default:
                 return pStateLength == null;
         }
@@ -198,31 +202,164 @@ public enum GordianDigestType {
     public GordianLength getStateForLength(final GordianLength pLength) {
         switch (this) {
             case SKEIN:
-                return pLength.getSkeinState();
+                return getSkeinStateForLength(pLength);
             case SHAKE:
-                return pLength.getSHAKEState();
+                return getSHAKEStateForLength(pLength);
+            case BLAKE:
+                return getBLAKEStateForLength(pLength);
             default:
                 return null;
         }
     }
 
     /**
-     * Does this digest have an extended state for this length?
+     * Obtain the standard skeinState length.
      * @param pLength the length
-     * @return true/false
+     * @return the length (null if not supported)
      */
-    public GordianLength getExtendedStateForLength(final GordianLength pLength) {
-        switch (this) {
-            case SHA2:
-                return pLength.getSha2ExtendedState();
-            case SKEIN:
-                final GordianLength myState = pLength.getSkeinExtendedState();
-                return !pLength.equals(myState)
-                                                ? myState
-                                                : null;
+    private static GordianLength getSkeinStateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_1024:
+                return GordianLength.LEN_1024;
+            case LEN_384:
+            case LEN_512:
+                return GordianLength.LEN_512;
+            case LEN_128:
+            case LEN_160:
+            case LEN_224:
+            case LEN_256:
+                return GordianLength.LEN_256;
             default:
                 return null;
         }
+    }
+
+    /**
+     * Obtain the standard shakeState length.
+     * @param pLength the length
+     * @return the length (null if not supported)
+     */
+    private static GordianLength getSHAKEStateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_256:
+            case LEN_384:
+            case LEN_512:
+                return GordianLength.LEN_256;
+            case LEN_128:
+            case LEN_160:
+            case LEN_224:
+                return GordianLength.LEN_128;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the standard blakeState length.
+     * @param pLength the length
+     * @return the length (null if not supported)
+     */
+    private static GordianLength getBLAKEStateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_160:
+            case LEN_256:
+            case LEN_384:
+            case LEN_512:
+                return GordianLength.LEN_512;
+            case LEN_128:
+            case LEN_224:
+                return GordianLength.LEN_256;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the alternate stateLength for this length?
+     * @param pLength the length
+     * @return the length (null if not supported)
+     */
+    public GordianLength getAlternateStateForLength(final GordianLength pLength) {
+        switch (this) {
+            case SHA2:
+                return getAlternateSha2StateForLength(pLength);
+            case SKEIN:
+                return getAlternateSkeinStateForLength(pLength);
+            case BLAKE:
+                return getAlternateBLAKEStateForLength(pLength);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the alternate skeinState length.
+     * @param pLength the length
+     * @return the length (null if not supported)
+     */
+    private static GordianLength getAlternateSkeinStateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_384:
+            case LEN_512:
+                return GordianLength.LEN_1024;
+            case LEN_128:
+            case LEN_160:
+            case LEN_224:
+            case LEN_256:
+                return GordianLength.LEN_512;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the alternate blakeState length.
+     * @param pLength the length
+     * @return the length (null if not supported)
+     */
+    private static GordianLength getAlternateBLAKEStateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_160:
+            case LEN_256:
+                return GordianLength.LEN_256;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Obtain the extended sha2State length.
+     * @param pLength the length
+     * @return the length
+     */
+    private static GordianLength getAlternateSha2StateForLength(final GordianLength pLength) {
+        switch (pLength) {
+            case LEN_224:
+            case LEN_256:
+                return GordianLength.LEN_512;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Is this the Blake2b algorithm?
+     * @param pLength the length
+     * @return true/false
+     */
+    public static boolean isBlake2bState(final GordianLength pLength) {
+        return GordianLength.LEN_512.equals(pLength);
+    }
+
+    /**
+     * Obtain the blakeAlgorithm name for State.
+     * @param pLength the length
+     * @return the length
+     */
+    static String getBlakeAlgorithmForStateLength(final GordianLength pLength) {
+        return BLAKE.toString() + "2" + (isBlake2bState(pLength)
+                                                                 ? "b"
+                                                                 : "s");
     }
 
     /**

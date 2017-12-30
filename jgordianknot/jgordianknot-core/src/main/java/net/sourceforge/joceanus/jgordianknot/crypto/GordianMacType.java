@@ -72,11 +72,6 @@ public enum GordianMacType {
     VMPC;
 
     /**
-     * Initialisation Vector size (128/8).
-     */
-    private static final int IVSIZE = 16;
-
-    /**
      * The String name.
      */
     private String theName;
@@ -91,21 +86,6 @@ public enum GordianMacType {
 
         /* return the name */
         return theName;
-    }
-
-    /**
-     * Obtain the IV length.
-     * @return the IV Length
-     */
-    public int getIVLen() {
-        switch (this) {
-            case VMPC:
-            case GMAC:
-            case POLY1305:
-                return IVSIZE;
-            default:
-                return 0;
-        }
     }
 
     /**

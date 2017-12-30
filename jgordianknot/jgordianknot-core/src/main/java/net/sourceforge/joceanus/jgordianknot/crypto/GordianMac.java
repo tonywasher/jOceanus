@@ -165,7 +165,7 @@ public abstract class GordianMac
      */
     public void initMac(final GordianKey<GordianMacSpec> pKey) throws OceanusException {
         /* Determine the required length of IV */
-        final int myLen = getMacSpec().getMacType().getIVLen();
+        final int myLen = getMacSpec().getIVLen();
         byte[] myIV = null;
 
         /* If we need an IV */
@@ -187,11 +187,6 @@ public abstract class GordianMac
      */
     public abstract void initMac(GordianKey<GordianMacSpec> pKey,
                                  byte[] pIV) throws OceanusException;
-
-    /**
-     * Reset the MAC.
-     */
-    public abstract void reset();
 
     /**
      * Calculate the MAC.

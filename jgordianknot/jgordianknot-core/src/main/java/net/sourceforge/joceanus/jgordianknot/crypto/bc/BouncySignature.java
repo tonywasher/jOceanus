@@ -38,7 +38,6 @@ import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECGOST3410_2012Signer;
 import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
-import org.bouncycastle.crypto.signers.SM2Signer;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -105,6 +104,11 @@ public final class BouncySignature {
             theDigest.update(pBytes, 0, pBytes.length);
         }
 
+        @Override
+        public void reset() {
+            theDigest.reset();
+        }
+
         /**
          * Obtain the calculated digest.
          * @return the digest.
@@ -135,7 +139,6 @@ public final class BouncySignature {
          * @throws OceanusException on error
          */
         BigInteger[] dsaDecode(byte[] pEncoded) throws OceanusException;
-
     }
 
     /**
@@ -238,10 +241,7 @@ public final class BouncySignature {
     static DSA getDSASigner(final BouncyFactory pFactory,
                             final GordianAsymKeySpec pKeySpec,
                             final GordianSignatureSpec pSpec) throws OceanusException {
-        /* Handle SM2/DSTU/GOST explicitly */
-        if (GordianAsymKeyType.SM2.equals(pKeySpec.getKeyType())) {
-            return new SM2Signer();
-        }
+        /* Handle DSTU/GOST explicitly */
         if (GordianAsymKeyType.DSTU4145.equals(pKeySpec.getKeyType())) {
             return new DSTU4145Signer();
         }

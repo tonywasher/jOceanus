@@ -42,11 +42,6 @@ public interface GordianDigest
     int getDigestSize();
 
     /**
-     * Reset the digest.
-     */
-    void reset();
-
-    /**
      * Calculate the digest.
      * @return the digest
      */

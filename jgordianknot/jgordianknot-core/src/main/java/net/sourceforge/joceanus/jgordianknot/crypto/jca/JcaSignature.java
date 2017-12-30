@@ -159,6 +159,11 @@ public abstract class JcaSignature
         }
     }
 
+    @Override
+    public void reset() {
+        /* NoOp */
+    }
+
     /**
      * RSA signer.
      */

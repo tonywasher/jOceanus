@@ -24,15 +24,19 @@ package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Mac;
 import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.bouncycastle.jcajce.spec.SkeinParameterSpec.Builder;
+
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -76,7 +80,7 @@ public final class JcaMac
             if (pIV == null) {
                 theMac.init(myKey.getKey());
             } else {
-                theMac.init(myKey.getKey(), new IvParameterSpec(pIV));
+                theMac.init(myKey.getKey(), buildInitParams(pIV));
             }
 
             /* Catch exceptions */
@@ -99,6 +103,23 @@ public final class JcaMac
     @Override
     public int getMacSize() {
         return theMac.getMacLength();
+    }
+
+    /**
+     * Build initParameters.
+     * @param pIV the initVector
+     * @return the parameters
+     */
+    private AlgorithmParameterSpec buildInitParams(final byte[] pIV) {
+        /* Handle Skein Parameters */
+        if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
+            final Builder myBuilder = new Builder();
+            myBuilder.setNonce(pIV);
+            return myBuilder.build();
+        }
+
+        /* Handle standard MACs */
+        return new IvParameterSpec(pIV);
     }
 
     @Override

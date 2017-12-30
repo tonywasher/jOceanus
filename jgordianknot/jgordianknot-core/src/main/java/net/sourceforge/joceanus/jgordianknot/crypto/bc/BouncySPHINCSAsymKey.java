@@ -347,7 +347,7 @@ public final class BouncySPHINCSAsymKey {
             /* Create the internal digests */
             final BouncyDigest myTreeDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
                                                                                                                  ? GordianDigestSpec.sha3(GordianLength.LEN_256)
-                                                                                                                 : GordianDigestSpec.sha2(GordianLength.LEN_256, true));
+                                                                                                                 : GordianDigestSpec.sha2Alt(GordianLength.LEN_256));
             final BouncyDigest myMsgDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
                                                                                                                 ? GordianDigestSpec.sha3(GordianLength.LEN_512)
                                                                                                                 : GordianDigestSpec.sha2(GordianLength.LEN_512));
@@ -396,7 +396,7 @@ public final class BouncySPHINCSAsymKey {
             /* Create the internal digests */
             final BouncyDigest myTreeDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
                                                                                                                  ? GordianDigestSpec.sha3(GordianLength.LEN_256)
-                                                                                                                 : GordianDigestSpec.sha2(GordianLength.LEN_256, true));
+                                                                                                                 : GordianDigestSpec.sha2Alt(GordianLength.LEN_256));
             final BouncyDigest myMsgDigest = pFactory.createDigest(GordianSPHINCSKeyType.SHA3.equals(myKeyType)
                                                                                                                 ? GordianDigestSpec.sha3(GordianLength.LEN_512)
                                                                                                                 : GordianDigestSpec.sha2(GordianLength.LEN_512));

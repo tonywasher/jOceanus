@@ -32,6 +32,7 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.digests.Blake2bDigest;
+import org.bouncycastle.crypto.digests.Blake2sDigest;
 import org.bouncycastle.crypto.digests.DSTU7564Digest;
 import org.bouncycastle.crypto.digests.GOST3411Digest;
 import org.bouncycastle.crypto.digests.GOST3411_2012_256Digest;
@@ -66,6 +67,7 @@ import org.bouncycastle.crypto.engines.ChaChaEngine;
 import org.bouncycastle.crypto.engines.DESedeEngine;
 import org.bouncycastle.crypto.engines.DSTU7624Engine;
 import org.bouncycastle.crypto.engines.GOST28147Engine;
+import org.bouncycastle.crypto.engines.GOST3412_2015Engine;
 import org.bouncycastle.crypto.engines.Grain128Engine;
 import org.bouncycastle.crypto.engines.HC128Engine;
 import org.bouncycastle.crypto.engines.HC256Engine;
@@ -163,6 +165,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.Bou
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Signer;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Validator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeKeyPairGenerator;
@@ -363,6 +367,7 @@ public final class BouncyFactory
     public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
                     && supportedSymKeySpecs().test(p)
+                    && !GordianSymKeyType.KUZNYECHIK.equals(p.getSymKeyType())
                     && p.getBlockLength() == GordianLength.LEN_128;
     }
 
@@ -570,7 +575,7 @@ public final class BouncyFactory
             case SHAKE:
                 return new SHAKEDigest(pDigestSpec.getStateLength().getLength());
             case BLAKE:
-                return getBlake2bDigest(myLen);
+                return getBlake2Digest(pDigestSpec);
             case STREEBOG:
                 return getStreebogDigest(myLen);
             case KUPYNA:
@@ -616,12 +621,15 @@ public final class BouncyFactory
     }
 
     /**
-     * Create the BouncyCastle Blake2B digest.
-     * @param pLength the digest length
+     * Create the BouncyCastle Blake2 digest.
+     * @param pSpec the digest spec
      * @return the digest
      */
-    private static Digest getBlake2bDigest(final GordianLength pLength) {
-        return new Blake2bDigest(pLength.getLength());
+    private static Digest getBlake2Digest(final GordianDigestSpec pSpec) {
+        final int myLength = pSpec.getDigestLength().getLength();
+        return GordianDigestType.isBlake2bState(pSpec.getStateLength())
+                                                                        ? new Blake2bDigest(myLength)
+                                                                        : new Blake2sDigest(myLength);
     }
 
     /**
@@ -708,7 +716,7 @@ public final class BouncyFactory
             case SKEIN:
                 return getBCSkeinMac(pMacSpec.getDigestSpec());
             case BLAKE:
-                return getBCBlakeMac(pMacSpec.getDigestSpec());
+                return getBCBlakeMac(pMacSpec);
             case KALYNA:
                 return getBCKalynaMac(pMacSpec.getKeySpec());
             case KUPYNA:
@@ -796,8 +804,8 @@ public final class BouncyFactory
      * @param pSpec the digestSpec
      * @return the MAC
      */
-    private static Mac getBCBlakeMac(final GordianDigestSpec pSpec) {
-        return new BouncyBlake2bMac(pSpec.getDigestLength().getLength());
+    private static Mac getBCBlakeMac(final GordianMacSpec pSpec) {
+        return new BouncyBlake2Mac(pSpec);
     }
 
     /**
@@ -908,6 +916,8 @@ public final class BouncyFactory
                 return new DESedeEngine();
             case GOST:
                 return new GOST28147Engine();
+            case KUZNYECHIK:
+                return new GOST3412_2015Engine();
             case SHACAL2:
                 return new Shacal2Engine();
             default:
@@ -1063,10 +1073,11 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSASigner(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
-            case SM2:
             case DSTU4145:
             case GOST2012:
                 return new BouncyECSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case SM2:
+                return new BouncySM2Signer(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), getRandom());
             case DSA:
                 return new BouncyDSASigner(this, (BouncyDSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
@@ -1096,10 +1107,11 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSAValidator(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
-            case SM2:
             case DSTU4145:
             case GOST2012:
                 return new BouncyECValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case SM2:
+                return new BouncySM2Validator(this, (BouncyECPublicKey) pKeyPair.getPublicKey());
             case DSA:
                 return new BouncyDSAValidator(this, (BouncyDSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:

@@ -173,7 +173,7 @@ public final class JcaDigest
             case SHA3:
                 return getSHA3Algorithm(myLen);
             case BLAKE:
-                return getBlake2bAlgorithm(myLen);
+                return getBlake2Algorithm(pDigestSpec);
             case KUPYNA:
                 return getKupynaAlgorithm(myLen);
             case SHAKE:
@@ -213,22 +213,12 @@ public final class JcaDigest
     }
 
     /**
-     * Determine the Blake2b algorithm.
-     * @param pLength the digest length
+     * Determine the Blake2 algorithm.
+     * @param pSpec the digestSpec
      * @return the name
      */
-    private static String getBlake2bAlgorithm(final GordianLength pLength) {
-        switch (pLength) {
-            case LEN_160:
-                return "BLAKE2B-160";
-            case LEN_256:
-                return "BLAKE2B-256";
-            case LEN_384:
-                return "BLAKE2B-384";
-            case LEN_512:
-            default:
-                return "BLAKE2B-512";
-        }
+    private static String getBlake2Algorithm(final GordianDigestSpec pSpec) {
+        return pSpec.toString();
     }
 
     /**

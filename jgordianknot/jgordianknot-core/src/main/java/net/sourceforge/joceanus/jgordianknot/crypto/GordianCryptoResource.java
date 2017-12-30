@@ -264,6 +264,11 @@ public enum GordianCryptoResource implements TethysResourceId {
     SYMKEY_GOST("symKey.GOST"),
 
     /**
+     * SymKey Kuznyechik.
+     */
+    SYMKEY_KUZNYECHIK("symKey.KUZNYECHIK"),
+
+    /**
      * SymKey Kalyna.
      */
     SYMKEY_KALYNA("symKey.Kalyna"),
@@ -510,6 +515,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.BLOWFISH, SYMKEY_BLOWFISH);
         myMap.put(GordianSymKeyType.DESEDE, SYMKEY_DESEDE);
         myMap.put(GordianSymKeyType.GOST, SYMKEY_GOST);
+        myMap.put(GordianSymKeyType.KUZNYECHIK, SYMKEY_KUZNYECHIK);
         myMap.put(GordianSymKeyType.KALYNA, SYMKEY_KALYNA);
         myMap.put(GordianSymKeyType.SHACAL2, SYMKEY_SHACAL2);
         return myMap;

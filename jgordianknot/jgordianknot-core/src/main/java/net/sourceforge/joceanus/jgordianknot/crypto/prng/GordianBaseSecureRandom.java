@@ -167,24 +167,24 @@ public class GordianBaseSecureRandom
 
         /**
          * Constructor.
-         * @param the underlying random
+         * @param pRandom the underlying random
          */
         protected GordianSimpleSecureRandom(final SecureRandom pRandom) {
             theRandom = pRandom;
         }
 
         @Override
-        public byte[] generateSeed(int pLength) {
+        public byte[] generateSeed(final int pLength) {
             return theRandom.generateSeed(pLength);
         }
 
         @Override
-        public void setSeed(byte[] pSeed) {
+        public void setSeed(final byte[] pSeed) {
             theRandom.setSeed(pSeed);
         }
 
         @Override
-        public void reseed(byte[] pXtraBytes) {
+        public void reseed(final byte[] pXtraBytes) {
             setSeed(pXtraBytes);
         }
 

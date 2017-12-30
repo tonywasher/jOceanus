@@ -137,6 +137,11 @@ public enum GordianSymKeyType {
     GOST(GordianLength.LEN_64),
 
     /**
+     * Kuznyechik.
+     */
+    KUZNYECHIK(GordianLength.LEN_128),
+
+    /**
      * SHACAL2.
      */
     SHACAL2(GordianLength.LEN_512);
@@ -218,6 +223,7 @@ public enum GordianSymKeyType {
         switch (this) {
             case THREEFISH:
             case GOST:
+            case KUZNYECHIK:
                 return !pRestricted;
             case SM4:
             case SEED:

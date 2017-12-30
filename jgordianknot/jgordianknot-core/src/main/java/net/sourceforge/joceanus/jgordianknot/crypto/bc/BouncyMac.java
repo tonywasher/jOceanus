@@ -26,10 +26,12 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Mac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
+import org.bouncycastle.crypto.params.SkeinParameters.Builder;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMac;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -68,10 +70,7 @@ public final class BouncyMac
         checkValidKey(pKey);
 
         /* Initialise the cipher */
-        CipherParameters myParms = new KeyParameter(myKey.getKey());
-        if (pIV != null) {
-            myParms = new ParametersWithIV(myParms, pIV);
-        }
+        final CipherParameters myParms = buildInitParams(myKey, pIV);
         theMac.init(myParms);
 
         /* Reset the byte count */
@@ -88,6 +87,32 @@ public final class BouncyMac
     @Override
     public int getMacSize() {
         return theMac.getMacSize();
+    }
+
+    /**
+     * Build initParameters.
+     * @param pKey the key
+     * @param pIV the initVector
+     * @return the parameters
+     */
+    private CipherParameters buildInitParams(final BouncyKey<GordianMacSpec> pKey,
+                                             final byte[] pIV) {
+        /* Handle Skein Parameters */
+        if (GordianMacType.SKEIN.equals(getMacSpec().getMacType())) {
+            final Builder myBuilder = new Builder();
+            myBuilder.setKey(pKey.getKey());
+            if (pIV != null) {
+                myBuilder.setNonce(pIV);
+            }
+            return myBuilder.build();
+        }
+
+        /* Handle standard MACs */
+        CipherParameters myParms = new KeyParameter(pKey.getKey());
+        if (pIV != null) {
+            myParms = new ParametersWithIV(myParms, pIV);
+        }
+        return myParms;
     }
 
     @Override

@@ -20,6 +20,11 @@
       <version>${PostGreSQLVersion}</version>
     </dependency>
     <dependency>
+      <groupId>net.sourceforge.jtds</groupId>
+      <artifactId>jtds</artifactId>
+      <version>${JTDSVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jmetis-core</artifactId>
       <version>${project.version}</version>

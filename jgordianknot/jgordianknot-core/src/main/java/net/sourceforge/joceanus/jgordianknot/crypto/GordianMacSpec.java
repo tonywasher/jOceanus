@@ -37,6 +37,11 @@ public final class GordianMacSpec {
     private static final String SEP = "-";
 
     /**
+     * Initialisation Vector size (128/8).
+     */
+    private static final int IVSIZE = 16;
+
+    /**
      * The Mac Type.
      */
     private final GordianMacType theMacType;
@@ -151,18 +156,17 @@ public final class GordianMacSpec {
      * @return the MacSpec
      */
     public static GordianMacSpec skeinMac(final GordianLength pLength) {
-        return skeinMac(pLength, false);
+        final GordianDigestSpec mySpec = GordianDigestSpec.skein(pLength);
+        return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
     }
 
     /**
      * Create skeinMacSpec.
      * @param pLength the length
-     * @param useExtended use extended state
      * @return the MacSpec
      */
-    public static GordianMacSpec skeinMac(final GordianLength pLength,
-                                          final boolean useExtended) {
-        final GordianDigestSpec mySpec = GordianDigestSpec.skein(pLength, useExtended);
+    public static GordianMacSpec skeinMacAlt(final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpec.skeinAlt(pLength);
         return new GordianMacSpec(GordianMacType.SKEIN, mySpec);
     }
 
@@ -179,7 +183,7 @@ public final class GordianMacSpec {
     }
 
     /**
-     * Create skeinMacSpec.
+     * Create blakeMacSpec.
      * @return the MacSpec
      */
     public static GordianMacSpec blakeMac() {
@@ -187,12 +191,34 @@ public final class GordianMacSpec {
     }
 
     /**
-     * Create blake2bMacSpec.
+     * Create blakeMacSpec.
      * @param pLength the length
      * @return the MacSpec
      */
     public static GordianMacSpec blakeMac(final GordianLength pLength) {
         final GordianDigestSpec mySpec = GordianDigestSpec.blake(pLength);
+        return new GordianMacSpec(GordianMacType.BLAKE, mySpec);
+    }
+
+    /**
+     * Create blakeMacSpec.
+     * @param pState the state length
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    static GordianMacSpec blakeMac(final GordianLength pState,
+                                   final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpec.blake(pState, pLength);
+        return new GordianMacSpec(GordianMacType.BLAKE, mySpec);
+    }
+
+    /**
+     * Create blakeMacSpec.
+     * @param pLength the length
+     * @return the MacSpec
+     */
+    public static GordianMacSpec blakeMacAlt(final GordianLength pLength) {
+        final GordianDigestSpec mySpec = GordianDigestSpec.blakeAlt(pLength);
         return new GordianMacSpec(GordianMacType.BLAKE, mySpec);
     }
 
@@ -264,6 +290,26 @@ public final class GordianMacSpec {
         return theKeySpec;
     }
 
+    /**
+     * Obtain the IV length.
+     * @return the IV Length
+     */
+    public int getIVLen() {
+        switch (theMacType) {
+            case VMPC:
+            case GMAC:
+            case POLY1305:
+            case SKEIN:
+                return IVSIZE;
+            case BLAKE:
+                return GordianDigestType.isBlake2bState(theDigestSpec.getStateLength())
+                                                                                        ? IVSIZE
+                                                                                        : IVSIZE >> 1;
+            default:
+                return 0;
+        }
+    }
+
     @Override
     public String toString() {
         /* If we have not yet loaded the name */
@@ -284,8 +330,11 @@ public final class GordianMacSpec {
                     theName += SEP + theKeySpec.toString();
                     break;
                 case KUPYNA:
-                case BLAKE:
                     theName += SEP + theDigestSpec.getDigestLength().getLength();
+                    break;
+                case BLAKE:
+                    theName = GordianDigestType.getBlakeAlgorithmForStateLength(theDigestSpec.getStateLength());
+                    theName += "Mac" + SEP + Integer.toString(theDigestSpec.getDigestLength().getLength());
                     break;
                 case KALYNA:
                     theName += SEP + theKeySpec.getBlockLength().getLength();
@@ -377,11 +426,11 @@ public final class GordianMacSpec {
             myList.add(GordianMacSpec.poly1305Mac(mySymKeySpec));
         }
 
-        /* For each length */
-        for (final GordianLength myLength : GordianLength.values()) {
+        /* Add SkeinMacs */
+        for (final GordianLength myLength : GordianDigestType.SKEIN.getSupportedLengths()) {
             myList.add(GordianMacSpec.skeinMac(myLength));
-            if (GordianDigestType.SKEIN.getExtendedStateForLength(myLength) != null) {
-                myList.add(GordianMacSpec.skeinMac(myLength, true));
+            if (GordianDigestType.SKEIN.getAlternateStateForLength(myLength) != null) {
+                myList.add(GordianMacSpec.skeinMacAlt(myLength));
             }
         }
 
@@ -391,6 +440,9 @@ public final class GordianMacSpec {
         /* Add blakeMac */
         for (final GordianLength myLength : GordianDigestType.BLAKE.getSupportedLengths()) {
             myList.add(GordianMacSpec.blakeMac(myLength));
+            if (GordianDigestType.BLAKE.getAlternateStateForLength(myLength) != null) {
+                myList.add(GordianMacSpec.blakeMacAlt(myLength));
+            }
         }
 
         /* Add kalynaMac */

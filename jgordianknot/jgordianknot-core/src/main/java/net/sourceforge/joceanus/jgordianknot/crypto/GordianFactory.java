@@ -158,7 +158,7 @@ public abstract class GordianFactory {
      */
     public GordianRandomSpec generateRandomSpec() {
         /* Access the random generator */
-        SecureRandom myRandom = getRandom();
+        final SecureRandom myRandom = getRandom();
 
         /* Determine the type of random generator */
         final boolean isHMac = myRandom.nextBoolean();
