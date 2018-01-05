@@ -42,15 +42,14 @@ import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDSAKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPair;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianMcElieceKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianModulus;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSPHINCSKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec.GordianXMSSKeyType;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyXMSSAsymKey;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaKeyPair.JcaPublicKey;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -539,16 +538,6 @@ public abstract class JcaKeyPairGenerator
     public static class JcaXMSSKeyPairGenerator
             extends JcaKeyPairGenerator {
         /**
-         * Default height for XMSS key.
-         */
-        public static final int DEFAULT_HEIGHT = BouncyXMSSAsymKey.DEFAULT_HEIGHT;
-
-        /**
-         * Default layers for XMSS key.
-         */
-        public static final int DEFAULT_LAYERS = BouncyXMSSAsymKey.DEFAULT_LAYERS;
-
-        /**
          * Generator.
          */
         private final KeyPairGenerator theGenerator;
@@ -567,20 +556,22 @@ public abstract class JcaKeyPairGenerator
             /* Protect against exceptions */
             try {
                 /* Access the algorithm */
-                final GordianXMSSKeySpec mySpec = pKeySpec.getXMSSKeySpec();
-                final GordianXMSSKeyType myType = mySpec.getKeyType();
+                final boolean isXMSSMT = GordianAsymKeyType.XMSSMT.equals(pKeySpec.getKeyType());
+                final GordianXMSSKeyType myType = pKeySpec.getXMSSKeyType();
 
                 /* Create the parameters */
-                final AlgorithmParameterSpec myAlgo = myType.isXMSSMT()
-                                                                        ? new XMSSMTParameterSpec(DEFAULT_HEIGHT, DEFAULT_LAYERS, mySpec.getDigestType().name())
-                                                                        : new XMSSParameterSpec(DEFAULT_HEIGHT, mySpec.getDigestType().name());
+                final AlgorithmParameterSpec myAlgo = isXMSSMT
+                                                               ? new XMSSMTParameterSpec(GordianXMSSKeyType.DEFAULT_HEIGHT,
+                                                                       GordianXMSSKeyType.DEFAULT_LAYERS, myType.name())
+                                                               : new XMSSParameterSpec(GordianXMSSKeyType.DEFAULT_HEIGHT, myType.name());
 
                 /* Create and initialise the generator */
-                theGenerator = JcaFactory.getJavaKeyPairGenerator(myType.toString(), true);
+                final String myJavaType = pKeySpec.getKeyType().toString();
+                theGenerator = JcaFactory.getJavaKeyPairGenerator(myJavaType, true);
                 theGenerator.initialize(myAlgo, getRandom());
 
                 /* Create the factory */
-                setKeyFactory(JcaFactory.getJavaKeyFactory(myType.toString(), true));
+                setKeyFactory(JcaFactory.getJavaKeyFactory(myJavaType, true));
             } catch (InvalidAlgorithmParameterException e) {
                 throw new GordianCryptoException("Failed to create DHgenerator", e);
             }

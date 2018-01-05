@@ -24,13 +24,12 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.spec.X509EncodedKeySpec;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec.GordianXMSSDigestType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -77,7 +76,8 @@ public class GordianTestAsymmetric {
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.newHope());
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.dstu4145(GordianDSTU4145Elliptic.DSTU9));
         createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.gost2012(GordianGOSTElliptic.CRYPTOPROA));
-        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmss(GordianXMSSKeySpec.xmss(GordianXMSSDigestType.SHA256)));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmss(GordianXMSSKeyType.SHA256));
+        createKeyPair(pFactory, pKeySet, GordianAsymKeySpec.xmssmt(GordianXMSSKeyType.SHA256));
     }
 
     /**
@@ -113,7 +113,8 @@ public class GordianTestAsymmetric {
                                final GordianKeySet pKeySet,
                                final GordianAsymKeySpec pKeySpec) throws OceanusException {
         /* Create and record the pair */
-        AsymPairControl myPair = new AsymPairControl(pFactory, pKeySet, pKeySpec);
+        System.out.println(" Creating " + pKeySpec.toString());
+        AsymPairControl myPair = new AsymPairControl(pFactory, pKeySpec);
         theMap.put(pKeySpec.getKeyType(), myPair);
 
         /* Create signatures */
@@ -121,6 +122,9 @@ public class GordianTestAsymmetric {
 
         /* Check KeyExchange */
         myPair.checkKEMS();
+
+        /* Secure the privateKey */
+        myPair.securePrivateKey(pKeySet);
     }
 
     /**
@@ -135,6 +139,7 @@ public class GordianTestAsymmetric {
         Iterator<AsymPairControl> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
             AsymPairControl myControl = myIterator.next();
+            System.out.println(" Restoring " + myControl.getKeySpec().toString());
             myControl = new AsymPairControl(pFactory, pKeySet, myControl);
             myControl.validateSignatures(theSignatureSource);
         }
@@ -150,6 +155,11 @@ public class GordianTestAsymmetric {
         private final GordianFactory theFactory;
 
         /**
+         * The KeyPairGenerator.
+         */
+        private final GordianKeyPairGenerator theGenerator;
+
+        /**
          * The KeyPair.
          */
         private final GordianKeyPair thePair;
@@ -162,7 +172,7 @@ public class GordianTestAsymmetric {
         /**
          * The Private KeySpec.
          */
-        private final byte[] thePrivate;
+        private byte[] thePrivate;
 
         /**
          * Signature Map.
@@ -172,26 +182,23 @@ public class GordianTestAsymmetric {
         /**
          * Constructor.
          * @param pFactory the factory
-         * @param pKeySet the keySet
          * @param pKeySpec the Asymmetric KeyType.
          * @throws OceanusException on error
          */
         private AsymPairControl(final GordianFactory pFactory,
-                                final GordianKeySet pKeySet,
                                 final GordianAsymKeySpec pKeySpec) throws OceanusException {
             /* Store the factory */
             theFactory = pFactory;
 
             /* Create new KeyPair */
-            GordianKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pKeySpec);
-            thePair = myGenerator.generateKeyPair();
+            theGenerator = pFactory.getKeyPairGenerator(pKeySpec);
+            thePair = theGenerator.generateKeyPair();
 
-            /* Secure the keys */
-            thePrivate = myGenerator.securePrivateKey(thePair, pKeySet);
-            thePublic = myGenerator.getX509Encoding(thePair);
+            /* Secure the public key */
+            thePublic = theGenerator.getX509Encoding(thePair);
 
             /* Create the signature map */
-            theSignatures = new HashMap<>();
+            theSignatures = new LinkedHashMap<>();
         }
 
         /**
@@ -208,8 +215,8 @@ public class GordianTestAsymmetric {
             theFactory = pFactory;
 
             /* Create new KeyPair */
-            GordianKeyPairGenerator myGenerator = pFactory.getKeyPairGenerator(pStatus.getKeySpec());
-            thePair = myGenerator.deriveKeyPair(pStatus.thePublic, pStatus.thePrivate, pKeySet);
+            theGenerator = pFactory.getKeyPairGenerator(pStatus.getKeySpec());
+            thePair = theGenerator.deriveKeyPair(pStatus.thePublic, pStatus.thePrivate, pKeySet);
 
             /* Don't worry about the keySpecs */
             thePrivate = null;
@@ -233,6 +240,15 @@ public class GordianTestAsymmetric {
         }
 
         /**
+         * Secure the privateKey.
+         * @param pKeySet the keySet
+         * @throws OceanusException on error
+         */
+        private void securePrivateKey(final GordianKeySet pKeySet) throws OceanusException {
+            thePrivate = theGenerator.securePrivateKey(thePair, pKeySet);
+        }
+
+        /**
          * Create the signatures.
          * @param pSources the sources to sign
          * @throws OceanusException on error
@@ -252,7 +268,6 @@ public class GordianTestAsymmetric {
                     /* If the signature is supported */
                     if (mySignPredicate.test(thePair, mySign)) {
                         createSignature(mySign, pSources);
-                        return;
                     }
                 }
             }
@@ -266,6 +281,7 @@ public class GordianTestAsymmetric {
          */
         private void createSignature(final GordianSignatureSpec pSignatureSpec,
                                      final byte[][] pSources) throws OceanusException {
+            System.out.println("  Signing " + pSignatureSpec.toString());
             GordianSigner mySigner = theFactory.createSigner(thePair, pSignatureSpec);
             for (byte[] mySource : pSources) {
                 mySigner.update(mySource);
@@ -295,6 +311,7 @@ public class GordianTestAsymmetric {
          */
         private void validateSignature(final GordianSignatureSpec pSignatureSpec,
                                        final byte[][] pSources) throws OceanusException {
+            System.out.println("  Validating " + pSignatureSpec.toString());
             GordianValidator myValidator = theFactory.createValidator(thePair, pSignatureSpec);
             for (byte[] mySource : pSources) {
                 myValidator.update(mySource);
@@ -316,6 +333,7 @@ public class GordianTestAsymmetric {
             /* If we can perform keyExchange */
             if (myXchgPredicate.test(thePair, mySpec)) {
                 /* Perform the key exchange */
+                System.out.println("  Checking KEMS " + mySpec.toString());
                 GordianKEMSender mySender = theFactory.createKEMessage(thePair, mySpec);
                 GordianKeyEncapsulation myReceiver = theFactory.parseKEMessage(thePair, mySpec, mySender.getCipherText());
 

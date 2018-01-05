@@ -108,6 +108,10 @@ import org.bouncycastle.crypto.modes.CCMBlockCipher;
 import org.bouncycastle.crypto.modes.CFBBlockCipher;
 import org.bouncycastle.crypto.modes.CTSBlockCipher;
 import org.bouncycastle.crypto.modes.EAXBlockCipher;
+import org.bouncycastle.crypto.modes.G3413CBCBlockCipher;
+import org.bouncycastle.crypto.modes.G3413CFBBlockCipher;
+import org.bouncycastle.crypto.modes.G3413CTRBlockCipher;
+import org.bouncycastle.crypto.modes.G3413OFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GOFBBlockCipher;
@@ -147,7 +151,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianWrapCipher;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPublicKey;
@@ -354,6 +357,7 @@ public final class BouncyFactory
     public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
                     && supportedSymKeySpecs().test(p)
+                    && !GordianSymKeyType.KALYNA.equals(p.getSymKeyType())
                     && p.getBlockLength() == GordianLength.LEN_128;
     }
 
@@ -951,6 +955,14 @@ public final class BouncyFactory
                 return new OFBBlockCipher(pEngine, pEngine.getBlockSize());
             case GOFB:
                 return new GOFBBlockCipher(pEngine);
+            case G3413CBC:
+                return new G3413CBCBlockCipher(pEngine);
+            case G3413CTR:
+                return new G3413CTRBlockCipher(pEngine);
+            case G3413CFB:
+                return new G3413CFBBlockCipher(pEngine);
+            case G3413OFB:
+                return new G3413OFBBlockCipher(pEngine);
             default:
                 throw new GordianDataException(getInvalidText(pMode));
         }
@@ -1052,9 +1064,9 @@ public final class BouncyFactory
             case NEWHOPE:
                 return new BouncyNewHopeKeyPairGenerator(this, pKeySpec);
             case XMSS:
-                return pKeySpec.getXMSSKeySpec().isXMSSMT()
-                                                            ? new BouncyXMSSMTKeyPairGenerator(this, pKeySpec)
-                                                            : new BouncyXMSSKeyPairGenerator(this, pKeySpec);
+                return new BouncyXMSSKeyPairGenerator(this, pKeySpec);
+            case XMSSMT:
+                return new BouncyXMSSMTKeyPairGenerator(this, pKeySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
         }
@@ -1085,10 +1097,9 @@ public final class BouncyFactory
             case RAINBOW:
                 return new BouncyRainbowSigner(this, (BouncyRainbowPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case XMSS:
-                final GordianXMSSKeySpec myKeySpec = pKeyPair.getPrivateKey().getKeySpec().getXMSSKeySpec();
-                return myKeySpec.isXMSSMT()
-                                            ? new BouncyXMSSMTSigner(this, (BouncyXMSSMTPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec)
-                                            : new BouncyXMSSSigner(this, (BouncyXMSSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
+                return new BouncyXMSSSigner(this, (BouncyXMSSPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
+            case XMSSMT:
+                return new BouncyXMSSMTSigner(this, (BouncyXMSSMTPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
@@ -1119,10 +1130,9 @@ public final class BouncyFactory
             case RAINBOW:
                 return new BouncyRainbowValidator(this, (BouncyRainbowPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case XMSS:
-                final GordianXMSSKeySpec myKeySpec = pKeyPair.getPublicKey().getKeySpec().getXMSSKeySpec();
-                return myKeySpec.isXMSSMT()
-                                            ? new BouncyXMSSMTValidator(this, (BouncyXMSSMTPublicKey) pKeyPair.getPublicKey(), pSignatureSpec)
-                                            : new BouncyXMSSValidator(this, (BouncyXMSSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+                return new BouncyXMSSValidator(this, (BouncyXMSSPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case XMSSMT:
+                return new BouncyXMSSMTValidator(this, (BouncyXMSSMTPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }

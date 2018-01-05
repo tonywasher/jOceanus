@@ -192,9 +192,9 @@ public abstract class GordianCipher<T> {
         final int myOut = update(pBytes, pOffset, pLength, myOutput, 0);
 
         /* Return full or partial buffer */
-        return (myOut == myLen)
-                                ? myOutput
-                                : Arrays.copyOf(myOutput, myOut);
+        return myOut == myLen
+                              ? myOutput
+                              : Arrays.copyOf(myOutput, myOut);
     }
 
     /**
@@ -243,9 +243,9 @@ public abstract class GordianCipher<T> {
         final int myOut = finish(myOutput, 0);
 
         /* Return full or partial buffer */
-        return (myOut == myLen)
-                                ? myOutput
-                                : Arrays.copyOf(myOutput, myOut);
+        return myOut == myLen
+                              ? myOutput
+                              : Arrays.copyOf(myOutput, myOut);
     }
 
     /**
@@ -277,9 +277,9 @@ public abstract class GordianCipher<T> {
         final int myOut = finish(pBytes, pOffset, pLength, myOutput, 0);
 
         /* Return full or partial buffer */
-        return (myOut == myLen)
-                                ? myOutput
-                                : Arrays.copyOf(myOutput, myOut);
+        return myOut == myLen
+                              ? myOutput
+                              : Arrays.copyOf(myOutput, myOut);
     }
 
     /**

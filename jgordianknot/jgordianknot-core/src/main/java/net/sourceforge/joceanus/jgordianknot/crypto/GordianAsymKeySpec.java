@@ -161,8 +161,17 @@ public final class GordianAsymKeySpec {
      * @param pKeySpec the xmss keyType
      * @return the KeySpec
      */
-    public static GordianAsymKeySpec xmss(final GordianXMSSKeySpec pKeySpec) {
+    public static GordianAsymKeySpec xmss(final GordianXMSSKeyType pKeySpec) {
         return new GordianAsymKeySpec(GordianAsymKeyType.XMSS, pKeySpec);
+    }
+
+    /**
+     * Create xmssMTKey.
+     * @param pKeySpec the xmssMT keyType
+     * @return the KeySpec
+     */
+    public static GordianAsymKeySpec xmssmt(final GordianXMSSKeyType pKeySpec) {
+        return new GordianAsymKeySpec(GordianAsymKeyType.XMSSMT, pKeySpec);
     }
 
     /**
@@ -232,12 +241,12 @@ public final class GordianAsymKeySpec {
     }
 
     /**
-     * Obtain the XMSS keySpec.
-     * @return the keySpec.
+     * Obtain the XMSS keyType.
+     * @return the keyType.
      */
-    public GordianXMSSKeySpec getXMSSKeySpec() {
-        return theSubKeyType instanceof GordianXMSSKeySpec
-                                                           ? (GordianXMSSKeySpec) theSubKeyType
+    public GordianXMSSKeyType getXMSSKeyType() {
+        return theSubKeyType instanceof GordianXMSSKeyType
+                                                           ? (GordianXMSSKeyType) theSubKeyType
                                                            : null;
     }
 
@@ -249,12 +258,6 @@ public final class GordianAsymKeySpec {
             theName = theKeyType.toString();
             if (theSubKeyType != null) {
                 theName += SEP + theSubKeyType.toString();
-            }
-
-            /* For XMSS use the subKeyType */
-            if (GordianAsymKeyType.XMSS.equals(theKeyType)
-                && theSubKeyType != null) {
-                theName = theSubKeyType.toString();
             }
         }
 

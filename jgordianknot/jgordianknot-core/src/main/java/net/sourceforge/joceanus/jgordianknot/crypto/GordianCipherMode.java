@@ -94,7 +94,27 @@ public enum GordianCipherMode {
     /**
      * KGCM Mode.
      */
-    KGCM;
+    KGCM,
+
+    /**
+     * G3413CBC Mode.
+     */
+    G3413CBC,
+
+    /**
+     * G3413CFB Mode.
+     */
+    G3413CFB,
+
+    /**
+     * G3413OFB Mode.
+     */
+    G3413OFB,
+
+    /**
+     * G3413CTR Mode.
+     */
+    G3413CTR;
 
     /**
      * Does the mode require padding?
@@ -104,6 +124,7 @@ public enum GordianCipherMode {
         switch (this) {
             case ECB:
             case CBC:
+            case G3413CBC:
                 return true;
             default:
                 return false;
@@ -166,6 +187,11 @@ public enum GordianCipherMode {
      */
     public boolean validForSymKey(final GordianSymKeyType pKeyType) {
         switch (this) {
+            case G3413OFB:
+            case G3413CFB:
+            case G3413CBC:
+            case G3413CTR:
+                return GordianSymKeyType.KUZNYECHIK.equals(pKeyType);
             case GOFB:
             case GCFB:
                 return GordianSymKeyType.GOST.equals(pKeyType);

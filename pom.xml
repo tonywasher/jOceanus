@@ -75,7 +75,7 @@
     <appLibDir/>
     <BouncyCastleVersion>1.59</BouncyCastleVersion>
     <SvnKitVersion>1.9.0</SvnKitVersion>
-    <JGitVersion>4.9.2.201712150930-r</JGitVersion>
+    <JGitVersion>4.10.0.201712302008-r</JGitVersion>
     <HttpClientVersion>4.5.4</HttpClientVersion>
     <JSONVersion>20171018</JSONVersion>
     <ApacheMavenVersion>3.5.2</ApacheMavenVersion>
@@ -90,22 +90,22 @@
     <JSoupVersion>1.11.2</JSoupVersion>
     <ZipSDKVersion>9.20</ZipSDKVersion>
     <JavaVersion>1.8</JavaVersion>
-    <CheckStyleVersion>8.5</CheckStyleVersion>
+    <CheckStyleVersion>8.7</CheckStyleVersion>
     <PMDVersion>6.0.0</PMDVersion>
     <CleanPluginVersion>3.0.0</CleanPluginVersion>
     <InstallPluginVersion>2.5.2</InstallPluginVersion>
-    <SitePluginVersion>3.6</SitePluginVersion>
+    <SitePluginVersion>3.7</SitePluginVersion>
     <DeployPluginVersion>2.8.2</DeployPluginVersion>
     <EnforcerPluginVersion>3.0.0-M1</EnforcerPluginVersion>
     <CompilerPluginVersion>3.7.0</CompilerPluginVersion>
     <ShadePluginVersion>3.1.0</ShadePluginVersion>
-    <DependencyPluginVersion>3.0.1</DependencyPluginVersion>
+    <DependencyPluginVersion>3.0.2</DependencyPluginVersion>
     <SurefirePluginVersion>2.20.1</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <JarPluginVersion>3.0.2</JarPluginVersion>
     <ProjectInfoPluginVersion>2.9</ProjectInfoPluginVersion>
     <JxrPluginVersion>2.5</JxrPluginVersion>
-    <JavaDocPluginVersion>3.0.0-M1</JavaDocPluginVersion>
+    <JavaDocPluginVersion>3.0.0</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.4.0.905</SonarQubePluginVersion>
     <CheckStylePluginVersion>2.17</CheckStylePluginVersion>
     <PMDPluginVersion>3.8</PMDPluginVersion>

@@ -150,7 +150,7 @@ public class GordianTestAlgorithms {
      * @param pDigest the digest to profile
      */
     private void profileDigest(final GordianDigest pDigest) {
-        byte[] myBytes = "MacInput".getBytes();
+        byte[] myBytes = "DigestInput".getBytes();
         long myStart = System.nanoTime();
         for (int i = 0; i < 100; i++) {
             pDigest.update(myBytes);

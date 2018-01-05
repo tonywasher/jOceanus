@@ -375,7 +375,6 @@ public enum GordianDigestType {
      * @return true/false
      */
     public boolean isCombinedHashDigest() {
-        return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength()
-               && this != KUPYNA;
+        return getDefaultLength().getLength() >= GordianLength.LEN_256.getLength();
     }
 }

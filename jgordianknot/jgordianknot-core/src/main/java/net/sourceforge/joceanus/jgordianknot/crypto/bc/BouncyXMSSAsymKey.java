@@ -37,6 +37,8 @@ import org.bouncycastle.crypto.KeyGenerationParameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.crypto.digests.SHAKEDigest;
+import org.bouncycastle.pqc.asn1.XMSSKeyParams;
+import org.bouncycastle.pqc.asn1.XMSSMTKeyParams;
 import org.bouncycastle.pqc.asn1.XMSSMTPrivateKey;
 import org.bouncycastle.pqc.asn1.XMSSMTPublicKey;
 import org.bouncycastle.pqc.asn1.XMSSPrivateKey;
@@ -69,7 +71,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianLength;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianValidator;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeySpec.GordianXMSSDigestType;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianXMSSKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyKeyPair.BouncyPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncySignature.BouncyDigestSignature;
@@ -79,16 +81,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * XMSS AsymKey classes.
  */
 public final class BouncyXMSSAsymKey {
-    /**
-     * Default height for XMSS key.
-     */
-    public static final int DEFAULT_HEIGHT = 10;
-
-    /**
-     * Default layers for XMSS key.
-     */
-    public static final int DEFAULT_LAYERS = 4;
-
     /**
      * Private constructor.
      */
@@ -286,16 +278,16 @@ public final class BouncyXMSSAsymKey {
             /* Create and initialise the generator */
             theGenerator = new XMSSKeyPairGenerator();
             final KeyGenerationParameters myParams = new XMSSKeyGenerationParameters(
-                    new XMSSParameters(DEFAULT_HEIGHT, createDigest(getDigestType())), getRandom());
+                    new XMSSParameters(GordianXMSSKeyType.DEFAULT_HEIGHT, createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
 
         /**
-         * Obtain the digestType.
-         * @return the digestType
+         * Obtain the keyTypeType.
+         * @return the keyTypeType
          */
-        private GordianXMSSDigestType getDigestType() {
-            return getKeySpec().getXMSSKeySpec().getDigestType();
+        private GordianXMSSKeyType getKeyType() {
+            return getKeySpec().getXMSSKeyType();
         }
 
         @Override
@@ -310,7 +302,7 @@ public final class BouncyXMSSAsymKey {
         protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
             final BouncyXMSSPrivateKey myPrivateKey = BouncyXMSSPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final XMSSPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final BCXMSSPrivateKey myKey = new BCXMSSPrivateKey(getOID(getDigestType()), myParms);
+            final BCXMSSPrivateKey myKey = new BCXMSSPrivateKey(getOID(getKeyType()), myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
         }
 
@@ -319,9 +311,10 @@ public final class BouncyXMSSAsymKey {
                                               final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
+                final XMSSKeyParams myParams = XMSSKeyParams.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
                 final XMSSPrivateKey myKey = XMSSPrivateKey.getInstance(myInfo.parsePrivateKey());
                 final XMSSPrivateKeyParameters.Builder myBuilder = new XMSSPrivateKeyParameters.Builder(
-                        new XMSSParameters(DEFAULT_HEIGHT, createDigest(getDigestType())))
+                        new XMSSParameters(myParams.getHeight(), createDigest(getKeyType())))
                                 .withIndex(myKey.getIndex())
                                 .withSecretKeySeed(myKey.getSecretKeySeed())
                                 .withSecretKeyPRF(myKey.getSecretKeyPRF())
@@ -346,7 +339,7 @@ public final class BouncyXMSSAsymKey {
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
             final BouncyXMSSPublicKey myPublicKey = BouncyXMSSPublicKey.class.cast(getPublicKey(pKeyPair));
             final XMSSPublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final BCXMSSPublicKey myKey = new BCXMSSPublicKey(getOID(getDigestType()), myParms);
+            final BCXMSSPublicKey myKey = new BCXMSSPublicKey(getOID(getKeyType()), myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());
         }
 
@@ -365,9 +358,10 @@ public final class BouncyXMSSAsymKey {
         private BouncyXMSSPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+                final XMSSKeyParams myParams = XMSSKeyParams.getInstance(myInfo.getAlgorithm().getParameters());
                 final XMSSPublicKey myPublicKey = XMSSPublicKey.getInstance(myInfo.parsePublicKey());
                 final XMSSPublicKeyParameters myParms = new XMSSPublicKeyParameters.Builder(
-                        new XMSSParameters(DEFAULT_HEIGHT, createDigest(getDigestType())))
+                        new XMSSParameters(myParams.getHeight(), createDigest(getKeyType())))
                                 .withPublicSeed(myPublicKey.getPublicSeed())
                                 .withRoot(myPublicKey.getRoot()).build();
                 return new BouncyXMSSPublicKey(getKeySpec(), myParms);
@@ -379,12 +373,12 @@ public final class BouncyXMSSAsymKey {
     }
 
     /**
-     * Create digest for keySpec.
-     * @param pDigest the digest type
+     * Create digest for XMSSKeyType.
+     * @param pKeyType the key type
      * @return the digest
      */
-    static Digest createDigest(final GordianXMSSDigestType pDigest) {
-        switch (pDigest) {
+    static Digest createDigest(final GordianXMSSKeyType pKeyType) {
+        switch (pKeyType) {
             case SHAKE128:
                 return new SHAKEDigest(GordianLength.LEN_128.getLength());
             case SHAKE256:
@@ -398,12 +392,12 @@ public final class BouncyXMSSAsymKey {
     }
 
     /**
-     * Obtain digest OID for digest.
-     * @param pDigest the digest type
+     * Obtain digest OID for XMSSKeyType.
+     * @param pKeyType the keyType
      * @return the OIDt
      */
-    static ASN1ObjectIdentifier getOID(final GordianXMSSDigestType pDigest) {
-        switch (pDigest) {
+    static ASN1ObjectIdentifier getOID(final GordianXMSSKeyType pKeyType) {
+        switch (pKeyType) {
             case SHAKE128:
                 return NISTObjectIdentifiers.id_shake128;
             case SHAKE256:
@@ -607,7 +601,8 @@ public final class BouncyXMSSAsymKey {
             /* Create and initialise the generator */
             theGenerator = new XMSSMTKeyPairGenerator();
             final KeyGenerationParameters myParams = new XMSSMTKeyGenerationParameters(
-                    new XMSSMTParameters(DEFAULT_HEIGHT, DEFAULT_LAYERS, createDigest(getDigestType())), getRandom());
+                    new XMSSMTParameters(GordianXMSSKeyType.DEFAULT_HEIGHT, GordianXMSSKeyType.DEFAULT_LAYERS,
+                            createDigest(getKeyType())), getRandom());
             theGenerator.init(myParams);
         }
 
@@ -615,8 +610,8 @@ public final class BouncyXMSSAsymKey {
          * Obtain the digestType.
          * @return the digestType
          */
-        private GordianXMSSDigestType getDigestType() {
-            return getKeySpec().getXMSSKeySpec().getDigestType();
+        private GordianXMSSKeyType getKeyType() {
+            return getKeySpec().getXMSSKeyType();
         }
 
         @Override
@@ -631,7 +626,7 @@ public final class BouncyXMSSAsymKey {
         protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
             final BouncyXMSSMTPrivateKey myPrivateKey = BouncyXMSSMTPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final XMSSMTPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
-            final BCXMSSMTPrivateKey myKey = new BCXMSSMTPrivateKey(getOID(getDigestType()), myParms);
+            final BCXMSSMTPrivateKey myKey = new BCXMSSMTPrivateKey(getOID(getKeyType()), myParms);
             return new PKCS8EncodedKeySpec(myKey.getEncoded());
         }
 
@@ -640,9 +635,10 @@ public final class BouncyXMSSAsymKey {
                                               final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
+                final XMSSMTKeyParams myParams = XMSSMTKeyParams.getInstance(myInfo.getPrivateKeyAlgorithm().getParameters());
                 final XMSSMTPrivateKey myKey = XMSSMTPrivateKey.getInstance(myInfo.parsePrivateKey());
                 final XMSSMTPrivateKeyParameters.Builder myBuilder = new XMSSMTPrivateKeyParameters.Builder(
-                        new XMSSMTParameters(DEFAULT_HEIGHT, DEFAULT_LAYERS, createDigest(getDigestType())))
+                        new XMSSMTParameters(myParams.getHeight(), myParams.getLayers(), createDigest(getKeyType())))
                                 .withIndex(myKey.getIndex())
                                 .withSecretKeySeed(myKey.getSecretKeySeed())
                                 .withSecretKeyPRF(myKey.getSecretKeyPRF())
@@ -667,7 +663,7 @@ public final class BouncyXMSSAsymKey {
         public X509EncodedKeySpec getX509Encoding(final GordianKeyPair pKeyPair) {
             final BouncyXMSSMTPublicKey myPublicKey = BouncyXMSSMTPublicKey.class.cast(getPublicKey(pKeyPair));
             final XMSSMTPublicKeyParameters myParms = myPublicKey.getPublicKey();
-            final BCXMSSMTPublicKey myKey = new BCXMSSMTPublicKey(getOID(getDigestType()), myParms);
+            final BCXMSSMTPublicKey myKey = new BCXMSSMTPublicKey(getOID(getKeyType()), myParms);
             return new X509EncodedKeySpec(myKey.getEncoded());
         }
 
@@ -686,9 +682,10 @@ public final class BouncyXMSSAsymKey {
         private BouncyXMSSMTPublicKey derivePublicKey(final X509EncodedKeySpec pEncodedKey) throws OceanusException {
             try {
                 final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncodedKey.getEncoded());
+                final XMSSMTKeyParams myParams = XMSSMTKeyParams.getInstance(myInfo.getAlgorithm().getParameters());
                 final XMSSMTPublicKey myPublicKey = XMSSMTPublicKey.getInstance(myInfo.parsePublicKey());
                 final XMSSMTPublicKeyParameters myParms = new XMSSMTPublicKeyParameters.Builder(
-                        new XMSSMTParameters(DEFAULT_HEIGHT, DEFAULT_LAYERS, createDigest(getDigestType())))
+                        new XMSSMTParameters(myParams.getHeight(), myParams.getLayers(), createDigest(getKeyType())))
                                 .withPublicSeed(myPublicKey.getPublicSeed())
                                 .withRoot(myPublicKey.getRoot()).build();
                 return new BouncyXMSSMTPublicKey(getKeySpec(), myParms);

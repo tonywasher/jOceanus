@@ -110,7 +110,7 @@ public final class JcaCipher<T>
             return ((GordianStreamKeyType) myType).getIVLength();
         }
         return needsIV()
-                         ? theCipher.getBlockSize()
+                         ? getCipherSpec().getIVLength()
                          : 0;
     }
 

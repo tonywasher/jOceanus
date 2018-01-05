@@ -82,6 +82,11 @@ public enum GordianAsymKeyType {
     XMSS(GordianSignatureType.NATIVE),
 
     /**
+     * XMSSMT.
+     */
+    XMSSMT(GordianSignatureType.NATIVE),
+
+    /**
      * NewHope.
      */
     NEWHOPE();

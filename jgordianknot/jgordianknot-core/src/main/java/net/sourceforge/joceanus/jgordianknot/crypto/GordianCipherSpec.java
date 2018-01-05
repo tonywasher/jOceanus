@@ -61,6 +61,12 @@ public abstract class GordianCipherSpec<T> {
      */
     public abstract boolean needsIV();
 
+    /**
+     * Obtain the IV length for the cipher.
+     * @return the IV length
+     */
+    public abstract int getIVLength();
+
     @Override
     public boolean equals(final Object pThat) {
         /* Handle the trivial cases */
@@ -286,6 +292,17 @@ public abstract class GordianCipherSpec<T> {
             return getKeyType().getBlockLength().getLength();
         }
 
+        @Override
+        public int getIVLength() {
+            if (getCipherMode().isAAD()) {
+                return GordianAADCipher.AADIVLEN;
+            }
+            final int myBlockLen = getKeyType().getBlockLength().getByteLength();
+            return GordianCipherMode.G3413CTR.equals(theMode)
+                                                              ? myBlockLen >> 1
+                                                              : myBlockLen;
+        }
+
         /**
          * Is this an AAD mode?
          * @return true/false
@@ -379,6 +396,11 @@ public abstract class GordianCipherSpec<T> {
         @Override
         public boolean needsIV() {
             return getKeyType().getIVLength() > 0;
+        }
+
+        @Override
+        public int getIVLength() {
+            return getKeyType().getIVLength();
         }
     }
 }

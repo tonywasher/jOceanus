@@ -105,6 +105,16 @@ public abstract class JcaSignature
     static final String RAINBOW_ALGOBASE = "withRainbow";
 
     /**
+     * The XMSS Signature.
+     */
+    static final String XMSS_ALGOBASE = "withXMSS";
+
+    /**
+     * The XMSSMT Signature.
+     */
+    static final String XMSSMT_ALGOBASE = "withXMSSMT";
+
+    /**
      * The DSTU Signature.
      */
     static final String DSTU_SIGN = "DSTU4145";
@@ -294,11 +304,6 @@ public abstract class JcaSignature
         /* Handle DSTU explicitly */
         if (GordianAsymKeyType.DSTU4145.equals(pKeySpec.getKeyType())) {
             return DSTU_SIGN;
-        }
-
-        /* Handle XMSS explicitly */
-        if (GordianAsymKeyType.XMSS.equals(pKeySpec.getKeyType())) {
-            return "SHA256with" + pKeySpec.getXMSSKeySpec().getKeyType().name();
         }
 
         /* Obtain the digest length */
@@ -608,6 +613,92 @@ public abstract class JcaSignature
             try {
                 final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
                 setSigner(JcaFactory.getJavaSignature(myDigest + RAINBOW_ALGOBASE, true));
+
+                /* Initialise and set the signer */
+                getSigner().initVerify(pPublicKey.getPublicKey());
+
+                /* Catch exceptions */
+            } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public boolean verify(final byte[] pSignature) throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().verify(pSignature);
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * XMSS signer.
+     */
+    public static class JcaXMSSSigner
+            extends JcaSignature
+            implements GordianSigner {
+        /**
+         * Constructor.
+         * @param pPrivateKey the private key
+         * @param pSignatureSpec the signatureSpec
+         * @param pRandom the secure random
+         * @throws OceanusException on error
+         */
+        protected JcaXMSSSigner(final JcaPrivateKey pPrivateKey,
+                                final GordianSignatureSpec pSignatureSpec,
+                                final SecureRandom pRandom) throws OceanusException {
+            /* Create the Signer */
+            try {
+                final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
+                final String myBase = GordianAsymKeyType.XMSSMT.equals(pPrivateKey.getKeySpec().getKeyType())
+                                                                                                              ? XMSSMT_ALGOBASE
+                                                                                                              : XMSS_ALGOBASE;
+                setSigner(JcaFactory.getJavaSignature(myDigest + myBase, true));
+
+                /* Initialise and set the signer */
+                getSigner().initSign(pPrivateKey.getPrivateKey());
+
+                /* Catch exceptions */
+            } catch (InvalidKeyException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+
+        @Override
+        public byte[] sign() throws OceanusException {
+            /* Protect against exception */
+            try {
+                return getSigner().sign();
+            } catch (SignatureException e) {
+                throw new GordianCryptoException(SIG_ERROR, e);
+            }
+        }
+    }
+
+    /**
+     * XMSS Validator.
+     */
+    public static class JcaXMSSValidator
+            extends JcaSignature
+            implements GordianValidator {
+        /**
+         * Constructor.
+         * @param pPublicKey the public key
+         * @param pSignatureSpec the signatureSpec
+         * @throws OceanusException on error
+         */
+        protected JcaXMSSValidator(final JcaPublicKey pPublicKey,
+                                   final GordianSignatureSpec pSignatureSpec) throws OceanusException {
+            /* Create the Signer */
+            try {
+                final String myDigest = JcaDigest.getAlgorithm(pSignatureSpec.getDigestSpec());
+                final String myBase = GordianAsymKeyType.XMSSMT.equals(pPublicKey.getKeySpec().getKeyType())
+                                                                                                             ? XMSSMT_ALGOBASE
+                                                                                                             : XMSS_ALGOBASE;
+                setSigner(JcaFactory.getJavaSignature(myDigest + myBase, true));
 
                 /* Initialise and set the signer */
                 getSigner().initVerify(pPublicKey.getPublicKey());

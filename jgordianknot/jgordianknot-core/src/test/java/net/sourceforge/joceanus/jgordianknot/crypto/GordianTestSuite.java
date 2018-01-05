@@ -38,6 +38,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  */
 public class GordianTestSuite {
     /**
+     * Default password.
+     */
+    private static final char[] DEF_PASSWORD = "SimplePassword".toCharArray();
+
+    /**
      * Interface for Security Manager creator.
      */
     public interface SecurityManagerCreator {
@@ -122,12 +127,13 @@ public class GordianTestSuite {
         String myTestName = pType.toString() + "-" + (pRestricted
                                                                   ? "Restricted"
                                                                   : "Unlimited");
+        System.out.println("Running tests for " + myTestName);
 
         /* Create new Password Hash */
         GordianParameters myParams = new GordianParameters(pRestricted);
         myParams.setFactoryType(pType);
         GordianHashManager myManager = theCreator.newSecureManager(myParams);
-        GordianKeySetHash myHash = myManager.newKeySetHash(myTestName);
+        GordianKeySetHash myHash = myManager.getSecurityFactory().generateKeySetHash(DEF_PASSWORD.clone());
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
 
@@ -167,12 +173,12 @@ public class GordianTestSuite {
         GordianMac myMac = myFactory.generateRandomMac();
         myMac.update(mySymSafe);
         myMac.update(myStreamSafe);
-        byte[] myMacBytes = myMac.finish();
+        final byte[] myMacBytes = myMac.finish();
 
         /* Secure the keys */
-        byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
-        byte[] myIV = myMac.getInitVector();
-        long myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
+        final byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
+        final byte[] myIV = myMac.getInitVector();
+        final long myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
 
         /* Create AsymTest Control */
         GordianTestAsymmetric myAsymTest = new GordianTestAsymmetric(mySymSafe, myStreamSafe);
@@ -181,7 +187,7 @@ public class GordianTestSuite {
 
         /* Start a new session */
         myManager = theCreator.newSecureManager(myParams);
-        GordianKeySetHash myNewHash = myManager.resolveKeySetHash(myHash.getHash(), myTestName);
+        GordianKeySetHash myNewHash = myManager.getSecurityFactory().deriveKeySetHash(myHash.getHash(), DEF_PASSWORD.clone());
         GordianKeySet myKeySet1 = myNewHash.getKeySet();
         myFactory = myKeySet.getFactory();
 

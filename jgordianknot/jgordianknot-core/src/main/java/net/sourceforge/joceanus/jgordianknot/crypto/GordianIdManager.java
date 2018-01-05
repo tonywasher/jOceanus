@@ -87,6 +87,11 @@ public class GordianIdManager {
     private static final int LOC_CIPHER = 29;
 
     /**
+     * The factory.
+     */
+    private final GordianFactory theFactory;
+
+    /**
      * The SecureRandom.
      */
     private SecureRandom theRandom;
@@ -151,6 +156,9 @@ public class GordianIdManager {
      * @param pFactory the security factory
      */
     protected GordianIdManager(final GordianFactory pFactory) {
+        /* Store the factory */
+        theFactory = pFactory;
+
         /* Access personalisation */
         thePersonalisation = pFactory.getPersonalisation();
 
@@ -512,8 +520,7 @@ public class GordianIdManager {
             case POLY1305:
             case GMAC:
             case CMAC:
-                final GordianSymKeyType mySymType = generateRandomKeySetSymKeyType();
-                return new GordianMacSpec(myMacType, new GordianSymKeySpec(mySymType));
+                return generateRandomSymKeyMacSpec(myMacType);
             case SKEIN:
                 return GordianMacSpec.skeinMac();
             case BLAKE:
@@ -537,6 +544,22 @@ public class GordianIdManager {
 
         /* Return the single macType */
         return myMac[0];
+    }
+
+    /**
+     * Obtain random symKey MacSpec.
+     * @param pMacType the macType
+     * @return the random symKey MacSpec
+     */
+    private GordianMacSpec generateRandomSymKeyMacSpec(final GordianMacType pMacType) {
+        /* Loop until we get a valid Spec */
+        for (;;) {
+            final GordianSymKeyType mySymType = generateRandomKeySetSymKeyType();
+            final GordianMacSpec myMacSpec = new GordianMacSpec(pMacType, new GordianSymKeySpec(mySymType));
+            if (theFactory.supportedMacSpecs().test(myMacSpec)) {
+                return myMacSpec;
+            }
+        }
     }
 
     /**

@@ -88,7 +88,7 @@ public final class BouncySymKeyCipher
         /* If we need an IV */
         if (needsIV()) {
             /* Create a random IV */
-            final int myLen = theCipher.getBlockSize();
+            final int myLen = getCipherSpec().getIVLength();
             myIV = new byte[myLen];
             getRandom().nextBytes(myIV);
         }

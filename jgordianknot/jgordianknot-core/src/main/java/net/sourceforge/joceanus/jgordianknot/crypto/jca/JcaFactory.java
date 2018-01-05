@@ -88,6 +88,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowS
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaRainbowValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSSigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaSPHINCSValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaXMSSSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaXMSSValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -279,6 +281,7 @@ public final class JcaFactory
     public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
                     && supportedSymKeySpecs().test(p)
+                    && p.getSymKeyType() != GordianSymKeyType.KALYNA
                     && p.getSymKeyType() != GordianSymKeyType.KUZNYECHIK;
     }
 
@@ -816,9 +819,6 @@ public final class JcaFactory
         switch (pSpec.getCipherMode()) {
             case ECB:
             case SIC:
-            case CBC:
-            case OFB:
-            case CFB:
             case EAX:
             case CCM:
             case GCM:
@@ -826,12 +826,22 @@ public final class JcaFactory
             case GOFB:
             case GCFB:
                 return myMode.name();
+            case CBC:
+            case G3413CBC:
+                return GordianCipherMode.CBC.name();
+            case CFB:
+            case G3413CFB:
+                return GordianCipherMode.CFB.name();
+            case OFB:
+            case G3413OFB:
+                return GordianCipherMode.OFB.name();
             case KCTR:
+            case G3413CTR:
                 return "CTR";
             case KCCM:
-                return "CCM";
+                return GordianCipherMode.CCM.name();
             case KGCM:
-                return "GCM";
+                return GordianCipherMode.GCM.name();
             default:
                 throw new GordianDataException(getInvalidText(myMode));
         }
@@ -916,6 +926,7 @@ public final class JcaFactory
             case NEWHOPE:
                 return new JcaNewHopeKeyPairGenerator(this, pKeySpec);
             case XMSS:
+            case XMSSMT:
                 return new JcaXMSSKeyPairGenerator(this, pKeySpec);
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec.getKeyType()));
@@ -940,8 +951,10 @@ public final class JcaFactory
                 return new JcaDSASigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case GOST2012:
             case DSTU4145:
-            case XMSS:
                 return new JcaGOSTSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case XMSS:
+            case XMSSMT:
+                return new JcaXMSSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SPHINCS:
                 return new JcaSPHINCSSigner((JcaPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec);
             case RAINBOW:
@@ -969,8 +982,10 @@ public final class JcaFactory
                 return new JcaDSAValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case GOST2012:
             case DSTU4145:
-            case XMSS:
                 return new JcaGOSTValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case XMSS:
+            case XMSSMT:
+                return new JcaXMSSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SPHINCS:
                 return new JcaSPHINCSValidator((JcaPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case RAINBOW:
@@ -1114,6 +1129,11 @@ public final class JcaFactory
         return !GordianDigestType.SHAKE.equals(pDigestSpec.getDigestType());
     }
 
+    @Override
+    protected boolean validSignatureDigestSpec(final GordianDigestSpec pDigestSpec) {
+        return super.validDigestSpec(pDigestSpec);
+    }
+
     /**
      * Check Signature.
      * @param pKeyPair the keyPair
@@ -1146,10 +1166,12 @@ public final class JcaFactory
                 return validDSTUSignature(myDigest);
             case GOST2012:
                 return validGOSTSignature(myDigest);
+            case XMSS:
+            case XMSSMT:
+                return validXMSSSignature(myDigest);
             case DIFFIEHELLMAN:
             case NEWHOPE:
             case MCELIECE:
-            case XMSS:
             default:
                 return false;
         }
@@ -1249,6 +1271,55 @@ public final class JcaFactory
     }
 
     /**
+     * Check XMSSSignature.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validXMSSSignature(final GordianDigestSpec pSpec) {
+        /* Switch on DigestType */
+        switch (pSpec.getDigestType()) {
+            case SHA2:
+                return validXMSSSHA2Signature(pSpec);
+            case SHAKE:
+                return validXMSSSHAKESignature(pSpec);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check XMSSSignature for SHA2.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validXMSSSHA2Signature(final GordianDigestSpec pSpec) {
+        /* Switch on DigestLength */
+        switch (pSpec.getDigestLength()) {
+            case LEN_256:
+            case LEN_512:
+                return pSpec.getStateLength() == null;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Check XMSSSignature for SHA2.
+     * @param pSpec the digestSpec
+     * @return true/false
+     */
+    private static boolean validXMSSSHAKESignature(final GordianDigestSpec pSpec) {
+        /* Switch on DigestLength */
+        switch (pSpec.getDigestLength()) {
+            case LEN_128:
+            case LEN_256:
+                return pSpec.getStateLength().equals(pSpec.getDigestLength());
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Check DSTUSignature.
      * @param pSpec the digestSpec
      * @return true/false
@@ -1287,8 +1358,12 @@ public final class JcaFactory
                 return !GordianCipherMode.OCB.equals(myMode)
                        && !GordianCipherMode.OFB.equals(myMode);
             case KUZNYECHIK:
-                /* Disallow OCB */
-                return !GordianCipherMode.OCB.equals(myMode);
+                /* Disallow OCB, OFB, CFB and CBC */
+                return !GordianCipherMode.OCB.equals(myMode)
+                       && !GordianCipherMode.OFB.equals(myMode)
+                       && !GordianCipherMode.G3413CTR.equals(myMode)
+                       && !GordianCipherMode.CFB.equals(myMode)
+                       && !GordianCipherMode.CBC.equals(myMode);
             default:
                 return true;
         }
