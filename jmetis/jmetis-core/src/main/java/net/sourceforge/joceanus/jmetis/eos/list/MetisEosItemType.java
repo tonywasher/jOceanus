@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.eos.list;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 
 /**
- * List Item Type
+ * List Item Type.
  * @param <T> The item type
  */
 public interface MetisEosItemType<T extends MetisFieldVersionedItem> {

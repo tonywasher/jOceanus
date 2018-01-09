@@ -106,6 +106,7 @@ public class GordianTestAlgorithms {
                 /* Create and profile the digest */
                 GordianDigest myDigest = myFactory.createDigest(mySpec);
                 profileDigest(myDigest);
+                checkExternalId(myFactory, mySpec, GordianDigestSpec.class);
             }
         }
 
@@ -119,6 +120,7 @@ public class GordianTestAlgorithms {
                 GordianKeyGenerator<GordianMacSpec> myGenerator = myFactory.getKeyGenerator(mySpec);
                 GordianKey<GordianMacSpec> myKey = myGenerator.generateKey();
                 profileMac(myFactory, myMac, myKey);
+                checkExternalId(myFactory, mySpec, GordianMacSpec.class);
             }
         }
 
@@ -131,6 +133,7 @@ public class GordianTestAlgorithms {
                 profileSymKey(myFactory, mySymKey);
                 checkCipherModes(myFactory, mySymKey);
                 checkWrapCipher(myFactory, mySymKey);
+                checkExternalId(myFactory, mySpec, GordianSymKeySpec.class);
             }
         }
 
@@ -141,6 +144,7 @@ public class GordianTestAlgorithms {
                 GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
                 GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
                 checkCipher(myFactory, myStreamKey);
+                checkExternalId(myFactory, myType, GordianStreamKeyType.class);
             }
         }
     }
@@ -281,6 +285,7 @@ public class GordianTestAlgorithms {
                     System.out.println("Failed to encrypt/decrypt");
                 }
             }
+            checkExternalId(pFactory, mySpec, GordianSymCipherSpec.class);
         }
     }
 
@@ -315,6 +320,7 @@ public class GordianTestAlgorithms {
             if (!Arrays.areEqual(myTestData, myResult)) {
                 System.out.println("Failed to encrypt/decrypt");
             }
+            checkExternalId(pFactory, mySpec, GordianSymCipherSpec.class);
         }
     }
 
@@ -331,7 +337,8 @@ public class GordianTestAlgorithms {
 
         /* Create the Cipher */
         System.out.println("  " + pKey.getKeyType().toString());
-        GordianCipher<GordianStreamKeyType> myCipher = pFactory.createStreamKeyCipher(GordianStreamCipherSpec.stream(pKey.getKeyType()));
+        GordianStreamCipherSpec mySpec = GordianStreamCipherSpec.stream(pKey.getKeyType());
+        GordianCipher<GordianStreamKeyType> myCipher = pFactory.createStreamKeyCipher(mySpec);
         myCipher.initCipher(pKey);
         byte[] myIV = myCipher.getInitVector();
         byte[] myEncrypted = myCipher.finish(myTestData);
@@ -340,6 +347,7 @@ public class GordianTestAlgorithms {
         if (!Arrays.areEqual(myTestData, myResult)) {
             System.out.println("Failed to encrypt/decrypt");
         }
+        checkExternalId(pFactory, mySpec, GordianStreamCipherSpec.class);
     }
 
     /**
@@ -385,6 +393,31 @@ public class GordianTestAlgorithms {
         long myElapsed = System.nanoTime() - myStart;
         myElapsed /= 100;
         System.out.println("  " + myKeyType.toString() + ":" + myElapsed);
+    }
+
+    /**
+     * Check externalId.
+     * @param <T> the type of the object
+     * @param pKnuth the Knuth Obfuscater
+     * @param pObject the object
+     * @param pClazz the class of the object
+     * @throws OceanusException on error
+     */
+    private <T> void checkExternalId(final GordianFactory pFactory,
+                                     final T pObject,
+                                     final Class<T> pClazz) throws OceanusException {
+        GordianKnuthObfuscater myKnuth = pFactory.getObfuscater();
+        int myId = myKnuth.deriveExternalIdFromType(pObject);
+        T myResult = myKnuth.deriveTypeFromExternalId(myId, pClazz);
+        if (!pObject.equals(myResult)) {
+            System.out.println("Failed to resolve externalId for " + pClazz.getSimpleName() + ": " + pObject);
+        }
+
+        myId = myKnuth.deriveExternalIdFromType(pObject, 205);
+        myResult = myKnuth.deriveTypeFromExternalId(myId, 205, pClazz);
+        if (!pObject.equals(myResult)) {
+            System.out.println("Failed to resolve adjusted externalId for " + pClazz.getSimpleName() + ": " + pObject);
+        }
     }
 
     /**

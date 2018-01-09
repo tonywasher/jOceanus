@@ -51,7 +51,7 @@ public class PrometheusTableDataKeys
         myTableDef.addReferenceColumn(DataKey.FIELD_KEYSET, PrometheusTableDataKeySet.TABLE_NAME);
         myTableDef.addBooleanColumn(DataKey.FIELD_HASHPRIME);
         myTableDef.addBooleanColumn(DataKey.FIELD_ISSYMKEY);
-        myTableDef.addLongColumn(DataKey.FIELD_KEYTYPE);
+        myTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
         myTableDef.addBinaryColumn(DataKey.FIELD_KEYDEF, DataKey.KEYLEN);
     }
 
@@ -70,7 +70,7 @@ public class PrometheusTableDataKeys
         myValues.addValue(DataKey.FIELD_KEYSET, myTableDef.getIntegerValue(DataKey.FIELD_KEYSET));
         myValues.addValue(DataKey.FIELD_HASHPRIME, myTableDef.getBooleanValue(DataKey.FIELD_HASHPRIME));
         myValues.addValue(DataKey.FIELD_ISSYMKEY, myTableDef.getBooleanValue(DataKey.FIELD_ISSYMKEY));
-        myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getLongValue(DataKey.FIELD_KEYTYPE));
+        myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF));
 
         /* Return the values */
@@ -89,7 +89,7 @@ public class PrometheusTableDataKeys
         } else if (DataKey.FIELD_ISSYMKEY.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isSymKey());
         } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
-            myTableDef.setLongValue(iField, pItem.getKeyTypeId());
+            myTableDef.setIntegerValue(iField, pItem.getKeyTypeId());
         } else if (DataKey.FIELD_KEYDEF.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
         } else {

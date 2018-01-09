@@ -29,6 +29,7 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 
@@ -289,4 +290,40 @@ public class MetisValueSetHistory
         /* Call the function from the interface */
         return theCurr.fieldChanged(pField, theOriginal);
     }
+
+    /**
+     * Determine State of item.
+     * @param pHistory the history to derive state from
+     * @return the state of the item
+     */
+    @Deprecated
+    public static MetisDataState determineState(final MetisValueSetHistory pHistory) {
+        /* Access the current values and base values */
+        final MetisValueSet myCurr = pHistory.getValueSet();
+        final MetisValueSet myBase = pHistory.getOriginalValues();
+
+        /* If we are a new element */
+        if (myBase.getVersion() > 0) {
+            /* Return status */
+            return myCurr.isDeletion()
+                                       ? MetisDataState.DELNEW
+                                       : MetisDataState.NEW;
+        }
+
+        /* If we have no changes we are CLEAN */
+        if (myCurr.getVersion() == 0) {
+            return MetisDataState.CLEAN;
+        }
+
+        /* If we are deleted return so */
+        if (myCurr.isDeletion()) {
+            return MetisDataState.DELETED;
+        }
+
+        /* Return RECOVERED or CHANGED depending on whether we started as deleted */
+        return myBase.isDeletion()
+                                   ? MetisDataState.RECOVERED
+                                   : MetisDataState.CHANGED;
+    }
+
 }

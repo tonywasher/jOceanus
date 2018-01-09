@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianPersonalisation.GordianPersonalId;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
 
@@ -36,56 +37,6 @@ import net.sourceforge.joceanus.jtethys.TethysDataConverter;
  * Security Id Manager.
  */
 public class GordianIdManager {
-    /**
-     * The Symmetric personalisation location.
-     */
-    private static final int LOC_SYM = 5;
-
-    /**
-     * The KeySet Symmetric personalisation location.
-     */
-    private static final int LOC_KEYSETSYM = 7;
-
-    /**
-     * The Stream personalisation location.
-     */
-    private static final int LOC_STREAM = 11;
-
-    /**
-     * The KeySet Stream personalisation location.
-     */
-    private static final int LOC_KEYSETSTREAM = 13;
-
-    /**
-     * The Digest personalisation location.
-     */
-    private static final int LOC_DIGEST = 17;
-
-    /**
-     * The External Digest personalisation location.
-     */
-    private static final int LOC_XDIGEST = 17;
-
-    /**
-     * The KeySet Digest personalisation location.
-     */
-    private static final int LOC_KEYSETDIGEST = 19;
-
-    /**
-     * The HMac personalisation location.
-     */
-    private static final int LOC_HMAC = 23;
-
-    /**
-     * The Mac personalisation location.
-     */
-    private static final int LOC_MAC = 27;
-
-    /**
-     * The Cipher personalisation location.
-     */
-    private static final int LOC_CIPHER = 29;
-
     /**
      * The factory.
      */
@@ -163,18 +114,18 @@ public class GordianIdManager {
         thePersonalisation = pFactory.getPersonalisation();
 
         /* Create shuffled and filtered lists */
-        theSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_SYM, pFactory.supportedSymKeyTypes());
-        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), LOC_KEYSETSYM, pFactory.supportedKeySetSymKeyTypes());
-        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_STREAM, pFactory.supportedStreamKeyTypes());
-        theKeySetStreamKeys = shuffleTypes(GordianStreamKeyType.values(), LOC_KEYSETSTREAM, pFactory.supportedKeySetStreamKeyTypes());
-        theDigests = shuffleTypes(GordianDigestType.values(), LOC_DIGEST, pFactory.supportedDigestTypes());
-        theExternalDigests = shuffleTypes(GordianDigestType.values(), LOC_XDIGEST, pFactory.supportedExternalDigestTypes());
-        theKeySetDigests = shuffleTypes(GordianDigestType.values(), LOC_KEYSETDIGEST, pFactory.supportedKeySetDigestTypes());
-        theHMacDigests = shuffleTypes(GordianDigestType.values(), LOC_HMAC, pFactory.supportedHMacDigestTypes());
-        theMacs = shuffleTypes(GordianMacType.values(), LOC_MAC, pFactory.supportedMacTypes());
+        theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, pFactory.supportedSymKeyTypes());
+        theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.KEYSETSYMKEY, pFactory.supportedKeySetSymKeyTypes());
+        theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY, pFactory.supportedStreamKeyTypes());
+        theKeySetStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.KEYSETSTREAMKEY, pFactory.supportedKeySetStreamKeyTypes());
+        theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, pFactory.supportedDigestTypes());
+        theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.XTERNDIGEST, pFactory.supportedExternalDigestTypes());
+        theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.KEYSETDIGEST, pFactory.supportedKeySetDigestTypes());
+        theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.HMAC, pFactory.supportedHMacDigestTypes());
+        theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC, pFactory.supportedMacTypes());
 
         /* Determine the cipher indentation */
-        theCipherIndent = thePersonalisation.getPersonalisedByte(LOC_CIPHER) & TethysDataConverter.NYBBLE_MASK;
+        theCipherIndent = thePersonalisation.getPersonalisedByte(GordianPersonalId.CIPHER) & TethysDataConverter.NYBBLE_MASK;
     }
 
     /**
@@ -239,23 +190,12 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain symKeySpec from external SymKeySpecId.
-     * @param pExternalId the external id
-     * @return the symKeySpec
-     * @throws OceanusException on error
-     */
-    private GordianSymKeySpec deriveSymKeySpecFromExternalId(final long pExternalId) throws OceanusException {
-        final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-        return deriveSymKeySpecFromEncodedId(myEncoded);
-    }
-
-    /**
      * Obtain digestSpec from encodedId.
      * @param pEncodedId the encoded id
      * @return the digestSpec
      * @throws OceanusException on error
      */
-    private GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    protected GordianSymKeySpec deriveSymKeySpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
         final int myLenCode = pEncodedId & TethysDataConverter.NYBBLE_MASK;
         final int myId = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
@@ -279,23 +219,12 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain external SymKeyId.
-     * @param pKeySpec the symKeySpec
-     * @return the external id
-     * @throws OceanusException on error
-     */
-    private long deriveExternalIdFromSymKeySpec(final GordianSymKeySpec pKeySpec) throws OceanusException {
-        final int myEncoded = deriveEncodedIdFromSymKeySpec(pKeySpec);
-        return TethysDataConverter.knuthEncode(myEncoded);
-    }
-
-    /**
      * Obtain encoded SymKeySpecId.
      * @param pSymKeySpec the digestSpec
      * @return the encoded id
      * @throws OceanusException on error
      */
-    private int deriveEncodedIdFromSymKeySpec(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
+    protected int deriveEncodedIdFromSymKeySpec(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
         int myCode = deriveEncodedIdFromSymKeyType(pSymKeySpec.getSymKeyType());
         myCode <<= TethysDataConverter.NYBBLE_SHIFT;
         myCode += deriveEncodedIdFromLength(pSymKeySpec.getBlockLength());
@@ -336,35 +265,13 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain streamKeyType from external StreamKeyId.
-     * @param pExternalId the external id
-     * @return the streamKeyType
-     * @throws OceanusException on error
-     */
-    private GordianStreamKeyType deriveStreamKeyTypeFromExternalId(final long pExternalId) throws OceanusException {
-        final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-        return deriveStreamKeyTypeFromEncodedId(myEncoded);
-    }
-
-    /**
      * Obtain streamKeyType from encoded StreamKeyId.
      * @param pEncodedId the encoded id
      * @return the streamKeyType
      * @throws OceanusException on error
      */
-    private GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws OceanusException {
+    protected GordianStreamKeyType deriveStreamKeyTypeFromEncodedId(final int pEncodedId) throws OceanusException {
         return deriveTypeFromEncodedId(pEncodedId, theStreamKeys);
-    }
-
-    /**
-     * Obtain external StreamKeyId.
-     * @param pKey the streamKeyType
-     * @return the external id
-     * @throws OceanusException on error
-     */
-    private long deriveExternalIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
-        final int myEncoded = deriveEncodedIdFromStreamKeyType(pKey);
-        return TethysDataConverter.knuthEncode(myEncoded);
     }
 
     /**
@@ -373,7 +280,7 @@ public class GordianIdManager {
      * @return the encoded id
      * @throws OceanusException on error
      */
-    private int deriveEncodedIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
+    protected int deriveEncodedIdFromStreamKeyType(final GordianStreamKeyType pKey) throws OceanusException {
         return deriveEncodedIdFromType(pKey, theStreamKeys);
     }
 
@@ -424,23 +331,12 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain digestSpec from external DigestSpecId.
-     * @param pExternalId the external id
-     * @return the digestSpec
-     * @throws OceanusException on error
-     */
-    private GordianDigestSpec deriveDigestSpecFromExternalId(final long pExternalId) throws OceanusException {
-        final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-        return deriveDigestSpecFromEncodedId(myEncoded);
-    }
-
-    /**
      * Obtain digestSpec from encodedId.
      * @param pEncodedId the encoded id
      * @return the digestSpec
      * @throws OceanusException on error
      */
-    private GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws OceanusException {
+    protected GordianDigestSpec deriveDigestSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
         final int myLenCode = pEncodedId & TethysDataConverter.NYBBLE_MASK;
         final int myCode = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
@@ -459,23 +355,12 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain external DigestSpecId.
-     * @param pDigestSpec the digestSpec
-     * @return the external id
-     * @throws OceanusException on error
-     */
-    private long deriveExternalIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
-        final int myCode = deriveEncodedIdFromDigestSpec(pDigestSpec);
-        return TethysDataConverter.knuthEncode(myCode);
-    }
-
-    /**
      * Obtain encoded DigestSpecId.
      * @param pDigestSpec the digestSpec
      * @return the encoded id
      * @throws OceanusException on error
      */
-    private int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
+    protected int deriveEncodedIdFromDigestSpec(final GordianDigestSpec pDigestSpec) throws OceanusException {
         int myCode = deriveEncodedIdFromDigestType(pDigestSpec.getDigestType());
         final GordianLength myState = pDigestSpec.getStateLength();
         myCode <<= TethysDataConverter.NYBBLE_SHIFT;
@@ -563,18 +448,15 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain macSpec from external macSpecId.
-     * @param pExternalId the external id
+     * Obtain macSpec from encoded macSpecId.
+     * @param pEncodedId the encoded id
      * @return the macSpec
      * @throws OceanusException on error
      */
-    private GordianMacSpec deriveMacSpecFromExternalId(final long pExternalId) throws OceanusException {
-        /* Decode the id */
-        final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-
+    protected GordianMacSpec deriveMacSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        final int myId = myEncoded & TethysDataConverter.NYBBLE_MASK;
-        final int myCode = myEncoded >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myId = pEncodedId & TethysDataConverter.NYBBLE_MASK;
+        final int myCode = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
 
         /* Determine MacType */
         final GordianMacType myMacType = deriveMacTypeFromEncodedId(myId);
@@ -603,12 +485,12 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain external macSpecId.
+     * Obtain encoded macSpecId.
      * @param pMacSpec the macSpec
      * @return the external id
      * @throws OceanusException on error
      */
-    private long deriveExternalIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
+    protected int deriveEncodedIdFromMacSpec(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Determine base code */
         final GordianMacType myMacType = pMacSpec.getMacType();
         int myCode = deriveEncodedIdFromMacType(myMacType);
@@ -632,7 +514,7 @@ public class GordianIdManager {
         }
 
         /* Return the code */
-        return TethysDataConverter.knuthEncode(myCode);
+        return myCode;
     }
 
     /**
@@ -656,20 +538,17 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain cipherSpec from external cipherSpecId.
-     * @param pExternalId the external id
+     * Obtain cipherSpec from encoded cipherSpecId.
+     * @param pEncodedId the encoded id
      * @return the cipherSpec
      * @throws OceanusException on error
      */
-    private GordianSymCipherSpec deriveSymCipherSpecFromExternalId(final long pExternalId) throws OceanusException {
-        /* Decode the id */
-        final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-
+    protected GordianSymCipherSpec deriveSymCipherSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Isolate id Components */
-        final int myPaddingCode = myEncoded & TethysDataConverter.NYBBLE_MASK;
-        final int myCode = myEncoded >> TethysDataConverter.NYBBLE_SHIFT;
-        final int myModeCode = myCode & TethysDataConverter.NYBBLE_MASK;
-        final int myId = myCode >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myPaddingCode = pEncodedId & TethysDataConverter.NYBBLE_MASK;
+        final int myCode = pEncodedId >> TethysDataConverter.NYBBLE_SHIFT;
+        final int myModeCode = myCode & TethysDataConverter.BYTE_MASK;
+        final int myId = myCode >> TethysDataConverter.BYTE_SHIFT;
 
         /* Determine KeyType */
         final GordianSymKeySpec mySpec = deriveSymKeySpecFromEncodedId(myId);
@@ -681,36 +560,33 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain cipherSpec from external cipherSpecId.
-     * @param pExternalId the external id
+     * Obtain cipherSpec from encoded cipherSpecId.
+     * @param pEncodedId the encoded id
      * @return the cipherSpec
      * @throws OceanusException on error
      */
-    private GordianStreamCipherSpec deriveStreamCipherSpecFromExternalId(final long pExternalId) throws OceanusException {
-        /* Decode the id */
-        final int myEncoded = TethysDataConverter.knuthDecode(pExternalId);
-
+    protected GordianStreamCipherSpec deriveStreamCipherSpecFromEncodedId(final int pEncodedId) throws OceanusException {
         /* Derive StreamCipherSpec */
-        final GordianStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(myEncoded);
+        final GordianStreamKeyType myType = deriveStreamKeyTypeFromEncodedId(pEncodedId);
         return GordianStreamCipherSpec.stream(myType);
     }
 
     /**
-     * Obtain external cipherSpecId.
+     * Obtain encoded cipherSpecId.
      * @param pCipherSpec the cipherSpec
      * @return the external id
      * @throws OceanusException on error
      */
-    private long deriveExternalIdFromCipherSpec(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
+    protected int deriveEncodedIdFromCipherSpec(final GordianSymCipherSpec pCipherSpec) throws OceanusException {
         /* Derive the encoded id */
         int myCode = deriveEncodedIdFromSymKeySpec(pCipherSpec.getKeyType());
-        myCode <<= TethysDataConverter.NYBBLE_SHIFT;
+        myCode <<= TethysDataConverter.BYTE_SHIFT;
         myCode += deriveEncodedIdFromCipherMode(pCipherSpec.getCipherMode());
         myCode <<= TethysDataConverter.NYBBLE_SHIFT;
         myCode += deriveEncodedIdFromPadding(pCipherSpec.getPadding());
 
         /* Return the code */
-        return TethysDataConverter.knuthEncode(myCode);
+        return myCode;
     }
 
     /**
@@ -719,12 +595,9 @@ public class GordianIdManager {
      * @return the external id
      * @throws OceanusException on error
      */
-    private long deriveExternalIdFromCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
+    protected int deriveEncodedIdFromCipherSpec(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Derive the encoded id */
-        final int myCode = deriveEncodedIdFromStreamKeyType(pCipherSpec.getKeyType());
-
-        /* Return the code */
-        return TethysDataConverter.knuthEncode(myCode);
+        return deriveEncodedIdFromStreamKeyType(pCipherSpec.getKeyType());
     }
 
     /**
@@ -803,66 +676,6 @@ public class GordianIdManager {
     }
 
     /**
-     * Obtain Type from external Id.
-     * @param <T> the type class
-     * @param pId the external id
-     * @param pTypeClass the type class
-     * @return the Type
-     * @throws OceanusException on error
-     */
-    protected <T> T deriveTypeFromExternalId(final long pId,
-                                             final Class<T> pTypeClass) throws OceanusException {
-        if (GordianDigestSpec.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveDigestSpecFromExternalId(pId));
-        }
-        if (GordianSymCipherSpec.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveSymCipherSpecFromExternalId(pId));
-        }
-        if (GordianStreamCipherSpec.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveStreamCipherSpecFromExternalId(pId));
-        }
-        if (GordianMacSpec.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveMacSpecFromExternalId(pId));
-        }
-        if (GordianSymKeySpec.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveSymKeySpecFromExternalId(pId));
-        }
-        if (GordianStreamKeyType.class.equals(pTypeClass)) {
-            return pTypeClass.cast(deriveStreamKeyTypeFromExternalId(pId));
-        }
-        throw new GordianDataException("Invalid class: " + pTypeClass.getCanonicalName());
-    }
-
-    /**
-     * Obtain external Id from Type.
-     * @param <T> the type class
-     * @param pType the type
-     * @return the externalId
-     * @throws OceanusException on error
-     */
-    protected <T> long deriveExternalIdFromType(final T pType) throws OceanusException {
-        if (GordianDigestSpec.class.isInstance(pType)) {
-            return deriveExternalIdFromDigestSpec((GordianDigestSpec) pType);
-        }
-        if (GordianSymCipherSpec.class.isInstance(pType)) {
-            return deriveExternalIdFromCipherSpec((GordianSymCipherSpec) pType);
-        }
-        if (GordianStreamCipherSpec.class.isInstance(pType)) {
-            return deriveExternalIdFromCipherSpec((GordianStreamCipherSpec) pType);
-        }
-        if (GordianMacSpec.class.isInstance(pType)) {
-            return deriveExternalIdFromMacSpec((GordianMacSpec) pType);
-        }
-        if (GordianSymKeySpec.class.isInstance(pType)) {
-            return deriveExternalIdFromSymKeySpec((GordianSymKeySpec) pType);
-        }
-        if (GordianStreamKeyType.class.isInstance(pType)) {
-            return deriveExternalIdFromStreamKeyType((GordianStreamKeyType) pType);
-        }
-        throw new GordianDataException("Invalid type: " + pType.getClass().getCanonicalName());
-    }
-
-    /**
      * Obtain external Id for type.
      * @param <E> the data type
      * @param pType the type.
@@ -911,56 +724,38 @@ public class GordianIdManager {
      * Generate personalised shuffle of Types.
      * @param <E> the data type
      * @param pTypes the types to be shuffled.
-     * @param pIndex the relevant index
+     * @param pId the relevant id
      * @param pFilter the filter
      * @return the shuffled types
      */
     private <E extends Enum<E>> E[] shuffleTypes(final E[] pTypes,
-                                                 final int pIndex,
+                                                 final GordianPersonalId pId,
                                                  final Predicate<E> pFilter) {
-        /* Access input length */
-        int myNumTypes = pTypes.length;
-        final int myLen = myNumTypes;
+        /* Filter the types */
+        final E[] myTypes = filterTypes(pTypes, pFilter);
 
-        /* Allocate a copy of the types */
-        final E[] myTypes = Arrays.copyOf(pTypes, myNumTypes);
+        /* Access input length */
+        final int myLen = myTypes.length;
+        int myNumTypes = myLen;
 
         /* Obtain the personalised integer */
-        int mySeed = thePersonalisation.getPersonalisedInteger(pIndex);
+        int mySeed = thePersonalisation.getPersonalisedInteger(pId);
 
         /* Loop through the types */
-        int myNumAvailable = 0;
-        for (int i = 0; i < myLen; i++) {
+        for (int i = 0; i < myLen - 1; i++) {
             /* Access the next element index */
             final int myIndex = mySeed % myNumTypes;
 
-            /* Access the value */
-            final int myLoc = myNumAvailable + myIndex;
-            final E myType = myTypes[myLoc];
+            /* If we have not chosen the first index */
+            if (myIndex > 0) {
+                /* Access the value */
+                final int myLoc = i + myIndex;
+                final E myType = myTypes[myLoc];
 
-            /* If this is a valid selection */
-            if (pFilter.test(myType)) {
-                /* If we need to shift the item */
-                if (myIndex != 0) {
-                    /* Swap value into place */
-                    final E myCurr = myTypes[myNumAvailable];
-                    myTypes[myNumAvailable] = myType;
-                    myTypes[myLoc] = myCurr;
-                }
-
-                /* Increment available count */
-                myNumAvailable++;
-
-                /* else we are not interested in this item */
-            } else {
-                /* If we need to shift the item */
-                if (myIndex != myNumTypes - 1) {
-                    /* Swap value out to end */
-                    final int myLast = myNumAvailable + myNumTypes - 1;
-                    final E myCurr = myTypes[myLast];
-                    myTypes[myLast] = myType;
-                    myTypes[myLoc] = myCurr;
-                }
+                /* Swap value into place */
+                final E myCurr = myTypes[i];
+                myTypes[i] = myType;
+                myTypes[myLoc] = myCurr;
             }
 
             /* Adjust for next iteration */
@@ -969,6 +764,38 @@ public class GordianIdManager {
         }
 
         /* Return the shuffled and filtered types */
+        return myTypes;
+    }
+
+    /**
+     * Filter Types.
+     * @param <E> the data type
+     * @param pTypes the types to be shuffled.
+     * @param pFilter the filter
+     * @return the filtered types
+     */
+    private static <E extends Enum<E>> E[] filterTypes(final E[] pTypes,
+                                                       final Predicate<E> pFilter) {
+        /* Access input length */
+        final int myNumTypes = pTypes.length;
+        int myNumAvailable = 0;
+
+        /* Allocate a copy of the types */
+        final E[] myTypes = Arrays.copyOf(pTypes, myNumTypes);
+
+        /* Loop through the types */
+        for (int i = 0; i < myNumTypes; i++) {
+            /* Access the value */
+            final E myType = myTypes[i];
+
+            /* If this is a valid selection */
+            if (pFilter.test(myType)) {
+                /* Copy it to the target types */
+                myTypes[myNumAvailable++] = myType;
+            }
+        }
+
+        /* Return the filtered types as a new array */
         return Arrays.copyOf(myTypes, myNumAvailable);
     }
 

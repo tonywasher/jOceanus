@@ -27,6 +27,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKnuthObfuscater;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
@@ -152,6 +153,8 @@ public class DataKey
         final DataKeySet myDataKeySet = getDataKeySet();
         final GordianKeySetHash myHash = myDataKeySet.getKeySetHash(isHashPrime);
         final GordianKeySet myKeySet = myHash.getKeySet();
+        final GordianFactory myFactory = myKeySet.getFactory();
+        final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
         /* Store the SymKey Flag */
         myValue = pValues.getValue(FIELD_ISSYMKEY);
@@ -164,16 +167,16 @@ public class DataKey
 
         /* Store the KeyType */
         myValue = pValues.getValue(FIELD_KEYTYPE);
-        if (myValue instanceof Long) {
+        if (myValue instanceof Integer) {
             /* Store the integer */
-            setValueKeyTypeId((Long) myValue);
+            setValueKeyTypeId((Integer) myValue);
 
             /* Resolve the KeyType */
             if (isSymKey()) {
-                final GordianSymKeySpec mySpec = myKeySet.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeySpec.class);
+                final GordianSymKeySpec mySpec = myKnuth.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeySpec.class);
                 setValueKeyType(mySpec.getSymKeyType());
             } else {
-                setValueKeyType(myKeySet.deriveTypeFromExternalId(getKeyTypeId(), GordianStreamKeyType.class));
+                setValueKeyType(myKnuth.deriveTypeFromExternalId(getKeyTypeId(), GordianStreamKeyType.class));
             }
         } else if (myValue instanceof GordianSymKeyType) {
             /* Store the keyType */
@@ -181,9 +184,9 @@ public class DataKey
 
             /* Look for passed id */
             myValue = pValues.getValue(FIELD_KEYTYPEID);
-            if (myValue instanceof Long) {
+            if (myValue instanceof Integer) {
                 /* Store the id */
-                setValueKeyTypeId((Long) myValue);
+                setValueKeyTypeId((Integer) myValue);
             }
         } else if (myValue instanceof GordianStreamKeyType) {
             /* Store the keyType */
@@ -191,9 +194,9 @@ public class DataKey
 
             /* Look for passed id */
             myValue = pValues.getValue(FIELD_KEYTYPEID);
-            if (myValue instanceof Long) {
+            if (myValue instanceof Integer) {
                 /* Store the id */
-                setValueKeyTypeId((Long) myValue);
+                setValueKeyTypeId((Integer) myValue);
             }
         }
 
@@ -210,7 +213,6 @@ public class DataKey
                 setValueDataKey((GordianKey<?>) myValue);
             } else {
                 /* Create the Key from the wrapped data */
-                final GordianFactory myFactory = myKeySet.getFactory();
                 Object myType = getKeyType();
                 if (myType instanceof GordianSymKeyType) {
                     myType = new GordianSymKeySpec((GordianSymKeyType) myType);
@@ -248,15 +250,16 @@ public class DataKey
             final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
             final GordianKeySet myKeySet = myHash.getKeySet();
             final GordianSymKeySpec myKeySpec = new GordianSymKeySpec(pKeyType);
+            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
             /* Store the Details */
             setValueDataKeySet(pKeySet);
-            setValueKeyTypeId(myKeySet.deriveExternalIdForType(myKeySpec));
+            setValueKeyTypeId(myKnuth.deriveExternalIdFromType(myKeySpec));
             setValueKeyType(pKeyType);
             setValueIsSymKey(Boolean.TRUE);
 
             /* Create the new key */
-            final GordianFactory myFactory = myKeySet.getFactory();
             final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(myKeySpec);
             final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
             setValueDataKey(myKey);
@@ -296,15 +299,16 @@ public class DataKey
             /* Create the new key */
             final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
             final GordianKeySet myKeySet = myHash.getKeySet();
+            final GordianFactory myFactory = myKeySet.getFactory();
+            final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
             /* Store the Details */
             setValueDataKeySet(pKeySet);
-            setValueKeyTypeId(myKeySet.deriveExternalIdForType(pKeyType));
+            setValueKeyTypeId(myKnuth.deriveExternalIdFromType(pKeyType));
             setValueKeyType(pKeyType);
             setValueIsSymKey(Boolean.FALSE);
 
             /* Create the new key */
-            final GordianFactory myFactory = myKeySet.getFactory();
             final GordianKeyGenerator<GordianStreamKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
             final GordianKey<GordianStreamKeyType> myKey = myGenerator.generateKey();
             setValueDataKey(myKey);
@@ -382,7 +386,7 @@ public class DataKey
      * Get the Key Type Id.
      * @return the key type id
      */
-    public Long getKeyTypeId() {
+    public Integer getKeyTypeId() {
         return getKeyTypeId(getValueSet());
     }
 
@@ -480,8 +484,8 @@ public class DataKey
      * @param pValueSet the valueSet
      * @return the Key type Id
      */
-    public static Long getKeyTypeId(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEYTYPEID, Long.class);
+    public static Integer getKeyTypeId(final MetisValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_KEYTYPEID, Integer.class);
     }
 
     /**
@@ -571,7 +575,7 @@ public class DataKey
      * Set the KeyType id.
      * @param pId the KeyType id
      */
-    private void setValueKeyTypeId(final Long pId) {
+    private void setValueKeyTypeId(final Integer pId) {
         getValueSet().setValue(FIELD_KEYTYPEID, pId);
     }
 

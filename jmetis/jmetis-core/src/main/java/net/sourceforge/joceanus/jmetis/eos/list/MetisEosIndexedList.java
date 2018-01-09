@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
- * Indexed List
+ * Indexed List.
  * @param <T> the item type
  */
 public class MetisEosIndexedList<T extends MetisIndexedItem>

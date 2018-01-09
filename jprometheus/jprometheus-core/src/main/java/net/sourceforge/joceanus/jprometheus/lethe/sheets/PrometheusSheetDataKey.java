@@ -97,7 +97,7 @@ public class PrometheusSheetDataKey
         myValues.addValue(DataKey.FIELD_KEYSET, loadInteger(COL_KEYSETID));
         myValues.addValue(DataKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
         myValues.addValue(DataKey.FIELD_ISSYMKEY, loadBoolean(COL_ISSYMKEY));
-        myValues.addValue(DataKey.FIELD_KEYTYPE, loadLong(COL_KEYTYPE));
+        myValues.addValue(DataKey.FIELD_KEYTYPE, loadInteger(COL_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
 
         /* Return the values */
@@ -111,7 +111,7 @@ public class PrometheusSheetDataKey
         writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
         writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
         writeBoolean(COL_ISSYMKEY, pItem.isSymKey());
-        writeLong(COL_KEYTYPE, pItem.getKeyTypeId());
+        writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }
 

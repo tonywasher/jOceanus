@@ -78,6 +78,11 @@ public abstract class GordianFactory {
     private final GordianPersonalisation thePersonalisation;
 
     /**
+     * Obfuscater.
+     */
+    private GordianKnuthObfuscater theKnuth;
+
+    /**
      * SecureRandom instance.
      */
     private GordianSecureRandom theRandom;
@@ -142,6 +147,17 @@ public abstract class GordianFactory {
             theIdManager = new GordianIdManager(this);
         }
         return theIdManager;
+    }
+
+    /**
+     * Obtain the obfuscater.
+     * @return the obfuscater
+     */
+    public GordianKnuthObfuscater getObfuscater() {
+        if (theKnuth == null) {
+            theKnuth = new GordianKnuthObfuscater(getIdManager(), thePersonalisation);
+        }
+        return theKnuth;
     }
 
     /**

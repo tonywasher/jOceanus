@@ -254,32 +254,6 @@ public final class GordianKeySet {
     }
 
     /**
-     * derive externalId from type.
-     * @param <T> the Type class
-     * @param pType the type
-     * @return the externalId
-     * @throws OceanusException on error
-     */
-    public <T> long deriveExternalIdForType(final T pType) throws OceanusException {
-        final GordianIdManager myManager = theFactory.getIdManager();
-        return myManager.deriveExternalIdFromType(pType);
-    }
-
-    /**
-     * derive Type from externalId.
-     * @param <T> the Type class
-     * @param pExternalId the externalId
-     * @param pTypeClass the class
-     * @return the type
-     * @throws OceanusException on error
-     */
-    public <T> T deriveTypeFromExternalId(final long pExternalId,
-                                          final Class<T> pTypeClass) throws OceanusException {
-        final GordianIdManager myManager = theFactory.getIdManager();
-        return myManager.deriveTypeFromExternalId(pExternalId, pTypeClass);
-    }
-
-    /**
      * Declare symmetricKey.
      * @param pKey the key
      * @throws OceanusException on error

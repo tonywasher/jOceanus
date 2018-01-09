@@ -29,7 +29,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -586,7 +585,7 @@ public abstract class DataItem<E extends Enum<E>>
      * @return the State
      */
     public MetisDataState getState() {
-        return MetisDataVersionControl.determineState(theHistory);
+        return MetisValueSetHistory.determineState(theHistory);
     }
 
     /**

@@ -42,9 +42,14 @@ public class GordianPersonalisation {
     private static final GordianLength HASH_LEN = GordianLength.LEN_512;
 
     /**
-     * The Recipe personalisation location.
+     * The Mask to see whether adjustment is needed for a small Recipe/Personalised Integer.
      */
-    private static final int LOC_RECIPE = 37;
+    private static final int VALUE_CHECK = 0x7F000000;
+
+    /**
+     * The Adjustment to apply to a small Recipe/Personalised Integer.
+     */
+    private static final int VALUE_ADJUST = 0x7000000;
 
     /**
      * Personalisation bytes.
@@ -81,7 +86,7 @@ public class GordianPersonalisation {
         thePersonalLen = thePersonalisation.length;
 
         /* Obtain the recipe mask */
-        theRecipeMask = getPersonalisedInteger(LOC_RECIPE);
+        theRecipeMask = getPersonalisedInteger(GordianPersonalId.RECIPE);
     }
 
     /**
@@ -200,7 +205,34 @@ public class GordianPersonalisation {
      * @return the converted recipe
      */
     protected int convertRecipe(final int pRecipe) {
-        return pRecipe ^ theRecipeMask;
+        return sanitiseValue(pRecipe ^ theRecipeMask);
+    }
+
+    /**
+     * Obtain integer from personalisation.
+     * @param pId the id of the integer
+     * @return the result
+     */
+    protected int getPersonalisedInteger(final GordianPersonalId pId) {
+        return sanitiseValue(getPersonalisedMask(getOffsetForId(pId)));
+    }
+
+    /**
+     * Obtain byte from personalisation.
+     * @param pId the id of the byte
+     * @return the result
+     */
+    protected int getPersonalisedByte(final GordianPersonalId pId) {
+        return getPersonalisedByte(getOffsetForId(pId));
+    }
+
+    /**
+     * Determine offset for Id.
+     * @param pId the id of the value
+     * @return the offset
+     */
+    private static int getOffsetForId(final GordianPersonalId pId) {
+        return pId.ordinal() << 2;
     }
 
     /**
@@ -208,7 +240,7 @@ public class GordianPersonalisation {
      * @param pOffSet the offset within the array
      * @return the result
      */
-    protected int getPersonalisedMask(final int pOffSet) {
+    private int getPersonalisedMask(final int pOffSet) {
         /* Loop to obtain the personalised byte */
         int myVal = 0;
         for (int i = 0, myOffSet = pOffSet; i < Integer.BYTES; i++, myOffSet++) {
@@ -221,30 +253,101 @@ public class GordianPersonalisation {
     }
 
     /**
-     * Obtain integer from personalisation.
-     * @param pOffSet the offset within the array
-     * @return the result
-     */
-    protected int getPersonalisedInteger(final int pOffSet) {
-        /* Loop to obtain the personalised byte */
-        final int myVal = getPersonalisedMask(pOffSet);
-
-        /* Ensure that the value is positive */
-        return myVal < 0
-                         ? -myVal
-                         : myVal;
-    }
-
-    /**
      * Obtain byte from personalisation.
      * @param pOffSet the offset within the array
      * @return the result
      */
-    protected int getPersonalisedByte(final int pOffSet) {
+    private int getPersonalisedByte(final int pOffSet) {
         int myOffSet = pOffSet;
         if (myOffSet >= thePersonalLen) {
             myOffSet %= thePersonalLen;
         }
         return thePersonalisation[myOffSet] & TethysDataConverter.BYTE_MASK;
+    }
+
+    /**
+     * Sanitise an integer value.
+     * @param pValue the value to sanitise
+     * @return the sanitised value
+     */
+    private static int sanitiseValue(final int pValue) {
+        /* Ensure that the value is positive */
+        int myVal = pValue < 0
+                               ? -pValue
+                               : pValue;
+
+        /* If the value is insufficiently large */
+        if ((myVal & VALUE_CHECK) == 0) {
+            /* Set some top bits */
+            myVal |= VALUE_ADJUST;
+        }
+
+        /* Return the sanitised value */
+        return myVal;
+    }
+
+    /**
+     * Personalisation IDs.
+     */
+    protected enum GordianPersonalId {
+        /**
+         * SymKey.
+         */
+        SYMKEY,
+
+        /**
+         * KeySetSymKey.
+         */
+        KEYSETSYMKEY,
+
+        /**
+         * StreamKey.
+         */
+        STREAMKEY,
+
+        /**
+         * KeySetStreamKey.
+         */
+        KEYSETSTREAMKEY,
+
+        /**
+         * Digest.
+         */
+        DIGEST,
+
+        /**
+         * ExternalDigest.
+         */
+        XTERNDIGEST,
+
+        /**
+         * KeySetDigest.
+         */
+        KEYSETDIGEST,
+
+        /**
+         * HMac.
+         */
+        HMAC,
+
+        /**
+         * KeySetDigest.
+         */
+        MAC,
+
+        /**
+         * Cipher.
+         */
+        CIPHER,
+
+        /**
+         * Recipe.
+         */
+        RECIPE,
+
+        /**
+         * Knuth.
+         */
+        KNUTH;
     }
 }

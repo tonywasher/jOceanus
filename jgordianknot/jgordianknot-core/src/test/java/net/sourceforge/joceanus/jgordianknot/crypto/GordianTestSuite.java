@@ -23,12 +23,9 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.io.File;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import org.bouncycastle.util.Arrays;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -136,6 +133,7 @@ public class GordianTestSuite {
         GordianKeySetHash myHash = myManager.getSecurityFactory().generateKeySetHash(DEF_PASSWORD.clone());
         GordianKeySet myKeySet = myHash.getKeySet();
         GordianFactory myFactory = myKeySet.getFactory();
+        GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
         /* Create new symmetric key and stream Key */
         GordianKey<GordianSymKeySpec> mySym = myFactory.generateRandomSymKey();
@@ -160,9 +158,6 @@ public class GordianTestSuite {
         myBytes = TethysDataConverter.stringToByteArray(myTest3);
         byte[] myEncrypt3 = myKeySet.encryptBytes(myBytes);
 
-        /* Check externalIds */
-        checkExternalIds(myFactory, myKeySet);
-
         /* Create a data digest */
         GordianDigest myDigest = myFactory.generateRandomDigest();
         myDigest.update(mySymSafe);
@@ -178,7 +173,7 @@ public class GordianTestSuite {
         /* Secure the keys */
         final byte[] myMacSafe = myKeySet.secureKey(myMac.getKey());
         final byte[] myIV = myMac.getInitVector();
-        final long myMacId = myKeySet.deriveExternalIdForType(myMac.getMacSpec());
+        final int myMacId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
 
         /* Create AsymTest Control */
         GordianTestAsymmetric myAsymTest = new GordianTestAsymmetric(mySymSafe, myStreamSafe);
@@ -190,6 +185,7 @@ public class GordianTestSuite {
         GordianKeySetHash myNewHash = myManager.getSecurityFactory().deriveKeySetHash(myHash.getHash(), DEF_PASSWORD.clone());
         GordianKeySet myKeySet1 = myNewHash.getKeySet();
         myFactory = myKeySet.getFactory();
+        myKnuth = myFactory.getObfuscater();
 
         /* Check the keySets are the same */
         if (!myKeySet1.equals(myKeySet)) {
@@ -197,7 +193,7 @@ public class GordianTestSuite {
         }
 
         /* Derive the Mac */
-        GordianMacSpec myMacSpec = myKeySet1.deriveTypeFromExternalId(myMacId, GordianMacSpec.class);
+        GordianMacSpec myMacSpec = myKnuth.deriveTypeFromExternalId(myMacId, GordianMacSpec.class);
         GordianKey<GordianMacSpec> myMacKey = myKeySet1.deriveKey(myMacSafe, myMacSpec);
         myMac = myFactory.createMac(myMacSpec);
         myMac.initMac(myMacKey, myIV);
@@ -249,87 +245,6 @@ public class GordianTestSuite {
         myAnswer = TethysDataConverter.byteArrayToString(myResult);
         if (!myAnswer.equals(myTest3)) {
             System.out.println("Failed to decrypt test3 string");
-        }
-    }
-
-    /**
-     * Check externalIds.
-     * @param pFactory the factory
-     * @param pKeySet the keySet
-     * @throws OceanusException on error
-     */
-    private void checkExternalIds(final GordianFactory pFactory,
-                                  final GordianKeySet pKeySet) throws OceanusException {
-        /* Loop through the digestSpecs */
-        Predicate<GordianDigestSpec> myDigestPredicate = pFactory.supportedDigestSpecs();
-        for (GordianDigestSpec mySpec : GordianDigestSpec.listAll()) {
-            /* If the digestSpec is supported */
-            if (myDigestPredicate.test(mySpec)) {
-                /* Check the externalId */
-                checkExternalId(pKeySet, mySpec, GordianDigestSpec.class);
-            }
-        }
-
-        /* Loop through the macSpecs */
-        Predicate<GordianMacSpec> myMacPredicate = pFactory.supportedMacSpecs();
-        for (GordianMacSpec mySpec : GordianMacSpec.listAll()) {
-            /* If the macSpec is supported */
-            if (myMacPredicate.test(mySpec)) {
-                /* Check the externalId */
-                checkExternalId(pKeySet, mySpec, GordianMacSpec.class);
-            }
-        }
-
-        /* Loop through the symKeySpecs */
-        Predicate<GordianSymKeySpec> mySymKeyPredicate = pFactory.supportedSymKeySpecs();
-        BiPredicate<GordianSymCipherSpec, Boolean> myCipherPredicate = pFactory.supportedSymCipherSpecs();
-        for (GordianSymKeySpec mySpec : GordianSymKeySpec.listAll()) {
-            /* If the symKey is supported */
-            if (mySymKeyPredicate.test(mySpec)) {
-                /* Check the externalId */
-                checkExternalId(pKeySet, mySpec, GordianSymKeySpec.class);
-
-                /* Loop through the modes */
-                for (GordianCipherMode myMode : GordianCipherMode.values()) {
-                    /* If we have padding */
-                    if (myMode.hasPadding()) {
-                        /* Loop through the paddings */
-                        for (GordianPadding myPadding : GordianPadding.values()) {
-                            /* Check Id if the ciperSpec is supported */
-                            GordianSymCipherSpec myTestSpec = new GordianSymCipherSpec(mySpec, myMode, myPadding);
-                            if (myCipherPredicate.test(myTestSpec, myMode.isAAD())) {
-                                checkExternalId(pKeySet, myTestSpec, GordianSymCipherSpec.class);
-                            }
-                        }
-
-                        /* else use null padding */
-                    } else {
-                        /* Check Id if the cipherSpec is supported */
-                        GordianSymCipherSpec myTestSpec = new GordianSymCipherSpec(mySpec, myMode, GordianPadding.NONE);
-                        if (myCipherPredicate.test(myTestSpec, myMode.isAAD())) {
-                            checkExternalId(pKeySet, myTestSpec, GordianSymCipherSpec.class);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Check externalId.
-     * @param <T> the type of the object
-     * @param pKeySet the keySet
-     * @param pObject the object
-     * @param pClazz the class of the object
-     * @throws OceanusException on error
-     */
-    private <T> void checkExternalId(final GordianKeySet pKeySet,
-                                     final T pObject,
-                                     final Class<T> pClazz) throws OceanusException {
-        long myId = pKeySet.deriveExternalIdForType(pObject);
-        T myResult = pKeySet.deriveTypeFromExternalId(myId, pClazz);
-        if (!pObject.equals(myResult)) {
-            System.out.println("Failed to resolve externalId for " + pClazz.getSimpleName() + ": " + pObject);
         }
     }
 }

@@ -75,7 +75,7 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
     /**
      * Constructor.
      * @param pListSet the listSet
-     * @param pConstructor the constructor
+     * @param pItemType the itemType
      */
     protected MetisEosVersionedList(final MetisEosVersionedListSet pListSet,
                                     final MetisEosItemType<T> pItemType) {
