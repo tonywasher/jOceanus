@@ -7,13 +7,13 @@ additionally download this library from the {{{http://www.bouncycastle.org/java.
 
   In the first instance, GordianKnot provides a simple API on top of BouncyCastle providing access to 
 the various BouncyCastle primitives such as symmetric/stream ciphers, digests/Macs and asymmetricKey functionality.  
-Details are provided in the section {{Simple API}}.
+Details are provided in the section <<Simple API>>.
 
   It also build on this API to provide various extensions such as triple encryption and encrypted ZipFiles.   	
   
   Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
-the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plaintext is encrypted 
-by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen
+the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plainText is encrypted 
+by each key in turn. The types of the keys used are encoded into output cipherText along with the randomly chosen
 initialisation vector (which is shifted differently for each key). 
 
   The last cipher mode is set to SIC mode. All prior modes are set to ECB mode. The first ECB mode is set to use ISO7816-4 padding,
@@ -30,10 +30,9 @@ compared with the expected hash. If it matches, the password is assumed correct 
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
   KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blocksizes other than 128. Details
-are provided {{{./KeyWrap.apt}here}}.  
-  
+are provided here.  
 
-{Simple API}
+Simple API
 
 * Configuration
 
@@ -50,63 +49,65 @@ Not all of BouncyCastle functionality is available through the JCE and so there 
 
   A cipher for encryption/decryption is created by specifying a CipherSpec (Algorithm/BlockSize if needed) and a mode, plus padding if required.
 The cipher can be used for encryption of byte streams in the same fashion as the standard JCA Cipher class. In addition a wrapCipher can be created 
-for each algorithm as defined in {{Key Wrapping}}.
+for each algorithm as defined in <<Key Wrapping>>.
 
 ** Supported Algorithms
 
   The following symmetric key algorithms are supported for both JCA and Native.  
 
-*-------------*-------------*------------*
-| Algorithm   | BlockLength | KeyLengths |
-*-------------*-------------*------------*    
-| AES         | 128         | 128,256    |  
-*-------------*-------------*------------*
-| Serpent     | 128         | 128,256    |  
-*-------------*-------------*------------*
-| TwoFish     | 128         | 128,256    |  
-*-------------*-------------*------------*
-| CAMELLIA    | 128         | 128,256    |  
-*-------------*-------------*------------*
-| CAST6       | 128         | 128,256    |  
-*-------------*-------------*------------*
-| RC6         | 128         | 128,256    |  
-*-------------*-------------*------------*
-| ARIA        | 128         | 128,256    |  
-*-------------*-------------*------------*
-| Threefish   | 256         | 256        |  
-*-------------*-------------*------------*
-| Noekeon     | 128         | 128        |  
-*-------------*-------------*------------*
-| SM4         | 128         | 128        |  
-*-------------*-------------*------------*
-| SEED        | 128         | 128        |  
-*-------------*-------------*------------*
-| SKIPJACK    | 64          | 128        |  
-*-------------*-------------*------------*
-| Blowfish    | 64          | 128,256    |  
-*-------------*-------------*------------*
-| DESede      | 64          | 128        |  
-*-------------*-------------*------------*
-| CAST5       | 64          | 128        |  
-*-------------*-------------*------------*
-| RC5         | 64          | 128        |
-*-------------*-------------*------------*
-| RC2         | 64          | 128, 256   |
-*-------------*-------------*------------*
-| IDEA        | 64          | 128        |
-*-------------*-------------*------------*
-| TEA         | 64          | 128        |
-*-------------*-------------*------------*
-| XTEA        | 64          | 128        |
-*-------------*-------------*------------*
-| Magma(GOST) | 64          | 256        |
-*-------------*-------------*------------*
-| SHACAL2     | 512         | 128, 256   |
-*-------------*-------------*------------*
-| Kalyna      | 128         | 128, 256   |
-|             | 256         | 256        |
-*-------------*-------------*------------*
-        
+*-------------*-------------*------------*-------*
+| Algorithm   | BlockLength | KeyLengths | Notes |
+*-------------*-------------*------------*-------*    
+| AES         | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| Serpent     | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| TwoFish     | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| CAMELLIA    | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| CAST6       | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| RC6         | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| ARIA        | 128         | 128,256    ||  
+*-------------*-------------*------------**
+| ThreeFish   | 256         | 256        ||  
+*-------------*-------------*------------**
+| NoeKeon     | 128         | 128        ||  
+*-------------*-------------*------------**
+| SM4         | 128         | 128        ||  
+*-------------*-------------*------------**
+| SEED        | 128         | 128        ||  
+*-------------*-------------*------------**
+| SKIPJACK    | 64          | 128        ||  
+*-------------*-------------*------------**
+| BlowFish    | 64          | 128,256    ||  
+*-------------*-------------*------------**
+| DESede      | 64          | 128        ||  
+*-------------*-------------*------------**
+| CAST5       | 64          | 128        ||  
+*-------------*-------------*------------**
+| RC5         | 64          | 128        ||
+*-------------*-------------*------------**
+| RC2         | 64          | 128, 256   ||
+*-------------*-------------*------------**
+| IDEA        | 64          | 128        ||
+*-------------*-------------*------------**
+| TEA         | 64          | 128        ||
+*-------------*-------------*------------**
+| XTEA        | 64          | 128        ||
+*-------------*-------------*------------**
+| Magma       | 64          | 256        | GOST28147 |
+*-------------*-------------*------------**
+| SHACAL2     | 256         | 128, 256   ||
+*-------------*-------------*------------*----------*
+| Kalyna      | 128         | 128, 256   | DSTU7624 |
+|             | 256         | 256        |          |
+*-------------*-------------*------------*----------*
+| Kuznyechik  | 128         | 256        | GOST3412-2015 |
+*-------------*-------------*------------*----------*
+
 ** Supported Modes
 
   The following modes are available with the above algorithms
@@ -114,25 +115,27 @@ for each algorithm as defined in {{Key Wrapping}}.
 *------*-------*
 | Mode | Notes |
 *------*-------*
-| ECB  |
-*------*
-| CBC  |
+| ECB  | |
+*------*-*
+| CBC  | K3413CBC Mode available for Kuznyechik |
 *------*--------------------------------*
 | SIC  | KCTR Mode available for Kalyna |
+|      | K3413CTR Mode available for Kuznyechik |
 *------*--------------------------------*
 | OFB  | GOFB Mode available for Magma  |
+|      | K3413OFB Mode available for Kuznyechik |
 *------*--------------------------------*
 | CFB  | GCFB Mode available for Magma  |
+|      | K3413CFB Mode available for Kuznyechik |
 *------*--------------------------------*
-| EAX  |
+| EAX  | |
 *------*--------------------------------*
 | GCM  | KGCM Mode available for Kalyna |
 *------*--------------------------------*
 | CCM  | KCCM Mode available for Kalyna |
 *------*--------------------------------*
-| OCB  |
-*------*
-   
+| OCB  | |
+*------*-* 	
 
 ** Supported Paddings
 
@@ -173,77 +176,106 @@ for each algorithm as defined in {{Key Wrapping}}.
 *-------------*-------------*------------*
 | Algorithm   | KeyLengths  | Notes      |
 *-------------*-------------*------------*    
-| ChaCha      | 128,256     |  
-*-------------*-------------*    
-| ChaCha7539  | 256         |  
-*-------------*-------------*    
-| Salsa20     | 128,256     |  
-*-------------*-------------*    
-| XSalsa20    | 256         |  
-*-------------*-------------*    
-| HC128       | 128         |  
-*-------------*-------------*    
-| HC256       | 256         |  
-*-------------*-------------*    
-| VMPC        | 128,256     |  
+| ChaCha      | 128,256     | | 
+*-------------*-------------*-*    
+| ChaCha7539  | 256         | |  
+*-------------*-------------*-*    
+| Salsa20     | 128,256     | |  
+*-------------*-------------*-*    
+| XSalsa20    | 256         | |  
+*-------------*-------------*-*    
+| HC128       | 128         | |  
+*-------------*-------------*-*    
+| HC256       | 256         | |  
+*-------------*-------------*-*    
+| VMPC        | 128,256     | |  
 *-------------*-------------*-------------*     
 | ISAAC       | 128,256     | Not for JCA |  
 *-------------*-------------*-------------*     
-| RC4         | 128,256     |  
-*-------------*-------------*    
-| Grain128    | 128         |  
-*-------------*-------------*    
+| RC4         | 128,256     | |  
+*-------------*-------------*-*    
+| Grain128    | 128         | |  
+*-------------*-------------*-*    
 
-  The following MessageDigest algorithms are supported (bit lengths in brackets).
+* Digests and MACs
 
-    * SHA2 (224, 256, 384, 512)
+** Supported Digest algorithms
 
-    * Tiger (192)
+*-------------*-------------*-----------------*------------*
+| Algorithm   | StateLength | OutputLengths   | Notes      |
+*-------------*-------------*-----------------*---------=--*    
+| SHA2        | 512         | 224,256,384,512 | |
+|             | 256         | 224 256 | |
+*-------------*-----------------*-*-*   
+| Tiger       |             | 192 | |  
+*-------------*-------------*-----*-*    
+| WHIRLPOOL   |             | 512 | |  
+*-------------*-------------*-----*-*    
+| Streebog    | 256         | 256 | GOST3411-2012 |
+|             | 512         | 512 | |  
+*-------------*-------------*-----*-*    
+| GOST        |             | 256 | GOST3411-94 |  
+*-------------*-------------*-----*-*    
+| RIPEMD      | 128         | 128,160 | |
+|             | 256         | 256,320 | |  
+*-------------*-------------*---------*-*    
+| SHA3        |             | 224,256,384,512 | |  
+*-------------*-------------*-----------------*-*    
+| Skein       | 256         | 128,160,224,256         | |
+|             | 512         | 128,160,224,256,384,512 | |
+|             | 1024        | 384, 512, 1024          | |  
+*-------------*-------------*-----------------*-*    
+| SM3         |             | 256  | |  
+*-------------*-------------*----*-*    
+| Blake2s     | 256         | 128,160,224,256 | |
+*-------------*-------------*----*-*    
+| Blake2b     | 512         | 224,256,384,512 | |
+*-------------*-------------*----*-*    
+| SHA1        |             | 160 | |  
+*-------------*-------------*----*-*    
+| MD5         |             | 128 | |  
+*-------------*-------------*----*-*    
+| MD4         |             | 128 | |  
+*-------------*-------------*----*-*    
+| MD2         |             |128             | |  
+*-------------*-------------*----*-*    
+| SHAKE       | 128         | 128 | Not for JCA |
+|             | 256         | 256 | |  
+*-------------*-------------*----*-*    
+| Kupyna      |             |256,384,512 | DSTU7564 |  
+*-------------*-------------*----*-*    
+  
+** Supported MAC algorithms
 
-    * WHIRLPOOL (512)
+*-------------*------------------*------------*
+| Algorithm   | OutputLengths    | Notes      |
+*-------------*------------------*------------*    
+| HMac        | digest length    | For all digests. | 
+|             |                  | Jca does not support SM3, BLAKE, SHAKE or Kupyna | 
+*-------------*------------------*-*    
+| GMac        | 128 bits         | For all supported 128 bit ciphers except Kalyna (BUG). |
+|             |                  | Jca does not support Kuznyechik | 
+*-------------*------------------*-*    
+| CMac        | cipher blockSize | For all supported ciphers. |
+|             |                  | Not for Jca | 
+*-------------*-----------------*-*    
+| Poly1305    | 128 bits         | For all supported 128 bit ciphers except Kuznyechik | 
+|             |                  | Jca does not support Kalyna | 
+*-------------*-----------------*-*    
+| Skein       | as per Skein     | For all Skein digests | 
+*-------------*-----------------*-*    
+| VMPC        | 160 bits         | | 
+*-------------*-----------------*-*    
+| Blake       | as per Blake     | For all supported Blake2s/Blake2b digests | 
+|             |                  | Not for Jca | 
+*-------------*-----------------*-*    
+| KupynaMac   | as per Kupyna    | For all supported Kupyna digests | 
+|             |                  | Not for Jca | 
+*-------------*-----------------*-*    
+| KalynaMac   | as per Kalyna blockSize  | Not for Jca | 
+*-------------*-----------------*-*    
 
-    * Streebog (GOST1411-2012) (256, 512)
-
-    * GOST (GOST1411-94) (256)
-   
-    * RIPEMD (128, 160, 256, 320)
-
-    * SHA3 (224, 256, 384, 512)
-
-    * Skein (128, 160, 224, 256, 384, 512, 1024)
-
-    * SM3 (256)
-
-    * Blake2b (160, 256, 384, 512)
-
-    * SHA1 (160)
-
-    * MD5 (128)
-
-    * SHAKE (128, 256)
-	
-    * Kupyna (256, 384, 512)
-	
-  The following Mac Algorithms are supported
-
-    * HMac (for each supported message digest/length)
-
-    * GMac (for each symmetric algorithm except for ThreeFish)
-
-    * CMac (for each symmetric algorithm)
-   
-    * Poly1305 (for each symmetric algorithm except for ThreeFish)
-
-    * SkeinMAC (for each supported Skein digest length)
-
-    * VMPCMAC
-
-    * Blake2bMAC
-	
-    * KupynaMAC
-	
-    * KalynaMAC
-	
+ 	
 ZipFile support
 
   In addition to Encryption services, jGordianKnot also provides support for to creating and reading encrypted ZipFiles.

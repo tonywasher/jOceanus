@@ -289,7 +289,7 @@ public final class JcaFactory
     public Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
                     && supportedSymKeySpecs().test(p)
-                    && JcaFactory.isSupportedCMAC(p.getSymKeyType());
+                    && isSupportedCMAC(p.getSymKeyType());
     }
 
     @Override
@@ -297,7 +297,7 @@ public final class JcaFactory
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
                     && supportedSymKeySpecs().test(p)
                     && p.getBlockLength() == GordianLength.LEN_128
-                    && JcaFactory.isSupportedPoly1305(p.getSymKeyType());
+                    && isSupportedPoly1305(p.getSymKeyType());
     }
 
     @Override
