@@ -896,6 +896,13 @@ public abstract class GordianFactory {
             return false;
         }
 
+        /* Disallow AAD for RC5-64 */
+        if (GordianSymKeyType.RC5.equals(myKeyType)
+            && GordianLength.LEN_128.equals(myKeySpec.getBlockLength())
+            && myMode.isAAD()) {
+            return false;
+        }
+
         /* Determine whether we have a short block length */
         final int myLen = myKeySpec.getBlockLength().getLength();
         final boolean shortBlock = myLen < GordianLength.LEN_128.getLength();

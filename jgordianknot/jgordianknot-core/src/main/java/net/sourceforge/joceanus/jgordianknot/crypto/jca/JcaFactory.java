@@ -281,8 +281,7 @@ public final class JcaFactory
     public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
         return p -> theKeySetSymPredicate.test(p.getSymKeyType())
                     && supportedSymKeySpecs().test(p)
-                    && p.getSymKeyType() != GordianSymKeyType.KALYNA
-                    && p.getSymKeyType() != GordianSymKeyType.KUZNYECHIK;
+                    && isSupportedGMAC(p.getSymKeyType());
     }
 
     @Override
@@ -784,6 +783,10 @@ public final class JcaFactory
                 return "GOST3412-2015";
             case KALYNA:
                 return KALYNA_ALGORITHM + "-" + pKeySpec.getBlockLength().getLength();
+            case RC5:
+                return GordianLength.LEN_128.equals(pKeySpec.getBlockLength())
+                                                                               ? "RC5-64"
+                                                                               : "RC5";
             case AES:
             case CAMELLIA:
             case CAST6:
@@ -797,7 +800,6 @@ public final class JcaFactory
             case XTEA:
             case IDEA:
             case RC2:
-            case RC5:
             case CAST5:
             case BLOWFISH:
             case DESEDE:
@@ -1104,6 +1106,22 @@ public final class JcaFactory
     }
 
     /**
+     * Determine supported GMAC algorithms.
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    private static boolean isSupportedGMAC(final GordianSymKeyType pKeyType) {
+        switch (pKeyType) {
+            case KALYNA:
+            case KUZNYECHIK:
+            case RC5:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Determine supported Poly1305 algorithms.
      * @param pKeyType the keyType
      * @return true/false
@@ -1112,6 +1130,7 @@ public final class JcaFactory
         switch (pKeyType) {
             case KALYNA:
             case KUZNYECHIK:
+            case RC5:
                 return false;
             default:
                 return true;
@@ -1354,9 +1373,9 @@ public final class JcaFactory
                        && !GordianCipherMode.CCM.equals(myMode)
                        && !GordianCipherMode.GCM.equals(myMode);
             case GOST:
-                /* Disallow OCB and OFB */
-                return !GordianCipherMode.OCB.equals(myMode)
-                       && !GordianCipherMode.OFB.equals(myMode);
+                /* Disallow OFB and CFB */
+                return !GordianCipherMode.OFB.equals(myMode)
+                       && !GordianCipherMode.CFB.equals(myMode);
             case KUZNYECHIK:
                 /* Disallow OCB, OFB, CFB and CBC */
                 return !GordianCipherMode.OCB.equals(myMode)

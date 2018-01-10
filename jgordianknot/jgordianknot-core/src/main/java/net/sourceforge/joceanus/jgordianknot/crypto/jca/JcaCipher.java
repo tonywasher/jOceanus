@@ -130,8 +130,13 @@ public final class JcaCipher<T>
 
         /* Protect against exceptions */
         try {
+            /* Careful of RC5 */
+            final T myKeyType = pKey.getKeyType();
+            boolean isRC5 = myKeyType instanceof GordianSymKeySpec &&
+                            GordianSymKeyType.RC5.equals(((GordianSymKeySpec) myKeyType).getSymKeyType());
+
             /* Initialise as required */
-            if (pIV != null) {
+            if (pIV != null || isRC5) {
                 final AlgorithmParameterSpec myParms = generateParameters(myJcaKey, pIV);
                 theCipher.init(myMode, myKey, myParms);
             } else {
@@ -166,7 +171,9 @@ public final class JcaCipher<T>
                 return new RC2ParameterSpec(pKey.getKeyBytes().length * Byte.SIZE, pIV);
             }
             if (GordianSymKeyType.RC5.equals(myType)) {
-                return new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
+                return pIV == null
+                                   ? new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1)
+                                   : new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
             }
         }
         return new IvParameterSpec(pIV);
