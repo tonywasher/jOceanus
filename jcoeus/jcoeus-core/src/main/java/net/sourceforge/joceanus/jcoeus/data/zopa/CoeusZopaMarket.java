@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.joceanus.jcoeus.data.CoeusLoan;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarket;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.data.CoeusResource;
@@ -69,11 +70,6 @@ public class CoeusZopaMarket
     private final CoeusZopaLoanBookParser theBookParser;
 
     /**
-     * The BadDebt Parser.
-     */
-    private final CoeusZopaBadDebtParser theDebtParser;
-
-    /**
      * The Transaction Parser.
      */
     private final CoeusZopaTransactionParser theXactionParser;
@@ -113,7 +109,6 @@ public class CoeusZopaMarket
 
         /* Create the parsers */
         theBookParser = new CoeusZopaLoanBookParser(this);
-        theDebtParser = new CoeusZopaBadDebtParser(this);
         theXactionParser = new CoeusZopaTransactionParser(this);
 
         /* Create missing counters */
@@ -151,20 +146,22 @@ public class CoeusZopaMarket
     }
 
     /**
-     * Parse the badDebtBook file.
-     * @param pFile the file to parse
+     * Process the badDebt.
      * @throws OceanusException on error
      */
-    public void parseBadDebtBook(final Path pFile) throws OceanusException {
-        /* Parse the file */
-        theDebtParser.parseFile(pFile);
-
-        /* Loop through the loan book items */
-        final Iterator<CoeusZopaTransaction> myIterator = theDebtParser.badDebtIterator();
+    public void processBadDebt() throws OceanusException {
+        /* Loop through the loans */
+        final Iterator<CoeusLoan> myIterator = loanIterator();
         while (myIterator.hasNext()) {
-            final CoeusZopaTransaction myTrans = myIterator.next();
+            final CoeusZopaLoan myLoan = (CoeusZopaLoan) myIterator.next();
+
+            /* Ignore loans that are not badDebt */
+            if (myLoan.getBadDebtDate() == null) {
+                continue;
+            }
 
             /* Add to the transactions */
+            final CoeusZopaTransaction myTrans = new CoeusZopaTransaction(myLoan);
             addTransaction(myTrans);
         }
     }

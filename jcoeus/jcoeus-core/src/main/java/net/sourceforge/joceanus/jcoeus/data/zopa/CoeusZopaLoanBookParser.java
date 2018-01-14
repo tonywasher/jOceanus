@@ -48,7 +48,7 @@ public class CoeusZopaLoanBookParser
     private final CoeusZopaMarket theMarket;
 
     /**
-     * Parsed fields.
+     * Parsed loans.
      */
     private final List<CoeusZopaLoanBookItem> theLoans;
 
@@ -110,7 +110,8 @@ public class CoeusZopaLoanBookParser
             /* else its a transaction */
         } else {
             /* Parse the loan and add to the list */
-            theLoans.add(new CoeusZopaLoanBookItem(this, pFields));
+            final CoeusZopaLoanBookItem myBookItem = new CoeusZopaLoanBookItem(this, pFields);
+            theLoans.add(myBookItem);
         }
     }
 }

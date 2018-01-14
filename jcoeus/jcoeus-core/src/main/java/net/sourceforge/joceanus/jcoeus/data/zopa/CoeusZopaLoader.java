@@ -59,11 +59,6 @@ public class CoeusZopaLoader {
     private static final String LOANBOOK = "my_all_time_loan_book";
 
     /**
-     * The Bad debt book name.
-     */
-    private static final String DEBTBOOK = "my_baddebt_loan_book";
-
-    /**
      * The StatementPrefix.
      */
     private static final String PREFIX = "ZopaStatement";
@@ -158,8 +153,8 @@ public class CoeusZopaLoader {
         /* Parse the loanBook file */
         myMarket.parseLoanBook(theBasePath.resolve(LOANBOOK + SUFFIX));
 
-        /* Parse the badDebt file */
-        myMarket.parseBadDebtBook(theBasePath.resolve(DEBTBOOK + SUFFIX));
+        /* Process the badDebt */
+        myMarket.processBadDebt();
 
         /* Loop through the statements */
         for (final StatementRecord myStatement : listStatements()) {

@@ -119,6 +119,12 @@ public class CoeusZopaLoan
         theMissingCapital = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theMissingInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
         theUpFrontInterest = new TethysDecimal(0, CoeusZopaMarket.DECIMAL_SIZE);
+
+        /* If this is a badDebt, record it */
+        if (pBookItem != null
+            && pBookItem.isBadDebt()) {
+            setBadDebtDate(pBookItem.getBadDebtDate());
+        }
     }
 
     @Override
@@ -246,7 +252,7 @@ public class CoeusZopaLoan
         myInterest.subtractValue(theUpFrontInterest);
         if (!myInterest.equals(theBookItem.getInterestRepaid())) {
             myInterest.subtractValue(theBookItem.getInterestRepaid());
-            getMarket().recordMissingInterest(myLoanBalance);
+            getMarket().recordMissingInterest(myInterest);
             theMissingInterest.addValue(myInterest);
         }
 

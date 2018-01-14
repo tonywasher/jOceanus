@@ -5,12 +5,21 @@
     <exclude-pattern>.*/embedded/.*</exclude-pattern>
     <exclude-pattern>.*/test/.*</exclude-pattern>
 
-    <rule ref="rulesets/java/basic.xml" />
+    <rule ref="category/java/bestpractices.xml" />
 
-    <rule ref="rulesets/java/braces.xml" />
+    <rule ref="category/java/codestyle.xml" />
 
-    <rule ref="rulesets/java/clone.xml" />
+    <rule ref="category/java/design.xml" />
 
+    <rule ref="category/java/documentation.xml" />
+
+    <rule ref="category/java/errorprone.xml" />
+
+    <rule ref="category/java/multithreading.xml" />
+
+    <rule ref="category/java/performance.xml" />
+
+    <!--
     <rule ref="rulesets/java/codesize.xml">
         <exclude name="NPathComplexity" />
         <exclude name="CyclomaticComplexity" />
@@ -22,11 +31,11 @@
             <property name="maxLines" value="200" />
             <property name="maxLineLength" value="200" />
         </properties>
-    </rule>
+    </rule> 
 
     <rule ref="rulesets/java/coupling.xml">
         <exclude name="LawOfDemeter" />
-    </rule>
+    </rule> 
 
     <rule ref="rulesets/java/design.xml">
         <exclude name="ConfusingTernary" />
@@ -51,15 +60,11 @@
         <properties>
             <property name="maximumStaticImports" value="10" />
         </properties>
-    </rule>
+    </rule> 
 
-    <rule ref="rulesets/java/j2ee.xml/DoNotCallSystemExit" />
+    <rule ref="rulesets/java/j2ee.xml/DoNotCallSystemExit" /> 
 
-    <rule ref="rulesets/java/logging-java.xml" />
-
-    <rule ref="rulesets/java/migrating.xml" />
-
-    <rule ref="rulesets/java/naming.xml">
+     <rule ref="rulesets/java/naming.xml">
         <exclude name="LongVariable" />
         <exclude name="ShortVariable" />
         <exclude name="ShortMethodName" />
@@ -72,18 +77,10 @@
         <exclude name="AvoidInstantiatingObjectsInLoops" />
     </rule>
 
-    <rule ref="rulesets/java/strictexception.xml" />
-
+ 
     <rule ref="rulesets/java/strings.xml">
         <exclude name="AvoidDuplicateLiterals" />
         <exclude name="InefficientEmptyStringCheck" />
-    </rule>
+    </rule> -->
 
-    <rule ref="rulesets/java/sunsecure.xml" />
-
-    <rule ref="rulesets/java/typeresolution.xml" />
-
-    <rule ref="rulesets/java/unnecessary.xml" />
-
-    <rule ref="rulesets/java/unusedcode.xml" />
 </ruleset>

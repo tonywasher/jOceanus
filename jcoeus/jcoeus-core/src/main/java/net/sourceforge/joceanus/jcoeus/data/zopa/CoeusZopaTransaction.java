@@ -247,61 +247,19 @@ public final class CoeusZopaTransaction
 
     /**
      * Constructor.
-     * @param pParser the parser
-     * @param pFields the fields
+     * @param pLoan the loan
      * @throws OceanusException on error
      */
-    protected CoeusZopaTransaction(final CoeusZopaBadDebtParser pParser,
-                                   final List<String> pFields) throws OceanusException {
+    protected CoeusZopaTransaction(final CoeusZopaLoan pLoan) throws OceanusException {
         /* Initialise underlying class */
-        super(pParser.getMarket());
+        super(pLoan.getMarket());
 
-        /* Iterate through the fields */
-        final Iterator<String> myIterator = pFields.iterator();
-
-        /* Obtain LoanIDs */
-        final String myLoanId = myIterator.next();
-
-        /* Skip Product/date acquired/risk */
-        myIterator.next();
-        myIterator.next();
-        myIterator.next();
-
-        /* Skip Term and Loan Size */
-        myIterator.next();
-        myIterator.next();
-
-        /* Skip status/rate/lent */
-        myIterator.next();
-        myIterator.next();
-        myIterator.next();
-
-        /* Parse the outstanding balances */
-        final TethysDecimal myDebt = pParser.parseDecimal(myIterator.next());
+        /* Determine the debt */
+        final TethysDecimal myDebt = new TethysDecimal(pLoan.getBalance());
         myDebt.negate();
 
-        /* Skip rePaid/capital/interest/arrears */
-        myIterator.next();
-        myIterator.next();
-        myIterator.next();
-        myIterator.next();
-
-        /* Skip Payment Day/SafeGuard flag */
-        myIterator.next();
-        myIterator.next();
-
-        /* Skip Comment and loan start/end dates */
-        myIterator.next();
-        myIterator.next();
-        myIterator.next();
-
-        /* Skip Monthly rePayment/Purpose/portion rePaid */
-        myIterator.next();
-        myIterator.next();
-        myIterator.next();
-
-        /* Parse the date */
-        theDate = pParser.parseDate(myIterator.next());
+        /* Access the default date */
+        theDate = pLoan.getBadDebtDate();
 
         /* Obtain description */
         theDesc = CoeusTransactionType.BADDEBT.toString();
@@ -309,9 +267,8 @@ public final class CoeusZopaTransaction
         /* Determine the transaction type */
         theTransType = CoeusTransactionType.BADDEBT;
 
-        /* Determine the loan and record the badDebt date */
-        theLoan = getMarket().findLoanById(myLoanId);
-        theLoan.setBadDebtDate(theDate);
+        /* Record the loan */
+        theLoan = pLoan;
 
         /* Determine the BadDebt Deltas */
         theBadDebt = myDebt;

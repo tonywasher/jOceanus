@@ -135,6 +135,11 @@ public class CoeusZopaLoanBookItem
     private final TethysRate thePortionRepaid;
 
     /**
+     * The badDebt date.
+     */
+    private final TethysDate theBadDebtDate;
+
+    /**
      * Is the loan safeGuarded.
      */
     private final boolean isSafeGuarded;
@@ -211,7 +216,10 @@ public class CoeusZopaLoanBookItem
         myIterator.next();
 
         /* Skip the default date */
-        myIterator.next();
+        final String myDate = myIterator.next();
+        theBadDebtDate = myDate.length() > 0
+                                             ? pParser.parseDate(myDate)
+                                             : null;
 
         /* Skip Monthly rePayment and Purpose */
         myIterator.next();
@@ -242,6 +250,7 @@ public class CoeusZopaLoanBookItem
         theRate = myRecent.getRate();
         thePortionRepaid = myRecent.getPortionRepaid();
         isSafeGuarded = myRecent.isSafeGuarded();
+        theBadDebtDate = myRecent.getBadDebtDate();
 
         /* Parse the outstanding balances */
         theLent = new TethysDecimal(pBase.getLent());
@@ -364,6 +373,22 @@ public class CoeusZopaLoanBookItem
      */
     public TethysRate getPortionRepaid() {
         return thePortionRepaid;
+    }
+
+    /**
+     * Obtain the badDebt date.
+     * @return the badDebt date
+     */
+    public TethysDate getBadDebtDate() {
+        return theBadDebtDate;
+    }
+
+    /**
+     * Is this loan a badDebt.
+     * @return true/false
+     */
+    public boolean isBadDebt() {
+        return theBadDebtDate != null;
     }
 
     /**
