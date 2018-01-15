@@ -171,7 +171,9 @@ public final class JcaCipher<T>
                 return new RC2ParameterSpec(pKey.getKeyBytes().length * Byte.SIZE, pIV);
             }
             if (GordianSymKeyType.RC5.equals(myType)) {
-                return new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
+                return pIV == null
+                                   ? new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1)
+                                   : new RC5ParameterSpec(1, GordianFactory.RC5_ROUNDS, myLen.getLength() >> 1, pIV);
             }
         }
         return new IvParameterSpec(pIV);

@@ -190,22 +190,29 @@ public abstract class GordianKeyGenerator<T> {
         final byte[] myKeyBytes = new byte[myKeyLen];
         int myBuilt = 0;
 
-        /* Determine a digestType to use based on the first four bytes of the initVector */
-        int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
+        /* Determine an initialSeed and work out hash type and iterations */
+        int mySeed = determineSecretSeed(pSecret, pInitVector);
         mySeed = theFactory.getPersonalisation().convertRecipe(mySeed);
-        final GordianDigestType[] myDigestType = new GordianDigestType[1];
-        theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
+        final GordianDigestType[] myDigestType = new GordianDigestType[2];
+        mySeed = theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
+        final int myIterations = mySeed & TethysDataConverter.NYBBLE_MASK;
 
-        /* Create the MAC and initialise it */
-        final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
-        final GordianMac myMac = theFactory.createMac(myMacSpec);
+        /* Create the MACs and initialise them */
+        final GordianMac[] myMacs = new GordianMac[2];
+        GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
+        GordianMac myMac = theFactory.createMac(myMacSpec);
         myMac.initMac(pSecret);
+        myMacs[0] = myMac;
+        myMacSpec = GordianMacSpec.hMac(myDigestType[1]);
+        myMac = theFactory.createMac(myMacSpec);
+        myMac.initMac(pSecret);
+        myMacs[1] = myMac;
 
         /* while we need to generate more bytes */
         final GordianByteArrayInteger mySection = new GordianByteArrayInteger();
         while (myBuilt < myKeyLen) {
             /* Build the key part */
-            final byte[] myKeyPart = buildCipherSection(myMac, mySection.iterate(), pInitVector);
+            final byte[] myKeyPart = buildCipherSection(myMacs, mySection.iterate(), pInitVector, myIterations);
 
             /* Determine how many bytes of this hash should be used */
             int myNeeded = myKeyLen
@@ -225,44 +232,95 @@ public abstract class GordianKeyGenerator<T> {
 
     /**
      * Build Secret Key section (based on PBKDF2).
-     * @param pMac the MAC to utilise
+     * @param pMacs the MACs to utilise
      * @param pSection the section count
      * @param pInitVector the initialisation vector
+     * @param pIterations the adjustment to iterations
      * @return the section
      * @throws OceanusException on error
      */
-    private byte[] buildCipherSection(final GordianMac pMac,
+    private byte[] buildCipherSection(final GordianMac[] pMacs,
                                       final byte[] pSection,
-                                      final byte[] pInitVector) throws OceanusException {
+                                      final byte[] pInitVector,
+                                      final int pIterations) throws OceanusException {
+        /* Access the two MACs */
+        final GordianMac myPrime = pMacs[0];
+        final GordianMac myAlt = pMacs[1];
+
         /* Declare initial value */
-        final byte[] myResult = new byte[pMac.getMacSize()];
-        final byte[] myHash = new byte[pMac.getMacSize()];
-        byte[] myInput = pInitVector;
+        final byte[] myResult = new byte[myPrime.getMacSize()];
+        final byte[] myPrimeHash = new byte[myPrime.getMacSize()];
+        final byte[] myAltHash = new byte[myAlt.getMacSize()];
+        byte[] myPrimeInput = pInitVector;
+        byte[] myAltInput = pInitVector;
 
         /* Create the standard data */
         final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
         final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
 
         /* Update with personalisation, algorithm and section */
-        myPersonal.updateMac(pMac);
-        pMac.update(myAlgo);
-        pMac.update(pSection);
+        myPersonal.updateMac(myPrime);
+        myPrime.update(myAlgo);
+        myPrime.update(pSection);
 
         /* Loop through the iterations */
-        final int myNumIterations = theFactory.getNumIterations();
+        final int myNumIterations = theFactory.getNumIterations() + pIterations;
         for (int i = 0; i < myNumIterations; i++) {
+            /* Calculate alternate hash */
+            myAlt.update(myAltInput);
+            myAltInput = myAltHash;
+            myAlt.finish(myAltHash, 0);
+
             /* Add the existing result to hash */
-            pMac.update(myInput);
-            myInput = myHash;
+            myPrime.update(myPrimeInput);
+            myPrime.update(myAltHash);
+            myPrimeInput = myPrimeHash;
 
             /* Calculate MAC and place results into hash */
-            pMac.finish(myHash, 0);
+            myPrime.finish(myPrimeHash, 0);
 
             /* Fold into results */
-            TethysDataConverter.buildHashResult(myResult, myHash);
+            TethysDataConverter.buildHashResult(myResult, myPrimeHash);
         }
 
         /* Return the result */
         return myResult;
+    }
+
+    /**
+     * Determine initialSeed.
+     * @param pSecret the secret
+     * @param pInitVector the initialisation vector
+     * @return the seed
+     * @throws OceanusException on error
+     */
+    private int determineSecretSeed(final byte[] pSecret,
+                                    final byte[] pInitVector) throws OceanusException {
+        /* Determine a digestType to use based on the first four bytes of the initVector */
+        int mySeed = TethysDataConverter.byteArrayToInteger(Arrays.copyOf(pInitVector, Integer.SIZE));
+        mySeed = theFactory.getPersonalisation().convertRecipe(mySeed);
+        final GordianDigestType[] myDigestType = new GordianDigestType[1];
+        theFactory.getIdManager().deriveKeyHashDigestTypesFromSeed(mySeed, myDigestType);
+
+        /* Create the MAC and initialise it */
+        final GordianMacSpec myMacSpec = GordianMacSpec.hMac(myDigestType[0]);
+        final GordianMac myMac = theFactory.createMac(myMacSpec);
+        myMac.initMac(pSecret);
+
+        /* Create the standard data */
+        final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
+        final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
+
+        /* Update with personalisation, algorithm and initVector */
+        myPersonal.updateMac(myMac);
+        myMac.update(myAlgo);
+        myMac.update(pInitVector);
+
+        /* Determine result */
+        final byte[] myResult = new byte[myMac.getMacSize()];
+        myMac.finish(myResult, 0);
+
+        /* Return the first few bytes as the seed */
+        return TethysDataConverter.byteArrayToInteger(Arrays.copyOf(myResult, Integer.SIZE));
     }
 }

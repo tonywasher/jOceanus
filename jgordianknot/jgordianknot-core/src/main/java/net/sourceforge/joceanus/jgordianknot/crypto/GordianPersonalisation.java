@@ -149,8 +149,8 @@ public class GordianPersonalisation {
             myHashes[i] = myResult;
         }
 
-        /* Loop several times to cross-fertilise */
-        for (int i = 0; i < myDigests.length; i++) {
+        /* Loop the configured amount of times to cross-fertilise */
+        for (int i = 0; i < pParameters.getNumHashIterations(); i++) {
             /* Update all the digests */
             for (int j = 0; j < myDigests.length; j++) {
                 /* Update with the results */

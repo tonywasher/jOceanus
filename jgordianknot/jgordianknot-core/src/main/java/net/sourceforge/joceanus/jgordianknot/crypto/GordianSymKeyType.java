@@ -119,7 +119,7 @@ public enum GordianSymKeyType {
     /**
      * RC5.
      */
-    RC5(GordianLength.LEN_64, GordianLength.LEN_128),
+    RC5(GordianLength.LEN_128, GordianLength.LEN_64),
 
     /**
      * Blowfish.
