@@ -104,7 +104,17 @@ public enum GordianDigestType {
     /**
      * MD2.
      */
-    MD2(GordianLength.LEN_128);
+    MD2(GordianLength.LEN_128),
+
+    /**
+     * JH.
+     */
+    JH(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384),
+
+    /**
+     * GROESTL.
+     */
+    GROESTL(GordianLength.LEN_512, GordianLength.LEN_224, GordianLength.LEN_256, GordianLength.LEN_384);
 
     /**
      * The Supported lengths.

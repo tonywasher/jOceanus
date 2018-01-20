@@ -63,6 +63,21 @@ public abstract class GordianFactory {
     private static final int SEED_SIZE = GordianLength.LEN_256.getByteLength();
 
     /**
+     * Array for Max Cipher Steps.
+     */
+    private static final int[] MAX_CIPHER_STEPS;
+
+    /**
+     * Static Constructor.
+     */
+    static {
+        /* Calculate max cipher Steps */
+        MAX_CIPHER_STEPS = new int[2];
+        MAX_CIPHER_STEPS[0] = determineMaximumCipherSteps(false);
+        MAX_CIPHER_STEPS[1] = determineMaximumCipherSteps(true);
+    }
+
+    /**
      * Parameters.
      */
     private final GordianParameters theParameters;
@@ -328,7 +343,9 @@ public abstract class GordianFactory {
      * Obtain predicate for supported digestTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianDigestType> supportedDigestTypes();
+    public Predicate<GordianDigestType> supportedDigestTypes() {
+        return this::validDigestType;
+    }
 
     /**
      * Obtain predicate for supported KeyHash digests.
@@ -387,7 +404,9 @@ public abstract class GordianFactory {
      * Obtain predicate for supported macTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianMacType> supportedMacTypes();
+    public Predicate<GordianMacType> supportedMacTypes() {
+        return this::validMacType;
+    }
 
     /**
      * Obtain predicate for supported hMac digestSpecs.
@@ -401,25 +420,35 @@ public abstract class GordianFactory {
      * Obtain predicate for supported hMac digestTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianDigestType> supportedHMacDigestTypes();
+    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
+        return this::validHMacDigestType;
+    }
 
     /**
      * Obtain predicate for supported poly1305 symKeySpecs.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs();
+    public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
+        return p -> validPoly1305SymKeySpec(p)
+                    && p.getBlockLength() == GordianLength.LEN_128;
+    }
 
     /**
      * Obtain predicate for supported gMac symKeySpecs.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs();
+    public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
+        return p -> validGMacSymKeySpec(p)
+                    && p.getBlockLength() == GordianLength.LEN_128;
+    }
 
     /**
      * Obtain predicate for supported cMac symKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs();
+    public Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
+        return this::validCMacSymKeySpec;
+    }
 
     /**
      * obtain GordianKeyGenerator.
@@ -503,20 +532,25 @@ public abstract class GordianFactory {
      * Obtain predicate for supported SymKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> supportedSymKeyTypes();
+    public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
+        return this::validSymKeyType;
+    }
 
     /**
      * Obtain predicate for keySet SymKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes();
+    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
+        return this::validKeySetSymKeyType;
+    }
 
     /**
      * Obtain predicate for supported poly1305 symKeySpecs.
      * @return the predicate
      */
     public Predicate<GordianSymKeySpec> supportedKeySetSymKeySpecs() {
-        return p -> supportedKeySetSymKeyTypes().test(p.getSymKeyType()) && p.getBlockLength() == GordianLength.LEN_128;
+        return p -> supportedKeySetSymKeyTypes().test(p.getSymKeyType())
+                    && p.getBlockLength() == GordianLength.LEN_128;
     }
 
     /**
@@ -561,7 +595,9 @@ public abstract class GordianFactory {
      * Obtain predicate for supported StreamKeyTypes.
      * @return the predicate
      */
-    public abstract Predicate<GordianStreamKeyType> supportedStreamKeyTypes();
+    public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
+        return this::validStreamKeyType;
+    }
 
     /**
      * Obtain predicate for keySet SymKeyTypes.
@@ -711,6 +747,40 @@ public abstract class GordianFactory {
     }
 
     /**
+     * Check DigestType.
+     * @param pDigestType the digestType
+     * @return true/false
+     */
+    protected boolean validDigestType(final GordianDigestType pDigestType) {
+        /* Access details */
+        switch (pDigestType) {
+            case JH:
+            case GROESTL:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Check MacType.
+     * @param pMacType the macType
+     * @return true/false
+     */
+    protected boolean validMacType(final GordianMacType pMacType) {
+        return true;
+    }
+
+    /**
+     * Check HMacDigestType.
+     * @param pDigestType the digestType
+     * @return true/false
+     */
+    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
+        return validDigestType(pDigestType);
+    }
+
+    /**
      * Check DigestSpec.
      * @param pDigestSpec the digestSpec
      * @return true/false
@@ -741,7 +811,7 @@ public abstract class GordianFactory {
      * @param pDigestSpec the digestSpec
      * @return true/false
      */
-    private boolean validHMacSpec(final GordianDigestSpec pDigestSpec) {
+    protected boolean validHMacSpec(final GordianDigestSpec pDigestSpec) {
         /* Access details */
         final GordianDigestType myType = pDigestSpec.getDigestType();
 
@@ -777,22 +847,64 @@ public abstract class GordianFactory {
             case POLY1305:
                 return supportedPoly1305SymKeySpecs().test(mySymSpec);
             case SKEIN:
-                return supportedDigestSpecs().test(mySpec)
-                       && GordianDigestType.SKEIN.equals(mySpec.getDigestType());
+                return GordianDigestType.SKEIN.equals(mySpec.getDigestType())
+                       && supportedDigestSpecs().test(mySpec);
             case BLAKE:
-                return supportedDigestSpecs().test(mySpec)
-                       && GordianDigestType.BLAKE.equals(mySpec.getDigestType());
+                return GordianDigestType.BLAKE.equals(mySpec.getDigestType())
+                       && supportedDigestSpecs().test(mySpec);
             case KUPYNA:
-                return supportedDigestSpecs().test(mySpec)
-                       && GordianDigestType.KUPYNA.equals(mySpec.getDigestType());
+                return GordianDigestType.KUPYNA.equals(mySpec.getDigestType())
+                       && supportedDigestSpecs().test(mySpec);
             case KALYNA:
-                return validSymKeySpec(mySymSpec)
-                       && GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType());
+                return GordianSymKeyType.KALYNA.equals(mySymSpec.getSymKeyType())
+                       && validSymKeySpec(mySymSpec);
             case VMPC:
                 return true;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine supported Poly1305 algorithms.
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
+        switch (pKeySpec.getSymKeyType()) {
+            case KUZNYECHIK:
+            case RC5:
+                return false;
+            default:
+                return validSymKeySpec(pKeySpec);
+        }
+    }
+
+    /**
+     * Determine supported GMAC algorithms.
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+        switch (pKeySpec.getSymKeyType()) {
+            case KALYNA:
+            case RC5:
+                return false;
+            default:
+                return validSymKeySpec(pKeySpec);
+        }
+    }
+
+    /**
+     * Determine supported CMAC algorithms.
+     * @param pKeyType the keyType
+     * @return true/false
+     */
+    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+        if (GordianSymKeyType.RC5.equals(pKeySpec.getSymKeyType())) {
+            return false;
+        }
+        return validSymKeySpec(pKeySpec);
     }
 
     /**
@@ -814,6 +926,85 @@ public abstract class GordianFactory {
         final GordianSymKeyType myType = pSymKeySpec.getSymKeyType();
         return supportedSymKeyTypes().test(myType)
                && myType.isLengthValid(myLen);
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @return true/false
+     */
+    protected boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+        return validSymKeyTypeForRestriction(pKeyType, isRestricted);
+    }
+
+    /**
+     * Check SymKeyType.
+     * @param pKeyType the symKeyType
+     * @param is the symKeyType restricted?
+     * @return true/false
+     */
+    protected static boolean validSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
+                                                           final boolean pRestricted) {
+        return pKeyType.validForRestriction(pRestricted);
+    }
+
+    /**
+     * Generate keySet symKeyType.
+     * @param pKeyType the symKeyType
+     * @return true/false
+     */
+    protected boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType) {
+        return validKeySetSymKeyTypeForRestriction(pKeyType, isRestricted);
+    }
+
+    /**
+     * Generate keySet symKeyType.
+     * @param pKeyType the symKeyType
+     * @return true/false
+     */
+    protected static boolean validKeySetSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
+                                                                 final boolean pRestricted) {
+        return validSymKeyTypeForRestriction(pKeyType, pRestricted)
+               && pKeyType.getDefaultLength().equals(GordianLength.LEN_128);
+    }
+
+    /**
+     * Obtain maximum cipherSteps.
+     * @param pRestricted are keys restricted
+     * @return the maximum
+     */
+    public static int getMaximumCipherSteps(final boolean pRestricted) {
+        return MAX_CIPHER_STEPS[pRestricted
+                                            ? 1
+                                            : 0];
+    }
+
+    /**
+     * Determine maximum cipherSteps.
+     * @param pRestricted are keys restricted?
+     * @return the maximum
+     */
+    private static int determineMaximumCipherSteps(final boolean pRestricted) {
+        /* Count valid values */
+        int myCount = 0;
+        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
+            if (validKeySetSymKeyTypeForRestriction(myType, pRestricted)) {
+                myCount++;
+            }
+        }
+
+        /* Maximum is 1 less than the count */
+        return myCount - 1;
+    }
+
+    /**
+     * Check StreamKeyType.
+     * @param pKeyType the streamKeyType
+     * @return true/false
+     */
+    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
+        return // !GordianStreamKeyType.SOSEMANUK.equals(pKeyType)
+        pKeyType.validForRestriction(isRestricted);
     }
 
     /**

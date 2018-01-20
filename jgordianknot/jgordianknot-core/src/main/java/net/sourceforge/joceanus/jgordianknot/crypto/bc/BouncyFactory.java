@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.BufferedBlockCipher;
@@ -214,36 +213,6 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 public final class BouncyFactory
         extends GordianFactory {
     /**
-     * Predicate for all digestTypes.
-     */
-    private static final Predicate<GordianDigestType> PREDICATE_DIGESTS;
-
-    /**
-     * Predicate for all supported macTypes.
-     */
-    private static final Predicate<GordianMacType> PREDICATE_MACS;
-
-    /**
-     * Array for Max Cipher Steps.
-     */
-    private static final int[] MAX_CIPHER_STEPS;
-
-    /**
-     * Predicate for all supported streamKeyTypes.
-     */
-    private final Predicate<GordianStreamKeyType> theStreamPredicate;
-
-    /**
-     * Predicate for all supported symKeyTypes.
-     */
-    private final Predicate<GordianSymKeyType> theSymPredicate;
-
-    /**
-     * Predicate for all keySet symKeyTypes.
-     */
-    private final Predicate<GordianSymKeyType> theKeySetSymPredicate;
-
-    /**
      * Cache for KeyGenerators.
      */
     private final BouncyKeyGeneratorCache theGeneratorCache;
@@ -252,20 +221,6 @@ public final class BouncyFactory
      * SP800 Factory.
      */
     private final GordianRandomFactory theSP800Factory;
-
-    /**
-     * Static Constructor.
-     */
-    static {
-        /* Create the Predicates */
-        PREDICATE_DIGESTS = generateDigestPredicate();
-        PREDICATE_MACS = p -> true;
-
-        /* Calculate max cipher Steps */
-        MAX_CIPHER_STEPS = new int[2];
-        MAX_CIPHER_STEPS[0] = determineMaximumCipherSteps(false);
-        MAX_CIPHER_STEPS[1] = determineMaximumCipherSteps(true);
-    }
 
     /**
      * Constructor.
@@ -283,12 +238,6 @@ public final class BouncyFactory
     public BouncyFactory(final GordianParameters pParameters) throws OceanusException {
         /* Initialise underlying class */
         super(pParameters);
-
-        /* Generate the predicates */
-        final boolean isRestricted = pParameters.useRestricted();
-        theSymPredicate = generateSymKeyPredicate(isRestricted);
-        theKeySetSymPredicate = generateKeySetSymKeyPredicate(isRestricted);
-        theStreamPredicate = generateStreamKeyPredicate(isRestricted);
 
         /* Create the keyGenerator cache */
         theGeneratorCache = new BouncyKeyGeneratorCache();
@@ -327,16 +276,6 @@ public final class BouncyFactory
     }
 
     @Override
-    public Predicate<GordianDigestType> supportedDigestTypes() {
-        return PREDICATE_DIGESTS;
-    }
-
-    @Override
-    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
-        return PREDICATE_DIGESTS;
-    }
-
-    @Override
     public BouncyMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Check validity of MacSpec */
         if (!supportedMacSpecs().test(pMacSpec)) {
@@ -346,33 +285,6 @@ public final class BouncyFactory
         /* Create Mac */
         final Mac myBCMac = getBCMac(pMacSpec);
         return new BouncyMac(this, pMacSpec, myBCMac);
-    }
-
-    @Override
-    public Predicate<GordianMacType> supportedMacTypes() {
-        return PREDICATE_MACS;
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
-        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p)
-                    && !GordianSymKeyType.KALYNA.equals(p.getSymKeyType())
-                    && p.getBlockLength() == GordianLength.LEN_128;
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
-        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p);
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
-        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p)
-                    && !GordianSymKeyType.KUZNYECHIK.equals(p.getSymKeyType())
-                    && p.getBlockLength() == GordianLength.LEN_128;
     }
 
     @Override
@@ -441,16 +353,6 @@ public final class BouncyFactory
     }
 
     @Override
-    public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
-        return theSymPredicate;
-    }
-
-    @Override
-    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
-        return theKeySetSymPredicate;
-    }
-
-    @Override
     public BouncyStreamKeyCipher createStreamKeyCipher(final GordianStreamCipherSpec pCipherSpec) throws OceanusException {
         /* Check validity of StreamKey */
         final GordianStreamKeyType myKeyType = pCipherSpec.getKeyType();
@@ -461,11 +363,6 @@ public final class BouncyFactory
         /* Create the cipher */
         final StreamCipher myBCCipher = getBCStreamCipher(myKeyType);
         return new BouncyStreamKeyCipher(this, pCipherSpec, myBCCipher);
-    }
-
-    @Override
-    public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
-        return theStreamPredicate;
     }
 
     @Override
@@ -584,6 +481,10 @@ public final class BouncyFactory
                 return getStreebogDigest(myLen);
             case KUPYNA:
                 return getKupynaDigest(myLen);
+            case GROESTL:
+                return new BouncyGroestlDigest(myLen.getLength());
+            case JH:
+                return new BouncyJHDigest(myLen.getLength());
             case GOST:
                 return new GOST3411Digest();
             case TIGER:
@@ -861,6 +762,8 @@ public final class BouncyFactory
                 return new ISAACEngine();
             case RC4:
                 return new RC4Engine();
+            case SOSEMANUK:
+                return new BouncySosemanukEngine();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
         }
@@ -1186,72 +1089,5 @@ public final class BouncyFactory
             default:
                 throw new GordianDataException(getInvalidText(pKeyPair.getKeySpec().getKeyType()));
         }
-    }
-
-    /**
-     * Generate Digest predicate.
-     * @return the predicate
-     */
-    public static Predicate<GordianDigestType> generateDigestPredicate() {
-        return p -> true;
-    }
-
-    /**
-     * Generate symKey predicate.
-     * @param pRestricted are keys restricted?
-     * @return the predicate
-     */
-    private static Predicate<GordianSymKeyType> generateSymKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted);
-    }
-
-    /**
-     * Generate standard symKey predicate.
-     * @param pRestricted are keys restricted?
-     * @return the predicate
-     */
-    private static Predicate<GordianSymKeyType> generateKeySetSymKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted) && p.getDefaultLength().equals(GordianLength.LEN_128);
-    }
-
-    /**
-     * Generate streamKey predicate.
-     * @param pRestricted are keys restricted?
-     * @return the predicate
-     */
-    private static Predicate<GordianStreamKeyType> generateStreamKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted);
-    }
-
-    /**
-     * Obtain maximum cipherSteps.
-     * @param pRestricted are keys restricted
-     * @return the maximum
-     */
-    public static int getMaximumCipherSteps(final boolean pRestricted) {
-        return MAX_CIPHER_STEPS[pRestricted
-                                            ? 1
-                                            : 0];
-    }
-
-    /**
-     * Determine maximum cipherSteps.
-     * @param pRestricted are keys restricted?
-     * @return the maximum
-     */
-    private static int determineMaximumCipherSteps(final boolean pRestricted) {
-        /* generate the predicate */
-        final Predicate<GordianSymKeyType> myFilter = generateKeySetSymKeyPredicate(pRestricted);
-
-        /* Count valid values */
-        int myCount = 0;
-        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (myFilter.test(myType)) {
-                myCount++;
-            }
-        }
-
-        /* Maximum is 1 less than the count */
-        return myCount - 1;
     }
 }

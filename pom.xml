@@ -80,7 +80,7 @@
     <JSONVersion>20171018</JSONVersion>
     <ApacheMavenVersion>3.5.2</ApacheMavenVersion>
     <MySQLVersion>5.1.45</MySQLVersion>
-    <PostGreSQLVersion>42.1.4</PostGreSQLVersion>
+    <PostGreSQLVersion>42.2.0</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>
     <ApachePOIVersion>3.17</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
@@ -107,7 +107,7 @@
     <JxrPluginVersion>2.5</JxrPluginVersion>
     <JavaDocPluginVersion>3.0.0</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.4.0.905</SonarQubePluginVersion>
-    <CheckStylePluginVersion>2.17</CheckStylePluginVersion>
+    <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.8</PMDPluginVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
   </properties>

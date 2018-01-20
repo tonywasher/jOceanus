@@ -69,7 +69,12 @@ public enum GordianStreamKeyType {
     /**
      * Grain.
      */
-    GRAIN(GordianLength.LEN_96);
+    GRAIN(GordianLength.LEN_96),
+
+    /**
+     * Sosemanuk.
+     */
+    SOSEMANUK(GordianLength.LEN_128);
 
     /**
      * The IV Length.

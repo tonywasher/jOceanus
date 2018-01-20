@@ -30,7 +30,6 @@ import java.security.Provider;
 import java.security.Security;
 import java.security.Signature;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -110,6 +109,11 @@ public final class JcaFactory
     private static final String KALYNA_ALGORITHM = "DSTU7624";
 
     /**
+     * CMAC algorithm name.
+     */
+    private static final String CMAC_ALGORITHM = "CMAC";
+
+    /**
      * Static Constructor.
      */
     static {
@@ -128,41 +132,6 @@ public final class JcaFactory
     private static final Provider BCPQPROV = new BouncyCastlePQCProvider();
 
     /**
-     * Predicate for all supported digest types.
-     */
-    private static final Predicate<GordianDigestType> PREDICATE_DIGESTS;
-
-    /**
-     * Predicate for all supported hMac digest types.
-     */
-    private static final Predicate<GordianDigestType> PREDICATE_HMACDIGESTS;
-
-    /**
-     * Predicate for all supported macTypes.
-     */
-    private static final Predicate<GordianMacType> PREDICATE_MACS;
-
-    /**
-     * Array for Max Cipher Steps.
-     */
-    private static final int[] MAX_CIPHER_STEPS;
-
-    /**
-     * Predicate for all supported streamKeyTypes.
-     */
-    private final Predicate<GordianStreamKeyType> theStreamPredicate;
-
-    /**
-     * Predicate for all supported symKeyTypes.
-     */
-    private final Predicate<GordianSymKeyType> theSymPredicate;
-
-    /**
-     * Predicate for all keySet symKeyTypes.
-     */
-    private final Predicate<GordianSymKeyType> theKeySetSymPredicate;
-
-    /**
      * Cache for KeyGenerators.
      */
     private final JcaKeyGeneratorCache theGeneratorCache;
@@ -179,16 +148,6 @@ public final class JcaFactory
         /* Make sure that the Bouncy Castle Providers are installed */
         Security.addProvider(BCPROV);
         Security.addProvider(BCPQPROV);
-
-        /* Create the Predicates */
-        PREDICATE_DIGESTS = generateDigestPredicate();
-        PREDICATE_HMACDIGESTS = generateHMacDigestPredicate();
-        PREDICATE_MACS = p -> p != GordianMacType.CMAC && p != GordianMacType.KALYNA && p != GordianMacType.BLAKE;
-
-        /* Calculate max cipher Steps */
-        MAX_CIPHER_STEPS = new int[2];
-        MAX_CIPHER_STEPS[0] = determineMaximumCipherSteps(false);
-        MAX_CIPHER_STEPS[1] = determineMaximumCipherSteps(true);
     }
 
     /**
@@ -207,12 +166,6 @@ public final class JcaFactory
     public JcaFactory(final GordianParameters pParameters) throws OceanusException {
         /* Initialise underlying class */
         super(pParameters);
-
-        /* Generate the predicates */
-        final boolean isRestricted = pParameters.useRestricted();
-        theSymPredicate = generateSymKeyPredicate(isRestricted);
-        theKeySetSymPredicate = generateKeySetSymKeyPredicate(isRestricted);
-        theStreamPredicate = generateStreamKeyPredicate(isRestricted);
 
         /* Create the keyGenerator cache */
         theGeneratorCache = new JcaKeyGeneratorCache();
@@ -251,16 +204,6 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianDigestType> supportedDigestTypes() {
-        return PREDICATE_DIGESTS;
-    }
-
-    @Override
-    public Predicate<GordianDigestType> supportedHMacDigestTypes() {
-        return PREDICATE_HMACDIGESTS;
-    }
-
-    @Override
     public JcaMac createMac(final GordianMacSpec pMacSpec) throws OceanusException {
         /* Check validity of MacSpec */
         if (!supportedMacSpecs().test(pMacSpec)) {
@@ -273,30 +216,14 @@ public final class JcaFactory
     }
 
     @Override
-    public Predicate<GordianMacType> supportedMacTypes() {
-        return PREDICATE_MACS;
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedGMacSymKeySpecs() {
-        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p)
-                    && isSupportedGMAC(p.getSymKeyType());
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedCMacSymKeySpecs() {
-        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p)
-                    && isSupportedCMAC(p.getSymKeyType());
-    }
-
-    @Override
-    public Predicate<GordianSymKeySpec> supportedPoly1305SymKeySpecs() {
-        return p -> theKeySetSymPredicate.test(p.getSymKeyType())
-                    && supportedSymKeySpecs().test(p)
-                    && p.getBlockLength() == GordianLength.LEN_128
-                    && isSupportedPoly1305(p.getSymKeyType());
+    protected boolean validMacType(final GordianMacType pMacType) {
+        switch (pMacType) {
+            case BLAKE:
+            case KALYNA:
+                return false;
+            default:
+                return super.validMacType(pMacType);
+        }
     }
 
     @Override
@@ -313,16 +240,6 @@ public final class JcaFactory
             theGeneratorCache.cacheKeyGenerator(myGenerator);
         }
         return myGenerator;
-    }
-
-    @Override
-    public Predicate<GordianSymKeyType> supportedSymKeyTypes() {
-        return theSymPredicate;
-    }
-
-    @Override
-    public Predicate<GordianSymKeyType> supportedKeySetSymKeyTypes() {
-        return theKeySetSymPredicate;
     }
 
     @Override
@@ -386,11 +303,6 @@ public final class JcaFactory
         /* Create the cipher */
         final Cipher myJavaCipher = getJavaCipher(myKeyType);
         return new JcaCipher<>(this, pCipherSpec, myJavaCipher);
-    }
-
-    @Override
-    public Predicate<GordianStreamKeyType> supportedStreamKeyTypes() {
-        return theStreamPredicate;
     }
 
     @Override
@@ -590,10 +502,19 @@ public final class JcaFactory
     private static KeyGenerator getJavaKeyGenerator(final String pAlgorithm) throws OceanusException {
         /* Protect against exceptions */
         try {
+            /* Massage the keyGenerator name */
+            String myAlgorithm = pAlgorithm;
+
             /* Note that DSTU7624 has only a single keyGenerator */
-            final String myAlgorithm = pAlgorithm.startsWith(KALYNA_ALGORITHM)
-                                                                               ? KALYNA_ALGORITHM
-                                                                               : pAlgorithm;
+            if (myAlgorithm.startsWith(KALYNA_ALGORITHM)) {
+                myAlgorithm = KALYNA_ALGORITHM;
+            }
+
+            /* CMAC generators use the symKeyGenerator */
+            if (myAlgorithm.endsWith(CMAC_ALGORITHM)) {
+                myAlgorithm = myAlgorithm.substring(0, myAlgorithm.length() - CMAC_ALGORITHM.length());
+            }
+
             /* Return a KeyGenerator for the algorithm */
             return KeyGenerator.getInstance(myAlgorithm, BCPROV);
 
@@ -722,7 +643,7 @@ public final class JcaFactory
      */
     private static String getCMacAlgorithm(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Return algorithm name */
-        return getSymKeyAlgorithm(pKeySpec) + "CMAC";
+        return getSymKeyAlgorithm(pKeySpec) + CMAC_ALGORITHM;
     }
 
     /**
@@ -779,6 +700,8 @@ public final class JcaFactory
                 return "ThreeFish-" + pKeySpec.getBlockLength().getLength();
             case GOST:
                 return "GOST28147";
+            case SHACAL2:
+                return "Shacal-2";
             case KUZNYECHIK:
                 return "GOST3412-2015";
             case KALYNA:
@@ -803,7 +726,6 @@ public final class JcaFactory
             case CAST5:
             case BLOWFISH:
             case DESEDE:
-            case SHACAL2:
                 return pKeySpec.getSymKeyType().name();
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec));
@@ -1015,126 +937,52 @@ public final class JcaFactory
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Generate Digest predicate.
-     * @return the predicate
-     */
-    public static Predicate<GordianDigestType> generateDigestPredicate() {
-        return p -> true;
+    @Override
+    protected boolean validHMacDigestType(final GordianDigestType pDigestType) {
+        return JcaDigest.isHMacSupported(pDigestType) && super.validDigestType(pDigestType);
     }
 
-    /**
-     * Generate Digest predicate.
-     * @return the predicate
-     */
-    public static Predicate<GordianDigestType> generateHMacDigestPredicate() {
-        return JcaDigest::isHMacSupported;
-    }
-
-    /**
-     * Generate symKey predicate.
-     * @param pRestricted are keys restricted?
-     * @return the predicate
-     */
-    private static Predicate<GordianSymKeyType> generateSymKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted);
-    }
-
-    /**
-     * Generate keySet symKey predicate.
-     * @param pRestricted are keys restricted?
-     * @return the predicate
-     */
-    private static Predicate<GordianSymKeyType> generateKeySetSymKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted) && p.isLengthValid(GordianLength.LEN_128);
-    }
-
-    /**
-     * Generate streamKey predicate.
-     * @param pRestricted are keys restricted?
-     * @return the predicate
-     */
-    private static Predicate<GordianStreamKeyType> generateStreamKeyPredicate(final boolean pRestricted) {
-        return p -> p.validForRestriction(pRestricted) && p != GordianStreamKeyType.ISAAC;
-    }
-
-    /**
-     * Obtain maximum cipherSteps.
-     * @param pRestricted are keys restricted
-     * @return the maximum
-     */
-    public static int getMaximumCipherSteps(final boolean pRestricted) {
-        return MAX_CIPHER_STEPS[pRestricted
-                                            ? 1
-                                            : 0];
-    }
-
-    /**
-     * Determine maximum cipherSteps.
-     * @param pRestricted are keys restricted?
-     * @return the maximum
-     */
-    private static int determineMaximumCipherSteps(final boolean pRestricted) {
-        /* generate the predicate */
-        final Predicate<GordianSymKeyType> myFilter = generateKeySetSymKeyPredicate(pRestricted);
-
-        /* Count valid values */
-        int myCount = 0;
-        for (final GordianSymKeyType myType : GordianSymKeyType.values()) {
-            if (myFilter.test(myType)) {
-                myCount++;
-            }
-        }
-
-        /* Maximum is 1 less than the count */
-        return myCount - 1;
-    }
-
-    /**
-     * Determine supported PolyCMAC algorithms.
-     * @param pKeyType the keyType
-     * @return true/false
-     */
-    private static boolean isSupportedCMAC(final GordianSymKeyType pKeyType) {
+    @Override
+    protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
         switch (pKeyType) {
+            case ISAAC:
+            case SOSEMANUK:
+                return false;
+            default:
+                return super.validStreamKeyType(pKeyType);
+        }
+    }
+
+    @Override
+    protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+        switch (pKeySpec.getSymKeyType()) {
+            case AES:
+            case DESEDE:
+            case BLOWFISH:
+            case SHACAL2:
+            case THREEFISH:
             case SEED:
             case SM4:
-                return true;
+                return super.validGMacSymKeySpec(pKeySpec);
             default:
                 return false;
         }
     }
 
-    /**
-     * Determine supported GMAC algorithms.
-     * @param pKeyType the keyType
-     * @return true/false
-     */
-    private static boolean isSupportedGMAC(final GordianSymKeyType pKeyType) {
-        switch (pKeyType) {
-            case KALYNA:
-            case KUZNYECHIK:
-            case RC5:
-                return false;
-            default:
-                return true;
+    @Override
+    protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
+        if (GordianSymKeyType.KUZNYECHIK.equals(pKeySpec.getSymKeyType())) {
+            return false;
         }
+        return super.validGMacSymKeySpec(pKeySpec);
     }
 
-    /**
-     * Determine supported Poly1305 algorithms.
-     * @param pKeyType the keyType
-     * @return true/false
-     */
-    private static boolean isSupportedPoly1305(final GordianSymKeyType pKeyType) {
-        switch (pKeyType) {
-            case KALYNA:
-            case KUZNYECHIK:
-            case RC5:
-                return false;
-            default:
-                return true;
+    @Override
+    protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
+        if (GordianSymKeyType.KALYNA.equals(pKeySpec.getSymKeyType())) {
+            return false;
         }
+        return super.validPoly1305SymKeySpec(pKeySpec);
     }
 
     @Override

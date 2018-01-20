@@ -143,6 +143,7 @@ public class GordianTestAlgorithms {
             if (myStreamKeyPredicate.test(myType)) {
                 GordianKeyGenerator<GordianStreamKeyType> myStreamGenerator = myFactory.getKeyGenerator(myType);
                 GordianKey<GordianStreamKeyType> myStreamKey = myStreamGenerator.generateKey();
+                profileStreamKey(myFactory, myStreamKey);
                 checkCipher(myFactory, myStreamKey);
                 checkExternalId(myFactory, myType, GordianStreamKeyType.class);
             }
@@ -384,6 +385,30 @@ public class GordianTestAlgorithms {
         byte[] myBytes = new byte[myLen];
         GordianSymCipherSpec mySpec = new GordianSymCipherSpec(myKeyType, GordianCipherMode.ECB, GordianPadding.NONE);
         GordianCipher<GordianSymKeySpec> myCipher = pFactory.createSymKeyCipher(mySpec);
+        long myStart = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            myCipher.initCipher(pKey);
+            myCipher.update(myBytes);
+            myBytes = myCipher.finish();
+        }
+        long myElapsed = System.nanoTime() - myStart;
+        myElapsed /= 100;
+        System.out.println("  " + myKeyType.toString() + ":" + myElapsed);
+    }
+
+    /**
+     * Profile symKey.
+     * @param pFactory the factory
+     * @param pKey the symKey to profile
+     * @throws OceanusException on error
+     */
+    private void profileStreamKey(final GordianFactory pFactory,
+                                  final GordianKey<GordianStreamKeyType> pKey) throws OceanusException {
+        final GordianStreamKeyType myKeyType = pKey.getKeyType();
+        final int myLen = 128;
+        byte[] myBytes = new byte[myLen];
+        GordianStreamCipherSpec mySpec = GordianStreamCipherSpec.stream(myKeyType);
+        GordianCipher<GordianStreamKeyType> myCipher = pFactory.createStreamKeyCipher(mySpec);
         long myStart = System.nanoTime();
         for (int i = 0; i < 100; i++) {
             myCipher.initCipher(pKey);

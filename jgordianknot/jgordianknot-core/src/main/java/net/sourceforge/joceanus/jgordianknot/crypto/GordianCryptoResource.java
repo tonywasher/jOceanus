@@ -124,6 +124,16 @@ public enum GordianCryptoResource implements TethysResourceId {
     DIGEST_MD2("digest.MD2"),
 
     /**
+     * Digest JH.
+     */
+    DIGEST_JH("digest.JH"),
+
+    /**
+     * Digest Groestl.
+     */
+    DIGEST_GROESTL("digest.GROESTL"),
+
+    /**
      * MAC HMAC.
      */
     MAC_HMAC("mac.HMAC"),
@@ -331,7 +341,12 @@ public enum GordianCryptoResource implements TethysResourceId {
     /**
      * StreamKey RC4.
      */
-    STREAMKEY_RC4("streamKey.RC4");
+    STREAMKEY_RC4("streamKey.RC4"),
+
+    /**
+     * StreamKey SOSEMANUK.
+     */
+    STREAMKEY_SOSEMANUK("streamKey.SOSEMANUK");
 
     /**
      * The Factory Map.
@@ -447,6 +462,8 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianDigestType.MD5, DIGEST_MD5);
         myMap.put(GordianDigestType.MD4, DIGEST_MD4);
         myMap.put(GordianDigestType.MD2, DIGEST_MD2);
+        myMap.put(GordianDigestType.JH, DIGEST_JH);
+        myMap.put(GordianDigestType.GROESTL, DIGEST_GROESTL);
         return myMap;
     }
 
@@ -546,6 +563,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianStreamKeyType.ISAAC, STREAMKEY_ISAAC);
         myMap.put(GordianStreamKeyType.GRAIN, STREAMKEY_GRAIN);
         myMap.put(GordianStreamKeyType.RC4, STREAMKEY_RC4);
+        myMap.put(GordianStreamKeyType.SOSEMANUK, STREAMKEY_SOSEMANUK);
         return myMap;
     }
 
