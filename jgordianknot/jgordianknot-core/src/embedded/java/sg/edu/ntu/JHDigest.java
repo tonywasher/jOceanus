@@ -13,7 +13,7 @@
 
    Last Modified: January 16, 2011
 */
-package edu.ecrypt;
+package sg.edu.ntu;
 
 /**
  * JHDigest. Changes to reference implementation are only to change types and to avoid allocating
@@ -23,7 +23,7 @@ public class JHDigest {
     /**
      * The state.
      */
-    private int hashbitlen; /* the message digest size */
+    private final int hashbitlen; /* the message digest size */
     private long databitlen; /* the message size in bits */
     private long datasizeInBuffer; /*
                                     * the size of the message remained in buffer; assumed to be
@@ -36,11 +36,13 @@ public class JHDigest {
                                                   * round constant for one round; 64 4-bit elements
                                                   */
     private byte[] buffer = new byte[64]; /* the message block to be hashed; 64 bytes */
-    private byte[] tem = new byte[256];
     private byte[] roundconstantExpanded = new byte[256]; /*
                                                            * the round constant expanded into 256
                                                            * 1-bit element
                                                            */
+
+    /* ScratchPad */
+    private byte[] tem = new byte[256];
 
     /**
      * The constant for the Round 0 of E8.
@@ -286,7 +288,7 @@ public class JHDigest {
     }
 
     /* hash each 512-bit message block, except the last partial block */
-    public void Update(byte[] data, int pOffset, int pDatabitlen) {
+    public void Update(byte[] data, int pOffset, long pDatabitlen) {
         int index; /* the starting address of the data to be compressed */
 
         databitlen += pDatabitlen;
@@ -300,10 +302,11 @@ public class JHDigest {
 
         /* There is data in the buffer, but the incoming data is insufficient for a full block */
         if ((datasizeInBuffer > 0) && ((datasizeInBuffer + pDatabitlen) < 512)) {
-            if ((pDatabitlen & 7) == 0) {
-                System.arraycopy(data, pOffset, buffer, (int) (datasizeInBuffer >> 3), (int) (64 - (datasizeInBuffer >> 3)));
-            } else
-                System.arraycopy(data, pOffset, buffer, (int) (datasizeInBuffer >> 3), (int) (64 - (datasizeInBuffer >> 3) + 1));
+            int copyDataLen = (int) (pDatabitlen >> 3);
+            if ((pDatabitlen & 7) != 0) {
+                copyDataLen++;
+            }
+            System.arraycopy(data, pOffset, buffer, (int) (datasizeInBuffer >> 3), copyDataLen);
             datasizeInBuffer += pDatabitlen;
             pDatabitlen = 0;
         }

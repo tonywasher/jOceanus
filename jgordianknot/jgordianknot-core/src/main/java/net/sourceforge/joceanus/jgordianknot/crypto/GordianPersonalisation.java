@@ -306,11 +306,6 @@ public class GordianPersonalisation {
         STREAMKEY,
 
         /**
-         * KeySetStreamKey.
-         */
-        KEYSETSTREAMKEY,
-
-        /**
          * Digest.
          */
         DIGEST,

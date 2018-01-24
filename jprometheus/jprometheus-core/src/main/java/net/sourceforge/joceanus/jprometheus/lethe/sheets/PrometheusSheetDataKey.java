@@ -96,7 +96,6 @@ public class PrometheusSheetDataKey
         final DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_KEYSET, loadInteger(COL_KEYSETID));
         myValues.addValue(DataKey.FIELD_HASHPRIME, loadBoolean(COL_HASHPRIME));
-        myValues.addValue(DataKey.FIELD_ISSYMKEY, loadBoolean(COL_ISSYMKEY));
         myValues.addValue(DataKey.FIELD_KEYTYPE, loadInteger(COL_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, loadBytes(COL_KEYDATA));
 
@@ -110,7 +109,6 @@ public class PrometheusSheetDataKey
         super.insertSecureItem(pItem);
         writeInteger(COL_KEYSETID, pItem.getDataKeySetId());
         writeBoolean(COL_HASHPRIME, pItem.isHashPrime());
-        writeBoolean(COL_ISSYMKEY, pItem.isSymKey());
         writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }

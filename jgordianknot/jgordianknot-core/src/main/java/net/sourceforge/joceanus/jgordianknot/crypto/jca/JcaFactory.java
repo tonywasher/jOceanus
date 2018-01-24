@@ -992,8 +992,15 @@ public final class JcaFactory
             return false;
         }
 
-        /* SHAKE is not supported */
-        return !GordianDigestType.SHAKE.equals(pDigestSpec.getDigestType());
+        /* Disable JH, Groestl and SHAKE */
+        switch (pDigestSpec.getDigestType()) {
+            case JH:
+            case GROESTL:
+            case SHAKE:
+                return false;
+            default:
+                return true;
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package edu.ecrypt;
+package info.groestl;
 
 public class GroestlDigest {
     /* Constants */

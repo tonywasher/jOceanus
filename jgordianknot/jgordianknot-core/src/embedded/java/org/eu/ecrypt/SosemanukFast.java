@@ -21,7 +21,7 @@
  * thomas.pornin@cryptolog.com
  * </p>
  */
-package edu.ecrypt;
+package org.eu.ecrypt;
 
 public class SosemanukFast {
 

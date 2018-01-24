@@ -176,12 +176,9 @@ public final class GordianStreamManager {
 
             /* Determine mode and padding */
             GordianPadding myPadding = GordianPadding.NONE;
-            if (!bFirst) {
-                if (bLast) {
-                    myPadding = GordianPadding.ISO7816D4;
-                } else if (myKey.getKeyType().getBlockLength() != GordianLength.LEN_128) {
-                    myPadding = GordianPadding.CTS;
-                }
+            if (!bFirst
+                && (bLast || myKey.getKeyType().getBlockLength() != GordianLength.LEN_128)) {
+                myPadding = GordianPadding.ISO7816D4;
             }
             final GordianSymCipherSpec mySpec = bFirst
                                                        ? GordianSymCipherSpec.sic(myKey.getKeyType())

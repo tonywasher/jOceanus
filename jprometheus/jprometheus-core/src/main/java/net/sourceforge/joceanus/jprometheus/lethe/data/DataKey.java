@@ -28,7 +28,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKnuthObfuscater;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
@@ -75,11 +74,6 @@ public class DataKey
     public static final MetisField FIELD_KEYSET = FIELD_DEFS.declareEqualityValueField(DataKeySet.OBJECT_NAME, MetisDataType.LINK);
 
     /**
-     * isSymKey Field Id.
-     */
-    public static final MetisField FIELD_ISSYMKEY = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_ISSYMKEY.getValue(), MetisDataType.BOOLEAN);
-
-    /**
      * KeyType Field Id.
      */
     public static final MetisField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(PrometheusDataResource.DATAKEY_TYPE.getValue(), MetisDataType.ENUM);
@@ -121,6 +115,7 @@ public class DataKey
      * @param pValues the values constructor
      * @throws OceanusException on error
      */
+    @SuppressWarnings("unchecked")
     private DataKey(final DataKeyList pList,
                     final DataValues<CryptographyDataType> pValues) throws OceanusException {
         /* Initialise the item */
@@ -156,15 +151,6 @@ public class DataKey
         final GordianFactory myFactory = myKeySet.getFactory();
         final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
 
-        /* Store the SymKey Flag */
-        myValue = pValues.getValue(FIELD_ISSYMKEY);
-        if (myValue instanceof Boolean) {
-            /* Store the boolean */
-            setValueIsSymKey((Boolean) myValue);
-        } else {
-            setValueIsSymKey(Boolean.TRUE);
-        }
-
         /* Store the KeyType */
         myValue = pValues.getValue(FIELD_KEYTYPE);
         if (myValue instanceof Integer) {
@@ -172,25 +158,12 @@ public class DataKey
             setValueKeyTypeId((Integer) myValue);
 
             /* Resolve the KeyType */
-            if (isSymKey()) {
-                final GordianSymKeySpec mySpec = myKnuth.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeySpec.class);
-                setValueKeyType(mySpec.getSymKeyType());
-            } else {
-                setValueKeyType(myKnuth.deriveTypeFromExternalId(getKeyTypeId(), GordianStreamKeyType.class));
-            }
+            final GordianSymKeySpec mySpec = myKnuth.deriveTypeFromExternalId(getKeyTypeId(), GordianSymKeySpec.class);
+            setValueSymKeyType(mySpec.getSymKeyType());
+
         } else if (myValue instanceof GordianSymKeyType) {
             /* Store the keyType */
-            setValueKeyType((GordianSymKeyType) myValue);
-
-            /* Look for passed id */
-            myValue = pValues.getValue(FIELD_KEYTYPEID);
-            if (myValue instanceof Integer) {
-                /* Store the id */
-                setValueKeyTypeId((Integer) myValue);
-            }
-        } else if (myValue instanceof GordianStreamKeyType) {
-            /* Store the keyType */
-            setValueKeyType((GordianStreamKeyType) myValue);
+            setValueSymKeyType((GordianSymKeyType) myValue);
 
             /* Look for passed id */
             myValue = pValues.getValue(FIELD_KEYTYPEID);
@@ -210,16 +183,14 @@ public class DataKey
             /* Look for passed key */
             myValue = pValues.getValue(FIELD_KEY);
             if (myValue instanceof GordianKey) {
-                setValueDataKey((GordianKey<?>) myValue);
+                setValueSymKey((GordianKey<GordianSymKeySpec>) myValue);
             } else {
                 /* Create the Key from the wrapped data */
-                Object myType = getKeyType();
-                if (myType instanceof GordianSymKeyType) {
-                    myType = new GordianSymKeySpec((GordianSymKeyType) myType);
-                }
-                final GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(myType);
-                final GordianKey<?> myKey = myGenerator.deriveKey(myBytes, myKeySet);
-                setValueDataKey(myKey);
+                GordianSymKeyType myType = getSymKeyType();
+                GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
+                final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(mySpec);
+                final GordianKey<GordianSymKeySpec> myKey = myGenerator.deriveKey(myBytes, myKeySet);
+                setValueSymKey(myKey);
             }
 
             /* Register the DataKey */
@@ -256,62 +227,12 @@ public class DataKey
             /* Store the Details */
             setValueDataKeySet(pKeySet);
             setValueKeyTypeId(myKnuth.deriveExternalIdFromType(myKeySpec));
-            setValueKeyType(pKeyType);
-            setValueIsSymKey(Boolean.TRUE);
+            setValueSymKeyType(pKeyType);
 
             /* Create the new key */
             final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(myKeySpec);
             final GordianKey<GordianSymKeySpec> myKey = myGenerator.generateKey();
-            setValueDataKey(myKey);
-
-            /* Store its secured keyDef */
-            setValueSecuredKeyDef(myGenerator.secureKey(myKey, myKeySet));
-
-            /* Register the DataKey */
-            pKeySet.registerDataKey(this);
-
-            /* Catch Exceptions */
-        } catch (OceanusException e) {
-            /* Pass on exception */
-            throw new PrometheusDataException(this, ERROR_CREATEITEM, e);
-        }
-    }
-
-    /**
-     * Constructor for a new streamDataKey in a new DataKeySet.
-     * @param pList the list to add to
-     * @param pKeySet the KeySet to which this key belongs
-     * @param pKeyType the Key type of the new key
-     * @throws OceanusException on error
-     */
-    private DataKey(final DataKeyList pList,
-                    final DataKeySet pKeySet,
-                    final GordianStreamKeyType pKeyType) throws OceanusException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Protect against exceptions */
-        try {
-            /* Create the new key */
-            final Boolean isHashPrime = pKeySet.isHashPrime();
-            setValueHashPrime(isHashPrime);
-
-            /* Create the new key */
-            final GordianKeySetHash myHash = pKeySet.getKeySetHash(isHashPrime);
-            final GordianKeySet myKeySet = myHash.getKeySet();
-            final GordianFactory myFactory = myKeySet.getFactory();
-            final GordianKnuthObfuscater myKnuth = myFactory.getObfuscater();
-
-            /* Store the Details */
-            setValueDataKeySet(pKeySet);
-            setValueKeyTypeId(myKnuth.deriveExternalIdFromType(pKeyType));
-            setValueKeyType(pKeyType);
-            setValueIsSymKey(Boolean.FALSE);
-
-            /* Create the new key */
-            final GordianKeyGenerator<GordianStreamKeyType> myGenerator = myFactory.getKeyGenerator(pKeyType);
-            final GordianKey<GordianStreamKeyType> myKey = myGenerator.generateKey();
-            setValueDataKey(myKey);
+            setValueSymKey(myKey);
 
             /* Store its secured keyDef */
             setValueSecuredKeyDef(myGenerator.secureKey(myKey, myKeySet));
@@ -351,35 +272,11 @@ public class DataKey
     }
 
     /**
-     * Is this a symKey?
-     * @return true/false
-     */
-    public Boolean isSymKey() {
-        return isSymKey(getValueSet());
-    }
-
-    /**
-     * Get the keyType.
-     * @return the key type
-     */
-    public Object getKeyType() {
-        return getKeyType(getValueSet());
-    }
-
-    /**
      * Get the SymKey Type.
      * @return the key type
      */
     public GordianSymKeyType getSymKeyType() {
         return getSymKeyType(getValueSet());
-    }
-
-    /**
-     * Get the StreamKey Type.
-     * @return the key type
-     */
-    public GordianStreamKeyType getStreamKeyType() {
-        return getStreamKeyType(getValueSet());
     }
 
     /**
@@ -407,27 +304,11 @@ public class DataKey
     }
 
     /**
-     * Get the DataKey.
-     * @return the dataKey
-     */
-    protected GordianKey<?> getDataKey() {
-        return getDataKey(getValueSet());
-    }
-
-    /**
      * Get the SymKey.
      * @return the symKey
      */
     protected GordianKey<GordianSymKeySpec> getSymKey() {
         return getSymKey(getValueSet());
-    }
-
-    /**
-     * Get the StreamKey.
-     * @return the streamKey
-     */
-    protected GordianKey<GordianStreamKeyType> getStreamKey() {
-        return getStreamKey(getValueSet());
     }
 
     /**
@@ -440,43 +321,12 @@ public class DataKey
     }
 
     /**
-     * Is this a symKey rather than a streamKey?
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isSymKey(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ISSYMKEY, Boolean.class);
-    }
-
-    /**
-     * Get the keyType.
-     * @param pValueSet the valueSet
-     * @return the Key type
-     */
-    public static Object getKeyType(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEYTYPE);
-    }
-
-    /**
      * Get the symKey type.
      * @param pValueSet the valueSet
      * @return the Key type
      */
     public static GordianSymKeyType getSymKeyType(final MetisValueSet pValueSet) {
-        return isSymKey(pValueSet)
-                                   ? pValueSet.getValue(FIELD_KEYTYPE, GordianSymKeyType.class)
-                                   : null;
-    }
-
-    /**
-     * Get the streamKey type.
-     * @param pValueSet the valueSet
-     * @return the Key type
-     */
-    public static GordianStreamKeyType getStreamKeyType(final MetisValueSet pValueSet) {
-        return isSymKey(pValueSet)
-                                   ? null
-                                   : pValueSet.getValue(FIELD_KEYTYPE, GordianStreamKeyType.class);
+        return pValueSet.getValue(FIELD_KEYTYPE, GordianSymKeyType.class);
     }
 
     /**
@@ -507,36 +357,13 @@ public class DataKey
     }
 
     /**
-     * Get the DataKey.
-     * @param pValueSet the valueSet
-     * @return the dataKey
-     */
-    protected static GordianKey<?> getDataKey(final MetisValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_KEY, GordianKey.class);
-    }
-
-    /**
      * Get the SymKey.
      * @param pValueSet the valueSet
      * @return the symKey
      */
     @SuppressWarnings("unchecked")
     protected static GordianKey<GordianSymKeySpec> getSymKey(final MetisValueSet pValueSet) {
-        return isSymKey(pValueSet)
-                                   ? (GordianKey<GordianSymKeySpec>) getDataKey(pValueSet)
-                                   : null;
-    }
-
-    /**
-     * Get the StreamKey.
-     * @param pValueSet the valueSet
-     * @return the streamKey
-     */
-    @SuppressWarnings("unchecked")
-    protected static GordianKey<GordianStreamKeyType> getStreamKey(final MetisValueSet pValueSet) {
-        return isSymKey(pValueSet)
-                                   ? null
-                                   : (GordianKey<GordianStreamKeyType>) getDataKey(pValueSet);
+        return (GordianKey<GordianSymKeySpec>) pValueSet.getValue(FIELD_KEY, GordianKey.class);
     }
 
     /**
@@ -556,18 +383,10 @@ public class DataKey
     }
 
     /**
-     * Set the SymKey indication.
-     * @param pValue is this a symKey?
-     */
-    private void setValueIsSymKey(final Boolean pValue) {
-        getValueSet().setValue(FIELD_ISSYMKEY, pValue);
-    }
-
-    /**
      * Set the Key Type.
      * @param pValue the KeyType
      */
-    private void setValueKeyType(final Object pValue) {
+    private void setValueSymKeyType(final GordianSymKeyType pValue) {
         getValueSet().setValue(FIELD_KEYTYPE, pValue);
     }
 
@@ -599,7 +418,7 @@ public class DataKey
      * Set the DataKey.
      * @param pValue the dataKey
      */
-    private void setValueDataKey(final GordianKey<?> pValue) {
+    private void setValueSymKey(final GordianKey<GordianSymKeySpec> pValue) {
         getValueSet().setValue(FIELD_KEY, pValue);
     }
 
@@ -656,12 +475,10 @@ public class DataKey
             final GordianKeySet myKeySet = pHash.getKeySet();
             setValueHashPrime(pPrimeHash);
             final GordianFactory myFactory = myKeySet.getFactory();
-            Object myType = getKeyType();
-            if (myType instanceof GordianSymKeyType) {
-                myType = new GordianSymKeySpec((GordianSymKeyType) myType);
-            }
-            final GordianKeyGenerator<?> myGenerator = myFactory.getKeyGenerator(myType);
-            setValueSecuredKeyDef(myGenerator.secureKey(getDataKey(), myKeySet));
+            GordianSymKeyType myType = getSymKeyType();
+            GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
+            final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(mySpec);
+            setValueSecuredKeyDef(myGenerator.secureKey(getSymKey(), myKeySet));
 
             /* Check for changes */
             if (checkForHistory()) {
@@ -801,23 +618,6 @@ public class DataKey
         }
 
         /**
-         * Add a new streamDataKey for the passed KeySet.
-         * @param pKeySet the dataKeySet
-         * @param pKeyType the KeyType
-         * @return the new DataKey
-         * @throws OceanusException on error
-         */
-        public DataKey createNewKey(final DataKeySet pKeySet,
-                                    final GordianStreamKeyType pKeyType) throws OceanusException {
-            /* Create the key */
-            final DataKey myKey = new DataKey(this, pKeySet, pKeyType);
-
-            /* Add to the list */
-            add(myKey);
-            return myKey;
-        }
-
-        /**
          * Add a clone of the passed DataKey for the passed KeySet.
          * @param pKeySet the KeySet
          * @param pDataKey the DataKey
@@ -831,11 +631,10 @@ public class DataKey
             myValues.addValue(DataKey.FIELD_ID, pDataKey.getId());
             myValues.addValue(DataKey.FIELD_KEYSET, pKeySet);
             myValues.addValue(DataKey.FIELD_HASHPRIME, pDataKey.isHashPrime());
-            myValues.addValue(DataKey.FIELD_ISSYMKEY, pDataKey.isSymKey());
-            myValues.addValue(DataKey.FIELD_KEYTYPE, pDataKey.getKeyType());
+            myValues.addValue(DataKey.FIELD_KEYTYPE, pDataKey.getSymKeyType());
             myValues.addValue(DataKey.FIELD_KEYTYPEID, pDataKey.getKeyTypeId());
             myValues.addValue(DataKey.FIELD_KEYDEF, pDataKey.getSecuredKeyDef());
-            myValues.addValue(DataKey.FIELD_KEY, pDataKey.getDataKey());
+            myValues.addValue(DataKey.FIELD_KEY, pDataKey.getSymKey());
 
             /* Clone the dataKey */
             return addValuesItem(myValues);

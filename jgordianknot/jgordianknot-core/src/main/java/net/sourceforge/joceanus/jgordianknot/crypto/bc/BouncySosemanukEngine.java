@@ -28,8 +28,7 @@ import org.bouncycastle.crypto.OutputLengthException;
 import org.bouncycastle.crypto.StreamCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
-
-import edu.ecrypt.SosemanukFast;
+import org.eu.ecrypt.SosemanukFast;
 
 /**
  * StreamCipher implementation based on the SosemanukFast java implementation.

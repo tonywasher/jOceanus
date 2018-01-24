@@ -182,11 +182,6 @@ public final class GordianKeySetRecipe {
         private final byte[] theRecipe;
 
         /**
-         * The StreamKey.
-         */
-        private final GordianStreamKeyType[] theStreamKeyType;
-
-        /**
          * The SymKeySet.
          */
         private final GordianSymKeyType[] theSymKeyTypes;
@@ -219,15 +214,13 @@ public final class GordianKeySetRecipe {
             theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
-            theStreamKeyType = new GordianStreamKeyType[1];
             theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
 
             /* Generate recipe and derive parameters */
             int mySeed = myRandom.nextInt();
             theRecipe = TethysDataConverter.integerToByteArray(mySeed);
             mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
-            myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
+            myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
         }
 
         /**
@@ -251,14 +244,12 @@ public final class GordianKeySetRecipe {
             theInitVector = myPersonal.adjustIV(theSalt);
 
             /* Allocate the arrays */
-            theStreamKeyType = new GordianStreamKeyType[1];
             theSymKeyTypes = new GordianSymKeyType[pFactory.getNumCipherSteps()];
 
             /* derive parameters */
             int mySeed = TethysDataConverter.byteArrayToInteger(theRecipe);
             mySeed = myPersonal.convertRecipe(mySeed);
-            mySeed = myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
-            myManager.deriveStreamKeyTypesFromSeed(mySeed, theStreamKeyType);
+            myManager.deriveKeySetSymKeyTypesFromSeed(mySeed, theSymKeyTypes);
         }
 
         /**
@@ -267,14 +258,6 @@ public final class GordianKeySetRecipe {
          */
         byte[] getSalt() {
             return theSalt;
-        }
-
-        /**
-         * Obtain the streamKey Type.
-         * @return the streamKeyType
-         */
-        GordianStreamKeyType getStreamKeyType() {
-            return theStreamKeyType[0];
         }
 
         /**

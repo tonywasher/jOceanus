@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.security.spec.PKCS8EncodedKeySpec;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -54,11 +53,6 @@ public final class GordianKeySet {
     private final Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> theSymKeyMap;
 
     /**
-     * Map of KeyType to streamKey.
-     */
-    private final Map<GordianStreamKeyType, GordianKey<GordianStreamKeyType>> theStreamKeyMap;
-
-    /**
      * The underlying Cipher.
      */
     private final GordianMultiCipher theCipher;
@@ -73,7 +67,6 @@ public final class GordianKeySet {
 
         /* Create maps */
         theSymKeyMap = new HashMap<>();
-        theStreamKeyMap = new EnumMap<>(GordianStreamKeyType.class);
 
         /* Create the cipher */
         theCipher = new GordianMultiCipher(this);
@@ -93,14 +86,6 @@ public final class GordianKeySet {
      */
     Map<GordianSymKeySpec, GordianKey<GordianSymKeySpec>> getSymKeyMap() {
         return theSymKeyMap;
-    }
-
-    /**
-     * Obtain the streamKeySet.
-     * @return the keySet
-     */
-    Map<GordianStreamKeyType, GordianKey<GordianStreamKeyType>> getStreamKeyMap() {
-        return theStreamKeyMap;
     }
 
     /**
@@ -127,7 +112,7 @@ public final class GordianKeySet {
      * @return the keyWrap expansion
      */
     public int getKeyWrapExpansion() {
-        return getKeyWrapExpansion(theFactory.getNumCipherSteps());
+        return getKeyWrapExpansion(theFactory.getNumCipherSteps() - 1);
     }
 
     /**
@@ -263,15 +248,6 @@ public final class GordianKeySet {
     }
 
     /**
-     * Declare streamKey.
-     * @param pKey the key
-     * @throws OceanusException on error
-     */
-    public void declareStreamKey(final GordianKey<GordianStreamKeyType> pKey) throws OceanusException {
-        declareKey(pKey, theFactory.supportedKeySetStreamKeyTypes(), theStreamKeyMap);
-    }
-
-    /**
      * Declare Key.
      * @param <T> the keyType
      * @param pKey the key
@@ -323,16 +299,6 @@ public final class GordianKeySet {
                 theSymKeyMap.put(mySpec, generateKey(mySpec, pSecret, pInitVector));
             }
         }
-
-        /* Loop through the streamKeys values */
-        final Predicate<GordianStreamKeyType> myPredicate = theFactory.supportedKeySetStreamKeyTypes();
-        for (final GordianStreamKeyType myType : GordianStreamKeyType.values()) {
-            /* If this is supported for a keySet */
-            if (myPredicate.test(myType)) {
-                /* Generate the key and add to map */
-                theStreamKeyMap.put(myType, generateKey(myType, pSecret, pInitVector));
-            }
-        }
     }
 
     /**
@@ -372,14 +338,12 @@ public final class GordianKeySet {
 
         /* Check differences */
         return theFactory.equals(myThat.getFactory())
-               && theSymKeyMap.equals(myThat.getSymKeyMap())
-               && theStreamKeyMap.equals(myThat.getStreamKeyMap());
+               && theSymKeyMap.equals(myThat.getSymKeyMap());
     }
 
     @Override
     public int hashCode() {
         return GordianFactory.HASH_PRIME * theFactory.hashCode()
-               + theSymKeyMap.hashCode()
-               + theStreamKeyMap.hashCode();
+               + theSymKeyMap.hashCode();
     }
 }

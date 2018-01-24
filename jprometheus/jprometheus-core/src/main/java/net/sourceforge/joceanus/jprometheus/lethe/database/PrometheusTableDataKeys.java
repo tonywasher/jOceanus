@@ -50,7 +50,6 @@ public class PrometheusTableDataKeys
         /* Define the columns */
         myTableDef.addReferenceColumn(DataKey.FIELD_KEYSET, PrometheusTableDataKeySet.TABLE_NAME);
         myTableDef.addBooleanColumn(DataKey.FIELD_HASHPRIME);
-        myTableDef.addBooleanColumn(DataKey.FIELD_ISSYMKEY);
         myTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
         myTableDef.addBinaryColumn(DataKey.FIELD_KEYDEF, DataKey.KEYLEN);
     }
@@ -69,7 +68,6 @@ public class PrometheusTableDataKeys
         final DataValues<CryptographyDataType> myValues = getRowValues(DataKey.OBJECT_NAME);
         myValues.addValue(DataKey.FIELD_KEYSET, myTableDef.getIntegerValue(DataKey.FIELD_KEYSET));
         myValues.addValue(DataKey.FIELD_HASHPRIME, myTableDef.getBooleanValue(DataKey.FIELD_HASHPRIME));
-        myValues.addValue(DataKey.FIELD_ISSYMKEY, myTableDef.getBooleanValue(DataKey.FIELD_ISSYMKEY));
         myValues.addValue(DataKey.FIELD_KEYTYPE, myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE));
         myValues.addValue(DataKey.FIELD_KEYDEF, myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF));
 
@@ -86,8 +84,6 @@ public class PrometheusTableDataKeys
             myTableDef.setIntegerValue(iField, pItem.getDataKeySetId());
         } else if (DataKey.FIELD_HASHPRIME.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isHashPrime());
-        } else if (DataKey.FIELD_ISSYMKEY.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.isSymKey());
         } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getKeyTypeId());
         } else if (DataKey.FIELD_KEYDEF.equals(iField)) {

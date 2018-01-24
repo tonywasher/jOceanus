@@ -24,7 +24,7 @@ package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 
-import edu.ecrypt.GroestlDigest;
+import info.groestl.GroestlFastDigest;
 
 /**
  * Java implementation of JH Digest.
@@ -34,14 +34,14 @@ import edu.ecrypt.GroestlDigest;
 public class BouncyGroestlDigest
         implements ExtendedDigest {
     /**
-     * The underlying ByteLength????.
+     * The underlying StateLength.
      */
-    private static final int BYTE_LENGTH = 256;
+    private static final int STATE_LENGTH = 1024;
 
     /**
      * The underlying digest.
      */
-    private final GroestlDigest theDigest;
+    private final GroestlFastDigest theDigest;
 
     /**
      * The digest length.
@@ -53,14 +53,13 @@ public class BouncyGroestlDigest
      * @param pHashBitLen the hash bit length
      */
     public BouncyGroestlDigest(final int pHashBitLen) {
-        theDigest = new GroestlDigest(pHashBitLen);
+        theDigest = new GroestlFastDigest(pHashBitLen);
         theDigestLen = pHashBitLen / Byte.SIZE;
     }
 
     @Override
     public int doFinal(final byte[] pHash, final int pOffset) {
         theDigest.Final(pHash, pOffset);
-        theDigest.Init();
         return getDigestSize();
     }
 
@@ -76,7 +75,7 @@ public class BouncyGroestlDigest
 
     @Override
     public void reset() {
-        theDigest.Init();
+        theDigest.reset();
     }
 
     @Override
@@ -88,11 +87,11 @@ public class BouncyGroestlDigest
 
     @Override
     public void update(final byte[] pData, final int pOffset, final int pLength) {
-        theDigest.Update(pData, pOffset, pLength * Byte.SIZE);
+        theDigest.Update(pData, pOffset, ((long) pLength) * Byte.SIZE);
     }
 
     @Override
     public int getByteLength() {
-        return BYTE_LENGTH;
+        return STATE_LENGTH;
     }
 }

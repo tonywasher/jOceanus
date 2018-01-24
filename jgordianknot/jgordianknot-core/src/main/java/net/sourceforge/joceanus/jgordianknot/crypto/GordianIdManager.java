@@ -73,11 +73,6 @@ public class GordianIdManager {
     private final GordianStreamKeyType[] theStreamKeys;
 
     /**
-     * The list of keySet Stream Keys.
-     */
-    private final GordianStreamKeyType[] theKeySetStreamKeys;
-
-    /**
      * The list of Digests.
      */
     private final GordianDigestType[] theDigests;
@@ -117,7 +112,6 @@ public class GordianIdManager {
         theSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.SYMKEY, pFactory.supportedSymKeyTypes());
         theKeySetSymKeys = shuffleTypes(GordianSymKeyType.values(), GordianPersonalId.KEYSETSYMKEY, pFactory.supportedKeySetSymKeyTypes());
         theStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.STREAMKEY, pFactory.supportedStreamKeyTypes());
-        theKeySetStreamKeys = shuffleTypes(GordianStreamKeyType.values(), GordianPersonalId.KEYSETSTREAMKEY, pFactory.supportedKeySetStreamKeyTypes());
         theDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.DIGEST, pFactory.supportedDigestTypes());
         theExternalDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.XTERNDIGEST, pFactory.supportedExternalDigestTypes());
         theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.KEYSETDIGEST, pFactory.supportedKeySetDigestTypes());
@@ -251,17 +245,6 @@ public class GordianIdManager {
 
         /* Return the single StreamKeyType */
         return myStreamKey[0];
-    }
-
-    /**
-     * Derive set of standard StreamKeyTypes from seed.
-     * @param pSeed the seed
-     * @param pKeyTypes the array of streamKeyTypes to be filled in
-     * @return the remaining seed
-     */
-    protected int deriveStreamKeyTypesFromSeed(final int pSeed,
-                                               final GordianStreamKeyType[] pKeyTypes) {
-        return getSeededTypes(theKeySetStreamKeys, pKeyTypes, pSeed);
     }
 
     /**

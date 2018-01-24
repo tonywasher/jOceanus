@@ -600,14 +600,6 @@ public abstract class GordianFactory {
     }
 
     /**
-     * Obtain predicate for keySet SymKeyTypes.
-     * @return the predicate
-     */
-    public Predicate<GordianStreamKeyType> supportedKeySetStreamKeyTypes() {
-        return p -> supportedStreamKeyTypes().test(p) && p.getIVLength() > 0;
-    }
-
-    /**
      * create GordianWrapCipher.
      * @param pKeySpec the KeySpec
      * @return the new Cipher
@@ -752,14 +744,7 @@ public abstract class GordianFactory {
      * @return true/false
      */
     protected boolean validDigestType(final GordianDigestType pDigestType) {
-        /* Access details */
-        switch (pDigestType) {
-            case JH:
-            case GROESTL:
-                return false;
-            default:
-                return true;
-        }
+        return true;
     }
 
     /**
@@ -867,7 +852,7 @@ public abstract class GordianFactory {
 
     /**
      * Determine supported Poly1305 algorithms.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return true/false
      */
     protected boolean validPoly1305SymKeySpec(final GordianSymKeySpec pKeySpec) {
@@ -882,7 +867,7 @@ public abstract class GordianFactory {
 
     /**
      * Determine supported GMAC algorithms.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return true/false
      */
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
@@ -897,7 +882,7 @@ public abstract class GordianFactory {
 
     /**
      * Determine supported CMAC algorithms.
-     * @param pKeyType the keyType
+     * @param pKeySpec the keySpec
      * @return true/false
      */
     protected boolean validCMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
@@ -940,7 +925,7 @@ public abstract class GordianFactory {
     /**
      * Check SymKeyType.
      * @param pKeyType the symKeyType
-     * @param is the symKeyType restricted?
+     * @param pRestricted is the symKeyType restricted?
      * @return true/false
      */
     protected static boolean validSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,
@@ -960,6 +945,7 @@ public abstract class GordianFactory {
     /**
      * Generate keySet symKeyType.
      * @param pKeyType the symKeyType
+     * @param pRestricted is the symKeyType restricted?
      * @return true/false
      */
     protected static boolean validKeySetSymKeyTypeForRestriction(final GordianSymKeyType pKeyType,

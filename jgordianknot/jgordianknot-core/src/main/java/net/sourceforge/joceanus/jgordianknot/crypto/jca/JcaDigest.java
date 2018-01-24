@@ -333,6 +333,8 @@ public final class JcaDigest
             case SM3:
             case BLAKE:
             case KUPYNA:
+            case JH:
+            case GROESTL:
             case SHAKE:
                 return false;
             default:

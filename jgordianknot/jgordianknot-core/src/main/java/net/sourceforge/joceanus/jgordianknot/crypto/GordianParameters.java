@@ -41,12 +41,12 @@ public class GordianParameters {
     /**
      * Minimum Cipher Steps.
      */
-    public static final Integer MINIMUM_CIPHER_STEPS = 2;
+    public static final Integer MINIMUM_CIPHER_STEPS = 3;
 
     /**
      * Default Cipher Steps.
      */
-    public static final Integer DEFAULT_CIPHER_STEPS = 3;
+    public static final Integer DEFAULT_CIPHER_STEPS = 4;
 
     /**
      * Minimum Hash iterations.
