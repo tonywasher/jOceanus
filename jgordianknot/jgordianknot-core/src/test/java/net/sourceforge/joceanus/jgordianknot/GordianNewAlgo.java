@@ -24,7 +24,7 @@ public class GordianNewAlgo {
      */
     public static void main(final String[] args) {
         /* Test JH Digest */
-        // List<Results> myJH = testDigest(GordianDigestType.JH);
+        List<Results> myJH = testDigest(GordianDigestType.JH);
         List<Results> myGroestl = testDigest(GordianDigestType.GROESTL);
 
         System.out.println("Complete");

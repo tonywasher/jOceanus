@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.util.Memoable;
 
 import sg.edu.ntu.JHFastDigest;
 
@@ -32,7 +33,7 @@ import sg.edu.ntu.JHFastDigest;
  * This is a direct port from the JH Reference C implementation, with minimal modifications.
  */
 public class BouncyJHDigest
-        implements ExtendedDigest {
+        implements ExtendedDigest, Memoable {
     /**
      * The underlying StateLength????.
      */
@@ -55,6 +56,16 @@ public class BouncyJHDigest
     public BouncyJHDigest(final int pHashBitLen) {
         theDigest = new JHFastDigest(pHashBitLen);
         theDigestLen = pHashBitLen / Byte.SIZE;
+    }
+
+    /**
+     * Constructor.
+     * @param pDigest the digest to copy
+     */
+    public BouncyJHDigest(final BouncyJHDigest pDigest) {
+        theDigestLen = pDigest.theDigestLen;
+        theDigest = new JHFastDigest(theDigestLen * Byte.SIZE);
+        theDigest.copyIn(pDigest.theDigest);
     }
 
     @Override
@@ -93,5 +104,16 @@ public class BouncyJHDigest
     @Override
     public int getByteLength() {
         return STATE_LENGTH;
+    }
+
+    @Override
+    public Memoable copy() {
+        return new BouncyJHDigest(this);
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+        final BouncyJHDigest d = (BouncyJHDigest) pState;
+        theDigest.copyIn(d.theDigest);
     }
 }

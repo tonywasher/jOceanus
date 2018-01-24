@@ -429,6 +429,24 @@ public class JHFastDigest {
         }
     }
 
+    /* CopyIn a state */
+    public void copyIn(JHFastDigest pState) {
+        /* Ensure that we are copying similar digest */
+        if (this.hashbitlen != pState.hashbitlen)
+            throw new IllegalArgumentException();
+
+        /* Copy state */
+        initialised = pState.initialised;
+        databitlen = pState.databitlen;
+        datasizeInBuffer = pState.datasizeInBuffer;
+        System.arraycopy(pState.buffer, 0, buffer, 0, buffer.length);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 2; j++) {
+                x[i][j] = pState.x[i][j];
+            }
+        }
+    }
+
     /**
      * Reset the digest.
      */

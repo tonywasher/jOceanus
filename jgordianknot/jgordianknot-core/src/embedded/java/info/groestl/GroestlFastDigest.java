@@ -373,14 +373,14 @@ public class GroestlFastDigest {
 
     /* compute a round in P (short variants) */
     private static void RND512P(long[] x, long[] y, long r) {
-        x[0] ^= U64BIG(0x0000000000000000l) ^ r;
-        x[1] ^= U64BIG(0x1000000000000000l) ^ r;
-        x[2] ^= U64BIG(0x2000000000000000l) ^ r;
-        x[3] ^= U64BIG(0x3000000000000000l) ^ r;
-        x[4] ^= U64BIG(0x4000000000000000l) ^ r;
-        x[5] ^= U64BIG(0x5000000000000000l) ^ r;
-        x[6] ^= U64BIG(0x6000000000000000l) ^ r;
-        x[7] ^= U64BIG(0x7000000000000000l) ^ r;
+        x[0] ^= 0x0000000000000000l ^ r;
+        x[1] ^= 0x0000000000000010l ^ r;
+        x[2] ^= 0x0000000000000020l ^ r;
+        x[3] ^= 0x0000000000000030l ^ r;
+        x[4] ^= 0x0000000000000040l ^ r;
+        x[5] ^= 0x0000000000000050l ^ r;
+        x[6] ^= 0x0000000000000060l ^ r;
+        x[7] ^= 0x0000000000000070l ^ r;
         y[0] = COLUMN(x, 0, 1, 2, 3, 4, 5, 6, 7);
         y[1] = COLUMN(x, 1, 2, 3, 4, 5, 6, 7, 0);
         y[2] = COLUMN(x, 2, 3, 4, 5, 6, 7, 0, 1);
@@ -393,14 +393,14 @@ public class GroestlFastDigest {
 
     /* compute a round in Q (short variants) */
     private static void RND512Q(long[] x, long[] y, long r) {
-        x[0] ^= U64BIG(0xffffffffffffffffl) ^ r;
-        x[1] ^= U64BIG(0xffffffffffffffefl) ^ r;
-        x[2] ^= U64BIG(0xffffffffffffffdfl) ^ r;
-        x[3] ^= U64BIG(0xffffffffffffffcfl) ^ r;
-        x[4] ^= U64BIG(0xffffffffffffffbfl) ^ r;
-        x[5] ^= U64BIG(0xffffffffffffffafl) ^ r;
-        x[6] ^= U64BIG(0xffffffffffffff9fl) ^ r;
-        x[7] ^= U64BIG(0xffffffffffffff8fl) ^ r;
+        x[0] ^= 0xffffffffffffffffl ^ r;
+        x[1] ^= 0xefffffffffffffffl ^ r;
+        x[2] ^= 0xdfffffffffffffffl ^ r;
+        x[3] ^= 0xcfffffffffffffffl ^ r;
+        x[4] ^= 0xbfffffffffffffffl ^ r;
+        x[5] ^= 0xafffffffffffffffl ^ r;
+        x[6] ^= 0x9fffffffffffffffl ^ r;
+        x[7] ^= 0x8fffffffffffffffl ^ r;
         y[0] = COLUMN(x, 1, 3, 5, 7, 0, 2, 4, 6);
         y[1] = COLUMN(x, 2, 4, 6, 0, 1, 3, 5, 7);
         y[2] = COLUMN(x, 3, 5, 7, 1, 2, 4, 6, 0);
@@ -413,22 +413,22 @@ public class GroestlFastDigest {
 
     /* compute a round in P (long variants) */
     private static void RND1024P(long[] x, long[] y, long r) {
-        x[0] ^= U64BIG(0x0000000000000000l) ^ r;
-        x[1] ^= U64BIG(0x1000000000000000l) ^ r;
-        x[2] ^= U64BIG(0x2000000000000000l) ^ r;
-        x[3] ^= U64BIG(0x3000000000000000l) ^ r;
-        x[4] ^= U64BIG(0x4000000000000000l) ^ r;
-        x[5] ^= U64BIG(0x5000000000000000l) ^ r;
-        x[6] ^= U64BIG(0x6000000000000000l) ^ r;
-        x[7] ^= U64BIG(0x7000000000000000l) ^ r;
-        x[8] ^= U64BIG(0x8000000000000000l) ^ r;
-        x[9] ^= U64BIG(0x9000000000000000l) ^ r;
-        x[10] ^= U64BIG(0xa000000000000000l) ^ r;
-        x[11] ^= U64BIG(0xb000000000000000l) ^ r;
-        x[12] ^= U64BIG(0xc000000000000000l) ^ r;
-        x[13] ^= U64BIG(0xd000000000000000l) ^ r;
-        x[14] ^= U64BIG(0xe000000000000000l) ^ r;
-        x[15] ^= U64BIG(0xf000000000000000l) ^ r;
+        x[0] ^= 0x0000000000000000l ^ r;
+        x[1] ^= 0x0000000000000010l ^ r;
+        x[2] ^= 0x0000000000000020l ^ r;
+        x[3] ^= 0x0000000000000030l ^ r;
+        x[4] ^= 0x0000000000000040l ^ r;
+        x[5] ^= 0x0000000000000050l ^ r;
+        x[6] ^= 0x0000000000000060l ^ r;
+        x[7] ^= 0x0000000000000070l ^ r;
+        x[8] ^= 0x0000000000000080l ^ r;
+        x[9] ^= 0x0000000000000090l ^ r;
+        x[10] ^= 0x00000000000000a0l ^ r;
+        x[11] ^= 0x00000000000000b0l ^ r;
+        x[12] ^= 0x00000000000000c0l ^ r;
+        x[13] ^= 0x00000000000000d0l ^ r;
+        x[14] ^= 0x00000000000000e0l ^ r;
+        x[15] ^= 0x00000000000000f0l ^ r;
         y[15] = COLUMN(x, 15, 0, 1, 2, 3, 4, 5, 10);
         y[14] = COLUMN(x, 14, 15, 0, 1, 2, 3, 4, 9);
         y[13] = COLUMN(x, 13, 14, 15, 0, 1, 2, 3, 8);
@@ -449,22 +449,22 @@ public class GroestlFastDigest {
 
     /* compute a round in Q (long variants) */
     private static void RND1024Q(long[] x, long[] y, long r) {
-        x[0] ^= U64BIG(0xffffffffffffffffl) ^ r;
-        x[1] ^= U64BIG(0xffffffffffffffefl) ^ r;
-        x[2] ^= U64BIG(0xffffffffffffffdfl) ^ r;
-        x[3] ^= U64BIG(0xffffffffffffffcfl) ^ r;
-        x[4] ^= U64BIG(0xffffffffffffffbfl) ^ r;
-        x[5] ^= U64BIG(0xffffffffffffffafl) ^ r;
-        x[6] ^= U64BIG(0xffffffffffffff9fl) ^ r;
-        x[7] ^= U64BIG(0xffffffffffffff8fl) ^ r;
-        x[8] ^= U64BIG(0xffffffffffffff7fl) ^ r;
-        x[9] ^= U64BIG(0xffffffffffffff6fl) ^ r;
-        x[10] ^= U64BIG(0xffffffffffffff5fl) ^ r;
-        x[11] ^= U64BIG(0xffffffffffffff4fl) ^ r;
-        x[12] ^= U64BIG(0xffffffffffffff3fl) ^ r;
-        x[13] ^= U64BIG(0xffffffffffffff2fl) ^ r;
-        x[14] ^= U64BIG(0xffffffffffffff1fl) ^ r;
-        x[15] ^= U64BIG(0xffffffffffffff0fl) ^ r;
+        x[0] ^= 0xffffffffffffffffl ^ r;
+        x[1] ^= 0xefffffffffffffffl ^ r;
+        x[2] ^= 0xdfffffffffffffffl ^ r;
+        x[3] ^= 0xcfffffffffffffffl ^ r;
+        x[4] ^= 0xbfffffffffffffffl ^ r;
+        x[5] ^= 0xafffffffffffffffl ^ r;
+        x[6] ^= 0x9fffffffffffffffl ^ r;
+        x[7] ^= 0x8fffffffffffffffl ^ r;
+        x[8] ^= 0x7fffffffffffffffl ^ r;
+        x[9] ^= 0x6fffffffffffffffl ^ r;
+        x[10] ^= 0x5fffffffffffffffl ^ r;
+        x[11] ^= 0x4fffffffffffffffl ^ r;
+        x[12] ^= 0x3fffffffffffffffl ^ r;
+        x[13] ^= 0x2fffffffffffffffl ^ r;
+        x[14] ^= 0x1fffffffffffffffl ^ r;
+        x[15] ^= 0x0fffffffffffffffl ^ r;
         y[15] = COLUMN(x, 0, 2, 4, 10, 15, 1, 3, 5);
         y[14] = COLUMN(x, 15, 1, 3, 9, 14, 0, 2, 4);
         y[13] = COLUMN(x, 14, 0, 2, 8, 13, 15, 1, 3);
@@ -495,28 +495,28 @@ public class GroestlFastDigest {
         }
 
         /* compute Q(m) */
-        RND512Q(tmpZ, tmpY, U64BIG(0x0000000000000000l));
-        RND512Q(tmpY, tmpZ, U64BIG(0x0000000000000001l));
-        RND512Q(tmpZ, tmpY, U64BIG(0x0000000000000002l));
-        RND512Q(tmpY, tmpZ, U64BIG(0x0000000000000003l));
-        RND512Q(tmpZ, tmpY, U64BIG(0x0000000000000004l));
-        RND512Q(tmpY, tmpZ, U64BIG(0x0000000000000005l));
-        RND512Q(tmpZ, tmpY, U64BIG(0x0000000000000006l));
-        RND512Q(tmpY, tmpZ, U64BIG(0x0000000000000007l));
-        RND512Q(tmpZ, tmpY, U64BIG(0x0000000000000008l));
-        RND512Q(tmpY, tmpOutQ, U64BIG(0x0000000000000009l));
+        RND512Q(tmpZ, tmpY, 0x0000000000000000l);
+        RND512Q(tmpY, tmpZ, 0x0100000000000000l);
+        RND512Q(tmpZ, tmpY, 0x0200000000000000l);
+        RND512Q(tmpY, tmpZ, 0x0300000000000000l);
+        RND512Q(tmpZ, tmpY, 0x0400000000000000l);
+        RND512Q(tmpY, tmpZ, 0x0500000000000000l);
+        RND512Q(tmpZ, tmpY, 0x0600000000000000l);
+        RND512Q(tmpY, tmpZ, 0x0700000000000000l);
+        RND512Q(tmpZ, tmpY, 0x0800000000000000l);
+        RND512Q(tmpY, tmpOutQ, 0x0900000000000000l);
 
         /* compute P(h+m) */
-        RND512P(tmpInP, tmpZ, U64BIG(0x0000000000000000l));
-        RND512P(tmpZ, tmpY, U64BIG(0x0100000000000000l));
-        RND512P(tmpY, tmpZ, U64BIG(0x0200000000000000l));
-        RND512P(tmpZ, tmpY, U64BIG(0x0300000000000000l));
-        RND512P(tmpY, tmpZ, U64BIG(0x0400000000000000l));
-        RND512P(tmpZ, tmpY, U64BIG(0x0500000000000000l));
-        RND512P(tmpY, tmpZ, U64BIG(0x0600000000000000l));
-        RND512P(tmpZ, tmpY, U64BIG(0x0700000000000000l));
-        RND512P(tmpY, tmpZ, U64BIG(0x0800000000000000l));
-        RND512P(tmpZ, tmpY, U64BIG(0x0900000000000000l));
+        RND512P(tmpInP, tmpZ, 0x0000000000000000l);
+        RND512P(tmpZ, tmpY, 0x0000000000000001l);
+        RND512P(tmpY, tmpZ, 0x0000000000000002l);
+        RND512P(tmpZ, tmpY, 0x0000000000000003l);
+        RND512P(tmpY, tmpZ, 0x0000000000000004l);
+        RND512P(tmpZ, tmpY, 0x0000000000000005l);
+        RND512P(tmpY, tmpZ, 0x0000000000000006l);
+        RND512P(tmpZ, tmpY, 0x0000000000000007l);
+        RND512P(tmpY, tmpZ, 0x0000000000000008l);
+        RND512P(tmpZ, tmpY, 0x0000000000000009l);
 
         /* h' == h + Q(m) + P(h+m) */
         for (i = 0; i < COLS512; i++) {
@@ -592,15 +592,15 @@ public class GroestlFastDigest {
                 tmpInP[j] = chaining[j];
             }
             RND512P(tmpInP, tmpZ, 0x0000000000000000l);
-            RND512P(tmpZ, tmpY, U64BIG(0x0100000000000000l));
-            RND512P(tmpY, tmpZ, U64BIG(0x0200000000000000l));
-            RND512P(tmpZ, tmpY, U64BIG(0x0300000000000000l));
-            RND512P(tmpY, tmpZ, U64BIG(0x0400000000000000l));
-            RND512P(tmpZ, tmpY, U64BIG(0x0500000000000000l));
-            RND512P(tmpY, tmpZ, U64BIG(0x0600000000000000l));
-            RND512P(tmpZ, tmpY, U64BIG(0x0700000000000000l));
-            RND512P(tmpY, tmpZ, U64BIG(0x0800000000000000l));
-            RND512P(tmpZ, tmpInP, U64BIG(0x0900000000000000l));
+            RND512P(tmpZ, tmpY, 0x0000000000000001l);
+            RND512P(tmpY, tmpZ, 0x0000000000000002l);
+            RND512P(tmpZ, tmpY, 0x0000000000000003l);
+            RND512P(tmpY, tmpZ, 0x0000000000000004l);
+            RND512P(tmpZ, tmpY, 0x0000000000000005l);
+            RND512P(tmpY, tmpZ, 0x0000000000000006l);
+            RND512P(tmpZ, tmpY, 0x0000000000000007l);
+            RND512P(tmpY, tmpZ, 0x0000000000000008l);
+            RND512P(tmpZ, tmpInP, 0x0000000000000009l);
             for (j = 0; j < COLS512; j++) {
                 chaining[j] ^= tmpInP[j];
             }
@@ -653,6 +653,21 @@ public class GroestlFastDigest {
             /* Clear the initialised flag */
             initialised = false;
         }
+    }
+
+    /* CopyIn a state */
+    public void copyIn(GroestlFastDigest pState) {
+        /* Ensure that we are copying similar digest */
+        if (this.hashbitlen != pState.hashbitlen)
+            throw new IllegalArgumentException();
+
+        /* Copy state */
+        initialised = pState.initialised;
+        block_counter = pState.block_counter;
+        buf_ptr = pState.buf_ptr;
+        bits_in_last_byte = pState.bits_in_last_byte;
+        System.arraycopy(pState.buffer, 0, buffer, 0, buffer.length);
+        System.arraycopy(pState.chaining, 0, chaining, 0, chaining.length);
     }
 
     /* update state with databitlen bits of input */

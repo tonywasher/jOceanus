@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jgordianknot.crypto.bc;
 
 import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.util.Memoable;
 
 import info.groestl.GroestlFastDigest;
 
@@ -32,7 +33,7 @@ import info.groestl.GroestlFastDigest;
  * This is a direct port from the JH Reference C implementation, with minimal modifications.
  */
 public class BouncyGroestlDigest
-        implements ExtendedDigest {
+        implements ExtendedDigest, Memoable {
     /**
      * The underlying StateLength.
      */
@@ -55,6 +56,16 @@ public class BouncyGroestlDigest
     public BouncyGroestlDigest(final int pHashBitLen) {
         theDigest = new GroestlFastDigest(pHashBitLen);
         theDigestLen = pHashBitLen / Byte.SIZE;
+    }
+
+    /**
+     * Constructor.
+     * @param pDigest the digest to copy
+     */
+    public BouncyGroestlDigest(final BouncyGroestlDigest pDigest) {
+        theDigestLen = pDigest.theDigestLen;
+        theDigest = new GroestlFastDigest(theDigestLen * Byte.SIZE);
+        theDigest.copyIn(pDigest.theDigest);
     }
 
     @Override
@@ -93,5 +104,16 @@ public class BouncyGroestlDigest
     @Override
     public int getByteLength() {
         return STATE_LENGTH;
+    }
+
+    @Override
+    public Memoable copy() {
+        return new BouncyGroestlDigest(this);
+    }
+
+    @Override
+    public void reset(final Memoable pState) {
+        final BouncyGroestlDigest d = (BouncyGroestlDigest) pState;
+        theDigest.copyIn(d.theDigest);
     }
 }
