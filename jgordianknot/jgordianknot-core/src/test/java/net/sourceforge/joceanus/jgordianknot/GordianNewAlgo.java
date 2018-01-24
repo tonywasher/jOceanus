@@ -16,7 +16,16 @@ public class GordianNewAlgo {
     /**
      * The test data.
      */
-    private static final byte[] BYTES = "The quick brown fox jumped over the lazy dog".getBytes();
+    private static final byte[] BYTES = ("The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog" +
+                                         "The quick brown fox jumped over the lazy dog").getBytes();
 
     /**
      * Main test case.

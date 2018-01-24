@@ -487,7 +487,7 @@ public class GroestlFastDigest {
     private void F512(long[] h, byte[] m, int pOffset) {
         int i;
 
-        pOffset /= Long.SIZE;
+        pOffset /= Long.BYTES;
         for (i = 0; i < COLS512; i++) {
             long inVal = leBytesToLong(m, pOffset + i);
             tmpZ[i] = inVal;
@@ -528,7 +528,7 @@ public class GroestlFastDigest {
     private void F1024(long[] h, byte[] m, int pOffset) {
         int i;
 
-        pOffset /= Long.SIZE;
+        pOffset /= Long.BYTES;
         for (i = 0; i < COLS1024; i++) {
             long inVal = leBytesToLong(m, pOffset + i);
             tmpZ[i] = inVal;
