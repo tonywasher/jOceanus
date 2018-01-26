@@ -2,6 +2,12 @@ package info.groestl;
 
 import java.util.Arrays;
 
+/**
+ * Groestl Digest Fast version.
+ * <p>
+ * Ported from the C implementation in groestl_opt.h/tables.h in the "NIST submission package" at
+ * http://www.groestl.info with tweaks to interface to the BouncyCastle libraries
+ */
 public class GroestlFastDigest {
     /* Constants */
     private static final int ROWS = 8;
@@ -314,16 +320,39 @@ public class GroestlFastDigest {
         }
     }
 
-    /* rotate a long nBits to the left retaining bits. */
+    /**
+     * Obtain the buffer size.
+     * @return the bufferSize
+     */
+    public int getBufferSize() {
+        return size;
+    }
+
+    /**
+     * Rotate a long nBits to the left retaining bits.
+     * @param a the value to rotate
+     * @param n the number of bits to rotate
+     * @return the rotated long
+     */
     private static long ROTL64(long a, int n) {
         return (a << n) | (a >>> (64 - n));
     }
 
-    /* Extract a numbered byte from a long */
+    /**
+     * Extract a numbered byte from a long.
+     * @param var the long to extract from
+     * @param n the byte number
+     * @return the extracted byte
+     */
     private static int EXT_BYTE(long var, int n) {
         return (int) ((var >>> (8 * n)) & 0xffL);
     }
 
+    /**
+     * Convert a long value to little-endian.
+     * @param a the value to convert
+     * @return the converted value
+     */
     private static long U64BIG(long a) {
         return ((ROTL64(a, 8) & 0x000000FF000000FFL) |
                 (ROTL64(a, 24) & 0x0000FF000000FF00L) |
@@ -331,9 +360,19 @@ public class GroestlFastDigest {
                 (ROTL64(a, 56) & 0xFF000000FF000000L));
     }
 
-    /* littleEndianBytes to long */
-    private static long leBytesToLong(byte[] pBuffer, int pIndex) {
+    /**
+     * Convert a series of eight bytes in littleEndian form to a long.
+     * @param pBuffer the source buffer
+     * @param pOffset the offset in the source buffer to extract from
+     * @param pIndex the index of the long to extract with respect to the offset
+     * @return the extracted long
+     */
+    private static long leBytesToLong(byte[] pBuffer, int pOffset, int pIndex) {
+        /* Determine position to extract from */
         pIndex *= 8;
+        pIndex += pOffset;
+
+        /* Loop through the bytes to build the value */
         long value = 0;
         int i = 7;
         while (i > 0) {
@@ -341,17 +380,27 @@ public class GroestlFastDigest {
             value <<= 8;
         }
         value += pBuffer[pIndex] & 0xff;
+
+        /* Return the value */
         return value;
     }
 
-    /* long to littleEndianBytes */
+    /**
+     * Convert a long to littleEndian Bytes with truncation if required.
+     * @param pValue the value to convert
+     * @param pBuffer the buffer to place the result into
+     * @param pOffset the offset of the buffer to place the result into
+     * @param pLength the length of buffer available
+     */
     private static void longToLeBytes(long pValue, byte[] pBuffer, int pOffset, int pLength) {
+        /* Determine how many bytes to copy */
         int i = 8;
         while (i > pLength) {
             pValue >>= 8;
             i--;
         }
 
+        /* Convert and copy bytes */
         int pos = pOffset + pLength - i;
         while (i-- > 0) {
             pBuffer[pos++] = (byte) (pValue & 0xff);
@@ -487,9 +536,8 @@ public class GroestlFastDigest {
     private void F512(long[] h, byte[] m, int pOffset) {
         int i;
 
-        pOffset /= Long.BYTES;
         for (i = 0; i < COLS512; i++) {
-            long inVal = leBytesToLong(m, pOffset + i);
+            long inVal = leBytesToLong(m, pOffset, i);
             tmpZ[i] = inVal;
             tmpInP[i] = h[i] ^ inVal;
         }
@@ -528,9 +576,8 @@ public class GroestlFastDigest {
     private void F1024(long[] h, byte[] m, int pOffset) {
         int i;
 
-        pOffset /= Long.BYTES;
         for (i = 0; i < COLS1024; i++) {
-            long inVal = leBytesToLong(m, pOffset + i);
+            long inVal = leBytesToLong(m, pOffset, i);
             tmpZ[i] = inVal;
             tmpInP[i] = h[i] ^ inVal;
         }
@@ -655,7 +702,10 @@ public class GroestlFastDigest {
         }
     }
 
-    /* CopyIn a state */
+    /**
+     * CopyIn state from another digest.
+     * @param pState the other digest
+     */
     public void copyIn(GroestlFastDigest pState) {
         /* Ensure that we are copying similar digest */
         if (this.hashbitlen != pState.hashbitlen)
@@ -727,7 +777,12 @@ public class GroestlFastDigest {
         }
     }
 
-    /* Build hash from state buffer */
+    /**
+     * Build hash from state buffer.
+     * @param pHashVal the buffer to build the hash into
+     * @param pOffset the offset at which to place the hash
+     * @param pLength the length of the hash
+     */
     private void buildHashFromState(byte[] pHashVal, int pOffset, int pLength) {
         for (int i = chaining.length - 1; i >= 0 && pLength > 0; i--) {
             longToLeBytes(chaining[i], pHashVal, pOffset, pLength);
@@ -772,7 +827,7 @@ public class GroestlFastDigest {
         buf_ptr = size;
         while (buf_ptr > size - LENGTHFIELDLEN) {
             buffer[--buf_ptr] = (byte) block_counter;
-            block_counter >>= 8;
+            block_counter >>>= 8;
         }
 
         /* digest final padding block */

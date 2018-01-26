@@ -35,11 +35,6 @@ import info.groestl.GroestlFastDigest;
 public class BouncyGroestlDigest
         implements ExtendedDigest, Memoable {
     /**
-     * The underlying StateLength.
-     */
-    private static final int STATE_LENGTH = 1024;
-
-    /**
      * The underlying digest.
      */
     private final GroestlFastDigest theDigest;
@@ -103,7 +98,7 @@ public class BouncyGroestlDigest
 
     @Override
     public int getByteLength() {
-        return STATE_LENGTH;
+        return theDigest.getBufferSize();
     }
 
     @Override

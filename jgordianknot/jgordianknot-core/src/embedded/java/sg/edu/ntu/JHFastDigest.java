@@ -2,6 +2,12 @@ package sg.edu.ntu;
 
 import java.util.Arrays;
 
+/**
+ * JH Digest Fast version.
+ * <p>
+ * Ported from the C implementation in jh_bitslice_ref64.h in the Round 3 submission package at
+ * http://www3.ntu.edu.sg with tweaks to interface to the BouncyCastle libraries
+ */
 public class JHFastDigest {
     /**
      * The state.
@@ -224,6 +230,14 @@ public class JHFastDigest {
             Init();
             initialised = true;
         }
+    }
+
+    /**
+     * Obtain the buffer size.
+     * @return the bufferSize
+     */
+    public int getBufferSize() {
+        return buffer.length;
     }
 
     /* swapping bit 2i with bit 2i+1 of 64-bit x */

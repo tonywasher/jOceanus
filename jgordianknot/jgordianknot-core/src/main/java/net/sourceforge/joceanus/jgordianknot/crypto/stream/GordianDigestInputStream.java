@@ -81,7 +81,7 @@ public class GordianDigestInputStream
         /* Calculate digest */
         final byte[] myResult = theDigest.finish();
 
-        /* Check valid MAC */
+        /* Check valid digest */
         if (!Arrays.areEqual(myResult, theExpected)) {
             throw new GordianDataException("Invalid Digest");
         }

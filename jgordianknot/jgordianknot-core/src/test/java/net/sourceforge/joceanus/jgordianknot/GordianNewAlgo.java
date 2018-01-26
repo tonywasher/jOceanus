@@ -1,9 +1,11 @@
 package net.sourceforge.joceanus.jgordianknot;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGroestlDigest;
@@ -33,7 +35,7 @@ public class GordianNewAlgo {
      */
     public static void main(final String[] args) {
         /* Test JH Digest */
-        List<Results> myJH = testDigest(GordianDigestType.JH);
+        // List<Results> myJH = testDigest(GordianDigestType.JH);
         List<Results> myGroestl = testDigest(GordianDigestType.GROESTL);
 
         System.out.println("Complete");
@@ -60,6 +62,7 @@ public class GordianNewAlgo {
 
             /* check and profile it */
             checkDigest(myDigest);
+            checkLargeDigest(myDigest);
             profileDigest(myDigest);
         }
 
@@ -92,11 +95,46 @@ public class GordianNewAlgo {
      */
     private static void checkDigest(final Results pDigest) {
         /* Perform a simple hash */
-        byte[] myResult = new byte[pDigest.getSize()];
         ExtendedDigest myDigest = pDigest.getDigest();
+        byte[] myResult = new byte[pDigest.getSize()];
         myDigest.update(BYTES, 0, BYTES.length);
         myDigest.doFinal(myResult, 0);
         pDigest.setResult(myResult);
+    }
+
+    /**
+     * Create standard result.
+     * @param pDigest the digest
+     */
+    private static void checkLargeDigest(final Results pDigest) {
+        /* Create a large, randomly populated buffer */
+        int myDataLength = 21819;
+        byte[] myInput = new byte[myDataLength];
+        SecureRandom myRandom = new SecureRandom();
+        myRandom.nextBytes(myInput);
+
+        /* Create a digest using buffer all in one hit */
+        ExtendedDigest myDigest = pDigest.getDigest();
+        byte[] myResult = new byte[pDigest.getSize()];
+        myDigest.update(myInput, 0, myDataLength);
+        myDigest.doFinal(myResult, 0);
+
+        /* Now create a digest in parts ensuring that we split on a prime boundary */
+        byte[] myResult2 = new byte[pDigest.getSize()];
+        int myBoundary = 1427;
+        for (int i = 0; i < myDataLength; i += myBoundary) {
+            int myLen = myDataLength - i;
+            if (myLen > myBoundary) {
+                myLen = myBoundary;
+            }
+            myDigest.update(myInput, i, myLen);
+        }
+        myDigest.doFinal(myResult2, 0);
+
+        /* Check that we have the same result */
+        if (!Arrays.areEqual(myResult, myResult2)) {
+            System.out.println("Help");
+        }
     }
 
     /**

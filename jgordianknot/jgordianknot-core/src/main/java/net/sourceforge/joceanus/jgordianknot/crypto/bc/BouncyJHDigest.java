@@ -35,11 +35,6 @@ import sg.edu.ntu.JHFastDigest;
 public class BouncyJHDigest
         implements ExtendedDigest, Memoable {
     /**
-     * The underlying StateLength????.
-     */
-    private static final int STATE_LENGTH = 128;
-
-    /**
      * The underlying digest.
      */
     private final JHFastDigest theDigest;
@@ -103,7 +98,7 @@ public class BouncyJHDigest
 
     @Override
     public int getByteLength() {
-        return STATE_LENGTH;
+        return theDigest.getBufferSize();
     }
 
     @Override
