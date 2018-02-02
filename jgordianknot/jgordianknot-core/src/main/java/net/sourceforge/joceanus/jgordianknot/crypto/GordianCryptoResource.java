@@ -299,6 +299,16 @@ public enum GordianCryptoResource implements TethysResourceId {
     SYMKEY_SHACAL2("symKey.SHACAL2"),
 
     /**
+     * SymKey SHACAL2.
+     */
+    SYMKEY_SPECK("symKey.Speck"),
+
+    /**
+     * SymKey Anubis.
+     */
+    SYMKEY_ANUBIS("symKey.Anubis"),
+
+    /**
      * StreamKey XSALSA20.
      */
     STREAMKEY_XSALSA20("streamKey.XSALSA20"),
@@ -535,6 +545,8 @@ public enum GordianCryptoResource implements TethysResourceId {
         myMap.put(GordianSymKeyType.KUZNYECHIK, SYMKEY_KUZNYECHIK);
         myMap.put(GordianSymKeyType.KALYNA, SYMKEY_KALYNA);
         myMap.put(GordianSymKeyType.SHACAL2, SYMKEY_SHACAL2);
+        myMap.put(GordianSymKeyType.SPECK, SYMKEY_SPECK);
+        myMap.put(GordianSymKeyType.ANUBIS, SYMKEY_ANUBIS);
         return myMap;
     }
 

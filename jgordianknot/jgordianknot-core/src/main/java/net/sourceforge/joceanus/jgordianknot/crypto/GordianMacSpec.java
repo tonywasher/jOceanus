@@ -396,17 +396,6 @@ public final class GordianMacSpec {
     }
 
     /**
-     * BlockSize for padding.
-     * @return the blockSize (or null)
-     */
-    public int paddingBlock() {
-        return GordianMacType.KALYNA.equals(theMacType)
-               && theKeySpec != null
-                                     ? theKeySpec.getBlockLength().getByteLength()
-                                     : 0;
-    }
-
-    /**
      * List all possible macSpecs.
      * @return the list
      */

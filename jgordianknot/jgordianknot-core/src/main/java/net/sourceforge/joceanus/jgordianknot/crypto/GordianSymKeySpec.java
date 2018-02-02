@@ -249,6 +249,31 @@ public class GordianSymKeySpec {
     }
 
     /**
+     * Create speckKeySpec.
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec speck() {
+        return new GordianSymKeySpec(GordianSymKeyType.SPECK);
+    }
+
+    /**
+     * Create speckKeySpec.
+     * @param pBlockLength the block length
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec speck(final GordianLength pBlockLength) {
+        return new GordianSymKeySpec(GordianSymKeyType.SPECK, pBlockLength);
+    }
+
+    /**
+     * Create anubisKeySpec.
+     * @return the keySpec
+     */
+    public static GordianSymKeySpec anubis() {
+        return new GordianSymKeySpec(GordianSymKeyType.ANUBIS);
+    }
+
+    /**
      * Obtain symKey Type.
      * @return the symKeyType
      */

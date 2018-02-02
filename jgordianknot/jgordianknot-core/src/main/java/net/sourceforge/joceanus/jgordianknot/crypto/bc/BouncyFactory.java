@@ -93,11 +93,8 @@ import org.bouncycastle.crypto.engines.XTEAEngine;
 import org.bouncycastle.crypto.generators.DESedeKeyGenerator;
 import org.bouncycastle.crypto.generators.Poly1305KeyGenerator;
 import org.bouncycastle.crypto.macs.CMac;
-import org.bouncycastle.crypto.macs.DSTU7564Mac;
-import org.bouncycastle.crypto.macs.DSTU7624Mac;
 import org.bouncycastle.crypto.macs.GMac;
 import org.bouncycastle.crypto.macs.HMac;
-import org.bouncycastle.crypto.macs.KGMac;
 import org.bouncycastle.crypto.macs.Poly1305;
 import org.bouncycastle.crypto.macs.SkeinMac;
 import org.bouncycastle.crypto.macs.VMPCMac;
@@ -114,12 +111,21 @@ import org.bouncycastle.crypto.modes.G3413OFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCFBBlockCipher;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
 import org.bouncycastle.crypto.modes.GOFBBlockCipher;
-import org.bouncycastle.crypto.modes.KCCMBlockCipher;
 import org.bouncycastle.crypto.modes.KCTRBlockCipher;
-import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.modes.OCBBlockCipher;
 import org.bouncycastle.crypto.modes.OFBBlockCipher;
 import org.bouncycastle.crypto.modes.SICBlockCipher;
+import org.bouncycastle.crypto.newdigests.GroestlDigest;
+import org.bouncycastle.crypto.newdigests.JHDigest;
+import org.bouncycastle.crypto.newengines.AnubisEngine;
+import org.bouncycastle.crypto.newengines.SosemanukEngine;
+import org.bouncycastle.crypto.newengines.SpeckEngine;
+import org.bouncycastle.crypto.newmacs.Blake2Mac;
+import org.bouncycastle.crypto.newmacs.DSTUX7564Mac;
+import org.bouncycastle.crypto.newmacs.DSTUX7624Mac;
+import org.bouncycastle.crypto.newmacs.KXGMac;
+import org.bouncycastle.crypto.newmodes.KCCMXBlockCipher;
+import org.bouncycastle.crypto.newmodes.KGCMXBlockCipher;
 import org.bouncycastle.crypto.paddings.ISO7816d4Padding;
 import org.bouncycastle.crypto.paddings.PKCS7Padding;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -482,9 +488,9 @@ public final class BouncyFactory
             case KUPYNA:
                 return getKupynaDigest(myLen);
             case GROESTL:
-                return new BouncyGroestlDigest(myLen.getLength());
+                return new GroestlDigest(myLen.getLength());
             case JH:
-                return new BouncyJHDigest(myLen.getLength());
+                return new JHDigest(myLen.getLength());
             case GOST:
                 return new GOST3411Digest();
             case TIGER:
@@ -652,7 +658,7 @@ public final class BouncyFactory
      */
     private static Mac getBCGMac(final GordianSymKeySpec pSymKeySpec) throws OceanusException {
         return GordianSymKeyType.KALYNA.equals(pSymKeySpec.getSymKeyType())
-                                                                            ? new KGMac(new KGCMBlockCipher(getBCSymEngine(pSymKeySpec)))
+                                                                            ? new KXGMac(new KGCMXBlockCipher(getBCSymEngine(pSymKeySpec)))
                                                                             : new GMac(new GCMBlockCipher(getBCSymEngine(pSymKeySpec)));
     }
 
@@ -692,7 +698,7 @@ public final class BouncyFactory
      */
     private static Mac getBCKalynaMac(final GordianSymKeySpec pSymKeySpec) {
         final GordianLength myLen = pSymKeySpec.getBlockLength();
-        return new DSTU7624Mac(myLen.getLength(), myLen.getLength());
+        return new DSTUX7624Mac(myLen.getLength(), myLen.getLength());
     }
 
     /**
@@ -701,7 +707,7 @@ public final class BouncyFactory
      * @return the MAC
      */
     private static Mac getBCKupynaMac(final GordianDigestSpec pSpec) {
-        return new DSTU7564Mac(pSpec.getDigestLength().getLength());
+        return new DSTUX7564Mac(pSpec.getDigestLength().getLength());
     }
 
     /**
@@ -710,7 +716,8 @@ public final class BouncyFactory
      * @return the MAC
      */
     private static Mac getBCBlakeMac(final GordianMacSpec pSpec) {
-        return new BouncyBlake2Mac(pSpec);
+        Digest myDigest = getBlake2Digest(pSpec.getDigestSpec());
+        return new Blake2Mac(myDigest);
     }
 
     /**
@@ -763,7 +770,7 @@ public final class BouncyFactory
             case RC4:
                 return new RC4Engine();
             case SOSEMANUK:
-                return new BouncySosemanukEngine();
+                return new SosemanukEngine();
             default:
                 throw new GordianDataException(getInvalidText(pKeyType));
         }
@@ -827,6 +834,10 @@ public final class BouncyFactory
                 return new GOST3412_2015Engine();
             case SHACAL2:
                 return new Shacal2Engine();
+            case SPECK:
+                return new SpeckEngine(pKeySpec.getBlockLength().getLength());
+            case ANUBIS:
+                return new AnubisEngine();
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec));
         }
@@ -885,11 +896,11 @@ public final class BouncyFactory
             case CCM:
                 return new CCMBlockCipher(getBCSymEngine(mySpec));
             case KCCM:
-                return new KCCMBlockCipher(getBCSymEngine(mySpec));
+                return new KCCMXBlockCipher(getBCSymEngine(mySpec));
             case GCM:
                 return new GCMBlockCipher(getBCSymEngine(mySpec));
             case KGCM:
-                return new KGCMBlockCipher(getBCSymEngine(mySpec));
+                return new KGCMXBlockCipher(getBCSymEngine(mySpec));
             case OCB:
                 return new OCBBlockCipher(getBCSymEngine(mySpec), getBCSymEngine(mySpec));
             default:

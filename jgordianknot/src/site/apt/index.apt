@@ -14,7 +14,7 @@ Details are provided in the section <<Simple API>>.
   Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
 the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plainText is encrypted 
 by each key in turn. The types of the keys used are encoded into output cipherText along with the randomly chosen
-initialisation vector (which is shifted differently for each key). 
+initialisation vector (which is transformed via an HMac differently for each key). 
 
   The last cipher mode is set to SIC mode. All prior modes are set to ECB mode. The first ECB mode is set to use ISO7816-4 padding,
 all others use no padding. The number of encryption steps is configurable.
@@ -29,7 +29,7 @@ keys for the KeySet via another variant of the PBKDF2 algorithm.
 compared with the expected hash. If it matches, the password is assumed correct and the keySet will be generated. In the unlikely
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
-  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blocksizes other than 128. Details
+  KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blockSizes other than 128. Details
 are provided here.  
 
 Simple API
@@ -53,7 +53,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 
 ** Supported Algorithms
 
-  The following symmetric key algorithms are supported for both JCA and Native.  
+  The following symmetric key algorithms are supported.  
 
 *-------------*-------------*------------*-------*
 | Algorithm   | BlockLength | KeyLengths | Notes |
@@ -107,6 +107,11 @@ for each algorithm as defined in <<Key Wrapping>>.
 *-------------*-------------*------------*----------*
 | Kuznyechik  | 128         | 256        | GOST3412-2015 |
 *-------------*-------------*------------*----------*
+| Speck       | 64          | 128        | Not for JCA |
+|             | 128         | 128, 256   | |
+*-------------*-------------*------------*----------*
+| Anubis      | 128         | 128, 256   | Not for JCA |
+*-------------*-------------*------------*----------*
 
 ** Supported Modes
 
@@ -141,17 +146,21 @@ for each algorithm as defined in <<Key Wrapping>>.
 
   The following paddings are available for ECB and CBC modes
 
-    * CTS
-
-    * ISO7816-4
- 
-    * PKCS7
-
-    * X9.63
-
-    * TBC
-   
-    * NONE (used for all modes other than ECB/CBC)
+*---------*-------*
+| Padding | Notes |
+*---------*-------*
+| CTS | |
+*---------*-------*
+| ISO7816-4 | |
+*---------*-------* 
+| PKCS7 | |
+*---------*-------*
+| X9.63 | |
+*---------*-------*
+| TBC | |
+*---------*-------*   
+| NONE | used for all modes other than ECB/CBC |
+*---------*-------*
     
 * {Key Wrapping}
 
@@ -195,6 +204,8 @@ for each algorithm as defined in <<Key Wrapping>>.
 | RC4         | 128,256     | |  
 *-------------*-------------*-*    
 | Grain128    | 128         | |  
+*-------------*-------------*-*    
+| Sosemanuk   | 128,256     | Not for JCA |  
 *-------------*-------------*-*    
 
 * Digests and MACs
@@ -244,6 +255,10 @@ for each algorithm as defined in <<Key Wrapping>>.
 *-------------*-------------*----*-*    
 | Kupyna      |             |256,384,512 | DSTU7564 |  
 *-------------*-------------*----*-*    
+| JH          |             |224,256,384,512 | Not for JCA |  
+*-------------*-------------*----*-*    
+| Groestl     |             |224,256,384,512 | Not for JCA |  
+*-------------*-------------*----*-*    
   
 ** Supported MAC algorithms
 
@@ -251,7 +266,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 | Algorithm   | OutputLengths    | Notes      |
 *-------------*------------------*------------*    
 | HMac        | digest length    | For all digests. | 
-|             |                  | Jca does not support SM3, BLAKE, SHAKE or Kupyna | 
+|             |                  | Jca does not support SM3, BLAKE, SHAKE, JH, Groestl or Kupyna | 
 *-------------*------------------*-*    
 | GMac        | 128 bits         | For all supported 128 bit ciphers except Kalyna (BUG). |
 |             |                  | Jca does not support Kuznyechik | 

@@ -872,7 +872,7 @@ public abstract class GordianFactory {
      */
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
         switch (pKeySpec.getSymKeyType()) {
-            case KALYNA:
+            // case KALYNA:
             case RC5:
                 return false;
             default:
@@ -904,6 +904,13 @@ public abstract class GordianFactory {
         /* Reject restrictedSpecs where the block length is too large */
         if (isRestricted
             && myLen.getLength() > GordianLength.LEN_128.getLength()) {
+            return false;
+        }
+
+        /* Reject Speck-64 for unrestricted */
+        if (!isRestricted
+            && GordianSymKeyType.SPECK.equals(pSymKeySpec.getSymKeyType())
+            && GordianLength.LEN_64.equals(myLen)) {
             return false;
         }
 

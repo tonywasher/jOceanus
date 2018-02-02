@@ -196,10 +196,9 @@ public enum GordianCipherMode {
             case GCFB:
                 return GordianSymKeyType.GOST.equals(pKeyType);
             case KCTR:
-                return GordianSymKeyType.KALYNA.equals(pKeyType);
             case KGCM:
             case KCCM:
-                return false;
+                return GordianSymKeyType.KALYNA.equals(pKeyType);
             default:
                 return true;
         }

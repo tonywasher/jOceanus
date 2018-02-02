@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.bc;
+package org.bouncycastle.crypto.newengines;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.DataLengthException;
@@ -33,7 +33,7 @@ import org.eu.ecrypt.SosemanukFast;
 /**
  * StreamCipher implementation based on the SosemanukFast java implementation.
  */
-public class BouncySosemanukEngine
+public class SosemanukEngine
         implements StreamCipher {
     /**
      * Advanced stream length. This must Match BufferLength in the Sosemanuk engine, in order to

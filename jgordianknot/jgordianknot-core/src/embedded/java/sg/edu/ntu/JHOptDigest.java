@@ -1,19 +1,3 @@
-/**
- * This program gives the 64-bit bitslice reference implementation of JH using ANSI C
- * It is the reference implementation, NOT optimized
- *
- *-------------------------------
- *Performance
- *
- *Microprocessor: Intel CORE 2 processor (Core 2 Duo Mobile T6600 2.2GHz)
- *Operating System: 64-bit Ubuntu 10.04 (Linux kernel 2.6.32-22-generic)
- *Speed for long message:
- *1) 67.5 cycles/byte   compiler: Intel C++ Compiler 11.1   compilation option: icc -O2
- *2) 68.5 cycles/byte   compiler: gcc 4.4.3                 compilation option: gcc -O3
- *
- *--------------------------------
- *Last Modified: January 01, 2011
- */
 package sg.edu.ntu;
 
 import java.util.Arrays;
@@ -24,7 +8,7 @@ import java.util.Arrays;
  * Ported from the C implementation in jh_bitslice_ref64.h in the Round 3 submission package at
  * http://www3.ntu.edu.sg with tweaks to interface to the BouncyCastle libraries
  */
-public class JHFastDigest {
+public class JHOptDigest {
     /**
      * The state.
      */
@@ -222,7 +206,7 @@ public class JHFastDigest {
      * Constructor.
      * @param pHashBitLen the hash bit length
      */
-    public JHFastDigest(int pHashBitLen) {
+    public JHOptDigest(int pHashBitLen) {
         /* Check the hashBitLength */
         switch (pHashBitLen) {
             case 224:
@@ -330,85 +314,192 @@ public class JHFastDigest {
         }
     }
 
-    /* The Sbox */
-    private void Sbox(int i, int j, int roundnumber) {
+    /*
+     * Two Sboxes are computed in parallel, each Sbox implements S0 and S1, selected by a constant
+     * bit
+     */
+    /*
+     * The reason to compute two Sboxes in parallel is to try to fully utilize the parallel
+     * processing power
+     */
+    private void SS(int i, int roundnumber) {
         byte[] round = E8_bitslice_roundconstant[roundnumber];
-        int index = i + (j * 2);
-        long cc = leBytesToLong(round, index);
-        x[6 + j][i] = ~x[6 + j][i];
-        x[0 + j][i] ^= ((~x[4 + j][i]) & (cc));
-        long temp0 = (cc) ^ (x[0 + j][i] & x[2 + j][i]);
-        x[0 + j][i] ^= (x[4 + j][i] & x[6 + j][i]);
-        x[6 + j][i] ^= ((~x[2 + j][i]) & x[4 + j][i]);
-        x[2 + j][i] ^= (x[0 + j][i] & x[4 + j][i]);
-        x[4 + j][i] ^= (x[0 + j][i] & (~x[6 + j][i]));
-        x[0 + j][i] ^= (x[2 + j][i] | x[6 + j][i]);
-        x[6 + j][i] ^= (x[2 + j][i] & x[4 + j][i]);
-        x[2 + j][i] ^= (temp0 & x[0 + j][i]);
-        x[4 + j][i] ^= temp0;
+        long cc0 = leBytesToLong(round, i);
+        long cc1 = leBytesToLong(round, i + 2);
+        x[6][i] = ~x[6][i];
+        x[7][i] = ~x[7][i];
+        x[0][i] ^= ((~x[4][i]) & (cc0));
+        x[1][i] ^= ((~x[5][i]) & (cc1));
+        long temp0 = (cc0) ^ (x[0][i] & x[2][i]);
+        long temp1 = (cc1) ^ (x[1][i] & x[3][i]);
+        x[0][i] ^= (x[4][i] & x[6][i]);
+        x[1][i] ^= (x[5][i] & x[7][i]);
+        x[6][i] ^= ((~x[2][i]) & x[4][i]);
+        x[7][i] ^= ((~x[3][i]) & x[5][i]);
+        x[2][i] ^= (x[0][i] & x[4][i]);
+        x[3][i] ^= (x[1][i] & x[5][i]);
+        x[4][i] ^= (x[0][i] & (~x[6][i]));
+        x[5][i] ^= (x[1][i] & (~x[7][i]));
+        x[0][i] ^= (x[2][i] | x[6][i]);
+        x[1][i] ^= (x[3][i] | x[7][i]);
+        x[6][i] ^= (x[2][i] & x[4][i]);
+        x[7][i] ^= (x[3][i] & x[5][i]);
+        x[2][i] ^= (temp0 & x[0][i]);
+        x[3][i] ^= (temp1 & x[1][i]);
+        x[4][i] ^= temp0;
+        x[5][i] ^= temp1;
     }
+
+    /* The Sbox */
+    // private void Sbox(int i, int j, int roundnumber) {
+    // byte[] round = E8_bitslice_roundconstant[roundnumber];
+    // int index = i + (j * 2);
+    // long cc = leBytesToLong(round, index);
+    // x[6 + j][i] = ~x[6 + j][i];
+    // x[0 + j][i] ^= ((~x[4 + j][i]) & (cc));
+    // long temp0 = (cc) ^ (x[0 + j][i] & x[2 + j][i]);
+    // x[0 + j][i] ^= (x[4 + j][i] & x[6 + j][i]);
+    // x[6 + j][i] ^= ((~x[2 + j][i]) & x[4 + j][i]);
+    // x[2 + j][i] ^= (x[0 + j][i] & x[4 + j][i]);
+    // x[4 + j][i] ^= (x[0 + j][i] & (~x[6 + j][i]));
+    // x[0 + j][i] ^= (x[2 + j][i] | x[6 + j][i]);
+    // x[6 + j][i] ^= (x[2 + j][i] & x[4 + j][i]);
+    // x[2 + j][i] ^= (temp0 & x[0 + j][i]);
+    // x[4 + j][i] ^= temp0;
+    // }
 
     /* The round function of E8, in bitslice form */
-    private void RoundFunction(int roundnumber) {
-        int i, j;
-        long temp0;
+    // private void RoundFunction(int roundnumber) {
+    // int i, j;
+    // long temp0;
 
-        /* Sbox and MDS layer */
-        for (i = 0; i < 2; i++) {
-            Sbox(i, 0, roundnumber);
-            Sbox(i, 1, roundnumber);
-            L(i);
-        }
+    /* Sbox and MDS layer */
+    // for (i = 0; i < 2; i++) {
+    // Sbox(i, 0, roundnumber);
+    // Sbox(i, 1, roundnumber);
+    // L(i);
+    // }
 
-        /* swapping layer */
-        switch (roundnumber % 7) {
-            case 0:
-                for (j = 1; j < 8; j = j + 2)
-                    for (i = 0; i < 2; i++)
-                        x[j][i] = SWAP1(x[j][i]);
-                break;
-            case 1:
-                for (j = 1; j < 8; j = j + 2)
-                    for (i = 0; i < 2; i++)
-                        x[j][i] = SWAP2(x[j][i]);
-                break;
-            case 2:
-                for (j = 1; j < 8; j = j + 2)
-                    for (i = 0; i < 2; i++)
-                        x[j][i] = SWAP4(x[j][i]);
-                break;
-            case 3:
-                for (j = 1; j < 8; j = j + 2)
-                    for (i = 0; i < 2; i++)
-                        x[j][i] = SWAP8(x[j][i]);
-                break;
-            case 4:
-                for (j = 1; j < 8; j = j + 2)
-                    for (i = 0; i < 2; i++)
-                        x[j][i] = SWAP16(x[j][i]);
-                break;
-            case 5:
-                for (j = 1; j < 8; j = j + 2)
-                    for (i = 0; i < 2; i++)
-                        x[j][i] = SWAP32(x[j][i]);
-                break;
-            case 6:
-                for (j = 1; j < 8; j = j + 2) {
-                    temp0 = x[j][0];
-                    x[j][0] = x[j][1];
-                    x[j][1] = temp0;
-                }
-                break;
-        }
-    }
+    /* swapping layer */
+    // switch (roundnumber % 7) {
+    // case 0:
+    // for (j = 1; j < 8; j = j + 2)
+    // for (i = 0; i < 2; i++)
+    // x[j][i] = SWAP1(x[j][i]);
+    // break;
+    // case 1:
+    // for (j = 1; j < 8; j = j + 2)
+    // for (i = 0; i < 2; i++)
+    // x[j][i] = SWAP2(x[j][i]);
+    // break;
+    // case 2:
+    // for (j = 1; j < 8; j = j + 2)
+    // for (i = 0; i < 2; i++)
+    // x[j][i] = SWAP4(x[j][i]);
+    // break;
+    // case 3:
+    // for (j = 1; j < 8; j = j + 2)
+    // for (i = 0; i < 2; i++)
+    // x[j][i] = SWAP8(x[j][i]);
+    // break;
+    // case 4:
+    // for (j = 1; j < 8; j = j + 2)
+    // for (i = 0; i < 2; i++)
+    // x[j][i] = SWAP16(x[j][i]);
+    // break;
+    // case 5:
+    // for (j = 1; j < 8; j = j + 2)
+    // for (i = 0; i < 2; i++)
+    // x[j][i] = SWAP32(x[j][i]);
+    // break;
+    // case 6:
+    // for (j = 1; j < 8; j = j + 2) {
+    // temp0 = x[j][0];
+    // x[j][0] = x[j][1];
+    // x[j][1] = temp0;
+    // }
+    // break;
+    // }
+    // }
 
     /* The bijective function E8, in bitslice form */
     private void E8() {
-        int i;
+        int i, roundnumber;
+        long temp0;
 
-        /* perform 42 rounds */
-        for (i = 0; i < 42; i++)
-            RoundFunction(i);
+        for (roundnumber = 0; roundnumber < 42; roundnumber = roundnumber + 7) {
+            /* round 7*roundnumber+0: Sbox, MDS and Swapping layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 0);
+                L(i);
+                x[1][i] = SWAP1(x[1][i]);
+                x[3][i] = SWAP1(x[3][i]);
+                x[5][i] = SWAP1(x[5][i]);
+                x[7][i] = SWAP1(x[7][i]);
+            }
+
+            /* round 7*roundnumber+1: Sbox, MDS and Swapping layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 1);
+                L(i);
+                x[1][i] = SWAP2(x[1][i]);
+                x[3][i] = SWAP2(x[3][i]);
+                x[5][i] = SWAP2(x[5][i]);
+                x[7][i] = SWAP2(x[7][i]);
+            }
+
+            /* round 7*roundnumber+2: Sbox, MDS and Swapping layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 2);
+                L(i);
+                x[1][i] = SWAP4(x[1][i]);
+                x[3][i] = SWAP4(x[3][i]);
+                x[5][i] = SWAP4(x[5][i]);
+                x[7][i] = SWAP4(x[7][i]);
+            }
+
+            /* round 7*roundnumber+3: Sbox, MDS and Swapping layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 3);
+                L(i);
+                x[1][i] = SWAP8(x[1][i]);
+                x[3][i] = SWAP8(x[3][i]);
+                x[5][i] = SWAP8(x[5][i]);
+                x[7][i] = SWAP8(x[7][i]);
+            }
+
+            /* round 7*roundnumber+4: Sbox, MDS and Swapping layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 4);
+                L(i);
+                x[1][i] = SWAP16(x[1][i]);
+                x[3][i] = SWAP16(x[3][i]);
+                x[5][i] = SWAP16(x[5][i]);
+                x[7][i] = SWAP16(x[7][i]);
+            }
+
+            /* round 7*roundnumber+5: Sbox, MDS and Swapping layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 5);
+                L(i);
+                x[1][i] = SWAP32(x[1][i]);
+                x[3][i] = SWAP32(x[3][i]);
+                x[5][i] = SWAP32(x[5][i]);
+                x[7][i] = SWAP32(x[7][i]);
+            }
+
+            /* round 7*roundnumber+6: Sbox and MDS layers */
+            for (i = 0; i < 2; i++) {
+                SS(i, roundnumber + 6);
+                L(i);
+            }
+            /* round 7*roundnumber+6: swapping layer */
+            for (i = 1; i < 8; i = i + 2) {
+                temp0 = x[i][0];
+                x[i][0] = x[i][1];
+                x[i][1] = temp0;
+            }
+        }
     }
 
     /* The compression function F8 */
@@ -460,7 +551,7 @@ public class JHFastDigest {
     }
 
     /* CopyIn a state */
-    public void copyIn(JHFastDigest pState) {
+    public void copyIn(JHOptDigest pState) {
         /* Ensure that we are copying similar digest */
         if (this.hashbitlen != pState.hashbitlen)
             throw new IllegalArgumentException();

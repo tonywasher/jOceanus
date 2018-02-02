@@ -23,14 +23,10 @@
  */
 package org.eu.ecrypt;
 
+/**
+ * Copied from http://www.ecrypt.eu.org/stream/e2-sosemanuk.html.
+ */
 public class SosemanukFast {
-
-    /**
-     * Create the engine, empty. A key, then an IV must be set.
-     */
-    public SosemanukFast() {
-    }
-
     /*
      * Internal cipher state.
      */
@@ -2270,43 +2266,4 @@ public class SosemanukFast {
             }
         }
     }
-
-    /**
-     * Test code.
-     */
-    public static void main(String[] args) {
-        byte[] key =
-        {
-                (byte) 0xA7, (byte) 0xC0, (byte) 0x83, (byte) 0xFE,
-                (byte) 0xB7
-        };
-        byte[] iv =
-        {
-                (byte) 0x00, (byte) 0x11, (byte) 0x22, (byte) 0x33,
-                (byte) 0x44, (byte) 0x55, (byte) 0x66, (byte) 0x77,
-                (byte) 0x88, (byte) 0x99, (byte) 0xAA, (byte) 0xBB,
-                (byte) 0xCC, (byte) 0xDD, (byte) 0xEE, (byte) 0xFF
-        };
-
-        SosemanukFast sf = new SosemanukFast();
-        sf.setKey(key);
-        sf.setIV(iv);
-        byte[] tmp = new byte[160];
-        sf.makeStream(tmp, 0, tmp.length);
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 16; j++) {
-                int v = tmp[i * 16 + j] & 0xFF;
-                System.out.print((" " + hexnum[v >> 4])
-                                 + hexnum[v & 0x0F]);
-            }
-            System.out.println();
-        }
-    }
-
-    private static final char[] hexnum =
-    {
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-    };
 }

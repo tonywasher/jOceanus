@@ -184,7 +184,7 @@ public class GordianTestAlgorithms {
         GordianMacSpec mySpec = pMac.getMacSpec();
         GordianMacType myType = mySpec.getMacType();
         boolean twoMacs = GordianMacType.GMAC.equals(myType);
-        boolean needsReInit = myType.needsReInitialisation() || myType.needsReset();
+        boolean needsReInit = myType.needsReInitialisation();
         GordianMac myMac1 = pMac;
         GordianMac myMac2 = twoMacs
                                     ? pFactory.createMac(mySpec)

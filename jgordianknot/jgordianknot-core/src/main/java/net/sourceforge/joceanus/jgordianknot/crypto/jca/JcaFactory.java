@@ -943,6 +943,17 @@ public final class JcaFactory
     }
 
     @Override
+    protected boolean validSymKeyType(final GordianSymKeyType pKeyType) {
+        switch (pKeyType) {
+            case SPECK:
+            case ANUBIS:
+                return false;
+            default:
+                return super.validSymKeyType(pKeyType);
+        }
+    }
+
+    @Override
     protected boolean validStreamKeyType(final GordianStreamKeyType pKeyType) {
         switch (pKeyType) {
             case ISAAC:
@@ -963,7 +974,7 @@ public final class JcaFactory
             case THREEFISH:
             case SEED:
             case SM4:
-                return super.validGMacSymKeySpec(pKeySpec);
+                return super.validCMacSymKeySpec(pKeySpec);
             default:
                 return false;
         }
@@ -971,10 +982,13 @@ public final class JcaFactory
 
     @Override
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        if (GordianSymKeyType.KUZNYECHIK.equals(pKeySpec.getSymKeyType())) {
-            return false;
+        switch (pKeySpec.getSymKeyType()) {
+            case KUZNYECHIK:
+            case KALYNA:
+                return false;
+            default:
+                return super.validGMacSymKeySpec(pKeySpec);
         }
-        return super.validGMacSymKeySpec(pKeySpec);
     }
 
     @Override
@@ -1225,6 +1239,8 @@ public final class JcaFactory
             case KALYNA:
                 /* Disallow OCB, CCM and GCM */
                 return !GordianCipherMode.OCB.equals(myMode)
+                       && !GordianCipherMode.KCCM.equals(myMode)
+                       && !GordianCipherMode.KGCM.equals(myMode)
                        && !GordianCipherMode.CCM.equals(myMode)
                        && !GordianCipherMode.GCM.equals(myMode);
             case GOST:

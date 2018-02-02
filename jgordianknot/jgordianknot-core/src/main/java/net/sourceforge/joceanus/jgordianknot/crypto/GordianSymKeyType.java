@@ -144,7 +144,17 @@ public enum GordianSymKeyType {
     /**
      * SHACAL2.
      */
-    SHACAL2(GordianLength.LEN_256);
+    SHACAL2(GordianLength.LEN_256),
+
+    /**
+     * SPECK.
+     */
+    SPECK(GordianLength.LEN_128, GordianLength.LEN_64),
+
+    /**
+     * Anubis.
+     */
+    ANUBIS(GordianLength.LEN_128);
 
     /**
      * The Supported lengths.

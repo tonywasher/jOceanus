@@ -20,24 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.bc;
+package org.bouncycastle.crypto.newdigests;
 
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.util.Memoable;
 
-import sg.edu.ntu.JHFastDigest;
+import info.groestl.GroestlFastDigest;
 
 /**
  * Java implementation of JH Digest.
  * <p>
  * This is a direct port from the JH Reference C implementation, with minimal modifications.
  */
-public class BouncyJHDigest
+public class GroestlDigest
         implements ExtendedDigest, Memoable {
     /**
      * The underlying digest.
      */
-    private final JHFastDigest theDigest;
+    private final GroestlFastDigest theDigest;
 
     /**
      * The digest length.
@@ -48,8 +48,8 @@ public class BouncyJHDigest
      * Constructor.
      * @param pHashBitLen the hash bit length
      */
-    public BouncyJHDigest(final int pHashBitLen) {
-        theDigest = new JHFastDigest(pHashBitLen);
+    public GroestlDigest(final int pHashBitLen) {
+        theDigest = new GroestlFastDigest(pHashBitLen);
         theDigestLen = pHashBitLen / Byte.SIZE;
     }
 
@@ -57,9 +57,9 @@ public class BouncyJHDigest
      * Constructor.
      * @param pDigest the digest to copy
      */
-    public BouncyJHDigest(final BouncyJHDigest pDigest) {
+    public GroestlDigest(final GroestlDigest pDigest) {
         theDigestLen = pDigest.theDigestLen;
-        theDigest = new JHFastDigest(theDigestLen * Byte.SIZE);
+        theDigest = new GroestlFastDigest(theDigestLen * Byte.SIZE);
         theDigest.copyIn(pDigest.theDigest);
     }
 
@@ -71,7 +71,7 @@ public class BouncyJHDigest
 
     @Override
     public String getAlgorithmName() {
-        return "JH";
+        return "Groestl";
     }
 
     @Override
@@ -103,12 +103,12 @@ public class BouncyJHDigest
 
     @Override
     public Memoable copy() {
-        return new BouncyJHDigest(this);
+        return new GroestlDigest(this);
     }
 
     @Override
     public void reset(final Memoable pState) {
-        final BouncyJHDigest d = (BouncyJHDigest) pState;
+        final GroestlDigest d = (GroestlDigest) pState;
         theDigest.copyIn(d.theDigest);
     }
 }

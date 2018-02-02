@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jgordianknot.crypto.bc;
+package org.bouncycastle.crypto.newmacs;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.Digest;
@@ -30,18 +30,14 @@ import org.bouncycastle.crypto.digests.Blake2sDigest;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianMacSpec;
-
 /**
  * Bouncy implementation of Blake2bMac.
  */
-public class BouncyBlake2Mac implements Mac {
+public class Blake2Mac implements Mac {
     /**
      * MacSpec.
      */
-    private final GordianMacSpec theSpec;
+    // private final GordianMacSpec theSpec;
 
     /**
      * Use Blake2b?
@@ -60,22 +56,28 @@ public class BouncyBlake2Mac implements Mac {
 
     /**
      * Create a blake2Mac with the specified macSpec.
-     * @param pSpec the macSize.
+     * @param pDigest the base digest.
      */
-    public BouncyBlake2Mac(final GordianMacSpec pSpec) {
-        theSpec = pSpec;
-        final GordianDigestSpec myDigest = theSpec.getDigestSpec();
-        theMacSize = myDigest.getDigestLength().getByteLength();
-        final int myBitLength = myDigest.getDigestLength().getLength();
-        useBlake2b = GordianDigestType.isBlake2bState(myDigest.getStateLength());
-        theDigest = useBlake2b
-                               ? new Blake2bDigest(myBitLength)
-                               : new Blake2sDigest(myBitLength);
+    public Blake2Mac(final Digest pDigest) {
+        /* Check parameter */
+        if (pDigest instanceof Blake2bDigest) {
+            useBlake2b = true;
+        } else if (pDigest instanceof Blake2sDigest) {
+            useBlake2b = false;
+        } else {
+            throw new IllegalArgumentException("Must supply a BlakeDigest variant");
+        }
+
+        /* Store the digest */
+        theDigest = pDigest;
+
+        /* Determine the macSize */
+        theMacSize = theDigest.getDigestSize();
     }
 
     @Override
     public String getAlgorithmName() {
-        return theSpec.toString();
+        return theDigest.getAlgorithmName() + "Mac";
     }
 
     @Override

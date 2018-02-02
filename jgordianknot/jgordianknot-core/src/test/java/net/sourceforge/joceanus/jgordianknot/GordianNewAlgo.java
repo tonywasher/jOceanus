@@ -4,12 +4,15 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.ExtendedDigest;
+import org.bouncycastle.crypto.newdigests.GroestlDigest;
+import org.bouncycastle.crypto.newdigests.JHDigest;
+import org.bouncycastle.crypto.newengines.AnubisEngine;
+import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGroestlDigest;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyJHDigest;
 
 /**
  * Check new algorithm.
@@ -36,9 +39,36 @@ public class GordianNewAlgo {
     public static void main(final String[] args) {
         /* Test JH Digest */
         // List<Results> myJH = testDigest(GordianDigestType.JH);
-        List<Results> myGroestl = testDigest(GordianDigestType.GROESTL);
+        // List<Results> myGroestl = testDigest(GordianDigestType.GROESTL);
+        testCipher();
 
         System.out.println("Complete");
+    }
+
+    /**
+     * testCipher.
+     */
+    private static void testCipher() {
+        /* Create message and key */
+        byte[] myMessage = "ASmall16byteMsg.".getBytes();
+        byte[] key = ("abcdefghijklmnop" +
+                      "abcdefghijklmnop").getBytes();
+
+        /* Create buffers */
+        byte[] myEncrypted = new byte[16];
+        byte[] myDecrypted = new byte[16];
+
+        /* Setup the cipher */
+        AnubisEngine myCipher = new AnubisEngine();
+        CipherParameters myParms = new KeyParameter(key);
+
+        /* Perform encrypt and decrypt */
+        myCipher.init(true, myParms);
+        myCipher.processBlock(myMessage, 0, myEncrypted, 0);
+
+        myCipher.init(false, myParms);
+        myCipher.processBlock(myEncrypted, 0, myDecrypted, 0);
+        return;
     }
 
     /**
@@ -81,9 +111,9 @@ public class GordianNewAlgo {
         /* Switch on digestType */
         switch (pDigestType) {
             case JH:
-                return new Results(pDigestType, new BouncyJHDigest(pSize));
+                return new Results(pDigestType, new JHDigest(pSize));
             case GROESTL:
-                return new Results(pDigestType, new BouncyGroestlDigest(pSize));
+                return new Results(pDigestType, new GroestlDigest(pSize));
             default:
                 throw new IllegalArgumentException();
         }
@@ -119,9 +149,26 @@ public class GordianNewAlgo {
         myDigest.update(myInput, 0, myDataLength);
         myDigest.doFinal(myResult, 0);
 
-        /* Now create a digest in parts ensuring that we split on a prime boundary */
-        byte[] myResult2 = new byte[pDigest.getSize()];
+        /* Now create a digest in parts that are discrete arrays */
         int myBoundary = 1427;
+        byte[] myResult2 = new byte[pDigest.getSize()];
+        byte[] myPartial = new byte[myBoundary];
+        for (int i = 0; i < myDataLength; i += myBoundary) {
+            int myLen = myDataLength - i;
+            if (myLen > myBoundary) {
+                myLen = myBoundary;
+            }
+            System.arraycopy(myInput, i, myPartial, 0, myLen);
+            myDigest.update(myPartial, 0, myLen);
+        }
+        myDigest.doFinal(myResult2, 0);
+
+        /* Check that we have the same result */
+        if (!Arrays.areEqual(myResult, myResult2)) {
+            System.out.println("Help");
+        }
+
+        /* Now create a digest in parts using offsets */
         for (int i = 0; i < myDataLength; i += myBoundary) {
             int myLen = myDataLength - i;
             if (myLen > myBoundary) {

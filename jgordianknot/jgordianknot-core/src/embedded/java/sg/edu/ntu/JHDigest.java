@@ -1,23 +1,25 @@
 /**
-   This program gives the reference implementation of JH, directly ported from C to Java.
-   It implements the standard description of JH (not bitslice)
-   The description given in this program is suitable for hardware implementation
-
-   --------------------------------
-   Comparing to the original reference implementation,
-   two functions are added to make the porgram more readable.
-   One function is E8_initialgroup() at the beginning of E8;
-   another function is E8_finaldegroup() at the end of E8.
-
-   --------------------------------
-
-   Last Modified: January 16, 2011
-*/
+ *  This program gives the reference implementation of JH, directly ported from C to Java.
+ *  It implements the standard description of JH (not bitslice)
+ *  The description given in this program is suitable for hardware implementation
+ *
+ * --------------------------------
+ *  Comparing to the original reference implementation,
+ *  two functions are added to make the program more readable.
+ *  One function is E8_initialgroup() at the beginning of E8;
+ *  another function is E8_finaldegroup() at the end of E8.
+ *
+ * --------------------------------
+ *
+ *  Last Modified: January 16, 2011
+ */
 package sg.edu.ntu;
 
 /**
- * JHDigest. Changes to reference implementation are only to change types and to avoid allocating
- * temporary arrays.
+ * JH Digest Reference version.
+ * <p>
+ * Ported from the C implementation in jh_ref.h in the Round 3 submission package at
+ * http://www3.ntu.edu.sg with tweaks to interface to the BouncyCastle libraries
  */
 public class JHDigest {
     /**
