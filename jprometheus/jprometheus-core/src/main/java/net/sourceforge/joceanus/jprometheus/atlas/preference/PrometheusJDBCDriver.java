@@ -73,7 +73,7 @@ public enum PrometheusJDBCDriver {
     public String getDriver() {
         switch (this) {
             case SQLSERVER:
-                return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+                return "net.sourceforge.jtds.jdbc.Driver";
             case MYSQL:
                 return "com.mysql.jdbc.Driver";
             case POSTGRESQL:
@@ -83,10 +83,10 @@ public enum PrometheusJDBCDriver {
     }
 
     /**
-     * Determine whether we use integrated security.
+     * Determine whether we use instance.
      * @return true/false
      */
-    public boolean useIntegratedSecurity() {
+    public boolean useInstance() {
         switch (this) {
             case SQLSERVER:
                 return true;
@@ -104,7 +104,7 @@ public enum PrometheusJDBCDriver {
     public String getPrefix() {
         switch (this) {
             case SQLSERVER:
-                return "jdbc:sqlserver://";
+                return "jdbc:jtds:sqlserver://";
             case MYSQL:
                 return "jdbc:mysql://";
             case POSTGRESQL:
@@ -121,28 +121,10 @@ public enum PrometheusJDBCDriver {
     public String getConnectionString(final PrometheusDatabasePreferences pPreferences) {
         /* Create the buffer */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-
-        switch (this) {
-            case SQLSERVER:
-                /* Build the connection string */
-                myBuilder.append(getPrefix());
-                myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));
-                myBuilder.append(";instanceName=");
-                myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBINSTANCE));
-                myBuilder.append(";database=");
-                myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME));
-                myBuilder.append(";integratedSecurity=true");
-                break;
-            case MYSQL:
-            case POSTGRESQL:
-            default:
-                /* Build the connection string */
-                myBuilder.append(getPrefix());
-                myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));
-                myBuilder.append("/");
-                myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME));
-                break;
-        }
+        myBuilder.append(getPrefix());
+        myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBSERVER));
+        myBuilder.append("/");
+        myBuilder.append(pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME));
 
         /* Return the string */
         return myBuilder.toString();

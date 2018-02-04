@@ -716,7 +716,7 @@ public final class BouncyFactory
      * @return the MAC
      */
     private static Mac getBCBlakeMac(final GordianMacSpec pSpec) {
-        Digest myDigest = getBlake2Digest(pSpec.getDigestSpec());
+        final Digest myDigest = getBlake2Digest(pSpec.getDigestSpec());
         return new Blake2Mac(myDigest);
     }
 

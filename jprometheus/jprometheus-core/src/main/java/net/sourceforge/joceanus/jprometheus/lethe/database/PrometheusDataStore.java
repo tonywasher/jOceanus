@@ -64,6 +64,11 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
     private static final String PROPERTY_PASS = "password";
 
     /**
+     * Instance property name.
+     */
+    private static final String PROPERTY_INSTANCE = "instance";
+
+    /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusDataStore.class);
@@ -102,36 +107,34 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
             /* Access the JDBC Driver */
             theDriver = pPreferences.getEnumValue(PrometheusDatabasePreferenceKey.DBDRIVER, PrometheusJDBCDriver.class);
 
-            /* Load the database driver */
-            Class.forName(theDriver.getDriver());
-
             /* Obtain the connection */
             final String myConnString = theDriver.getConnectionString(pPreferences);
 
-            /* If we are using integrated security */
-            if (theDriver.useIntegratedSecurity()) {
-                /* Connect without userId/password */
-                theConn = DriverManager.getConnection(myConnString);
+            /* Create the properties and record user */
+            final Properties myProperties = new Properties();
+            final String myUser = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBUSER);
+            final char[] myPass = pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS);
+            myProperties.setProperty(PROPERTY_USER, myUser);
+            myProperties.setProperty(PROPERTY_PASS, new String(myPass));
 
-                /* else we must use userId and password */
-            } else {
-                /* Create the properties and record user */
-                final Properties myProperties = new Properties();
-                final String myUser = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBUSER);
-                final char[] myPass = pPreferences.getCharArrayValue(PrometheusDatabasePreferenceKey.DBPASS);
-                myProperties.setProperty(PROPERTY_USER, myUser);
-                myProperties.setProperty(PROPERTY_PASS, new String(myPass));
-
-                /* Connect using properties */
-                theConn = DriverManager.getConnection(myConnString, myProperties);
+            /* If we are using instance */
+            if (theDriver.useInstance()) {
+                final String myInstance = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBINSTANCE);
+                myProperties.setProperty(PROPERTY_INSTANCE, myInstance);
             }
+
+            /* Connect using properties */
+            theConn = DriverManager.getConnection(myConnString, myProperties);
+
+            /* Connect to the correct database */
+            final String myCatalog = pPreferences.getStringValue(PrometheusDatabasePreferenceKey.DBNAME);
+            theConn.setCatalog(myCatalog);
 
             /* Switch off autoCommit */
             theConn.setAutoCommit(false);
 
             /* handle exceptions */
-        } catch (ClassNotFoundException
-                | SQLException e) {
+        } catch (SQLException e) {
             throw new PrometheusIOException("Failed to load driver", e);
         }
 
