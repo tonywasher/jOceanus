@@ -946,7 +946,7 @@ public abstract class GordianFactory {
      * @return true/false
      */
     protected boolean validKeySetSymKeyType(final GordianSymKeyType pKeyType) {
-        return validKeySetSymKeyTypeForRestriction(pKeyType, isRestricted);
+        return validSymKeyType(pKeyType) && validKeySetSymKeyTypeForRestriction(pKeyType, isRestricted);
     }
 
     /**
