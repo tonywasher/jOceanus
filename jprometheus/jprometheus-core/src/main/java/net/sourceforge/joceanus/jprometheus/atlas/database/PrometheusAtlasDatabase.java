@@ -23,10 +23,12 @@
 package net.sourceforge.joceanus.jprometheus.atlas.database;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -70,6 +72,11 @@ public abstract class PrometheusAtlasDatabase {
     protected static final int BUFFER_LEN = 100;
 
     /**
+     * Database type.
+     */
+    private final PrometheusAtlasDatabaseType theType;
+
+    /**
      * Preferences.
      */
     private final PrometheusDatabasePreferences thePreferences;
@@ -85,10 +92,38 @@ public abstract class PrometheusAtlasDatabase {
     private Connection theConnection;
 
     /**
+     * Database metaData.
+     */
+    private DatabaseMetaData theMetaData;
+
+    /**
+     * Quote database name?
+     */
+    private boolean quoteDatabase;
+
+    /**
+     * Quote identifiers?
+     */
+    private boolean quoteIdentifiers;
+
+    /**
+     * Do we convert prefixes to lowerCase?
+     */
+    private boolean prefixToLower;
+
+    /**
+     * Do we convert prefixes to lowerCase?
+     */
+    private boolean prefixToUpper;
+
+    /**
      * Constructor.
+     * @param pType the database type
      * @param pPreferences the preferences
      */
-    protected PrometheusAtlasDatabase(final PrometheusDatabasePreferences pPreferences) {
+    protected PrometheusAtlasDatabase(final PrometheusAtlasDatabaseType pType,
+                                      final PrometheusDatabasePreferences pPreferences) {
+        theType = pType;
         thePreferences = pPreferences;
     }
 
@@ -113,7 +148,18 @@ public abstract class PrometheusAtlasDatabase {
      * @param pPrefix the prefix
      */
     public void setPrefix(final String pPrefix) {
+        /* Store the prefix */
         thePrefix = pPrefix;
+
+        /* Convert prefix to upperCase if required */
+        if (prefixToUpper && thePrefix != null) {
+            thePrefix = thePrefix.toUpperCase();
+        }
+
+        /* Convert prefix to lowerCase if required */
+        if (prefixToLower && thePrefix != null) {
+            thePrefix = thePrefix.toLowerCase();
+        }
     }
 
     /**
@@ -139,9 +185,30 @@ public abstract class PrometheusAtlasDatabase {
 
             /* Connect using properties */
             theConnection = DriverManager.getConnection(myConnString, myProperties);
+            theMetaData = theConnection.getMetaData();
 
-            /* Switch off autoCommit */
-            theConnection.setAutoCommit(false);
+            /* Switch off autoCommit for non-maintenance databases */
+            theConnection.setAutoCommit(pDatabase == null);
+
+            /* Determine whether we should quote identifiers */
+            quoteIdentifiers = !theMetaData.supportsMixedCaseIdentifiers()
+                               && theMetaData.supportsMixedCaseQuotedIdentifiers();
+
+            /* Determine whether we should quote database */
+            quoteDatabase = quoteIdentifiers && theType.canQuoteDatabase();
+
+            /* If we are not quoting database and we do not support mixed case */
+            if (!quoteDatabase && !theMetaData.supportsMixedCaseIdentifiers()) {
+                /* Determine whether prefix is switched to upper or lower case */
+                prefixToLower = theMetaData.storesLowerCaseIdentifiers();
+                prefixToUpper = theMetaData.storesUpperCaseIdentifiers();
+            } else {
+                prefixToLower = false;
+                prefixToUpper = false;
+            }
+
+            /* Update the prefix appropriately */
+            setPrefix(thePrefix);
 
             /* handle exceptions */
         } catch (SQLException e) {
@@ -265,18 +332,22 @@ public abstract class PrometheusAtlasDatabase {
      * @throws OceanusException on error
      */
     public void createDatabase(final String pName) throws OceanusException {
-        /* create the list */
+        /* create the command */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         myBuilder.append("create database ");
-        myBuilder.append(QUOTE_STRING);
+        if (quoteDatabase) {
+            myBuilder.append(QUOTE_STRING);
+        }
         myBuilder.append(getDatabaseName(pName));
-        myBuilder.append(QUOTE_STRING);
+        if (quoteDatabase) {
+            myBuilder.append(QUOTE_STRING);
+        }
         final String myCommand = myBuilder.toString();
 
         /* Protect against exceptions */
-        try (PreparedStatement myStatement = theConnection.prepareStatement(myCommand)) {
+        try (Statement myStatement = theConnection.createStatement()) {
             /* Create the database */
-            myStatement.execute();
+            myStatement.executeUpdate(myCommand);
 
             /* Handle exceptions */
         } catch (SQLException e) {
@@ -290,18 +361,22 @@ public abstract class PrometheusAtlasDatabase {
      * @throws OceanusException on error
      */
     public void dropDatabase(final String pName) throws OceanusException {
-        /* create the list */
+        /* create the command */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         myBuilder.append("drop database IF EXISTS ");
-        myBuilder.append(QUOTE_STRING);
+        if (quoteDatabase) {
+            myBuilder.append(QUOTE_STRING);
+        }
         myBuilder.append(getDatabaseName(pName));
-        myBuilder.append(QUOTE_STRING);
+        if (quoteDatabase) {
+            myBuilder.append(QUOTE_STRING);
+        }
         final String myCommand = myBuilder.toString();
 
         /* Protect against exceptions */
-        try (PreparedStatement myStatement = theConnection.prepareStatement(myCommand)) {
-            /* Create the database */
-            myStatement.execute();
+        try (Statement myStatement = theConnection.createStatement()) {
+            /* drop the database */
+            myStatement.executeUpdate(myCommand);
 
             /* Handle exceptions */
         } catch (SQLException e) {

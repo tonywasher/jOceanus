@@ -35,7 +35,7 @@ public class PrometheusAtlasSQLServerDatabase
      * @param pPreferences the preferences
      */
     protected PrometheusAtlasSQLServerDatabase(final PrometheusDatabasePreferences pPreferences) {
-        super(pPreferences);
+        super(PrometheusAtlasDatabaseType.SQLSERVER, pPreferences);
     }
 
     @Override

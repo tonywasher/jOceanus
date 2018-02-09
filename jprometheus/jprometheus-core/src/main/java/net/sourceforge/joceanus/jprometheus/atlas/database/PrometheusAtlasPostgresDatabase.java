@@ -35,7 +35,7 @@ public class PrometheusAtlasPostgresDatabase
      * @param pPreferences the preferences
      */
     protected PrometheusAtlasPostgresDatabase(final PrometheusDatabasePreferences pPreferences) {
-        super(pPreferences);
+        super(PrometheusAtlasDatabaseType.POSTGRES, pPreferences);
     }
 
     @Override
@@ -60,9 +60,9 @@ public class PrometheusAtlasPostgresDatabase
     protected String getListDatabaseCommand() {
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         final String myPrefix = getPrefix();
-        myBuilder.append("select datName from pgdatabase");
+        myBuilder.append("select datName from pg_database where datistemplate = false");
         if (myPrefix != null) {
-            myBuilder.append(" where datName like '");
+            myBuilder.append(" and datName like '");
             myBuilder.append(myPrefix);
             myBuilder.append("%'");
         }
