@@ -38,17 +38,13 @@ import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListResource;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisReverseIterator;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListChange.MetisEosListEvent;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Indexed List.
  * @param <T> the item type
  */
 public class MetisEosIndexedList<T extends MetisIndexedItem>
-        implements MetisDataList<T>, TethysEventProvider<MetisEosListEvent>, MetisFieldItem {
+        implements MetisDataList<T>, MetisFieldItem {
     /**
      * Report fields.
      */
@@ -66,11 +62,6 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
      * The First Id.
      */
     private static final Integer ID_FIRST = Integer.valueOf(1);
-
-    /**
-     * The Event Manager.
-     */
-    private final TethysEventManager<MetisEosListEvent> theEventManager;
 
     /**
      * The underlying list.
@@ -96,17 +87,9 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
      * Constructor.
      */
     public MetisEosIndexedList() {
-        /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
-
         /* Create the list and map map */
         theList = new ArrayList<>();
         theIdMap = new HashMap<>();
-    }
-
-    @Override
-    public TethysEventRegistrar<MetisEosListEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
     }
 
     @Override
@@ -342,48 +325,6 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
         if (pId >= theNextId) {
             /* Adjust the nextId */
             theNextId = pId + 1;
-        }
-    }
-
-    /**
-     * Reset content.
-     * @param pSource the source list
-     */
-    public void resetContent(final MetisIndexedList<T> pSource) {
-        /* Reset the list */
-        resetContent(pSource.iterator());
-    }
-
-    /**
-     * Reset content.
-     * @param pSource the source iterator
-     */
-    public void resetContent(final Iterator<T> pSource) {
-        /* Clear the list */
-        clear();
-
-        /* Loop through the list */
-        while (pSource.hasNext()) {
-            final T myCurr = pSource.next();
-
-            /* Add the item to the list */
-            addToList(myCurr);
-        }
-
-        /* Report the refresh */
-        final MetisEosListChange<T> myChange = new MetisEosListChange<>(MetisEosListEvent.REFRESH);
-        fireEvent(myChange);
-    }
-
-    /**
-     * Fire event.
-     * @param pEvent the event
-     */
-    protected void fireEvent(final MetisEosListChange<T> pEvent) {
-        /* If the change is non-empty */
-        if (MetisEosListEvent.REFRESH.equals(pEvent.getEventType())
-            || !pEvent.isEmpty()) {
-            theEventManager.fireEvent(pEvent.getEventType(), pEvent);
         }
     }
 

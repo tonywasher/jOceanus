@@ -755,7 +755,7 @@ public final class JcaFactory
                 return GordianCipherMode.CBC.name();
             case CFB:
             case G3413CFB:
-                return GordianCipherMode.CFB.name();
+                return "CFB8";
             case OFB:
             case G3413OFB:
                 return GordianCipherMode.OFB.name();

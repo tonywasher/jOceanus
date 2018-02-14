@@ -862,11 +862,11 @@ public final class BouncyFactory
             case KCTR:
                 return new KCTRBlockCipher(pEngine);
             case CFB:
-                return new CFBBlockCipher(pEngine, pEngine.getBlockSize());
+                return new CFBBlockCipher(pEngine, Byte.SIZE);
             case GCFB:
                 return new GCFBBlockCipher(pEngine);
             case OFB:
-                return new OFBBlockCipher(pEngine, pEngine.getBlockSize());
+                return new OFBBlockCipher(pEngine, Byte.SIZE * pEngine.getBlockSize());
             case GOFB:
                 return new GOFBBlockCipher(pEngine);
             case G3413CBC:
@@ -874,7 +874,7 @@ public final class BouncyFactory
             case G3413CTR:
                 return new G3413CTRBlockCipher(pEngine);
             case G3413CFB:
-                return new G3413CFBBlockCipher(pEngine);
+                return new G3413CFBBlockCipher(pEngine, Byte.SIZE);
             case G3413OFB:
                 return new G3413OFBBlockCipher(pEngine);
             default:

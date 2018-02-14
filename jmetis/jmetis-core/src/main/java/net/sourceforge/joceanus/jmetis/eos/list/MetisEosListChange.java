@@ -27,13 +27,18 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 
 /**
  * Metis VersionedList Event.
  * @param <T> the item type
  */
-public class MetisEosListChange<T extends MetisIndexedItem> {
+public class MetisEosListChange<T extends MetisFieldVersionedItem> {
+    /**
+     * The item type.
+     */
+    private final MetisEosItemType<T> theItemType;
+
     /**
      * The event type.
      */
@@ -56,10 +61,21 @@ public class MetisEosListChange<T extends MetisIndexedItem> {
 
     /**
      * Constructor.
+     * @param pItemType the item type
      * @param pEventType the event type
      */
-    protected MetisEosListChange(final MetisEosListEvent pEventType) {
+    protected MetisEosListChange(final MetisEosItemType<T> pItemType,
+                                 final MetisEosListEvent pEventType) {
+        theItemType = pItemType;
         theEventType = pEventType;
+    }
+
+    /**
+     * Obtain the item type.
+     * @return the item type
+     */
+    public MetisEosItemType<T> getItemType() {
+        return theItemType;
     }
 
     /**
@@ -165,35 +181,5 @@ public class MetisEosListChange<T extends MetisIndexedItem> {
             theDeleted = new ArrayList<>();
         }
         theDeleted.add(pItem);
-    }
-
-    /**
-     * The Event Types.
-     */
-    public enum MetisEosListEvent {
-        /**
-         * Update.
-         */
-        UPDATE,
-
-        /**
-         * ReWind.
-         */
-        REWIND,
-
-        /**
-         * Commit.
-         */
-        COMMIT,
-
-        /**
-         * ReBase.
-         */
-        REBASE,
-
-        /**
-         * Refresh.
-         */
-        REFRESH;
     }
 }
