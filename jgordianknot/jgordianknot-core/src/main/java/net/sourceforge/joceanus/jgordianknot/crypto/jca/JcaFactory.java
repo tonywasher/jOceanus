@@ -947,6 +947,8 @@ public final class JcaFactory
         switch (pKeyType) {
             case SPECK:
             case ANUBIS:
+            case SIMON:
+            case MARS:
                 return false;
             default:
                 return super.validSymKeyType(pKeyType);

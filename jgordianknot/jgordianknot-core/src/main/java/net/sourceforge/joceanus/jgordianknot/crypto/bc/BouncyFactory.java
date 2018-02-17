@@ -118,6 +118,8 @@ import org.bouncycastle.crypto.modes.SICBlockCipher;
 import org.bouncycastle.crypto.newdigests.GroestlDigest;
 import org.bouncycastle.crypto.newdigests.JHDigest;
 import org.bouncycastle.crypto.newengines.AnubisEngine;
+import org.bouncycastle.crypto.newengines.MARSEngine;
+import org.bouncycastle.crypto.newengines.SimonEngine;
 import org.bouncycastle.crypto.newengines.SosemanukEngine;
 import org.bouncycastle.crypto.newengines.SpeckEngine;
 import org.bouncycastle.crypto.newmacs.Blake2Mac;
@@ -838,6 +840,10 @@ public final class BouncyFactory
                 return new SpeckEngine(pKeySpec.getBlockLength().getLength());
             case ANUBIS:
                 return new AnubisEngine();
+            case SIMON:
+                return new SimonEngine(pKeySpec.getBlockLength().getLength());
+            case MARS:
+                return new MARSEngine();
             default:
                 throw new GordianDataException(getInvalidText(pKeySpec));
         }

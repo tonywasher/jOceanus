@@ -154,7 +154,17 @@ public enum GordianSymKeyType {
     /**
      * Anubis.
      */
-    ANUBIS(GordianLength.LEN_128);
+    ANUBIS(GordianLength.LEN_128),
+
+    /**
+     * Simon.
+     */
+    SIMON(GordianLength.LEN_128),
+
+    /**
+     * MARS.
+     */
+    MARS(GordianLength.LEN_128);
 
     /**
      * The Supported lengths.

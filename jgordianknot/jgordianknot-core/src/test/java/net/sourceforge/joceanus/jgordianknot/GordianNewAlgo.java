@@ -8,7 +8,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.ExtendedDigest;
 import org.bouncycastle.crypto.newdigests.GroestlDigest;
 import org.bouncycastle.crypto.newdigests.JHDigest;
-import org.bouncycastle.crypto.newengines.AnubisEngine;
+import org.bouncycastle.crypto.newengines.MARSEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.Arrays;
 
@@ -59,7 +59,7 @@ public class GordianNewAlgo {
         byte[] myDecrypted = new byte[16];
 
         /* Setup the cipher */
-        AnubisEngine myCipher = new AnubisEngine();
+        MARSEngine myCipher = new MARSEngine();
         CipherParameters myParms = new KeyParameter(key);
 
         /* Perform encrypt and decrypt */

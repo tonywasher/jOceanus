@@ -35,11 +35,6 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
  */
 public class Blake2Mac implements Mac {
     /**
-     * MacSpec.
-     */
-    // private final GordianMacSpec theSpec;
-
-    /**
      * Use Blake2b?
      */
     private final boolean useBlake2b;
