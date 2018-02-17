@@ -32,11 +32,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 /**
  * List Edit Methods.
  */
-public final class MetisEosListEdit {
+public final class MetisEosListEditManager {
     /**
      * Private constructor.
      */
-    private MetisEosListEdit() {
+    private MetisEosListEditManager() {
     }
 
     /**
@@ -44,20 +44,20 @@ public final class MetisEosListEdit {
      * @param pBase the base listSet
      * @return the updateSet
      */
-    public static MetisEosVersionedListSet deriveUpdateListSet(final MetisEosVersionedListSet pBase) {
+    public static MetisEosListSetVersioned deriveUpdateListSet(final MetisEosListSetVersioned pBase) {
         /* Create a new editSet */
-        final MetisEosVersionedListSet myEdits = new MetisEosVersionedListSet(pBase);
+        final MetisEosListSetVersioned myEdits = new MetisEosListSetVersioned(pBase);
 
         /* Loop through the lists */
-        final Iterator<MetisEosItemType<MetisFieldVersionedItem>> myIterator = pBase.keyIterator();
+        final Iterator<MetisEosListKey> myIterator = pBase.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisEosItemType<MetisFieldVersionedItem> myKey = myIterator.next();
+            final MetisEosListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisEosVersionedList<MetisFieldVersionedItem> myBase = pBase.getList(myKey);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myBase = pBase.getList(myKey);
 
             /* Create the new list */
-            final MetisEosVersionedList<MetisFieldVersionedItem> myEdit = new MetisEosVersionedList<>(myEdits, myBase);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myEdit = new MetisEosListVersioned<>(myEdits, myBase);
 
             /* configure the edit list */
             deriveEdits(myEdit);
@@ -79,14 +79,14 @@ public final class MetisEosListEdit {
      * Derive edit items as a result of refresh in the base listSet.
      * @param pUpdates the updates listSet
      */
-    private static void deriveEdits(final MetisEosVersionedListSet pUpdates) {
+    private static void deriveEdits(final MetisEosListSetVersioned pUpdates) {
         /* Loop through the lists */
-        final Iterator<MetisEosItemType<MetisFieldVersionedItem>> myIterator = pUpdates.keyIterator();
+        final Iterator<MetisEosListKey> myIterator = pUpdates.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisEosItemType<MetisFieldVersionedItem> myKey = myIterator.next();
+            final MetisEosListKey myKey = myIterator.next();
 
             /* Obtain the update and base lists */
-            final MetisEosVersionedList<MetisFieldVersionedItem> myEdits = pUpdates.getList(myKey);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myEdits = pUpdates.getList(myKey);
 
             /* Derive items from the baseList */
             deriveEdits(myEdits);
@@ -105,12 +105,12 @@ public final class MetisEosListEdit {
      * @param <T> the itemType for the list
      * @param pEdits the edit list
      */
-    private static <T extends MetisFieldVersionedItem> void deriveEdits(final MetisEosVersionedList<T> pEdits) {
+    private static <T extends MetisFieldVersionedItem> void deriveEdits(final MetisEosListVersioned<T> pEdits) {
         /* Clear the list */
         pEdits.clear();
 
         /* Access the base list */
-        final MetisEosVersionedList<T> myBaseList = pEdits.getBaseList();
+        final MetisEosListVersioned<T> myBaseList = pEdits.getBaseList();
 
         /* Loop through the list */
         final Iterator<T> myIterator = myBaseList.iterator();
@@ -134,18 +134,18 @@ public final class MetisEosListEdit {
      * @param pEdits the edit listSet
      * @param pEvent the event
      */
-    private static void handleReWindOfBase(final MetisEosVersionedListSet pEdits,
+    private static void handleReWindOfBase(final MetisEosListSetVersioned pEdits,
                                            final TethysEvent<MetisEosListEvent> pEvent) {
         /* Access the change details */
         final MetisEosListSetChange myChanges = pEvent.getDetails(MetisEosListSetChange.class);
 
         /* Loop through the lists */
-        final Iterator<MetisEosItemType<MetisFieldVersionedItem>> myIterator = pEdits.keyIterator();
+        final Iterator<MetisEosListKey> myIterator = pEdits.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisEosItemType<MetisFieldVersionedItem> myKey = myIterator.next();
+            final MetisEosListKey myKey = myIterator.next();
 
             /* Obtain the update list and associated change */
-            final MetisEosVersionedList<MetisFieldVersionedItem> myEdits = pEdits.getList(myKey);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myEdits = pEdits.getList(myKey);
             MetisEosListChange<MetisFieldVersionedItem> myChange = myChanges.getListChange(myKey);
 
             /* If there are changes */
@@ -171,7 +171,7 @@ public final class MetisEosListEdit {
      * @param pChange the change
      * @return the editList change
      */
-    private static <T extends MetisFieldVersionedItem> MetisEosListChange<T> doHandleReWindOfBase(final MetisEosVersionedList<T> pList,
+    private static <T extends MetisFieldVersionedItem> MetisEosListChange<T> doHandleReWindOfBase(final MetisEosListVersioned<T> pList,
                                                                                                   final MetisEosListChange<T> pChange) {
         /* Create a new change */
         final MetisEosListChange<T> myChange = new MetisEosListChange<>(pList.getItemType(), MetisEosListEvent.REWIND);
@@ -195,7 +195,7 @@ public final class MetisEosListEdit {
      * @param pChange the change
      * @param pIterator the iterator
      */
-    private static <T extends MetisFieldVersionedItem> void handleBaseChangedItems(final MetisEosVersionedList<T> pList,
+    private static <T extends MetisFieldVersionedItem> void handleBaseChangedItems(final MetisEosListVersioned<T> pList,
                                                                                    final MetisEosListChange<T> pChange,
                                                                                    final Iterator<T> pIterator) {
         /* Loop through the changed items */
@@ -250,7 +250,7 @@ public final class MetisEosListEdit {
      * @param pChange the change
      * @param pIterator the iterator
      */
-    private static <T extends MetisFieldVersionedItem> void handleBaseDeletedItems(final MetisEosVersionedList<T> pList,
+    private static <T extends MetisFieldVersionedItem> void handleBaseDeletedItems(final MetisEosListVersioned<T> pList,
                                                                                    final MetisEosListChange<T> pChange,
                                                                                    final Iterator<T> pIterator) {
         /* Loop through the deleted items */
@@ -277,7 +277,7 @@ public final class MetisEosListEdit {
      * @param pBase the base item
      * @return the new item
      */
-    private static <T extends MetisFieldVersionedItem> T newItemFromBase(final MetisEosVersionedList<T> pList,
+    private static <T extends MetisFieldVersionedItem> T newItemFromBase(final MetisEosListVersioned<T> pList,
                                                                          final T pBase) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pBase.getIndexedId());

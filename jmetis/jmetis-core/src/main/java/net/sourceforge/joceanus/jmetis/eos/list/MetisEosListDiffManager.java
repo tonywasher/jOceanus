@@ -34,11 +34,11 @@ import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 /**
  * List Difference Generator.
  */
-public final class MetisEosListDifference {
+public final class MetisEosListDiffManager {
     /**
      * Private constructor.
      */
-    private MetisEosListDifference() {
+    private MetisEosListDiffManager() {
     }
 
     /**
@@ -47,25 +47,25 @@ public final class MetisEosListDifference {
      * @param pOld the old listSet to compare to
      * @return the difference set
      */
-    public static MetisEosVersionedListSet deriveDifferences(final MetisEosVersionedListSet pNew,
-                                                             final MetisEosVersionedListSet pOld) {
+    public static MetisEosListSetVersioned deriveDifferences(final MetisEosListSetVersioned pNew,
+                                                             final MetisEosListSetVersioned pOld) {
         /* Create a new difference set */
-        final MetisEosVersionedListSet myDifferences = new MetisEosVersionedListSet();
+        final MetisEosListSetVersioned myDifferences = new MetisEosListSetVersioned();
 
         /* Determine the new Version */
         int myNewVersion = 0;
 
         /* Loop through the lists */
-        final Iterator<MetisEosItemType<MetisFieldVersionedItem>> myIterator = obtainAllItemTypes(pNew, pOld);
+        final Iterator<MetisEosListKey> myIterator = obtainAllItemTypes(pNew, pOld);
         while (myIterator.hasNext()) {
-            final MetisEosItemType<MetisFieldVersionedItem> myKey = myIterator.next();
+            final MetisEosListKey myKey = myIterator.next();
 
             /* Obtain the source list */
-            final MetisEosVersionedList<MetisFieldVersionedItem> myOld = pOld.getList(myKey);
-            final MetisEosVersionedList<MetisFieldVersionedItem> myNew = pNew.getList(myKey);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myOld = pOld.getList(myKey);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myNew = pNew.getList(myKey);
 
             /* Create the new list */
-            final MetisEosVersionedList<MetisFieldVersionedItem> myDifference = new MetisEosVersionedList<>(myDifferences, myKey);
+            final MetisEosListVersioned<MetisFieldVersionedItem> myDifference = new MetisEosListVersioned<>(myDifferences, myKey);
 
             /* If we only have an old list */
             if (myNew == null) {
@@ -105,15 +105,15 @@ public final class MetisEosListDifference {
      * @param pOldListSet the old listSet
      * @return the iterator
      */
-    private static Iterator<MetisEosItemType<MetisFieldVersionedItem>> obtainAllItemTypes(final MetisEosVersionedListSet pNewListSet,
-                                                                                          final MetisEosVersionedListSet pOldListSet) {
+    private static Iterator<MetisEosListKey> obtainAllItemTypes(final MetisEosListSetVersioned pNewListSet,
+                                                                 final MetisEosListSetVersioned pOldListSet) {
         /* Create the new List */
-        final List<MetisEosItemType<MetisFieldVersionedItem>> myList = new ArrayList<>();
+        final List<MetisEosListKey> myList = new ArrayList<>();
 
         /* Loop through the item types in the first set */
-        Iterator<MetisEosItemType<MetisFieldVersionedItem>> myIterator = pNewListSet.keyIterator();
+        Iterator<MetisEosListKey> myIterator = pNewListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisEosItemType<MetisFieldVersionedItem> myKey = myIterator.next();
+            final MetisEosListKey myKey = myIterator.next();
 
             /* Add to the list */
             myList.add(myKey);
@@ -122,7 +122,7 @@ public final class MetisEosListDifference {
         /* Loop through the item types in the second set */
         myIterator = pOldListSet.keyIterator();
         while (myIterator.hasNext()) {
-            final MetisEosItemType<MetisFieldVersionedItem> myKey = myIterator.next();
+            final MetisEosListKey myKey = myIterator.next();
 
             /* Add to the list if it does not already exist */
             if (!myList.contains(myKey)) {
@@ -141,9 +141,9 @@ public final class MetisEosListDifference {
      * @param pNew the new list
      * @param pOld the old list
      */
-    private static <T extends MetisFieldVersionedItem> void generateDifferences(final MetisEosVersionedList<T> pList,
-                                                                                final MetisEosVersionedList<T> pNew,
-                                                                                final MetisEosVersionedList<T> pOld) {
+    private static <T extends MetisFieldVersionedItem> void generateDifferences(final MetisEosListVersioned<T> pList,
+                                                                                final MetisEosListVersioned<T> pNew,
+                                                                                final MetisEosListVersioned<T> pOld) {
         /* Access a copy of the idMap of the old list */
         final Map<Integer, T> myOld = new HashMap<>(pOld.getIdMap());
 
@@ -194,8 +194,8 @@ public final class MetisEosListDifference {
      * @param pList the list to populate
      * @param pNew the new list
      */
-    private static <T extends MetisFieldVersionedItem> void generateNewDifferences(final MetisEosVersionedList<T> pList,
-                                                                                   final MetisEosVersionedList<T> pNew) {
+    private static <T extends MetisFieldVersionedItem> void generateNewDifferences(final MetisEosListVersioned<T> pList,
+                                                                                   final MetisEosListVersioned<T> pNew) {
         /* Set the sort comparator */
         pList.setComparator(pNew.getComparator());
 
@@ -215,8 +215,8 @@ public final class MetisEosListDifference {
      * @param pList the list to populate
      * @param pOld the old list
      */
-    private static <T extends MetisFieldVersionedItem> void generateOldDifferences(final MetisEosVersionedList<T> pList,
-                                                                                   final MetisEosVersionedList<T> pOld) {
+    private static <T extends MetisFieldVersionedItem> void generateOldDifferences(final MetisEosListVersioned<T> pList,
+                                                                                   final MetisEosListVersioned<T> pOld) {
         /* Set the sort comparator */
         pList.setComparator(pOld.getComparator());
 
@@ -237,7 +237,7 @@ public final class MetisEosListDifference {
      * @param pBase the base item
      * @return the new item
      */
-    protected static <T extends MetisFieldVersionedItem> T newDiffDeletedItem(final MetisEosVersionedList<T> pList,
+    protected static <T extends MetisFieldVersionedItem> T newDiffDeletedItem(final MetisEosListVersioned<T> pList,
                                                                               final T pBase) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pBase.getIndexedId());
@@ -267,7 +267,7 @@ public final class MetisEosListDifference {
      * @param pBase the base item
      * @return the new item
      */
-    protected static <T extends MetisFieldVersionedItem> T newDiffChangedItem(final MetisEosVersionedList<T> pList,
+    protected static <T extends MetisFieldVersionedItem> T newDiffChangedItem(final MetisEosListVersioned<T> pList,
                                                                               final T pCurr,
                                                                               final T pBase) {
         /* Obtain a new item */
@@ -296,7 +296,7 @@ public final class MetisEosListDifference {
      * @param pCurr the current item
      * @return the new item
      */
-    protected static <T extends MetisFieldVersionedItem> T newDiffAddedItem(final MetisEosVersionedList<T> pList,
+    protected static <T extends MetisFieldVersionedItem> T newDiffAddedItem(final MetisEosListVersioned<T> pList,
                                                                             final T pCurr) {
         /* Obtain a new item */
         final T myNew = pList.newListItem(pCurr.getIndexedId());

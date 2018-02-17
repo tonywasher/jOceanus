@@ -26,9 +26,8 @@ import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 
 /**
  * List Item Type.
- * @param <T> The item type
  */
-public interface MetisEosItemType<T extends MetisFieldVersionedItem> {
+public interface MetisEosListKey {
     /**
      * Obtain the item name.
      * @return the item name
@@ -43,14 +42,16 @@ public interface MetisEosItemType<T extends MetisFieldVersionedItem> {
 
     /**
      * Obtain the class of the item.
+     * @param <T> the item type
      * @return the clazz
      */
-    Class<T> getClazz();
+    <T extends MetisFieldVersionedItem> Class<T> getClazz();
 
     /**
      * Create a new item for the list.
+     * @param <T> the item type
      * @param pListSet the listSet
      * @return the new item
      */
-    T newItem(MetisEosVersionedListSet pListSet);
+    <T extends MetisFieldVersionedItem> T newItem(MetisEosListSetVersioned pListSet);
 }

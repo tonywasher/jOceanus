@@ -39,7 +39,7 @@ public class MetisEosListSetChange {
     /**
      * The items that are being added.
      */
-    private final Map<MetisEosItemType<? extends MetisFieldVersionedItem>, MetisEosListChange<? extends MetisFieldVersionedItem>> theChanges;
+    private final Map<MetisEosListKey, MetisEosListChange<? extends MetisFieldVersionedItem>> theChanges;
 
     /**
      * Constructor.
@@ -73,7 +73,7 @@ public class MetisEosListSetChange {
      * @return the change (or null)
      */
     @SuppressWarnings("unchecked")
-    public <T extends MetisFieldVersionedItem> MetisEosListChange<T> getListChange(final MetisEosItemType<T> pItemType) {
+    public <T extends MetisFieldVersionedItem> MetisEosListChange<T> getListChange(final MetisEosListKey pItemType) {
         return (MetisEosListChange<T>) theChanges.get(pItemType);
     }
 

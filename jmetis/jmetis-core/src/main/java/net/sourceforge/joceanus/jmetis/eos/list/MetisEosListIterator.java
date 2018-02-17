@@ -30,12 +30,12 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem
  * Indexed List Iterator.
  * @param <T> the item type
  */
-public class MetisEosIndexedListIterator<T extends MetisIndexedItem>
+public class MetisEosListIterator<T extends MetisIndexedItem>
         implements ListIterator<T> {
     /**
      * The underlying list.
      */
-    private final MetisEosIndexedList<T> theList;
+    private final MetisEosListIndexed<T> theList;
 
     /**
      * The underlying iterator.
@@ -51,7 +51,7 @@ public class MetisEosIndexedListIterator<T extends MetisIndexedItem>
      * Constructor.
      * @param pList the list
      */
-    protected MetisEosIndexedListIterator(final MetisEosIndexedList<T> pList) {
+    protected MetisEosListIterator(final MetisEosListIndexed<T> pList) {
         /* Store parameters */
         theList = pList;
 
@@ -64,7 +64,7 @@ public class MetisEosIndexedListIterator<T extends MetisIndexedItem>
      * @param pList the list
      * @param pIndex the starting index
      */
-    protected MetisEosIndexedListIterator(final MetisEosIndexedList<T> pList,
+    protected MetisEosListIterator(final MetisEosListIndexed<T> pList,
                                           final int pIndex) {
         /* Store parameters */
         theList = pList;

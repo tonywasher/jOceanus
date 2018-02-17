@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jmetis.atlas.list.MetisReverseIterator;
  * Indexed List.
  * @param <T> the item type
  */
-public class MetisEosIndexedList<T extends MetisIndexedItem>
+public class MetisEosListIndexed<T extends MetisIndexedItem>
         implements MetisDataList<T>, MetisFieldItem {
     /**
      * Report fields.
@@ -86,7 +86,7 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
     /**
      * Constructor.
      */
-    public MetisEosIndexedList() {
+    public MetisEosListIndexed() {
         /* Create the list and map map */
         theList = new ArrayList<>();
         theIdMap = new HashMap<>();
@@ -278,7 +278,7 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
 
     @Override
     public Iterator<T> iterator() {
-        return new MetisEosIndexedListIterator<>(this);
+        return new MetisEosListIterator<>(this);
     }
 
     /**
@@ -286,7 +286,7 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
      * @return the iterator
      */
     public ListIterator<T> listIterator() {
-        return new MetisEosIndexedListIterator<>(this);
+        return new MetisEosListIterator<>(this);
     }
 
     /**
@@ -299,7 +299,7 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
 
     @Override
     public ListIterator<T> listIterator(final int pIndex) {
-        return new MetisEosIndexedListIterator<>(this, pIndex);
+        return new MetisEosListIterator<>(this, pIndex);
     }
 
     /**
@@ -339,12 +339,12 @@ public class MetisEosIndexedList<T extends MetisIndexedItem>
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof MetisEosIndexedList)) {
+        if (!(pThat instanceof MetisEosListIndexed)) {
             return false;
         }
 
         /* Cast as list */
-        final MetisEosIndexedList<?> myThat = (MetisEosIndexedList<?>) pThat;
+        final MetisEosListIndexed<?> myThat = (MetisEosListIndexed<?>) pThat;
 
         /* Check list */
         return theList.equals(myThat.theList);

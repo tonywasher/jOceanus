@@ -74,7 +74,7 @@
     <packageMain/>
     <appLibDir/>
     <BouncyCastleVersion>1.59</BouncyCastleVersion>
-    <SvnKitVersion>1.9.0</SvnKitVersion>
+    <SvnKitVersion>1.9.1</SvnKitVersion>
     <JGitVersion>4.10.0.201712302008-r</JGitVersion>
     <HttpClientVersion>4.5.5</HttpClientVersion>
     <JSONVersion>20180130</JSONVersion>
@@ -216,6 +216,7 @@
           <targetJdk>${JavaVersion}</targetJdk>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
+            <exclude>**/org/**/*.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -356,6 +357,7 @@
           <targetJdk>${JavaVersion}</targetJdk>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
+            <exclude>**/org/**/*.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -368,6 +370,7 @@
           <aggregate>true</aggregate>
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
+            <exclude>**/org/**/*.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -379,7 +382,7 @@
           <show>public</show>
           <aggregate>true</aggregate>
           <nohelp>true</nohelp>
-          <excludePackageNames>SevenZip*</excludePackageNames>
+          <excludePackageNames>SevenZip:org</excludePackageNames>
         </configuration>
       </plugin>
       <plugin>

@@ -41,29 +41,29 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 /**
  * Versioned ListSet.
  */
-public class MetisEosVersionedListSet
+public class MetisEosListSetVersioned
         implements MetisFieldItem, TethysEventProvider<MetisEosListEvent> {
     /**
      * Report fields.
      */
-    private static final MetisFieldSet<MetisEosVersionedListSet> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisEosVersionedListSet.class);
+    private static final MetisFieldSet<MetisEosListSetVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisEosListSetVersioned.class);
 
     /**
      * Version Field Id.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosVersionedListSet::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosListSetVersioned::getVersion);
     }
 
     /**
      * The Local fields.
      */
-    private final MetisFieldSet<MetisEosVersionedListSet> theFields;
+    private final MetisFieldSet<MetisEosListSetVersioned> theFields;
 
     /**
      * The VersionedList Map.
      */
-    private final Map<MetisEosItemType<MetisFieldVersionedItem>, MetisEosVersionedList<MetisFieldVersionedItem>> theListMap;
+    private final Map<MetisEosListKey, MetisEosListVersioned<MetisFieldVersionedItem>> theListMap;
 
     /**
      * The Event Manager.
@@ -73,7 +73,7 @@ public class MetisEosVersionedListSet
     /**
      * The Underlying list (if any).
      */
-    private final MetisEosVersionedListSet theBaseListSet;
+    private final MetisEosListSetVersioned theBaseListSet;
 
     /**
      * The version of the listSet.
@@ -83,7 +83,7 @@ public class MetisEosVersionedListSet
     /**
      * Constructor.
      */
-    protected MetisEosVersionedListSet() {
+    protected MetisEosListSetVersioned() {
         this(null);
     }
 
@@ -91,7 +91,7 @@ public class MetisEosVersionedListSet
      * Constructor.
      * @param pBaseListSet the baseListSet (if any)
      */
-    protected MetisEosVersionedListSet(final MetisEosVersionedListSet pBaseListSet) {
+    protected MetisEosListSetVersioned(final MetisEosListSetVersioned pBaseListSet) {
         /* Store parameters */
         theBaseListSet = pBaseListSet;
 
@@ -127,7 +127,7 @@ public class MetisEosVersionedListSet
      * Obtain the baseListSet.
      * @return the baseListSet
      */
-    public MetisEosVersionedListSet getBaseListSet() {
+    public MetisEosListSetVersioned getBaseListSet() {
         return theBaseListSet;
     }
 
@@ -151,7 +151,7 @@ public class MetisEosVersionedListSet
      * Obtain the key iterator.
      * @return the iterator
      */
-    public Iterator<MetisEosItemType<MetisFieldVersionedItem>> keyIterator() {
+    public Iterator<MetisEosListKey> keyIterator() {
         return theListMap.keySet().iterator();
     }
 
@@ -159,8 +159,8 @@ public class MetisEosVersionedListSet
      * Obtain the reverse key iterator.
      * @return the iterator
      */
-    public Iterator<MetisEosItemType<MetisFieldVersionedItem>> reverseKeyIterator() {
-        final List<MetisEosItemType<MetisFieldVersionedItem>> myList = new ArrayList<>(theListMap.keySet());
+    public Iterator<MetisEosListKey> reverseKeyIterator() {
+        final List<MetisEosListKey> myList = new ArrayList<>(theListMap.keySet());
         return new MetisReverseIterator<>(myList.listIterator(myList.size()));
     }
 
@@ -168,7 +168,7 @@ public class MetisEosVersionedListSet
      * Obtain the List iterator.
      * @return true/false
      */
-    public Iterator<MetisEosVersionedList<MetisFieldVersionedItem>> listIterator() {
+    public Iterator<MetisEosListVersioned<MetisFieldVersionedItem>> listIterator() {
         return theListMap.values().iterator();
     }
 
@@ -179,17 +179,17 @@ public class MetisEosVersionedListSet
      * @return the list (or null)
      */
     @SuppressWarnings("unchecked")
-    public <T extends MetisFieldVersionedItem> MetisEosVersionedList<T> getList(final MetisEosItemType<T> pListKey) {
-        return (MetisEosVersionedList<T>) theListMap.get(pListKey);
+    public <T extends MetisFieldVersionedItem> MetisEosListVersioned<T> getList(final MetisEosListKey pListKey) {
+        return (MetisEosListVersioned<T>) theListMap.get(pListKey);
     }
 
     /**
      * Declare list.
      * @param pItemType the itemType for the list
      */
-    public void declareList(final MetisEosItemType<MetisFieldVersionedItem> pItemType) {
+    public void declareList(final MetisEosListKey pItemType) {
         /* Create the list and declare it */
-        declareList(pItemType, new MetisEosVersionedList<>(this, pItemType));
+        declareList(pItemType, new MetisEosListVersioned<>(this, pItemType));
     }
 
     /**
@@ -197,8 +197,8 @@ public class MetisEosVersionedListSet
      * @param pItemType the itemType for the list
      * @param pList the list
      */
-    protected void declareList(final MetisEosItemType<MetisFieldVersionedItem> pItemType,
-                               final MetisEosVersionedList<MetisFieldVersionedItem> pList) {
+    protected void declareList(final MetisEosListKey pItemType,
+                               final MetisEosListVersioned<MetisFieldVersionedItem> pList) {
         /* Add to the list map */
         theListMap.put(pItemType, pList);
 
@@ -212,7 +212,7 @@ public class MetisEosVersionedListSet
      */
     public boolean isEmpty() {
         /* Loop through the lists */
-        for (MetisEosVersionedList<MetisFieldVersionedItem> myList : theListMap.values()) {
+        for (MetisEosListVersioned<MetisFieldVersionedItem> myList : theListMap.values()) {
             if (!myList.isEmpty()) {
                 return false;
             }

@@ -35,8 +35,8 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Versioned List implementation.
  * @param <T> the item type
  */
-public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
-        extends MetisEosIndexedList<T>
+public class MetisEosListVersioned<T extends MetisFieldVersionedItem>
+        extends MetisEosListIndexed<T>
         implements TethysEventProvider<MetisEosListEvent> {
     /**
      * Prime for hashing.
@@ -47,14 +47,14 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisFieldSet<MetisEosVersionedList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisEosVersionedList.class);
+    private static final MetisFieldSet<MetisEosListVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisEosListVersioned.class);
 
     /**
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS, MetisEosVersionedList::getItemType);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosVersionedList::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS, MetisEosListVersioned::getItemType);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosListVersioned::getVersion);
     }
 
     /**
@@ -65,17 +65,17 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
     /**
      * The listSet.
      */
-    private final MetisEosVersionedListSet theListSet;
+    private final MetisEosListSetVersioned theListSet;
 
     /**
      * The Underlying list (if any).
      */
-    private final MetisEosVersionedList<T> theBaseList;
+    private final MetisEosListVersioned<T> theBaseList;
 
     /**
      * The itemType.
      */
-    private final MetisEosItemType<T> theItemType;
+    private final MetisEosListKey theItemType;
 
     /**
      * The version of the list.
@@ -87,8 +87,8 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pItemType the itemType
      */
-    protected MetisEosVersionedList(final MetisEosVersionedListSet pListSet,
-                                    final MetisEosItemType<T> pItemType) {
+    protected MetisEosListVersioned(final MetisEosListSetVersioned pListSet,
+                                    final MetisEosListKey pItemType) {
         this(pListSet, null, pItemType);
     }
 
@@ -97,8 +97,8 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * @param pListSet the listSet
      * @param pBaseList the baseList
      */
-    protected MetisEosVersionedList(final MetisEosVersionedListSet pListSet,
-                                    final MetisEosVersionedList<T> pBaseList) {
+    protected MetisEosListVersioned(final MetisEosListSetVersioned pListSet,
+                                    final MetisEosListVersioned<T> pBaseList) {
         this(pListSet, pBaseList, pBaseList.getItemType());
     }
 
@@ -108,9 +108,9 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * @param pBaseList the baseList
      * @param pItemType the itemType
      */
-    protected MetisEosVersionedList(final MetisEosVersionedListSet pListSet,
-                                    final MetisEosVersionedList<T> pBaseList,
-                                    final MetisEosItemType<T> pItemType) {
+    protected MetisEosListVersioned(final MetisEosListSetVersioned pListSet,
+                                    final MetisEosListVersioned<T> pBaseList,
+                                    final MetisEosListKey pItemType) {
         /* Store parameters */
         theListSet = pListSet;
         theBaseList = pBaseList;
@@ -142,7 +142,7 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * Obtain the baseList.
      * @return the baseList
      */
-    public MetisEosVersionedList<T> getBaseList() {
+    public MetisEosListVersioned<T> getBaseList() {
         return theBaseList;
     }
 
@@ -150,7 +150,7 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * Obtain the itemType.
      * @return the itemType
      */
-    public MetisEosItemType<T> getItemType() {
+    public MetisEosListKey getItemType() {
         return theItemType;
     }
 
@@ -168,14 +168,14 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
      * @return the correctly cast list list
      */
     @SuppressWarnings("unchecked")
-    protected MetisEosVersionedList<T> castList(final MetisEosVersionedList<?> pSource) {
+    protected MetisEosListVersioned<T> castList(final MetisEosListVersioned<?> pSource) {
         /* Class must be the same */
         if (!theItemType.equals(pSource.getItemType())) {
             throw new InvalidParameterException("Inconsistent class");
         }
 
         /* Access as correctly cast list */
-        return (MetisEosVersionedList<T>) pSource;
+        return (MetisEosListVersioned<T>) pSource;
     }
 
     @Override
@@ -189,12 +189,12 @@ public class MetisEosVersionedList<T extends MetisFieldVersionedItem>
         }
 
         /* Make sure that the object is the same class */
-        if (!(pThat instanceof MetisEosVersionedList)) {
+        if (!(pThat instanceof MetisEosListVersioned)) {
             return false;
         }
 
         /* Cast as list */
-        final MetisEosVersionedList<?> myThat = (MetisEosVersionedList<?>) pThat;
+        final MetisEosListVersioned<?> myThat = (MetisEosListVersioned<?>) pThat;
 
         /* Check local fields */
         if (theVersion != myThat.getVersion()

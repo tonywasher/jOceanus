@@ -37,7 +37,7 @@ public class MetisEosListChange<T extends MetisFieldVersionedItem> {
     /**
      * The item type.
      */
-    private final MetisEosItemType<T> theItemType;
+    private final MetisEosListKey theItemType;
 
     /**
      * The event type.
@@ -64,7 +64,7 @@ public class MetisEosListChange<T extends MetisFieldVersionedItem> {
      * @param pItemType the item type
      * @param pEventType the event type
      */
-    protected MetisEosListChange(final MetisEosItemType<T> pItemType,
+    protected MetisEosListChange(final MetisEosListKey pItemType,
                                  final MetisEosListEvent pEventType) {
         theItemType = pItemType;
         theEventType = pEventType;
@@ -74,7 +74,7 @@ public class MetisEosListChange<T extends MetisFieldVersionedItem> {
      * Obtain the item type.
      * @return the item type
      */
-    public MetisEosItemType<T> getItemType() {
+    public MetisEosListKey getItemType() {
         return theItemType;
     }
 
