@@ -205,16 +205,16 @@ public enum MoneyWiseIcon implements TethysIconId {
         /* Create the map */
         final Map<Boolean, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
 
-        /* Create the TRUE state */
+        /* Create the FALSE state */
         TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, PrometheusIcon.COMMIT, TIP_RELEASE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);
-        myMap.put(Boolean.TRUE, myMapSet);
+        myMap.put(Boolean.FALSE, myMapSet);
 
-        /* Create the FALSE state */
+        /* Create the TRUE state */
         myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, FROZENRECONCILED, TIP_FROZEN);
-        myMap.put(Boolean.FALSE, myMapSet);
+        myMap.put(Boolean.TRUE, myMapSet);
 
         /* Return the map */
         return myMap;
@@ -228,17 +228,17 @@ public enum MoneyWiseIcon implements TethysIconId {
         /* Create the map */
         final Map<Boolean, TethysIconMapSet<AssetDirection>> myMap = new HashMap<>();
 
-        /* Create the TRUE state */
+        /* Create the FALSE state */
         TethysIconMapSet<AssetDirection> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.FROM, DIRTO, TIP_DIRTO);
         myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.TO, DIRFROM, TIP_DIRFROM);
-        myMap.put(Boolean.TRUE, myMapSet);
+        myMap.put(Boolean.FALSE, myMapSet);
 
-        /* Create the FALSE state */
+        /* Create the TRUE state */
         myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(AssetDirection.TO, AssetDirection.TO, DIRTOLOCKED, TIP_DIRTO);
         myMapSet.setMappingsForValue(AssetDirection.FROM, AssetDirection.FROM, DIRFROMLOCKED, TIP_DIRFROM);
-        myMap.put(Boolean.FALSE, myMapSet);
+        myMap.put(Boolean.TRUE, myMapSet);
 
         /* Return the map */
         return myMap;
