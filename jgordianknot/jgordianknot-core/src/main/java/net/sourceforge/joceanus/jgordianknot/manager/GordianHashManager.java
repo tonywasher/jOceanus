@@ -132,17 +132,14 @@ public abstract class GordianHashManager {
             return myHash;
         }
 
-        /* Prepare to prompt for password */
-        final String myTitle;
-        boolean needConfirm = false;
-        char[] myPassword;
-
         /* Determine whether we need confirmation */
+        boolean needConfirm = false;
         if (pHashBytes == null) {
             needConfirm = true;
         }
 
         /* Create the title for the window */
+        final String myTitle;
         if (needConfirm) {
             myTitle = NLS_TITLENEWPASS
                       + " " + pSource;
@@ -156,6 +153,7 @@ public abstract class GordianHashManager {
 
         /* Prompt for the password */
         boolean isPasswordOk = false;
+        char[] myPassword = null;
         while (showTheDialog()) {
             try {
                 /* Access the password */
@@ -176,6 +174,11 @@ public abstract class GordianHashManager {
                 break;
             } catch (GordianBadCredentialsException e) {
                 setError(NLS_ERRORPASS);
+            } finally {
+                if (myPassword != null) {
+                    Arrays.fill(myPassword, (char) 0);
+                    myPassword = null;
+                }
             }
         }
 

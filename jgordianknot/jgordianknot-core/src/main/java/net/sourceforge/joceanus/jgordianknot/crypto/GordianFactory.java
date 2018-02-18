@@ -488,7 +488,7 @@ public abstract class GordianFactory {
      */
     public List<GordianKey<GordianSymKeySpec>> generateRandomSymKeyList() throws OceanusException {
         /* Determine a random set of keyType */
-        final int myCount = getNumCipherSteps();
+        final int myCount = getNumCipherSteps() - 1;
         final GordianSymKeyType[] myTypes = getIdManager().generateRandomKeySetSymKeyTypes(myCount);
 
         /* Loop through the keys */

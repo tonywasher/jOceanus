@@ -7,22 +7,22 @@ additionally download this library from the {{{http://www.bouncycastle.org/java.
 
   In the first instance, GordianKnot provides a simple API on top of BouncyCastle providing access to 
 the various BouncyCastle primitives such as symmetric/stream ciphers, digests/Macs and asymmetricKey functionality.  
-Details are provided in the section <<Simple API>>.
+Details are provided in the section <<Simple_API>>.
 
-  It also build on this API to provide various extensions such as triple encryption and encrypted ZipFiles.   	
+  It also builds on this API to provide various extensions such as multi-encryption and encrypted ZipFiles.   	
   
   Encryption is performed using a set of keys called a <<KeySet>> (one key for each supported algorithm). A subset of
-the keys is selected at random (using a SecureRandom instance) from the KeySet, and the plainText is encrypted 
+the keys is selected at random from the KeySet (using a SecureRandom instance), and the plainText is encrypted 
 by each key in turn. The types of the keys used are encoded into output cipherText along with the randomly chosen
 initialisation vector (which is transformed via an HMac differently for each key). 
 
-  The last cipher mode is set to SIC mode. All prior modes are set to ECB mode. The first ECB mode is set to use ISO7816-4 padding,
-all others use no padding. The number of encryption steps is configurable.
+  The first and last cipher modes are set to SIC mode. All other modes are set to ECB mode. The first ECB mode is set to use ISO7816-4 padding,
+all other ECB modes use no padding. The number of encryption steps is configurable, with a minimum of three.
 
   A KeySet may be defined by a <<KeySetHash>>. This KeySetHash is built from a password and a randomly selected set of three
 HMac algorithms using a simple variant of PBKDF2. One of the MACs (the secret MAC) is also fed the intermediate results of
-the other two MACs. The non secret MACs are calculated and feed into a MessageDigest algorithm (default KECCAK) and combined
-with the initialisation vector and HMac types to provide an external Hash. The result of the secret Mac is then used to generate
+the other two MACs. The non-secret MACs are calculated and feed into a randomly selected MessageDigest algorithm and combined
+with the initialisation vector and HMac types to provide an external Hash. The result of the secret MAC is then used to generate
 keys for the KeySet via another variant of the PBKDF2 algorithm.
 
   On resolving a KeySetHash with a password to obtain the KeySet the algorithm is repeated and the resulting external hash is 
@@ -30,7 +30,7 @@ compared with the expected hash. If it matches, the password is assumed correct 
 event of a collision on the hash, it is virtually impossible for the same keySet to be generated.  
 
   KeyWrapping is also supported using a variant of the RFC 5649 algorithm that caters for blockSizes other than 128. Details
-are provided here.  
+are provided in {{Key_Wrapping}}.  
 
 Simple API
 
@@ -166,7 +166,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 | NONE | used for all modes other than ECB/CBC |
 *---------*-------*
     
-* {Key Wrapping}
+* Key Wrapping
 
 	Key Wrapping is performed by GordianKnot using a variant of the AES Key Wrapping algorithm specified in {{{https://tools.ietf.org/html/rfc5649}RFC 5649}}.
 	

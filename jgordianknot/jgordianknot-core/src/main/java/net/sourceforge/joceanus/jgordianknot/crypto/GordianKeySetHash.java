@@ -61,11 +61,6 @@ public final class GordianKeySetHash {
     private byte[] theHash;
 
     /**
-     * The Secret.
-     */
-    private byte[] theSecret;
-
-    /**
      * Encrypted password.
      */
     private byte[] thePassword;
@@ -188,16 +183,17 @@ public final class GordianKeySetHash {
 
     /**
      * Build the password hash from the password.
-     * @param pPassword the password (cleared after usage)
+     * @param pPassword the password
      * @throws OceanusException on error
      */
     private void setPassword(final char[] pPassword) throws OceanusException {
         /* Generate the Hash */
-        theHash = generateHash(pPassword);
+        final byte[][] myResults = generateHash(pPassword);
+        theHash = myResults[0];
 
         /* Create the Key Set */
         theKeySet = new GordianKeySet(theFactory);
-        theKeySet.buildFromSecret(theSecret, theRecipe.getInitVector());
+        theKeySet.buildFromSecret(myResults[1], myResults[2]);
 
         /* Protect against exceptions */
         byte[] myBytes = null;
@@ -206,8 +202,7 @@ public final class GordianKeySetHash {
             myBytes = TethysDataConverter.charsToByteArray(pPassword);
             thePassword = theKeySet.encryptBytes(myBytes);
         } finally {
-            /* Clear out the password */
-            Arrays.fill(pPassword, (char) 0);
+            /* Clear out the password bytes */
             if (myBytes != null) {
                 Arrays.fill(myBytes, (byte) 0);
             }
@@ -216,23 +211,23 @@ public final class GordianKeySetHash {
 
     /**
      * Attempt to match the password hash with the password.
-     * @param pPassword the password (cleared after usage)
+     * @param pPassword the password
      * @throws GordianBadCredentialsException on wrong password
      * @throws OceanusException on error
      */
     private void attemptPassword(final char[] pPassword) throws OceanusException {
         /* Generate the HashBytes */
-        final byte[] myHash = generateHash(pPassword);
+        final byte[][] myResults = generateHash(pPassword);
 
         /* Check that the arrays match */
-        if (!Arrays.equals(theHash, myHash)) {
+        if (!Arrays.equals(theHash, myResults[0])) {
             /* Fail the password attempt */
             throw new GordianBadCredentialsException("Invalid Password");
         }
 
         /* Create the Key Set */
         theKeySet = new GordianKeySet(theFactory);
-        theKeySet.buildFromSecret(theSecret, theRecipe.getInitVector());
+        theKeySet.buildFromSecret(myResults[1], myResults[2]);
 
         /* Protect against exceptions */
         byte[] myBytes = null;
@@ -241,8 +236,7 @@ public final class GordianKeySetHash {
             myBytes = TethysDataConverter.charsToByteArray(pPassword);
             thePassword = theKeySet.encryptBytes(myBytes);
         } finally {
-            /* Clear out the password */
-            Arrays.fill(pPassword, (char) 0);
+            /* Clear out the password bytes */
             if (myBytes != null) {
                 Arrays.fill(myBytes, (byte) 0);
             }
@@ -255,7 +249,7 @@ public final class GordianKeySetHash {
      * @return the Salt and Hash array
      * @throws OceanusException on error
      */
-    private byte[] generateHash(final char[] pPassword) throws OceanusException {
+    private byte[][] generateHash(final char[] pPassword) throws OceanusException {
         byte[] myPassBytes = null;
 
         /* Protect against exceptions */
@@ -342,13 +336,15 @@ public final class GordianKeySetHash {
                 TethysDataConverter.buildHashResult(mySecretBytes, mySecretHash);
             }
 
-            /* Combine the Primary and Alternate hashes */
+            /* Combine the Primary and Alternate hashes to form the initVector */
+            myDigest.update(myPrimeHash);
+            myDigest.update(myAlternateHash);
+            byte[] myInitVector = myDigest.finish();
+
+            /* Combine the Primary and Alternate bytes to form the external hash */
             myDigest.update(myPrimeBytes);
             myDigest.update(myAlternateBytes);
             final byte[] myExternalHash = myDigest.finish();
-
-            /* Store the Secret Hash */
-            theSecret = mySecretBytes;
 
             /* Create the external hash */
             final byte[] myHashBytes = theRecipe.buildExternal(pPassword.length, myExternalHash);
@@ -360,7 +356,8 @@ public final class GordianKeySetHash {
             }
 
             /* Return to caller */
-            return myHashBytes;
+            return new byte[][]
+            { myHashBytes, mySecretBytes, myInitVector };
 
         } finally {
             if (myPassBytes != null) {
@@ -393,6 +390,7 @@ public final class GordianKeySetHash {
         } catch (GordianBadCredentialsException e) {
             return null;
         } finally {
+            /* Clear out password and bytes */
             if (myPassword != null) {
                 Arrays.fill(myPassword, (char) 0);
             }
