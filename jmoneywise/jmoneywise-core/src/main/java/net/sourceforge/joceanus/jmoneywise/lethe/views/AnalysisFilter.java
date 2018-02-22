@@ -23,11 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
+//import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
@@ -66,21 +65,20 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
  * @param <T> the attribute for the filter
  */
 public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AnalysisFilter.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<AnalysisFilter> FIELD_DEFS = MetisFieldSet.newFieldSet(AnalysisFilter.class);
 
     /**
-     * Bucket Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_BUCKET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET);
-
-    /**
-     * Attribute Field Id.
-     */
-    private static final MetisDataField FIELD_ATTR = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_BUCKET, AnalysisFilter::getBucket);
+        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.FILTER_ATTR, AnalysisFilter::getCurrentAttribute);
+    }
 
     /**
      * The Underlying bucket.
@@ -108,24 +106,10 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
         theClass = pClass;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<AnalysisFilter> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ATTR.equals(pField)) {
-            return theAttr;
-        }
-        if (FIELD_BUCKET.equals(pField)) {
-            return theBucket == null
-                                     ? MetisDataFieldValue.SKIP
-                                     : theBucket;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -862,7 +846,7 @@ public abstract class AnalysisFilter<B, T extends Enum<T> & BucketAttribute>
 
         @Override
         public int hashCode() {
-            return MetisDataFieldSet.HASH_PRIME;
+            return MetisFieldSet.HASH_PRIME;
         }
 
         @Override

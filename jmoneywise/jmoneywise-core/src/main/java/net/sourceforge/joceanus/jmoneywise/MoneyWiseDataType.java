@@ -29,7 +29,8 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldEnum;
 /**
  * MoneyWise Item Types.
  */
-public enum MoneyWiseDataType implements MetisFieldEnum {
+public enum MoneyWiseDataType
+        implements MetisFieldEnum, MetisFieldId {
     /**
      * DepositType.
      */
@@ -275,5 +276,10 @@ public enum MoneyWiseDataType implements MetisFieldEnum {
     @Override
     public String getFieldName() {
         return getListId().getId();
+    }
+
+    @Override
+    public String getId() {
+        return getFieldName();
     }
 }

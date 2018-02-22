@@ -108,7 +108,7 @@
     <JavaDocPluginVersion>3.0.0</JavaDocPluginVersion>
     <SonarQubePluginVersion>3.4.0.905</SonarQubePluginVersion>
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
-    <PMDPluginVersion>3.9.0</PMDPluginVersion>
+    <PMDPluginVersion>3.8</PMDPluginVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
   </properties>
   <build>

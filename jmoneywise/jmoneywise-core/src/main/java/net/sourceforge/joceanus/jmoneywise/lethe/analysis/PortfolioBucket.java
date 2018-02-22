@@ -22,22 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
@@ -50,43 +47,28 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
  * Portfolio Bucket.
  */
 public final class PortfolioBucket
-        implements MetisDataFieldItem, Comparable<PortfolioBucket>, MetisIndexedItem {
+        implements MetisFieldTableItem {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PortfolioBucket.class);
+    private static final MetisFieldSet<PortfolioBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioBucket.class);
 
     /**
-     * Portfolio Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemId());
-
-    /**
-     * CashBucket Field Id.
-     */
-    private static final MetisDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getItemId());
-
-    /**
-     * Securities Field Id.
-     */
-    private static final MetisDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListId());
-
-    /**
-     * Base Field Id.
-     */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
-
-    /**
-     * FieldSet map.
-     */
-    private static final Map<MetisDataField, SecurityAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO, PortfolioBucket::getPortfolio);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES, PortfolioBucket::getPortfolioCash);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH, PortfolioBucket::getBaseValues);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getListId(), PortfolioBucket::getSecurities);
+        FIELD_DEFS.declareLocalFieldsForEnum(SecurityAttribute.class, PortfolioBucket::getAttributeValue);
+    }
 
     /**
      * Totals bucket name.
@@ -252,38 +234,8 @@ public final class PortfolioBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<PortfolioBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_PORTFOLIO.equals(pField)) {
-            return thePortfolio;
-        }
-        if (FIELD_CASH.equals(pField)) {
-            return theCash;
-        }
-        if (FIELD_SECURITIES.equals(pField)) {
-            return theSecurities;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return theBaseValues;
-        }
-
-        /* Handle Attribute fields */
-        final SecurityAttribute myClass = getClassForField(pField);
-        if (myClass != null) {
-            final Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof TethysDecimal) {
-                return ((TethysDecimal) myValue).isNonZero()
-                                                             ? myValue
-                                                             : MetisDataFieldValue.SKIP;
-            }
-            return myValue;
-        }
-
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -410,16 +362,6 @@ public final class PortfolioBucket
     }
 
     /**
-     * Obtain the class of the field if it is an attribute field.
-     * @param pField the field
-     * @return the class
-     */
-    private static SecurityAttribute getClassForField(final MetisDataField pField) {
-        /* Look up field in map */
-        return FIELDSET_MAP.get(pField);
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -470,20 +412,6 @@ public final class PortfolioBucket
     public SecurityBucket findSecurityBucket(final Security pSecurity) {
         /* Return the security bucket for the portfolio's list */
         return theSecurities.findItemById(pSecurity.getOrderedId());
-    }
-
-    @Override
-    public int compareTo(final PortfolioBucket pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the Portfolios */
-        return getPortfolio().compareTo(pThat.getPortfolio());
     }
 
     @Override
@@ -713,21 +641,19 @@ public final class PortfolioBucket
      * PortfolioBucket list class.
      */
     public static final class PortfolioBucketList
-            implements MetisDataFieldItem, MetisDataList<PortfolioBucket> {
+            implements MetisFieldItem, MetisDataList<PortfolioBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PortfolioBucketList.class);
+        private static final MetisFieldSet<PortfolioBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-        /**
-         * Totals field Id.
-         */
-        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, PortfolioBucketList::getAnalysis);
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS, PortfolioBucketList::getTotals);
+        }
 
         /**
          * The analysis.
@@ -737,7 +663,7 @@ public final class PortfolioBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<PortfolioBucket> theList;
+        private final MetisEosListIndexed<PortfolioBucket> theList;
 
         /**
          * The totals.
@@ -762,7 +688,8 @@ public final class PortfolioBucket
             /* Initialise class */
             theAnalysis = pAnalysis;
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
+            theList.setComparator((l, r) -> l.getPortfolio().compareTo(r.getPortfolio()));
         }
 
         /**
@@ -848,7 +775,7 @@ public final class PortfolioBucket
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<PortfolioBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -862,15 +789,12 @@ public final class PortfolioBucket
             return getDataFieldSet().getName();
         }
 
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return MetisDataFieldValue.UNKNOWN;
+        /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        protected Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -1083,14 +1007,14 @@ public final class PortfolioBucket
                 }
 
                 /* Sort the list */
-                Collections.sort(myPortfolio.getSecurities().getUnderlyingList());
+                myPortfolio.getSecurities().sortBuckets();
 
                 /* Calculate delta for the portfolio */
                 myPortfolio.calculateDelta();
             }
 
             /* Sort the list */
-            Collections.sort(theList.getUnderlyingList());
+            theList.sortList();
 
             /* Calculate delta for the totals */
             theTotals.calculateDelta();

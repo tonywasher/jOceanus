@@ -28,11 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
@@ -56,26 +54,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Analysis Edit View.
  */
 public class AnalysisView
-        implements MetisDataFieldItem, TethysEventProvider<PrometheusDataEvent> {
+        implements MetisFieldItem, TethysEventProvider<PrometheusDataEvent> {
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AnalysisView.class);
+    private static final MetisFieldSet<AnalysisView> FIELD_DEFS = MetisFieldSet.newFieldSet(AnalysisView.class);
 
     /**
-     * Base Analysis Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_BASEANALYSIS = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE);
-
-    /**
-     * UpdateSet Field Id.
-     */
-    private static final MetisDataField FIELD_UPDATESET = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET);
-
-    /**
-     * Analysis Field Id.
-     */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_BASE, AnalysisView::getBaseAnalysis);
+        FIELD_DEFS.declareLocalField(MoneyWiseViewResource.ANALYSISVIEW_UPDATESET, AnalysisView::getUpdateSet);
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, AnalysisView::getAnalysis);
+    }
 
     /**
      * Logger.
@@ -152,22 +144,8 @@ public class AnalysisView
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<AnalysisView> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_BASEANALYSIS.equals(pField)) {
-            return theBaseAnalysis;
-        }
-        if (FIELD_UPDATESET.equals(pField)) {
-            return theUpdateSet;
-        }
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -186,6 +164,22 @@ public class AnalysisView
      */
     public Analysis getAnalysis() {
         return theAnalysis;
+    }
+
+    /**
+     * Obtain the base analysis.
+     * @return the base analysis
+     */
+    private Analysis getBaseAnalysis() {
+        return theBaseAnalysis;
+    }
+
+    /**
+     * Obtain the updateSet.
+     * @return the updateSet
+     */
+    private UpdateSet<MoneyWiseDataType> getUpdateSet() {
+        return theUpdateSet;
     }
 
     /**

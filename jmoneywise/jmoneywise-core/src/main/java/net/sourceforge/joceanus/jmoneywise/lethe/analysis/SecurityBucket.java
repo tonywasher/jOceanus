@@ -25,17 +25,15 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
@@ -63,46 +61,24 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * The Security Bucket class.
  */
 public final class SecurityBucket
-        implements MetisDataFieldItem, Comparable<SecurityBucket>, MetisIndexedItem {
+        implements MetisFieldTableItem {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SecurityBucket.class);
+    private static final MetisFieldSet<SecurityBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityBucket.class);
 
     /**
-     * Analysis Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-    /**
-     * SecurityHolding Field Id.
-     */
-    private static final MetisDataField FIELD_HOLDING = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING);
-
-    /**
-     * Currency Field Id.
-     */
-    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemId());
-
-    /**
-     * Security Type Field Id.
-     */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE.getItemId());
-
-    /**
-     * Base Field Id.
-     */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
-
-    /**
-     * FieldSet map.
-     */
-    private static final Map<MetisDataField, SecurityAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, SecurityAttribute.class);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, SecurityBucket::getAnalysis);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.ASSETTYPE_SECURITYHOLDING, SecurityBucket::getSecurityHolding);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITYTYPE, SecurityBucket::getSecurityType);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY, SecurityBucket::getCurrency);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES, SecurityBucket::getBaseValues);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY, SecurityBucket::getHistoryMap);
+        FIELD_DEFS.declareLocalFieldsForEnum(SecurityAttribute.class, SecurityBucket::getAttributeValue);
+    }
 
     /**
      * The analysis.
@@ -277,44 +253,8 @@ public final class SecurityBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<SecurityBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        if (FIELD_HOLDING.equals(pField)) {
-            return theHolding;
-        }
-        if (FIELD_CURRENCY.equals(pField)) {
-            return theCurrency;
-        }
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return theBaseValues;
-        }
-
-        /* Handle Attribute fields */
-        final SecurityAttribute myClass = getClassForField(pField);
-        if (myClass != null) {
-            final Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof TethysDecimal) {
-                return ((TethysDecimal) myValue).isNonZero()
-                                                             ? myValue
-                                                             : MetisDataFieldValue.SKIP;
-            }
-            return myValue;
-        }
-
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -533,16 +473,6 @@ public final class SecurityBucket
     }
 
     /**
-     * Obtain the class of the field if it is an attribute field.
-     * @param pField the field
-     * @return the class
-     */
-    private static SecurityAttribute getClassForField(final MetisDataField pField) {
-        /* Look up field in map */
-        return FIELDSET_MAP.get(pField);
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -550,59 +480,6 @@ public final class SecurityBucket
     private Object getAttribute(final SecurityAttribute pAttr) {
         /* Obtain the value */
         return theValues.getValue(pAttr);
-    }
-
-    @Override
-    public int compareTo(final SecurityBucket pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Check the portfolio */
-        final int iDiff = MetisDataDifference.compareObject(getPortfolio(), pThat.getPortfolio());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the Securities */
-        return getSecurity().compareTo(pThat.getSecurity());
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-        if (!(pThat instanceof SecurityBucket)) {
-            return false;
-        }
-
-        /* Compare the Portfolios */
-        final SecurityBucket myThat = (SecurityBucket) pThat;
-        if (!getPortfolio().equals(myThat.getPortfolio())) {
-            return false;
-        }
-
-        /* Compare the Securities */
-        if (!getSecurity().equals(myThat.getSecurity())) {
-            return false;
-        }
-
-        /* Compare the date ranges */
-        return getDateRange().equals(myThat.getDateRange());
-    }
-
-    @Override
-    public int hashCode() {
-        return getSecurity().hashCode();
     }
 
     /**
@@ -1016,17 +893,18 @@ public final class SecurityBucket
      * SecurityBucket list class.
      */
     public static class SecurityBucketList
-            implements MetisDataFieldItem, MetisDataList<SecurityBucket> {
-
+            implements MetisFieldItem, MetisDataList<SecurityBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(SecurityBucketList.class);
+        private static final MetisFieldSet<SecurityBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, SecurityBucketList::getAnalysis);
+        }
 
         /**
          * The analysis.
@@ -1036,7 +914,7 @@ public final class SecurityBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<SecurityBucket> theList;
+        private final MetisEosListIndexed<SecurityBucket> theList;
 
         /**
          * Construct a top-level List.
@@ -1044,7 +922,8 @@ public final class SecurityBucket
          */
         protected SecurityBucketList(final Analysis pAnalysis) {
             theAnalysis = pAnalysis;
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
+            theList.setComparator((l, r) -> l.getSecurity().compareTo(r.getSecurity()));
         }
 
         /**
@@ -1137,7 +1016,7 @@ public final class SecurityBucket
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<SecurityBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1151,12 +1030,12 @@ public final class SecurityBucket
             return getDataFieldSet().getName();
         }
 
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            return MetisDataFieldValue.UNKNOWN;
+        /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        protected Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -1167,6 +1046,13 @@ public final class SecurityBucket
         public SecurityBucket findItemById(final Integer pId) {
             /* Return results */
             return theList.getItemById(pId);
+        }
+
+        /**
+         * SortBuckets.
+         */
+        protected void sortBuckets() {
+            theList.sortList();
         }
 
         /**

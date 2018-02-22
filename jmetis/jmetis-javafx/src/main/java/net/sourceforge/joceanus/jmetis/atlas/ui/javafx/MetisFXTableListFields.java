@@ -32,8 +32,8 @@ import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 
 /**
  * Table List fields.
@@ -59,7 +59,7 @@ public class MetisFXTableListFields<R extends MetisFieldTableItem> {
      * Constructor.
      * @param pList the editList
      */
-    public MetisFXTableListFields(final MetisIndexedList<R> pList) {
+    public MetisFXTableListFields(final MetisEosListIndexed<R> pList) {
         theFields = new ArrayList<>();
         theIdMap = new HashMap<>();
     }

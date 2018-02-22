@@ -29,8 +29,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.swing.MetisSwingTableManager;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -114,7 +114,7 @@ public class MetisSwingToolkit
 
     @Override
     public <R extends MetisFieldTableItem> MetisSwingTableManager<R> newTableManager(final Class<R> pClazz,
-                                                                                     final MetisIndexedList<R> pList) {
+                                                                                     final MetisEosListIndexed<R> pList) {
         return new MetisSwingTableManager<>(getGuiFactory(), pClazz, pList);
     }
 }

@@ -24,12 +24,12 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIconColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIntegerColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableListColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShortColumn;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
@@ -64,7 +64,7 @@ public class MetisTestDataTable<N, I> {
         theHelper = new TethysScrollUITestHelper<>();
 
         /* Create test Data */
-        final MetisIndexedList<MetisTestTableItem> myData = new MetisIndexedList<>();
+        final MetisEosListIndexed<MetisTestTableItem> myData = new MetisEosListIndexed<>();
         myData.addToList(createItem("Damage"));
         myData.addToList(createItem("Tony"));
         myData.addToList(createItem("Dave"));

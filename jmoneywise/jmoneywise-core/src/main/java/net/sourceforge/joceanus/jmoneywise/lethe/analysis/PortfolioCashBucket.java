@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
@@ -36,7 +36,7 @@ public class PortfolioCashBucket
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(PortfolioCashBucket.class, AccountBucket.getBaseFieldSet());
+    private static final MetisFieldSet<PortfolioCashBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioCashBucket.class);
 
     /**
      * Constructor.
@@ -87,7 +87,7 @@ public class PortfolioCashBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<PortfolioCashBucket> getDataFieldSet() {
         return FIELD_DEFS;
     }
 

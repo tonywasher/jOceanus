@@ -35,27 +35,29 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListResource;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisReverseIterator;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Indexed List.
  * @param <T> the item type
  */
 public class MetisEosListIndexed<T extends MetisIndexedItem>
-        implements MetisDataList<T>, MetisFieldItem {
+        implements MetisDataList<T>, MetisFieldItem, TethysEventProvider<MetisEosListEvent> {
     /**
      * Report fields.
      */
     @SuppressWarnings("rawtypes")
-    private static final MetisFieldSet<MetisIndexedList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisIndexedList.class);
+    private static final MetisFieldSet<MetisEosListIndexed> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisEosListIndexed.class);
 
     /**
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE, MetisIndexedList::size);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE, MetisEosListIndexed::size);
     }
 
     /**
@@ -79,6 +81,11 @@ public class MetisEosListIndexed<T extends MetisIndexedItem>
     private Integer theNextId = ID_FIRST;
 
     /**
+     * The Event Manager.
+     */
+    private TethysEventManager<MetisEosListEvent> theEventManager;
+
+    /**
      * The comparator.
      */
     private Comparator<T> theComparator;
@@ -90,6 +97,25 @@ public class MetisEosListIndexed<T extends MetisIndexedItem>
         /* Create the list and map map */
         theList = new ArrayList<>();
         theIdMap = new HashMap<>();
+    }
+
+    /**
+     * Access the event manager.
+     * @return the event manager.
+     */
+    private TethysEventManager<MetisEosListEvent> getEventManager() {
+        /* Access the event manager and create it if it does not exist */
+        synchronized (this) {
+            if (theEventManager == null) {
+                theEventManager = new TethysEventManager<>();
+            }
+        }
+        return theEventManager;
+    }
+
+    @Override
+    public TethysEventRegistrar<MetisEosListEvent> getEventRegistrar() {
+        return getEventManager().getEventRegistrar();
     }
 
     @Override
@@ -353,5 +379,17 @@ public class MetisEosListIndexed<T extends MetisIndexedItem>
     @Override
     public int hashCode() {
         return theList.hashCode();
+    }
+
+    /**
+     * Fire event.
+     * @param pEvent the event
+     */
+    protected void fireEvent(final MetisEosListChange<T> pEvent) {
+        /* If the change is non-empty */
+        if (MetisEosListEvent.REFRESH.equals(pEvent.getEventType())
+            || !pEvent.isEmpty()) {
+            getEventManager().fireEvent(pEvent.getEventType(), pEvent);
+        }
     }
 }

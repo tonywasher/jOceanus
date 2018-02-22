@@ -22,17 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.LoanBucket.LoanBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Loan;
@@ -48,12 +45,14 @@ public final class LoanCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(LoanCategoryBucket.class, AccountCategoryBucket.getBaseFieldSet());
+    private static final MetisFieldSet<LoanCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanCategoryBucket.class);
 
     /**
-     * Loan Category Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getItemId());
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY, LoanCategoryBucket::getAccountCategory);
+    }
 
     /**
      * The loan category.
@@ -77,16 +76,8 @@ public final class LoanCategoryBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<LoanCategoryBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        return super.getFieldValue(pField);
     }
 
     @Override
@@ -114,20 +105,6 @@ public final class LoanCategoryBucket
         return isActive;
     }
 
-    @Override
-    public int compareTo(final AccountCategoryBucket<Loan, LoanCategory> pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the AccountCategories */
-        return getAccountCategory().compareTo(pThat.getAccountCategory());
-    }
-
     /**
      * Update active flag for Loan Bucket.
      * @param pBucket the Loan bucket
@@ -148,21 +125,19 @@ public final class LoanCategoryBucket
      * LoanCategoryBucket list class.
      */
     public static final class LoanCategoryBucketList
-            implements MetisDataFieldItem, MetisDataList<LoanCategoryBucket> {
+            implements MetisFieldItem, MetisDataList<LoanCategoryBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(LoanCategoryBucketList.class);
+        private static final MetisFieldSet<LoanCategoryBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanCategoryBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-        /**
-         * Totals field Id.
-         */
-        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, LoanCategoryBucketList::getAnalysis);
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS, LoanCategoryBucketList::getTotals);
+        }
 
         /**
          * The analysis.
@@ -172,7 +147,7 @@ public final class LoanCategoryBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<LoanCategoryBucket> theList;
+        private final MetisEosListIndexed<LoanCategoryBucket> theList;
 
         /**
          * The currency.
@@ -198,11 +173,12 @@ public final class LoanCategoryBucket
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
+            theList.setComparator((l, r) -> l.getAccountCategory().compareTo(r.getAccountCategory()));
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<LoanCategoryBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -216,17 +192,6 @@ public final class LoanCategoryBucket
             return getDataFieldSet().getName();
         }
 
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return MetisDataFieldValue.UNKNOWN;
-        }
-
         /**
          * Obtain item by id.
          * @param pId the id to lookup
@@ -235,6 +200,14 @@ public final class LoanCategoryBucket
         public LoanCategoryBucket findItemById(final Integer pId) {
             /* Return results */
             return theList.getItemById(pId);
+        }
+
+        /**
+         * Obtain the Analysis.
+         * @return the analysis
+         */
+        public Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -292,7 +265,7 @@ public final class LoanCategoryBucket
         protected void analyseLoans(final MarketAnalysis pMarket,
                                     final LoanBucketList pLoans) {
             /* Sort the loans */
-            Collections.sort(pLoans.getUnderlyingList());
+            pLoans.sortBuckets();
 
             /* Loop through the buckets */
             final TethysDateRange myRange = theAnalysis.getDateRange();
@@ -342,7 +315,7 @@ public final class LoanCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            final MetisIndexedList<LoanCategoryBucket> myTotals = new MetisIndexedList<>();
+            final MetisEosListIndexed<LoanCategoryBucket> myTotals = new MetisEosListIndexed<>();
 
             /* Loop through the buckets */
             Iterator<LoanCategoryBucket> myIterator = iterator();
@@ -393,7 +366,7 @@ public final class LoanCategoryBucket
             }
 
             /* Sort the list */
-            Collections.sort(theList.getUnderlyingList());
+            theList.sortList();
 
             /* Calculate delta for the totals */
             theTotals.calculateDelta();

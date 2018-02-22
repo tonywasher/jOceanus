@@ -26,17 +26,15 @@ import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -61,41 +59,23 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Transaction Category Bucket.
  */
 public final class TransactionCategoryBucket
-        implements MetisDataFieldItem, Comparable<TransactionCategoryBucket>, MetisIndexedItem {
+        implements MetisFieldTableItem {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionCategoryBucket.class);
+    private static final MetisFieldSet<TransactionCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionCategoryBucket.class);
 
     /**
-     * Analysis Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-    /**
-     * Transaction Category Field Id.
-     */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getItemId());
-
-    /**
-     * Transaction Type Field Id.
-     */
-    private static final MetisDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTYPE.getItemId());
-
-    /**
-     * Base Field Id.
-     */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
-
-    /**
-     * FieldSet map.
-     */
-    private static final Map<MetisDataField, TransactionAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, TransactionAttribute.class);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, TransactionCategoryBucket::getAnalysis);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryBucket::getTransactionCategory);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTYPE, TransactionCategoryBucket::getTransactionCategoryType);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES, TransactionCategoryBucket::getBaseValues);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY, TransactionCategoryBucket::getHistoryMap);
+        FIELD_DEFS.declareLocalFieldsForEnum(TransactionAttribute.class, TransactionCategoryBucket::getAttributeValue);
+    }
 
     /**
      * Totals bucket name.
@@ -204,43 +184,8 @@ public final class TransactionCategoryBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<TransactionCategoryBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        if (FIELD_TYPE.equals(pField)) {
-            return theType;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return theBaseValues != null
-                                         ? theBaseValues
-                                         : MetisDataFieldValue.SKIP;
-        }
-
-        /* Handle Attribute fields */
-        final TransactionAttribute myClass = getClassForField(pField);
-        if (myClass != null) {
-            final Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof TethysDecimal) {
-                return ((TethysDecimal) myValue).isNonZero()
-                                                             ? myValue
-                                                             : MetisDataFieldValue.SKIP;
-            }
-            return myValue;
-        }
-
-        return MetisDataFieldValue.SKIP;
     }
 
     @Override
@@ -390,16 +335,6 @@ public final class TransactionCategoryBucket
     }
 
     /**
-     * Obtain the class of the field if it is an attribute field.
-     * @param pField the field
-     * @return the class
-     */
-    private static TransactionAttribute getClassForField(final MetisDataField pField) {
-        /* Look up field in map */
-        return FIELDSET_MAP.get(pField);
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -407,48 +342,6 @@ public final class TransactionCategoryBucket
     private Object getValue(final TransactionAttribute pAttr) {
         /* Obtain the value */
         return theValues.getValue(pAttr);
-    }
-
-    @Override
-    public int compareTo(final TransactionCategoryBucket pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the EventCategories */
-        return getTransactionCategory().compareTo(pThat.getTransactionCategory());
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-        if (!(pThat instanceof TransactionCategoryBucket)) {
-            return false;
-        }
-
-        /* Compare the transaction Categories */
-        final TransactionCategoryBucket myThat = (TransactionCategoryBucket) pThat;
-        if (!getTransactionCategory().equals(myThat.getTransactionCategory())) {
-            return false;
-        }
-
-        /* Compare the date ranges */
-        return getDateRange().equals(myThat.getDateRange());
-    }
-
-    @Override
-    public int hashCode() {
-        return getTransactionCategory().hashCode();
     }
 
     /**
@@ -768,22 +661,19 @@ public final class TransactionCategoryBucket
      * TransactionCategoryBucket list class.
      */
     public static final class TransactionCategoryBucketList
-            implements MetisDataFieldItem, MetisDataList<TransactionCategoryBucket> {
-
+            implements MetisFieldItem, MetisDataList<TransactionCategoryBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionCategoryBucketList.class);
+        private static final MetisFieldSet<TransactionCategoryBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionCategoryBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-        /**
-         * Totals field Id.
-         */
-        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, TransactionCategoryBucketList::getAnalysis);
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS, TransactionCategoryBucketList::getTotals);
+        }
 
         /**
          * The analysis.
@@ -793,7 +683,7 @@ public final class TransactionCategoryBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<TransactionCategoryBucket> theList;
+        private final MetisEosListIndexed<TransactionCategoryBucket> theList;
 
         /**
          * The data.
@@ -864,7 +754,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
 
             /* Access taxBasis list */
             theTaxBasis = theAnalysis.getTaxBasis();
@@ -895,7 +785,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -938,7 +828,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -970,7 +860,7 @@ public final class TransactionCategoryBucket
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<TransactionCategoryBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -984,15 +874,12 @@ public final class TransactionCategoryBucket
             return getDataFieldSet().getName();
         }
 
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return MetisDataFieldValue.UNKNOWN;
+        /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        protected Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -1225,7 +1112,7 @@ public final class TransactionCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets */
-            final MetisIndexedList<TransactionCategoryBucket> myTotals = new MetisIndexedList<>();
+            final MetisEosListIndexed<TransactionCategoryBucket> myTotals = new MetisEosListIndexed<>();
 
             /* Loop through the buckets */
             Iterator<TransactionCategoryBucket> myIterator = iterator();
@@ -1273,7 +1160,7 @@ public final class TransactionCategoryBucket
             }
 
             /* Sort the list */
-            Collections.sort(theList.getUnderlyingList());
+            Collections.sort(theList.getUnderlyingList(), (l, r) -> l.getTransactionCategory().compareTo(r.getTransactionCategory()));
 
             /* Calculate delta for the totals */
             if (theTotals != null) {

@@ -26,11 +26,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
@@ -65,91 +63,33 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @author Tony Washer
  */
 public class Analysis
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(Analysis.class);
+    private static final MetisFieldSet<Analysis> FIELD_DEFS = MetisFieldSet.newFieldSet(Analysis.class);
 
     /**
-     * Range Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE);
-
-    /**
-     * TaxYears Field Id.
-     */
-    private static final MetisDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_YEARS);
-
-    /**
-     * Currency Field Id.
-     */
-    private static final MetisDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY.getItemId());
-
-    /**
-     * DepositBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_DEPOSITS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSIT.getListId());
-
-    /**
-     * CashBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_CASH = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getListId());
-
-    /**
-     * LoanBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_LOANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOAN.getListId());
-
-    /**
-     * PayeeBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getListId());
-
-    /**
-     * PortfolioBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_PORTFOLIOS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getListId());
-
-    /**
-     * DepositCategoryBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_DEPCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getListId());
-
-    /**
-     * CashCategoryBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_CASHCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getListId());
-
-    /**
-     * LoanCategoryBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_LOANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getListId());
-
-    /**
-     * TransactionCategoryBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_TRANCATS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListId());
-
-    /**
-     * TransactionTagBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_TRANSTAGS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListId());
-
-    /**
-     * TaxBasisBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListId());
-
-    /**
-     * TaxCalc Field Id.
-     */
-    private static final MetisDataField FIELD_TAXCALC = FIELD_DEFS.declareLocalField(AnalysisResource.TAX_CALCULATION);
-
-    /**
-     * Dilutions Field Id.
-     */
-    private static final MetisDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_RANGE, Analysis::getDateRange);
+        FIELD_DEFS.declareLocalField(AnalysisResource.TAX_YEARS, Analysis::getTaxYearCache);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY, Analysis::getCurrency);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSIT.getListId(), Analysis::getDeposits);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASH.getListId(), Analysis::getCash);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOAN.getListId(), Analysis::getLoans);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.PAYEE.getListId(), Analysis::getPayees);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getListId(), Analysis::getPortfolios);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getListId(), Analysis::getDepositCategories);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getListId(), Analysis::getCashCategories);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.LOANCATEGORY.getListId(), Analysis::getLoanCategories);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSCATEGORY.getListId(), Analysis::getTransCategories);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSTAG.getListId(), Analysis::getTransactionTags);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListId(), Analysis::getTaxBasis);
+        FIELD_DEFS.declareLocalField(AnalysisResource.TAX_CALCULATION, Analysis::getTaxAnalysis);
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS, Analysis::getDilutions);
+    }
 
     /**
      * The DataSet.
@@ -411,89 +351,8 @@ public class Analysis
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<Analysis> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_RANGE.equals(pField)) {
-            return theDateRange;
-        }
-        if (FIELD_TAXYEARS.equals(pField)) {
-            return theTaxYearCache;
-        }
-        if (FIELD_CURRENCY.equals(pField)) {
-            return theCurrency;
-        }
-        if (FIELD_DEPOSITS.equals(pField)) {
-            return theDeposits.isEmpty()
-                                         ? MetisDataFieldValue.SKIP
-                                         : theDeposits;
-        }
-        if (FIELD_CASH.equals(pField)) {
-            return theCash.isEmpty()
-                                     ? MetisDataFieldValue.SKIP
-                                     : theCash;
-        }
-        if (FIELD_LOANS.equals(pField)) {
-            return theLoans.isEmpty()
-                                      ? MetisDataFieldValue.SKIP
-                                      : theLoans;
-        }
-        if (FIELD_PORTFOLIOS.equals(pField)) {
-            return thePortfolios.isEmpty()
-                                           ? MetisDataFieldValue.SKIP
-                                           : thePortfolios;
-        }
-        if (FIELD_PAYEES.equals(pField)) {
-            return thePayees.isEmpty()
-                                       ? MetisDataFieldValue.SKIP
-                                       : thePayees;
-        }
-        if (FIELD_DEPCATS.equals(pField)) {
-            return theDepositCategories.isEmpty()
-                                                  ? MetisDataFieldValue.SKIP
-                                                  : theDepositCategories;
-        }
-        if (FIELD_CASHCATS.equals(pField)) {
-            return theCashCategories.isEmpty()
-                                               ? MetisDataFieldValue.SKIP
-                                               : theCashCategories;
-        }
-        if (FIELD_LOANCATS.equals(pField)) {
-            return theLoanCategories.isEmpty()
-                                               ? MetisDataFieldValue.SKIP
-                                               : theLoanCategories;
-        }
-        if (FIELD_TRANCATS.equals(pField)) {
-            return theTransCategories.isEmpty()
-                                                ? MetisDataFieldValue.SKIP
-                                                : theTransCategories;
-        }
-        if (FIELD_TRANSTAGS.equals(pField)) {
-            return theTransTags.isEmpty()
-                                          ? MetisDataFieldValue.SKIP
-                                          : theTransTags;
-        }
-        if (FIELD_TAXBASIS.equals(pField)) {
-            return theTaxBasis.isEmpty()
-                                         ? MetisDataFieldValue.SKIP
-                                         : theTaxBasis;
-        }
-        if (FIELD_TAXCALC.equals(pField)) {
-            return theTaxAnalysis != null
-                                          ? theTaxAnalysis
-                                          : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_DILUTIONS.equals(pField)) {
-            return theDilutions.isEmpty()
-                                          ? MetisDataFieldValue.SKIP
-                                          : theDilutions;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -507,6 +366,14 @@ public class Analysis
      */
     public MoneyWiseData getData() {
         return theData;
+    }
+
+    /**
+     * Obtain the currency.
+     * @return the currency
+     */
+    private MoneyWiseTaxYearCache getTaxYearCache() {
+        return theTaxYearCache;
     }
 
     /**

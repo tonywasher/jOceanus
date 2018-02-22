@@ -28,10 +28,10 @@ import java.util.function.Predicate;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalSet;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotals;
 import net.sourceforge.joceanus.jcoeus.data.CoeusTotalsField;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 
 /**
  * Statement calculator.
@@ -46,7 +46,7 @@ public class CoeusStatementCalculator
     /**
      * The totals.
      */
-    private final MetisIndexedList<CoeusTotals> theTotals;
+    private final MetisEosListIndexed<CoeusTotals> theTotals;
 
     /**
      * The current filter.
@@ -57,7 +57,7 @@ public class CoeusStatementCalculator
      * Constructor.
      * @param pTotals the totals
      */
-    public CoeusStatementCalculator(final MetisIndexedList<CoeusTotals> pTotals) {
+    public CoeusStatementCalculator(final MetisEosListIndexed<CoeusTotals> pTotals) {
         theTotals = pTotals;
     }
 

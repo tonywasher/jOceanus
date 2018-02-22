@@ -228,7 +228,7 @@ public abstract class PrometheusAtlasDatabase {
      * @param pDatabase the name of the database (or null for maintenance DB)
      * @return the connection string
      */
-    protected String getDatabaseName(String pDatabase) {
+    protected String getDatabaseName(final String pDatabase) {
         if (pDatabase == null) {
             return getMaintenanceDatabase();
         }
@@ -236,7 +236,7 @@ public abstract class PrometheusAtlasDatabase {
         /* If we have a prefix */
         if (thePrefix != null) {
             /* Build the full database name */
-            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+            final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
             myBuilder.append(thePrefix);
             myBuilder.append(pDatabase);
             return myBuilder.toString();
@@ -284,10 +284,10 @@ public abstract class PrometheusAtlasDatabase {
      */
     public List<String> listDatabases() throws OceanusException {
         /* create the list */
-        List<String> myList = new ArrayList<>();
+        final List<String> myList = new ArrayList<>();
 
         /* Protect against exceptions */
-        String myCommand = getListDatabaseCommand();
+        final String myCommand = getListDatabaseCommand();
         try (PreparedStatement myStatement = theConnection.prepareStatement(myCommand);
              ResultSet myResults = myStatement.executeQuery()) {
 
@@ -333,7 +333,7 @@ public abstract class PrometheusAtlasDatabase {
      */
     public void createDatabase(final String pName) throws OceanusException {
         /* create the command */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         myBuilder.append("create database ");
         if (quoteDatabase) {
             myBuilder.append(QUOTE_STRING);
@@ -362,7 +362,7 @@ public abstract class PrometheusAtlasDatabase {
      */
     public void dropDatabase(final String pName) throws OceanusException {
         /* create the command */
-        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         myBuilder.append("drop database IF EXISTS ");
         if (quoteDatabase) {
             myBuilder.append(QUOTE_STRING);

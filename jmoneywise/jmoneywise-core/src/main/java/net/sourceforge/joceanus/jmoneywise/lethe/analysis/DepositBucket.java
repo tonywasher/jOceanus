@@ -26,8 +26,7 @@ import java.util.Currency;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.DepositCategory;
@@ -48,12 +47,14 @@ public final class DepositBucket
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DepositBucket.class, AccountBucket.getBaseFieldSet());
+    private static final MetisFieldSet<DepositBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositBucket.class);
 
     /**
-     * Deposit Category Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY.getItemId());
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.DEPOSITCATEGORY, DepositBucket::getCategory);
+    }
 
     /**
      * The analysis.
@@ -141,16 +142,8 @@ public final class DepositBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<DepositBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        return super.getFieldValue(pField);
     }
 
     /**
@@ -336,7 +329,7 @@ public final class DepositBucket
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DepositBucketList.class, AccountBucketList.getBaseFieldSet());
+        private static final MetisFieldSet<DepositBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositBucketList.class);
 
         /**
          * Construct a top-level List.
@@ -394,7 +387,7 @@ public final class DepositBucket
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<DepositBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

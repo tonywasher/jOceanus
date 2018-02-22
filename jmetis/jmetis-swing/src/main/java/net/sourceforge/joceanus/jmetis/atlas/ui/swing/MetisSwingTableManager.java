@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
@@ -52,6 +51,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShort
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableStringColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableUnitsColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -105,7 +105,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
      */
     public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
                                   final Class<R> pClazz,
-                                  final MetisIndexedList<R> pList) {
+                                  final MetisEosListIndexed<R> pList) {
         /* Initialise underlying class */
         super(pFactory, pClazz);
 

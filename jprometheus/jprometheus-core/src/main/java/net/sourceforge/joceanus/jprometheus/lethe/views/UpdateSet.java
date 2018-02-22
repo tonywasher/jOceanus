@@ -30,11 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
@@ -53,16 +51,19 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * @param <E> the data type enum class
  */
 public class UpdateSet<E extends Enum<E>>
-        implements MetisDataFieldItem, TethysEventProvider<PrometheusDataEvent>, DataListSet<E> {
+        implements MetisFieldItem, TethysEventProvider<PrometheusDataEvent>, DataListSet<E> {
     /**
      * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(UpdateSet.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<UpdateSet> FIELD_DEFS = MetisFieldSet.newFieldSet(UpdateSet.class);
 
     /**
-     * Version field id.
+     * Declare Fields.
      */
-    public static final MetisDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION);
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, UpdateSet::getVersion);
+    }
 
     /**
      * Logger.
@@ -77,7 +78,8 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Report fields.
      */
-    private final MetisDataFieldSet theLocalFields;
+    @SuppressWarnings("rawtypes")
+    private final MetisFieldSet<UpdateSet> theLocalFields;
 
     /**
      * The entry map.
@@ -113,37 +115,21 @@ public class UpdateSet<E extends Enum<E>>
         theEventManager = new TethysEventManager<>();
 
         /* Create local fields */
-        theLocalFields = new MetisDataFieldSet(FIELD_DEFS.getName(), FIELD_DEFS);
+        theLocalFields = MetisFieldSet.newFieldSet(this);
 
         /* Create the map */
         theMap = new EnumMap<>(pClass);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<UpdateSet> getDataFieldSet() {
         return theLocalFields;
     }
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFieldSet().getName();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
-
-        /* If the field is an entry handle specially */
-        if (theLocalFields.equals(pField.getAnchor())) {
-            /* Obtain the entry */
-            return findEntryValue(pField.getFieldId().getId());
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -189,9 +175,10 @@ public class UpdateSet<E extends Enum<E>>
         UpdateEntry<T, E> myEntry = (UpdateEntry<T, E>) theMap.get(pDataType);
         if (myEntry == null) {
             /* Not found , so add it */
-            myEntry = new UpdateEntry<>(pDataType);
-            theMap.put(pDataType, myEntry);
-            theLocalFields.declareIndexField(myEntry.getName());
+            final UpdateEntry<T, E> myNewEntry = new UpdateEntry<>(pDataType);
+            theMap.put(pDataType, myNewEntry);
+            theLocalFields.declareLocalField(myNewEntry.getName(), n -> myNewEntry);
+            myEntry = myNewEntry;
         }
 
         /* Update list to null and return */
@@ -218,32 +205,6 @@ public class UpdateSet<E extends Enum<E>>
         return myEntry != null
                                ? pClass.cast(myEntry.getDataList())
                                : theControl.getData().getDataList(pDataType, pClass);
-    }
-
-    /**
-     * Find the value for a field.
-     * @param pName the name of the field
-     * @return the value
-     */
-    private Object findEntryValue(final String pName) {
-        /* Loop through the items in the list */
-        final Iterator<UpdateEntry<?, E>> myIterator = theMap.values().iterator();
-        while (myIterator.hasNext()) {
-            /* Access entry */
-            final UpdateEntry<?, E> myEntry = myIterator.next();
-
-            /* If we have found the entry */
-            if (pName.equals(myEntry.getName())) {
-                /* Return the value */
-                final DataList<?, ?> myList = myEntry.getDataList();
-                return (myList == null)
-                                        ? MetisDataFieldValue.SKIP
-                                        : myList;
-            }
-        }
-
-        /* Not found , so add it */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

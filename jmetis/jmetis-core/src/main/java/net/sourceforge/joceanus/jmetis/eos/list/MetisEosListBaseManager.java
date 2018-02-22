@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 
@@ -192,6 +193,30 @@ public final class MetisEosListBaseManager {
             /* Add the item to the list */
             pTarget.addToList(myCurr);
         }
+    }
+
+    /**
+     * Reset content.
+     * @param <T> the item type
+     * @param pTarget the target list
+     * @param pSource the source list
+     */
+    public static <T extends MetisIndexedItem> void resetContent(final MetisEosListIndexed<T> pTarget,
+                                                                 final Iterator<T> pSource) {
+        /* Clear the list */
+        pTarget.clear();
+
+        /* Loop through the list */
+        while (pSource.hasNext()) {
+            final T myCurr = pSource.next();
+
+            /* Add the item to the list */
+            pTarget.addToList(myCurr);
+        }
+
+        /* Fire the event */
+        final MetisEosListChange<T> myChange = new MetisEosListChange<>(null, MetisEosListEvent.REFRESH);
+        pTarget.fireEvent(myChange);
     }
 
     /**

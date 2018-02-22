@@ -29,17 +29,17 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
  */
 public enum PrometheusAtlasDatabaseType {
     /**
-     * PostgresSQL/
+     * PostgresSQL.
      */
     POSTGRES,
 
     /**
-     * MySQL/
+     * MySQL.
      */
     MYSQL,
 
     /**
-     * PostgresSQL/
+     * SQLServer.
      */
     SQLSERVER;
 

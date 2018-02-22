@@ -186,8 +186,8 @@ public class DataKey
                 setValueSymKey((GordianKey<GordianSymKeySpec>) myValue);
             } else {
                 /* Create the Key from the wrapped data */
-                GordianSymKeyType myType = getSymKeyType();
-                GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
+                final GordianSymKeyType myType = getSymKeyType();
+                final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
                 final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(mySpec);
                 final GordianKey<GordianSymKeySpec> myKey = myGenerator.deriveKey(myBytes, myKeySet);
                 setValueSymKey(myKey);
@@ -475,8 +475,8 @@ public class DataKey
             final GordianKeySet myKeySet = pHash.getKeySet();
             setValueHashPrime(pPrimeHash);
             final GordianFactory myFactory = myKeySet.getFactory();
-            GordianSymKeyType myType = getSymKeyType();
-            GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
+            final GordianSymKeyType myType = getSymKeyType();
+            final GordianSymKeySpec mySpec = new GordianSymKeySpec(myType);
             final GordianKeyGenerator<GordianSymKeySpec> myGenerator = myFactory.getKeyGenerator(mySpec);
             setValueSecuredKeyDef(myGenerator.secureKey(getSymKey(), myKeySet));
 

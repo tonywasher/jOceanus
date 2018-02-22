@@ -26,11 +26,9 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
@@ -84,7 +82,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @author Tony Washer
  */
 public class TransactionAnalyser
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * Local Report fields.
      */
@@ -93,12 +91,14 @@ public class TransactionAnalyser
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TransactionAnalyser.class);
+    private static final MetisFieldSet<TransactionAnalyser> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionAnalyser.class);
 
     /**
-     * Analysis field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, TransactionAnalyser::getAnalysis);
+    }
 
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
@@ -365,18 +365,8 @@ public class TransactionAnalyser
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<TransactionAnalyser> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

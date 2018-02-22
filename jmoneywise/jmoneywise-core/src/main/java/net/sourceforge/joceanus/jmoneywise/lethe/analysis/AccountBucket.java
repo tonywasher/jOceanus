@@ -23,21 +23,18 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.text.DecimalFormatSymbols;
-import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.ExchangeRate;
@@ -57,41 +54,28 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
  * @param <T> the account data type
  */
 public abstract class AccountBucket<T extends AssetBase<T>>
-        implements MetisDataFieldItem, Comparable<AccountBucket<T>>, MetisIndexedItem {
+        implements MetisFieldTableItem {
     /**
      * Default currency.
      */
     protected static final Currency DEFAULT_CURRENCY = DecimalFormatSymbols.getInstance().getCurrency();
 
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AccountBucket.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<AccountBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(AccountBucket.class);
 
     /**
-     * Analysis Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-    /**
-     * Account Field Id.
-     */
-    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_ACCOUNT);
-
-    /**
-     * Base Field Id.
-     */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
-
-    /**
-     * FieldSet map.
-     */
-    private static final Map<MetisDataField, AccountAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, AccountBucket::getAnalysis);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_ACCOUNT, AccountBucket::getAccount);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES, AccountBucket::getBaseValues);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY, AccountBucket::getHistoryMap);
+        FIELD_DEFS.declareLocalFieldsForEnum(AccountAttribute.class, AccountBucket::getAttributeValue);
+    }
 
     /**
      * Totals bucket name.
@@ -232,44 +216,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         /* Access the key value maps */
         theValues = theHistory.getValues();
         theBaseValues = theHistory.getBaseValues();
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return theAccount;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return theBaseValues;
-        }
-
-        /* Handle Attribute fields */
-        final AccountAttribute myClass = getClassForField(pField);
-        if (myClass != null) {
-            final Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof TethysDecimal) {
-                return ((TethysDecimal) myValue).isNonZero()
-                                                             ? myValue
-                                                             : MetisDataFieldValue.SKIP;
-            }
-            return myValue;
-        }
-
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -469,16 +415,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     }
 
     /**
-     * Obtain the class of the field if it is an attribute field.
-     * @param pField the field
-     * @return the class
-     */
-    private static AccountAttribute getClassForField(final MetisDataField pField) {
-        /* Look up field in map */
-        return FIELDSET_MAP.get(pField);
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -486,48 +422,6 @@ public abstract class AccountBucket<T extends AssetBase<T>>
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute value */
         return theValues.getValue(pAttr);
-    }
-
-    @Override
-    public int compareTo(final AccountBucket<T> pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the Accounts */
-        return getAccount().compareTo(pThat.getAccount());
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-        if (!(pThat instanceof AccountBucket)) {
-            return false;
-        }
-
-        /* Compare the Accounts */
-        final AccountBucket<?> myThat = (AccountBucket<?>) pThat;
-        if (!getAccount().equals(myThat.getAccount())) {
-            return false;
-        }
-
-        /* Compare the date ranges */
-        return getDateRange().equals(myThat.getDateRange());
-    }
-
-    @Override
-    public int hashCode() {
-        return getAccount().hashCode();
     }
 
     /**
@@ -898,16 +792,19 @@ public abstract class AccountBucket<T extends AssetBase<T>>
      * @param <T> the account data type
      */
     public abstract static class AccountBucketList<B extends AccountBucket<T>, T extends AssetBase<T>>
-            implements MetisDataFieldItem, MetisDataList<B> {
+            implements MetisFieldItem, MetisDataList<B> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AccountBucketList.class);
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<AccountBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(AccountBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Field IDs.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, AccountBucketList::getAnalysis);
+        }
 
         /**
          * The analysis.
@@ -917,7 +814,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         /**
          * The list.
          */
-        private final MetisIndexedList<B> theList;
+        private final MetisEosListIndexed<B> theList;
 
         /**
          * Construct a top-level List.
@@ -926,7 +823,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
         protected AccountBucketList(final Analysis pAnalysis) {
             /* Initialise class */
             theAnalysis = pAnalysis;
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
         }
 
         @Override
@@ -934,25 +831,9 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             return theList.getUnderlyingList();
         }
 
-        /**
-         * Obtain the data fields.
-         * @return the data fields
-         */
-        protected static MetisDataFieldSet getBaseFieldSet() {
-            return FIELD_DEFS;
-        }
-
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return getDataFieldSet().getName();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -1100,7 +981,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
          * SortBuckets.
          */
         protected void sortBuckets() {
-            Collections.sort(theList.getUnderlyingList());
+            theList.sortList();
         }
 
         /**

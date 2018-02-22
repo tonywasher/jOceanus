@@ -30,9 +30,10 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter.CoeusSnapShotFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListBaseManager;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -48,7 +49,7 @@ public class CoeusStatementTable<N, I>
     /**
      * The List.
      */
-    private final MetisIndexedList<CoeusTotals> theList;
+    private final MetisEosListIndexed<CoeusTotals> theList;
 
     /**
      * The Table.
@@ -86,7 +87,7 @@ public class CoeusStatementTable<N, I>
         final TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the list */
-        theList = new MetisIndexedList<>();
+        theList = new MetisEosListIndexed<>();
 
         /* Create the table */
         theTable = pToolkit.newTableManager(CoeusTotals.class, theList);
@@ -145,7 +146,7 @@ public class CoeusStatementTable<N, I>
      * @param pFilter the filter
      */
     public void updateStatement(final CoeusFilter pFilter) {
-        theList.resetContent(pFilter.getHistory().historyIterator());
+        MetisEosListBaseManager.resetContent(theList, pFilter.getHistory().historyIterator());
         filterChanged();
     }
 

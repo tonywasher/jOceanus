@@ -37,6 +37,11 @@ public enum MetisEosListEvent {
     COMMIT,
 
     /**
+     * Update.
+     */
+    UPDATE,
+
+    /**
      * ReBase.
      */
     REBASE,
@@ -55,6 +60,7 @@ public enum MetisEosListEvent {
             case REWIND:
             case REBASE:
             case COMMIT:
+            case UPDATE:
                 return true;
             default:
                 return false;

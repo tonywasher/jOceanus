@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -336,6 +337,22 @@ public class MetisFieldSet<T extends MetisFieldItem>
     public MetisField<T> declareLocalField(final MetisFieldId pId,
                                            final Function<T, Object> pValue) {
         return declareDataField(pId, pValue, MetisDataFieldStorage.LOCAL);
+    }
+
+    /**
+     * Declare local non-equality fields one for each Enum.
+     * @param <E> the Enum
+     * @param pClazz the class of the Enum
+     * @param pValue the value supplier
+     */
+    public <E extends Enum<E>> void declareLocalFieldsForEnum(final Class<E> pClazz,
+                                                              final BiFunction<T, E, Object> pValue) {
+        /* Loop through the enum constants */
+        for (E myValue : pClazz.getEnumConstants()) {
+            /* Create an id and callback for the value */
+            final MetisFieldId myId = new MetisSimpleFieldId(myValue.toString());
+            declareDataField(myId, t -> pValue.apply(t, myValue), MetisDataFieldStorage.LOCAL);
+        }
     }
 
     /**

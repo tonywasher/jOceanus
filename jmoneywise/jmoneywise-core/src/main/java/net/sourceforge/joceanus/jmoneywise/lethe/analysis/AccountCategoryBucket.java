@@ -23,20 +23,16 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.Currency;
-import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket.SecurityValues;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
-import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -45,21 +41,20 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * @param <C> the account category data type
  */
 public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
-        implements MetisDataFieldItem, Comparable<AccountCategoryBucket<T, C>>, MetisIndexedItem {
+        implements MetisFieldTableItem {
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AccountCategoryBucket.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<AccountCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(AccountCategoryBucket.class);
 
     /**
-     * Base Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
-
-    /**
-     * FieldSet map.
-     */
-    private static final Map<MetisDataField, AccountAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES, AccountCategoryBucket::getBaseValues);
+        FIELD_DEFS.declareLocalFieldsForEnum(AccountAttribute.class, AccountCategoryBucket::getAttributeValue);
+    }
 
     /**
      * Totals bucket name.
@@ -92,35 +87,6 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
                                                       : pCurrency.getCurrency();
         theValues = new AccountValues(myCurrency);
         theBaseValues = new AccountValues(myCurrency);
-    }
-
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_BASE.equals(pField)) {
-            return theBaseValues;
-        }
-
-        /* Handle Attribute fields */
-        final AccountAttribute myClass = getClassForField(pField);
-        if (myClass != null) {
-            final Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof TethysDecimal) {
-                return ((TethysDecimal) myValue).isNonZero()
-                                                             ? myValue
-                                                             : MetisDataFieldValue.SKIP;
-            }
-            return myValue;
-        }
-
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -188,16 +154,6 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     }
 
     /**
-     * Obtain the class of the field if it is an attribute field.
-     * @param pField the field
-     * @return the class
-     */
-    private static AccountAttribute getClassForField(final MetisDataField pField) {
-        /* Look up field in map */
-        return FIELDSET_MAP.get(pField);
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -205,29 +161,6 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return theValues.getValue(pAttr);
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-        if (!(pThat instanceof AccountCategoryBucket)) {
-            return false;
-        }
-
-        /* Compare the Account Categories */
-        final AccountCategoryBucket<?, ?> myThat = (AccountCategoryBucket<?, ?>) pThat;
-        return getAccountCategory().equals(myThat.getAccountCategory());
-    }
-
-    @Override
-    public int hashCode() {
-        return getAccountCategory().hashCode();
     }
 
     /**

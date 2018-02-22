@@ -22,17 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash;
@@ -48,12 +45,14 @@ public final class CashCategoryBucket
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CashCategoryBucket.class, AccountCategoryBucket.getBaseFieldSet());
+    private static final MetisFieldSet<CashCategoryBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(CashCategoryBucket.class);
 
     /**
-     * Cash Category Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY.getItemId());
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.CASHCATEGORY, CashCategoryBucket::getAccountCategory);
+    }
 
     /**
      * The cash category.
@@ -77,16 +76,8 @@ public final class CashCategoryBucket
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<CashCategoryBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_CATEGORY.equals(pField)) {
-            return theCategory;
-        }
-        return super.getFieldValue(pField);
     }
 
     @Override
@@ -114,20 +105,6 @@ public final class CashCategoryBucket
         return isActive;
     }
 
-    @Override
-    public int compareTo(final AccountCategoryBucket<Cash, CashCategory> pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the AccountCategories */
-        return getAccountCategory().compareTo(pThat.getAccountCategory());
-    }
-
     /**
      * Update active flag for Cash Bucket.
      * @param pBucket the Cash bucket
@@ -148,21 +125,19 @@ public final class CashCategoryBucket
      * CashCategoryBucket list class.
      */
     public static final class CashCategoryBucketList
-            implements MetisDataFieldItem, MetisDataList<CashCategoryBucket> {
+            implements MetisFieldItem, MetisDataList<CashCategoryBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(CashCategoryBucketList.class);
+        private static final MetisFieldSet<CashCategoryBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(CashCategoryBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-        /**
-         * Totals field Id.
-         */
-        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, CashCategoryBucketList::getAnalysis);
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS, CashCategoryBucketList::getTotals);
+        }
 
         /**
          * The analysis.
@@ -172,7 +147,7 @@ public final class CashCategoryBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<CashCategoryBucket> theList;
+        private final MetisEosListIndexed<CashCategoryBucket> theList;
 
         /**
          * The currency.
@@ -198,11 +173,12 @@ public final class CashCategoryBucket
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
+            theList.setComparator((l, r) -> l.getAccountCategory().compareTo(r.getAccountCategory()));
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<CashCategoryBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -214,17 +190,6 @@ public final class CashCategoryBucket
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return getDataFieldSet().getName();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**
@@ -243,6 +208,14 @@ public final class CashCategoryBucket
          */
         public Boolean haveForeignCurrency() {
             return haveForeignCurrency;
+        }
+
+        /**
+         * Obtain the Analysis.
+         * @return the analysis
+         */
+        public Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -292,7 +265,7 @@ public final class CashCategoryBucket
         protected void analyseCash(final MarketAnalysis pMarket,
                                    final CashBucketList pCash) {
             /* Sort the cash */
-            Collections.sort(pCash.getUnderlyingList());
+            pCash.sortBuckets();
 
             /* Loop through the buckets */
             final TethysDateRange myRange = theAnalysis.getDateRange();
@@ -342,7 +315,7 @@ public final class CashCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            final MetisIndexedList<CashCategoryBucket> myTotals = new MetisIndexedList<>();
+            final MetisEosListIndexed<CashCategoryBucket> myTotals = new MetisEosListIndexed<>();
 
             /* Loop through the buckets */
             Iterator<CashCategoryBucket> myIterator = iterator();
@@ -393,7 +366,7 @@ public final class CashCategoryBucket
             }
 
             /* Sort the list */
-            Collections.sort(theList.getUnderlyingList());
+            theList.sortList();
 
             /* Calculate delta for the totals */
             theTotals.calculateDelta();

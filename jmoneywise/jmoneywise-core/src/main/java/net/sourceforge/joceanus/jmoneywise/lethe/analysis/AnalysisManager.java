@@ -22,19 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashCategoryBucket.CashCategoryBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
@@ -54,21 +51,23 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Analysis manager.
  */
 public class AnalysisManager
-        implements MetisDataFieldItem, MetisDataMap<TethysDateRange, Analysis> {
+        implements MetisFieldItem, MetisDataMap<TethysDateRange, Analysis> {
     /**
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisManager.class);
 
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(AnalysisManager.class);
+    private static final MetisFieldSet<AnalysisManager> FIELD_DEFS = MetisFieldSet.newFieldSet(AnalysisManager.class);
 
     /**
-     * BaseAnalysis Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, AnalysisManager::getAnalysis);
+    }
 
     /**
      * The analysis map.
@@ -103,19 +102,8 @@ public class AnalysisManager
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<AnalysisManager> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -271,7 +259,7 @@ public class AnalysisManager
 
         /* Sort the transaction Tag list */
         final TransactionTagBucketList myTags = pAnalysis.getTransactionTags();
-        Collections.sort(myTags.getUnderlyingList());
+        myTags.sortBuckets();
     }
 
     /**

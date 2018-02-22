@@ -26,30 +26,30 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.viewer.MetisViewerErrorList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 
 /**
  * Report-able error list.
  * @param <E> the data type enum class
  */
 public class DataErrorList<E extends Enum<E>>
-        implements MetisDataFieldItem, MetisDataList<DataItem<E>> {
+        implements MetisFieldItem, MetisDataList<DataItem<E>> {
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisViewerErrorList.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<DataErrorList> FIELD_DEFS = MetisFieldSet.newFieldSet(DataErrorList.class);
 
     /**
-     * Size Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE);
+    static {
+        FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataErrorList::size);
+    }
 
     /**
      * The list.
@@ -63,8 +63,9 @@ public class DataErrorList<E extends Enum<E>>
         theList = new ArrayList<>();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<DataErrorList> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -74,14 +75,6 @@ public class DataErrorList<E extends Enum<E>>
                + "("
                + size()
                + ")";
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_SIZE.equals(pField)) {
-            return size();
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

@@ -22,22 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import java.util.Collections;
 import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisIndexedList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisAccountBucket.TaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -60,46 +57,28 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * The TaxBasis Bucket class.
  */
 public class TaxBasisBucket
-        implements MetisDataFieldItem, Comparable<TaxBasisBucket>, MetisIndexedItem {
+        implements MetisFieldTableItem {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TaxBasisBucket.class);
+    private static final MetisFieldSet<TaxBasisBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisBucket.class);
 
     /**
-     * Analysis Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-    /**
-     * Tax Basis Field Id.
-     */
-    private static final MetisDataField FIELD_TAXBASIS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getItemId());
-
-    /**
-     * Base Field Id.
-     */
-    private static final MetisDataField FIELD_BASE = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES);
-
-    /**
-     * History Field Id.
-     */
-    private static final MetisDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY);
-
-    /**
-     * AccountList Field Id.
-     */
-    private static final MetisDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(AnalysisResource.TAXBASIS_ACCOUNTLIST);
+    static {
+        FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, TaxBasisBucket::getAnalysis);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS, TaxBasisBucket::getTaxBasis);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_BASEVALUES, TaxBasisBucket::getBaseValues);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_HISTORY, TaxBasisBucket::getHistoryMap);
+        FIELD_DEFS.declareLocalField(AnalysisResource.TAXBASIS_ACCOUNTLIST, TaxBasisBucket::getAccounts);
+        FIELD_DEFS.declareLocalFieldsForEnum(TaxBasisAttribute.class, TaxBasisBucket::getAttributeValue);
+    }
 
     /**
      * Totals bucket name.
      */
     private static final MetisFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
-
-    /**
-     * FieldSet map.
-     */
-    private static final Map<MetisDataField, TaxBasisAttribute> FIELDSET_MAP = MetisDataFieldSet.buildFieldMap(FIELD_DEFS, TaxBasisAttribute.class);
 
     /**
      * The analysis.
@@ -231,52 +210,9 @@ public class TaxBasisBucket
         theBaseValues = theHistory.getBaseValues();
     }
 
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<? extends TaxBasisBucket> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ANALYSIS.equals(pField)) {
-            return theAnalysis;
-        }
-        if (FIELD_TAXBASIS.equals(pField)) {
-            return theTaxBasis;
-        }
-        if (FIELD_HISTORY.equals(pField)) {
-            return theHistory;
-        }
-        if (FIELD_ACCOUNTS.equals(pField)) {
-            return hasAccounts
-                               ? theAccounts
-                               : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return theBaseValues;
-        }
-
-        /* Handle Attribute fields */
-        final TaxBasisAttribute myClass = getClassForField(pField);
-        if (myClass != null) {
-            final Object myValue = getAttributeValue(myClass);
-            if (myValue instanceof TethysDecimal) {
-                return ((TethysDecimal) myValue).isNonZero()
-                                                             ? myValue
-                                                             : MetisDataFieldValue.SKIP;
-            }
-            return myValue;
-        }
-
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -472,16 +408,6 @@ public class TaxBasisBucket
     }
 
     /**
-     * Obtain the class of the field if it is an attribute field.
-     * @param pField the field
-     * @return the class
-     */
-    private static TaxBasisAttribute getClassForField(final MetisDataField pField) {
-        /* Look up field in map */
-        return FIELDSET_MAP.get(pField);
-    }
-
-    /**
      * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
@@ -489,48 +415,6 @@ public class TaxBasisBucket
     private Object getValue(final TaxBasisAttribute pAttr) {
         /* Obtain the attribute */
         return theValues.getValue(pAttr);
-    }
-
-    @Override
-    public int compareTo(final TaxBasisBucket pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare the TaxBases */
-        return getTaxBasis().compareTo(pThat.getTaxBasis());
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-        if (!(pThat instanceof TaxBasisBucket)) {
-            return false;
-        }
-
-        /* Compare the Tax Bases */
-        final TaxBasisBucket myThat = (TaxBasisBucket) pThat;
-        if (!getTaxBasis().equals(myThat.getTaxBasis())) {
-            return false;
-        }
-
-        /* Compare the date ranges */
-        return getDateRange().equals(myThat.getDateRange());
-    }
-
-    @Override
-    public int hashCode() {
-        return getTaxBasis().hashCode();
     }
 
     /**
@@ -962,26 +846,20 @@ public class TaxBasisBucket
      * TaxBasisBucketList class.
      */
     public static class TaxBasisBucketList
-            implements MetisDataFieldItem, MoneyWiseTaxSource, MetisDataList<TaxBasisBucket> {
+            implements MetisFieldItem, MoneyWiseTaxSource, MetisDataList<TaxBasisBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TaxBasisBucketList.class);
+        private static final MetisFieldSet<TaxBasisBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
-
-        /**
-         * ChargeableGains Field Id.
-         */
-        private static final MetisDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_CHARGES);
-
-        /**
-         * Totals field Id.
-         */
-        private static final MetisDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NAME_TOTALS);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, TaxBasisBucketList::getAnalysis);
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_CHARGES, TaxBasisBucketList::getGainSlices);
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_TOTALS, TaxBasisBucketList::getTotals);
+        }
 
         /**
          * The analysis.
@@ -991,7 +869,7 @@ public class TaxBasisBucket
         /**
          * The list.
          */
-        private final MetisIndexedList<TaxBasisBucket> theList;
+        private final MetisEosListIndexed<TaxBasisBucket> theList;
 
         /**
          * The data.
@@ -1011,13 +889,24 @@ public class TaxBasisBucket
         /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
+         * @param pGains the new Gains list
          */
-        protected TaxBasisBucketList(final Analysis pAnalysis) {
+        private TaxBasisBucketList(final Analysis pAnalysis,
+                                   final MoneyWiseChargeableGainSliceList pGains) {
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
-            theCharges = new MoneyWiseChargeableGainSliceList();
+            theCharges = pGains;
             theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            theList = new MetisEosListIndexed<>();
+            theList.setComparator((l, r) -> l.getTaxBasis().compareTo(r.getTaxBasis()));
+        }
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+        protected TaxBasisBucketList(final Analysis pAnalysis) {
+            this(pAnalysis, new MoneyWiseChargeableGainSliceList());
         }
 
         /**
@@ -1030,11 +919,7 @@ public class TaxBasisBucket
                                      final TaxBasisBucketList pBase,
                                      final TethysDate pDate) {
             /* Initialise class */
-            theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
-            theCharges = new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange());
-            theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
 
             /* Loop through the buckets */
             final Iterator<TaxBasisBucket> myIterator = pBase.iterator();
@@ -1062,11 +947,7 @@ public class TaxBasisBucket
                                      final TaxBasisBucketList pBase,
                                      final TethysDateRange pRange) {
             /* Initialise class */
-            theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
-            theCharges = new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange());
-            theTotals = allocateTotalsBucket();
-            theList = new MetisIndexedList<>();
+            this(pAnalysis, new MoneyWiseChargeableGainSliceList(pBase.getGainSlices(), pAnalysis.getDateRange()));
 
             /* Loop through the buckets */
             final Iterator<TaxBasisBucket> myIterator = pBase.iterator();
@@ -1086,7 +967,7 @@ public class TaxBasisBucket
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<TaxBasisBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1100,20 +981,12 @@ public class TaxBasisBucket
             return getDataFieldSet().getName();
         }
 
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            if (FIELD_CHARGES.equals(pField)) {
-                return theCharges.isEmpty()
-                                            ? MetisDataFieldValue.SKIP
-                                            : theCharges;
-            }
-            if (FIELD_TOTALS.equals(pField)) {
-                return theTotals;
-            }
-            return MetisDataFieldValue.UNKNOWN;
+        /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        protected Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -1427,7 +1300,7 @@ public class TaxBasisBucket
 
                 /* Sort the accounts */
                 if (myBucket.hasAccounts()) {
-                    Collections.sort(myBucket.getAccounts().getUnderlyingList());
+                    myBucket.getAccounts().sortBuckets();
                 }
 
                 /* Adjust the Total Profit buckets */
@@ -1435,7 +1308,7 @@ public class TaxBasisBucket
             }
 
             /* Sort the bases */
-            Collections.sort(theList.getUnderlyingList());
+            theList.sortList();
         }
 
         /**

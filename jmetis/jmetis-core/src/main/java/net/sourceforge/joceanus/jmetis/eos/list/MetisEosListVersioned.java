@@ -27,8 +27,6 @@ import java.security.InvalidParameterException;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListResource;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
@@ -56,11 +54,6 @@ public class MetisEosListVersioned<T extends MetisFieldVersionedItem>
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS, MetisEosListVersioned::getItemType);
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosListVersioned::getVersion);
     }
-
-    /**
-     * The Event Manager.
-     */
-    private final TethysEventManager<MetisEosListEvent> theEventManager;
 
     /**
      * The listSet.
@@ -115,19 +108,11 @@ public class MetisEosListVersioned<T extends MetisFieldVersionedItem>
         theListSet = pListSet;
         theBaseList = pBaseList;
         theItemType = pItemType;
-
-        /* Create the event manager */
-        theEventManager = new TethysEventManager<>();
     }
 
     @Override
     public MetisFieldSetDef getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public TethysEventRegistrar<MetisEosListEvent> getEventRegistrar() {
-        return theEventManager.getEventRegistrar();
     }
 
     /**
@@ -213,18 +198,6 @@ public class MetisEosListVersioned<T extends MetisFieldVersionedItem>
         myHash += theItemType.hashCode();
         myHash *= HASH_PRIME;
         return myHash + theVersion;
-    }
-
-    /**
-     * Fire event.
-     * @param pEvent the event
-     */
-    protected void fireEvent(final MetisEosListChange<T> pEvent) {
-        /* If the change is non-empty */
-        if (MetisEosListEvent.REFRESH.equals(pEvent.getEventType())
-            || !pEvent.isEmpty()) {
-            theEventManager.fireEvent(pEvent.getEventType(), pEvent);
-        }
     }
 
     /**

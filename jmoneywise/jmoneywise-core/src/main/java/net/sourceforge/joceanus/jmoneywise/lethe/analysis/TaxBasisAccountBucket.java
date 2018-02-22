@@ -23,17 +23,16 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Payee;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionAsset;
@@ -49,12 +48,19 @@ public final class TaxBasisAccountBucket
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TaxBasisAccountBucket.class, TaxBasisBucket.getBaseFieldSet());
+    private static final MetisFieldSet<TaxBasisAccountBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisAccountBucket.class);
 
     /**
-     * Parent Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.TRANSACTION_ACCOUNT);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.TRANSACTION_ACCOUNT, TaxBasisAccountBucket::getAccount);
+    }
+
+    /**
+     * AssetId.
+     */
+    private final Long theAssetId;
 
     /**
      * Parent.
@@ -77,6 +83,7 @@ public final class TaxBasisAccountBucket
                                     final TransactionAsset pAccount) {
         /* Store the parameters */
         super(pAnalysis, pParent.getTaxBasis());
+        theAssetId = deriveAssetId(pAccount);
         theAccount = pAccount;
         theParent = pParent;
     }
@@ -94,6 +101,7 @@ public final class TaxBasisAccountBucket
                                   final TethysDate pDate) {
         /* Copy details from base */
         super(pAnalysis, pBase, pDate);
+        theAssetId = pBase.getAssetId();
         theAccount = pBase.getAccount();
         theParent = pParent;
     }
@@ -111,26 +119,38 @@ public final class TaxBasisAccountBucket
                                   final TethysDateRange pRange) {
         /* Copy details from base */
         super(pAnalysis, pBase, pRange);
+        theAssetId = pBase.getAssetId();
         theAccount = pBase.getAccount();
         theParent = pParent;
     }
 
-    @Override
-    public MetisDataFieldSet getDataFieldSet() {
-        return FIELD_DEFS;
+    /**
+     * derive asset key for an asset.
+     * @param pAsset the asset
+     * @return the asset key
+     */
+    private static Long deriveAssetId(final TransactionAsset pAsset) {
+        /* Calculate the key */
+        return Long.valueOf((((long) pAsset.getAssetType().getId()) << Integer.SIZE)
+                            + pAsset.getId());
     }
 
     @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return theAccount;
-        }
-        return super.getFieldValue(pField);
+    public MetisFieldSet<TaxBasisAccountBucket> getDataFieldSet() {
+        return FIELD_DEFS;
     }
 
     @Override
     public Integer getIndexedId() {
         return theAccount.getId();
+    }
+
+    /**
+     * Obtain assetId.
+     * @return the assetId
+     */
+    public Long getAssetId() {
+        return theAssetId;
     }
 
     /**
@@ -166,71 +186,22 @@ public final class TaxBasisAccountBucket
         return theParent;
     }
 
-    @Override
-    public int compareTo(final TaxBasisBucket pThat) {
-        /* Handle the trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare types of buckets */
-        int iDiff = super.compareTo(pThat);
-        if (iDiff == 0
-            && pThat instanceof TaxBasisAccountBucket) {
-            /* Compare the Accounts */
-            final TaxBasisAccountBucket myThat = (TaxBasisAccountBucket) pThat;
-            iDiff = getAccount().compareTo(myThat.getAccount());
-        }
-
-        /* Return the result */
-        return iDiff;
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-        if (!(pThat instanceof TaxBasisAccountBucket)) {
-            return false;
-        }
-
-        /* Compare the Accounts */
-        final TaxBasisAccountBucket myThat = (TaxBasisAccountBucket) pThat;
-        if (!getAccount().equals(myThat.getAccount())) {
-            return false;
-        }
-
-        /* Compare the tax bases */
-        return super.equals(myThat);
-    }
-
-    @Override
-    public int hashCode() {
-        return getAccount().hashCode();
-    }
-
     /**
      * TaxBasisAccountBucketList class.
      */
     public static class TaxBasisAccountBucketList
-            implements MetisDataFieldItem, MetisDataList<TaxBasisAccountBucket> {
+            implements MetisFieldItem, MetisDataList<TaxBasisAccountBucket> {
         /**
          * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(TaxBasisAccountBucketList.class);
+        private static final MetisFieldSet<TaxBasisAccountBucketList> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisAccountBucketList.class);
 
         /**
-         * Analysis field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME);
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_NAME, TaxBasisAccountBucketList::getAnalysis);
+        }
 
         /**
          * The analysis.
@@ -291,7 +262,7 @@ public final class TaxBasisAccountBucket
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
                     theList.add(myBucket);
-                    theMap.put(deriveAssetKey(myBucket), myBucket);
+                    theMap.put(myBucket.getAssetId(), myBucket);
                 }
             }
         }
@@ -325,13 +296,13 @@ public final class TaxBasisAccountBucket
 
                     /* Add to list and to map */
                     theList.add(myBucket);
-                    theMap.put(deriveAssetKey(myBucket), myBucket);
+                    theMap.put(myBucket.getAssetId(), myBucket);
                 }
             }
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<TaxBasisAccountBucketList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -345,12 +316,12 @@ public final class TaxBasisAccountBucket
             return getDataFieldSet().getName();
         }
 
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_ANALYSIS.equals(pField)) {
-                return theAnalysis;
-            }
-            return MetisDataFieldValue.UNKNOWN;
+        /**
+         * Obtain the analysis.
+         * @return the analysis
+         */
+        protected Analysis getAnalysis() {
+            return theAnalysis;
         }
 
         /**
@@ -416,7 +387,7 @@ public final class TaxBasisAccountBucket
          */
         private TaxBasisAccountBucket getBucket(final TransactionAsset pAccount) {
             /* Locate the bucket in the list */
-            final Long myKey = deriveAssetKey(pAccount);
+            final Long myKey = deriveAssetId(pAccount);
             TaxBasisAccountBucket myItem = theMap.get(myKey);
 
             /* If the item does not yet exist */
@@ -434,35 +405,21 @@ public final class TaxBasisAccountBucket
         }
 
         /**
+         * SortBuckets.
+         */
+        protected void sortBuckets() {
+            Collections.sort(theList, (l, r) -> l.getAssetId().compareTo(r.getAssetId()));
+        }
+
+        /**
          * Find the TaxBasisAccountBucket for a given account.
          * @param pAccount the account
          * @return the bucket (or null)
          */
         protected TaxBasisAccountBucket findBucket(final TransactionAsset pAccount) {
             /* Locate the bucket in the list */
-            final Long myKey = deriveAssetKey(pAccount);
+            final Long myKey = deriveAssetId(pAccount);
             return theMap.get(myKey);
-        }
-
-        /**
-         * derive asset key for a bucket.
-         * @param pBucket the bucket
-         * @return the asset key
-         */
-        private static long deriveAssetKey(final TaxBasisAccountBucket pBucket) {
-            /* Calculate the key */
-            return deriveAssetKey(pBucket.getAccount());
-        }
-
-        /**
-         * derive asset key for an asset.
-         * @param pAsset the asset
-         * @return the asset key
-         */
-        private static long deriveAssetKey(final TransactionAsset pAsset) {
-            /* Calculate the key */
-            return (((long) pAsset.getAssetType().getId()) << Integer.SIZE)
-                   + pAsset.getId();
         }
     }
 }

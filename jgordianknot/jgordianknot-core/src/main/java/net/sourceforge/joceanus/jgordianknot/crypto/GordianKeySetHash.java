@@ -339,7 +339,7 @@ public final class GordianKeySetHash {
             /* Combine the Primary and Alternate hashes to form the initVector */
             myDigest.update(myPrimeHash);
             myDigest.update(myAlternateHash);
-            byte[] myInitVector = myDigest.finish();
+            final byte[] myInitVector = myDigest.finish();
 
             /* Combine the Primary and Alternate bytes to form the external hash */
             myDigest.update(myPrimeBytes);

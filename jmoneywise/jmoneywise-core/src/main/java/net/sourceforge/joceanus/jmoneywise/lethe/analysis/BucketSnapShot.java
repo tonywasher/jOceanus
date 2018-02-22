@@ -22,11 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -42,36 +40,23 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
  * @param <E> the enum class
  */
 public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & BucketAttribute>
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(BucketSnapShot.class);
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<BucketSnapShot> FIELD_DEFS = MetisFieldSet.newFieldSet(BucketSnapShot.class);
 
     /**
-     * Id Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID);
-
-    /**
-     * Transaction Id.
-     */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemId());
-
-    /**
-     * Date Id.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE);
-
-    /**
-     * Values Id.
-     */
-    private static final MetisDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_VALUES);
-
-    /**
-     * Previous Values Id.
-     */
-    private static final MetisDataField FIELD_PREVIOUS = FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_PREVIOUS);
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID, BucketSnapShot::getId);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION, BucketSnapShot::getTransaction);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, BucketSnapShot::getDate);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_VALUES, BucketSnapShot::getSnapShot);
+        FIELD_DEFS.declareLocalField(AnalysisResource.BUCKET_PREVIOUS, BucketSnapShot::getPrevious);
+    }
 
     /**
      * The id of the transaction.
@@ -142,29 +127,10 @@ public class BucketSnapShot<T extends BucketValues<T, E>, E extends Enum<E> & Bu
         return theDate.toString();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<BucketSnapShot> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ID.equals(pField)) {
-            return theId;
-        }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTransaction;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_VALUES.equals(pField)) {
-            return theSnapShot;
-        }
-        if (FIELD_PREVIOUS.equals(pField)) {
-            return thePrevious;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

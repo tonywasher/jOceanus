@@ -30,15 +30,13 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
@@ -55,36 +53,22 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
  * @author Tony Washer
  */
 public final class DilutionEvent
-        implements MetisIndexedItem, MetisDataFieldItem, Comparable<DilutionEvent> {
+        implements MetisFieldTableItem, Comparable<DilutionEvent> {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DilutionEvent.class);
+    private static final MetisFieldSet<DilutionEvent> FIELD_DEFS = MetisFieldSet.newFieldSet(DilutionEvent.class);
 
     /**
-     * Id Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID);
-
-    /**
-     * Security Field Id.
-     */
-    private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemId());
-
-    /**
-     * Date Field Id.
-     */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE);
-
-    /**
-     * Dilution Field Id.
-     */
-    private static final MetisDataField FIELD_DILUTION = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_DILUTION);
-
-    /**
-     * Transaction Field Id.
-     */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemId());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID, DilutionEvent::getIndexedId);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY, DilutionEvent::getSecurity);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, DilutionEvent::getDate);
+        FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_DILUTION, DilutionEvent::getDilution);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION, DilutionEvent::getTransaction);
+    }
 
     /**
      * The Id.
@@ -133,33 +117,13 @@ public final class DilutionEvent
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<DilutionEvent> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFieldSet().getName();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ID.equals(pField)) {
-            return theId;
-        }
-        if (FIELD_SECURITY.equals(pField)) {
-            return theSecurity;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_DILUTION.equals(pField)) {
-            return theDilution;
-        }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTransaction;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**
@@ -257,16 +221,18 @@ public final class DilutionEvent
      * List of dilutions for a security.
      */
     public static final class DilutionEventList
-            implements MetisDataFieldItem, MetisDataList<DilutionEvent> {
+            implements MetisFieldItem, MetisDataList<DilutionEvent> {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(DilutionEventList.class);
+        private static final MetisFieldSet<DilutionEventList> FIELD_DEFS = MetisFieldSet.newFieldSet(DilutionEventList.class);
 
         /**
-         * Security Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY.getItemId());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY, DilutionEventList::getSecurity);
+        }
 
         /**
          * The list.
@@ -293,21 +259,13 @@ public final class DilutionEvent
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<DilutionEventList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return theSecurity.formatObject(pFormatter);
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            if (FIELD_SECURITY.equals(pField)) {
-                return theSecurity;
-            }
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         /**

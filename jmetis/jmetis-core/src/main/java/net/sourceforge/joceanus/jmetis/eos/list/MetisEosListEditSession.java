@@ -221,7 +221,7 @@ public class MetisEosListEditSession {
         /* If we are currently editing */
         if (activeVersion()) {
             /* Create new Change Details */
-            final MetisEosListSetChange myChanges = new MetisEosListSetChange(MetisEosListEvent.COMMIT);
+            final MetisEosListSetChange myChanges = new MetisEosListSetChange(MetisEosListEvent.UPDATE);
 
             /* Loop through the lists */
             final Iterator<MetisEosListKey> myIterator = theVersionLists.iterator();
@@ -266,7 +266,7 @@ public class MetisEosListEditSession {
      */
     private <T extends MetisFieldVersionedItem> MetisEosListChange<T> doCommitEditVersion(final MetisEosListVersioned<T> pList) {
         /* Create a new Change Detail */
-        final MetisEosListChange<T> myChange = new MetisEosListChange<>(pList.getItemType(), MetisEosListEvent.COMMIT);
+        final MetisEosListChange<T> myChange = new MetisEosListChange<>(pList.getItemType(), MetisEosListEvent.UPDATE);
 
         /* Loop through the list */
         final Iterator<T> myIterator = pList.iterator();
@@ -302,7 +302,7 @@ public class MetisEosListEditSession {
         /* If we are currently editing */
         if (activeSession()) {
             /* Create new Change Details */
-            final MetisEosListSetChange myChanges = new MetisEosListSetChange(MetisEosListEvent.COMMIT);
+            final MetisEosListSetChange myChanges = new MetisEosListSetChange(MetisEosListEvent.UPDATE);
             final MetisEosListSetChange myBaseChanges = new MetisEosListSetChange(MetisEosListEvent.COMMIT);
 
             /* Determine the new version in base */
@@ -318,7 +318,7 @@ public class MetisEosListEditSession {
                 myIterator.remove();
 
                 /* Create new Change Details */
-                final MetisEosListChange<MetisFieldVersionedItem> myChange = new MetisEosListChange<>(myKey, MetisEosListEvent.COMMIT);
+                final MetisEosListChange<MetisFieldVersionedItem> myChange = new MetisEosListChange<>(myKey, MetisEosListEvent.UPDATE);
                 final MetisEosListChange<MetisFieldVersionedItem> myBaseChange = new MetisEosListChange<>(myKey, MetisEosListEvent.COMMIT);
 
                 /* Commit the edit version */
