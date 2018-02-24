@@ -22,10 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -36,31 +34,21 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * Basic UK Tax Allowance.
  */
 public abstract class MoneyWiseUKBasicAllowance
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKBasicAllowance.class);
+    private static final MetisFieldSet<MoneyWiseUKBasicAllowance> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKBasicAllowance.class);
 
     /**
-     * Allowance Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC);
-
-    /**
-     * RentalAllowance Field Id.
-     */
-    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL);
-
-    /**
-     * CapitalAllowance Field Id.
-     */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL);
-
-    /**
-     * MarginalReduction Field Id.
-     */
-    private static final MetisDataField FIELD_MARGINAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.MARGINAL_REDUCTION);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC, MoneyWiseUKBasicAllowance::getAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL, MoneyWiseUKBasicAllowance::getRentalAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL, MoneyWiseUKBasicAllowance::getCapitalAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.MARGINAL_REDUCTION, MoneyWiseUKBasicAllowance::getMarginalReduction);
+    }
 
     /**
      * Allowance.
@@ -220,27 +208,7 @@ public abstract class MoneyWiseUKBasicAllowance
      * Obtain the data fields.
      * @return the data fields
      */
-    protected static MetisDataFieldSet getBaseFieldSet() {
+    protected static MetisFieldSet<? extends MoneyWiseUKBasicAllowance> getBaseFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_ALLOWANCE.equals(pField)) {
-            return theAllowance;
-        }
-        if (FIELD_RENTAL.equals(pField)) {
-            return theRentalAllowance;
-        }
-        if (FIELD_CAPITAL.equals(pField)) {
-            return theCapitalAllowance;
-        }
-        if (FIELD_MARGINAL.equals(pField)) {
-            return theMarginalReduction;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

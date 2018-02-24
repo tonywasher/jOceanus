@@ -24,10 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseChargeableGainSlice;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
@@ -55,39 +53,21 @@ public class MoneyWiseUKChargeableGainsScheme
     public static class MoneyWiseUKSlicedTaxDueBucket
             extends MoneyWiseTaxDueBucket {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKSlicedTaxDueBucket.class, MoneyWiseTaxDueBucket.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKSlicedTaxDueBucket> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKSlicedTaxDueBucket.class);
 
         /**
-         * Total Gains Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_TOTALGAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS);
-
-        /**
-         * Total Slices Field Id.
-         */
-        private static final MetisDataField FIELD_TOTALSLICES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS);
-
-        /**
-         * Ratio Field Id.
-         */
-        private static final MetisDataField FIELD_RATIO = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_RATIO);
-
-        /**
-         * TaxedSlices Field Id.
-         */
-        private static final MetisDataField FIELD_TAXEDSLICES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXEDSLICES);
-
-        /**
-         * NettTaxDue Field Id.
-         */
-        private static final MetisDataField FIELD_NETTTAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_NETTTAXDUE);
-
-        /**
-         * TaxRelief Field Id.
-         */
-        private static final MetisDataField FIELD_TAXRELIEF = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXRELIEF);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALGAINS, MoneyWiseUKSlicedTaxDueBucket::getTotalGains);
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TOTALSLICES, MoneyWiseUKSlicedTaxDueBucket::getTotalSlices);
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_RATIO, MoneyWiseUKSlicedTaxDueBucket::getRatio);
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXEDSLICES, MoneyWiseUKSlicedTaxDueBucket::getTaxedSlices);
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_NETTTAXDUE, MoneyWiseUKSlicedTaxDueBucket::getNettTaxDue);
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_TAXRELIEF, MoneyWiseUKSlicedTaxDueBucket::getTaxRelief);
+        }
 
         /**
          * The total gains.
@@ -176,14 +156,6 @@ public class MoneyWiseUKChargeableGainsScheme
         }
 
         /**
-         * Obtain the tax due bucket for slices.
-         * @return the tax due on slices
-         */
-        public MoneyWiseTaxDueBucket getSliceBucket() {
-            return theSliceBucket;
-        }
-
-        /**
          * Obtain the taxed slices.
          * @return the taxed slices
          */
@@ -263,34 +235,8 @@ public class MoneyWiseUKChargeableGainsScheme
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseUKSlicedTaxDueBucket> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_TOTALGAIN.equals(pField)) {
-                return theTotalGains;
-            }
-            if (FIELD_TOTALSLICES.equals(pField)) {
-                return theTotalSlices;
-            }
-            if (FIELD_RATIO.equals(pField)) {
-                return theRatio;
-            }
-            if (FIELD_TAXEDSLICES.equals(pField)) {
-                return theSliceBucket;
-            }
-            if (FIELD_TAXRELIEF.equals(pField)) {
-                return theTaxRelief;
-            }
-            if (FIELD_NETTTAXDUE.equals(pField)) {
-                return theNettTaxDue;
-            }
-
-            /* Not recognised */
-            return MetisDataFieldValue.UNKNOWN;
         }
     }
 }

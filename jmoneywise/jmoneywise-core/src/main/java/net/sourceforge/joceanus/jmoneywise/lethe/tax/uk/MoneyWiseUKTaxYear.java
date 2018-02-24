@@ -24,8 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -41,34 +40,20 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 public class MoneyWiseUKTaxYear
         extends MoneyWiseTaxYear {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxYear.class, MoneyWiseTaxYear.getBaseFieldSet());
+    private static final MetisFieldSet<MoneyWiseUKTaxYear> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxYear.class);
 
     /**
-     * Allowances Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ALLOWANCES = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES);
-
-    /**
-     * Bands Field Id.
-     */
-    private static final MetisDataField FIELD_BANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS);
-
-    /**
-     * InterestScheme Field Id.
-     */
-    private static final MetisDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_INTEREST);
-
-    /**
-     * DividendScheme Field Id.
-     */
-    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND);
-
-    /**
-     * CapitalScheme Field Id.
-     */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_CAPITAL);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_ALLOWANCES, MoneyWiseUKTaxYear::getAllowances);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS, MoneyWiseUKTaxYear::getTaxBands);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_INTEREST, MoneyWiseUKTaxYear::getInterestScheme);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_DIVIDEND, MoneyWiseUKTaxYear::getDividendScheme);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_CAPITAL, MoneyWiseUKTaxYear::getCapitalScheme);
+    }
 
     /**
      * The Allowances.
@@ -153,6 +138,30 @@ public class MoneyWiseUKTaxYear
     }
 
     /**
+     * Obtain the Interest TaxScheme.
+     * @return the tax scheme
+     */
+    private MoneyWiseUKInterestScheme getInterestScheme() {
+        return theInterestScheme;
+    }
+
+    /**
+     * Obtain the Dividend TaxScheme.
+     * @return the tax scheme
+     */
+    private MoneyWiseUKDividendScheme getDividendScheme() {
+        return theDividendScheme;
+    }
+
+    /**
+     * Obtain the Capital TaxScheme.
+     * @return the tax scheme
+     */
+    private MoneyWiseUKCapitalScheme getCapitalScheme() {
+        return theCapitalScheme;
+    }
+
+    /**
      * Determine the taxYear end.
      * @param pYear the taxYear as an integer
      * @return the amount
@@ -163,31 +172,8 @@ public class MoneyWiseUKTaxYear
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseUKTaxYear> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_ALLOWANCES.equals(pField)) {
-            return theAllowances;
-        }
-        if (FIELD_BANDS.equals(pField)) {
-            return theTaxBands;
-        }
-        if (FIELD_INTEREST.equals(pField)) {
-            return theInterestScheme;
-        }
-        if (FIELD_DIVIDEND.equals(pField)) {
-            return theDividendScheme;
-        }
-        if (FIELD_CAPITAL.equals(pField)) {
-            return theCapitalScheme;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 
     @Override

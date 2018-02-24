@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -39,6 +38,13 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  */
 public abstract class MoneyWiseUKCapitalScheme
         extends MoneyWiseUKIncomeScheme {
+    /**
+     * Local Report fields.
+     */
+    static {
+        MetisFieldSet.newFieldSet(MoneyWiseUKCapitalScheme.class);
+    }
+
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
                                            final TethysMoney pAmount) {
@@ -85,14 +91,16 @@ public abstract class MoneyWiseUKCapitalScheme
     public static class MoneyWiseUKCapitalFlatRateScheme
             extends MoneyWiseUKCapitalScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKCapitalFlatRateScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKCapitalFlatRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalFlatRateScheme.class);
 
         /**
-         * Rate Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKCapitalFlatRateScheme::getBasicRate);
+        }
 
         /**
          * The Base Rate.
@@ -115,28 +123,9 @@ public abstract class MoneyWiseUKCapitalScheme
             return theBaseRate;
         }
 
-        /**
-         * Obtain the data fields.
-         * @return the data fields
-         */
-        protected static MetisDataFieldSet getBaseFields() {
-            return FIELD_DEFS;
-        }
-
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<? extends MoneyWiseUKCapitalFlatRateScheme> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_BASERATE.equals(pField)) {
-                return theBaseRate;
-            }
-
-            /* Pass on */
-            return super.getFieldValue(pField);
         }
 
         @Override
@@ -159,14 +148,16 @@ public abstract class MoneyWiseUKCapitalScheme
     public static class MoneyWiseUKCapitalSplitRateScheme
             extends MoneyWiseUKCapitalFlatRateScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKCapitalSplitRateScheme.class, MoneyWiseUKCapitalFlatRateScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKCapitalSplitRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalSplitRateScheme.class);
 
         /**
-         * Rate Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_HIGHRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE, MoneyWiseUKCapitalSplitRateScheme::getHighRate);
+        }
 
         /**
          * The High Rate.
@@ -193,19 +184,8 @@ public abstract class MoneyWiseUKCapitalScheme
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<? extends MoneyWiseUKCapitalSplitRateScheme> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_HIGHRATE.equals(pField)) {
-                return theHighRate;
-            }
-
-            /* Pass call on */
-            return super.getFieldValue(pField);
         }
 
         @Override
@@ -233,20 +213,12 @@ public abstract class MoneyWiseUKCapitalScheme
     public static class MoneyWiseUKCapitalAsIncomeScheme
             extends MoneyWiseUKCapitalScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKCapitalAsIncomeScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
-
-        /**
-         * Obtain the data fields.
-         * @return the data fields
-         */
-        protected static MetisDataFieldSet getBaseFieldSet() {
-            return FIELD_DEFS;
-        }
+        private static final MetisFieldSet<MoneyWiseUKCapitalAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalAsIncomeScheme.class);
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseUKCapitalAsIncomeScheme> getDataFieldSet() {
             return FIELD_DEFS;
         }
     }
@@ -257,14 +229,16 @@ public abstract class MoneyWiseUKCapitalScheme
     public static class MoneyWiseUKCapitalResidentialScheme
             extends MoneyWiseUKCapitalSplitRateScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKCapitalResidentialScheme.class, MoneyWiseUKCapitalSplitRateScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKCapitalResidentialScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKCapitalResidentialScheme.class);
 
         /**
-         * Residential Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_RESIDENTIAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_RESIDENTIAL, MoneyWiseUKCapitalResidentialScheme::getResidentialScheme);
+        }
 
         /**
          * The Residential Scheme.
@@ -295,19 +269,8 @@ public abstract class MoneyWiseUKCapitalScheme
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseUKCapitalResidentialScheme> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_RESIDENTIAL.equals(pField)) {
-                return theResidential;
-            }
-
-            /* Pass call on */
-            return super.getFieldValue(pField);
         }
 
         @Override

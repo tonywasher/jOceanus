@@ -22,9 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
@@ -34,14 +33,16 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 public class MoneyWiseUKAdditionalAllowance
         extends MoneyWiseUKAgeAllowance {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKAdditionalAllowance.class, MoneyWiseUKAgeAllowance.getBaseFieldSet());
+    private static final MetisFieldSet<MoneyWiseUKAdditionalAllowance> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKAdditionalAllowance.class);
 
     /**
-     * AdditionalAllowanceLimit Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_ADDALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_ADDALLOWANCE, MoneyWiseUKAdditionalAllowance::getAdditionalAllowanceLimit);
+    }
 
     /**
      * IncomeBoundary.
@@ -102,18 +103,8 @@ public class MoneyWiseUKAdditionalAllowance
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseUKAdditionalAllowance> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_ADDALLOWLIMIT.equals(pField)) {
-            return theAddAllowLimit;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 
     @Override

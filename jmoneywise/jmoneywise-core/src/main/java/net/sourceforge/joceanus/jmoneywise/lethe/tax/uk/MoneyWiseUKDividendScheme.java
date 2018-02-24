@@ -26,8 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -39,6 +38,13 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  */
 public abstract class MoneyWiseUKDividendScheme
         extends MoneyWiseUKIncomeScheme {
+    /**
+     * Local Report fields.
+     */
+    static {
+        MetisFieldSet.newFieldSet(MoneyWiseUKDividendScheme.class);
+    }
+
     /**
      * Constructor.
      */
@@ -190,9 +196,9 @@ public abstract class MoneyWiseUKDividendScheme
     public static class MoneyWiseUKDividendAsIncomeScheme
             extends MoneyWiseUKDividendScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKDividendAsIncomeScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKDividendAsIncomeScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAsIncomeScheme.class);
 
         @Override
         protected TethysRate getTaxCreditRate(final MoneyWiseUKTaxYear pTaxYear) {
@@ -200,7 +206,7 @@ public abstract class MoneyWiseUKDividendScheme
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseUKDividendAsIncomeScheme> getDataFieldSet() {
             return FIELD_DEFS;
         }
     }
@@ -211,14 +217,16 @@ public abstract class MoneyWiseUKDividendScheme
     public static class MoneyWiseUKDividendBaseRateScheme
             extends MoneyWiseUKDividendScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKDividendBaseRateScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKDividendBaseRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendBaseRateScheme.class);
 
         /**
-         * Base Rate Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_BASERATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_BASE_RATE, MoneyWiseUKDividendBaseRateScheme::getBaseRate);
+        }
 
         /**
          * The Base Rate.
@@ -254,28 +262,9 @@ public abstract class MoneyWiseUKDividendScheme
             return theBaseRate;
         }
 
-        /**
-         * Obtain the data fields.
-         * @return the data fields
-         */
-        protected static MetisDataFieldSet getBaseFields() {
-            return FIELD_DEFS;
-        }
-
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<? extends MoneyWiseUKDividendBaseRateScheme> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_BASERATE.equals(pField)) {
-                return theBaseRate;
-            }
-
-            /* Pass call on */
-            return super.getFieldValue(pField);
         }
     }
 
@@ -285,14 +274,16 @@ public abstract class MoneyWiseUKDividendScheme
     public static class MoneyWiseUKDividendHigherRateScheme
             extends MoneyWiseUKDividendBaseRateScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKDividendHigherRateScheme.class, MoneyWiseUKDividendBaseRateScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKDividendHigherRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendHigherRateScheme.class);
 
         /**
-         * Rate Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_HIGHRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_HIGH_RATE, MoneyWiseUKDividendHigherRateScheme::getHigherRate);
+        }
 
         /**
          * The Higher Rate.
@@ -327,28 +318,9 @@ public abstract class MoneyWiseUKDividendScheme
             return theHighRate;
         }
 
-        /**
-         * Obtain the data fields.
-         * @return the data fields
-         */
-        protected static MetisDataFieldSet getBaseFieldSet() {
-            return FIELD_DEFS;
-        }
-
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<? extends MoneyWiseUKDividendHigherRateScheme> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_HIGHRATE.equals(pField)) {
-                return theHighRate;
-            }
-
-            /* Pass on */
-            return super.getFieldValue(pField);
         }
     }
 
@@ -358,9 +330,9 @@ public abstract class MoneyWiseUKDividendScheme
     public static class MoneyWiseUKDividendLoHigherRateScheme
             extends MoneyWiseUKDividendHigherRateScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKDividendLoHigherRateScheme.class, MoneyWiseUKDividendHigherRateScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKDividendLoHigherRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendLoHigherRateScheme.class);
 
         /**
          * Constructor.
@@ -373,7 +345,7 @@ public abstract class MoneyWiseUKDividendScheme
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseUKDividendLoHigherRateScheme> getDataFieldSet() {
             return FIELD_DEFS;
         }
     }
@@ -384,14 +356,16 @@ public abstract class MoneyWiseUKDividendScheme
     public static class MoneyWiseUKDividendAdditionalRateScheme
             extends MoneyWiseUKDividendHigherRateScheme {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKDividendAdditionalRateScheme.class, MoneyWiseUKDividendHigherRateScheme.getBaseFieldSet());
+        private static final MetisFieldSet<MoneyWiseUKDividendAdditionalRateScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKDividendAdditionalRateScheme.class);
 
         /**
-         * Rate Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_ADDRATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.SCHEME_ADDITIONAL_RATE, MoneyWiseUKDividendHigherRateScheme::getAdditionalRate);
+        }
 
         /**
          * The Additional Rate.
@@ -431,19 +405,8 @@ public abstract class MoneyWiseUKDividendScheme
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseUKDividendAdditionalRateScheme> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_ADDRATE.equals(pField)) {
-                return theAdditionalRate;
-            }
-
-            /* Pass on */
-            return super.getFieldValue(pField);
         }
     }
 }

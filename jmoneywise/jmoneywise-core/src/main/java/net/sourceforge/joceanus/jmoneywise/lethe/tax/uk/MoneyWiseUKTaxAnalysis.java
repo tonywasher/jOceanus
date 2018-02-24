@@ -27,11 +27,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
@@ -51,46 +49,24 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * UK Tax Analysis.
  */
 public class MoneyWiseUKTaxAnalysis
-        implements MetisDataFieldItem, MoneyWiseTaxAnalysis {
+        implements MetisFieldItem, MoneyWiseTaxAnalysis {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxAnalysis.class);
+    private static final MetisFieldSet<MoneyWiseUKTaxAnalysis> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxAnalysis.class);
 
     /**
-     * TaxYear Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME);
-
-    /**
-     * TaxConfig Field Id.
-     */
-    private static final MetisDataField FIELD_TAXCONFIG = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME);
-
-    /**
-     * TaxBuckets Field Id.
-     */
-    private static final MetisDataField FIELD_TAXBUCKETS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS);
-
-    /**
-     * TaxableIncome Field Id.
-     */
-    private static final MetisDataField FIELD_INCOME = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME);
-
-    /**
-     * TaxDue Field Id.
-     */
-    private static final MetisDataField FIELD_TAXDUE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE);
-
-    /**
-     * TaxPaid Field Id.
-     */
-    private static final MetisDataField FIELD_TAXPAID = FIELD_DEFS.declareLocalField(StaticDataResource.TAXBASIS_TAXPAID);
-
-    /**
-     * TaxProfit Field Id.
-     */
-    private static final MetisDataField FIELD_TAXPROFIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME, MoneyWiseUKTaxAnalysis::getTaxYear);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_NAME, MoneyWiseUKTaxAnalysis::getTaxConfig);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXBUCKETS, MoneyWiseUKTaxAnalysis::getTaxBuckets);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_INCOME, MoneyWiseUKTaxAnalysis::getTaxableIncome);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_TAXDUE, MoneyWiseUKTaxAnalysis::getTaxDue);
+        FIELD_DEFS.declareLocalField(StaticDataResource.TAXBASIS_TAXPAID, MoneyWiseUKTaxAnalysis::getTaxPaid);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXANALYSIS_TAXPROFIT, MoneyWiseUKTaxAnalysis::getTaxProfit);
+    }
 
     /**
      * The TaxYear.
@@ -256,6 +232,14 @@ public class MoneyWiseUKTaxAnalysis
         return theTaxBuckets.iterator();
     }
 
+    /**
+     * Obtain the taxBuckets.
+     * @return the taxBuckets
+     */
+    private List<MoneyWiseTaxDueBucket> getTaxBuckets() {
+        return theTaxBuckets;
+    }
+
     @Override
     public TethysMoney getTaxableIncome() {
         return theTaxableIncome;
@@ -349,37 +333,8 @@ public class MoneyWiseUKTaxAnalysis
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseUKTaxAnalysis> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_TAXYEAR.equals(pField)) {
-            return theTaxYear;
-        }
-        if (FIELD_TAXCONFIG.equals(pField)) {
-            return theTaxConfig;
-        }
-        if (FIELD_TAXBUCKETS.equals(pField)) {
-            return theTaxBuckets;
-        }
-        if (FIELD_INCOME.equals(pField)) {
-            return theTaxableIncome;
-        }
-        if (FIELD_TAXDUE.equals(pField)) {
-            return theTaxDue;
-        }
-        if (FIELD_TAXPAID.equals(pField)) {
-            return theTaxPaid;
-        }
-        if (FIELD_TAXPROFIT.equals(pField)) {
-            return theTaxProfit;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

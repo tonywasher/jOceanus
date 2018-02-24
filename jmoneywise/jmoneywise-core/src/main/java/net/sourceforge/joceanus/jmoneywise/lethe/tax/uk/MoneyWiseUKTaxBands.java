@@ -24,11 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
@@ -38,26 +36,20 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
  * UK TaxBands.
  */
 public class MoneyWiseUKTaxBands
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxBands.class);
+    private static final MetisFieldSet<MoneyWiseUKTaxBands> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxBands.class);
 
     /**
-     * StandardSet Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_STANDARD = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_STANDARD);
-
-    /**
-     * Has Low Tax Band Field Id.
-     */
-    private static final MetisDataField FIELD_LOTAXBAND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_HASLOTAXBAND);
-
-    /**
-     * Low Savings Band Field Id.
-     */
-    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_STANDARD, MoneyWiseUKTaxBands::getStandardSet);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_HASLOTAXBAND, MoneyWiseUKTaxBands::hasLoTaxBand);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS, MoneyWiseUKTaxBands::getLoSavings);
+    }
 
     /**
      * Standard TaxBandSet.
@@ -173,28 +165,7 @@ public class MoneyWiseUKTaxBands
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseUKTaxBands> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_STANDARD.equals(pField)) {
-            return theStandard;
-        }
-        if (FIELD_LOTAXBAND.equals(pField)) {
-            return hasLoTaxBand
-                                ? hasLoTaxBand
-                                : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_LOSAVINGS.equals(pField)) {
-            return theLoSavings == null
-                                        ? MetisDataFieldValue.SKIP
-                                        : theLoSavings;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 }

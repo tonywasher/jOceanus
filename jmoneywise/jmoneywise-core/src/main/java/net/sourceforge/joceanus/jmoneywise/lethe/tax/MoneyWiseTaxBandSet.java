@@ -26,13 +26,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet.MoneyWiseTaxBand;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
@@ -122,21 +120,19 @@ public class MoneyWiseTaxBandSet
      * MoneyWiseTaxBand class.
      */
     public static class MoneyWiseTaxBand
-            implements MetisDataFieldItem {
+            implements MetisFieldItem {
         /**
-         * Report fields.
+         * Local Report fields.
          */
-        private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseTaxBand.class);
+        private static final MetisFieldSet<MoneyWiseTaxBand> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseTaxBand.class);
 
         /**
-         * StandardSet Field Id.
+         * Declare Fields.
          */
-        private static final MetisDataField FIELD_RATE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE);
-
-        /**
-         * Amount Field Id.
-         */
-        private static final MetisDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT);
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_RATE, MoneyWiseTaxBand::getAmount);
+            FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_AMOUNT, MoneyWiseTaxBand::getRate);
+        }
 
         /**
          * Amount.
@@ -214,24 +210,8 @@ public class MoneyWiseTaxBandSet
         }
 
         @Override
-        public MetisDataFieldSet getDataFieldSet() {
+        public MetisFieldSet<MoneyWiseTaxBand> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisDataField pField) {
-            /* Handle standard fields */
-            if (FIELD_RATE.equals(pField)) {
-                return theRate;
-            }
-            if (FIELD_AMOUNT.equals(pField)) {
-                return theAmount == null
-                                         ? MetisDataFieldValue.SKIP
-                                         : theAmount;
-            }
-
-            /* Not recognised */
-            return MetisDataFieldValue.UNKNOWN;
         }
     }
 }

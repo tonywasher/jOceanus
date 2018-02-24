@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 
 /**
@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 public class MoneyWiseUKRoomRentalScheme
         extends MoneyWiseUKIncomeScheme {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKRoomRentalScheme.class, MoneyWiseUKIncomeScheme.getBaseFieldSet());
+    private static final MetisFieldSet<MoneyWiseUKRoomRentalScheme> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKRoomRentalScheme.class);
 
     @Override
     protected TethysMoney adjustAllowances(final MoneyWiseUKTaxConfig pConfig,
@@ -76,7 +76,7 @@ public class MoneyWiseUKRoomRentalScheme
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseUKRoomRentalScheme> getDataFieldSet() {
         return FIELD_DEFS;
     }
 }

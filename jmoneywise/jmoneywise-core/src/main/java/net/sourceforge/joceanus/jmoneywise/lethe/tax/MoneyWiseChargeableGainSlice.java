@@ -26,13 +26,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
@@ -45,36 +43,22 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Chargeable Gains Slice record.
  */
 public class MoneyWiseChargeableGainSlice
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseChargeableGainSlice.class);
+    private static final MetisFieldSet<MoneyWiseChargeableGainSlice> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseChargeableGainSlice.class);
 
     /**
-     * Date Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE);
-
-    /**
-     * Gain Field Id.
-     */
-    private static final MetisDataField FIELD_GAIN = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_GAIN);
-
-    /**
-     * Years Field Id.
-     */
-    private static final MetisDataField FIELD_YEARS = FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_QUALYEARS);
-
-    /**
-     * Slice Field Id.
-     */
-    private static final MetisDataField FIELD_SLICE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_SLICE);
-
-    /**
-     * Transaction Field Id.
-     */
-    private static final MetisDataField FIELD_TRANS = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION.getItemId());
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, MoneyWiseChargeableGainSlice::getDate);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_GAIN, MoneyWiseChargeableGainSlice::getGain);
+        FIELD_DEFS.declareLocalField(StaticDataResource.TRANSINFO_QUALYEARS, MoneyWiseChargeableGainSlice::getYears);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.CHARGEABLEGAIN_SLICE, MoneyWiseChargeableGainSlice::getSlice);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TRANSACTION, MoneyWiseChargeableGainSlice::getTransaction);
+    }
 
     /**
      * The Date.
@@ -165,31 +149,8 @@ public class MoneyWiseChargeableGainSlice
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseChargeableGainSlice> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
-        }
-        if (FIELD_GAIN.equals(pField)) {
-            return theGain;
-        }
-        if (FIELD_YEARS.equals(pField)) {
-            return theYears;
-        }
-        if (FIELD_SLICE.equals(pField)) {
-            return theSlice;
-        }
-        if (FIELD_TRANS.equals(pField)) {
-            return theTrans;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

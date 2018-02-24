@@ -22,11 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TaxBasisClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxBandSet;
@@ -41,81 +39,31 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
  * Tax configuration.
  */
 public class MoneyWiseUKTaxConfig
-        implements MetisDataFieldItem, MoneyWiseTaxConfig {
+        implements MetisFieldItem, MoneyWiseTaxConfig {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKTaxConfig.class);
+    private static final MetisFieldSet<MoneyWiseUKTaxConfig> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKTaxConfig.class);
 
     /**
-     * TaxYear Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME);
-
-    /**
-     * TaxBasis Field Id.
-     */
-    private static final MetisDataField FIELD_TAXSOURCE = FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS.getListId());
-
-    /**
-     * GrossTaxable Field Id.
-     */
-    private static final MetisDataField FIELD_GROSS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_GROSS);
-
-    /**
-     * GrossPreSavings Field Id.
-     */
-    private static final MetisDataField FIELD_PRESAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS);
-
-    /**
-     * Birthday Field Id.
-     */
-    private static final MetisDataField FIELD_BIRTHDAY = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY);
-
-    /**
-     * ClientAge Field Id.
-     */
-    private static final MetisDataField FIELD_AGE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGE);
-
-    /**
-     * AgeRelatedAllowances Field Id.
-     */
-    private static final MetisDataField FIELD_AGERELATED = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE);
-
-    /**
-     * Allowance Field Id.
-     */
-    private static final MetisDataField FIELD_ALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC);
-
-    /**
-     * Rental Allowance Field Id.
-     */
-    private static final MetisDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL);
-
-    /**
-     * Savings Allowance Field Id.
-     */
-    private static final MetisDataField FIELD_SAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS);
-
-    /**
-     * Dividend Allowance Field Id.
-     */
-    private static final MetisDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND);
-
-    /**
-     * Capital Allowance Field Id.
-     */
-    private static final MetisDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL);
-
-    /**
-     * TaxBands Field Id.
-     */
-    private static final MetisDataField FIELD_TAXBANDS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS);
-
-    /**
-     * Low Savings Band Field Id.
-     */
-    private static final MetisDataField FIELD_LOSAVINGS = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_NAME, MoneyWiseUKTaxConfig::getTaxYear);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.TAXBASIS, MoneyWiseUKTaxConfig::getTaxSource);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_GROSS, MoneyWiseUKTaxConfig::getGrossTaxable);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_PRESAVINGS, MoneyWiseUKTaxConfig::getGrossPreSavings);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_BIRTHDAY, MoneyWiseUKTaxConfig::getBirthday);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGE, MoneyWiseUKTaxConfig::getClientAge);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXCONFIG_AGEALLOWANCE, MoneyWiseUKTaxConfig::hasAgeRelatedAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_BASIC, MoneyWiseUKTaxConfig::getAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_RENTAL, MoneyWiseUKTaxConfig::getRentalAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_SAVINGS, MoneyWiseUKTaxConfig::getSavingsAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_DIVIDEND, MoneyWiseUKTaxConfig::getDividendAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_CAPITAL, MoneyWiseUKTaxConfig::getCapitalAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXYEAR_BANDS, MoneyWiseUKTaxConfig::getTaxBands);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.TAXBANDS_LOSAVINGS, MoneyWiseUKTaxConfig::getLoSavingsBand);
+    }
 
     /**
      * TaxYear.
@@ -371,72 +319,8 @@ public class MoneyWiseUKTaxConfig
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MoneyWiseUKTaxConfig> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_TAXYEAR.equals(pField)) {
-            return theTaxYear;
-        }
-        if (FIELD_TAXSOURCE.equals(pField)) {
-            return theTaxSource;
-        }
-        if (FIELD_GROSS.equals(pField)) {
-            return theGrossTaxable;
-        }
-        if (FIELD_PRESAVINGS.equals(pField)) {
-            return theGrossPreSavings;
-        }
-        if (FIELD_BIRTHDAY.equals(pField)) {
-            return theBirthday;
-        }
-        if (FIELD_AGE.equals(pField)) {
-            return theClientAge;
-        }
-        if (FIELD_AGERELATED.equals(pField)) {
-            return hasAgeRelatedAllowance
-                                          ? Boolean.TRUE
-                                          : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_ALLOWANCE.equals(pField)) {
-            return theAllowance.isNonZero()
-                                            ? theAllowance
-                                            : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_RENTAL.equals(pField)) {
-            return theRentalAllowance.isNonZero()
-                                                  ? theRentalAllowance
-                                                  : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_SAVINGS.equals(pField)) {
-            return theSavingsAllowance.isNonZero()
-                                                   ? theSavingsAllowance
-                                                   : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_DIVIDEND.equals(pField)) {
-            return theDividendAllowance.isNonZero()
-                                                    ? theDividendAllowance
-                                                    : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_CAPITAL.equals(pField)) {
-            return theCapitalAllowance.isNonZero()
-                                                   ? theCapitalAllowance
-                                                   : MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_TAXBANDS.equals(pField)) {
-            return theTaxBands;
-        }
-        if (FIELD_LOSAVINGS.equals(pField)) {
-            return theLoSavings.getAmount().isNonZero()
-                                                        ? theLoSavings
-                                                        : MetisDataFieldValue.SKIP;
-        }
-
-        /* Not recognised */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

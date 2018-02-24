@@ -24,10 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax.uk;
 
 import java.time.Month;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseMarginalReduction;
 import net.sourceforge.joceanus.jmoneywise.lethe.tax.MoneyWiseTaxResource;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -40,24 +38,18 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 public class MoneyWiseUKAgeAllowance
         extends MoneyWiseUKBasicAllowance {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MoneyWiseUKAgeAllowance.class, MoneyWiseUKBasicAllowance.getBaseFieldSet());
+    private static final MetisFieldSet<MoneyWiseUKAgeAllowance> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseUKAgeAllowance.class);
 
     /**
-     * LoAgeAllowance Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_LOAGEALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_LOAGE);
-
-    /**
-     * HiAgeAllowance Field Id.
-     */
-    private static final MetisDataField FIELD_HIAGEALLOWANCE = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_HIAGE);
-
-    /**
-     * AgeAllowanceLimit Field Id.
-     */
-    private static final MetisDataField FIELD_AGEALLOWLIMIT = FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_AGEALLOWANCE);
+    static {
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_LOAGE, MoneyWiseUKAgeAllowance::getLoAgeAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.ALLOWANCE_HIAGE, MoneyWiseUKAgeAllowance::getHiAgeAllowance);
+        FIELD_DEFS.declareLocalField(MoneyWiseTaxResource.LIMIT_AGEALLOWANCE, MoneyWiseUKAgeAllowance::getAgeAllowanceLimit);
+    }
 
     /**
      * Age Allowance minimum.
@@ -222,7 +214,7 @@ public class MoneyWiseUKAgeAllowance
             /* If we have reduced below the Base Allowance */
             if (myAllowance.compareTo(myBaseAllowance) < 0) {
                 /* Return to the basic allowance */
-                hasAgeAllowance = true;
+                hasAgeAllowance = false;
                 myAllowance = myBaseAllowance;
             }
         }
@@ -234,36 +226,9 @@ public class MoneyWiseUKAgeAllowance
         return myAllowance;
     }
 
-    /**
-     * Obtain the data fields.
-     * @return the data fields
-     */
-    protected static MetisDataFieldSet getBaseFieldSet() {
-        return FIELD_DEFS;
-    }
-
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<? extends MoneyWiseUKAgeAllowance> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle standard fields */
-        if (FIELD_LOAGEALLOWANCE.equals(pField)) {
-            return theLoAgeAllowance;
-        }
-        if (FIELD_HIAGEALLOWANCE.equals(pField)) {
-            return theHiAgeAllowance == null
-                                             ? MetisDataFieldValue.SKIP
-                                             : theHiAgeAllowance;
-        }
-        if (FIELD_AGEALLOWLIMIT.equals(pField)) {
-            return theAgeAllowanceLimit;
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 
     @Override
