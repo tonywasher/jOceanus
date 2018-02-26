@@ -22,15 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldEnum;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSimpleId;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
 
 /**
  * MoneyWise Item Types.
  */
 public enum MoneyWiseDataType
-        implements MetisFieldEnum, MetisFieldId {
+        implements MetisLetheFieldEnum, MetisDataFieldId {
     /**
      * DepositType.
      */
@@ -214,12 +214,12 @@ public enum MoneyWiseDataType
     /**
      * The String id.
      */
-    private MetisFieldId theNameId;
+    private MetisDataFieldId theNameId;
 
     /**
      * The List id.
      */
-    private MetisFieldId theListId;
+    private MetisDataFieldId theListId;
 
     @Override
     public String toString() {
@@ -231,11 +231,11 @@ public enum MoneyWiseDataType
      * Obtain Id of item.
      * @return the item name
      */
-    public MetisFieldId getItemId() {
+    public MetisDataFieldId getItemId() {
         /* If we have not yet loaded the id */
         if (theNameId == null) {
             /* Load the id */
-            theNameId = MetisSimpleFieldId.convertResource(MoneyWiseDataTypeResource.getKeyForDataType(this));
+            theNameId = MetisFieldSimpleId.convertResource(MoneyWiseDataTypeResource.getKeyForDataType(this));
         }
 
         /* Return the name id */
@@ -254,11 +254,11 @@ public enum MoneyWiseDataType
      * Obtain Id of associated list.
      * @return the list name
      */
-    public MetisFieldId getListId() {
+    public MetisDataFieldId getListId() {
         /* If we have not yet loaded the id */
         if (theListId == null) {
             /* Load the id */
-            theListId = MetisSimpleFieldId.convertResource(MoneyWiseDataTypeResource.getKeyForDataList(this));
+            theListId = MetisFieldSimpleId.convertResource(MoneyWiseDataTypeResource.getKeyForDataList(this));
         }
 
         /* return the list id */

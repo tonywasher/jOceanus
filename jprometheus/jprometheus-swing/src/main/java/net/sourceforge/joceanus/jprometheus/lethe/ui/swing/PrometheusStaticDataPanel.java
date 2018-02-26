@@ -30,7 +30,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldEnum;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
@@ -65,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
  * Top level panel for static data.
  * @param <E> the data type enum class
  */
-public class PrometheusStaticDataPanel<E extends Enum<E> & MetisFieldEnum>
+public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
         implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
     /**
      * Text for Selection Title.

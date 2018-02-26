@@ -26,7 +26,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * Resource IDs for JMetis viewer.
  */
 public enum MetisViewerResource
-        implements TethysResourceId, MetisFieldId {
+        implements TethysResourceId, MetisDataFieldId {
     /**
      * Viewer window title.
      */

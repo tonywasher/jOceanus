@@ -24,11 +24,11 @@ package net.sourceforge.joceanus.jmetis;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSimpleId;
 
 /**
  * Data Tester.
@@ -63,8 +63,8 @@ public class MetisDataTester {
          * Declare fields.
          */
         static {
-            FIELD_DEFS.declareLocalField(new MetisSimpleFieldId("One"), p -> 1);
-            FIELD_DEFS.declareLocalField(new MetisSimpleFieldId("Two"), BaseClass::getCounter);
+            FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("One"), p -> 1);
+            FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("Two"), BaseClass::getCounter);
         }
 
         /**
@@ -98,7 +98,7 @@ public class MetisDataTester {
          * DataFieldThree.
          */
         static {
-            FIELD_DEFS.declareLocalField(new MetisSimpleFieldId("Three"), p -> 3);
+            FIELD_DEFS.declareLocalField(new MetisFieldSimpleId("Three"), p -> 3);
         }
 
         /**

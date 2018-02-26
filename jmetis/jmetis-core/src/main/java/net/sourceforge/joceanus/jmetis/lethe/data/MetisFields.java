@@ -221,7 +221,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareLocalField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisLetheFieldEquality.DERIVED, MetisLetheFieldStorage.LOCAL);
     }
 
     /**
@@ -230,7 +230,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareEqualityField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.EQUALITY, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisLetheFieldEquality.EQUALITY, MetisLetheFieldStorage.LOCAL);
     }
 
     /**
@@ -239,7 +239,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareComparisonField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.COMPARISON, MetisFieldStorage.LOCAL);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisLetheFieldEquality.COMPARISON, MetisLetheFieldStorage.LOCAL);
     }
 
     /**
@@ -248,7 +248,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareDerivedValueField(final String pName) {
-        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.VALUESET);
+        return declareDataField(pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisLetheFieldEquality.DERIVED, MetisLetheFieldStorage.VALUESET);
     }
 
     /**
@@ -272,7 +272,7 @@ public final class MetisFields {
     public MetisField declareEqualityValueField(final String pName,
                                                 final MetisDataType pDataType,
                                                 final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VALUESET);
+        return declareDataField(pName, pDataType, pMaxLength, MetisLetheFieldEquality.EQUALITY, MetisLetheFieldStorage.VALUESET);
     }
 
     /**
@@ -296,7 +296,7 @@ public final class MetisFields {
     public MetisField declareComparisonValueField(final String pName,
                                                   final MetisDataType pDataType,
                                                   final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.COMPARISON, MetisFieldStorage.VALUESET);
+        return declareDataField(pName, pDataType, pMaxLength, MetisLetheFieldEquality.COMPARISON, MetisLetheFieldStorage.VALUESET);
     }
 
     /**
@@ -320,7 +320,7 @@ public final class MetisFields {
     public MetisField declareEqualityEncryptedField(final String pName,
                                                     final MetisDataType pDataType,
                                                     final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.ENCRYPTED);
+        return declareDataField(pName, pDataType, pMaxLength, MetisLetheFieldEquality.EQUALITY, MetisLetheFieldStorage.ENCRYPTED);
     }
 
     /**
@@ -344,7 +344,7 @@ public final class MetisFields {
     public MetisField declareComparisonEncryptedField(final String pName,
                                                       final MetisDataType pDataType,
                                                       final Integer pMaxLength) {
-        return declareDataField(pName, pDataType, pMaxLength, MetisFieldEquality.COMPARISON, MetisFieldStorage.ENCRYPTED);
+        return declareDataField(pName, pDataType, pMaxLength, MetisLetheFieldEquality.COMPARISON, MetisLetheFieldStorage.ENCRYPTED);
     }
 
     /**
@@ -353,7 +353,7 @@ public final class MetisFields {
      * @return the field
      */
     public MetisField declareCalculatedField(final String pName) {
-        return declareDataField(pName, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.CALCULATED);
+        return declareDataField(pName, MetisDataType.CONTEXT, FIELD_NO_MAXLENGTH, MetisLetheFieldEquality.DERIVED, MetisLetheFieldStorage.CALCULATED);
     }
 
     /**
@@ -378,8 +378,8 @@ public final class MetisFields {
     private synchronized MetisField declareDataField(final String pName,
                                                      final MetisDataType pDataType,
                                                      final Integer pMaxLength,
-                                                     final MetisFieldEquality pEquality,
-                                                     final MetisFieldStorage pStorage) {
+                                                     final MetisLetheFieldEquality pEquality,
+                                                     final MetisLetheFieldStorage pStorage) {
         /* Reject if we have indices */
         if (hasIndices) {
             throw new IllegalStateException("Already indexed");
@@ -574,12 +574,12 @@ public final class MetisFields {
         /**
          * The field equality type.
          */
-        private final MetisFieldEquality theEquality;
+        private final MetisLetheFieldEquality theEquality;
 
         /**
          * The field storage type.
          */
-        private final MetisFieldStorage theStorage;
+        private final MetisLetheFieldStorage theStorage;
 
         /**
          * Constructor.
@@ -594,8 +594,8 @@ public final class MetisFields {
                              final String pName,
                              final MetisDataType pDataType,
                              final Integer pMaxLength,
-                             final MetisFieldEquality pEquality,
-                             final MetisFieldStorage pStorage) {
+                             final MetisLetheFieldEquality pEquality,
+                             final MetisLetheFieldStorage pStorage) {
             /* Store parameters */
             theAnchor = pAnchor;
             theName = pName;
@@ -622,8 +622,8 @@ public final class MetisFields {
          */
         protected MetisField(final MetisFields pAnchor,
                              final String pName,
-                             final MetisFieldEquality pEquality,
-                             final MetisFieldStorage pStorage) {
+                             final MetisLetheFieldEquality pEquality,
+                             final MetisLetheFieldStorage pStorage) {
             this(pAnchor, pName, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, pEquality, pStorage);
         }
 
@@ -639,8 +639,8 @@ public final class MetisFields {
             theName = pName;
             theDataType = MetisDataType.OBJECT;
             theMaxLength = FIELD_NO_MAXLENGTH;
-            theEquality = MetisFieldEquality.DERIVED;
-            theStorage = MetisFieldStorage.LOCAL;
+            theEquality = MetisLetheFieldEquality.DERIVED;
+            theStorage = MetisLetheFieldStorage.LOCAL;
 
             /* Check Validity */
             checkValidity();
@@ -685,7 +685,7 @@ public final class MetisFields {
          * Obtain the equality type.
          * @return true/false
          */
-        public MetisFieldEquality getEquality() {
+        public MetisLetheFieldEquality getEquality() {
             return theEquality;
         }
 
@@ -693,7 +693,7 @@ public final class MetisFields {
          * Obtain the storage type.
          * @return true/false
          */
-        public MetisFieldStorage getStorage() {
+        public MetisLetheFieldStorage getStorage() {
             return theStorage;
         }
 
@@ -789,8 +789,8 @@ public final class MetisFields {
         /* Loop through the enum values */
         for (E myValue : pClass.getEnumConstants()) {
             /* Determine name */
-            final String myName = (myValue instanceof MetisFieldEnum)
-                                                                      ? ((MetisFieldEnum) myValue).getFieldName()
+            final String myName = (myValue instanceof MetisLetheFieldEnum)
+                                                                      ? ((MetisLetheFieldEnum) myValue).getFieldName()
                                                                       : myValue.toString();
 
             /* Declare a field for the value */
@@ -831,45 +831,9 @@ public final class MetisFields {
     }
 
     /**
-     * Field presence status.
-     */
-    public enum MetisFieldRequired {
-        /**
-         * Must exist.
-         */
-        MUSTEXIST,
-
-        /**
-         * Can exist.
-         */
-        CANEXIST,
-
-        /**
-         * Not Allowed.
-         */
-        NOTALLOWED;
-
-        /**
-         * must the field exist?
-         * @return true/false
-         */
-        public boolean mustExist() {
-            return this == MUSTEXIST;
-        }
-
-        /**
-         * is the field notAllowed?
-         * @return true/false
-         */
-        public boolean notAllowed() {
-            return this == NOTALLOWED;
-        }
-    }
-
-    /**
      * Field Storage.
      */
-    public enum MetisFieldStorage {
+    public enum MetisLetheFieldStorage {
         /**
          * Local.
          */
@@ -919,7 +883,7 @@ public final class MetisFields {
     /**
      * Field Equality.
      */
-    public enum MetisFieldEquality {
+    public enum MetisLetheFieldEquality {
         /**
          * Derived.
          */
@@ -956,7 +920,7 @@ public final class MetisFields {
      * Enum naming interface.
      */
     @FunctionalInterface
-    public interface MetisFieldEnum {
+    public interface MetisLetheFieldEnum {
         /**
          * Get Field name.
          * @return the field name

@@ -24,13 +24,13 @@ package net.sourceforge.joceanus.jmetis.eos.list;
 
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 
 /**
  * Indexed List Iterator.
  * @param <T> the item type
  */
-public class MetisEosListIterator<T extends MetisIndexedItem>
+public class MetisEosListIterator<T extends MetisDataIndexedItem>
         implements ListIterator<T> {
     /**
      * The underlying list.

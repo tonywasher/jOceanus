@@ -20,49 +20,59 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.list;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 /**
- * Item interfaces.
+ * Field Storage.
  */
-public final class MetisListItem {
+public enum MetisFieldStorage {
     /**
-     * Private constructor.
+     * Local.
      */
-    private MetisListItem() {
+    LOCAL,
+
+    /**
+     * Versioned.
+     */
+    VERSIONED,
+
+    /**
+     * Paired.
+     */
+    PAIRED,
+
+    /**
+     * Calculated.
+     */
+    CALCULATED;
+
+    /**
+     * Is the field versioned?
+     * @return true/false
+     */
+    public boolean isVersioned() {
+        switch (this) {
+            case VERSIONED:
+            case PAIRED:
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
-     * Item Definition.
+     * Is the field paired?
+     * @return true/false
      */
-    public interface MetisListItemDef {
-        /**
-         * Obtain the item name.
-         * @return the item name
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the list name
-         */
-        String getListName();
+    public boolean isPaired() {
+        return this == PAIRED;
     }
 
     /**
-     * List Key.
+     * Is the field calculated?
+     * @return true/false
      */
-    public interface MetisListKey {
-        /**
-         * Obtain the item name.
-         * @return the name of the list
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the name of the list
-         */
-        String getListName();
+    public boolean isCalculated() {
+        return this == CALCULATED;
     }
 }

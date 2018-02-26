@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 
 /**
  * Data Viewer Entry.
@@ -255,8 +255,8 @@ public class MetisViewerEntry {
         setTheObject(pObject);
 
         /* Create child elements if required */
-        if (pObject instanceof MetisDataFieldItem) {
-            createChildElements((MetisDataFieldItem) pObject);
+        if (pObject instanceof MetisFieldItem) {
+            createChildElements((MetisFieldItem) pObject);
         }
 
         /* Notify regarding the data change */
@@ -281,14 +281,14 @@ public class MetisViewerEntry {
      * Create child elements.
      * @param pItem the item
      */
-    private void createChildElements(final MetisDataFieldItem pItem) {
+    private void createChildElements(final MetisFieldItem pItem) {
         /* Loop through the fields */
-        final Iterator<MetisDataField> myIterator = pItem.getDataFieldSet().fieldIterator();
+        final Iterator<MetisFieldDef> myIterator = pItem.getDataFieldSet().fieldIterator();
         while (myIterator.hasNext()) {
-            final MetisDataField myField = myIterator.next();
+            final MetisFieldDef myField = myIterator.next();
 
             /* Obtain the value */
-            final Object myValue = pItem.getFieldValue(myField);
+            final Object myValue = myField.getFieldValue(pItem);
             boolean addChild = false;
 
             /* Determine whether to add the child */

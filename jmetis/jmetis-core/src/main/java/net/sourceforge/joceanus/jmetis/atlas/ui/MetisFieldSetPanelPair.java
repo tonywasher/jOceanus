@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -63,7 +63,7 @@ public class MetisFieldSetPanelPair<N, I>
     /**
      * The field map.
      */
-    private final Map<MetisFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
+    private final Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
 
     /**
      * The Node.
@@ -175,7 +175,7 @@ public class MetisFieldSetPanelPair<N, I>
      * Obtain the fieldSet map.
      * @return the fieldSet map
      */
-    protected Map<MetisFieldId, MetisFieldSetPanelItem<?, N, I>> getFieldMap() {
+    protected Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> getFieldMap() {
         return theFieldMap;
     }
 
@@ -263,7 +263,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pField the field
      * @param pReadOnly the readOnly state
      */
-    public void setReadOnlyField(final MetisFieldId pField,
+    public void setReadOnlyField(final MetisDataFieldId pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -278,7 +278,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pField the field
      * @param pCurrency the currency supplier
      */
-    public void setDeemedCurrency(final MetisFieldId pField,
+    public void setDeemedCurrency(final MetisDataFieldId pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -294,7 +294,7 @@ public class MetisFieldSetPanelPair<N, I>
      * @param pField the field
      * @param pShow true/false
      */
-    public void showCmdButton(final MetisFieldId pField,
+    public void showCmdButton(final MetisDataFieldId pField,
                               final boolean pShow) {
         /* Look up the field */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);

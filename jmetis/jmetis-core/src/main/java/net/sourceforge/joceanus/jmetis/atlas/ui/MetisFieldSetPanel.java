@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDateItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;
@@ -79,7 +79,7 @@ public class MetisFieldSetPanel<N, I>
     /**
      * The field map.
      */
-    private final Map<MetisFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
+    private final Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
 
     /**
      * The VBox.
@@ -123,7 +123,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pFieldMap the fieldMap
      */
     private MetisFieldSetPanel(final TethysGuiFactory<N, I> pFactory,
-                               final Map<MetisFieldId, MetisFieldSetPanelItem<?, N, I>> pFieldMap) {
+                               final Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> pFieldMap) {
         theGuiFactory = pFactory;
         theFieldMap = pFieldMap;
         theItems = new ArrayList<>();
@@ -208,8 +208,8 @@ public class MetisFieldSetPanel<N, I>
 
         /* access version control */
         final MetisFieldVersionedItem myVersioned = theItem instanceof MetisFieldVersionedItem
-                                                                                                   ? (MetisFieldVersionedItem) theItem
-                                                                                                   : null;
+                                                                                               ? (MetisFieldVersionedItem) theItem
+                                                                                               : null;
 
         /* If the item is non-null */
         if (theItem != null) {
@@ -269,7 +269,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @param pReadOnly the readOnly state
      */
-    public void setReadOnlyField(final MetisFieldId pField,
+    public void setReadOnlyField(final MetisDataFieldId pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -284,7 +284,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @param pCurrency the currency supplier
      */
-    public void setDeemedCurrency(final MetisFieldId pField,
+    public void setDeemedCurrency(final MetisDataFieldId pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -300,7 +300,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @param pShow true/false
      */
-    public void showCmdButton(final MetisFieldId pField,
+    public void showCmdButton(final MetisDataFieldId pField,
                               final boolean pShow) {
         /* Look up the field */
         final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
@@ -315,7 +315,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetStringItem<N, I> addStringField(final MetisFieldId pField) {
+    public MetisFieldSetStringItem<N, I> addStringField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetStringItem<>(this, pField));
     }
 
@@ -324,7 +324,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetCharArrayItem<N, I> addCharArrayField(final MetisFieldId pField) {
+    public MetisFieldSetCharArrayItem<N, I> addCharArrayField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetCharArrayItem<>(this, pField));
     }
 
@@ -333,7 +333,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetShortItem<N, I> addShortField(final MetisFieldId pField) {
+    public MetisFieldSetShortItem<N, I> addShortField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetShortItem<>(this, pField));
     }
 
@@ -342,7 +342,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetIntegerItem<N, I> addIntegerField(final MetisFieldId pField) {
+    public MetisFieldSetIntegerItem<N, I> addIntegerField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetIntegerItem<>(this, pField));
     }
 
@@ -351,7 +351,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetLongItem<N, I> addLongField(final MetisFieldId pField) {
+    public MetisFieldSetLongItem<N, I> addLongField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetLongItem<>(this, pField));
     }
 
@@ -360,7 +360,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetMoneyItem<N, I> addMoneyField(final MetisFieldId pField) {
+    public MetisFieldSetMoneyItem<N, I> addMoneyField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetMoneyItem<>(this, pField));
     }
 
@@ -369,7 +369,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetPriceItem<N, I> addPriceField(final MetisFieldId pField) {
+    public MetisFieldSetPriceItem<N, I> addPriceField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetPriceItem<>(this, pField));
     }
 
@@ -378,7 +378,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetRateItem<N, I> addRateField(final MetisFieldId pField) {
+    public MetisFieldSetRateItem<N, I> addRateField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetRateItem<>(this, pField));
     }
 
@@ -387,7 +387,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetUnitsItem<N, I> addUnitsField(final MetisFieldId pField) {
+    public MetisFieldSetUnitsItem<N, I> addUnitsField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetUnitsItem<>(this, pField));
     }
 
@@ -396,7 +396,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetDilutionItem<N, I> addDilutionField(final MetisFieldId pField) {
+    public MetisFieldSetDilutionItem<N, I> addDilutionField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetDilutionItem<>(this, pField));
     }
 
@@ -405,7 +405,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetRatioItem<N, I> addRatioField(final MetisFieldId pField) {
+    public MetisFieldSetRatioItem<N, I> addRatioField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetRatioItem<>(this, pField));
     }
 
@@ -414,7 +414,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetDateItem<N, I> addDateButtonField(final MetisFieldId pField) {
+    public MetisFieldSetDateItem<N, I> addDateButtonField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetDateItem<>(this, pField));
     }
 
@@ -425,7 +425,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pClass the item class
      * @return the field
      */
-    public <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisFieldId pField,
+    public <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisDataFieldId pField,
                                                                      final Class<T> pClass) {
         return registerField(new MetisFieldSetScrollItem<>(this, pField, pClass));
     }
@@ -436,7 +436,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pField the field
      * @return the list field
      */
-    public <T extends Comparable<T>> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisFieldId pField) {
+    public <T extends Comparable<T>> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetListItem<>(this, pField));
     }
 
@@ -447,7 +447,7 @@ public class MetisFieldSetPanel<N, I>
      * @param pClass the item class
      * @return the icon field
      */
-    public <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisFieldId pField,
+    public <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisDataFieldId pField,
                                                                  final Class<T> pClass) {
         return registerField(new MetisFieldSetIconItem<>(this, pField, pClass));
     }

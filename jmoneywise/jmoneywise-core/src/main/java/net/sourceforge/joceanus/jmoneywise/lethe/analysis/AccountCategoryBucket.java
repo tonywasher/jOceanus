@@ -26,7 +26,7 @@ import java.util.Currency;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountBucket.AccountValues;
@@ -59,7 +59,7 @@ public abstract class AccountCategoryBucket<T extends AssetBase<T>, C>
     /**
      * Totals bucket name.
      */
-    protected static final MetisFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
+    protected static final MetisDataFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
 
     /**
      * Values.

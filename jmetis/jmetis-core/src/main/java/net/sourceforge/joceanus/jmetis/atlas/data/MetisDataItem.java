@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jtethys.date.TethysDate;
+
 /**
  * Standard item interfaces.
  */
@@ -52,20 +54,9 @@ public final class MetisDataItem {
     }
 
     /**
-     * Interface for items are fieldIds.
-     */
-    public interface MetisFieldId {
-        /**
-         * Obtain the fieldId.
-         * @return the fieldId
-         */
-        String getId();
-    }
-
-    /**
      * Interface for items that are looked up via an integer index id.
      */
-    public interface MetisIndexedItem {
+    public interface MetisDataIndexedItem {
         /**
          * Get the Id to index the list.
          * @return the Id
@@ -74,53 +65,48 @@ public final class MetisDataItem {
     }
 
     /**
-     * Data Field Item.
+     * Interface for items that are looked up via a name.
      */
-    public interface MetisDataFieldItem
-            extends MetisDataObjectFormat {
+    public interface MetisDataNamedItem {
         /**
-         * Obtain the Data FieldSet.
-         * @return the report fields
+         * Get the Name.
+         * @return the name
          */
-        MetisDataFieldSet getDataFieldSet();
-
-        /**
-         * Obtain Field value.
-         * @param pField the field
-         * @return the value of the field
-         */
-        Object getFieldValue(MetisDataField pField);
+        String getName();
     }
 
     /**
-     * Table Item.
+     * Interface for items that are looked up via a date.
      */
-    public interface MetisDataTableItem
-            extends MetisDataFieldItem, MetisIndexedItem {
-    }
-
-    /**
-     * ValueSet object interface.
-     */
-    public interface MetisDataVersionedItem
-            extends MetisDataTableItem {
+    public interface MetisDataDatedItem {
         /**
-         * Obtain Object Version Control.
-         * @return the versionControl of the object
+         * Get the Date.
+         * @return the date
          */
-        MetisDataVersionControl getVersionControl();
+        TethysDate getDate();
     }
 
     /**
      * Interface for items that wish to control disabled items.
      */
     @FunctionalInterface
-    public interface MetisDisableItem {
+    public interface MetisDataDisableItem {
         /**
          * Determine whether the item is disabled.
          * @return true/false
          */
         boolean isDisabled();
+    }
+
+    /**
+     * Interface for items are fieldIds.
+     */
+    public interface MetisDataFieldId {
+        /**
+         * Obtain the fieldId.
+         * @return the fieldId
+         */
+        String getId();
     }
 
     /**

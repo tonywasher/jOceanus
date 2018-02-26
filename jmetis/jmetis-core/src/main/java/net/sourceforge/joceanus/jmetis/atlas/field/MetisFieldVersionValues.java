@@ -28,7 +28,6 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference.MetisDataDiffers;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
@@ -241,9 +240,9 @@ public class MetisFieldVersionValues {
         Object myValue = getValue(pField);
 
         /* If this is an encrypted value */
-        if (myValue instanceof MetisDataEosEncryptedValue) {
+        if (myValue instanceof MetisFieldEncryptedValue) {
             /* Access correct part of pair */
-            final MetisDataEosEncryptedValue myEncrypted = (MetisDataEosEncryptedValue) myValue;
+            final MetisFieldEncryptedValue myEncrypted = (MetisFieldEncryptedValue) myValue;
             myValue = byte[].class.equals(pClazz)
                                                   ? myEncrypted.getEncryption()
                                                   : myEncrypted.getValue(pClazz);
@@ -317,7 +316,7 @@ public class MetisFieldVersionValues {
             }
 
             /* Adjust existing hash */
-            iHashCode *= MetisDataFieldSet.HASH_PRIME;
+            iHashCode *= MetisFieldSet.HASH_PRIME;
 
             /* Access value and add hash if non-null */
             final Object o = theValues[myField.getIndex()];
@@ -428,7 +427,7 @@ public class MetisFieldVersionValues {
     /**
      * EncryptedValue.
      */
-    public static final class MetisDataEosEncryptedValue
+    public static final class MetisFieldEncryptedValue
             implements MetisDataObjectFormat, MetisDataDiffers {
         /**
          * The value.
@@ -445,8 +444,8 @@ public class MetisFieldVersionValues {
          * @param pValue the value
          * @param pEncryption the encryption
          */
-        protected MetisDataEosEncryptedValue(final Object pValue,
-                                             final byte[] pEncryption) {
+        protected MetisFieldEncryptedValue(final Object pValue,
+                                           final byte[] pEncryption) {
             theValue = pValue;
             theEncryption = pEncryption;
         }
@@ -498,12 +497,12 @@ public class MetisFieldVersionValues {
             }
 
             /* Make sure that the object is the same class */
-            if (!(pThat instanceof MetisDataEosEncryptedValue)) {
+            if (!(pThat instanceof MetisFieldEncryptedValue)) {
                 return false;
             }
 
             /* Access the target field */
-            final MetisDataEosEncryptedValue myThat = (MetisDataEosEncryptedValue) pThat;
+            final MetisFieldEncryptedValue myThat = (MetisFieldEncryptedValue) pThat;
 
             /* Check differences */
             if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {
@@ -517,7 +516,7 @@ public class MetisFieldVersionValues {
         @Override
         public int hashCode() {
             /* Calculate hash allowing for field that has not been encrypted yet */
-            int myHashCode = MetisDataFieldSet.HASH_PRIME
+            int myHashCode = MetisFieldSet.HASH_PRIME
                              * getValue().hashCode();
             myHashCode += Arrays.hashCode(getEncryption());
             return myHashCode;
@@ -531,12 +530,12 @@ public class MetisFieldVersionValues {
             }
 
             /* Reject if wrong class */
-            if (!(pThat instanceof MetisDataEosEncryptedValue)) {
+            if (!(pThat instanceof MetisFieldEncryptedValue)) {
                 return MetisDataDifference.DIFFERENT;
             }
 
             /* Access as correct class */
-            final MetisDataEosEncryptedValue myThat = (MetisDataEosEncryptedValue) pThat;
+            final MetisFieldEncryptedValue myThat = (MetisFieldEncryptedValue) pThat;
 
             /* Compare value */
             if (MetisDataDifference.difference(getValue(), myThat.getValue()).isDifferent()) {

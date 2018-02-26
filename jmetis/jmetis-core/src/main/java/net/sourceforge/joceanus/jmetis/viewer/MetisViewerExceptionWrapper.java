@@ -22,52 +22,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Wrapper class to facilitate reporting of exception.
  */
 public class MetisViewerExceptionWrapper
-        implements MetisDataFieldItem {
+        implements MetisFieldItem {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisViewerExceptionWrapper.class);
+    private static final MetisFieldSet<MetisViewerExceptionWrapper> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisViewerExceptionWrapper.class);
 
     /**
-     * Class Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CLASS);
-
-    /**
-     * Message Field Id.
-     */
-    private static final MetisDataField FIELD_MESSAGE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_MESSAGE);
-
-    /**
-     * Origin Field Id.
-     */
-    private static final MetisDataField FIELD_ORIGIN = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_ORIGIN);
-
-    /**
-     * Cause Field Id.
-     */
-    private static final MetisDataField FIELD_CAUSE = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CAUSE);
-
-    /**
-     * Object Field Id.
-     */
-    private static final MetisDataField FIELD_OBJECT = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_OBJECT);
-
-    /**
-     * Stack Field Id.
-     */
-    private static final MetisDataField FIELD_STACK = FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_STACK);
+    static {
+        FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CLASS, MetisViewerExceptionWrapper::getClassName);
+        FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_MESSAGE, MetisViewerExceptionWrapper::getWrappedMessage);
+        FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_ORIGIN, MetisViewerExceptionWrapper::getWrappedCause);
+        FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_CAUSE, MetisViewerExceptionWrapper::getWrappedOrigin);
+        FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_OBJECT, MetisViewerExceptionWrapper::getWrappedObject);
+        FIELD_DEFS.declareLocalField(MetisViewerResource.VIEWER_ERROR_STACK, MetisViewerExceptionWrapper::getWrappedStack);
+    }
 
     /**
      * The wrapped exception.
@@ -90,50 +70,8 @@ public class MetisViewerExceptionWrapper
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MetisViewerExceptionWrapper> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        /* Handle fields */
-        if (FIELD_CLASS.equals(pField)) {
-            return theClass;
-        }
-        if (FIELD_MESSAGE.equals(pField)) {
-            return theWrapped.getMessage();
-        }
-        if (FIELD_CAUSE.equals(pField)) {
-            return theWrapped.getCause();
-        }
-        if (FIELD_OBJECT.equals(pField)) {
-            if (!(theWrapped instanceof OceanusException)) {
-                return MetisDataFieldValue.SKIP;
-            }
-            final OceanusException myWrapped = (OceanusException) theWrapped;
-            final Object myObject = myWrapped.getObject();
-            return (myObject == null)
-                                      ? MetisDataFieldValue.SKIP
-                                      : myObject;
-        }
-        if (FIELD_STACK.equals(pField)) {
-            return theWrapped.getStackTrace();
-        }
-
-        /* Handle Origin separately */
-        if (FIELD_ORIGIN.equals(pField)) {
-            Throwable myResult = theWrapped;
-            if (myResult.getCause() == null) {
-                return MetisDataFieldValue.SKIP;
-            }
-            while (myResult.getCause() != null) {
-                myResult = myResult.getCause();
-            }
-            return myResult;
-        }
-
-        /* Unknown field */
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -151,5 +89,62 @@ public class MetisViewerExceptionWrapper
                 .append(": ")
                 .append(theWrapped.getMessage());
         return myBuilder.toString();
+    }
+
+    /**
+     * Obtain the className.
+     * @return the name
+     */
+    private String getClassName() {
+        return theClass;
+    }
+
+    /**
+     * Obtain the wrappedCause.
+     * @return the cause
+     */
+    private Throwable getWrappedCause() {
+        return theWrapped.getCause();
+    }
+
+    /**
+     * Obtain the wrappedMessage.
+     * @return the message
+     */
+    private String getWrappedMessage() {
+        return theWrapped.getMessage();
+    }
+
+    /**
+     * Obtain the wrappedMessage.
+     * @return the message
+     */
+    private StackTraceElement[] getWrappedStack() {
+        return theWrapped.getStackTrace();
+    }
+
+    /**
+     * Obtain the wrappedObject.
+     * @return the object
+     */
+    private Object getWrappedObject() {
+        return theWrapped instanceof OceanusException
+                                                      ? ((OceanusException) theWrapped).getObject()
+                                                      : null;
+    }
+
+    /**
+     * Obtain the wrappedOrigin.
+     * @return the origin
+     */
+    private Throwable getWrappedOrigin() {
+        Throwable myResult = theWrapped;
+        if (myResult.getCause() == null) {
+            return null;
+        }
+        while (myResult.getCause() != null) {
+            myResult = myResult.getCause();
+        }
+        return myResult;
     }
 }

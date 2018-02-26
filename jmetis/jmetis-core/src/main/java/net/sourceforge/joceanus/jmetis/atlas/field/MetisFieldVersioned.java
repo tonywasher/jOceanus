@@ -22,9 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.field;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -46,11 +44,11 @@ public class MetisFieldVersioned<T extends MetisFieldVersionedItem>
      * @param pStorage the field storage type
      */
     protected MetisFieldVersioned(final MetisFieldVersionedSet<T> pAnchor,
-                                  final MetisFieldId pId,
+                                  final MetisDataFieldId pId,
                                   final MetisDataType pDataType,
                                   final Integer pMaxLength,
-                                  final MetisDataFieldEquality pEquality,
-                                  final MetisDataFieldStorage pStorage) {
+                                  final MetisFieldEquality pEquality,
+                                  final MetisFieldStorage pStorage) {
         /* initialise underlying class */
         super(pAnchor, pId, pDataType, pMaxLength, pEquality, pStorage);
     }

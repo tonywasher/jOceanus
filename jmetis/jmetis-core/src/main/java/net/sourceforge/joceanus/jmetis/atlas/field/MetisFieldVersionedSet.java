@@ -22,9 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.field;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 
@@ -74,7 +72,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public MetisFieldVersioned<T> declareStringField(final MetisFieldId pId,
+    public MetisFieldVersioned<T> declareStringField(final MetisDataFieldId pId,
                                                      final int pMaxLength) {
         return declareEqualityVersionedField(pId, MetisDataType.STRING, pMaxLength);
     }
@@ -85,7 +83,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public MetisFieldVersioned<T> declareCharArrayField(final MetisFieldId pId,
+    public MetisFieldVersioned<T> declareCharArrayField(final MetisDataFieldId pId,
                                                         final int pMaxLength) {
         return declareEqualityVersionedField(pId, MetisDataType.CHARARRAY, pMaxLength);
     }
@@ -95,7 +93,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareShortField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareShortField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.SHORT, FIELD_NO_MAXLENGTH);
     }
 
@@ -104,7 +102,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareIntegerField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareIntegerField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.INTEGER, FIELD_NO_MAXLENGTH);
     }
 
@@ -113,7 +111,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareLongField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareLongField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.LONG, FIELD_NO_MAXLENGTH);
     }
 
@@ -122,7 +120,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareBooleanField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareBooleanField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.BOOLEAN, FIELD_NO_MAXLENGTH);
     }
 
@@ -131,7 +129,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareDateField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareDateField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.DATE, FIELD_NO_MAXLENGTH);
     }
 
@@ -140,7 +138,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareMoneyField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareMoneyField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.MONEY, FIELD_NO_MAXLENGTH);
     }
 
@@ -149,7 +147,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declarePriceField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declarePriceField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.PRICE, FIELD_NO_MAXLENGTH);
     }
 
@@ -158,7 +156,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareUnitsField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareUnitsField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.UNITS, FIELD_NO_MAXLENGTH);
     }
 
@@ -167,7 +165,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareRateField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareRateField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.RATE, FIELD_NO_MAXLENGTH);
     }
 
@@ -176,7 +174,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareRatioField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareRatioField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.RATIO, FIELD_NO_MAXLENGTH);
     }
 
@@ -185,7 +183,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareDilutionField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareDilutionField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.DILUTION, FIELD_NO_MAXLENGTH);
     }
 
@@ -194,7 +192,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareDilutedPriceField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareDilutedPriceField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.DILUTEDPRICE, FIELD_NO_MAXLENGTH);
     }
 
@@ -203,7 +201,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareLinkField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareLinkField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.LINK, FIELD_NO_MAXLENGTH);
     }
 
@@ -212,7 +210,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareLinkSetField(final MetisFieldId pId) {
+    public MetisFieldVersioned<T> declareLinkSetField(final MetisDataFieldId pId) {
         return declareEqualityVersionedField(pId, MetisDataType.LINKSET, FIELD_NO_MAXLENGTH);
     }
 
@@ -221,8 +219,8 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisFieldVersioned<T> declareDerivedVersionedField(final MetisFieldId pId) {
-        return declareVersionedField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisDataFieldEquality.DERIVED, MetisDataFieldStorage.VERSIONED);
+    public MetisFieldVersioned<T> declareDerivedVersionedField(final MetisDataFieldId pId) {
+        return declareVersionedField(pId, MetisDataType.OBJECT, FIELD_NO_MAXLENGTH, MetisFieldEquality.DERIVED, MetisFieldStorage.VERSIONED);
     }
 
     /**
@@ -231,7 +229,7 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pDataType the dataType of the field
      * @return the field
      */
-    public MetisFieldVersioned<T> declareEqualityVersionedField(final MetisFieldId pId,
+    public MetisFieldVersioned<T> declareEqualityVersionedField(final MetisDataFieldId pId,
                                                                 final MetisDataType pDataType) {
         return declareEqualityVersionedField(pId, pDataType, FIELD_NO_MAXLENGTH);
     }
@@ -243,10 +241,10 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pMaxLength the maximum length of the field
      * @return the field
      */
-    public MetisFieldVersioned<T> declareEqualityVersionedField(final MetisFieldId pId,
+    public MetisFieldVersioned<T> declareEqualityVersionedField(final MetisDataFieldId pId,
                                                                 final MetisDataType pDataType,
                                                                 final Integer pMaxLength) {
-        return declareVersionedField(pId, pDataType, pMaxLength, MetisDataFieldEquality.EQUALITY, MetisDataFieldStorage.VERSIONED);
+        return declareVersionedField(pId, pDataType, pMaxLength, MetisFieldEquality.EQUALITY, MetisFieldStorage.VERSIONED);
     }
 
     /**
@@ -258,11 +256,11 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @param pStorage the field storage type
      * @return the field
      */
-    private MetisFieldVersioned<T> declareVersionedField(final MetisFieldId pId,
+    private MetisFieldVersioned<T> declareVersionedField(final MetisDataFieldId pId,
                                                          final MetisDataType pDataType,
                                                          final Integer pMaxLength,
-                                                         final MetisDataFieldEquality pEquality,
-                                                         final MetisDataFieldStorage pStorage) {
+                                                         final MetisFieldEquality pEquality,
+                                                         final MetisFieldStorage pStorage) {
         /* Create the field */
         final MetisFieldVersioned<T> myField = new MetisFieldVersioned<>(this, pId, pDataType, pMaxLength, pEquality, pStorage);
 

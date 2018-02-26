@@ -20,49 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.list;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 /**
- * Item interfaces.
+ * Field Equality.
  */
-public final class MetisListItem {
+public enum MetisFieldEquality {
     /**
-     * Private constructor.
+     * Derived.
      */
-    private MetisListItem() {
-    }
-
-    /**
-     * Item Definition.
-     */
-    public interface MetisListItemDef {
-        /**
-         * Obtain the item name.
-         * @return the item name
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the list name
-         */
-        String getListName();
-    }
+    DERIVED,
 
     /**
-     * List Key.
+     * Equality.
      */
-    public interface MetisListKey {
-        /**
-         * Obtain the item name.
-         * @return the name of the list
-         */
-        String getItemName();
+    EQUALITY;
 
-        /**
-         * Obtain the list name.
-         * @return the name of the list
-         */
-        String getListName();
+    /**
+     * Is the field used in equality?
+     * @return true/false
+     */
+    public boolean isEquality() {
+        return this == EQUALITY;
     }
 }

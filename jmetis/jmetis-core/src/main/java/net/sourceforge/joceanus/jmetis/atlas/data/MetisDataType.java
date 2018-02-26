@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -206,7 +206,7 @@ public enum MetisDataType {
             case DILUTEDPRICE:
                 return TethysDilutedPrice.class;
             case LINK:
-                return MetisIndexedItem.class;
+                return MetisDataIndexedItem.class;
             case LINKSET:
                 return TethysItemList.class;
             default:

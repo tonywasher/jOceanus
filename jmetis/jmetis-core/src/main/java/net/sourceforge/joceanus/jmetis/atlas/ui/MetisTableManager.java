@@ -26,8 +26,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDisableItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataDisableItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
@@ -66,7 +66,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
     /**
      * The underlying table.
      */
-    private final TethysTableManager<MetisFieldId, R, N, I> theTable;
+    private final TethysTableManager<MetisDataFieldId, R, N, I> theTable;
 
     /**
      * The fieldSet for the item.
@@ -125,7 +125,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pId the field id
      * @return the field
      */
-    public MetisFieldDef getFieldForId(final MetisFieldId pId) {
+    public MetisFieldDef getFieldForId(final MetisDataFieldId pId) {
         return theFieldSet.getField(pId);
     }
 
@@ -207,7 +207,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pId the id of the column
      * @return the table column
      */
-    public TethysTableColumn<?, MetisFieldId, R, N, I> getColumn(final MetisFieldId pId) {
+    public TethysTableColumn<?, MetisDataFieldId, R, N, I> getColumn(final MetisDataFieldId pId) {
         return theTable.getColumn(pId);
     }
 
@@ -215,7 +215,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * Repaint the column.
      * @param pId the column id
      */
-    public void repaintColumn(final MetisFieldId pId) {
+    public void repaintColumn(final MetisDataFieldId pId) {
         theTable.repaintColumn(pId);
     }
 
@@ -223,7 +223,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * Obtain the table.
      * @return the table
      */
-    protected TethysTableManager<MetisFieldId, R, N, I> getTable() {
+    protected TethysTableManager<MetisDataFieldId, R, N, I> getTable() {
         return theTable;
     }
 
@@ -238,98 +238,98 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableStringColumn<R, N, I> declareStringColumn(MetisFieldId pId);
+    public abstract MetisTableStringColumn<R, N, I> declareStringColumn(MetisDataFieldId pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableCharArrayColumn<R, N, I> declareCharArrayColumn(MetisFieldId pId);
+    public abstract MetisTableCharArrayColumn<R, N, I> declareCharArrayColumn(MetisDataFieldId pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableShortColumn<R, N, I> declareShortColumn(MetisFieldId pId);
+    public abstract MetisTableShortColumn<R, N, I> declareShortColumn(MetisDataFieldId pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableIntegerColumn<R, N, I> declareIntegerColumn(MetisFieldId pId);
+    public abstract MetisTableIntegerColumn<R, N, I> declareIntegerColumn(MetisDataFieldId pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableLongColumn<R, N, I> declareLongColumn(MetisFieldId pId);
+    public abstract MetisTableLongColumn<R, N, I> declareLongColumn(MetisDataFieldId pId);
 
     /**
      * Declare rawDecimal column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableRawDecimalColumn<R, N, I> declareRawDecimalColumn(MetisFieldId pId);
+    public abstract MetisTableRawDecimalColumn<R, N, I> declareRawDecimalColumn(MetisDataFieldId pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableMoneyColumn<R, N, I> declareMoneyColumn(MetisFieldId pId);
+    public abstract MetisTableMoneyColumn<R, N, I> declareMoneyColumn(MetisDataFieldId pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTablePriceColumn<R, N, I> declarePriceColumn(MetisFieldId pId);
+    public abstract MetisTablePriceColumn<R, N, I> declarePriceColumn(MetisDataFieldId pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableRateColumn<R, N, I> declareRateColumn(MetisFieldId pId);
+    public abstract MetisTableRateColumn<R, N, I> declareRateColumn(MetisDataFieldId pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableUnitsColumn<R, N, I> declareUnitsColumn(MetisFieldId pId);
+    public abstract MetisTableUnitsColumn<R, N, I> declareUnitsColumn(MetisDataFieldId pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableDilutionColumn<R, N, I> declareDilutionColumn(MetisFieldId pId);
+    public abstract MetisTableDilutionColumn<R, N, I> declareDilutionColumn(MetisDataFieldId pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableRatioColumn<R, N, I> declareRatioColumn(MetisFieldId pId);
+    public abstract MetisTableRatioColumn<R, N, I> declareRatioColumn(MetisDataFieldId pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableDilutedPriceColumn<R, N, I> declareDilutedPriceColumn(MetisFieldId pId);
+    public abstract MetisTableDilutedPriceColumn<R, N, I> declareDilutedPriceColumn(MetisDataFieldId pId);
 
     /**
      * Declare date column.
      * @param pId the column id
      * @return the column
      */
-    public abstract MetisTableDateColumn<R, N, I> declareDateColumn(MetisFieldId pId);
+    public abstract MetisTableDateColumn<R, N, I> declareDateColumn(MetisDataFieldId pId);
 
     /**
      * Declare scroll column.
@@ -338,7 +338,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> MetisTableScrollColumn<T, R, N, I> declareScrollColumn(MetisFieldId pId,
+    public abstract <T> MetisTableScrollColumn<T, R, N, I> declareScrollColumn(MetisDataFieldId pId,
                                                                                Class<T> pClass);
 
     /**
@@ -347,7 +347,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract <T extends Comparable<T>> MetisTableListColumn<T, R, N, I> declareListColumn(MetisFieldId pId);
+    public abstract <T extends Comparable<T>> MetisTableListColumn<T, R, N, I> declareListColumn(MetisDataFieldId pId);
 
     /**
      * Declare icon column.
@@ -356,7 +356,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pClass the column class
      * @return the column
      */
-    public abstract <T> MetisTableIconColumn<T, R, N, I> declareIconColumn(MetisFieldId pId,
+    public abstract <T> MetisTableIconColumn<T, R, N, I> declareIconColumn(MetisDataFieldId pId,
                                                                            Class<T> pClass);
 
     /**
@@ -365,7 +365,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private static boolean isFieldInError(final MetisFieldId pField,
+    private static boolean isFieldInError(final MetisDataFieldId pField,
                                           final MetisFieldTableItem pItem) {
         if (pItem instanceof MetisFieldVersionedItem) {
             final MetisFieldVersionedItem myVersioned = (MetisFieldVersionedItem) pItem;
@@ -381,7 +381,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @param pItem the item
      * @return true/false
      */
-    private static boolean isFieldChanged(final MetisFieldId pField,
+    private static boolean isFieldChanged(final MetisDataFieldId pField,
                                           final MetisFieldTableItem pItem) {
         if (pItem instanceof MetisFieldVersionedItem) {
             final MetisFieldVersionedItem myVersioned = (MetisFieldVersionedItem) pItem;
@@ -397,8 +397,8 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * @return true/false
      */
     private static boolean isItemDisabled(final MetisFieldTableItem pItem) {
-        if (pItem instanceof MetisDisableItem) {
-            final MetisDisableItem myItem = (MetisDisableItem) pItem;
+        if (pItem instanceof MetisDataDisableItem) {
+            final MetisDataDisableItem myItem = (MetisDataDisableItem) pItem;
             return myItem.isDisabled();
         }
         return false;

@@ -23,9 +23,8 @@
 package net.sourceforge.joceanus.jprometheus.atlas.field;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -80,7 +79,7 @@ public class PrometheusEncryptedValues
         }
 
         /* Allow EncryptedValue if we have a keySet */
-        if (pValue instanceof MetisEncryptedValue
+        if (pValue instanceof MetisFieldEncryptedValue
             && theKeySet != null) {
             return;
         }

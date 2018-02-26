@@ -20,49 +20,40 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.list;
+package net.sourceforge.joceanus.jmetis.atlas.field;
 
 /**
- * Item interfaces.
+ * Field presence status.
  */
-public final class MetisListItem {
+public enum MetisFieldRequired {
     /**
-     * Private constructor.
+     * Must exist.
      */
-    private MetisListItem() {
+    MUSTEXIST,
+
+    /**
+     * Can exist.
+     */
+    CANEXIST,
+
+    /**
+     * Not Allowed.
+     */
+    NOTALLOWED;
+
+    /**
+     * must the field exist?
+     * @return true/false
+     */
+    public boolean mustExist() {
+        return this == MUSTEXIST;
     }
 
     /**
-     * Item Definition.
+     * is the field notAllowed?
+     * @return true/false
      */
-    public interface MetisListItemDef {
-        /**
-         * Obtain the item name.
-         * @return the item name
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the list name
-         */
-        String getListName();
-    }
-
-    /**
-     * List Key.
-     */
-    public interface MetisListKey {
-        /**
-         * Obtain the item name.
-         * @return the name of the list
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the name of the list
-         */
-        String getListName();
+    public boolean notAllowed() {
+        return this == NOTALLOWED;
     }
 }

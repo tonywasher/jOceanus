@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jmetis.atlas.field;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
@@ -349,7 +349,7 @@ public class MetisFieldVersionedItem
      * @param pId the field id
      * @return the versioned field
      */
-    public MetisFieldVersionedDef getVersionedField(final MetisFieldId pId) {
+    public MetisFieldVersionedDef getVersionedField(final MetisDataFieldId pId) {
         final MetisFieldDef myField = getDataFieldSet().getField(pId);
         return myField instanceof MetisFieldVersionedDef
                                                          ? (MetisFieldVersionedDef) myField

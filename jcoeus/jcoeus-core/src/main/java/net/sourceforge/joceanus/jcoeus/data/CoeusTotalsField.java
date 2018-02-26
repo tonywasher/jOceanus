@@ -22,13 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 
 /**
  * Transaction FieldIds.
  */
 public enum CoeusTotalsField
-        implements MetisFieldId {
+        implements MetisDataFieldId {
     /**
      * ID.
      */
@@ -157,13 +157,13 @@ public enum CoeusTotalsField
     /**
      * The FieldId.
      */
-    private final MetisFieldId theField;
+    private final MetisDataFieldId theField;
 
     /**
      * Constructor.
      * @param pField the field
      */
-    CoeusTotalsField(final MetisFieldId pField) {
+    CoeusTotalsField(final MetisDataFieldId pField) {
         theField = pField;
     }
 

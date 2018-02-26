@@ -22,15 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 
 /**
  * Test Data FieldIds.
  */
 public enum MetisTestDataField
-        implements MetisFieldId {
+        implements MetisDataFieldId {
     /**
      * Name.
      */
@@ -124,14 +124,14 @@ public enum MetisTestDataField
     /**
      * The FieldId.
      */
-    private final MetisFieldId theField;
+    private final MetisDataFieldId theField;
 
     /**
      * Constructor.
      * @param pField the field
      */
     MetisTestDataField(final TethysDataId pField) {
-        theField = new MetisSimpleFieldId(pField.toString());
+        theField = new MetisFieldSimpleId(pField.toString());
     }
 
     @Override

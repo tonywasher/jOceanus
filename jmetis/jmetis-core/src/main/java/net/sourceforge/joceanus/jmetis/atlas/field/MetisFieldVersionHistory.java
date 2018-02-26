@@ -29,7 +29,6 @@ import java.util.Iterator;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionHistory;
 
 /**
  * Data Version History.
@@ -99,7 +98,7 @@ public class MetisFieldVersionHistory
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return MetisDataVersionHistory.class.getSimpleName() + "(" + theStack.size() + ")";
+        return MetisFieldVersionHistory.class.getSimpleName() + "(" + theStack.size() + ")";
     }
 
     /**

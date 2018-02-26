@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
@@ -73,7 +73,7 @@ public final class PortfolioBucket
     /**
      * Totals bucket name.
      */
-    private static final MetisFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
+    private static final MetisDataFieldId NAME_TOTALS = AnalysisResource.ANALYSIS_TOTALS;
 
     /**
      * The portfolio.

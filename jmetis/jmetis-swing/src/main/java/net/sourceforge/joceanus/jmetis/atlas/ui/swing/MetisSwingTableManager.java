@@ -28,10 +28,10 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
@@ -115,8 +115,8 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     }
 
     @Override
-    protected TethysSwingTableManager<MetisFieldId, R> getTable() {
-        return (TethysSwingTableManager<MetisFieldId, R>) super.getTable();
+    protected TethysSwingTableManager<MetisDataFieldId, R> getTable() {
+        return (TethysSwingTableManager<MetisDataFieldId, R>) super.getTable();
     }
 
     /**
@@ -150,8 +150,8 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
         }
-        if (myValue instanceof MetisEncryptedValue) {
-            myValue = ((MetisEncryptedValue) myValue).getValue();
+        if (myValue instanceof MetisFieldEncryptedValue) {
+            myValue = ((MetisFieldEncryptedValue) myValue).getValue();
         }
         return pClazz.cast(myValue);
     }
@@ -211,89 +211,89 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     }
 
     @Override
-    public MetisSwingTableStringColumn<R> declareStringColumn(final MetisFieldId pId) {
+    public MetisSwingTableStringColumn<R> declareStringColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableStringColumn<>(this, getTable().declareStringColumn(pId));
     }
 
     @Override
-    public MetisSwingTableCharArrayColumn<R> declareCharArrayColumn(final MetisFieldId pId) {
+    public MetisSwingTableCharArrayColumn<R> declareCharArrayColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableCharArrayColumn<>(this, getTable().declareCharArrayColumn(pId));
     }
 
     @Override
-    public MetisSwingTableShortColumn<R> declareShortColumn(final MetisFieldId pId) {
+    public MetisSwingTableShortColumn<R> declareShortColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableShortColumn<>(this, getTable().declareShortColumn(pId));
     }
 
     @Override
-    public MetisSwingTableIntegerColumn<R> declareIntegerColumn(final MetisFieldId pId) {
+    public MetisSwingTableIntegerColumn<R> declareIntegerColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableIntegerColumn<>(this, getTable().declareIntegerColumn(pId));
     }
 
     @Override
-    public MetisSwingTableLongColumn<R> declareLongColumn(final MetisFieldId pId) {
+    public MetisSwingTableLongColumn<R> declareLongColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableLongColumn<>(this, getTable().declareLongColumn(pId));
     }
 
     @Override
-    public MetisSwingTableRawDecimalColumn<R> declareRawDecimalColumn(final MetisFieldId pId) {
+    public MetisSwingTableRawDecimalColumn<R> declareRawDecimalColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableRawDecimalColumn<>(this, getTable().declareRawDecimalColumn(pId));
     }
 
     @Override
-    public MetisSwingTableMoneyColumn<R> declareMoneyColumn(final MetisFieldId pId) {
+    public MetisSwingTableMoneyColumn<R> declareMoneyColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableMoneyColumn<>(this, getTable().declareMoneyColumn(pId));
     }
 
     @Override
-    public MetisSwingTablePriceColumn<R> declarePriceColumn(final MetisFieldId pId) {
+    public MetisSwingTablePriceColumn<R> declarePriceColumn(final MetisDataFieldId pId) {
         return new MetisSwingTablePriceColumn<>(this, getTable().declarePriceColumn(pId));
     }
 
     @Override
-    public MetisSwingTableRateColumn<R> declareRateColumn(final MetisFieldId pId) {
+    public MetisSwingTableRateColumn<R> declareRateColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableRateColumn<>(this, getTable().declareRateColumn(pId));
     }
 
     @Override
-    public MetisSwingTableUnitsColumn<R> declareUnitsColumn(final MetisFieldId pId) {
+    public MetisSwingTableUnitsColumn<R> declareUnitsColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableUnitsColumn<>(this, getTable().declareUnitsColumn(pId));
     }
 
     @Override
-    public MetisSwingTableDilutionColumn<R> declareDilutionColumn(final MetisFieldId pId) {
+    public MetisSwingTableDilutionColumn<R> declareDilutionColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableDilutionColumn<>(this, getTable().declareDilutionColumn(pId));
     }
 
     @Override
-    public MetisSwingTableRatioColumn<R> declareRatioColumn(final MetisFieldId pId) {
+    public MetisSwingTableRatioColumn<R> declareRatioColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableRatioColumn<>(this, getTable().declareRatioColumn(pId));
     }
 
     @Override
-    public MetisSwingTableDilutedPriceColumn<R> declareDilutedPriceColumn(final MetisFieldId pId) {
+    public MetisSwingTableDilutedPriceColumn<R> declareDilutedPriceColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableDilutedPriceColumn<>(this, getTable().declareDilutedPriceColumn(pId));
     }
 
     @Override
-    public MetisSwingTableDateColumn<R> declareDateColumn(final MetisFieldId pId) {
+    public MetisSwingTableDateColumn<R> declareDateColumn(final MetisDataFieldId pId) {
         return new MetisSwingTableDateColumn<>(this, getTable().declareDateColumn(pId));
     }
 
     @Override
-    public <T> MetisSwingTableScrollColumn<T, R> declareScrollColumn(final MetisFieldId pId,
+    public <T> MetisSwingTableScrollColumn<T, R> declareScrollColumn(final MetisDataFieldId pId,
                                                                      final Class<T> pClazz) {
         return new MetisSwingTableScrollColumn<>(this, getTable().declareScrollColumn(pId, pClazz), pClazz);
     }
 
     @Override
-    public <T extends Comparable<T>> MetisSwingTableListColumn<T, R> declareListColumn(final MetisFieldId pId) {
-        final TethysSwingTableListColumn<T, MetisFieldId, R> myColumn = getTable().declareListColumn(pId);
+    public <T extends Comparable<T>> MetisSwingTableListColumn<T, R> declareListColumn(final MetisDataFieldId pId) {
+        final TethysSwingTableListColumn<T, MetisDataFieldId, R> myColumn = getTable().declareListColumn(pId);
         return new MetisSwingTableListColumn<>(this, myColumn);
     }
 
     @Override
-    public <T> MetisSwingTableIconColumn<T, R> declareIconColumn(final MetisFieldId pId,
+    public <T> MetisSwingTableIconColumn<T, R> declareIconColumn(final MetisDataFieldId pId,
                                                                  final Class<T> pClazz) {
         return new MetisSwingTableIconColumn<>(this, getTable().declareIconColumn(pId, pClazz), pClazz);
     }
@@ -310,7 +310,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableStringColumn(final MetisSwingTableManager<R> pTable,
-                                              final TethysSwingTableStringColumn<MetisFieldId, R> pColumn) {
+                                              final TethysSwingTableStringColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), String.class));
         }
@@ -328,7 +328,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableCharArrayColumn(final MetisSwingTableManager<R> pTable,
-                                                 final TethysSwingTableCharArrayColumn<MetisFieldId, R> pColumn) {
+                                                 final TethysSwingTableCharArrayColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), char[].class));
         }
@@ -346,7 +346,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableShortColumn(final MetisSwingTableManager<R> pTable,
-                                             final TethysSwingTableShortColumn<MetisFieldId, R> pColumn) {
+                                             final TethysSwingTableShortColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), Short.class));
         }
@@ -364,7 +364,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableIntegerColumn(final MetisSwingTableManager<R> pTable,
-                                               final TethysSwingTableIntegerColumn<MetisFieldId, R> pColumn) {
+                                               final TethysSwingTableIntegerColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), Integer.class));
         }
@@ -382,7 +382,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableLongColumn(final MetisSwingTableManager<R> pTable,
-                                            final TethysSwingTableLongColumn<MetisFieldId, R> pColumn) {
+                                            final TethysSwingTableLongColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), Long.class));
         }
@@ -400,7 +400,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableRawDecimalColumn(final MetisSwingTableManager<R> pTable,
-                                                  final TethysSwingTableRawDecimalColumn<MetisFieldId, R> pColumn) {
+                                                  final TethysSwingTableRawDecimalColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDecimal.class));
         }
@@ -418,7 +418,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableMoneyColumn(final MetisSwingTableManager<R> pTable,
-                                             final TethysSwingTableMoneyColumn<MetisFieldId, R> pColumn) {
+                                             final TethysSwingTableMoneyColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysMoney.class));
         }
@@ -436,7 +436,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTablePriceColumn(final MetisSwingTableManager<R> pTable,
-                                             final TethysSwingTablePriceColumn<MetisFieldId, R> pColumn) {
+                                             final TethysSwingTablePriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysPrice.class));
         }
@@ -454,7 +454,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableRateColumn(final MetisSwingTableManager<R> pTable,
-                                            final TethysSwingTableRateColumn<MetisFieldId, R> pColumn) {
+                                            final TethysSwingTableRateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysRate.class));
         }
@@ -472,7 +472,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableUnitsColumn(final MetisSwingTableManager<R> pTable,
-                                             final TethysSwingTableUnitsColumn<MetisFieldId, R> pColumn) {
+                                             final TethysSwingTableUnitsColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysUnits.class));
         }
@@ -490,7 +490,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableRatioColumn(final MetisSwingTableManager<R> pTable,
-                                             final TethysSwingTableRatioColumn<MetisFieldId, R> pColumn) {
+                                             final TethysSwingTableRatioColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysRatio.class));
         }
@@ -508,7 +508,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableDilutionColumn(final MetisSwingTableManager<R> pTable,
-                                                final TethysSwingTableDilutionColumn<MetisFieldId, R> pColumn) {
+                                                final TethysSwingTableDilutionColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDilution.class));
         }
@@ -526,7 +526,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableDilutedPriceColumn(final MetisSwingTableManager<R> pTable,
-                                                    final TethysSwingTableDilutedPriceColumn<MetisFieldId, R> pColumn) {
+                                                    final TethysSwingTableDilutedPriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDilutedPrice.class));
         }
@@ -544,7 +544,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pColumn the column
          */
         protected MetisSwingTableDateColumn(final MetisSwingTableManager<R> pTable,
-                                            final TethysSwingTableDateColumn<MetisFieldId, R> pColumn) {
+                                            final TethysSwingTableDateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDate.class));
         }
@@ -564,7 +564,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pClazz the value class
          */
         protected MetisSwingTableIconColumn(final MetisSwingTableManager<R> pTable,
-                                            final TethysSwingTableIconColumn<T, MetisFieldId, R> pColumn,
+                                            final TethysSwingTableIconColumn<T, MetisDataFieldId, R> pColumn,
                                             final Class<T> pClazz) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), pClazz));
@@ -585,7 +585,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pClazz the value class
          */
         protected MetisSwingTableScrollColumn(final MetisSwingTableManager<R> pTable,
-                                              final TethysSwingTableScrollColumn<T, MetisFieldId, R> pColumn,
+                                              final TethysSwingTableScrollColumn<T, MetisDataFieldId, R> pColumn,
                                               final Class<T> pClazz) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), pClazz));
@@ -606,7 +606,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          */
         @SuppressWarnings("unchecked")
         protected MetisSwingTableListColumn(final MetisSwingTableManager<R> pTable,
-                                            final TethysSwingTableListColumn<T, MetisFieldId, R> pColumn) {
+                                            final TethysSwingTableListColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), List.class));
         }

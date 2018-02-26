@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues;
@@ -244,9 +244,9 @@ public class MetisVersionedListSet
                                                                 : null;
 
             /* If the value is an IndexedItem */
-            if (myValue instanceof MetisIndexedItem) {
+            if (myValue instanceof MetisDataIndexedItem) {
                 /* Obtain the reLinked value and store the new value */
-                myValue = reLinkValue((MetisIndexedItem) myValue);
+                myValue = reLinkValue((MetisDataIndexedItem) myValue);
                 myValues.setUncheckedValue(myField, myValue);
             }
         }
@@ -257,12 +257,12 @@ public class MetisVersionedListSet
      * @param pValue the value
      * @return the reLinked value
      */
-    private MetisIndexedItem reLinkValue(final MetisIndexedItem pValue) {
+    private MetisDataIndexedItem reLinkValue(final MetisDataIndexedItem pValue) {
         /* Determine the list for the item */
         final MetisVersionedList<MetisFieldVersionedItem> myList = determineListForItem(pValue);
 
         /* If we found the list */
-        final MetisIndexedItem myNew = myList != null
+        final MetisDataIndexedItem myNew = myList != null
                                                       ? myList.getItemById(pValue.getIndexedId())
                                                       : null;
 
@@ -277,7 +277,7 @@ public class MetisVersionedListSet
      * @param pItem the item
      * @return the corresponding list (or null)
      */
-    private MetisVersionedList<MetisFieldVersionedItem> determineListForItem(final MetisIndexedItem pItem) {
+    private MetisVersionedList<MetisFieldVersionedItem> determineListForItem(final MetisDataIndexedItem pItem) {
         /* Loop through the lists */
         final Iterator<MetisVersionedList<MetisFieldVersionedItem>> myIterator = listIterator();
         while (myIterator.hasNext()) {

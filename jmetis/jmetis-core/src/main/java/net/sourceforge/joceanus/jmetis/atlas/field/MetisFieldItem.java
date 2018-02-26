@@ -24,11 +24,9 @@ package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -51,7 +49,7 @@ public interface MetisFieldItem
          * Obtain the id of the field.
          * @return the name of the field.
          */
-        MetisFieldId getFieldId();
+        MetisDataFieldId getFieldId();
 
         /**
          * Obtain the index of the field.
@@ -75,13 +73,13 @@ public interface MetisFieldItem
          * Obtain the equality type.
          * @return equalityType
          */
-        MetisDataFieldEquality getEquality();
+        MetisFieldEquality getEquality();
 
         /**
          * Obtain the storage type.
          * @return storageType
          */
-        MetisDataFieldStorage getStorage();
+        MetisFieldStorage getStorage();
 
         /**
          * Obtain the value of a field.
@@ -169,13 +167,13 @@ public interface MetisFieldItem
          * @return the corresponding field
          * @throws IllegalArgumentException if name is not present
          */
-        MetisFieldDef getField(MetisFieldId pId);
+        MetisFieldDef getField(MetisDataFieldId pId);
     }
 
     /**
      * Table Item.
      */
     public interface MetisFieldTableItem
-            extends MetisFieldItem, MetisIndexedItem {
+            extends MetisFieldItem, MetisDataIndexedItem {
     }
 }

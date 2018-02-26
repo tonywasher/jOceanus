@@ -24,10 +24,8 @@ package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 
@@ -50,7 +48,7 @@ public class MetisField<T extends MetisFieldItem>
     /**
      * Id of field.
      */
-    private final MetisFieldId theId;
+    private final MetisDataFieldId theId;
 
     /**
      * DataType of field.
@@ -65,12 +63,12 @@ public class MetisField<T extends MetisFieldItem>
     /**
      * The field equality type.
      */
-    private final MetisDataFieldEquality theEquality;
+    private final MetisFieldEquality theEquality;
 
     /**
      * The field storage type.
      */
-    private final MetisDataFieldStorage theStorage;
+    private final MetisFieldStorage theStorage;
 
     /**
      * The field value function.
@@ -87,11 +85,11 @@ public class MetisField<T extends MetisFieldItem>
      * @param pStorage the field storage type
      */
     MetisField(final MetisFieldSet<T> pAnchor,
-               final MetisFieldId pId,
+               final MetisDataFieldId pId,
                final MetisDataType pDataType,
                final Integer pMaxLength,
-               final MetisDataFieldEquality pEquality,
-               final MetisDataFieldStorage pStorage) {
+               final MetisFieldEquality pEquality,
+               final MetisFieldStorage pStorage) {
         /* Store parameters */
         theAnchor = pAnchor;
         theId = pId;
@@ -118,15 +116,15 @@ public class MetisField<T extends MetisFieldItem>
      * @param pStorage the field storage type
      */
     MetisField(final MetisFieldSet<T> pAnchor,
-               final MetisFieldId pId,
+               final MetisDataFieldId pId,
                final Function<T, Object> pValue,
-               final MetisDataFieldStorage pStorage) {
+               final MetisFieldStorage pStorage) {
         /* Store parameters */
         theAnchor = pAnchor;
         theId = pId;
         theDataType = MetisDataType.OBJECT;
         theMaxLength = MetisFieldSet.FIELD_NO_MAXLENGTH;
-        theEquality = MetisDataFieldEquality.DERIVED;
+        theEquality = MetisFieldEquality.DERIVED;
         theStorage = pStorage;
         theValue = pValue;
         theIndex = null;
@@ -144,7 +142,7 @@ public class MetisField<T extends MetisFieldItem>
     }
 
     @Override
-    public MetisFieldId getFieldId() {
+    public MetisDataFieldId getFieldId() {
         return theId;
     }
 
@@ -159,12 +157,12 @@ public class MetisField<T extends MetisFieldItem>
     }
 
     @Override
-    public MetisDataFieldEquality getEquality() {
+    public MetisFieldEquality getEquality() {
         return theEquality;
     }
 
     @Override
-    public MetisDataFieldStorage getStorage() {
+    public MetisFieldStorage getStorage() {
         return theStorage;
     }
 

@@ -30,11 +30,11 @@ import java.util.Map;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues.MetisEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 
 /**
@@ -145,7 +145,7 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
             final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is changeable */
-            final MetisDataFieldStorage myStorage = myField.getStorage();
+            final MetisFieldStorage myStorage = myField.getStorage();
             if (myStorage.isVersioned()
                 || myStorage.isCalculated()) {
                 /* Set the value */
@@ -165,7 +165,7 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
             final MetisFieldDef myField = myEntry.getKey();
 
             /* If the field is calculated */
-            final MetisDataFieldStorage myStorage = myField.getStorage();
+            final MetisFieldStorage myStorage = myField.getStorage();
             if (myStorage.isCalculated()) {
                 /* Set the value */
                 setCalculatedValue(myField, myEntry.getValue());
@@ -199,8 +199,8 @@ public class MetisFXTableFieldSet<R extends MetisFieldTableItem> {
         if (myValue == MetisDataFieldValue.SKIP) {
             myValue = null;
         }
-        if (myValue instanceof MetisEncryptedValue) {
-            myValue = ((MetisEncryptedValue) myValue).getValue();
+        if (myValue instanceof MetisFieldEncryptedValue) {
+            myValue = ((MetisFieldEncryptedValue) myValue).getValue();
         }
 
         /* Store into the property */

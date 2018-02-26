@@ -24,11 +24,10 @@ package net.sourceforge.joceanus.jmetis.atlas.field;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 
 /**
  * Set of dataValue Deltas.
@@ -68,7 +67,7 @@ public class MetisFieldVersionDelta
      * @param pOld the old valueSet.
      */
     protected MetisFieldVersionDelta(final MetisFieldVersionValues pNew,
-                                       final MetisFieldVersionValues pOld) {
+                                     final MetisFieldVersionValues pOld) {
         /* Store parameters */
         theOldSet = pOld;
         theNewSet = pNew;
@@ -112,7 +111,7 @@ public class MetisFieldVersionDelta
         }
 
         /* Return the number of differences */
-        return MetisDataVersionDelta.class.getSimpleName()
+        return MetisFieldVersionDelta.class.getSimpleName()
                + "("
                + myNumDiffs
                + ")";

@@ -26,26 +26,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionControl;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionDelta.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataVersionValues;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldStorage;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
@@ -146,17 +141,9 @@ public class MetisViewerFormatter {
                                                                   ? ((MetisDataDelta) pObject).getObject()
                                                                   : pObject;
 
-        /* If we are DataVersionedItem */
-        if (myObject instanceof MetisDataVersionedItem) {
-            formatHTMLVersionedItem((MetisDataVersionedItem) myObject);
-
-            /* If we are DataEosFieldItem */
-        } else if (myObject instanceof MetisFieldItem) {
+        /* If we are DataEosFieldItem */
+        if (myObject instanceof MetisFieldItem) {
             formatHTMLEosFieldItem((MetisFieldItem) myObject);
-
-            /* If we are DataFieldItem */
-        } else if (myObject instanceof MetisDataFieldItem) {
-            formatHTMLFieldItem((MetisDataFieldItem) myObject);
 
             /* If we are DataContents */
         } else if (myObject instanceof MetisDataContents) {
@@ -168,7 +155,7 @@ public class MetisViewerFormatter {
 
             /* If we are Throwable */
         } else if (myObject instanceof Throwable) {
-            formatHTMLFieldItem(new MetisViewerExceptionWrapper((Throwable) myObject));
+            formatHTMLEosFieldItem(new MetisViewerExceptionWrapper((Throwable) myObject));
 
             /* else handle unsupported list item */
         } else {
@@ -229,50 +216,16 @@ public class MetisViewerFormatter {
     }
 
     /**
-     * Build HTML table describing DataFieldItem.
-     * @param pItem the item
-     */
-    private void formatHTMLFieldItem(final MetisDataFieldItem pItem) {
-        /* Access details */
-        final MetisDataFieldSet myFields = pItem.getDataFieldSet();
-
-        /* Initialise the document */
-        theBuilder.newTitle(myFields.getName());
-        theBuilder.newTable();
-        theBuilder.newTitleCell(COLUMN_FIELD);
-        theBuilder.newTitleCell(COLUMN_VALUE);
-
-        /* Loop through the fields */
-        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
-        while (myIterator.hasNext()) {
-            /* Access Field */
-            final MetisDataField myField = myIterator.next();
-            final MetisDataFieldStorage myStorage = myField.getStorage();
-
-            /* Access the value */
-            final Object myValue = myStorage.isCalculated()
-                                                            ? MetisDataFieldValue.SKIP
-                                                            : pItem.getFieldValue(myField);
-
-            /* Skip value if required */
-            if (MetisDataFieldValue.SKIP.equals(myValue)) {
-                continue;
-            }
-
-            /* Start the field */
-            theBuilder.newTableRow();
-            theBuilder.newDataCell(myField.getFieldId().getId());
-            theBuilder.newDataCell(myValue);
-        }
-    }
-
-    /**
      * Build HTML table describing DataEosFieldItem.
      * @param pItem the item
      */
     private void formatHTMLEosFieldItem(final MetisFieldItem pItem) {
         /* Access details */
         final MetisFieldSetDef myFields = pItem.getDataFieldSet();
+        final boolean isVersioned = pItem instanceof MetisFieldVersionedItem;
+        final MetisFieldVersionedItem myItem = isVersioned
+                                                           ? (MetisFieldVersionedItem) pItem
+                                                           : null;
 
         /* Initialise the document */
         theBuilder.newTitle(myFields.getName());
@@ -285,7 +238,7 @@ public class MetisViewerFormatter {
         while (myIterator.hasNext()) {
             /* Access Field */
             final MetisFieldDef myField = myIterator.next();
-            final MetisDataFieldStorage myStorage = myField.getStorage();
+            final MetisFieldStorage myStorage = myField.getStorage();
 
             /* Access the value */
             final Object myValue = myStorage.isCalculated()
@@ -300,7 +253,13 @@ public class MetisViewerFormatter {
             /* Start the field */
             theBuilder.newTableRow();
             theBuilder.newDataCell(myField.getFieldId().getId());
-            theBuilder.newDataCell(myValue);
+            if (myItem != null
+                && myStorage.isVersioned()
+                && myItem.fieldChanged(myField).isDifferent()) {
+                theBuilder.newDataCell(myValue, true);
+            } else {
+                theBuilder.newDataCell(myValue);
+            }
         }
     }
 
@@ -340,53 +299,6 @@ public class MetisViewerFormatter {
     }
 
     /**
-     * Build HTML table describing DataVersionedItem.
-     * @param pItem the item
-     */
-    private void formatHTMLVersionedItem(final MetisDataVersionedItem pItem) {
-        /* Access details */
-        final MetisDataFieldSet myFields = pItem.getDataFieldSet();
-        final MetisDataVersionControl myControl = pItem.getVersionControl();
-        final MetisDataVersionValues myValues = myControl.getValueSet();
-
-        /* Initialise the document */
-        theBuilder.newTitle(myFields.getName());
-        theBuilder.newTable();
-        theBuilder.newTitleCell(COLUMN_FIELD);
-        theBuilder.newTitleCell(COLUMN_VALUE);
-
-        /* Loop through the fields */
-        final Iterator<MetisDataField> myIterator = myFields.fieldIterator();
-        while (myIterator.hasNext()) {
-            /* Access Field */
-            final MetisDataField myField = myIterator.next();
-            final MetisDataFieldStorage myStorage = myField.getStorage();
-            Object myValue = MetisDataFieldValue.SKIP;
-
-            /* Access the value */
-            if (myStorage.isVersioned()) {
-                myValue = myValues.getValue(myField);
-            } else if (!myStorage.isCalculated()) {
-                myValue = pItem.getFieldValue(myField);
-            }
-
-            /* Skip value if required */
-            if (MetisDataFieldValue.SKIP.equals(myValue)) {
-                continue;
-            }
-
-            /* Start the field */
-            theBuilder.newTableRow();
-            theBuilder.newDataCell(myField.getFieldId().getId());
-            if (myControl.fieldChanged(myField).isDifferent()) {
-                theBuilder.newDataCell(myValue, true);
-            } else {
-                theBuilder.newDataCell(myValue);
-            }
-        }
-    }
-
-    /**
      * Build HTML table describing DataContents.
      * @param pContents the contents
      */
@@ -416,7 +328,7 @@ public class MetisViewerFormatter {
         while (myIterator.hasNext()) {
             /* Access Field */
             final MetisField myField = myIterator.next();
-            final MetisFieldStorage myStorage = myField.getStorage();
+            final MetisLetheFieldStorage myStorage = myField.getStorage();
             Object myValue = MetisDataFieldValue.SKIP;
 
             /* Access the value */

@@ -26,28 +26,28 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 
 /**
  * Report-able error list.
  */
 public class MetisViewerErrorList
-        implements MetisDataFieldItem, MetisDataList<MetisViewerExceptionWrapper> {
+        implements MetisFieldItem, MetisDataList<MetisViewerExceptionWrapper> {
     /**
      * Local Report fields.
      */
-    private static final MetisDataFieldSet FIELD_DEFS = new MetisDataFieldSet(MetisViewerErrorList.class);
+    private static final MetisFieldSet<MetisViewerErrorList> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisViewerErrorList.class);
 
     /**
-     * Size Field Id.
+     * Declare Fields.
      */
-    private static final MetisDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE);
+    static {
+        FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, MetisViewerErrorList::size);
+    }
 
     /**
      * The list.
@@ -62,21 +62,13 @@ public class MetisViewerErrorList
     }
 
     @Override
-    public MetisDataFieldSet getDataFieldSet() {
+    public MetisFieldSet<MetisViewerErrorList> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
         return getDataFieldSet().getName();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisDataField pField) {
-        if (FIELD_SIZE.equals(pField)) {
-            return size();
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     /**

@@ -32,7 +32,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.list.MetisListChange.MetisListEvent;
@@ -44,7 +44,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  * Java Indexed List.
  * @param <T> the item type
  */
-public class MetisIndexedList<T extends MetisIndexedItem>
+public class MetisIndexedList<T extends MetisDataIndexedItem>
         implements MetisDataList<T>, TethysEventProvider<MetisListEvent>, MetisFieldItem {
     /**
      * Report fields.

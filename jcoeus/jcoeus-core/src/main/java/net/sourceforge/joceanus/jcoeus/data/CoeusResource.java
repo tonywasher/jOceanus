@@ -26,7 +26,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -34,7 +34,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * Resource IDs for Coeus.
  */
 public enum CoeusResource
-        implements TethysResourceId, MetisFieldId {
+        implements TethysResourceId, MetisDataFieldId {
     /**
      * FundingCircle Market.
      */

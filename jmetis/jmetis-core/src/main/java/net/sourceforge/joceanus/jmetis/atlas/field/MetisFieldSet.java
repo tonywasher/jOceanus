@@ -32,9 +32,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataField.MetisSimpleFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldSet.MetisDataFieldStorage;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
 
@@ -334,9 +332,9 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @param pValue the value supplier
      * @return the field
      */
-    public MetisField<T> declareLocalField(final MetisFieldId pId,
+    public MetisField<T> declareLocalField(final MetisDataFieldId pId,
                                            final Function<T, Object> pValue) {
-        return declareDataField(pId, pValue, MetisDataFieldStorage.LOCAL);
+        return declareDataField(pId, pValue, MetisFieldStorage.LOCAL);
     }
 
     /**
@@ -350,8 +348,8 @@ public class MetisFieldSet<T extends MetisFieldItem>
         /* Loop through the enum constants */
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
-            final MetisFieldId myId = new MetisSimpleFieldId(myValue.toString());
-            declareDataField(myId, t -> pValue.apply(t, myValue), MetisDataFieldStorage.LOCAL);
+            final MetisDataFieldId myId = new MetisFieldSimpleId(myValue.toString());
+            declareDataField(myId, t -> pValue.apply(t, myValue), MetisFieldStorage.LOCAL);
         }
     }
 
@@ -360,8 +358,8 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @param pId the fieldId
      * @return the field
      */
-    public MetisField<T> declareCalculatedField(final MetisFieldId pId) {
-        return declareDataField(pId, null, MetisDataFieldStorage.CALCULATED);
+    public MetisField<T> declareCalculatedField(final MetisDataFieldId pId) {
+        return declareDataField(pId, null, MetisFieldStorage.CALCULATED);
     }
 
     /**
@@ -376,7 +374,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
         if (isStatic) {
             throw new IllegalArgumentException("Only allowed for dynamic fieldSets");
         }
-        return declareLocalField(new MetisSimpleFieldId(pName), pValue);
+        return declareLocalField(new MetisFieldSimpleId(pName), pValue);
     }
 
     /**
@@ -386,9 +384,9 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @param pStorage the field storage type
      * @return the field
      */
-    private MetisField<T> declareDataField(final MetisFieldId pId,
+    private MetisField<T> declareDataField(final MetisDataFieldId pId,
                                            final Function<T, Object> pValue,
-                                           final MetisDataFieldStorage pStorage) {
+                                           final MetisFieldStorage pStorage) {
         /* Create the field */
         final MetisField<T> myField = new MetisField<>(this, pId, pValue, pStorage);
 
@@ -434,7 +432,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @param pId the id to check.
      * @throws IllegalArgumentException if name is present
      */
-    protected void checkUniqueName(final MetisFieldId pId) {
+    protected void checkUniqueName(final MetisDataFieldId pId) {
         /* Obtain the name to check */
         final String myName = pId.getId();
 
@@ -451,7 +449,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     @Override
-    public MetisFieldDef getField(final MetisFieldId pId) {
+    public MetisFieldDef getField(final MetisDataFieldId pId) {
         /* Loop through existing iDs */
         final Iterator<MetisFieldDef> myIterator = fieldIterator();
         while (myIterator.hasNext()) {

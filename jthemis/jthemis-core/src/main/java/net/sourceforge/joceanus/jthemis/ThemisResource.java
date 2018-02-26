@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
  * Resource IDs for Themis.
  */
 public enum ThemisResource
-        implements TethysResourceId, MetisFieldId {
+        implements TethysResourceId, MetisDataFieldId {
     /**
      * List Size.
      */
