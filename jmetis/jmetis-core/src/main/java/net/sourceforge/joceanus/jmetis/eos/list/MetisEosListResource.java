@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.list;
+package net.sourceforge.joceanus.jmetis.eos.list;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 /**
  * ResourcesIds for List.
  */
-public enum MetisListResource
+public enum MetisEosListResource
         implements TethysResourceId, MetisDataFieldId {
     /**
      * List Size.
@@ -81,7 +81,7 @@ public enum MetisListResource
      * Constructor.
      * @param pKeyName the key name
      */
-    MetisListResource(final String pKeyName) {
+    MetisEosListResource(final String pKeyName) {
         theKeyName = pKeyName;
     }
 

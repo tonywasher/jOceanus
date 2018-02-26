@@ -20,49 +20,46 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jmetis.atlas.list;
+package net.sourceforge.joceanus.jmetis.atlas.data;
 
 /**
- * Item interfaces.
+ * Delta class.
  */
-public final class MetisListItem {
+public class MetisDataDelta {
     /**
-     * Private constructor.
+     * The object itself.
      */
-    private MetisListItem() {
+    private final Object theObject;
+
+    /**
+     * The difference.
+     */
+    private final MetisDataDifference theDifference;
+
+    /**
+     * Constructor.
+     * @param pObject the object
+     * @param pDifference the difference
+     */
+    public MetisDataDelta(final Object pObject,
+                          final MetisDataDifference pDifference) {
+        theObject = pObject;
+        theDifference = pDifference;
     }
 
     /**
-     * Item Definition.
+     * Obtain the object.
+     * @return the object
      */
-    public interface MetisListItemDef {
-        /**
-         * Obtain the item name.
-         * @return the item name
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the list name
-         */
-        String getListName();
+    public Object getObject() {
+        return theObject;
     }
 
     /**
-     * List Key.
+     * Obtain the difference.
+     * @return the difference
      */
-    public interface MetisListKey {
-        /**
-         * Obtain the item name.
-         * @return the name of the list
-         */
-        String getItemName();
-
-        /**
-         * Obtain the list name.
-         * @return the name of the list
-         */
-        String getListName();
+    public MetisDataDifference getDifference() {
+        return theDifference;
     }
 }

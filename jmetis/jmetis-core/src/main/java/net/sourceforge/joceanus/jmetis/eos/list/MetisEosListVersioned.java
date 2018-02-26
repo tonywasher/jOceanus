@@ -26,7 +26,6 @@ import java.security.InvalidParameterException;
 
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListResource;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
@@ -51,8 +50,8 @@ public class MetisEosListVersioned<T extends MetisFieldVersionedItem>
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS, MetisEosListVersioned::getItemType);
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosListVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisEosListResource.FIELD_CLASS, MetisEosListVersioned::getItemType);
+        FIELD_DEFS.declareLocalField(MetisEosListResource.FIELD_VERSION, MetisEosListVersioned::getVersion);
     }
 
     /**

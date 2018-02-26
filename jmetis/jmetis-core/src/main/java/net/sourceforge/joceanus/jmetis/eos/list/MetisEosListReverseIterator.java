@@ -20,7 +20,45 @@
  * $Author$
  * $Date$
  ******************************************************************************/
+package net.sourceforge.joceanus.jmetis.eos.list;
+
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
+
 /**
- * Java Indexed List.
+ * Reverse iterator.
+ * @param <T> the item type
  */
-package net.sourceforge.joceanus.jmetis.atlas.list;
+public class MetisEosListReverseIterator<T> implements Iterator<T> {
+    /**
+     * The underlying iterator.
+     */
+    private final ListIterator<T> theIterator;
+
+    /**
+     * Constructor.
+     * @param pIterator the iterator
+     */
+    public MetisEosListReverseIterator(final ListIterator<T> pIterator) {
+        theIterator = pIterator;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return theIterator.hasPrevious();
+    }
+
+    @Override
+    public T next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        return theIterator.previous();
+    }
+
+    @Override
+    public void remove() {
+        theIterator.remove();
+    }
+}

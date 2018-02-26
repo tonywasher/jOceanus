@@ -35,8 +35,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListResource;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisReverseIterator;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -57,7 +55,7 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_SIZE, MetisEosListIndexed::size);
+        FIELD_DEFS.declareLocalField(MetisEosListResource.FIELD_SIZE, MetisEosListIndexed::size);
     }
 
     /**
@@ -320,7 +318,7 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
      * @return the iterator
      */
     public Iterator<T> reverseIterator() {
-        return new MetisReverseIterator<>(listIterator(size()));
+        return new MetisEosListReverseIterator<>(listIterator(size()));
     }
 
     @Override

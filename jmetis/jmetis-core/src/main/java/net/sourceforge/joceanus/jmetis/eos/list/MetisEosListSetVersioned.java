@@ -32,8 +32,6 @@ import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisListResource;
-import net.sourceforge.joceanus.jmetis.atlas.list.MetisReverseIterator;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
@@ -52,7 +50,7 @@ public class MetisEosListSetVersioned
      * Version Field Id.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisEosListSetVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisEosListResource.FIELD_VERSION, MetisEosListSetVersioned::getVersion);
     }
 
     /**
@@ -161,7 +159,7 @@ public class MetisEosListSetVersioned
      */
     public Iterator<MetisEosListKey> reverseKeyIterator() {
         final List<MetisEosListKey> myList = new ArrayList<>(theListMap.keySet());
-        return new MetisReverseIterator<>(myList.listIterator(myList.size()));
+        return new MetisEosListReverseIterator<>(myList.listIterator(myList.size()));
     }
 
     /**
