@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.eos.list;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -191,7 +190,7 @@ public final class MetisEosListBaseManager {
             final T myCurr = myIterator.next();
 
             /* Add the item to the list */
-            pTarget.addToList(myCurr);
+            pTarget.add(myCurr);
         }
     }
 
@@ -202,7 +201,7 @@ public final class MetisEosListBaseManager {
      * @param pSource the source list
      */
     public static <T extends MetisDataIndexedItem> void resetContent(final MetisEosListIndexed<T> pTarget,
-                                                                 final Iterator<T> pSource) {
+                                                                     final Iterator<T> pSource) {
         /* Clear the list */
         pTarget.clear();
 
@@ -211,7 +210,7 @@ public final class MetisEosListBaseManager {
             final T myCurr = pSource.next();
 
             /* Add the item to the list */
-            pTarget.addToList(myCurr);
+            pTarget.add(myCurr);
         }
 
         /* Fire the event */
@@ -279,7 +278,7 @@ public final class MetisEosListBaseManager {
         final MetisEosListChange<T> myChange = new MetisEosListChange<>(pTarget.getItemType(), MetisEosListEvent.REBASE);
 
         /* Access a copy of the idMap of the base list */
-        final Map<Integer, T> myOld = new HashMap<>(pBase.getIdMap());
+        final Map<Integer, T> myOld = pBase.copyIdMap();
         boolean hasChanges = false;
 
         /* Loop through the list */
@@ -319,7 +318,7 @@ public final class MetisEosListBaseManager {
             /* Insert a new item */
             final T myCurr = myIterator.next();
             final T myItem = MetisEosListDiffManager.newDiffDeletedItem(pTarget, myCurr);
-            pTarget.addToList(myItem);
+            pTarget.add(myItem);
             myChange.registerDeleted(myItem);
             hasChanges = true;
         }

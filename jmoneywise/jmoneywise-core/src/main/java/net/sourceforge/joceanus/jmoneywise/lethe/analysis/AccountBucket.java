@@ -824,6 +824,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
             /* Initialise class */
             theAnalysis = pAnalysis;
             theList = new MetisEosListIndexed<>();
+            theList.setComparator((l, r) -> l.getAccount().compareTo(r.getAccount()));
         }
 
         @Override
@@ -860,7 +861,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* add to list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -891,7 +892,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Record the rate (if required) and add to list */
                     myBucket.recordRate(pDate);
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -924,7 +925,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 if (myBucket.isActive()
                     || !myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -963,7 +964,7 @@ public abstract class AccountBucket<T extends AssetBase<T>>
                 myItem = newBucket(pAccount);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */

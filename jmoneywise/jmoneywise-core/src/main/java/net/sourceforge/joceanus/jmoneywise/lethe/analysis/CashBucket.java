@@ -204,7 +204,7 @@ public final class CashBucket
          */
         public CashBucket getMatchingCash(final Cash pCash) {
             /* Return the matching cash if it exists else an orphan bucket */
-            final CashBucket myCash = findItemById(pCash.getOrderedId());
+            final CashBucket myCash = findItemById(pCash.getIndexedId());
             return myCash != null
                                   ? myCash
                                   : new CashBucket(getAnalysis(), pCash);

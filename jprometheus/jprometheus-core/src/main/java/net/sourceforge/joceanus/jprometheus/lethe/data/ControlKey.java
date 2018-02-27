@@ -666,7 +666,7 @@ public final class ControlKey
             }
 
             /* Add to the list */
-            append(myKey);
+            add(myKey);
 
             /* Return it */
             return myKey;

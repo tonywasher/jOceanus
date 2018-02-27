@@ -22,17 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDeletable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataUpdatable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
-import net.sourceforge.joceanus.jmetis.lethe.list.MetisOrderedIdItem;
 
 /**
  * Table Item interface.
  */
-public interface PrometheusTableItem extends MetisOrderedIdItem<Integer>, MetisDataValues, MetisFieldSetItem, MetisDataDeletable, MetisDataUpdatable {
+public interface PrometheusTableItem extends MetisDataIndexedItem, MetisDataValues, MetisFieldSetItem, MetisDataDeletable, MetisDataUpdatable {
     /**
      * Is this a header?
      * @return true/false

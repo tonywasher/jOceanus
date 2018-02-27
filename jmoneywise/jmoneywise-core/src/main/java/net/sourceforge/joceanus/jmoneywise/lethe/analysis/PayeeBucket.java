@@ -28,8 +28,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
@@ -867,7 +867,7 @@ public final class PayeeBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -896,7 +896,7 @@ public final class PayeeBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base and add to the list */
                     myBucket.adjustToBase();
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -974,7 +974,7 @@ public final class PayeeBucket
                 myItem = new PayeeBucket(theAnalysis, myPayee);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -1001,7 +1001,7 @@ public final class PayeeBucket
          */
         public PayeeBucket getMatchingPayee(final Payee pPayee) {
             /* Return the matching payee if it exists else an orphan bucket */
-            final PayeeBucket myPayee = findItemById(pPayee.getOrderedId());
+            final PayeeBucket myPayee = findItemById(pPayee.getIndexedId());
             return myPayee != null
                                    ? myPayee
                                    : new PayeeBucket(theAnalysis, pPayee);

@@ -272,7 +272,7 @@ public class Frequency
             }
 
             /* Add the Frequency to the list */
-            append(myFrequency);
+            add(myFrequency);
         }
 
         @Override
@@ -287,7 +287,7 @@ public class Frequency
             }
 
             /* Add to the list */
-            append(myFreq);
+            add(myFreq);
 
             /* Return it */
             return myFreq;
@@ -305,7 +305,7 @@ public class Frequency
             }
 
             /* Add to the list */
-            append(myFreq);
+            add(myFreq);
 
             /* Return it */
             return myFreq;

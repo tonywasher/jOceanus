@@ -379,7 +379,7 @@ public class ControlData
             }
 
             /* Add to the list */
-            append(myControl);
+            add(myControl);
 
             /* Return it */
             return myControl;

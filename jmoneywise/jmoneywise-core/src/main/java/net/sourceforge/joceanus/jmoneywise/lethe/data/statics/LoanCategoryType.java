@@ -222,7 +222,7 @@ public class LoanCategoryType
             }
 
             /* Add the Loan Category to the list */
-            append(myLoanType);
+            add(myLoanType);
         }
 
         @Override
@@ -237,7 +237,7 @@ public class LoanCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -255,7 +255,7 @@ public class LoanCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

@@ -1181,7 +1181,7 @@ public class Portfolio
                 /* Build the new linked portfolio and add it to the list */
                 final Portfolio myPortfolio = new Portfolio(myList, myCurr);
                 myPortfolio.resolveUpdateSetLinks(pUpdateSet);
-                myList.append(myPortfolio);
+                myList.add(myPortfolio);
 
                 /* Adjust the map */
                 myPortfolio.adjustMapForItem();
@@ -1259,7 +1259,7 @@ public class Portfolio
             }
 
             /* Add to the list */
-            append(myPortfolio);
+            add(myPortfolio);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

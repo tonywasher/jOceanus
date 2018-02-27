@@ -1167,7 +1167,7 @@ public class Transaction
             }
 
             /* Add to the list */
-            append(myTrans);
+            add(myTrans);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

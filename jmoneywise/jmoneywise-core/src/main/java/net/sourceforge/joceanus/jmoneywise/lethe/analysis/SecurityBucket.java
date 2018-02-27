@@ -950,7 +950,7 @@ public final class SecurityBucket
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -981,7 +981,7 @@ public final class SecurityBucket
                  */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -1010,7 +1010,7 @@ public final class SecurityBucket
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Adjust to base and add to the list */
                     myBucket.adjustToBase();
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -1071,7 +1071,7 @@ public final class SecurityBucket
                 myItem = new SecurityBucket(theAnalysis, pHolding);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */

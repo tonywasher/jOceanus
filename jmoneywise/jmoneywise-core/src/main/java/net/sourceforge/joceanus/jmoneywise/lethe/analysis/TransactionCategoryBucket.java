@@ -29,8 +29,8 @@ import java.util.List;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
@@ -810,7 +810,7 @@ public final class TransactionCategoryBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -854,7 +854,7 @@ public final class TransactionCategoryBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -929,7 +929,7 @@ public final class TransactionCategoryBucket
                 myItem = new TransactionCategoryBucket(theAnalysis, pCategory);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -956,7 +956,7 @@ public final class TransactionCategoryBucket
          */
         public TransactionCategoryBucket getMatchingCategory(final TransactionCategory pCategory) {
             /* Return the matching category if it exists else an orphan bucket */
-            final TransactionCategoryBucket myCategory = findItemById(pCategory.getOrderedId());
+            final TransactionCategoryBucket myCategory = findItemById(pCategory.getIndexedId());
             return myCategory != null
                                       ? myCategory
                                       : new TransactionCategoryBucket(theAnalysis, pCategory);
@@ -1138,7 +1138,7 @@ public final class TransactionCategoryBucket
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
                         myTotal = new TransactionCategoryBucket(theAnalysis, myParent);
-                        myTotals.addToList(myTotal);
+                        myTotals.add(myTotal);
                     }
                 }
 
@@ -1156,7 +1156,7 @@ public final class TransactionCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                theList.addToList(myCurr);
+                theList.add(myCurr);
             }
 
             /* Sort the list */

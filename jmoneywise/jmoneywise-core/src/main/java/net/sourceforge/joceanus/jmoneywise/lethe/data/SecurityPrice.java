@@ -726,7 +726,7 @@ public class SecurityPrice
             }
 
             /* Add to the list */
-            append(myPrice);
+            add(myPrice);
 
             /* Return it */
             return myPrice;

@@ -398,7 +398,7 @@ public final class DepositBucket
          */
         public DepositBucket getMatchingDeposit(final Deposit pDeposit) {
             /* Return the matching deposit if it exists else an orphan bucket */
-            final DepositBucket myDeposit = findItemById(pDeposit.getOrderedId());
+            final DepositBucket myDeposit = findItemById(pDeposit.getIndexedId());
             return myDeposit != null
                                      ? myDeposit
                                      : new DepositBucket(getAnalysis(), pDeposit);

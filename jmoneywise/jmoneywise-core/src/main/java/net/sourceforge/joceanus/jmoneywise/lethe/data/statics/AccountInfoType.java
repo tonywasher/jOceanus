@@ -249,7 +249,7 @@ public class AccountInfoType
             }
 
             /* Add the Account Info Type to the list */
-            append(myInfoType);
+            add(myInfoType);
         }
 
         @Override
@@ -264,7 +264,7 @@ public class AccountInfoType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -282,7 +282,7 @@ public class AccountInfoType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

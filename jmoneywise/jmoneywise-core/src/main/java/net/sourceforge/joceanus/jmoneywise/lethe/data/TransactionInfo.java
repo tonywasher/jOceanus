@@ -458,7 +458,7 @@ public class TransactionInfo
                                              final TransactionInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             final TransactionInfo myInfo = new TransactionInfo(this, pOwner, pInfoType);
-            append(myInfo);
+            add(myInfo);
 
             /* return it */
             return myInfo;
@@ -500,7 +500,7 @@ public class TransactionInfo
             }
 
             /* Add the Event Info to the list */
-            append(myInfo);
+            add(myInfo);
         }
 
         @Override
@@ -515,7 +515,7 @@ public class TransactionInfo
             }
 
             /* Add to the list */
-            append(myInfo);
+            add(myInfo);
 
             /* Return it */
             return myInfo;

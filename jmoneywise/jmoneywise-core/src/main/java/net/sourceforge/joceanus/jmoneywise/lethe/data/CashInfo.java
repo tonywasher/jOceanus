@@ -492,7 +492,7 @@ public class CashInfo
             }
 
             /* Add the Info to the list */
-            append(myInfo);
+            add(myInfo);
         }
 
         @Override
@@ -507,7 +507,7 @@ public class CashInfo
             }
 
             /* Add to the list */
-            append(myInfo);
+            add(myInfo);
 
             /* Return it */
             return myInfo;

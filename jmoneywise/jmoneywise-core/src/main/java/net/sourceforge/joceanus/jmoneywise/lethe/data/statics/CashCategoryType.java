@@ -222,7 +222,7 @@ public class CashCategoryType
             }
 
             /* Add the Cash Category to the list */
-            append(myCashType);
+            add(myCashType);
         }
 
         @Override
@@ -237,7 +237,7 @@ public class CashCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -255,7 +255,7 @@ public class CashCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

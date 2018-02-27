@@ -389,7 +389,7 @@ public class AssetCurrency
             }
 
             /* Add the Account Currency to the list */
-            append(myCurr);
+            add(myCurr);
         }
 
         @Override
@@ -404,7 +404,7 @@ public class AssetCurrency
             }
 
             /* Add to the list */
-            append(myCurrency);
+            add(myCurrency);
 
             /* Return it */
             return myCurrency;
@@ -478,7 +478,7 @@ public class AssetCurrency
             }
 
             /* Add to the list */
-            append(myCurr);
+            add(myCurr);
 
             /* Return it */
             return myCurr;

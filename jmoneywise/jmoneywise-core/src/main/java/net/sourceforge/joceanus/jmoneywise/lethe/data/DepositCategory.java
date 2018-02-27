@@ -384,7 +384,7 @@ public class DepositCategory
 
                 /* Build the new linked category and add it to the list */
                 final DepositCategory myCategory = new DepositCategory(myList, myCurr);
-                myList.append(myCategory);
+                myList.add(myCategory);
 
                 /* Adjust the map */
                 myCategory.adjustMapForItem();
@@ -434,7 +434,7 @@ public class DepositCategory
             }
 
             /* Add to the list */
-            append(myCategory);
+            add(myCategory);
 
             /* Return it */
             return myCategory;

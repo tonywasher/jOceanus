@@ -537,7 +537,7 @@ public class TransactionTag
 
                 /* Build the new linked tag and add it to the list */
                 final TransactionTag myTag = new TransactionTag(myList, myCurr);
-                myList.append(myTag);
+                myList.add(myTag);
 
                 /* Adjust the map */
                 myTag.adjustMapForItem();
@@ -615,7 +615,7 @@ public class TransactionTag
             }
 
             /* Add to the list */
-            append(myTag);
+            add(myTag);
 
             /* Return it */
             return myTag;

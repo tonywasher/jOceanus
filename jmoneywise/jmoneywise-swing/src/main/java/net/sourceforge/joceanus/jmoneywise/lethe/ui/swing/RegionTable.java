@@ -445,7 +445,7 @@ public class RegionTable
 
                 /* Add the new item */
                 myRegion.setNewVersion();
-                theRegions.append(myRegion);
+                theRegions.add(myRegion);
 
                 /* Validate the new item and notify of the changes */
                 myRegion.validate();

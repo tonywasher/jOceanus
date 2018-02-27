@@ -887,7 +887,7 @@ public class Cash
 
                 /* Build the new linked cash and add it to the list */
                 final Cash myCash = new Cash(myList, myCurr);
-                myList.append(myCash);
+                myList.add(myCash);
 
                 /* Adjust the map */
                 myCash.adjustMapForItem();
@@ -955,7 +955,7 @@ public class Cash
             }
 
             /* Add to the list */
-            append(myCash);
+            add(myCash);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

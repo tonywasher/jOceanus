@@ -216,7 +216,7 @@ public class SecurityType
             }
 
             /* Add the SecurityType to the list */
-            append(mySecType);
+            add(mySecType);
         }
 
         @Override
@@ -231,7 +231,7 @@ public class SecurityType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -249,7 +249,7 @@ public class SecurityType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

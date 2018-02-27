@@ -550,7 +550,7 @@ public abstract class DataItem<E extends Enum<E>>
     }
 
     @Override
-    public Integer getOrderedId() {
+    public Integer getIndexedId() {
         return theId;
     }
 

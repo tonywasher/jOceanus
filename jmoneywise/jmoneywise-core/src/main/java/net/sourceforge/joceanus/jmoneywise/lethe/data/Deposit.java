@@ -1163,7 +1163,7 @@ public class Deposit
                 /* Build the new linked deposit and add it to the list */
                 final Deposit myDeposit = new Deposit(myList, myCurr);
                 myDeposit.resolveUpdateSetLinks(pUpdateSet);
-                myList.append(myDeposit);
+                myList.add(myDeposit);
 
                 /* Adjust the map */
                 myDeposit.adjustMapForItem();
@@ -1222,7 +1222,7 @@ public class Deposit
             }
 
             /* Add to the list */
-            append(myDeposit);
+            add(myDeposit);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

@@ -330,7 +330,7 @@ public final class LoanBucket
          */
         public LoanBucket getMatchingLoan(final Loan pLoan) {
             /* Return the matching loan if it exists else an orphan bucket */
-            final LoanBucket myLoan = findItemById(pLoan.getOrderedId());
+            final LoanBucket myLoan = findItemById(pLoan.getIndexedId());
             return myLoan != null
                                   ? myLoan
                                   : new LoanBucket(getAnalysis(), pLoan);

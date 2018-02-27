@@ -222,7 +222,7 @@ public class DepositCategoryType
             }
 
             /* Add the Deposit Category to the list */
-            append(myDepType);
+            add(myDepType);
         }
 
         @Override
@@ -237,7 +237,7 @@ public class DepositCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -255,7 +255,7 @@ public class DepositCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

@@ -65,9 +65,9 @@ public class MetisTestDataTable<N, I> {
 
         /* Create test Data */
         final MetisEosListIndexed<MetisTestTableItem> myData = new MetisEosListIndexed<>();
-        myData.addToList(createItem("Damage"));
-        myData.addToList(createItem("Tony"));
-        myData.addToList(createItem("Dave"));
+        myData.add(createItem("Damage"));
+        myData.add(createItem("Tony"));
+        myData.add(createItem("Dave"));
 
         /* Create tableView */
         theTable = pToolkit.newTableManager(MetisTestTableItem.class, myData);

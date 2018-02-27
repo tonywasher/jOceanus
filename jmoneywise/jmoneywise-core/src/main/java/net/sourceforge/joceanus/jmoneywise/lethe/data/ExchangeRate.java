@@ -803,7 +803,7 @@ public class ExchangeRate
             }
 
             /* Add to the list */
-            append(myRate);
+            add(myRate);
 
             /* Return it */
             return myRate;

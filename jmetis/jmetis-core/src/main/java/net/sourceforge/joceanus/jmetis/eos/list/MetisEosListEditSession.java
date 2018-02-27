@@ -418,7 +418,7 @@ public class MetisEosListEditSession {
         /* Commit the item */
         final T myItem = newItemFromBase(myBaseList, pItem);
         myItem.getValueSet().setVersion(theNewVersion);
-        myBaseList.addToList(myItem);
+        myBaseList.add(myItem);
 
         /* Reset history on item */
         pItem.clearHistory();

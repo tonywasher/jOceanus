@@ -226,7 +226,7 @@ public class TransactionCategoryType
             }
 
             /* Add the Category Type to the list */
-            append(myCatType);
+            add(myCatType);
         }
 
         @Override
@@ -241,7 +241,7 @@ public class TransactionCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -259,7 +259,7 @@ public class TransactionCategoryType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

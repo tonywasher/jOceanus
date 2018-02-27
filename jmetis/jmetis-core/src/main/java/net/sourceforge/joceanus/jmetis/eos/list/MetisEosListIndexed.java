@@ -31,8 +31,8 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -139,6 +139,14 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
         return theIdMap;
     }
 
+    /**
+     * Copy the idMap.
+     * @return the copy of the map
+     */
+    public Map<Integer, T> copyIdMap() {
+        return new HashMap<>(theIdMap);
+    }
+
     @Override
     public List<T> getUnderlyingList() {
         return theList;
@@ -168,11 +176,8 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
         return theNextId;
     }
 
-    /**
-     * Add item to the list.
-     * @param pItem the item to add
-     */
-    public void addToList(final T pItem) {
+    @Override
+    public boolean add(final T pItem) {
         /* Access the id */
         final Integer myId = pItem.getIndexedId();
 
@@ -187,16 +192,26 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
         /* Add to the list */
         theIdMap.put(myId, pItem);
         theList.add(pItem);
+        return true;
     }
 
     @Override
-    public boolean add(final T pItem) {
-        throw new UnsupportedOperationException();
-    }
+    public void add(final int pIndex,
+                    final T pItem) {
+        /* Access the id */
+        final Integer myId = pItem.getIndexedId();
 
-    @Override
-    public void add(final int pPosition, final T pItem) {
-        throw new UnsupportedOperationException();
+        /* Check that the id is not currently present */
+        if (theIdMap.get(myId) != null) {
+            throw new IllegalArgumentException("Already present");
+        }
+
+        /* Check and adjust for id */
+        checkId(myId);
+
+        /* Add to the list */
+        theIdMap.put(myId, pItem);
+        theList.add(pIndex, pItem);
     }
 
     /**
@@ -223,7 +238,17 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
 
     @Override
     public boolean remove(final Object pItem) {
-        throw new UnsupportedOperationException();
+        if (pItem instanceof MetisDataIndexedItem) {
+            final Integer myId = ((MetisDataIndexedItem) pItem).getIndexedId();
+            final T myItem = theIdMap.get(myId);
+            if (pItem.equals(myItem)) {
+                /* Remove from the list */
+                theIdMap.remove(myId);
+                theList.remove(myItem);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -242,6 +267,15 @@ public class MetisEosListIndexed<T extends MetisDataIndexedItem>
      */
     public boolean containsItem(final T pItem) {
         return getItemById(pItem.getIndexedId()) != null;
+    }
+
+    /**
+     * Is ID present in list?
+     * @param pId the id to lookup
+     * @return true/false
+     */
+    public boolean containsId(final Integer pId) {
+        return getItemById(pId) != null;
     }
 
     @Override

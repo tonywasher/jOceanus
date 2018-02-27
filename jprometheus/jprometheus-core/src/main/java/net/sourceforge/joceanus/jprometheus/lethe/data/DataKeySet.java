@@ -577,7 +577,7 @@ public class DataKeySet
             }
 
             /* Add to the list */
-            append(mySet);
+            add(mySet);
 
             /* Return it */
             return mySet;

@@ -134,8 +134,8 @@ public final class MetisEosListUpdateManager {
 
         /* Loop through the lists */
         final Iterator<MetisEosListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
-                                                                                             ? pUpdates.reverseKeyIterator()
-                                                                                             : pUpdates.keyIterator();
+                                                                                            ? pUpdates.reverseKeyIterator()
+                                                                                            : pUpdates.keyIterator();
         while (myIterator.hasNext()) {
             final MetisEosListKey myKey = myIterator.next();
 
@@ -448,7 +448,7 @@ public final class MetisEosListUpdateManager {
     private static <T extends MetisFieldVersionedItem> void handleNewUpdate(final MetisEosListVersioned<T> pList,
                                                                             final T pItem) {
         final T myItem = MetisEosListDiffManager.newDiffAddedItem(pList, pItem);
-        pList.addToList(myItem);
+        pList.add(myItem);
     }
 
     /**
@@ -460,7 +460,7 @@ public final class MetisEosListUpdateManager {
     private static <T extends MetisFieldVersionedItem> void handleChangedUpdate(final MetisEosListVersioned<T> pList,
                                                                                 final T pItem) {
         final T myItem = newUpdateChangedItem(pList, pItem);
-        pList.addToList(myItem);
+        pList.add(myItem);
     }
 
     /**
@@ -472,7 +472,7 @@ public final class MetisEosListUpdateManager {
     private static <T extends MetisFieldVersionedItem> void handleDeletedUpdate(final MetisEosListVersioned<T> pList,
                                                                                 final T pItem) {
         final T myItem = MetisEosListDiffManager.newDiffDeletedItem(pList, pItem);
-        pList.addToList(myItem);
+        pList.add(myItem);
     }
 
     /**
@@ -484,7 +484,7 @@ public final class MetisEosListUpdateManager {
     private static <T extends MetisFieldVersionedItem> void handleDelNewUpdate(final MetisEosListVersioned<T> pList,
                                                                                final T pItem) {
         final T myItem = newUpdateDelNewItem(pList, pItem);
-        pList.addToList(myItem);
+        pList.add(myItem);
     }
 
     /**

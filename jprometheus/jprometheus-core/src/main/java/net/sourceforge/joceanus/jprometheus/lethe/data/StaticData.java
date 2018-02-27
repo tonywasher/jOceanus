@@ -878,7 +878,7 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
                 final T myItem = newItem(myClass);
 
                 /* Add the item to the list */
-                append(myItem);
+                add(myItem);
 
                 /* Validate the item */
                 myItem.validate();

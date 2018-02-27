@@ -1158,7 +1158,7 @@ public class Security
                 /* Build the new linked security and add it to the list */
                 final Security mySecurity = new Security(myList, myCurr);
                 mySecurity.resolveUpdateSetLinks(pUpdateSet);
-                myList.append(mySecurity);
+                myList.add(mySecurity);
 
                 /* Adjust the map */
                 mySecurity.adjustMapForItem();
@@ -1256,7 +1256,7 @@ public class Security
             }
 
             /* Add to the list */
-            append(mySecurity);
+            add(mySecurity);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

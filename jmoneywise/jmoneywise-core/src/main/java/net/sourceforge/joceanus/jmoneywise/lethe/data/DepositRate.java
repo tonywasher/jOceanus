@@ -790,7 +790,7 @@ public class DepositRate
                 /* Copy the item */
                 final DepositRate myItem = new DepositRate(myList, myCurr);
                 myItem.resolveUpdateSetLinks(pUpdateSet);
-                myList.append(myItem);
+                myList.add(myItem);
 
                 /* Adjust the map */
                 myItem.adjustMapForItem();
@@ -840,7 +840,7 @@ public class DepositRate
             }
 
             /* Add to the list */
-            append(myRate);
+            add(myRate);
 
             /* Return it */
             return myRate;

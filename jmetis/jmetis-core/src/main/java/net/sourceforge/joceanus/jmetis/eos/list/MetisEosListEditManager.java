@@ -121,7 +121,7 @@ public final class MetisEosListEditManager {
             if (!myCurr.isDeleted()) {
                 /* Create the new item */
                 final T myItem = newItemFromBase(pEdits, myCurr);
-                pEdits.addToList(myItem);
+                pEdits.add(myItem);
             }
         }
 
@@ -221,7 +221,7 @@ public final class MetisEosListEditManager {
             } else if (myItem == null) {
                 /* Create the new item */
                 myItem = newItemFromBase(pList, myCurr);
-                pList.addToList(myItem);
+                pList.add(myItem);
 
                 /* Record change */
                 pChange.registerAdded(myItem);

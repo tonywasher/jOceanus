@@ -484,7 +484,7 @@ public final class TransactionCategory
 
                 /* Build the new linked category and add it to the list */
                 final TransactionCategory myCategory = new TransactionCategory(myList, myCurr);
-                myList.append(myCategory);
+                myList.add(myCategory);
 
                 /* Adjust the map */
                 myCategory.adjustMapForItem();
@@ -567,7 +567,7 @@ public final class TransactionCategory
             }
 
             /* Add to the list */
-            append(myCategory);
+            add(myCategory);
 
             /* Return it */
             return myCategory;

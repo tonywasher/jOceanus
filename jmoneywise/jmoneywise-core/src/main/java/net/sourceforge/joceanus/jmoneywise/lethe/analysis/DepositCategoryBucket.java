@@ -250,7 +250,7 @@ public final class DepositCategoryBucket
                 myItem = new DepositCategoryBucket(theCurrency, pCategory);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -341,7 +341,7 @@ public final class DepositCategoryBucket
                     if (myTotal == null) {
                         /* Create the new bucket and add to new list */
                         myTotal = new DepositCategoryBucket(theCurrency, myParent);
-                        myTotals.addToList(myTotal);
+                        myTotals.add(myTotal);
                     }
                 }
 
@@ -362,7 +362,7 @@ public final class DepositCategoryBucket
                 myCurr.calculateDelta();
 
                 /* Add it to the list */
-                theList.addToList(myCurr);
+                theList.add(myCurr);
             }
 
             /* Sort the list */

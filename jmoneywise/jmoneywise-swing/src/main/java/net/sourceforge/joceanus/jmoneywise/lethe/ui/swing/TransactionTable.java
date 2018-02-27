@@ -792,7 +792,7 @@ public class TransactionTable
             if (myTrans != null) {
                 /* Add the new item */
                 myTrans.setNewVersion();
-                theTransactions.append(myTrans);
+                theTransactions.add(myTrans);
 
                 /* Validate the new item and notify of the changes */
                 myTrans.validate();

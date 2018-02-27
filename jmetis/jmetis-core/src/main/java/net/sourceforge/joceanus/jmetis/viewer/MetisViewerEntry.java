@@ -28,6 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
 
@@ -294,8 +296,12 @@ public class MetisViewerEntry {
             /* Determine whether to add the child */
             if (myValue instanceof List) {
                 addChild = !((List<?>) myValue).isEmpty();
+            } else if (myValue instanceof MetisDataList) {
+                addChild = !((MetisDataList<?>) myValue).isEmpty();
             } else if (myValue instanceof Map) {
                 addChild = !((Map<?, ?>) myValue).isEmpty();
+            } else if (myValue instanceof MetisDataMap) {
+                addChild = !((MetisDataMap<?, ?>) myValue).isEmpty();
             }
 
             /* If we should add the child */

@@ -889,7 +889,7 @@ public class Payee
 
                 /* Build the new linked payee and add it to the list */
                 final Payee myPayee = new Payee(myList, myCurr);
-                myList.append(myPayee);
+                myList.add(myPayee);
 
                 /* Adjust the map */
                 myPayee.adjustMapForItem();
@@ -967,7 +967,7 @@ public class Payee
             }
 
             /* Add to the list */
-            append(myPayee);
+            add(myPayee);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

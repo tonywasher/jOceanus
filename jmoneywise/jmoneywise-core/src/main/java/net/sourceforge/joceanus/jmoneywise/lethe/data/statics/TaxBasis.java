@@ -235,7 +235,7 @@ public class TaxBasis
             }
 
             /* Add the Tax Basis to the list */
-            append(myBasis);
+            add(myBasis);
         }
 
         @Override
@@ -250,7 +250,7 @@ public class TaxBasis
             }
 
             /* Add to the list */
-            append(myBasis);
+            add(myBasis);
 
             /* Return it */
             return myBasis;
@@ -268,7 +268,7 @@ public class TaxBasis
             }
 
             /* Add to the list */
-            append(myBasis);
+            add(myBasis);
 
             /* Return it */
             return myBasis;

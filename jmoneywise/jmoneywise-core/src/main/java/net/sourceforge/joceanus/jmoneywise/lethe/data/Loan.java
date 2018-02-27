@@ -1064,7 +1064,7 @@ public class Loan
                 /* Build the new linked loan and add it to the list */
                 final Loan myLoan = new Loan(myList, myCurr);
                 myLoan.resolveUpdateSetLinks(pUpdateSet);
-                myList.append(myLoan);
+                myList.add(myLoan);
 
                 /* Adjust the map */
                 myLoan.adjustMapForItem();
@@ -1123,7 +1123,7 @@ public class Loan
             }
 
             /* Add to the list */
-            append(myLoan);
+            add(myLoan);
 
             /* Loop through the info items */
             if (pValues.hasInfoItems()) {

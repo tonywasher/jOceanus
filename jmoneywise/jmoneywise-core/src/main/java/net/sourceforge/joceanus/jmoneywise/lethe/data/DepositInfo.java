@@ -368,7 +368,7 @@ public class DepositInfo
             }
 
             /* Add the Info to the list */
-            append(myInfo);
+            add(myInfo);
         }
 
         @Override
@@ -383,7 +383,7 @@ public class DepositInfo
             }
 
             /* Add to the list */
-            append(myInfo);
+            add(myInfo);
 
             /* Return it */
             return myInfo;

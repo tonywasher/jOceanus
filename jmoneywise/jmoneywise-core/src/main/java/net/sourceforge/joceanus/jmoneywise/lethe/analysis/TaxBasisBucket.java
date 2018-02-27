@@ -29,8 +29,8 @@ import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
@@ -932,7 +932,7 @@ public class TaxBasisBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Calculate the delta and add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -961,7 +961,7 @@ public class TaxBasisBucket
                 if (!myBucket.isIdle()) {
                     /* Adjust to the base */
                     myBucket.adjustToBase();
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -1040,7 +1040,7 @@ public class TaxBasisBucket
                 myItem = new TaxBasisBucket(theAnalysis, myBasis);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -1054,7 +1054,7 @@ public class TaxBasisBucket
          */
         public TaxBasisBucket getMatchingBasis(final TaxBasisBucket pTaxBasis) {
             /* Access the matching taxBasis bucket */
-            TaxBasisBucket myBasis = findItemById(pTaxBasis.getTaxBasis().getOrderedId());
+            TaxBasisBucket myBasis = findItemById(pTaxBasis.getTaxBasis().getIndexedId());
             if (myBasis == null) {
                 myBasis = new TaxBasisBucket(theAnalysis, pTaxBasis.getTaxBasis());
             }

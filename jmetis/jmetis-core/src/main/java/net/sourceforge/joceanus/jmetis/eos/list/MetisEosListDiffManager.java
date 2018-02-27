@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmetis.eos.list;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -106,7 +105,7 @@ public final class MetisEosListDiffManager {
      * @return the iterator
      */
     private static Iterator<MetisEosListKey> obtainAllItemTypes(final MetisEosListSetVersioned pNewListSet,
-                                                                 final MetisEosListSetVersioned pOldListSet) {
+                                                                final MetisEosListSetVersioned pOldListSet) {
         /* Create the new List */
         final List<MetisEosListKey> myList = new ArrayList<>();
 
@@ -145,7 +144,7 @@ public final class MetisEosListDiffManager {
                                                                                 final MetisEosListVersioned<T> pNew,
                                                                                 final MetisEosListVersioned<T> pOld) {
         /* Access a copy of the idMap of the old list */
-        final Map<Integer, T> myOld = new HashMap<>(pOld.getIdMap());
+        final Map<Integer, T> myOld = pOld.copyIdMap();
 
         /* Set the sort comparator */
         pList.setComparator(pNew.getComparator());
@@ -162,7 +161,7 @@ public final class MetisEosListDiffManager {
             if (myItem == null) {
                 /* Insert a new item */
                 myItem = newDiffAddedItem(pList, myCurr);
-                pList.addToList(myItem);
+                pList.add(myItem);
 
                 /* else the item exists in the old list */
             } else {
@@ -170,7 +169,7 @@ public final class MetisEosListDiffManager {
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
                     myItem = newDiffChangedItem(pList, myCurr, myItem);
-                    pList.addToList(myItem);
+                    pList.add(myItem);
                 }
 
                 /* Remove the item from the map */
@@ -184,7 +183,7 @@ public final class MetisEosListDiffManager {
             /* Insert a new item */
             final T myCurr = myIterator.next();
             final T myItem = newDiffDeletedItem(pList, myCurr);
-            pList.addToList(myItem);
+            pList.add(myItem);
         }
     }
 
@@ -205,7 +204,7 @@ public final class MetisEosListDiffManager {
             /* Insert a new item */
             final T myCurr = myIterator.next();
             final T myItem = newDiffAddedItem(pList, myCurr);
-            pList.addToList(myItem);
+            pList.add(myItem);
         }
     }
 
@@ -226,7 +225,7 @@ public final class MetisEosListDiffManager {
             /* Insert a new item */
             final T myCurr = myIterator.next();
             final T myItem = newDiffDeletedItem(pList, myCurr);
-            pList.addToList(myItem);
+            pList.add(myItem);
         }
     }
 

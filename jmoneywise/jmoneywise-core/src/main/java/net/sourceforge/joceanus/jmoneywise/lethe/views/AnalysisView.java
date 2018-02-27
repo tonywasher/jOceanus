@@ -315,7 +315,7 @@ public class AnalysisView
 
                 /* Build the new linked transaction and add it to the list */
                 final Transaction myTrans = new Transaction(this, myCurr);
-                append(myTrans);
+                add(myTrans);
             }
         }
 

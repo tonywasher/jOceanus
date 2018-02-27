@@ -537,7 +537,7 @@ public class Region
 
                 /* Build the new linked region and add it to the list */
                 final Region myRegion = new Region(myList, myCurr);
-                myList.append(myRegion);
+                myList.add(myRegion);
 
                 /* Adjust the map */
                 myRegion.adjustMapForItem();
@@ -615,7 +615,7 @@ public class Region
             }
 
             /* Add to the list */
-            append(myRegion);
+            add(myRegion);
 
             /* Return it */
             return myRegion;

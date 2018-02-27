@@ -384,7 +384,7 @@ public class CashCategory
 
                 /* Build the new linked cash category and add it to the list */
                 final CashCategory myCategory = new CashCategory(myList, myCurr);
-                myList.append(myCategory);
+                myList.add(myCategory);
 
                 /* Adjust the map */
                 myCategory.adjustMapForItem();
@@ -434,7 +434,7 @@ public class CashCategory
             }
 
             /* Add to the list */
-            append(myCategory);
+            add(myCategory);
 
             /* Return it */
             return myCategory;

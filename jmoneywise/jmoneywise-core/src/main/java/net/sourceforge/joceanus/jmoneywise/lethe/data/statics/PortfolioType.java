@@ -211,7 +211,7 @@ public class PortfolioType
             }
 
             /* Add the PortfolioType to the list */
-            append(myPortType);
+            add(myPortType);
         }
 
         @Override
@@ -226,7 +226,7 @@ public class PortfolioType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -244,7 +244,7 @@ public class PortfolioType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

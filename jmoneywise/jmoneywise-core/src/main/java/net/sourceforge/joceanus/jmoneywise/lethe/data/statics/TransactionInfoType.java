@@ -239,7 +239,7 @@ public class TransactionInfoType
             }
 
             /* Add the Type to the list */
-            append(myType);
+            add(myType);
         }
 
         @Override
@@ -254,7 +254,7 @@ public class TransactionInfoType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -272,7 +272,7 @@ public class TransactionInfoType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

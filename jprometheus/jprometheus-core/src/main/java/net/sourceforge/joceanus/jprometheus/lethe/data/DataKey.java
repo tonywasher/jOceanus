@@ -594,7 +594,7 @@ public class DataKey
             }
 
             /* Add to the list */
-            append(myKey);
+            add(myKey);
 
             /* Return it */
             return myKey;

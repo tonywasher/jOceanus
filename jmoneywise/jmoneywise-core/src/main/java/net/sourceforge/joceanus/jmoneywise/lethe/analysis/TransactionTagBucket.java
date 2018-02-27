@@ -298,7 +298,7 @@ public final class TransactionTagBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -326,7 +326,7 @@ public final class TransactionTagBucket
                 /* If the bucket is non-idle */
                 if (!myBucket.isIdle()) {
                     /* Add the bucket */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -379,7 +379,7 @@ public final class TransactionTagBucket
                 myItem = new TransactionTagBucket(theAnalysis, pTag);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -393,7 +393,7 @@ public final class TransactionTagBucket
          */
         public TransactionTagBucket getMatchingTag(final TransactionTag pTag) {
             /* Return the matching tag if it exists else an orphan bucket */
-            final TransactionTagBucket myTag = findItemById(pTag.getOrderedId());
+            final TransactionTagBucket myTag = findItemById(pTag.getIndexedId());
             return myTag != null
                                  ? myTag
                                  : new TransactionTagBucket(theAnalysis, pTag);

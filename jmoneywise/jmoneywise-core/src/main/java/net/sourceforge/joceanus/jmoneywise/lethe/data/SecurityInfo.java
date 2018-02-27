@@ -485,7 +485,7 @@ public class SecurityInfo
             }
 
             /* Add the Info to the list */
-            append(myInfo);
+            add(myInfo);
         }
 
         @Override
@@ -500,7 +500,7 @@ public class SecurityInfo
             }
 
             /* Add to the list */
-            append(myInfo);
+            add(myInfo);
 
             /* Return it */
             return myInfo;

@@ -23,7 +23,9 @@
 package net.sourceforge.joceanus.jprometheus.lethe.views;
 
 import java.util.Iterator;
+import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -33,7 +35,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <T> the data type
  * @param <E> the data type enum class
  */
-public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>> {
+public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
+        implements MetisDataList<T> {
     /**
      * The data type.
      */
@@ -52,6 +55,13 @@ public final class UpdateEntry<T extends DataItem<E> & Comparable<? super T>, E 
         /* Store details */
         theDataType = pDataType;
         theDataList = null;
+    }
+
+    @Override
+    public List<T> getUnderlyingList() {
+        return theDataList == null
+                                   ? null
+                                   : theDataList.getUnderlyingList();
     }
 
     /**

@@ -29,8 +29,8 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
@@ -411,7 +411,7 @@ public final class PortfolioBucket
      */
     public SecurityBucket findSecurityBucket(final Security pSecurity) {
         /* Return the security bucket for the portfolio's list */
-        return theSecurities.findItemById(pSecurity.getOrderedId());
+        return theSecurities.findItemById(pSecurity.getIndexedId());
     }
 
     @Override
@@ -713,7 +713,7 @@ public final class PortfolioBucket
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -741,7 +741,7 @@ public final class PortfolioBucket
                 /* Ignore if portfolio is idle */
                 if (!myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -769,7 +769,7 @@ public final class PortfolioBucket
                 /* If the bucket is non-idle or active */
                 if (myBucket.isActive() || !myBucket.isIdle()) {
                     /* Add to the list */
-                    theList.addToList(myBucket);
+                    theList.add(myBucket);
                 }
             }
         }
@@ -846,7 +846,7 @@ public final class PortfolioBucket
                 myItem = new PortfolioBucket(theAnalysis, pPortfolio);
 
                 /* Add to the list */
-                theList.addToList(myItem);
+                theList.add(myItem);
             }
 
             /* Return the bucket */
@@ -887,7 +887,7 @@ public final class PortfolioBucket
          */
         public PortfolioBucket getMatchingPortfolio(final Portfolio pPortfolio) {
             /* Return the matching portfolio if it exists else an orphan bucket */
-            final PortfolioBucket myPortfolio = findItemById(pPortfolio.getOrderedId());
+            final PortfolioBucket myPortfolio = findItemById(pPortfolio.getIndexedId());
             return myPortfolio != null
                                        ? myPortfolio
                                        : new PortfolioBucket(theAnalysis, pPortfolio);
@@ -900,7 +900,7 @@ public final class PortfolioBucket
          */
         public SecurityBucket getMatchingSecurityHolding(final SecurityHolding pSecurity) {
             /* Find the portfolio and holding */
-            final PortfolioBucket myPortfolio = findItemById(pSecurity.getPortfolio().getOrderedId());
+            final PortfolioBucket myPortfolio = findItemById(pSecurity.getPortfolio().getIndexedId());
             final SecurityBucket mySecurity = myPortfolio == null
                                                                   ? null
                                                                   : myPortfolio.findSecurityBucket(pSecurity.getSecurity());

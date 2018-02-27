@@ -213,7 +213,7 @@ public class PayeeType
             }
 
             /* Add the PayeeType to the list */
-            append(myPayeeType);
+            add(myPayeeType);
         }
 
         @Override
@@ -228,7 +228,7 @@ public class PayeeType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;
@@ -246,7 +246,7 @@ public class PayeeType
             }
 
             /* Add to the list */
-            append(myType);
+            add(myType);
 
             /* Return it */
             return myType;

@@ -868,7 +868,7 @@ public class Schedule
 
                 /* Copy the item */
                 final Schedule myItem = new Schedule(myList, myCurr);
-                myList.append(myItem);
+                myList.add(myItem);
             }
 
             /* Sort the list */
@@ -907,7 +907,7 @@ public class Schedule
             }
 
             /* Add to the list */
-            append(mySchedule);
+            add(mySchedule);
 
             /* Return it */
             return mySchedule;

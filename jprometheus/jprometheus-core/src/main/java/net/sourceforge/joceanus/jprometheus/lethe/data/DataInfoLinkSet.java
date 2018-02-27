@@ -135,7 +135,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
 
             /* Add a copy item */
             final T myNew = pList.addCopyItem(myLink);
-            theLinkSet.append(myNew);
+            theLinkSet.add(myNew);
         }
 
         /* build active links */
@@ -206,7 +206,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         /* If the item is not already linked */
         if (!isItemLinked(pItem)) {
             /* Add the item to the list */
-            theLinkSet.append(pItem);
+            theLinkSet.add(pItem);
             sortLinks();
         }
     }
@@ -297,7 +297,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
                     myLink.setValue(myItem);
                     myLink.setValueLink(myItem);
                     myLink.setNewVersion();
-                    theLinkSet.append(myLink);
+                    theLinkSet.add(myLink);
 
                     /* else restore the value */
                 } else {
