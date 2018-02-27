@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 
 /**
  * Transaction FieldIds.

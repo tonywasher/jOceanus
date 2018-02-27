@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 
 /**
  * Table Calculator.

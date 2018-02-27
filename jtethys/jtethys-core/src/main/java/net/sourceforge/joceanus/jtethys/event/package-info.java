@@ -24,4 +24,3 @@
  * Generic event handling.
  */
 package net.sourceforge.joceanus.jtethys.event;
-

@@ -24,4 +24,3 @@
  * Classes to manage the POM file.
  */
 package net.sourceforge.joceanus.jthemis.scm.maven;
-

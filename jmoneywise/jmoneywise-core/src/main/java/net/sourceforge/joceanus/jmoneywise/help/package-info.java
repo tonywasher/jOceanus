@@ -24,4 +24,3 @@
  * Help support details for jMoneyWise.
  */
 package net.sourceforge.joceanus.jmoneywise.help;
-

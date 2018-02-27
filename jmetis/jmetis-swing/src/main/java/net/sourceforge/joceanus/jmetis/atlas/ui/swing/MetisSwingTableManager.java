@@ -27,11 +27,6 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
@@ -51,7 +46,12 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShort
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableStringColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableUnitsColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -105,7 +105,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
      */
     public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
                                   final Class<R> pClazz,
-                                  final MetisEosListIndexed<R> pList) {
+                                  final MetisListIndexed<R> pList) {
         /* Initialise underlying class */
         super(pFactory, pClazz);
 

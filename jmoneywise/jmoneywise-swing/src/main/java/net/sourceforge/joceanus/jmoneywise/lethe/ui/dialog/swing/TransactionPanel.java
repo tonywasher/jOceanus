@@ -32,9 +32,9 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldSetBase.MetisFieldUpdate;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;

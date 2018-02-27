@@ -26,12 +26,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataDisableItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDilutedPriceColumn;
@@ -49,6 +43,12 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrol
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShortColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableStringColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableUnitsColumn;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDisableItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;

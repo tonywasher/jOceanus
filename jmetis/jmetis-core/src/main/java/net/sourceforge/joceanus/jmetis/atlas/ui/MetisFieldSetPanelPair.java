@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;

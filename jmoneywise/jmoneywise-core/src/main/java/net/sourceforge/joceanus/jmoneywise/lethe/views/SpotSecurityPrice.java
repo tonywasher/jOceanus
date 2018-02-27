@@ -25,8 +25,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.views;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;

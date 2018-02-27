@@ -24,4 +24,3 @@
  * HTTP Client services.
  */
 package net.sourceforge.joceanus.jmetis.http;
-

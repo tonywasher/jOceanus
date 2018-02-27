@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * Data Fields.
@@ -790,8 +790,8 @@ public final class MetisFields {
         for (E myValue : pClass.getEnumConstants()) {
             /* Determine name */
             final String myName = (myValue instanceof MetisLetheFieldEnum)
-                                                                      ? ((MetisLetheFieldEnum) myValue).getFieldName()
-                                                                      : myValue.toString();
+                                                                           ? ((MetisLetheFieldEnum) myValue).getFieldName()
+                                                                           : myValue.toString();
 
             /* Declare a field for the value */
             final MetisField myField = pAnchor.declareLocalField(myName);

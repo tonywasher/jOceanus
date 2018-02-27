@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableInteg
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableListColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShortColumn;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
@@ -64,7 +64,7 @@ public class MetisTestDataTable<N, I> {
         theHelper = new TethysScrollUITestHelper<>();
 
         /* Create test Data */
-        final MetisEosListIndexed<MetisTestTableItem> myData = new MetisEosListIndexed<>();
+        final MetisListIndexed<MetisTestTableItem> myData = new MetisListIndexed<>();
         myData.add(createItem("Damage"));
         myData.add(createItem("Tony"));
         myData.add(createItem("Dave"));

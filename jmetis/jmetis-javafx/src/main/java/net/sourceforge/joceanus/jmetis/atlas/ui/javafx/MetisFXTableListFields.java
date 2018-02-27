@@ -30,10 +30,10 @@ import java.util.Map;
 
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 
 /**
  * Table List fields.
@@ -59,7 +59,7 @@ public class MetisFXTableListFields<R extends MetisFieldTableItem> {
      * Constructor.
      * @param pList the editList
      */
-    public MetisFXTableListFields(final MetisEosListIndexed<R> pList) {
+    public MetisFXTableListFields(final MetisListIndexed<R> pList) {
         theFields = new ArrayList<>();
         theIdMap = new HashMap<>();
     }

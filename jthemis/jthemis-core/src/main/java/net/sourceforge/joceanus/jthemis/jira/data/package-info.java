@@ -24,4 +24,3 @@
  * Package to provide an easy to use link into Jira from Java.
  */
 package net.sourceforge.joceanus.jthemis.jira.data;
-

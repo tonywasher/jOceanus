@@ -40,7 +40,7 @@ public class ThemisLogicException
      * @param s the description of the exception
      */
     public ThemisLogicException(final Object o,
-                                 final String s) {
+                                final String s) {
         super(o, s);
     }
 

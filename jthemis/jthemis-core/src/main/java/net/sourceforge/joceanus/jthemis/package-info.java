@@ -24,4 +24,3 @@
  * Package to provide exception classes for jThemis.
  */
 package net.sourceforge.joceanus.jthemis;
-

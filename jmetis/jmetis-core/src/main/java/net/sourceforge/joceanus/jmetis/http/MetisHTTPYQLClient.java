@@ -33,7 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalParser;

@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSimpleId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
 
 /**

@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.field;
 
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 
 /**
  * Encrypted Data Item.

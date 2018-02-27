@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 
 /**
  * Methods for a Bucket Attribute.

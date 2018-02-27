@@ -27,12 +27,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Transaction;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
@@ -263,7 +263,7 @@ public final class TransactionTagBucket
         /**
          * The list.
          */
-        private final MetisEosListIndexed<TransactionTagBucket> theList;
+        private final MetisListIndexed<TransactionTagBucket> theList;
 
         /**
          * Construct a top-level List.
@@ -271,7 +271,7 @@ public final class TransactionTagBucket
          */
         protected TransactionTagBucketList(final Analysis pAnalysis) {
             theAnalysis = pAnalysis;
-            theList = new MetisEosListIndexed<>();
+            theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getTransTag().compareTo(r.getTransTag()));
         }
 

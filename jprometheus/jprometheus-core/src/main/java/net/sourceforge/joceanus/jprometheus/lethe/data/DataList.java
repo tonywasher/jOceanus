@@ -26,16 +26,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusTableItem.PrometheusTableList;
@@ -134,7 +134,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     /**
      * The list.
      */
-    private final MetisEosListIndexed<T> theList;
+    private final MetisListIndexed<T> theList;
 
     /**
      * The class.
@@ -205,7 +205,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         theGeneration = pDataSet.getGeneration();
 
         /* Create the list */
-        theList = new MetisEosListIndexed<>();
+        theList = new MetisListIndexed<>();
         theList.setComparator((l, r) -> l.compareTo(r));
 
         /* Declare fields (allowing for subclasses) */

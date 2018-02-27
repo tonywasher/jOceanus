@@ -24,4 +24,3 @@
  * Class to provide a Data window allowing a user to walk the various data chains.
  */
 package net.sourceforge.joceanus.jmetis.lethe.data;
-

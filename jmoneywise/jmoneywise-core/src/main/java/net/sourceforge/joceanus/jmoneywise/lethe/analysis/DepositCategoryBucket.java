@@ -25,11 +25,11 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DepositBucket.DepositBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit;
@@ -147,7 +147,7 @@ public final class DepositCategoryBucket
         /**
          * The list.
          */
-        private final MetisEosListIndexed<DepositCategoryBucket> theList;
+        private final MetisListIndexed<DepositCategoryBucket> theList;
 
         /**
          * The currency.
@@ -173,7 +173,7 @@ public final class DepositCategoryBucket
             theAnalysis = pAnalysis;
             theCurrency = theAnalysis.getCurrency();
             theTotals = allocateTotalsBucket();
-            theList = new MetisEosListIndexed<>();
+            theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getAccountCategory().compareTo(r.getAccountCategory()));
         }
 
@@ -315,7 +315,7 @@ public final class DepositCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets (to avoid breaking iterator on add) */
-            final MetisEosListIndexed<DepositCategoryBucket> myTotals = new MetisEosListIndexed<>();
+            final MetisListIndexed<DepositCategoryBucket> myTotals = new MetisListIndexed<>();
 
             /* Loop through the buckets */
             Iterator<DepositCategoryBucket> myIterator = iterator();

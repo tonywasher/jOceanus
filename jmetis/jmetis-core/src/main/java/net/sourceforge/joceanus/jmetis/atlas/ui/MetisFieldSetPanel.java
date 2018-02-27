@@ -30,11 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldSetDef;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetCharArrayItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDateItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetDilutionItem;
@@ -50,6 +45,11 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFiel
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetShortItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetStringItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldSetPanelItem.MetisFieldSetUnitsItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;

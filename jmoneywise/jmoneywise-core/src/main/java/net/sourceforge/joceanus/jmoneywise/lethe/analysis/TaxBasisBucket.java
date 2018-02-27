@@ -27,14 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisAccountBucket.TaxBasisAccountBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -869,7 +869,7 @@ public class TaxBasisBucket
         /**
          * The list.
          */
-        private final MetisEosListIndexed<TaxBasisBucket> theList;
+        private final MetisListIndexed<TaxBasisBucket> theList;
 
         /**
          * The data.
@@ -897,7 +897,7 @@ public class TaxBasisBucket
             theData = theAnalysis.getData();
             theCharges = pGains;
             theTotals = allocateTotalsBucket();
-            theList = new MetisEosListIndexed<>();
+            theList = new MetisListIndexed<>();
             theList.setComparator((l, r) -> l.getTaxBasis().compareTo(r.getTaxBasis()));
         }
 

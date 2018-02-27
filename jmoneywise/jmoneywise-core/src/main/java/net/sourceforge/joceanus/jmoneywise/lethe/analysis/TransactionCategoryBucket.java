@@ -27,14 +27,14 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TaxBasisBucket.TaxBasisBucketList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -683,7 +683,7 @@ public final class TransactionCategoryBucket
         /**
          * The list.
          */
-        private final MetisEosListIndexed<TransactionCategoryBucket> theList;
+        private final MetisListIndexed<TransactionCategoryBucket> theList;
 
         /**
          * The data.
@@ -754,7 +754,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisEosListIndexed<>();
+            theList = new MetisListIndexed<>();
 
             /* Access taxBasis list */
             theTaxBasis = theAnalysis.getTaxBasis();
@@ -785,7 +785,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisEosListIndexed<>();
+            theList = new MetisListIndexed<>();
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -828,7 +828,7 @@ public final class TransactionCategoryBucket
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
             theTotals = allocateTotalsBucket();
-            theList = new MetisEosListIndexed<>();
+            theList = new MetisListIndexed<>();
 
             /* Don't use implied buckets */
             theTaxBasis = null;
@@ -1112,7 +1112,7 @@ public final class TransactionCategoryBucket
          */
         protected void produceTotals() {
             /* Create a list of new buckets */
-            final MetisEosListIndexed<TransactionCategoryBucket> myTotals = new MetisEosListIndexed<>();
+            final MetisListIndexed<TransactionCategoryBucket> myTotals = new MetisListIndexed<>();
 
             /* Loop through the buckets */
             Iterator<TransactionCategoryBucket> myIterator = iterator();

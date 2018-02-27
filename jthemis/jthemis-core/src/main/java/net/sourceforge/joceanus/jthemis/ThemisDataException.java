@@ -35,14 +35,15 @@ public class ThemisDataException
     private static final long serialVersionUID = 4637657079563352555L;
 
     /**
-     * Create a new Themis Exception object based on an object, a string and an underlying exception.
+     * Create a new Themis Exception object based on an object, a string and an underlying
+     * exception.
      * @param o the object
      * @param s the description of the exception
      * @param e the underlying exception
      */
     public ThemisDataException(final Object o,
-                                final String s,
-                                final Throwable e) {
+                               final String s,
+                               final Throwable e) {
         super(o, s, e);
     }
 
@@ -52,7 +53,7 @@ public class ThemisDataException
      * @param s the description of the exception
      */
     public ThemisDataException(final Object o,
-                                final String s) {
+                               final String s) {
         super(o, s);
     }
 
@@ -62,7 +63,7 @@ public class ThemisDataException
      * @param e the underlying exception
      */
     public ThemisDataException(final String s,
-                                final Throwable e) {
+                               final Throwable e) {
         super(s, e);
     }
 

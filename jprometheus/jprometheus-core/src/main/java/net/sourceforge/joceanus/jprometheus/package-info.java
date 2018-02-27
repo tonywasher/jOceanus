@@ -24,4 +24,3 @@
  * Main window package.
  */
 package net.sourceforge.joceanus.jprometheus;
-

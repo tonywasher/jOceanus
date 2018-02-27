@@ -118,7 +118,7 @@ public class KCCMXBlockCipher
 
         if (nonce.length > engine.getBlockSize()) {
             throw new IllegalArgumentException("IV must be at most " + engine.getBlockSize() + " long");
-        }    
+        }
         this.nonce = Arrays.copyOf(nonce, engine.getBlockSize());
 
         this.mac = new byte[macSize];

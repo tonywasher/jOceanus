@@ -25,4 +25,3 @@
  * @author Tony Washer
  */
 package net.sourceforge.joceanus.jthemis.svn.tasks;
-

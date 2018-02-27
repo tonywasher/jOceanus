@@ -21,8 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * JGordianKnot ZipFile is an extension to the JGordianKnot security suite that reads and writes data encrypted via JGordianKnot
- * to a ZipFile. It also provides LZMA compression support.
+ * JGordianKnot ZipFile is an extension to the JGordianKnot security suite that reads and writes
+ * data encrypted via JGordianKnot to a ZipFile. It also provides LZMA compression support.
  */
 package net.sourceforge.joceanus.jgordianknot.zip;
-

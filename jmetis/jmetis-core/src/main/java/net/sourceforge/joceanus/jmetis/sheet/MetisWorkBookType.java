@@ -84,7 +84,7 @@ public enum MetisWorkBookType {
 
         /* Unrecognised type */
         throw new MetisLogicException("Unrecognised file type "
-                                       + pFileName);
+                                      + pFileName);
     }
 
     @Override

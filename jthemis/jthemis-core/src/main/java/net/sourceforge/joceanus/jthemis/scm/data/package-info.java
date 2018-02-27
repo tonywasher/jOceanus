@@ -24,4 +24,3 @@
  * Package to provide a framework for source control data.
  */
 package net.sourceforge.joceanus.jthemis.scm.data;
-

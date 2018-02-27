@@ -40,7 +40,7 @@ public class GordianCryptoException
      * @param e the underlying exception
      */
     public GordianCryptoException(final String s,
-                                   final Throwable e) {
+                                  final Throwable e) {
         super(s, e);
     }
 }

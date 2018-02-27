@@ -22,11 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.field;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldEquality;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldStorage;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldVersioned;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldEquality;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersioned;
 
 /**
  * Prometheus Data fields.

@@ -92,7 +92,7 @@ public final class MetisSwingFieldData {
      * @param pFixed is the item fixed width?
      */
     protected MetisSwingFieldData(final MetisSwingFieldManager pManager,
-                             final boolean pFixed) {
+                                  final boolean pFixed) {
         /* Record parameters */
         theManager = pManager;
         isFixed = pFixed;

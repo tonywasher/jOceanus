@@ -26,7 +26,7 @@ import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 
 /**
  * Class representing a row in Oasis.

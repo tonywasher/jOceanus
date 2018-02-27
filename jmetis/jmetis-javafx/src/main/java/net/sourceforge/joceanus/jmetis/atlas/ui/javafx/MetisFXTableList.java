@@ -26,11 +26,11 @@ import java.util.Iterator;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListChange;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListEvent;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListChange;
+import net.sourceforge.joceanus.jmetis.list.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -43,7 +43,7 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
     /**
      * The core List.
      */
-    private final MetisEosListIndexed<R> theCoreList;
+    private final MetisListIndexed<R> theCoreList;
 
     /**
      * The observableList.
@@ -59,7 +59,7 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
      * Constructor.
      * @param pList the list
      */
-    protected MetisFXTableList(final MetisEosListIndexed<R> pList) {
+    protected MetisFXTableList(final MetisListIndexed<R> pList) {
         /* Store parameters */
         theCoreList = pList;
 
@@ -70,9 +70,9 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
         theList = FXCollections.observableArrayList();
 
         /* Listen to events on the versionedList */
-        final TethysEventRegistrar<MetisEosListEvent> myRegistrar = theCoreList.getEventRegistrar();
-        myRegistrar.addEventListener(MetisEosListEvent.REFRESH, e -> refreshList());
-        myRegistrar.addEventListener(MetisEosListEvent.UPDATE, this::handleEditChanges);
+        final TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
+        myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> refreshList());
+        myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
     }
 
     @Override
@@ -104,10 +104,10 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
      * Handle editChanges.
      * @param pChange the change
      */
-    private void handleEditChanges(final TethysEvent<MetisEosListEvent> pChange) {
+    private void handleEditChanges(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        final MetisEosListChange<R> myChange = (MetisEosListChange<R>) pChange.getDetails(MetisEosListChange.class);
+        final MetisListChange<R> myChange = (MetisListChange<R>) pChange.getDetails(MetisListChange.class);
 
         /* Handle deleted items */
         handleDeletedItems(myChange.deletedIterator());

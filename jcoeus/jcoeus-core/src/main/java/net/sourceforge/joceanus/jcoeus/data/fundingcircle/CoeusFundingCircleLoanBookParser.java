@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusCSVParser;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

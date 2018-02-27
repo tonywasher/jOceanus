@@ -22,8 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataIndexedItem;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataDeletable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataUpdatable;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;

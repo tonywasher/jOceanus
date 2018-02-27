@@ -25,4 +25,3 @@
  * Java Utilities.
  */
 package net.sourceforge.joceanus.jtethys;
-

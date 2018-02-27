@@ -40,7 +40,7 @@ public class ThemisIOException
      * @param e the underlying exception
      */
     public ThemisIOException(final String s,
-                              final Throwable e) {
+                             final Throwable e) {
         super(s, e);
     }
 

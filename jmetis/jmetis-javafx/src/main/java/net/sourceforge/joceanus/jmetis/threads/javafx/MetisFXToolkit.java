@@ -26,9 +26,9 @@ import javafx.scene.Node;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianFXHashManager;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXTableManager;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -112,7 +112,7 @@ public class MetisFXToolkit
 
     @Override
     public <R extends MetisFieldTableItem> MetisFXTableManager<R> newTableManager(final Class<R> pClazz,
-                                                                                  final MetisEosListIndexed<R> pList) {
+                                                                                  final MetisListIndexed<R> pList) {
         return new MetisFXTableManager<>(getGuiFactory(), pClazz, pList);
     }
 }

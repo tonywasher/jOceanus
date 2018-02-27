@@ -27,7 +27,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

@@ -28,7 +28,7 @@ import java.awt.Font;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -157,7 +157,7 @@ public class MetisSwingFieldManager
      * @param pConfig the render configuration
      */
     public MetisSwingFieldManager(final TethysSwingGuiFactory pGuiFactory,
-                             final MetisSwingFieldConfig pConfig) {
+                                  final MetisSwingFieldConfig pConfig) {
         /* Store the parameters */
         theFactory = pGuiFactory;
         theConfig = pConfig;
@@ -244,7 +244,7 @@ public class MetisSwingFieldManager
      * @return the render data
      */
     protected <X extends MetisFieldSetItem> MetisSwingFieldData determineRenderData(final MetisSwingFieldElement<X> pElement,
-                                                                               final X pItem) {
+                                                                                    final X pItem) {
         /* Allocate the render data */
         final MetisSwingFieldData myData = new MetisSwingFieldData(this, pElement.isFixedWidth());
 

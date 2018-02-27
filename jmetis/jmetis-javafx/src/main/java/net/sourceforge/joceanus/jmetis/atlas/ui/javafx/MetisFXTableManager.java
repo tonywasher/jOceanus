@@ -23,9 +23,6 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
 
 import javafx.scene.Node;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldDef;
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
@@ -45,7 +42,10 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShort
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableStringColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableUnitsColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
@@ -91,7 +91,7 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      */
     public MetisFXTableManager(final TethysFXGuiFactory pFactory,
                                final Class<R> pClazz,
-                               final MetisEosListIndexed<R> pList) {
+                               final MetisListIndexed<R> pList) {
         /* Initialise underlying class */
         super(pFactory, pClazz);
 

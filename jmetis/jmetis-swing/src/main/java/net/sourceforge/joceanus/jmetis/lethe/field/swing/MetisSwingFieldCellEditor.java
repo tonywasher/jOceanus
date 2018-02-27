@@ -122,8 +122,8 @@ public final class MetisSwingFieldCellEditor {
             /* Set the text */
             theField.setText(((pValue == null)
                               || (MetisLetheFieldValue.ERROR.equals(pValue)))
-                                                                         ? STR_EMPTY
-                                                                         : (String) pValue);
+                                                                              ? STR_EMPTY
+                                                                              : (String) pValue);
             return theField;
         }
 

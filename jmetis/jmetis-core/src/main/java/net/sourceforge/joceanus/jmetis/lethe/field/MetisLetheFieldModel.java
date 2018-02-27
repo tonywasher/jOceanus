@@ -25,10 +25,10 @@ package net.sourceforge.joceanus.jmetis.lethe.field;
 import java.util.Currency;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFieldValue;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFieldSetItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -81,8 +81,8 @@ public abstract class MetisLetheFieldModel<T extends MetisFieldSetItem> {
      * @param pClass the class of the model
      */
     protected MetisLetheFieldModel(final MetisLetheFieldSetBase pFieldSet,
-                              final MetisField pField,
-                              final MetisDataType pClass) {
+                                   final MetisField pField,
+                                   final MetisDataType pClass) {
         /* Store values */
         theFieldSet = pFieldSet;
         theClass = pClass;

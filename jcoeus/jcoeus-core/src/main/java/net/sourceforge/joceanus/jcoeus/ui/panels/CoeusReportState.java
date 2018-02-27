@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jcoeus.ui.panels;
 import net.sourceforge.joceanus.jcoeus.data.CoeusCalendar;
 import net.sourceforge.joceanus.jcoeus.data.CoeusMarketProvider;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
-import net.sourceforge.joceanus.jmetis.atlas.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 

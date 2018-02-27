@@ -26,10 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.atlas.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListChange;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListEvent;
-import net.sourceforge.joceanus.jmetis.eos.list.MetisEosListIndexed;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListChange;
+import net.sourceforge.joceanus.jmetis.list.MetisListEvent;
+import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
@@ -41,7 +41,7 @@ public class MetisSwingTableListManager<R extends MetisFieldTableItem> {
     /**
      * The underlying List.
      */
-    private final MetisEosListIndexed<R> theCoreList;
+    private final MetisListIndexed<R> theCoreList;
 
     /**
      * The TableList.
@@ -64,7 +64,7 @@ public class MetisSwingTableListManager<R extends MetisFieldTableItem> {
      * @param pList the list
      */
     protected MetisSwingTableListManager(final MetisSwingTableManager<R> pTable,
-                                         final MetisEosListIndexed<R> pList) {
+                                         final MetisListIndexed<R> pList) {
         /* Store parameters */
         theTable = pTable;
         theCoreList = pList;
@@ -77,9 +77,9 @@ public class MetisSwingTableListManager<R extends MetisFieldTableItem> {
         initialiseLists();
 
         /* Listen to events on the editList */
-        final TethysEventRegistrar<MetisEosListEvent> myRegistrar = theCoreList.getEventRegistrar();
-        myRegistrar.addEventListener(MetisEosListEvent.REFRESH, e -> handleRefresh());
-        myRegistrar.addEventListener(MetisEosListEvent.UPDATE, this::handleEditChanges);
+        final TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
+        myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> handleRefresh());
+        myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
 
     }
 
@@ -125,10 +125,10 @@ public class MetisSwingTableListManager<R extends MetisFieldTableItem> {
      * Handle editChanges.
      * @param pChange the change
      */
-    private void handleEditChanges(final TethysEvent<MetisEosListEvent> pChange) {
+    private void handleEditChanges(final TethysEvent<MetisListEvent> pChange) {
         /* Access the change detail */
         @SuppressWarnings("unchecked")
-        final MetisEosListChange<R> myChange = (MetisEosListChange<R>) pChange.getDetails(MetisEosListChange.class);
+        final MetisListChange<R> myChange = (MetisListChange<R>) pChange.getDetails(MetisListChange.class);
 
         /* Handle deleted items */
         handleDeletedItems(myChange.deletedIterator());
