@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -257,9 +258,9 @@ public class ControlData
     public static class ControlDataList
             extends DataList<ControlData, CryptographyDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<ControlDataList> FIELD_DEFS = MetisFieldSet.newFieldSet(ControlDataList.class);
 
         /**
          * Construct an empty CORE Control Data list.
@@ -288,7 +289,7 @@ public class ControlData
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<ControlDataList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

@@ -933,7 +933,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         @Override
         public boolean hasNext() {
             /* If we have a set iterator with more to go */
-            if ((theSetIterator != null) && (theSetIterator.hasNext())) {
+            if (theSetIterator != null
+                && theSetIterator.hasNext()) {
                 /* We have a next item */
                 return true;
             }
@@ -948,7 +949,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, S, E>,
         @Override
         public T next() {
             /* If we have a set iterator with more to go */
-            if ((theSetIterator != null) && (theSetIterator.hasNext())) {
+            if (theSetIterator != null
+                && theSetIterator.hasNext()) {
                 /* Return the item */
                 return theSetIterator.next();
             }

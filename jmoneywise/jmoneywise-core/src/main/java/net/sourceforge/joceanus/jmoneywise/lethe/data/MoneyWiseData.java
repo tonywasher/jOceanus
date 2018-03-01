@@ -23,13 +23,10 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Cash.CashList;
@@ -89,22 +86,16 @@ public class MoneyWiseData
     /**
      * Local Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_NAME.getValue(), DataSet.FIELD_DEFS);
+    private static final MetisFieldSet<MoneyWiseData> FIELD_DEFS = MetisFieldSet.newFieldSet(MoneyWiseData.class);
 
     /**
-     * FieldSet map.
+     * Declare Fields.
      */
-    private static final Map<MetisField, MoneyWiseDataType> FIELDSET_MAP = MetisFields.buildFieldMap(FIELD_DEFS, MoneyWiseDataType.class);
-
-    /**
-     * DefaultCurrency Field Id.
-     */
-    private static final MetisField FIELD_DEFCURR = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
-
-    /**
-     * SecurityHoldings Field Id.
-     */
-    private static final MetisField FIELD_HOLDINGSMAP = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP.getValue());
+    static {
+        FIELD_DEFS.declareLocalFieldsForEnum(MoneyWiseDataType.class, MoneyWiseData::getFieldListValue);
+        FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT, MoneyWiseData::getDefaultCurrency);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_HOLDINGSMAP, MoneyWiseData::getSecurityHoldingsMap);
+    }
 
     /**
      * TaxFactory.
@@ -156,32 +147,8 @@ public class MoneyWiseData
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisFieldSet<MoneyWiseData> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
-        if (FIELD_DEFCURR.equals(pField)) {
-            return theDefaultCurrency == null
-                                              ? MetisDataFieldValue.SKIP
-                                              : theDefaultCurrency;
-        }
-        if (FIELD_HOLDINGSMAP.equals(pField)) {
-            return theSecurityHoldings == null
-                                               ? MetisDataFieldValue.SKIP
-                                               : theSecurityHoldings;
-        }
-
-        /* Handle List fields */
-        final MoneyWiseDataType myType = FIELDSET_MAP.get(pField);
-        if (myType != null) {
-            /* Access the list */
-            return getFieldListValue(myType);
-        }
-
-        /* Pass call on */
-        return super.getFieldValue(pField);
     }
 
     @Override

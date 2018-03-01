@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmetis.field;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -342,15 +343,23 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * @param <E> the Enum
      * @param pClazz the class of the Enum
      * @param pValue the value supplier
+     * @return map of class to fields
      */
-    public <E extends Enum<E>> void declareLocalFieldsForEnum(final Class<E> pClazz,
-                                                              final BiFunction<T, E, Object> pValue) {
+    public <E extends Enum<E>> Map<E, MetisFieldDef> declareLocalFieldsForEnum(final Class<E> pClazz,
+                                                                               final BiFunction<T, E, Object> pValue) {
         /* Loop through the enum constants */
+        Map<E, MetisFieldDef> myMap = new EnumMap<>(pClazz);
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
             final MetisDataFieldId myId = new MetisFieldSimpleId(myValue.toString());
-            declareDataField(myId, t -> pValue.apply(t, myValue), MetisFieldStorage.LOCAL);
+            MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue), MetisFieldStorage.LOCAL);
+
+            /* Store into the map */
+            myMap.put(myValue, myField);
         }
+
+        /* Return the map */
+        return myMap;
     }
 
     /**

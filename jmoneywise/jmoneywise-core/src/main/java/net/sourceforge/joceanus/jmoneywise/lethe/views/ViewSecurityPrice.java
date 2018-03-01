@@ -24,8 +24,8 @@ package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -37,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -233,12 +232,14 @@ public class ViewSecurityPrice
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<ViewSecurityPriceList> FIELD_DEFS = MetisFieldSet.newFieldSet(ViewSecurityPriceList.class);
 
         /**
-         * The Dilutions field id.
+         * The fields.
          */
-        public static final MetisField FIELD_DILUTIONS = FIELD_DEFS.declareEqualityField(AnalysisResource.ANALYSIS_DILUTIONS.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(AnalysisResource.ANALYSIS_DILUTIONS, ViewSecurityPriceList::getDilutions);
+        }
 
         /**
          * Dilutions list.
@@ -281,7 +282,7 @@ public class ViewSecurityPrice
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<ViewSecurityPriceList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -298,16 +299,6 @@ public class ViewSecurityPrice
         @Override
         protected ViewSecurityPriceList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_DILUTIONS.equals(pField)) {
-                return theDilutions.isEmpty()
-                                              ? MetisDataFieldValue.SKIP
-                                              : theDilutions;
-            }
-            return super.getFieldValue(pField);
         }
 
         @Override

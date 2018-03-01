@@ -50,6 +50,11 @@ public class GordianKnuthObfuscater {
     private final int theInverse;
 
     /**
+     * Knuth Mask.
+     */
+    private final int theMask;
+
+    /**
      * Constructor.
      * @param pIdManager the Id Manager
      * @param pPersonalisation pPersonalisation
@@ -60,64 +65,104 @@ public class GordianKnuthObfuscater {
         theIdManager = pIdManager;
 
         /* Generate Knuth Prime/Inverse */
-        final BigInteger[] myKnuth = generatePrime(pPersonalisation.getPersonalisedInteger(GordianPersonalId.KNUTH));
+        final BigInteger[] myKnuth = generatePrime(pPersonalisation.getPersonalisedInteger(GordianPersonalId.KNUTHPRIME));
         thePrime = myKnuth[0].intValue();
         theInverse = myKnuth[1].intValue();
+        theMask = pPersonalisation.getPersonalisedInteger(GordianPersonalId.KNUTHMASK);
     }
 
     /**
-     * Encode a value via Knuth Multiplication.
+     * Encode an integer value via Knuth Multiplication.
      * @param pInput the input
      * @return the encoded value
      */
-    public long knuthEncode(final int pInput) {
-        return pInput * (long) thePrime;
+    public int knuthEncodeInteger(final int pInput) {
+        return pInput == 0
+                           ? 0
+                           : (int) ((pInput ^ theMask) * (long) thePrime);
     }
 
     /**
-     * Encode a value via Knuth Multiplication.
+     * Encode an integer value via Knuth Multiplication.
      * @param pInput the input
      * @param pAdjustment the adjustment
      * @return the encoded value
      */
-    public long knuthEncode(final int pInput,
-                            final int pAdjustment) {
+    public int knuthEncodeInteger(final int pInput,
+                                  final int pAdjustment) {
         final int myId = pInput + pAdjustment;
-        return knuthEncode(myId);
+        return knuthEncodeInteger(myId);
     }
 
     /**
-     * Decode a Knuth Encoded value.
+     * Decode a Knuth Encoded integer value.
      * @param pEncoded the encoded value
      * @return the original input
      */
-    public int knuthDecode(final int pEncoded) {
-        return (int) (pEncoded * (long) theInverse);
+    public int knuthDecodeInteger(final int pEncoded) {
+        return pEncoded == 0
+                             ? 0
+                             : theMask ^ (int) (pEncoded * (long) theInverse);
     }
 
     /**
-     * Decode a Knuth Encoded value.
+     * Decode a Knuth Encoded integer value.
      * @param pEncoded the encoded value
      * @param pAdjustment the adjustment
      * @return the original input
      */
-    public int knuthDecode(final int pEncoded,
-                           final int pAdjustment) {
-        final int myId = knuthDecode(pEncoded);
+    public int knuthDecodeInteger(final int pEncoded,
+                                  final int pAdjustment) {
+        final int myId = knuthDecodeInteger(pEncoded);
         return myId - pAdjustment;
     }
 
     /**
-     * Create a Knuth hash.
+     * Encode a long value via Knuth Multiplication.
      * @param pInput the input
-     * @return the output hash
+     * @return the encoded value
      */
-    public int knuthHash(final int pInput) {
-        final long myHash = knuthEncode(pInput);
-        final int myBitLength = Integer.SIZE - (pInput >= 0
-                                                            ? Integer.numberOfLeadingZeros(pInput)
-                                                            : Integer.numberOfLeadingZeros(-pInput));
-        return (int) (myHash >> myBitLength);
+    public long knuthEncodeLong(final long pInput) {
+        final long myTop = knuthEncodeInteger((int) (pInput >>> Integer.SIZE));
+        final long myBottom = knuthEncodeInteger((int) pInput);
+        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+    }
+
+    /**
+     * Encode a long value via Knuth Multiplication.
+     * @param pInput the input
+     * @param pAdjustment the adjustment
+     * @return the encoded value
+     */
+    public long knuthEncodeLong(final long pInput,
+                                final int pAdjustment) {
+        final long myTop = knuthEncodeInteger((int) (pInput >>> Integer.SIZE), pAdjustment);
+        final long myBottom = knuthEncodeInteger((int) pInput, pAdjustment);
+        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+    }
+
+    /**
+     * Decode a Knuth Encoded long value.
+     * @param pEncoded the encoded value
+     * @return the original input
+     */
+    public long knuthDecodeLong(final long pEncoded) {
+        final int myTop = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE));
+        final int myBottom = knuthDecodeInteger((int) pEncoded);
+        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+    }
+
+    /**
+     * Decode a Knuth Encoded integer value.
+     * @param pEncoded the encoded value
+     * @param pAdjustment the adjustment
+     * @return the original input
+     */
+    public long knuthDecodeLong(final long pEncoded,
+                                final int pAdjustment) {
+        int myTop = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE), pAdjustment);
+        int myBottom = knuthDecodeInteger((int) pEncoded, pAdjustment);
+        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
     }
 
     /**
@@ -130,7 +175,7 @@ public class GordianKnuthObfuscater {
      */
     public <T> int deriveExternalIdFromType(final T pType,
                                             final int pAdjustment) throws OceanusException {
-        return (int) knuthEncode(deriveEncodedIdFromType(pType), pAdjustment);
+        return (int) knuthEncodeInteger(deriveEncodedIdFromType(pType), pAdjustment);
     }
 
     /**
@@ -141,7 +186,7 @@ public class GordianKnuthObfuscater {
      * @throws OceanusException on error
      */
     public <T> int deriveExternalIdFromType(final T pType) throws OceanusException {
-        return (int) knuthEncode(deriveEncodedIdFromType(pType));
+        return (int) knuthEncodeInteger(deriveEncodedIdFromType(pType));
     }
 
     /**
@@ -185,7 +230,7 @@ public class GordianKnuthObfuscater {
     public <T> T deriveTypeFromExternalId(final int pId,
                                           final int pAdjustment,
                                           final Class<T> pClazz) throws OceanusException {
-        return deriveTypeFromEncodedId(knuthDecode(pId, pAdjustment), pClazz);
+        return deriveTypeFromEncodedId(knuthDecodeInteger(pId, pAdjustment), pClazz);
     }
 
     /**
@@ -198,7 +243,7 @@ public class GordianKnuthObfuscater {
      */
     public <T> T deriveTypeFromExternalId(final int pId,
                                           final Class<T> pClazz) throws OceanusException {
-        return deriveTypeFromEncodedId(knuthDecode(pId), pClazz);
+        return deriveTypeFromEncodedId(knuthDecodeInteger(pId), pClazz);
     }
 
     /**

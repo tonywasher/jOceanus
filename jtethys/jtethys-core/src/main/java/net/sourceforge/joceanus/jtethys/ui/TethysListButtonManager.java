@@ -92,7 +92,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
     /**
      * The Value.
      */
-    private TethysValueList<T> theValue;
+    private List<T> theValue;
 
     /**
      * The ActiveValue.
@@ -256,7 +256,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
             /* else build the new lists */
         } else {
             /* Create the new lists */
-            theValue = new TethysValueList<>(pValue);
+            theValue = new ArrayList<>(pValue);
             theActiveValue = new TethysItemList<>();
             theValue.sort(null);
 
@@ -280,7 +280,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      */
     private void setValue(final TethysItemList<T> pValue) {
         /* Create the new list */
-        theValue = new TethysValueList<>();
+        theValue = new ArrayList<>();
         theActiveValue = pValue;
 
         /* Iterate through the list */
@@ -356,8 +356,8 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
         buildActiveValue();
 
         /* If we have any values */
-        if ((theActiveValue != null)
-            && (theActiveValue.size() > 0)) {
+        if (theActiveValue != null
+            && theActiveValue.size() > 0) {
             /* Sort the list */
             theActiveValue.sortList();
 
@@ -471,60 +471,31 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      * @return the formatted values
      */
     public String getText() {
-        return theActiveValue == null
-                                      ? null
-                                      : theActiveValue.toString();
-    }
-
-    /**
-     * Value List.
-     * @param <T> the list item
-     */
-    private static final class TethysValueList<T extends Comparable<T>> extends ArrayList<T> {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = 8266550434904154296L;
-
-        /**
-         * Constructor.
-         */
-        protected TethysValueList() {
-            super();
+        if (theActiveValue == null) {
+            return null;
         }
 
-        /**
-         * Constructor.
-         * @param pSource the source list
-         */
-        protected TethysValueList(final List<T> pSource) {
-            super(pSource);
-        }
+        /* Create the string builder */
+        final StringBuilder myBuilder = new StringBuilder();
+        boolean isFirst = true;
 
-        @Override
-        public String toString() {
-            /* Create the string builder */
-            final StringBuilder myBuilder = new StringBuilder();
-            boolean isFirst = true;
+        /* Loop through the list */
+        final Iterator<?> myIterator = theActiveValue.iterator();
+        while (myIterator.hasNext()) {
+            final Object myLink = myIterator.next();
 
-            /* Loop through the list */
-            final Iterator<?> myIterator = iterator();
-            while (myIterator.hasNext()) {
-                final Object myLink = myIterator.next();
-
-                /* If this is not the first item */
-                if (!isFirst) {
-                    /* add separator */
-                    myBuilder.append(ITEM_SEP);
-                }
-
-                /* Append the name */
-                myBuilder.append(myLink.toString());
-                isFirst = false;
+            /* If this is not the first item */
+            if (!isFirst) {
+                /* add separator */
+                myBuilder.append(ITEM_SEP);
             }
 
-            /* Return the list */
-            return myBuilder.toString();
+            /* Append the name */
+            myBuilder.append(myLink.toString());
+            isFirst = false;
         }
+
+        /* Return the list */
+        return myBuilder.toString();
     }
 }

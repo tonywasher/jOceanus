@@ -176,6 +176,16 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
         return theNextId;
     }
 
+    /**
+     * Allocate the next Id.
+     * @return the next allocated Id
+     */
+    public Integer allocateNextId() {
+        Integer myId = theNextId;
+        checkId(myId);
+        return myId;
+    }
+
     @Override
     public boolean add(final T pItem) {
         /* Access the id */

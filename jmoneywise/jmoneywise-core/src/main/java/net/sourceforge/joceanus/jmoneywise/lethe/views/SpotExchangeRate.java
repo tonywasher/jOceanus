@@ -27,6 +27,7 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -37,7 +38,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency.AssetCurrencyList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
@@ -198,29 +198,20 @@ public final class SpotExchangeRate
     public static class SpotExchangeList<N, I>
             extends ExchangeRateBaseList<SpotExchangeRate> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseViewResource.SPOTRATE_NAME.getValue(), DataList.FIELD_DEFS);
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<SpotExchangeList> FIELD_DEFS = MetisFieldSet.newFieldSet(SpotExchangeList.class);
 
         /**
          * The currency field Id.
          */
-        public static final MetisField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
-
-        /**
-         * The date field Id.
-         */
-        public static final MetisField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
-
-        /**
-         * The next date field Id.
-         */
-        public static final MetisField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE.getValue());
-
-        /**
-         * The previous date field Id.
-         */
-        public static final MetisField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataType.CURRENCY, SpotExchangeList::getCurrency);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, SpotExchangeList::getDate);
+            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE, SpotExchangeList::getNext);
+            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotExchangeList::getPrev);
+        }
 
         /**
          * The date.
@@ -339,26 +330,10 @@ public final class SpotExchangeRate
             }
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<SpotExchangeList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_CURRENCY.equals(pField)) {
-                return theCurrency;
-            }
-            if (FIELD_DATE.equals(pField)) {
-                return theDate;
-            }
-            if (FIELD_NEXT.equals(pField)) {
-                return getNext();
-            }
-            if (FIELD_PREV.equals(pField)) {
-                return getPrev();
-            }
-            return super.getFieldValue(pField);
         }
 
         @Override
@@ -379,6 +354,22 @@ public final class SpotExchangeRate
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
+        }
+
+        /**
+         * Obtain the currency.
+         * @return the currency
+         */
+        private AssetCurrency getCurrency() {
+            return theCurrency;
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        private TethysDate getDate() {
+            return theDate;
         }
 
         /**

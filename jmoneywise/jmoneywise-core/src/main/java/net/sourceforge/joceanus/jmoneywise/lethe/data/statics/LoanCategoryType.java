@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -134,9 +135,9 @@ public class LoanCategoryType
     public static class LoanCategoryTypeList
             extends StaticList<LoanCategoryType, LoanCategoryClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
+        private static final MetisFieldSet<LoanCategoryTypeList> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanCategoryTypeList.class);
 
         /**
          * Construct an empty CORE account category list.
@@ -155,7 +156,7 @@ public class LoanCategoryType
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<LoanCategoryTypeList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

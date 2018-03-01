@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -53,7 +54,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.SecurityTypeClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoSetItem;
@@ -1048,9 +1048,9 @@ public class Security
     public static class SecurityList
             extends AssetBaseList<Security> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<SecurityList> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityList.class);
 
         /**
          * The SecurityInfo List.
@@ -1079,7 +1079,7 @@ public class Security
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<SecurityList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1296,27 +1296,17 @@ public class Security
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
+        private static final MetisFieldSet<SecurityDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityDataMap.class);
 
         /**
-         * CategoryMap Field Id.
+         * Declare Fields.
          */
-        public static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
-
-        /**
-         * CategoryCountMap Field Id.
-         */
-        public static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
-
-        /**
-         * SymbolMap Field Id.
-         */
-        private static final MetisField FIELD_SYMMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITY_SYMBOLMAP.getValue());
-
-        /**
-         * SymbolCountMap Field Id.
-         */
-        private static final MetisField FIELD_SYMCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP, SecurityDataMap::getSingularMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, SecurityDataMap::getSingularCountMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.SECURITY_SYMBOLMAP, SecurityDataMap::getSymbolMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.SECURITY_SYMBOLCOUNTMAP, SecurityDataMap::getSymbolCountMap);
+        }
 
         /**
          * Map of symbol counts.
@@ -1350,33 +1340,45 @@ public class Security
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<SecurityDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_CATMAP.equals(pField)) {
-                return theSecurityMap;
-            }
-            if (FIELD_CATCOUNT.equals(pField)) {
-                return theSecurityCountMap;
-            }
-            if (FIELD_SYMMAP.equals(pField)) {
-                return theSymbolMap;
-            }
-            if (FIELD_SYMCOUNT.equals(pField)) {
-                return theSymbolCountMap;
-            }
-
-            /* Unknown */
-            return super.getFieldValue(pField);
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain the securityMap.
+         * @return the map
+         */
+        private Map<Integer, Security> getSingularMap() {
+            return theSecurityMap;
+        }
+
+        /**
+         * Obtain the securityCountMap.
+         * @return the map
+         */
+        private Map<Integer, Integer> getSingularCountMap() {
+            return theSecurityCountMap;
+        }
+
+        /**
+         * Obtain the keyMap.
+         * @return the map
+         */
+        private Map<String, Security> getSymbolMap() {
+            return theSymbolMap;
+        }
+
+        /**
+         * Obtain the keyCountMap.
+         * @return the map
+         */
+        private Map<String, Integer> getSymbolCountMap() {
+            return theSymbolCountMap;
         }
 
         @Override

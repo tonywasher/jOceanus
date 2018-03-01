@@ -26,15 +26,17 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -648,6 +650,13 @@ public class ExchangeRate
     public abstract static class ExchangeRateBaseList<T extends ExchangeRate>
             extends DataList<T, MoneyWiseDataType> {
         /**
+         * Report fields.
+         */
+        static {
+            MetisFieldSet.newFieldSet(ExchangeRateBaseList.class);
+        }
+
+        /**
          * Construct an empty CORE Price list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
@@ -686,14 +695,16 @@ public class ExchangeRate
     public static class ExchangeRateList
             extends ExchangeRateBaseList<ExchangeRate> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<ExchangeRateList> FIELD_DEFS = MetisFieldSet.newFieldSet(ExchangeRateList.class);
 
         /**
-         * Default Field Id.
+         * Declare Fields.
          */
-        private static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT, ExchangeRateList::getDefaultCurrency);
+        }
 
         /**
          * The default currency.
@@ -717,19 +728,8 @@ public class ExchangeRate
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<ExchangeRateList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_DEFAULT.equals(pField)) {
-                return theDefault;
-            }
-
-            /* Pass onwards */
-            return super.getFieldValue(pField);
         }
 
         /**
@@ -926,21 +926,20 @@ public class ExchangeRate
      * @param <T> the data type
      */
     public static class ExchangeRateDataMap<T extends ExchangeRate>
-            implements DataMapItem<T, MoneyWiseDataType>, MetisDataContents {
+            implements DataMapItem<T, MoneyWiseDataType>, MetisFieldItem {
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<ExchangeRateDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(ExchangeRateDataMap.class);
 
         /**
-         * CategoryMap Field Id.
+         * UnderlyingMap Field Id.
          */
-        public static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
-
-        /**
-         * RateMap Field Id.
-         */
-        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS, ExchangeRateDataMap::getMapOfMaps);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.XCHGRATE_MAP_MAPOFRATES, ExchangeRateDataMap::getMapOfRates);
+        }
 
         /**
          * Map of Maps.
@@ -961,28 +960,31 @@ public class ExchangeRate
             theMapOfRates = new HashMap<>();
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<ExchangeRateDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_MAPOFMAPS.equals(pField)) {
-                return theMapOfMaps;
-            }
-            if (FIELD_MAPOFRATES.equals(pField)) {
-                return theMapOfRates;
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain mapOfMaps.
+         * @return the map
+         */
+        private Map<AssetCurrency, Map<TethysDate, Integer>> getMapOfMaps() {
+            return theMapOfMaps;
+        }
+
+        /**
+         * Obtain mapOfRates.
+         * @return the map
+         */
+        private Map<AssetCurrency, RateList> getMapOfRates() {
+            return theMapOfRates;
         }
 
         @Override
@@ -1000,11 +1002,7 @@ public class ExchangeRate
             }
 
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myCurrency);
-            if (myMap == null) {
-                myMap = new HashMap<>();
-                theMapOfMaps.put(myCurrency, myMap);
-            }
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myCurrency, c -> new HashMap<>());
 
             /* Adjust rate count */
             final TethysDate myDate = pItem.getDate();
@@ -1016,11 +1014,7 @@ public class ExchangeRate
             }
 
             /* Access the list */
-            RateList myList = theMapOfRates.get(myCurrency);
-            if (myList == null) {
-                myList = new RateList(myCurrency);
-                theMapOfRates.put(myCurrency, myList);
-            }
+            final RateList myList = theMapOfRates.computeIfAbsent(myCurrency, c -> new RateList(c));
 
             /* Add element to the list */
             myList.add(pItem);
@@ -1071,7 +1065,7 @@ public class ExchangeRate
             final RateList myList = theMapOfRates.get(pCurrency);
             if (myList != null) {
                 /* Loop through the rates */
-                final ListIterator<ExchangeRate> myIterator = myList.listIterator();
+                final Iterator<ExchangeRate> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
                     final ExchangeRate myCurr = myIterator.next();
 
@@ -1123,8 +1117,8 @@ public class ExchangeRate
                     myLatest = myCurr.getExchangeRate();
 
                     /* Adjust first rate */
-                    if ((iComp > 0)
-                        || (myDate.compareTo(myStart) == 0)) {
+                    if (iComp > 0
+                        || myDate.compareTo(myStart) == 0) {
                         myFirst = myLatest;
                     }
                 }
@@ -1143,37 +1137,37 @@ public class ExchangeRate
         public ListIterator<ExchangeRate> rateIterator(final AssetCurrency pCurrency) {
             /* Access list for currency */
             final RateList myList = theMapOfRates.get(pCurrency);
-            return (myList != null)
-                                    ? myList.listIterator(myList.size())
-                                    : null;
+            return myList != null
+                                  ? myList.listIterator(myList.size())
+                                  : null;
         }
 
         /**
          * Rate List class.
          */
         private static final class RateList
-                extends ArrayList<ExchangeRate>
-                implements MetisDataContents {
-            /**
-             * Serial Id.
-             */
-            private static final long serialVersionUID = 438341994570572575L;
-
+                implements MetisFieldItem, MetisDataList<ExchangeRate> {
             /**
              * Report fields.
              */
-            private static final MetisFields FIELD_DEFS = new MetisFields(RateList.class.getSimpleName());
+            private static final MetisFieldSet<RateList> FIELD_DEFS = MetisFieldSet.newFieldSet(RateList.class);
 
             /**
-             * Size Field Id.
+             * UnderlyingMap Field Id.
              */
-            private static final MetisField FIELD_SIZE = FIELD_DEFS
-                    .declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+            static {
+                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, RateList::size);
+            }
+
+            /**
+             * The list.
+             */
+            private final List<ExchangeRate> theList;
 
             /**
              * The currency.
              */
-            private final transient AssetCurrency theCurrency;
+            private final AssetCurrency theCurrency;
 
             /**
              * Constructor.
@@ -1181,19 +1175,12 @@ public class ExchangeRate
              */
             private RateList(final AssetCurrency pCurrency) {
                 theCurrency = pCurrency;
+                theList = new ArrayList<>();
             }
 
             @Override
-            public MetisFields getDataFields() {
+            public MetisFieldSet<RateList> getDataFieldSet() {
                 return FIELD_DEFS;
-            }
-
-            @Override
-            public Object getFieldValue(final MetisField pField) {
-                if (FIELD_SIZE.equals(pField)) {
-                    return size();
-                }
-                return MetisDataFieldValue.UNKNOWN;
             }
 
             @Override
@@ -1210,6 +1197,11 @@ public class ExchangeRate
                        + "("
                        + size()
                        + ")";
+            }
+
+            @Override
+            public List<ExchangeRate> getUnderlyingList() {
+                return theList;
             }
         }
     }

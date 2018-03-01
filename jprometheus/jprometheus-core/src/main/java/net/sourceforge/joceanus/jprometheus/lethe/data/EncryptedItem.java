@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
@@ -329,6 +330,13 @@ public abstract class EncryptedItem<E extends Enum<E>>
      */
     public abstract static class EncryptedList<T extends EncryptedItem<E> & Comparable<? super T>, E extends Enum<E>>
             extends DataList<T, E> {
+        /**
+         * Report fields.
+         */
+        static {
+            MetisFieldSet.newFieldSet(EncryptedList.class);
+        }
+
         /**
          * Construct an empty CORE encrypted list.
          * @param pBaseClass the class of the underlying object

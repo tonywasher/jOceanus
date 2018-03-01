@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -36,7 +37,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
@@ -296,9 +296,9 @@ public class AssetCurrency
     public static class AssetCurrencyList
             extends StaticList<AssetCurrency, AssetCurrencyClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
+        private static final MetisFieldSet<AssetCurrencyList> FIELD_DEFS = MetisFieldSet.newFieldSet(AssetCurrencyList.class);
 
         /**
          * Construct an empty CORE account currency list.
@@ -317,7 +317,7 @@ public class AssetCurrency
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<AssetCurrencyList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -521,12 +521,14 @@ public class AssetCurrency
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), StaticDataMap.FIELD_DEFS);
+        private static final MetisFieldSet<CurrencyDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(CurrencyDataMap.class);
 
         /**
-         * Default Field Id.
+         * Declare Fields.
          */
-        public static final MetisField FIELD_DEFAULT = FIELD_DEFS.declareEqualityField(StaticDataResource.CURRENCY_DEFAULT.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(StaticDataResource.CURRENCY_DEFAULT, CurrencyDataMap::getDefault);
+        }
 
         /**
          * Default value.
@@ -545,19 +547,8 @@ public class AssetCurrency
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<CurrencyDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_DEFAULT.equals(pField)) {
-                return theDefault;
-            }
-
-            /* Unknown */
-            return super.getFieldValue(pField);
         }
 
         @Override

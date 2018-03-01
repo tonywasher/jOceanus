@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -138,9 +139,9 @@ public class TaxBasis
     public static class TaxBasisList
             extends StaticList<TaxBasis, TaxBasisClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
+        private static final MetisFieldSet<TaxBasisList> FIELD_DEFS = MetisFieldSet.newFieldSet(TaxBasisList.class);
 
         /**
          * Construct an empty CORE tax bucket list.
@@ -159,7 +160,7 @@ public class TaxBasis
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<TaxBasisList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

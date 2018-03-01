@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -123,9 +124,9 @@ public class PortfolioType
     public static class PortfolioTypeList
             extends StaticList<PortfolioType, PortfolioTypeClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
+        private static final MetisFieldSet<PortfolioTypeList> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioTypeList.class);
 
         /**
          * Construct an empty CORE portfolioType list.
@@ -144,7 +145,7 @@ public class PortfolioType
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<PortfolioTypeList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

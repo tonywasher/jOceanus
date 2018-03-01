@@ -24,7 +24,9 @@ package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.CashBucket.CashBucketList;
@@ -60,16 +62,16 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.Transactio
  * List of filters for a transaction within an analysis.
  */
 public class TransactionFilters
-        extends ArrayList<AnalysisFilter<?, ?>> {
+        implements MetisDataList<AnalysisFilter<?, ?>> {
     /**
-     * Serial Id.
+     * The list.
      */
-    private static final long serialVersionUID = 7093262525444372656L;
+    private final List<AnalysisFilter<?, ?>> theList;
 
     /**
      * The transaction.
      */
-    private final transient Transaction theTrans;
+    private final Transaction theTrans;
 
     /**
      * Constructor.
@@ -80,6 +82,9 @@ public class TransactionFilters
                               final Transaction pTrans) {
         /* Store transaction */
         theTrans = pTrans;
+
+        /* Create the list */
+        theList = new ArrayList<>();
 
         /* Analyse accounts */
         analyseDeposits(pAnalysis.getDeposits());
@@ -100,6 +105,11 @@ public class TransactionFilters
 
         /* Analyse Tags */
         analyseTags(pAnalysis.getTransactionTags());
+    }
+
+    @Override
+    public List<AnalysisFilter<?, ?>> getUnderlyingList() {
+        return theList;
     }
 
     /**

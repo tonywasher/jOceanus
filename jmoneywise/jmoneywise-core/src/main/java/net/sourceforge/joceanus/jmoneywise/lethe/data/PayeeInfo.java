@@ -23,6 +23,7 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -247,9 +248,9 @@ public class PayeeInfo
     public static class PayeeInfoList
             extends DataInfoList<PayeeInfo, Payee, AccountInfoType, AccountInfoClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataInfoList.FIELD_DEFS);
+        private static final MetisFieldSet<PayeeInfoList> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeInfoList.class);
 
         /**
          * Construct an empty CORE info list.
@@ -268,7 +269,7 @@ public class PayeeInfo
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<PayeeInfoList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

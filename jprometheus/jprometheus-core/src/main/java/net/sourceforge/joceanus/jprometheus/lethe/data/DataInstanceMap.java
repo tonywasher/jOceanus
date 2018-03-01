@@ -25,11 +25,9 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 
 /**
  * Template for a Data Instance Map.
@@ -39,21 +37,20 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
  * @param <K> the instance key
  */
 public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, K>
-        implements DataMapItem<T, E>, MetisDataContents {
+        implements DataMapItem<T, E>, MetisFieldItem {
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<DataInstanceMap> FIELD_DEFS = MetisFieldSet.newFieldSet(DataInstanceMap.class);
 
     /**
-     * NameMap Field Id.
+     * Declare Fields.
      */
-    private static final MetisField FIELD_KEYS = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAMAP_KEYS.getValue());
-
-    /**
-     * NameCountMap Field Id.
-     */
-    private static final MetisField FIELD_KEYCOUNTS = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATAMAP_KEYCOUNTS.getValue());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAMAP_KEYS, DataInstanceMap::getKeyMap);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAMAP_KEYCOUNTS, DataInstanceMap::getKeyCountMap);
+    }
 
     /**
      * Standard integer ONE.
@@ -79,23 +76,26 @@ public abstract class DataInstanceMap<T extends DataItem<E>, E extends Enum<E>, 
         theKeyCountMap = new HashMap<>();
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    public MetisFields getDataFields() {
+    public MetisFieldSet<? extends DataInstanceMap> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
-    @Override
-    public Object getFieldValue(final MetisField pField) {
-        /* Handle standard fields */
-        if (FIELD_KEYS.equals(pField)) {
-            return theKeyMap;
-        }
-        if (FIELD_KEYCOUNTS.equals(pField)) {
-            return theKeyCountMap;
-        }
+    /**
+     * Obtain the keyMap.
+     * @return the map
+     */
+    private Map<K, T> getKeyMap() {
+        return theKeyMap;
+    }
 
-        /* Unknown */
-        return MetisDataFieldValue.UNKNOWN;
+    /**
+     * Obtain the keyCountMap.
+     * @return the map
+     */
+    private Map<K, Integer> getKeyCountMap() {
+        return theKeyCountMap;
     }
 
     @Override

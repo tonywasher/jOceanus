@@ -29,6 +29,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -40,7 +41,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategor
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusDataResource;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -416,9 +416,9 @@ public final class TransactionCategory
     public static class TransactionCategoryList
             extends CategoryBaseList<TransactionCategory, TransactionCategoryType, TransactionCategoryClass> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
+        private static final MetisFieldSet<TransactionCategoryList> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionCategoryList.class);
 
         /**
          * Construct an empty CORE Category list.
@@ -437,7 +437,7 @@ public final class TransactionCategory
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<TransactionCategoryList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -587,17 +587,15 @@ public final class TransactionCategory
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue(), CategoryDataMap.FIELD_DEFS);
+        private static final MetisFieldSet<TransCategoryDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(TransCategoryDataMap.class);
 
         /**
-         * CategoryMap Field Id.
+         * Declare Fields.
          */
-        private static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
-
-        /**
-         * CategoryCountMap Field Id.
-         */
-        private static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP, TransCategoryDataMap::getSingularMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, TransCategoryDataMap::getSingularCountMap);
+        }
 
         /**
          * Map of category counts.
@@ -619,27 +617,29 @@ public final class TransactionCategory
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<TransCategoryDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_CATMAP.equals(pField)) {
-                return theCategoryMap;
-            }
-            if (FIELD_CATCOUNT.equals(pField)) {
-                return theCategoryCountMap;
-            }
-
-            /* Unknown */
-            return super.getFieldValue(pField);
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain the categoryMap.
+         * @return the map
+         */
+        private Map<Integer, TransactionCategory> getSingularMap() {
+            return theCategoryMap;
+        }
+
+        /**
+         * Obtain the categoryCountMap.
+         * @return the map
+         */
+        private Map<Integer, Integer> getSingularCountMap() {
+            return theCategoryCountMap;
         }
 
         @Override

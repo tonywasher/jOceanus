@@ -27,6 +27,7 @@ import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -43,7 +44,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.SecurityPrice;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -238,29 +238,20 @@ public final class SpotSecurityPrice
     public static class SpotSecurityList<N, I>
             extends SecurityPriceBaseList<SpotSecurityPrice> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseViewResource.SPOTPRICE_NAME.getValue(), DataList.FIELD_DEFS);
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<SpotSecurityList> FIELD_DEFS = MetisFieldSet.newFieldSet(SpotSecurityList.class);
 
         /**
-         * The portfolio field Id.
+         * The fields.
          */
-        public static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO.getItemName());
-
-        /**
-         * The date field Id.
-         */
-        public static final MetisField FIELD_DATE = FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE.getValue());
-
-        /**
-         * The next date field Id.
-         */
-        public static final MetisField FIELD_NEXT = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE.getValue());
-
-        /**
-         * The previous date field Id.
-         */
-        public static final MetisField FIELD_PREV = FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO, SpotSecurityList::getPortfolio);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_FIELD_DATE, SpotSecurityList::getDate);
+            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_NEXTDATE, SpotSecurityList::getNext);
+            FIELD_DEFS.declareLocalField(MoneyWiseViewResource.SPOTEVENT_PREVDATE, SpotSecurityList::getPrev);
+        }
 
         /**
          * The date.
@@ -383,26 +374,10 @@ public final class SpotSecurityPrice
             }
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<SpotSecurityList> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_PORTFOLIO.equals(pField)) {
-                return thePortfolio;
-            }
-            if (FIELD_DATE.equals(pField)) {
-                return theDate;
-            }
-            if (FIELD_NEXT.equals(pField)) {
-                return getNext();
-            }
-            if (FIELD_PREV.equals(pField)) {
-                return getPrev();
-            }
-            return super.getFieldValue(pField);
         }
 
         @Override
@@ -423,6 +398,22 @@ public final class SpotSecurityPrice
         @Override
         public MoneyWiseData getDataSet() {
             return (MoneyWiseData) super.getDataSet();
+        }
+
+        /**
+         * Obtain the portfolio.
+         * @return the portfolio
+         */
+        private Portfolio getPortfolio() {
+            return thePortfolio;
+        }
+
+        /**
+         * Obtain the date.
+         * @return the date
+         */
+        private TethysDate getDate() {
+            return theDate;
         }
 
         /**

@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeyType;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptionGenerator;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -479,9 +480,9 @@ public class DataKeySet
     public static class DataKeySetList
             extends DataList<DataKeySet, CryptographyDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<DataKeySetList> FIELD_DEFS = MetisFieldSet.newFieldSet(DataKeySetList.class);
 
         /**
          * Construct an empty CORE list.
@@ -510,7 +511,7 @@ public class DataKeySet
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<DataKeySetList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

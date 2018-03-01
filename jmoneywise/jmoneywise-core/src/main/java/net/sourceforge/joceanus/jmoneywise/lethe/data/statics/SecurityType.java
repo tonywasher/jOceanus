@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -128,9 +129,9 @@ public class SecurityType
     public static class SecurityTypeList
             extends StaticList<SecurityType, SecurityTypeClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
+        private static final MetisFieldSet<SecurityTypeList> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityTypeList.class);
 
         /**
          * Construct an empty CORE securityType list.
@@ -149,7 +150,7 @@ public class SecurityType
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<SecurityTypeList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

@@ -30,13 +30,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Portfolio.PortfolioList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
@@ -50,7 +49,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
  * Portfolio/Security combination.
  */
 public final class SecurityHolding
-        implements MetisDataContents, TransactionAsset {
+        implements MetisFieldItem, TransactionAsset {
     /**
      * Name separator.
      */
@@ -72,29 +71,19 @@ public final class SecurityHolding
     private static final int ID_MASK = 0xFFFFF;
 
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    private static final MetisFields FIELD_DEFS = new MetisFields(SecurityHolding.class.getSimpleName());
+    private static final MetisFieldSet<SecurityHolding> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityHolding.class);
 
     /**
-     * Id Field Id.
+     * UnderlyingMap Field Id.
      */
-    private static final MetisField FIELD_ID = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID.getValue());
-
-    /**
-     * Name Field Id.
-     */
-    private static final MetisField FIELD_NAME = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_FIELD_NAME.getValue());
-
-    /**
-     * Portfolio Field Id.
-     */
-    private static final MetisField FIELD_PORTFOLIO = FIELD_DEFS.declareComparisonField(MoneyWiseDataType.PORTFOLIO.getItemName());
-
-    /**
-     * Security Field Id.
-     */
-    private static final MetisField FIELD_SECURITY = FIELD_DEFS.declareComparisonField(MoneyWiseDataType.SECURITY.getItemName());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ID, SecurityHolding::getId);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_FIELD_NAME, SecurityHolding::getName);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.PORTFOLIO, SecurityHolding::getPortfolio);
+        FIELD_DEFS.declareLocalField(MoneyWiseDataType.SECURITY, SecurityHolding::getSecurity);
+    }
 
     /**
      * The id of the holding.
@@ -132,7 +121,7 @@ public final class SecurityHolding
     }
 
     @Override
-    public MetisFields getDataFields() {
+    public MetisFieldSet<SecurityHolding> getDataFieldSet() {
         return FIELD_DEFS;
     }
 
@@ -144,24 +133,6 @@ public final class SecurityHolding
     @Override
     public String toString() {
         return getName();
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
-        /* Handle fields */
-        if (FIELD_ID.equals(pField)) {
-            return theId;
-        }
-        if (FIELD_NAME.equals(pField)) {
-            return getName();
-        }
-        if (FIELD_PORTFOLIO.equals(pField)) {
-            return thePortfolio;
-        }
-        if (FIELD_SECURITY.equals(pField)) {
-            return theSecurity;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override

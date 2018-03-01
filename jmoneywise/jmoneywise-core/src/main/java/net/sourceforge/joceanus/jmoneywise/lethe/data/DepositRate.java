@@ -25,15 +25,17 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedRate;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -44,7 +46,6 @@ import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.Deposit.DepositList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
@@ -719,9 +720,9 @@ public class DepositRate
     public static class DepositRateList
             extends EncryptedList<DepositRate, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<DepositRateList> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositRateList.class);
 
         /**
          * Construct an empty CORE rate list.
@@ -747,7 +748,7 @@ public class DepositRate
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<DepositRateList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -856,21 +857,19 @@ public class DepositRate
      * The dataMap class.
      */
     public static class DepositRateDataMap
-            implements DataMapItem<DepositRate, MoneyWiseDataType>, MetisDataContents {
+            implements DataMapItem<DepositRate, MoneyWiseDataType>, MetisFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        private static final MetisFieldSet<DepositRateDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(DepositRateDataMap.class);
 
         /**
-         * MapOfMaps Field Id.
+         * UnderlyingMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
-
-        /**
-         * RateMap Field Id.
-         */
-        private static final MetisField FIELD_MAPOFRATES = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS, DepositRateDataMap::getMapOfMaps);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.DEPOSITRATE_MAP_MAPOFRATES, DepositRateDataMap::getMapOfRates);
+        }
 
         /**
          * Map of Maps.
@@ -892,27 +891,29 @@ public class DepositRate
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<DepositRateDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_MAPOFMAPS.equals(pField)) {
-                return theMapOfMaps;
-            }
-            if (FIELD_MAPOFRATES.equals(pField)) {
-                return theMapOfRates;
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain mapOfMaps.
+         * @return the map
+         */
+        private Map<Deposit, Map<TethysDate, Integer>> getMapOfMaps() {
+            return theMapOfMaps;
+        }
+
+        /**
+         * Obtain mapOfRates.
+         * @return the map
+         */
+        private Map<Deposit, RateList> getMapOfRates() {
+            return theMapOfRates;
         }
 
         @Override
@@ -930,11 +931,7 @@ public class DepositRate
             }
 
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(myDeposit);
-            if (myMap == null) {
-                myMap = new HashMap<>();
-                theMapOfMaps.put(myDeposit, myMap);
-            }
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(myDeposit, m -> new HashMap<>());
 
             /* Adjust rate count */
             final TethysDate myDate = pItem.getEndDate();
@@ -946,11 +943,7 @@ public class DepositRate
             }
 
             /* Access the list */
-            RateList myList = theMapOfRates.get(myDeposit);
-            if (myList == null) {
-                myList = new RateList(myDeposit);
-                theMapOfRates.put(myDeposit, myList);
-            }
+            final RateList myList = theMapOfRates.computeIfAbsent(myDeposit, d -> new RateList(d));
 
             /* Add element to the list */
             myList.add(pItem);
@@ -1009,8 +1002,8 @@ public class DepositRate
                     final TethysDate myDate = myCurr.getDate();
 
                     /* break loop if we have the correct record */
-                    if ((myDate == null)
-                        || (myDate.compareTo(pDate) >= 0)) {
+                    if (myDate == null
+                        || myDate.compareTo(pDate) >= 0) {
                         return myCurr;
                     }
                 }
@@ -1024,27 +1017,28 @@ public class DepositRate
          * Rate List class.
          */
         private static final class RateList
-                extends ArrayList<DepositRate>
-                implements MetisDataContents {
-            /**
-             * Serial Id.
-             */
-            private static final long serialVersionUID = -7315972503678709555L;
-
+                implements MetisFieldItem, MetisDataList<DepositRate> {
             /**
              * Report fields.
              */
-            private static final MetisFields FIELD_DEFS = new MetisFields(RateList.class.getSimpleName());
+            private static final MetisFieldSet<RateList> FIELD_DEFS = MetisFieldSet.newFieldSet(RateList.class);
 
             /**
-             * Size Field Id.
+             * UnderlyingMap Field Id.
              */
-            private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+            static {
+                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, RateList::size);
+            }
+
+            /**
+             * The list.
+             */
+            private final List<DepositRate> theList;
 
             /**
              * The deposit.
              */
-            private final transient Deposit theDeposit;
+            private final Deposit theDeposit;
 
             /**
              * Constructor.
@@ -1052,19 +1046,12 @@ public class DepositRate
              */
             private RateList(final Deposit pDeposit) {
                 theDeposit = pDeposit;
+                theList = new ArrayList<>();
             }
 
             @Override
-            public MetisFields getDataFields() {
+            public MetisFieldSet<RateList> getDataFieldSet() {
                 return FIELD_DEFS;
-            }
-
-            @Override
-            public Object getFieldValue(final MetisField pField) {
-                if (FIELD_SIZE.equals(pField)) {
-                    return size();
-                }
-                return MetisDataFieldValue.UNKNOWN;
             }
 
             @Override
@@ -1081,6 +1068,11 @@ public class DepositRate
                        + "("
                        + size()
                        + ")";
+            }
+
+            @Override
+            public List<DepositRate> getUnderlyingList() {
+                return theList;
             }
         }
     }

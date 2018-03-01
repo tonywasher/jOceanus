@@ -27,14 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInfo.DataInfoList;
@@ -48,7 +47,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        implements MetisDataContents, MetisDataList<T>, PrometheusTableList<T> {
+        implements MetisFieldItem, MetisDataList<T>, PrometheusTableList<T> {
     /**
      * DataList interface.
      * @param <E> the data type enum class
@@ -67,69 +66,25 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATALIST_NAME.getValue());
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<DataList> FIELD_DEFS = MetisFieldSet.newFieldSet(DataList.class);
 
     /**
-     * Size Field Id.
+     * Declare Fields.
      */
-    public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
-
-    /**
-     * Granularity Field Id.
-     */
-    public static final MetisField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
-
-    /**
-     * ListStyle Field Id.
-     */
-    public static final MetisField FIELD_STYLE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE.getValue());
-
-    /**
-     * DataSet Field Id.
-     */
-    public static final MetisField FIELD_DATASET = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME.getValue());
-
-    /**
-     * MapData Field Id.
-     */
-    private static final MetisField FIELD_MAPS = FIELD_DEFS.declareEqualityField(PrometheusDataResource.DATALIST_MAPS.getValue());
-
-    /**
-     * Generation Field Id.
-     */
-    public static final MetisField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
-
-    /**
-     * NextVersion Field Id.
-     */
-    public static final MetisField FIELD_VERS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
-
-    /**
-     * EditState Field Id.
-     */
-    public static final MetisField FIELD_EDIT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE.getValue());
-
-    /**
-     * ListType Field Id.
-     */
-    public static final MetisField FIELD_TYPE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE.getValue());
-
-    /**
-     * Base Field Id.
-     */
-    public static final MetisField FIELD_BASE = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE.getValue());
-
-    /**
-     * Errors Field Id.
-     */
-    public static final MetisField FIELD_ERRORS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_ERRORS.getValue());
-
-    /**
-     * Instance ReportFields.
-     */
-    private final MetisFields theFields;
+    static {
+        FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataList::size);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_STYLE, DataList::getStyle);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_NAME, DataList::getDataSet);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATALIST_MAPS, DataList::getDataMap);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, DataList::getGeneration);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, DataList::getVersion);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_EDITSTATE, DataList::getEditState);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_TYPE, DataList::getItemType);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAITEM_BASE, DataList::getBaseList);
+    }
 
     /**
      * The list.
@@ -155,11 +110,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      * The DataSet.
      */
     private DataSet<?, ?> theDataSet;
-
-    /**
-     * The granularity of the list.
-     */
-    private final int theGranularity;
 
     /**
      * The item type.
@@ -201,15 +151,11 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         theStyle = pStyle;
         theItemType = pItemType;
         theDataSet = pDataSet;
-        theGranularity = pDataSet.getGranularity();
         theGeneration = pDataSet.getGeneration();
 
         /* Create the list */
         theList = new MetisListIndexed<>();
         theList.setComparator((l, r) -> l.compareTo(r));
-
-        /* Declare fields (allowing for subclasses) */
-        theFields = declareFields();
     }
 
     /**
@@ -223,11 +169,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
     }
 
     @Override
-    public MetisFields getDataFields() {
-        return theFields;
-    }
-
-    @Override
     public List<T> getUnderlyingList() {
         return theList.getUnderlyingList();
     }
@@ -238,62 +179,30 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public abstract MetisFields getItemFields();
 
-    /**
-     * Declare fields.
-     * @return the fields
-     */
-    public abstract MetisFields declareFields();
-
     @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFields().getName() + "(" + size() + ")";
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
-        if (FIELD_SIZE.equals(pField)) {
-            return size();
-        }
-        if (FIELD_GRANULARITY.equals(pField)) {
-            return 1 << theGranularity;
-        }
-        if (FIELD_STYLE.equals(pField)) {
-            return theStyle;
-        }
-        if (FIELD_DATASET.equals(pField)) {
-            return theDataSet;
-        }
-        if (FIELD_GENERATION.equals(pField)) {
-            return theGeneration;
-        }
-        if (FIELD_VERS.equals(pField)) {
-            return theVersion;
-        }
-        if (FIELD_EDIT.equals(pField)) {
-            return theEdit;
-        }
-        if (FIELD_BASE.equals(pField)) {
-            return theBase == null
-                                   ? MetisDataFieldValue.SKIP
-                                   : theBase;
-        }
-        if (FIELD_MAPS.equals(pField)) {
-            return theDataMap == null
-                                      ? MetisDataFieldValue.SKIP
-                                      : theDataMap;
-        }
-        if (FIELD_ERRORS.equals(pField)) {
-            return MetisDataFieldValue.SKIP;
-        }
-        if (FIELD_TYPE.equals(pField)) {
-            return theItemType;
-        }
-        return MetisDataFieldValue.UNKNOWN;
+        return getDataFieldSet().getName() + "(" + size() + ")";
     }
 
     @Override
     public boolean add(final T pItem) {
         return theList.add(pItem);
+    }
+
+    @Override
+    public void add(final int pIndex,
+                    final T pItem) {
+        theList.add(pIndex, pItem);
+    }
+
+    @Override
+    public boolean remove(final Object pItem) {
+        return theList.remove(pItem);
+    }
+
+    @Override
+    public void clear() {
+        theList.clear();
     }
 
     /**
@@ -388,14 +297,6 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
      */
     public int getGeneration() {
         return theGeneration;
-    }
-
-    /**
-     * Get the Granularity of the list.
-     * @return the Granularity
-     */
-    public int getGranularity() {
-        return theGranularity;
     }
 
     /**
@@ -727,7 +628,7 @@ public abstract class DataList<T extends DataItem<E> & Comparable<? super T>, E 
         if (myId == null
             || myId == 0) {
             /* Obtain the next Id */
-            pItem.setId(theList.getNextId());
+            pItem.setId(theList.allocateNextId());
         }
     }
 

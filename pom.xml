@@ -110,6 +110,7 @@
     <CheckStylePluginVersion>3.0.0</CheckStylePluginVersion>
     <PMDPluginVersion>3.8</PMDPluginVersion>
     <FindBugsPluginVersion>3.0.5</FindBugsPluginVersion>
+    <VersionsPluginVersion>2.5</VersionsPluginVersion>
   </properties>
   <build>
     <resources>
@@ -239,6 +240,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
         <version>${DeployPluginVersion}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${VersionsPluginVersion}</version>
       </plugin>
     </plugins>
     <pluginManagement>

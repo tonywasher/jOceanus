@@ -32,7 +32,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -54,7 +55,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PortfolioTypeClass
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionCategoryClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
@@ -1070,9 +1070,9 @@ public class Portfolio
     public static class PortfolioList
             extends AssetBaseList<Portfolio> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<PortfolioList> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioList.class);
 
         /**
          * The PortfolioInfo List.
@@ -1101,7 +1101,7 @@ public class Portfolio
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<PortfolioList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1303,27 +1303,20 @@ public class Portfolio
      * The dataMap class.
      */
     protected static class PortfolioDataMap
-            implements DataMapItem<Portfolio, MoneyWiseDataType>, MetisDataContents {
+            implements DataMapItem<Portfolio, MoneyWiseDataType>, MetisFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFieldSet<PortfolioDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(PortfolioDataMap.class);
 
         /**
          * UnderlyingMap Field Id.
          */
-        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
-                .getValue());
-
-        /**
-         * CategoryMap Field Id.
-         */
-        private static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
-
-        /**
-         * CategoryCountMap Field Id.
-         */
-        private static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING, PortfolioDataMap::getUnderlyingMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP, PortfolioDataMap::getPortfolioMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, PortfolioDataMap::getPortfolioCountMap);
+        }
 
         /**
          * The assetMap.
@@ -1354,30 +1347,37 @@ public class Portfolio
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<PortfolioDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_UNDERLYINGMAP.equals(pField)) {
-                return theUnderlyingMap;
-            }
-            if (FIELD_CATMAP.equals(pField)) {
-                return thePortfolioMap;
-            }
-            if (FIELD_CATCOUNT.equals(pField)) {
-                return thePortfolioCountMap;
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        private AssetDataMap getUnderlyingMap() {
+            return theUnderlyingMap;
+        }
+
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        private Map<Integer, Portfolio> getPortfolioMap() {
+            return thePortfolioMap;
+        }
+
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        private Map<Integer, Integer> getPortfolioCountMap() {
+            return thePortfolioCountMap;
         }
 
         @Override

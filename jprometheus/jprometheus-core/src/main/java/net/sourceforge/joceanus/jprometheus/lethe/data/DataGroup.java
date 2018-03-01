@@ -25,12 +25,10 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 
 /**
  * Group class for data item.
@@ -38,16 +36,19 @@ import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
  * @param <E> the data type enum class
  */
 public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E extends Enum<E>>
-        implements MetisDataContents, MetisDataList<T> {
+        implements MetisFieldItem, MetisDataList<T> {
     /**
-     * Local Report fields.
+     * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAGROUP_NAME.getValue());
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<DataGroup> FIELD_DEFS = MetisFieldSet.newFieldSet(DataGroup.class);
 
     /**
-     * Parent field id.
+     * Declare Fields.
      */
-    public static final MetisField FIELD_PARENT = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT.getValue());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAGROUP_PARENT, DataGroup::getParent);
+    }
 
     /**
      * The list.
@@ -70,16 +71,8 @@ public abstract class DataGroup<T extends DataItem<E> & Comparable<? super T>, E
     }
 
     @Override
-    public Object getFieldValue(final MetisField pField) {
-        if (FIELD_PARENT.equals(pField)) {
-            return theParent;
-        }
-        return MetisDataFieldValue.UNKNOWN;
-    }
-
-    @Override
     public String formatObject(final MetisDataFormatter pFormatter) {
-        return getDataFields().getName() + "(" + size() + ")";
+        return getDataFieldSet().getName() + "(" + size() + ")";
     }
 
     @Override

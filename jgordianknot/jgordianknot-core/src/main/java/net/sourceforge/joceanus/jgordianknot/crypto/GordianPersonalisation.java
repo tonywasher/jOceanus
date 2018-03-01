@@ -326,7 +326,7 @@ public class GordianPersonalisation {
         HMAC,
 
         /**
-         * KeySetDigest.
+         * MAC.
          */
         MAC,
 
@@ -341,8 +341,13 @@ public class GordianPersonalisation {
         RECIPE,
 
         /**
-         * Knuth.
+         * KnuthPrime.
          */
-        KNUTH;
+        KNUTHPRIME,
+
+        /**
+         * KnuthMask.
+         */
+        KNUTHMASK;
     }
 }

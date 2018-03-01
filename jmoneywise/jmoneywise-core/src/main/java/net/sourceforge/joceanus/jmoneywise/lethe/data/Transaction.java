@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -45,7 +46,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionInfo.Transactio
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoClass;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.TransactionInfoType.TransactionInfoTypeList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
@@ -1014,10 +1014,10 @@ public class Transaction
         setPartnerDeltaUnits(myActDelta);
 
         /* If we need to wipe memory of AccountDelta/PartnerDelta */
-        if ((myActDelta != null) && (myPartDelta == null)) {
+        if (myActDelta != null && myPartDelta == null) {
             theInfoSet.wipeInfo(TransactionInfoClass.ACCOUNTDELTAUNITS);
         }
-        if ((myPartDelta != null) && (myActDelta == null)) {
+        if (myPartDelta != null && myActDelta == null) {
             theInfoSet.wipeInfo(TransactionInfoClass.PARTNERDELTAUNITS);
         }
     }
@@ -1028,9 +1028,9 @@ public class Transaction
     public static class TransactionList
             extends TransactionBaseList<Transaction> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<TransactionList> FIELD_DEFS = MetisFieldSet.newFieldSet(TransactionList.class);
 
         /**
          * The TransactionInfo List.
@@ -1059,7 +1059,7 @@ public class Transaction
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<TransactionList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

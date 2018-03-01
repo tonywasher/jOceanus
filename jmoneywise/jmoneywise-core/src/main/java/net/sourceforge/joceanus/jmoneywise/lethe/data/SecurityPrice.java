@@ -25,15 +25,18 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedPrice;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -45,7 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.Security.SecurityList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem;
@@ -604,6 +606,13 @@ public class SecurityPrice
     public abstract static class SecurityPriceBaseList<T extends SecurityPrice>
             extends EncryptedList<T, MoneyWiseDataType> {
         /**
+         * Report fields.
+         */
+        static {
+            MetisFieldSet.newFieldSet(SecurityPriceBaseList.class);
+        }
+
+        /**
          * Construct an empty CORE Price list.
          * @param pData the DataSet for the list
          * @param pClass the class of the item
@@ -642,9 +651,9 @@ public class SecurityPrice
     public static class SecurityPriceList
             extends SecurityPriceBaseList<SecurityPrice> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<SecurityPriceList> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityPriceList.class);
 
         /**
          * Construct an empty CORE price list.
@@ -663,7 +672,7 @@ public class SecurityPrice
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<SecurityPriceList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -738,21 +747,20 @@ public class SecurityPrice
      * @param <T> the data type
      */
     public static class SecurityPriceDataMap<T extends SecurityPrice>
-            implements DataMapItem<T, MoneyWiseDataType>, MetisDataContents {
+            implements DataMapItem<T, MoneyWiseDataType>, MetisFieldItem {
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(MoneyWiseDataResource.MONEYWISEDATA_MAP_MULTIMAP.getValue());
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<SecurityPriceDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(SecurityPriceDataMap.class);
 
         /**
-         * InstanceMap Field Id.
+         * UnderlyingMap Field Id.
          */
-        private static final MetisField FIELD_MAPOFMAPS = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS.getValue());
-
-        /**
-         * PriceMap Field Id.
-         */
-        private static final MetisField FIELD_MAPOFPRICES = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_MAPOFMAPS, SecurityPriceDataMap::getMapOfMaps);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.SECURITYPRICE_MAP_MAPOFPRICES, SecurityPriceDataMap::getMapOfPrices);
+        }
 
         /**
          * Map of Maps.
@@ -773,28 +781,31 @@ public class SecurityPrice
             theMapOfPrices = new HashMap<>();
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<SecurityPriceDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_MAPOFMAPS.equals(pField)) {
-                return theMapOfMaps;
-            }
-            if (FIELD_MAPOFPRICES.equals(pField)) {
-                return theMapOfPrices;
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain mapOfMaps.
+         * @return the map
+         */
+        private Map<Security, Map<TethysDate, Integer>> getMapOfMaps() {
+            return theMapOfMaps;
+        }
+
+        /**
+         * Obtain mapOfPrices.
+         * @return the map
+         */
+        private Map<Security, PriceList> getMapOfPrices() {
+            return theMapOfPrices;
         }
 
         @Override
@@ -812,11 +823,7 @@ public class SecurityPrice
             }
 
             /* Access the map */
-            Map<TethysDate, Integer> myMap = theMapOfMaps.get(mySecurity);
-            if (myMap == null) {
-                myMap = new HashMap<>();
-                theMapOfMaps.put(mySecurity, myMap);
-            }
+            final Map<TethysDate, Integer> myMap = theMapOfMaps.computeIfAbsent(mySecurity, s -> new HashMap<>());
 
             /* Adjust price count */
             final TethysDate myDate = pItem.getDate();
@@ -828,11 +835,7 @@ public class SecurityPrice
             }
 
             /* Access the list */
-            PriceList myList = theMapOfPrices.get(mySecurity);
-            if (myList == null) {
-                myList = new PriceList(mySecurity);
-                theMapOfPrices.put(mySecurity, myList);
-            }
+            final PriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, s -> new PriceList(s));
 
             /* Add element to the list */
             myList.add(pItem);
@@ -886,7 +889,7 @@ public class SecurityPrice
             final PriceList myList = theMapOfPrices.get(mySecurity);
             if (myList != null) {
                 /* Loop through the prices */
-                final ListIterator<SecurityPrice> myIterator = myList.listIterator();
+                final Iterator<SecurityPrice> myIterator = myList.iterator();
                 while (myIterator.hasNext()) {
                     final SecurityPrice myCurr = myIterator.next();
 
@@ -937,8 +940,8 @@ public class SecurityPrice
                     myLatest = myCurr.getPrice();
 
                     /* Record early price */
-                    if ((iComp > 0)
-                        || (myDate.compareTo(myStart) == 0)) {
+                    if (iComp > 0
+                        || myDate.compareTo(myStart) == 0) {
                         myFirst = myLatest;
                     }
                 }
@@ -957,36 +960,37 @@ public class SecurityPrice
         public ListIterator<SecurityPrice> priceIterator(final Security pSecurity) {
             /* Access list for currency */
             final PriceList myList = theMapOfPrices.get(pSecurity);
-            return (myList != null)
-                                    ? myList.listIterator(myList.size())
-                                    : null;
+            return myList != null
+                                  ? myList.listIterator(myList.size())
+                                  : null;
         }
 
         /**
          * Price List class.
          */
         private static final class PriceList
-                extends ArrayList<SecurityPrice>
-                implements MetisDataContents {
-            /**
-             * Serial Id.
-             */
-            private static final long serialVersionUID = -44781825426553991L;
-
+                implements MetisFieldItem, MetisDataList<SecurityPrice> {
             /**
              * Report fields.
              */
-            private static final MetisFields FIELD_DEFS = new MetisFields(PriceList.class.getSimpleName());
+            private static final MetisFieldSet<PriceList> FIELD_DEFS = MetisFieldSet.newFieldSet(PriceList.class);
 
             /**
-             * Size Field Id.
+             * UnderlyingMap Field Id.
              */
-            private static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+            static {
+                FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, PriceList::size);
+            }
+
+            /**
+             * The list.
+             */
+            private final List<SecurityPrice> theList;
 
             /**
              * The security.
              */
-            private final transient Security theSecurity;
+            private final Security theSecurity;
 
             /**
              * Constructor.
@@ -994,19 +998,12 @@ public class SecurityPrice
              */
             private PriceList(final Security pSecurity) {
                 theSecurity = pSecurity;
+                theList = new ArrayList<>();
             }
 
             @Override
-            public MetisFields getDataFields() {
+            public MetisFieldSet<PriceList> getDataFieldSet() {
                 return FIELD_DEFS;
-            }
-
-            @Override
-            public Object getFieldValue(final MetisField pField) {
-                if (FIELD_SIZE.equals(pField)) {
-                    return size();
-                }
-                return MetisDataFieldValue.UNKNOWN;
             }
 
             @Override
@@ -1023,6 +1020,11 @@ public class SecurityPrice
                        + "("
                        + size()
                        + ")";
+            }
+
+            @Override
+            public List<SecurityPrice> getUnderlyingList() {
+                return theList;
             }
         }
     }

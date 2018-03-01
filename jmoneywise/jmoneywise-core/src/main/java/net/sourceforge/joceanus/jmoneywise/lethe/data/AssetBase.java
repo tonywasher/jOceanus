@@ -28,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -835,6 +836,13 @@ public abstract class AssetBase<T extends AssetBase<T>>
      */
     public abstract static class AssetBaseList<T extends AssetBase<T>>
             extends EncryptedList<T, MoneyWiseDataType> {
+        /**
+         * Report fields.
+         */
+        static {
+            MetisFieldSet.newFieldSet(AssetBaseList.class);
+        }
+
         /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list

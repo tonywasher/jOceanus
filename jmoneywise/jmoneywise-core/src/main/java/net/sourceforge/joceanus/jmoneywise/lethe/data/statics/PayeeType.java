@@ -24,6 +24,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data.statics;
 
 import java.util.Iterator;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -125,9 +126,9 @@ public class PayeeType
     public static class PayeeTypeList
             extends StaticList<PayeeType, PayeeTypeClass, MoneyWiseDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, StaticList.FIELD_DEFS);
+        private static final MetisFieldSet<PayeeTypeList> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeTypeList.class);
 
         /**
          * Construct an empty CORE payeeType list.
@@ -146,7 +147,7 @@ public class PayeeType
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<PayeeTypeList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

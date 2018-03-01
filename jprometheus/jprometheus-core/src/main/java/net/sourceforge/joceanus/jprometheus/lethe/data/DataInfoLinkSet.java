@@ -29,6 +29,7 @@ import java.util.List;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -187,7 +188,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     public List<Object> getActive() {
         return theActive.isEmpty()
                                    ? null
-                                   : theActive;
+                                   : theActive.getUnderlyingList();
     }
 
     /**
@@ -288,7 +289,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
             final DataItem<E> myItem = myIterator.next();
 
             /* Link the item if it is not currently selected */
-            if (!theActive.contains(myItem)) {
+            if (!theActive.getUnderlyingList().contains(myItem)) {
                 /* If we have never had such a link */
                 T myLink = getItemForValue(myItem);
                 if (myLink == null) {
@@ -590,17 +591,18 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
     /**
      * Value List.
      */
-    public static final class MetisInfoSetValueList extends ArrayList<Object> implements MetisDataObjectFormat {
+    public static final class MetisInfoSetValueList
+            implements MetisDataObjectFormat, MetisDataList<Object> {
         /**
-         * Serial Id.
+         * The list.
          */
-        private static final long serialVersionUID = -2400385873494004968L;
+        private final List<Object> theList;
 
         /**
          * Constructor.
          */
         protected MetisInfoSetValueList() {
-            super();
+            theList = new ArrayList<>();
         }
 
         @Override
@@ -610,7 +612,7 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
             boolean isFirst = true;
 
             /* Loop through the list */
-            final Iterator<?> myIterator = super.iterator();
+            final Iterator<?> myIterator = iterator();
             while (myIterator.hasNext()) {
                 final Object myLink = myIterator.next();
 
@@ -632,6 +634,11 @@ public class DataInfoLinkSet<T extends DataInfo<T, O, I, S, E>,
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return toString();
+        }
+
+        @Override
+        public List<Object> getUnderlyingList() {
+            return theList;
         }
     }
 }

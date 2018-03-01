@@ -26,6 +26,7 @@ import java.util.Date;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -959,9 +960,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
                                               E extends Enum<E>>
             extends EncryptedList<T, E> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAINFO_LIST.getValue(), DataList.FIELD_DEFS);
+        static {
+            MetisFieldSet.newFieldSet(DataInfoList.class);
+        }
 
         /**
          * Construct a generic data info list.
@@ -983,11 +986,6 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, S, E>,
          */
         protected DataInfoList(final DataInfoList<T, O, I, S, E> pSource) {
             super(pSource);
-        }
-
-        @Override
-        public MetisFields declareFields() {
-            return FIELD_DEFS;
         }
 
         @Override

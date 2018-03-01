@@ -31,9 +31,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
@@ -47,8 +46,6 @@ import net.sourceforge.joceanus.jprometheus.lethe.data.DataKeySet.DataKeySetList
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.DataListSet;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.EncryptedItem.EncryptedList;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDataList.PrometheusDataListPreferenceKey;
-import net.sourceforge.joceanus.jprometheus.lethe.preference.PrometheusDataList.PrometheusDataListPreferences;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
@@ -57,7 +54,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * @param <E> the data type enum class
  */
 public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
-        implements MetisDataContents, DataListSet<E> {
+        implements MetisFieldItem, DataListSet<E> {
     /**
      * The Hash prime.
      */
@@ -66,42 +63,20 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     /**
      * Report fields.
      */
-    protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATASET_NAME.getValue());
+    @SuppressWarnings("rawtypes")
+    private static final MetisFieldSet<DataSet> FIELD_DEFS = MetisFieldSet.newFieldSet(DataSet.class);
 
     /**
-     * Generation Field Id.
+     * Declare Fields.
      */
-    public static final MetisField FIELD_GENERATION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION.getValue());
-
-    /**
-     * Granularity Field Id.
-     */
-    public static final MetisField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GRANULARITY.getValue());
-
-    /**
-     * Version Field Id.
-     */
-    public static final MetisField FIELD_VERSION = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION.getValue());
-
-    /**
-     * ControlKeys Field Id.
-     */
-    public static final MetisField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST.getValue());
-
-    /**
-     * DataKeySets Field Id.
-     */
-    public static final MetisField FIELD_DATAKEYSETS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST.getValue());
-
-    /**
-     * DataKeys Field Id.
-     */
-    public static final MetisField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEY_LIST.getValue());
-
-    /**
-     * ControlData Field Id.
-     */
-    public static final MetisField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST.getValue());
+    static {
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_GENERATION, DataSet::getGeneration);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATASET_VERSION, DataSet::getVersion);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLKEY_LIST, DataSet::getControlKeys);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEYSET_LIST, DataSet::getDataKeySets);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.DATAKEY_LIST, DataSet::getDataKeys);
+        FIELD_DEFS.declareLocalField(PrometheusDataResource.CONTROLDATA_LIST, DataSet::getControlData);
+    }
 
     /**
      * SecurityInit Task.
@@ -179,11 +154,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
     private int theGeneration;
 
     /**
-     * Granularity of dataSet.
-     */
-    private final int theGranularity;
-
-    /**
      * Version of dataSet.
      */
     private int theVersion;
@@ -209,10 +179,8 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         theSecurity = pUtilitySet.getSecureManager();
         theEnumClass = pEnumClass;
 
-        /* Access the DataListPreferences */
+        /* Access the SecurityPreferences */
         final MetisPreferenceManager myPrefMgr = pUtilitySet.getPreferenceManager();
-        final PrometheusDataListPreferences myDataPreferences = myPrefMgr.getPreferenceSet(PrometheusDataListPreferences.class);
-        theGranularity = myDataPreferences.getIntegerValue(PrometheusDataListPreferenceKey.GRANULARITY);
         final MetisSecurityPreferences mySecPreferences = myPrefMgr.getPreferenceSet(MetisSecurityPreferences.class);
         theNumActiveKeySets = mySecPreferences.getIntegerValue(MetisSecurityPreferenceKey.ACTIVEKEYSETS);
 
@@ -237,9 +205,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
         /* Access the Enum class */
         theEnumClass = pSource.getEnumClass();
 
-        /* Access the Granularity */
-        theGranularity = pSource.getGranularity();
-
         /* Access the #activeKeySets */
         theNumActiveKeySets = pSource.getNumActiveKeySets();
 
@@ -251,45 +216,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
 
         /* Copy formatter */
         theFormatter = pSource.getDataFormatter();
-    }
-
-    @Override
-    public MetisFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final MetisField pField) {
-        if (FIELD_GENERATION.equals(pField)) {
-            return theGeneration;
-        }
-        if (FIELD_GRANULARITY.equals(pField)) {
-            return theGranularity;
-        }
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
-        if (FIELD_CONTROLKEYS.equals(pField)) {
-            return theControlKeys.isEmpty()
-                                            ? MetisDataFieldValue.SKIP
-                                            : theControlKeys;
-        }
-        if (FIELD_DATAKEYSETS.equals(pField)) {
-            return theDataKeySets.isEmpty()
-                                            ? MetisDataFieldValue.SKIP
-                                            : theDataKeySets;
-        }
-        if (FIELD_DATAKEYS.equals(pField)) {
-            return theDataKeys.isEmpty()
-                                         ? MetisDataFieldValue.SKIP
-                                         : theDataKeys;
-        }
-        if (FIELD_CONTROLDATA.equals(pField)) {
-            return theControlData.isEmpty()
-                                            ? MetisDataFieldValue.SKIP
-                                            : theControlData;
-        }
-        return MetisDataFieldValue.UNKNOWN;
     }
 
     @Override
@@ -351,14 +277,6 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      */
     public int getGeneration() {
         return theGeneration;
-    }
-
-    /**
-     * Get Granularity.
-     * @return the granularity
-     */
-    public int getGranularity() {
-        return theGranularity;
     }
 
     /**

@@ -30,7 +30,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -45,7 +46,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AccountInfoType.Ac
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.AssetCurrency;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.LoanCategoryClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
@@ -953,9 +953,9 @@ public class Loan
     public static class LoanList
             extends AssetBaseList<Loan> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<LoanList> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanList.class);
 
         /**
          * The LoanInfo List.
@@ -984,7 +984,7 @@ public class Loan
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<LoanList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1167,17 +1167,18 @@ public class Loan
      * The dataMap class.
      */
     protected static class LoanDataMap
-            implements DataMapItem<Loan, MoneyWiseDataType>, MetisDataContents {
+            implements DataMapItem<Loan, MoneyWiseDataType>, MetisFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFieldSet<LoanDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(LoanDataMap.class);
 
         /**
          * UnderlyingMap Field Id.
          */
-        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
-                .getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING, LoanDataMap::getUnderlyingMap);
+        }
 
         /**
          * The assetMap.
@@ -1193,24 +1194,21 @@ public class Loan
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<LoanDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_UNDERLYINGMAP.equals(pField)) {
-                return theUnderlyingMap;
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        private AssetDataMap getUnderlyingMap() {
+            return theUnderlyingMap;
         }
 
         @Override

@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -321,9 +322,9 @@ public class CashCategory
     public static class CashCategoryList
             extends CategoryBaseList<CashCategory, CashCategoryType, CashCategoryClass> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, CategoryBaseList.FIELD_DEFS);
+        private static final MetisFieldSet<CashCategoryList> FIELD_DEFS = MetisFieldSet.newFieldSet(CashCategoryList.class);
 
         /**
          * Construct an empty CORE Category list.
@@ -342,7 +343,7 @@ public class CashCategory
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<CashCategoryList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 

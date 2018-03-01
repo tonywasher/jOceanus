@@ -31,6 +31,7 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedData.MetisEncryptedString;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisEncryptedValueSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
@@ -746,6 +747,13 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
     public abstract static class StaticList<T extends StaticData<T, S, E>, S extends Enum<S> & StaticInterface, E extends Enum<E>>
             extends EncryptedList<T, E> {
         /**
+         * Report fields.
+         */
+        static {
+            MetisFieldSet.newFieldSet(StaticList.class);
+        }
+
+        /**
          * Construct a generic static data list.
          * @param pBaseClass the class of the underlying object
          * @param pData the dataSet
@@ -915,12 +923,15 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
         /**
          * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.STATICDATAMAP_NAME.getValue(), DataInstanceMap.FIELD_DEFS);
+        @SuppressWarnings("rawtypes")
+        private static final MetisFieldSet<StaticDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(StaticDataMap.class);
 
         /**
-         * OrderCountMap Field Id.
+         * Declare Fields.
          */
-        public static final MetisField FIELD_ORDERCOUNTS = FIELD_DEFS.declareLocalField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(PrometheusDataResource.STATICDATAMAP_ORDERCOUNTS, StaticDataMap::getOrderCountMap);
+        }
 
         /**
          * Map of order counts.
@@ -935,25 +946,23 @@ public abstract class StaticData<T extends StaticData<T, S, E>, S extends Enum<S
             theOrderCountMap = new HashMap<>();
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<? extends StaticDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_ORDERCOUNTS.equals(pField)) {
-                return theOrderCountMap;
-            }
-
-            /* Unknown */
-            return super.getFieldValue(pField);
         }
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
             return FIELD_DEFS.getName();
+        }
+
+        /**
+         * Obtain the keyMap.
+         * @return the map
+         */
+        private Map<Integer, Integer> getOrderCountMap() {
+            return theOrderCountMap;
         }
 
         @Override

@@ -29,12 +29,12 @@ import java.util.List;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
+import net.sourceforge.joceanus.jmetis.data.MetisDataResource;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataResource;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -568,9 +568,9 @@ public final class ControlKey
     public static class ControlKeyList
             extends DataList<ControlKey, CryptographyDataType> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<ControlKeyList> FIELD_DEFS = MetisFieldSet.newFieldSet(ControlKeyList.class);
 
         /**
          * Construct an empty CORE ControlKey list.
@@ -599,7 +599,7 @@ public final class ControlKey
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<ControlKeyList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -793,16 +793,18 @@ public final class ControlKey
      * DataKeySetResource.
      */
     private static final class DataKeySetResource
-            implements MetisDataContents, MetisDataList<DataKeySet> {
+            implements MetisFieldItem, MetisDataList<DataKeySet> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        protected static final MetisFields FIELD_DEFS = new MetisFields(DataKeySet.LIST_NAME);
+        private static final MetisFieldSet<DataKeySetResource> FIELD_DEFS = MetisFieldSet.newFieldSet(DataKeySetResource.class);
 
         /**
          * Size Field Id.
          */
-        public static final MetisField FIELD_SIZE = FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MetisDataResource.LIST_SIZE, DataKeySetResource::size);
+        }
 
         /**
          * The list.
@@ -822,7 +824,7 @@ public final class ControlKey
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<DataKeySetResource> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -833,15 +835,7 @@ public final class ControlKey
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return getDataFields().getName() + "(" + size() + ")";
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            if (FIELD_SIZE.equals(pField)) {
-                return size();
-            }
-            return MetisDataFieldValue.UNKNOWN;
+            return getDataFieldSet().getName() + "(" + size() + ")";
         }
 
         /**

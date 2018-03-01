@@ -32,7 +32,8 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
-import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisValueSet;
@@ -47,7 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeType.PayeeTyp
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.PayeeTypeClass;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataInstanceMap;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataItem;
-import net.sourceforge.joceanus.jprometheus.lethe.data.DataList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataMapItem;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataValues.InfoItem;
@@ -782,9 +782,9 @@ public class Payee
     public static class PayeeList
             extends AssetBaseList<Payee> {
         /**
-         * Local Report fields.
+         * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(LIST_NAME, DataList.FIELD_DEFS);
+        private static final MetisFieldSet<PayeeList> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeList.class);
 
         /**
          * The PayeeInfo List.
@@ -813,7 +813,7 @@ public class Payee
         }
 
         @Override
-        public MetisFields declareFields() {
+        public MetisFieldSet<PayeeList> getDataFieldSet() {
             return FIELD_DEFS;
         }
 
@@ -1003,27 +1003,20 @@ public class Payee
      * The dataMap class.
      */
     protected static class PayeeDataMap
-            implements DataMapItem<Payee, MoneyWiseDataType>, MetisDataContents {
+            implements DataMapItem<Payee, MoneyWiseDataType>, MetisFieldItem {
         /**
          * Report fields.
          */
-        private static final MetisFields FIELD_DEFS = new MetisFields(PrometheusDataResource.DATAMAP_NAME.getValue());
+        private static final MetisFieldSet<PayeeDataMap> FIELD_DEFS = MetisFieldSet.newFieldSet(PayeeDataMap.class);
 
         /**
          * UnderlyingMap Field Id.
          */
-        private static final MetisField FIELD_UNDERLYINGMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING
-                .getValue());
-
-        /**
-         * CategoryMap Field Id.
-         */
-        private static final MetisField FIELD_CATMAP = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP.getValue());
-
-        /**
-         * CategoryCountMap Field Id.
-         */
-        private static final MetisField FIELD_CATCOUNT = FIELD_DEFS.declareEqualityField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS.getValue());
+        static {
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_UNDERLYING, PayeeDataMap::getUnderlyingMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARMAP, PayeeDataMap::getPayeeMap);
+            FIELD_DEFS.declareLocalField(MoneyWiseDataResource.MONEYWISEDATA_MAP_SINGULARCOUNTS, PayeeDataMap::getPayeeCountMap);
+        }
 
         /**
          * The assetMap.
@@ -1053,25 +1046,8 @@ public class Payee
         }
 
         @Override
-        public MetisFields getDataFields() {
+        public MetisFieldSet<PayeeDataMap> getDataFieldSet() {
             return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final MetisField pField) {
-            /* Handle standard fields */
-            if (FIELD_UNDERLYINGMAP.equals(pField)) {
-                return theUnderlyingMap;
-            }
-            if (FIELD_CATMAP.equals(pField)) {
-                return thePayeeMap;
-            }
-            if (FIELD_CATCOUNT.equals(pField)) {
-                return thePayeeCountMap;
-            }
-
-            /* Unknown */
-            return MetisDataFieldValue.UNKNOWN;
         }
 
         @Override
@@ -1085,6 +1061,22 @@ public class Payee
          */
         public AssetDataMap getUnderlyingMap() {
             return theUnderlyingMap;
+        }
+
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        private Map<Integer, Payee> getPayeeMap() {
+            return thePayeeMap;
+        }
+
+        /**
+         * Obtain the underlying map.
+         * @return the underlying map
+         */
+        private Map<Integer, Integer> getPayeeCountMap() {
+            return thePayeeCountMap;
         }
 
         @Override
