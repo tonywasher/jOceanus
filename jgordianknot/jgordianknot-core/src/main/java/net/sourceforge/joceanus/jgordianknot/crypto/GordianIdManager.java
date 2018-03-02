@@ -53,11 +53,6 @@ public class GordianIdManager {
     private final GordianPersonalisation thePersonalisation;
 
     /**
-     * The cipherSet indent.
-     */
-    private final int theCipherIndent;
-
-    /**
      * The list of Symmetric Keys.
      */
     private final GordianSymKeyType[] theSymKeys;
@@ -117,17 +112,6 @@ public class GordianIdManager {
         theKeySetDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.KEYSETDIGEST, pFactory.supportedKeySetDigestTypes());
         theHMacDigests = shuffleTypes(GordianDigestType.values(), GordianPersonalId.HMAC, pFactory.supportedHMacDigestTypes());
         theMacs = shuffleTypes(GordianMacType.values(), GordianPersonalId.MAC, pFactory.supportedMacTypes());
-
-        /* Determine the cipher indentation */
-        theCipherIndent = thePersonalisation.getPersonalisedByte(GordianPersonalId.CIPHER) & TethysDataConverter.NYBBLE_MASK;
-    }
-
-    /**
-     * Obtain cipher indentation.
-     * @return the cipher indentation
-     */
-    protected int getCipherIndentation() {
-        return theCipherIndent;
     }
 
     /**

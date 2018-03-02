@@ -331,11 +331,6 @@ public class GordianPersonalisation {
         MAC,
 
         /**
-         * Cipher.
-         */
-        CIPHER,
-
-        /**
          * Recipe.
          */
         RECIPE,

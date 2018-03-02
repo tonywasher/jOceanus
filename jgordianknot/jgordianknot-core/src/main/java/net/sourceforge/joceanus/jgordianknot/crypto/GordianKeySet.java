@@ -27,8 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetRecipe.GordianKeySetParameters;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -141,13 +139,7 @@ public final class GordianKeySet {
         final byte[] myBytes = theCipher.finish(pBytes);
 
         /* Package and return the encrypted bytes */
-        final byte[] myCloud = myRecipe.buildExternal(theFactory, myBytes);
-        final byte[] myClear = decryptBytes(myCloud);
-        if (!Arrays.areEqual(pBytes, myClear)) {
-            throw new GordianDataException("Help");
-        }
-
-        return myCloud;
+        return myRecipe.buildExternal(myBytes);
     }
 
     /**
@@ -182,7 +174,7 @@ public final class GordianKeySet {
         final byte[] myBytes = theCipher.secureKey(myParams, pKeyToSecure);
 
         /* Package and return the encrypted bytes */
-        return myRecipe.buildExternal(theFactory, myBytes);
+        return myRecipe.buildExternal(myBytes);
     }
 
     /**
@@ -219,7 +211,7 @@ public final class GordianKeySet {
         final byte[] myBytes = theCipher.securePrivateKey(myParams, pKeyPair);
 
         /* Package and return the encrypted bytes */
-        return myRecipe.buildExternal(theFactory, myBytes);
+        return myRecipe.buildExternal(myBytes);
     }
 
     /**

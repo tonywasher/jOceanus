@@ -41,11 +41,6 @@ public final class GordianKeySetRecipe {
     static final int SALTLEN = GordianLength.LEN_128.getByteLength();
 
     /**
-     * Margins.
-     */
-    private static final int IMBED_MARGIN = 4;
-
-    /**
      * The Recipe.
      */
     private final byte[] theRecipe;
@@ -79,47 +74,24 @@ public final class GordianKeySetRecipe {
     GordianKeySetRecipe(final GordianFactory pFactory,
                         final byte[] pExternal) {
         /* Determine data length */
-        int myRecipeLen = RECIPELEN;
         final int myLen = pExternal.length;
         final int myDataLen = myLen
-                              - myRecipeLen
+                              - RECIPELEN
                               - SALTLEN;
 
         /* Allocate buffers */
-        theRecipe = new byte[myRecipeLen];
+        theRecipe = new byte[RECIPELEN];
         final byte[] mySalt = new byte[SALTLEN];
         theBytes = new byte[myDataLen];
 
-        /* Determine offset position */
-        final int myOffSet = getCipherIndentation(pFactory, myDataLen);
-
         /* Copy Data into buffers */
-        System.arraycopy(pExternal, 0, theBytes, 0, myOffSet);
-        System.arraycopy(pExternal, myOffSet, theRecipe, 0, myRecipeLen);
-        System.arraycopy(pExternal, myOffSet
-                                    + myRecipeLen, mySalt, 0, SALTLEN);
-        myRecipeLen += SALTLEN;
-        System.arraycopy(pExternal, myOffSet
-                                    + myRecipeLen, theBytes, myOffSet, myDataLen
-                                                                       - myOffSet);
+        System.arraycopy(pExternal, 0, theRecipe, 0, RECIPELEN);
+        System.arraycopy(pExternal, RECIPELEN, mySalt, 0, SALTLEN);
+        System.arraycopy(pExternal, RECIPELEN
+                                    + SALTLEN, theBytes, 0, myDataLen);
 
         /* Allocate new set of parameters */
         theParams = new GordianKeySetParameters(pFactory, theRecipe, mySalt);
-    }
-
-    /**
-     * Obtain cipher indentation.
-     * @param pFactory the factory
-     * @param pDataLen the data length
-     * @return the cipher indentation
-     */
-    private static int getCipherIndentation(final GordianFactory pFactory,
-                                            final int pDataLen) {
-        final GordianIdManager myManager = pFactory.getIdManager();
-        int myOffSet = myManager.getCipherIndentation();
-        myOffSet += IMBED_MARGIN;
-        return Math.min(myOffSet, pDataLen
-                                  - IMBED_MARGIN);
     }
 
     /**
@@ -140,33 +112,22 @@ public final class GordianKeySetRecipe {
 
     /**
      * Build External Format for data.
-     * @param pFactory the factory
      * @param pData the encrypted data
      * @return the external form
      */
-    byte[] buildExternal(final GordianFactory pFactory,
-                         final byte[] pData) {
+    byte[] buildExternal(final byte[] pData) {
         /* Determine lengths */
-        int myRecipeLen = RECIPELEN;
         final int myDataLen = pData.length;
-        final int myLen = myRecipeLen
+        final int myLen = RECIPELEN
                           + myDataLen + SALTLEN;
 
         /* Allocate the buffer */
         final byte[] myBuffer = new byte[myLen];
 
-        /* Determine offset position */
-        final int myOffSet = getCipherIndentation(pFactory, myDataLen);
-
         /* Copy Data into buffer */
-        System.arraycopy(pData, 0, myBuffer, 0, myOffSet);
-        System.arraycopy(theRecipe, 0, myBuffer, myOffSet, myRecipeLen);
-        System.arraycopy(theParams.getSalt(), 0, myBuffer, myOffSet
-                                                           + myRecipeLen, SALTLEN);
-        myRecipeLen += SALTLEN;
-        System.arraycopy(pData, myOffSet, myBuffer, myOffSet
-                                                    + myRecipeLen, myDataLen
-                                                                   - myOffSet);
+        System.arraycopy(theRecipe, 0, myBuffer, 0, RECIPELEN);
+        System.arraycopy(theParams.getSalt(), 0, myBuffer, RECIPELEN, SALTLEN);
+        System.arraycopy(pData, 0, myBuffer, RECIPELEN + SALTLEN, myDataLen);
 
         /* return the external format */
         return myBuffer;

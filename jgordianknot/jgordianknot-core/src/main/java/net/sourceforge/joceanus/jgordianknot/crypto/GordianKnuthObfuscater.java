@@ -123,9 +123,9 @@ public class GordianKnuthObfuscater {
      * @return the encoded value
      */
     public long knuthEncodeLong(final long pInput) {
-        final long myTop = knuthEncodeInteger((int) (pInput >>> Integer.SIZE));
-        final long myBottom = knuthEncodeInteger((int) pInput);
-        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+        final long myHigh = knuthEncodeInteger((int) (pInput >>> Integer.SIZE));
+        final int myLow = knuthEncodeInteger((int) pInput);
+        return (myHigh << Integer.SIZE) | Integer.toUnsignedLong(myLow);
     }
 
     /**
@@ -136,9 +136,9 @@ public class GordianKnuthObfuscater {
      */
     public long knuthEncodeLong(final long pInput,
                                 final int pAdjustment) {
-        final long myTop = knuthEncodeInteger((int) (pInput >>> Integer.SIZE), pAdjustment);
-        final long myBottom = knuthEncodeInteger((int) pInput, pAdjustment);
-        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+        final long myHigh = knuthEncodeInteger((int) (pInput >>> Integer.SIZE), pAdjustment);
+        final int myLow = knuthEncodeInteger((int) pInput, pAdjustment);
+        return (myHigh << Integer.SIZE) | Integer.toUnsignedLong(myLow);
     }
 
     /**
@@ -147,9 +147,9 @@ public class GordianKnuthObfuscater {
      * @return the original input
      */
     public long knuthDecodeLong(final long pEncoded) {
-        final int myTop = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE));
-        final int myBottom = knuthDecodeInteger((int) pEncoded);
-        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+        final int myHigh = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE));
+        final int myLow = knuthDecodeInteger((int) pEncoded);
+        return (myHigh << Integer.SIZE) | Integer.toUnsignedLong(myLow);
     }
 
     /**
@@ -160,9 +160,9 @@ public class GordianKnuthObfuscater {
      */
     public long knuthDecodeLong(final long pEncoded,
                                 final int pAdjustment) {
-        int myTop = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE), pAdjustment);
-        int myBottom = knuthDecodeInteger((int) pEncoded, pAdjustment);
-        return (myTop << Integer.SIZE) | (myBottom & 0xFFFFFFFFL);
+        final int myHigh = knuthDecodeInteger((int) (pEncoded >>> Integer.SIZE), pAdjustment);
+        final int myLow = knuthDecodeInteger((int) pEncoded, pAdjustment);
+        return (myHigh << Integer.SIZE) | Integer.toUnsignedLong(myLow);
     }
 
     /**
