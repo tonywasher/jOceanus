@@ -181,7 +181,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
      * @return the next allocated Id
      */
     public Integer allocateNextId() {
-        Integer myId = theNextId;
+        final Integer myId = theNextId;
         checkId(myId);
         return myId;
     }
@@ -383,7 +383,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
      * Check the Id.
      * @param pId the id
      */
-    private void checkId(final Integer pId) {
+    protected void checkId(final Integer pId) {
         /* Check that the id is non-zero and positive */
         if (pId <= 0) {
             throw new IllegalArgumentException("Invalid Id");

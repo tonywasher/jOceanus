@@ -41,15 +41,21 @@ public final class MetisListDiffManager {
     }
 
     /**
-     * Derive a difference set.
+     * Derive a difference set between two baseListSets.
      * @param pNew the new listSet
      * @param pOld the old listSet to compare to
      * @return the difference set
      */
     public static MetisListSetVersioned deriveDifferences(final MetisListSetVersioned pNew,
                                                           final MetisListSetVersioned pOld) {
+        /* Only allowed for Base ListSets */
+        if (!MetisListSetType.BASE.equals(pNew.getListSetType())
+            || !MetisListSetType.BASE.equals(pOld.getListSetType())) {
+            throw new IllegalArgumentException();
+        }
+
         /* Create a new difference set */
-        final MetisListSetVersioned myDifferences = new MetisListSetVersioned();
+        final MetisListSetVersioned myDifferences = new MetisListSetVersioned(MetisListSetType.DIFF);
 
         /* Determine the new Version */
         int myNewVersion = 0;

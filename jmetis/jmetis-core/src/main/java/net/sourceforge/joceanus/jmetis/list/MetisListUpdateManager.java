@@ -47,8 +47,13 @@ public final class MetisListUpdateManager {
      * @return the updateSet
      */
     public static MetisListSetVersioned deriveUpdateListSet(final MetisListSetVersioned pBase) {
+        /* Only allowed for Base ListSets */
+        if (!MetisListSetType.BASE.equals(pBase.getListSetType())) {
+            throw new IllegalArgumentException();
+        }
+
         /* Create a new updateSet */
-        final MetisListSetVersioned myUpdates = new MetisListSetVersioned(pBase);
+        final MetisListSetVersioned myUpdates = new MetisListSetVersioned(MetisListSetType.UPDATE, pBase);
 
         /* Determine the new Version */
         int myNewVersion = 0;
@@ -93,6 +98,11 @@ public final class MetisListUpdateManager {
      */
     public static void commitUpdateBatch(final MetisListSetVersioned pUpdates,
                                          final int pNumItems) {
+        /* Only allowed for Base ListSets */
+        if (!MetisListSetType.UPDATE.equals(pUpdates.getListSetType())) {
+            throw new IllegalArgumentException();
+        }
+
         /* Access the number of items */
         int myNumItems = pNumItems;
 

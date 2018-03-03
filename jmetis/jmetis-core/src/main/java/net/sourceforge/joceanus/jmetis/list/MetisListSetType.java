@@ -22,31 +22,32 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.list;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldItemType;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
-
 /**
- * List Item Type.
+ * ListSet type.
  */
-public interface MetisListKey
-        extends MetisFieldItemType {
+public enum MetisListSetType {
     /**
-     * Obtain the item id.
-     * @return the item id
+     * Base.
      */
-    Integer getItemId();
+    BASE,
 
     /**
-     * Obtain the list name.
-     * @return the list name
+     * Update.
      */
-    String getListName();
+    UPDATE,
 
     /**
-     * Create a new item for the list.
-     * @param <T> the item type
-     * @param pListSet the listSet
-     * @return the new item
+     * Difference.
      */
-    <T extends MetisFieldVersionedItem> T newItem(MetisListSetVersioned pListSet);
+    DIFF,
+
+    /**
+     * Edit.
+     */
+    EDIT,
+
+    /**
+     * View.
+     */
+    VIEW;
 }

@@ -262,9 +262,7 @@ public abstract class GordianFactory {
      * @return the keyLength
      * @throws OceanusException on error
      */
-    public <X> String getKeyAlgorithm(final X pKeyType) throws OceanusException {
-        return pKeyType.toString();
-    }
+    public abstract <X> String getKeyAlgorithm(X pKeyType) throws OceanusException;
 
     /**
      * create KeySet.
@@ -871,13 +869,7 @@ public abstract class GordianFactory {
      * @return true/false
      */
     protected boolean validGMacSymKeySpec(final GordianSymKeySpec pKeySpec) {
-        switch (pKeySpec.getSymKeyType()) {
-            // case KALYNA:
-            case RC5:
-                return false;
-            default:
-                return validSymKeySpec(pKeySpec);
-        }
+        return validCMacSymKeySpec(pKeySpec);
     }
 
     /**

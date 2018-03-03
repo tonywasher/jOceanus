@@ -261,6 +261,11 @@ public final class BouncyFactory
     }
 
     @Override
+    public <X> String getKeyAlgorithm(final X pKeyType) {
+        return pKeyType.toString();
+    }
+
+    @Override
     public GordianBaseSecureRandom createRandom(final GordianRandomSpec pRandomSpec) throws OceanusException {
         /* Check validity of randomSpec */
         if (!supportedRandomSpecs().test(pRandomSpec)) {

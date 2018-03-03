@@ -348,11 +348,11 @@ public class MetisFieldSet<T extends MetisFieldItem>
     public <E extends Enum<E>> Map<E, MetisFieldDef> declareLocalFieldsForEnum(final Class<E> pClazz,
                                                                                final BiFunction<T, E, Object> pValue) {
         /* Loop through the enum constants */
-        Map<E, MetisFieldDef> myMap = new EnumMap<>(pClazz);
+        final Map<E, MetisFieldDef> myMap = new EnumMap<>(pClazz);
         for (E myValue : pClazz.getEnumConstants()) {
             /* Create an id and callback for the value */
             final MetisDataFieldId myId = new MetisFieldSimpleId(myValue.toString());
-            MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue), MetisFieldStorage.LOCAL);
+            final MetisField<T> myField = declareDataField(myId, t -> pValue.apply(t, myValue), MetisFieldStorage.LOCAL);
 
             /* Store into the map */
             myMap.put(myValue, myField);

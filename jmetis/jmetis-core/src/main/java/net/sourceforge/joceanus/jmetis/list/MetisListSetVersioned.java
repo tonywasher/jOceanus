@@ -59,6 +59,11 @@ public class MetisListSetVersioned
     private final MetisFieldSet<MetisListSetVersioned> theFields;
 
     /**
+     * The listSetType.
+     */
+    private final MetisListSetType theType;
+
+    /**
      * The VersionedList Map.
      */
     private final Map<MetisListKey, MetisListVersioned<MetisFieldVersionedItem>> theListMap;
@@ -80,17 +85,21 @@ public class MetisListSetVersioned
 
     /**
      * Constructor.
+     * @param pListSetType the type
      */
-    protected MetisListSetVersioned() {
-        this(null);
+    protected MetisListSetVersioned(final MetisListSetType pListSetType) {
+        this(pListSetType, null);
     }
 
     /**
      * Constructor.
+     * @param pListSetType the type
      * @param pBaseListSet the baseListSet (if any)
      */
-    protected MetisListSetVersioned(final MetisListSetVersioned pBaseListSet) {
+    protected MetisListSetVersioned(final MetisListSetType pListSetType,
+                                    final MetisListSetVersioned pBaseListSet) {
         /* Store parameters */
+        theType = pListSetType;
         theBaseListSet = pBaseListSet;
 
         /* Create listMap and fieldSet */
@@ -119,6 +128,14 @@ public class MetisListSetVersioned
     @Override
     public String toString() {
         return getDataFieldSet().getName();
+    }
+
+    /**
+     * Obtain the listSetType.
+     * @return the listSet type
+     */
+    public MetisListSetType getListSetType() {
+        return theType;
     }
 
     /**

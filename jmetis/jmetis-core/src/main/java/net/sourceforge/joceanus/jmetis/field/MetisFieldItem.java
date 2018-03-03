@@ -171,6 +171,24 @@ public interface MetisFieldItem
     }
 
     /**
+     * Field Item Type.
+     */
+    public interface MetisFieldItemType {
+        /**
+         * Obtain the item name.
+         * @return the item name
+         */
+        String getItemName();
+
+        /**
+         * Obtain the class of the item.
+         * @param <T> the item type
+         * @return the clazz
+         */
+        <T extends MetisFieldVersionedItem> Class<T> getClazz();
+    }
+
+    /**
      * Table Item.
      */
     public interface MetisFieldTableItem

@@ -126,7 +126,7 @@ public final class MetisDataItem {
          * @return the iterator
          */
         default Iterator<T> iterator() {
-            List<T> myList = getUnderlyingList();
+            final List<T> myList = getUnderlyingList();
             return myList == null
                                   ? null
                                   : myList.iterator();
@@ -138,7 +138,7 @@ public final class MetisDataItem {
          * @return the iterator
          */
         default ListIterator<T> listIterator(final int pIndex) {
-            List<T> myList = getUnderlyingList();
+            final List<T> myList = getUnderlyingList();
             return myList == null
                                   ? null
                                   : myList.listIterator(pIndex);
@@ -149,7 +149,7 @@ public final class MetisDataItem {
          * @return true/false
          */
         default boolean isEmpty() {
-            List<T> myList = getUnderlyingList();
+            final List<T> myList = getUnderlyingList();
             return myList == null
                                   ? true
                                   : myList.isEmpty();
@@ -160,7 +160,7 @@ public final class MetisDataItem {
          * @return the size
          */
         default int size() {
-            List<T> myList = getUnderlyingList();
+            final List<T> myList = getUnderlyingList();
             return myList == null
                                   ? 0
                                   : myList.size();
@@ -170,7 +170,7 @@ public final class MetisDataItem {
          * Clear the list.
          */
         default void clear() {
-            List<T> myList = getUnderlyingList();
+            final List<T> myList = getUnderlyingList();
             if (myList != null) {
                 myList.clear();
             }

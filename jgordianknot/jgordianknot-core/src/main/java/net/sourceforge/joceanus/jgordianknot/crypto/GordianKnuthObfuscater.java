@@ -175,7 +175,7 @@ public class GordianKnuthObfuscater {
      */
     public <T> int deriveExternalIdFromType(final T pType,
                                             final int pAdjustment) throws OceanusException {
-        return (int) knuthEncodeInteger(deriveEncodedIdFromType(pType), pAdjustment);
+        return knuthEncodeInteger(deriveEncodedIdFromType(pType), pAdjustment);
     }
 
     /**
@@ -186,7 +186,7 @@ public class GordianKnuthObfuscater {
      * @throws OceanusException on error
      */
     public <T> int deriveExternalIdFromType(final T pType) throws OceanusException {
-        return (int) knuthEncodeInteger(deriveEncodedIdFromType(pType));
+        return knuthEncodeInteger(deriveEncodedIdFromType(pType));
     }
 
     /**

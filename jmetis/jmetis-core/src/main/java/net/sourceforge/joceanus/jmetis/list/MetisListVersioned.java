@@ -205,8 +205,20 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @return the new item
      */
     protected T newListItem(final Integer pId) {
+        /* Determine the id */
+        Integer myId = pId;
+        if (myId == null || myId == 0) {
+            myId = allocateNextId();
+        } else {
+            checkId(myId);
+        }
+
+        /* Create the item and initialise it */
         final T myItem = theItemType.newItem(theListSet);
-        myItem.setIndexedId(pId);
+        myItem.setIndexedId(myId);
+        myItem.setItemType(theItemType);
+
+        /* Return the new id */
         return myItem;
     }
 }

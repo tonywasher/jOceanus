@@ -45,6 +45,7 @@ public class MetisFieldVersionedItem
      */
     static {
         FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID.getValue(), MetisFieldVersionedItem::getIndexedId);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ITEMTYPE.getValue(), MetisFieldVersionedItem::getItemType);
         FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisFieldVersionedItem::getVersion);
         FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED.getValue(), MetisFieldVersionedItem::isDeleted);
         FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE.getValue(), MetisFieldVersionedItem::getState);
@@ -67,6 +68,11 @@ public class MetisFieldVersionedItem
      * The id.
      */
     private Integer theId;
+
+    /**
+     * The itemType.
+     */
+    private MetisFieldItemType theItemType;
 
     /**
      * The dataState.
@@ -121,6 +127,22 @@ public class MetisFieldVersionedItem
      */
     public void setIndexedId(final Integer pId) {
         theId = pId;
+    }
+
+    /**
+     * Obtain the itemType.
+     * @return the item type
+     */
+    public MetisFieldItemType getItemType() {
+        return theItemType;
+    }
+
+    /**
+     * Set ItemType.
+     * @param pItemType the itemType
+     */
+    public void setItemType(final MetisFieldItemType pItemType) {
+        theItemType = pItemType;
     }
 
     /**

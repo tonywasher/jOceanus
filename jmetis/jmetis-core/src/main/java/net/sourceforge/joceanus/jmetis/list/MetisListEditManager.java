@@ -44,9 +44,14 @@ public final class MetisListEditManager {
      * @param pBase the base listSet
      * @return the updateSet
      */
-    public static MetisListSetVersioned deriveUpdateListSet(final MetisListSetVersioned pBase) {
+    public static MetisListSetVersioned deriveEditListSet(final MetisListSetVersioned pBase) {
+        /* Only allowed for Base ListSets */
+        if (!MetisListSetType.BASE.equals(pBase.getListSetType())) {
+            throw new IllegalArgumentException();
+        }
+
         /* Create a new editSet */
-        final MetisListSetVersioned myEdits = new MetisListSetVersioned(pBase);
+        final MetisListSetVersioned myEdits = new MetisListSetVersioned(MetisListSetType.EDIT, pBase);
 
         /* Loop through the lists */
         final Iterator<MetisListKey> myIterator = pBase.keyIterator();

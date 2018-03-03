@@ -101,6 +101,11 @@ public enum MetisDataResource
     DATA_ID("item.Id"),
 
     /**
+     * DataItem Type.
+     */
+    DATA_ITEMTYPE("item.Type"),
+
+    /**
      * DataItem Version.
      */
     DATA_VERSION("item.Version"),

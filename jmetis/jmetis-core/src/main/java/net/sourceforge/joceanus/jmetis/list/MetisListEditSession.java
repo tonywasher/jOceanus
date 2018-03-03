@@ -58,6 +58,11 @@ public class MetisListEditSession {
      * @param pListSet the listSet
      */
     protected MetisListEditSession(final MetisListSetVersioned pListSet) {
+        /* Only allowed for Edit ListSets */
+        if (!MetisListSetType.EDIT.equals(pListSet.getListSetType())) {
+            throw new IllegalArgumentException();
+        }
+
         /* Store parameters */
         theListSet = pListSet;
         theNewVersion = -1;
