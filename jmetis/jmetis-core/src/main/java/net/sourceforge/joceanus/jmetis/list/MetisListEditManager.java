@@ -74,7 +74,7 @@ public final class MetisListEditManager {
         /* Register event handlers */
         final TethysEventRegistrar<MetisListEvent> myRegistrar = pBase.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> deriveEdits(myEdits));
-        myRegistrar.addEventListener(MetisListEvent.REWIND, e -> handleReWindOfBase(myEdits, e));
+        myRegistrar.addEventListener(MetisListEvent.VERSION, e -> handleReWindOfBase(myEdits, e));
 
         /* Return the editSet */
         return myEdits;
@@ -144,6 +144,9 @@ public final class MetisListEditManager {
         /* Access the change details */
         final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
 
+        /* Create a new ListSet event */
+        final MetisListSetChange myNewChanges = new MetisListSetChange(0);
+
         /* Loop through the lists */
         final Iterator<MetisListKey> myIterator = pEdits.keyIterator();
         while (myIterator.hasNext()) {
@@ -158,14 +161,14 @@ public final class MetisListEditManager {
                 /* handle changes in the base list */
                 myChange = doHandleReWindOfBase(myEdits, myChange);
                 if (!myChange.isEmpty()) {
-                    myChanges.registerChangedList(myChange);
+                    myNewChanges.registerChangedList(myChange);
                 }
             }
         }
 
         /* Fire the event */
-        if (!myChanges.isEmpty()) {
-            pEdits.fireEvent(myChanges);
+        if (!myNewChanges.isEmpty()) {
+            pEdits.fireEvent(myNewChanges);
         }
     }
 
@@ -179,13 +182,15 @@ public final class MetisListEditManager {
     private static <T extends MetisFieldVersionedItem> MetisListChange<T> doHandleReWindOfBase(final MetisListVersioned<T> pList,
                                                                                                final MetisListChange<T> pChange) {
         /* Create a new change */
-        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.REWIND);
+        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.VERSION);
 
         /* Handle underlying deleted items */
         handleBaseDeletedItems(pList, myChange, pChange.deletedIterator());
+        handleBaseDeletedItems(pList, myChange, pChange.hiddenIterator());
 
         /* Handle base changed items */
         handleBaseChangedItems(pList, myChange, pChange.changedIterator());
+        handleBaseChangedItems(pList, myChange, pChange.restoredIterator());
 
         /* Items are never added by a reWind */
 
@@ -211,19 +216,8 @@ public final class MetisListEditManager {
             /* Obtain the item to be changed */
             T myItem = pList.getItemById(myId);
 
-            /* If the item is now deleted */
-            if (!myCurr.isDeleted()) {
-                /* If we currently have the item in the list */
-                if (myItem == null) {
-                    /* Remove the item */
-                    pList.removeById(myId);
-
-                    /* Record change */
-                    pChange.registerDeleted(myCurr);
-                }
-
-                /* else if we do not currently have the item in the list */
-            } else if (myItem == null) {
+            /* if we do not currently have the item in the list */
+            if (myItem == null) {
                 /* Create the new item */
                 myItem = newItemFromBase(pList, myCurr);
                 pList.add(myItem);
@@ -293,7 +287,7 @@ public final class MetisListEditManager {
         /* Obtain a clone of the value set as the base value */
         final MetisFieldVersionValues myBaseSet = pBase.getValueSet();
         mySet.copyFrom(myBaseSet);
-        pBase.adjustState();
+        myNew.adjustState();
 
         /* Return the new item */
         return myNew;

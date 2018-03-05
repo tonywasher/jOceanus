@@ -226,7 +226,7 @@ public class MetisListEditSession {
         /* If we are currently editing */
         if (activeVersion()) {
             /* Create new Change Details */
-            final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.UPDATE);
+            final MetisListSetChange myChanges = new MetisListSetChange(theNewVersion);
 
             /* Loop through the lists */
             final Iterator<MetisListKey> myIterator = theVersionLists.iterator();
@@ -271,7 +271,7 @@ public class MetisListEditSession {
      */
     private <T extends MetisFieldVersionedItem> MetisListChange<T> doCommitEditVersion(final MetisListVersioned<T> pList) {
         /* Create a new Change Detail */
-        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.UPDATE);
+        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.VERSION);
 
         /* Loop through the list */
         final Iterator<T> myIterator = pList.iterator();
@@ -287,8 +287,14 @@ public class MetisListEditSession {
 
                     /* else if there is actually a change */
                 } else if (myCurr.maybePopHistory()) {
-                    /* Register as a changed item */
-                    myChange.registerChanged(myCurr);
+                    /* If deletion flag is unchanged */
+                    if (myCurr.isDeleted()) {
+                        /* Register as a hidden item */
+                        myChange.registerHidden(myCurr);
+                    } else {
+                        /* Register as a changed item */
+                        myChange.registerChanged(myCurr);
+                    }
                 }
 
                 /* adjust the state */
@@ -306,12 +312,12 @@ public class MetisListEditSession {
     public void commitEditSession() {
         /* If we are currently editing */
         if (activeSession()) {
-            /* Create new Change Details */
-            final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.UPDATE);
-            final MetisListSetChange myBaseChanges = new MetisListSetChange(MetisListEvent.COMMIT);
-
             /* Determine the new version in base */
             theNewVersion = theListSet.getBaseListSet().getVersion() + 1;
+
+            /* Create new Change Details */
+            final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.UPDATE);
+            final MetisListSetChange myBaseChanges = new MetisListSetChange(theNewVersion);
 
             /* Loop through the lists */
             final Iterator<MetisListKey> myIterator = theSessionLists.iterator();
@@ -323,8 +329,8 @@ public class MetisListEditSession {
                 myIterator.remove();
 
                 /* Create new Change Details */
-                final MetisListChange<MetisFieldVersionedItem> myChange = new MetisListChange<>(myKey, MetisListEvent.UPDATE);
-                final MetisListChange<MetisFieldVersionedItem> myBaseChange = new MetisListChange<>(myKey, MetisListEvent.COMMIT);
+                final MetisListChange<MetisFieldVersionedItem> myChange = new MetisListChange<>(myKey, MetisListEvent.VERSION);
+                final MetisListChange<MetisFieldVersionedItem> myBaseChange = new MetisListChange<>(myKey, MetisListEvent.UPDATE);
 
                 /* Commit the edit version */
                 doCommitEditSession(myList, myChange, myBaseChange);
@@ -333,6 +339,7 @@ public class MetisListEditSession {
                 if (!myBaseChange.isEmpty()) {
                     /* Update the version and record changes */
                     myList.getBaseList().setVersion(theNewVersion);
+                    myBaseChange.setVersion(theNewVersion);
                     myBaseChanges.registerChangedList(myBaseChange);
                 }
 
@@ -387,7 +394,6 @@ public class MetisListEditSession {
                     break;
                 case CHANGED:
                 case DELETED:
-                case RECOVERED:
                     handleCommitOfChangedItem(pList, pChange, pBaseChange, myCurr);
                     break;
                 default:
@@ -476,7 +482,11 @@ public class MetisListEditSession {
             myBaseSet.copyFrom(mySet);
 
             /* Add to the base changes */
-            pBaseChange.registerChanged(myBase);
+            if (pItem.isDeleted()) {
+                pBaseChange.registerHidden(myBase);
+            } else {
+                pBaseChange.registerChanged(myBase);
+            }
         }
 
         /* Add to the edit changes */

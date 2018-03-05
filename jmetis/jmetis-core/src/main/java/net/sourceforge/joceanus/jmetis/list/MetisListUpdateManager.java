@@ -82,9 +82,8 @@ public final class MetisListUpdateManager {
         /* Register event handlers */
         final TethysEventRegistrar<MetisListEvent> myRegistrar = pBase.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> deriveUpdates(myUpdates));
-        myRegistrar.addEventListener(MetisListEvent.REBASE, e -> handleChangesInBaseSet(myUpdates, e));
-        myRegistrar.addEventListener(MetisListEvent.COMMIT, e -> handleChangesInBaseSet(myUpdates, e));
-        myRegistrar.addEventListener(MetisListEvent.REWIND, e -> handleChangesInBaseSet(myUpdates, e));
+        myRegistrar.addEventListener(MetisListEvent.UPDATE, e -> handleChangesInBaseSet(myUpdates, e));
+        myRegistrar.addEventListener(MetisListEvent.VERSION, e -> handleChangesInBaseSet(myUpdates, e));
 
         /* Return the updateSet */
         myUpdates.setVersion(myNewVersion);
@@ -244,7 +243,7 @@ public final class MetisListUpdateManager {
     }
 
     /**
-     * Amend update items as a result of reWind/Commit in the base listSet.
+     * Amend update items as a result of changes in the base listSet.
      * @param pUpdates the updates listSet
      * @param pEvent the event
      */
@@ -282,29 +281,72 @@ public final class MetisListUpdateManager {
     }
 
     /**
-     * Derive update items as a result of reWind/Commit in the base list.
+     * Derive update items as a result of changes in the base list.
      * @param <T> the itemType for the list
      * @param pUpdates the updates list
      * @param pChange the change event
      */
     private static <T extends MetisFieldVersionedItem> void doHandleChangesInBase(final MetisListVersioned<T> pUpdates,
                                                                                   final MetisListChange<T> pChange) {
-        /* Process added entries (can only happen from a commit) */
-        boolean doSort = false;
-        Iterator<T> myIterator = pChange.addedIterator();
-        while (myIterator.hasNext()) {
-            final T myCurr = myIterator.next();
-            handleNewUpdate(pUpdates, myCurr);
-            doSort = true;
+        /* Process added entries */
+        boolean doSort = doHandleAddedItems(pUpdates, pChange.addedIterator());
+
+        /* Process changed entries */
+        doSort |= doHandleChangedItems(pUpdates, pChange.restoredIterator());
+        doSort |= doHandleChangedItems(pUpdates, pChange.changedIterator());
+        doSort |= doHandleChangedItems(pUpdates, pChange.hiddenIterator());
+
+        /* Process deleted entries */
+        doHandleDeletedItems(pUpdates, pChange.deletedIterator());
+
+        /* Make sure that the version is correct */
+        pUpdates.setVersion(pUpdates.isEmpty()
+                                               ? 0
+                                               : 1);
+
+        /* Sort the list if necessary */
+        if (doSort) {
+            pUpdates.sortList();
+        }
+    }
+
+    /**
+     * Process update items that have been added in the base list.
+     * @param <T> the itemType for the list
+     * @param pUpdates the updates list
+     * @param pItems the added items
+     * @return were items added?
+     */
+    private static <T extends MetisFieldVersionedItem> boolean doHandleAddedItems(final MetisListVersioned<T> pUpdates,
+                                                                                  final Iterator<T> pItems) {
+        /* Process added entries */
+        boolean added = false;
+        while (pItems.hasNext()) {
+            final T myCurr = pItems.next();
+            processUpdate(pUpdates, myCurr);
+            added = true;
         }
 
-        /* Obtain changed entries */
-        myIterator = pChange.changedIterator();
-        while (myIterator.hasNext()) {
-            final T myBase = myIterator.next();
+        /* return whether we added items */
+        return added;
+    }
+
+    /**
+     * Process update items that have been changed in the base list.
+     * @param <T> the itemType for the list
+     * @param pUpdates the updates list
+     * @param pItems the changed items
+     * @return were items changed?
+     */
+    private static <T extends MetisFieldVersionedItem> boolean doHandleChangedItems(final MetisListVersioned<T> pUpdates,
+                                                                                    final Iterator<T> pItems) {
+        /* Process changed entries */
+        boolean changed = false;
+        while (pItems.hasNext()) {
+            final T myBase = pItems.next();
             final int myId = myBase.getIndexedId();
             final T myCurr = pUpdates.getItemById(myId);
-            doSort = true;
+            changed = true;
 
             /* If we do not currently have the item */
             if (myCurr == null) {
@@ -316,22 +358,23 @@ public final class MetisListUpdateManager {
             }
         }
 
+        /* return whether we changed items */
+        return changed;
+    }
+
+    /**
+     * Process update items that have been deleted in the base list.
+     * @param <T> the itemType for the list
+     * @param pUpdates the updates list
+     * @param pItems the deleted items
+     */
+    private static <T extends MetisFieldVersionedItem> void doHandleDeletedItems(final MetisListVersioned<T> pUpdates,
+                                                                                 final Iterator<T> pItems) {
         /* Process deleted entries (can only happen from a rewind of DelNew) */
-        myIterator = pChange.deletedIterator();
-        while (myIterator.hasNext()) {
-            final T myCurr = myIterator.next();
+        while (pItems.hasNext()) {
+            final T myCurr = pItems.next();
             final Integer myId = myCurr.getIndexedId();
             pUpdates.removeById(myId);
-        }
-
-        /* Make sure that the version is correct */
-        pUpdates.setVersion(pUpdates.isEmpty()
-                                               ? 0
-                                               : 1);
-
-        /* Sort the list if necessary */
-        if (doSort) {
-            pUpdates.sortList();
         }
     }
 

@@ -37,6 +37,11 @@ public class MetisListSetChange {
     private final MetisListEvent theEventType;
 
     /**
+     * The version.
+     */
+    private final int theVersion;
+
+    /**
      * The items that are being added.
      */
     private final Map<MetisListKey, MetisListChange<? extends MetisFieldVersionedItem>> theChanges;
@@ -46,7 +51,26 @@ public class MetisListSetChange {
      * @param pEventType the event type
      */
     protected MetisListSetChange(final MetisListEvent pEventType) {
+        this(pEventType, 0);
+    }
+
+    /**
+     * Constructor.
+     * @param pVersion the version
+     */
+    protected MetisListSetChange(final int pVersion) {
+        this(MetisListEvent.VERSION, pVersion);
+    }
+
+    /**
+     * Constructor.
+     * @param pEventType the event type
+     * @param pVersion the version
+     */
+    private MetisListSetChange(final MetisListEvent pEventType,
+                               final int pVersion) {
         theEventType = pEventType;
+        theVersion = pVersion;
         theChanges = new HashMap<>();
     }
 
@@ -56,6 +80,14 @@ public class MetisListSetChange {
      */
     public MetisListEvent getEventType() {
         return theEventType;
+    }
+
+    /**
+     * Obtain the version.
+     * @return the version
+     */
+    public int getVersion() {
+        return theVersion;
     }
 
     /**

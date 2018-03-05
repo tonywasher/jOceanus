@@ -27,24 +27,14 @@ package net.sourceforge.joceanus.jmetis.list;
  */
 public enum MetisListEvent {
     /**
-     * ReWind.
-     */
-    REWIND,
-
-    /**
-     * Commit.
-     */
-    COMMIT,
-
-    /**
      * Update.
      */
     UPDATE,
 
     /**
-     * ReBase.
+     * Version.
      */
-    REBASE,
+    VERSION,
 
     /**
      * Refresh.
@@ -57,9 +47,7 @@ public enum MetisListEvent {
      */
     public boolean hasContent() {
         switch (this) {
-            case REWIND:
-            case REBASE:
-            case COMMIT:
+            case VERSION:
             case UPDATE:
                 return true;
             default:

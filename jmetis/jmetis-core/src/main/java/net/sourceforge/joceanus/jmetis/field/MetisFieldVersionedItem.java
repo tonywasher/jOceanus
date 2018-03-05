@@ -343,10 +343,8 @@ public class MetisFieldVersionedItem
             return MetisDataState.DELETED;
         }
 
-        /* Return RECOVERED or CHANGED depending on whether we started as deleted */
-        return myOriginal.isDeletion()
-                                       ? MetisDataState.RECOVERED
-                                       : MetisDataState.CHANGED;
+        /* We must have changed */
+        return MetisDataState.CHANGED;
     }
 
     /**

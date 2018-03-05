@@ -80,7 +80,7 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.REWIND);
+        final MetisListSetChange myChanges = new MetisListSetChange(pVersion);
 
         /* Loop through the lists */
         final Iterator<MetisListVersioned<MetisFieldVersionedItem>> myIterator = pListSet.listIterator();
@@ -112,7 +112,7 @@ public final class MetisListBaseManager {
     private static <T extends MetisFieldVersionedItem> MetisListChange<T> doReWindToVersion(final MetisListVersioned<T> pList,
                                                                                             final int pVersion) {
         /* Create a new Change Detail */
-        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.REWIND);
+        final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.VERSION);
 
         /* Note maximum version */
         int myMaxVersion = 0;
@@ -133,6 +133,9 @@ public final class MetisListBaseManager {
                     continue;
                 }
 
+                /* Note the current deleted status */
+                final boolean isDeleted = myCurr.isDeleted();
+
                 /* Loop while version is too high */
                 while (myVersion > pVersion) {
                     /* Pop history */
@@ -147,12 +150,19 @@ public final class MetisListBaseManager {
                 myMaxVersion = Math.max(myMaxVersion, myVersion);
 
                 /* Register the change */
-                myChange.registerChanged(myCurr);
+                if (isDeleted == myCurr.isDeleted()) {
+                    myChange.registerChanged(myCurr);
+                } else if (isDeleted) {
+                    myChange.registerRestored(myCurr);
+                } else {
+                    myChange.registerHidden(myCurr);
+                }
             }
         }
 
         /* Record the new maxVersion */
         pList.setVersion(myMaxVersion);
+        myChange.setVersion(myMaxVersion);
 
         /* Return the change */
         return myChange;
@@ -184,7 +194,7 @@ public final class MetisListBaseManager {
             final MetisListVersioned<MetisFieldVersionedItem> myTarget = pTarget.getList(myKey);
 
             /* Reset the content */
-            doResetContent(myTarget, mySource);
+            doResetContent(myTarget, mySource.iterator());
         }
 
         /* Set the version correctly */
@@ -198,17 +208,16 @@ public final class MetisListBaseManager {
      * Reset content.
      * @param <T> the item type
      * @param pTarget the target list
-     * @param pSource the source list
+     * @param pIterator the source list iterator
      */
-    private static <T extends MetisFieldVersionedItem> void doResetContent(final MetisListVersioned<T> pTarget,
-                                                                           final MetisListVersioned<T> pSource) {
+    private static <T extends MetisDataIndexedItem> void doResetContent(final MetisListIndexed<T> pTarget,
+                                                                        final Iterator<T> pIterator) {
         /* Clear the list */
         pTarget.clear();
 
         /* Loop through the list */
-        final Iterator<T> myIterator = pSource.iterator();
-        while (myIterator.hasNext()) {
-            final T myCurr = myIterator.next();
+        while (pIterator.hasNext()) {
+            final T myCurr = pIterator.next();
 
             /* Add the item to the list */
             pTarget.add(myCurr);
@@ -224,15 +233,7 @@ public final class MetisListBaseManager {
     public static <T extends MetisDataIndexedItem> void resetContent(final MetisListIndexed<T> pTarget,
                                                                      final Iterator<T> pSource) {
         /* Clear the list */
-        pTarget.clear();
-
-        /* Loop through the list */
-        while (pSource.hasNext()) {
-            final T myCurr = pSource.next();
-
-            /* Add the item to the list */
-            pTarget.add(myCurr);
-        }
+        doResetContent(pTarget, pSource);
 
         /* Fire the event */
         final MetisListChange<T> myChange = new MetisListChange<>(null, MetisListEvent.REFRESH);
@@ -259,7 +260,7 @@ public final class MetisListBaseManager {
         }
 
         /* Create a new ListSet event */
-        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.REBASE);
+        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.UPDATE);
 
         /* Determine the new Version */
         int myNewVersion = 0;
@@ -302,7 +303,7 @@ public final class MetisListBaseManager {
     private static <T extends MetisFieldVersionedItem> MetisListChange<T> doReBaseList(final MetisListVersioned<T> pTarget,
                                                                                        final MetisListVersioned<T> pBase) {
         /* Create a new Change Detail */
-        final MetisListChange<T> myChange = new MetisListChange<>(pTarget.getItemType(), MetisListEvent.REBASE);
+        final MetisListChange<T> myChange = new MetisListChange<>(pTarget.getItemType(), MetisListEvent.UPDATE);
 
         /* Access a copy of the idMap of the base list */
         final Map<Integer, T> myOld = pBase.copyIdMap();
@@ -320,7 +321,7 @@ public final class MetisListBaseManager {
             if (myItem == null) {
                 /* Set the version to 1 */
                 myCurr.getValueSet().setVersion(1);
-                myChange.registerAdded(myCurr);
+                myChange.registerChanged(myCurr);
                 hasChanges = true;
 
                 /* else the item exists in the old list */
@@ -346,7 +347,7 @@ public final class MetisListBaseManager {
             final T myCurr = myIterator.next();
             final T myItem = MetisListDiffManager.newDiffDeletedItem(pTarget, myCurr);
             pTarget.add(myItem);
-            myChange.registerDeleted(myItem);
+            myChange.registerAdded(myItem);
             hasChanges = true;
         }
 
