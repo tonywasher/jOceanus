@@ -33,6 +33,16 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
         extends MetisFieldSet<T> {
     /**
+     * Does the fieldSet have link fields?
+     */
+    private boolean hasLinks;
+
+    /**
+     * Does the fieldSet have pairedLink fields?
+     */
+    private boolean hasPairedLinks;
+
+    /**
      * Constructor.
      * @param pClazz the class of the item
      * @param pStatic is this a static fieldSet?
@@ -43,6 +53,13 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
                                      final boolean pStatic) {
         /* Pass call on */
         super(pClazz, pParent, pStatic);
+
+        /* If we have a parent */
+        if (pParent != null) {
+            /* Copy flags */
+            hasLinks = pParent.hasLinks();
+            hasPairedLinks = pParent.hasPairedLinks();
+        }
     }
 
     /**
@@ -64,6 +81,16 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
             /* Return the new fieldSet */
             return myFieldSet;
         }
+    }
+
+    @Override
+    public boolean hasLinks() {
+        return hasLinks;
+    }
+
+    @Override
+    public boolean hasPairedLinks() {
+        return hasPairedLinks;
     }
 
     /**
@@ -202,7 +229,18 @@ public class MetisFieldVersionedSet<T extends MetisFieldVersionedItem>
      * @return the field
      */
     public MetisFieldVersioned<T> declareLinkField(final MetisDataFieldId pId) {
+        hasLinks = true;
         return declareEqualityVersionedField(pId, MetisDataType.LINK, FIELD_NO_MAXLENGTH);
+    }
+
+    /**
+     * Declare versioned pairedLink field.
+     * @param pId the fieldId
+     * @return the field
+     */
+    public MetisFieldVersioned<T> declarePairedLinkField(final MetisDataFieldId pId) {
+        hasPairedLinks = true;
+        return declareEqualityVersionedField(pId, MetisDataType.LINKPAIR, FIELD_NO_MAXLENGTH);
     }
 
     /**

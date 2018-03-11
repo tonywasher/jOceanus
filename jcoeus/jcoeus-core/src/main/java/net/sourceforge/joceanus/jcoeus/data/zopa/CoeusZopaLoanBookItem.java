@@ -458,7 +458,8 @@ public class CoeusZopaLoanBookItem
      */
     private static CoeusLoanStatus determineStatus(final String pStatus) throws OceanusException {
         /* Look for Offered status */
-        if ("WithdrawalPending".equals(pStatus)) {
+        if ("WithdrawalPending".equals(pStatus)
+            || "Pending".equals(pStatus)) {
             return CoeusLoanStatus.OFFERED;
         }
 
@@ -469,6 +470,7 @@ public class CoeusZopaLoanBookItem
 
         /* Look for Poorly status */
         if ("Arrangement".equals(pStatus)
+            || "Deceased".equals(pStatus)
             || "Collections".equals(pStatus)
             || "Hardship".equals(pStatus)) {
             return CoeusLoanStatus.ACTIVE;

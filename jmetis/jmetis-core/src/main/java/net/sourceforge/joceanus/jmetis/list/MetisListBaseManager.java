@@ -90,7 +90,7 @@ public final class MetisListBaseManager {
             /* If the list needs reWinding */
             if (myList.getVersion() > pVersion) {
                 /* ReWind it and register the changes */
-                final MetisListChange<MetisFieldVersionedItem> myChange = doReWindToVersion(myList, pVersion);
+                final MetisListChange<MetisFieldVersionedItem> myChange = doReWindToVersion(myList, pListSet, pVersion);
                 myChanges.registerChangedList(myChange);
             }
         }
@@ -106,10 +106,12 @@ public final class MetisListBaseManager {
      * ReWind the list to a particular version.
      * @param <T> the item type
      * @param pList the list
+     * @param pListSet the listSet
      * @param pVersion the version to reWind to
      * @return the change for the list
      */
     private static <T extends MetisFieldVersionedItem> MetisListChange<T> doReWindToVersion(final MetisListVersioned<T> pList,
+                                                                                            final MetisListSetVersioned pListSet,
                                                                                             final int pVersion) {
         /* Create a new Change Detail */
         final MetisListChange<T> myChange = new MetisListChange<>(pList.getItemType(), MetisListEvent.VERSION);
@@ -130,6 +132,7 @@ public final class MetisListBaseManager {
                     /* Remove from list */
                     myIterator.remove();
                     myChange.registerDeleted(myCurr);
+                    pListSet.cleanupDeletedItem(myCurr);
                     continue;
                 }
 
@@ -183,6 +186,9 @@ public final class MetisListBaseManager {
 
         /* Create a new ListSet event */
         final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.REFRESH);
+
+        /* Clone paired items to target */
+        pTarget.clonePairedItems(pSource);
 
         /* Loop through the lists */
         final Iterator<MetisListKey> myIterator = pTarget.keyIterator();

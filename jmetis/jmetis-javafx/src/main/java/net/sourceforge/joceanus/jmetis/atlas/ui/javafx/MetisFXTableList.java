@@ -73,6 +73,7 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
         final TethysEventRegistrar<MetisListEvent> myRegistrar = theCoreList.getEventRegistrar();
         myRegistrar.addEventListener(MetisListEvent.REFRESH, e -> refreshList());
         myRegistrar.addEventListener(MetisListEvent.UPDATE, this::handleEditChanges);
+        myRegistrar.addEventListener(MetisListEvent.VERSION, this::handleEditChanges);
     }
 
     @Override
@@ -113,7 +114,9 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
         handleDeletedItems(myChange.deletedIterator());
 
         /* Handle changed items */
+        handleChangedItems(myChange.hiddenIterator());
         handleChangedItems(myChange.changedIterator());
+        handleChangedItems(myChange.restoredIterator());
 
         /* Handle added items */
         handleAddedItems(myChange.addedIterator());

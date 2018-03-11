@@ -35,6 +35,7 @@ import java.util.function.Function;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldItemType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 
 /**
@@ -106,7 +107,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
     /**
      * The itemType.
      */
-    private Object theItemType;
+    private MetisFieldItemType theItemType;
 
     /**
      * Constructor.
@@ -310,7 +311,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
     }
 
     @Override
-    public Object getItemType() {
+    public MetisFieldItemType getItemType() {
         return theItemType;
     }
 
@@ -318,7 +319,7 @@ public class MetisFieldSet<T extends MetisFieldItem>
      * Set the itemType.
      * @param pItemType the itemType
      */
-    public void setItemType(final Object pItemType) {
+    public void setItemType(final MetisFieldItemType pItemType) {
         theItemType = pItemType;
     }
 

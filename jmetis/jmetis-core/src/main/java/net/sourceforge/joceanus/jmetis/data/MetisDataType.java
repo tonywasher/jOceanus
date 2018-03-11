@@ -123,6 +123,11 @@ public enum MetisDataType {
     LINK,
 
     /**
+     * LinkPair.
+     */
+    LINKPAIR,
+
+    /**
      * LinkSet.
      */
     LINKSET,
@@ -153,17 +158,19 @@ public enum MetisDataType {
      */
     public boolean isNumeric() {
         switch (this) {
-            case STRING:
-            case BYTEARRAY:
-            case CHARARRAY:
-            case LINK:
-            case LINKSET:
-            case DATE:
-            case BOOLEAN:
-            case ENUM:
-                return false;
-            default:
+            case SHORT:
+            case INTEGER:
+            case LONG:
+            case MONEY:
+            case PRICE:
+            case RATE:
+            case UNITS:
+            case RATIO:
+            case DILUTION:
+            case DILUTEDPRICE:
                 return true;
+            default:
+                return false;
         }
     }
 

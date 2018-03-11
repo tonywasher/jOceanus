@@ -133,7 +133,17 @@ public enum MetisDataResource
     /**
      * DataItem History.
      */
-    DATA_HISTORY("item.History");
+    DATA_HISTORY("item.History"),
+
+    /**
+     * DataItem Parent.
+     */
+    DATA_PARENT("item.Parent"),
+
+    /**
+     * DataItem Child.
+     */
+    DATA_CHILD("item.Child");
 
     /**
      * The Difference Map.

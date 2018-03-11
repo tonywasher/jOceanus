@@ -23,8 +23,8 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
+import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSimpleId;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataId;
 
 /**
  * Test Data FieldIds.
@@ -34,92 +34,92 @@ public enum MetisTestDataField
     /**
      * Name.
      */
-    NAME(TethysDataId.NAME),
+    NAME(MetisDataType.STRING),
 
     /**
      * Password.
      */
-    PASSWORD(TethysDataId.PASSWORD),
+    PASSWORD(MetisDataType.CHARARRAY),
 
     /**
      * Date.
      */
-    DATE(TethysDataId.DATE),
+    DATE(MetisDataType.DATE),
 
     /**
      * Boolean.
      */
-    BOOLEAN(TethysDataId.BOOLEAN),
+    BOOLEAN(MetisDataType.BOOLEAN),
 
     /**
      * XtraBoolean.
      */
-    XTRABOOL(TethysDataId.XTRABOOL),
+    XTRABOOL(MetisDataType.BOOLEAN),
 
     /**
      * Short.
      */
-    SHORT(TethysDataId.SHORT),
+    SHORT(MetisDataType.SHORT),
 
     /**
      * Integer.
      */
-    INTEGER(TethysDataId.INTEGER),
+    INTEGER(MetisDataType.INTEGER),
 
     /**
      * Long.
      */
-    LONG(TethysDataId.LONG),
+    LONG(MetisDataType.LONG),
 
     /**
      * Money.
      */
-    MONEY(TethysDataId.MONEY),
+    MONEY(MetisDataType.MONEY),
 
     /**
      * Price.
      */
-    PRICE(TethysDataId.PRICE),
+    PRICE(MetisDataType.PRICE),
 
     /**
      * Units.
      */
-    UNITS(TethysDataId.UNITS),
+    UNITS(MetisDataType.UNITS),
 
     /**
      * Rate.
      */
-    RATE(TethysDataId.RATE),
+    RATE(MetisDataType.RATE),
 
     /**
      * Ratio.
      */
-    RATIO(TethysDataId.RATIO),
+    RATIO(MetisDataType.RATIO),
 
     /**
      * Dilution.
      */
-    DILUTION(TethysDataId.DILUTION),
+    DILUTION(MetisDataType.DILUTION),
 
     /**
      * DilutedPrice.
      */
-    DILUTEDPRICE(TethysDataId.DILUTEDPRICE),
+    DILUTEDPRICE(MetisDataType.DILUTEDPRICE),
 
     /**
      * Scroll.
      */
-    SCROLL(TethysDataId.SCROLL),
+    SCROLL(MetisDataType.LINK),
 
     /**
      * List.
      */
-    LIST(TethysDataId.LIST),
+    LIST(MetisDataType.LINKSET),
 
     /**
      * Updates.
      */
-    UPDATES(TethysDataId.UPDATES);
+    UPDATES(MetisDataType.CONTEXT);
 
     /**
      * The FieldId.
@@ -127,11 +127,17 @@ public enum MetisTestDataField
     private final MetisDataFieldId theField;
 
     /**
+     * The DataType.
+     */
+    private final MetisDataType theDataType;
+
+    /**
      * Constructor.
      * @param pField the field
      */
-    MetisTestDataField(final TethysDataId pField) {
+    MetisTestDataField(final MetisDataType pField) {
         theField = new MetisFieldSimpleId(pField.toString());
+        theDataType = pField;
     }
 
     @Override
@@ -142,5 +148,13 @@ public enum MetisTestDataField
     @Override
     public String toString() {
         return getId();
+    }
+
+    /**
+     * Obtain dataType.
+     * @return the dataType
+     */
+    public MetisDataType getDataType() {
+        return theDataType;
     }
 }

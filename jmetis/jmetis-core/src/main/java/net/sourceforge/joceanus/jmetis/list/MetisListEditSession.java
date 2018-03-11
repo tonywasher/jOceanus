@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMetis: Java Data Framework
+ * jMetis: Ja][va Data Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * Metis VersionedList Edit Session.
@@ -54,6 +56,11 @@ public class MetisListEditSession {
     private int theNewVersion;
 
     /**
+     * The error.
+     */
+    private OceanusException theError;
+
+    /**
      * Constructor.
      * @param pListSet the listSet
      */
@@ -70,6 +77,21 @@ public class MetisListEditSession {
         /* Create the active lists */
         theSessionLists = new ArrayList<>();
         theVersionLists = new ArrayList<>();
+    }
+
+    /**
+     * Obtain the error.
+     * @return the error
+     */
+    public OceanusException getError() {
+        return theError;
+    }
+
+    /**
+     * Reset the error.
+     */
+    public void resetError() {
+        theError = null;
     }
 
     /**
@@ -100,27 +122,65 @@ public class MetisListEditSession {
      * @param pList the list
      * @param pItemType the itemType
      */
-    public static void ensureActive(final List<MetisListKey> pList,
-                                    final MetisListKey pItemType) {
+    private static void ensureActive(final List<MetisListKey> pList,
+                                     final MetisListKey pItemType) {
         /* Ensure that this list is registered as active */
-        if (pList.contains(pItemType)) {
+        if (!pList.contains(pItemType)) {
             pList.add(pItemType);
+        }
+    }
+
+    /**
+     * Set field for item.
+     * @param <T> the item type
+     * @param pItem the item
+     * @param pField the field
+     * @param pValue the value
+     * @return success true/false
+     */
+    public <T extends MetisFieldVersionedItem> boolean setFieldForItem(final T pItem,
+                                                                       final MetisFieldVersionedDef pField,
+                                                                       final Object pValue) {
+        /* Reset any error */
+        resetError();
+
+        /* Protect against exceptions */
+        try {
+            /* Prepare the item for edit */
+            prepareItemForEdit(pItem);
+
+            /* Set the value */
+            pField.setFieldValue(pItem, pValue);
+
+            /* TODO autoCorrect the item */
+
+            /* Commit the version */
+            commitEditVersion();
+            return true;
+
+            /* Handle exceptions */
+        } catch (OceanusException e) {
+            /* Store error and cancel version */
+            theError = e;
+            cancelVersion();
+            return false;
         }
     }
 
     /**
      * Prepare item for edit.
      * @param <T> the item type
-     * @param pItemType the item type
      * @param pItem the item
      */
-    public <T extends MetisFieldVersionedItem> void prepareItemForEdit(final MetisListKey pItemType,
-                                                                       final T pItem) {
+    private <T extends MetisFieldVersionedItem> void prepareItemForEdit(final T pItem) {
+        /* Obtain the listKey */
+        final MetisListKey myItemType = (MetisListKey) pItem.getItemType();
+
         /* Start editing */
         newVersion();
 
         /* Ensure that this list is registered as active */
-        ensureActive(theVersionLists, pItemType);
+        ensureActive(theVersionLists, myItemType);
 
         /* Start editing the item */
         if (pItem.getVersion() != theNewVersion) {
@@ -135,6 +195,8 @@ public class MetisListEditSession {
      * @return the new item
      */
     public <T extends MetisFieldVersionedItem> T createNewItem(final MetisListKey pItemType) {
+        /* Protect against exceptions */
+        // try {
         /* Start editing */
         newVersion();
 
@@ -152,23 +214,37 @@ public class MetisListEditSession {
         myValues.setVersion(theNewVersion);
         myNew.adjustState();
 
+        /* TODO autoCorrect the item */
+
         /* Return the item */
         return myNew;
+
+        /* Handle exceptions */
+        // } catch (OceanusException e) {
+        /* Store error and cancel version */
+        // theError = e;
+        // cancelVersion();
+        // return null;
+        // }
     }
 
     /**
      * Delete an item.
      * @param <T> the item type
-     * @param pItemType the item type
      * @param pItem the item
      */
-    public <T extends MetisFieldVersionedItem> void deleteItem(final MetisListKey pItemType,
-                                                               final T pItem) {
+    public <T extends MetisFieldVersionedItem> void deleteItem(final T pItem) {
+        /* Reset any error */
+        resetError();
+
         /* Start editing */
-        prepareItemForEdit(pItemType, pItem);
+        prepareItemForEdit(pItem);
 
         /* Set the item as deleted */
         pItem.getValueSet().setDeletion(true);
+
+        /* Commit the version */
+        commitEditVersion();
     }
 
     /**
@@ -310,6 +386,12 @@ public class MetisListEditSession {
      * Commit the edit Session.
      */
     public void commitEditSession() {
+        /* If we have an active version */
+        if (activeVersion()) {
+            /* Commit the active version */
+            commitEditVersion();
+        }
+
         /* If we are currently editing */
         if (activeSession()) {
             /* Determine the new version in base */
@@ -390,7 +472,7 @@ public class MetisListEditSession {
                     handleCommitOfNewItem(pList, pChange, pBaseChange, myCurr);
                     break;
                 case DELNEW:
-                    handleCommitOfDelNewItem(pList, pChange, myCurr);
+                    handleCommitOfDelNewItem(pList, theListSet, pChange, myCurr);
                     break;
                 case CHANGED:
                 case DELETED:
@@ -431,6 +513,9 @@ public class MetisListEditSession {
         myItem.getValueSet().setVersion(theNewVersion);
         myBaseList.add(myItem);
 
+        /* Ensure links are correct in base */
+        MetisListEditManager.ensureLinks(pItem, theListSet.getBaseListSet());
+
         /* Reset history on item */
         pItem.clearHistory();
 
@@ -443,15 +528,20 @@ public class MetisListEditSession {
      * handle delNew commit.
      * @param <T> the item type
      * @param pList the list
+     * @param pEditSet the edit ListSet
      * @param pChange the edit change
      * @param pItem the item
      */
     private static <T extends MetisFieldVersionedItem> void handleCommitOfDelNewItem(final MetisListVersioned<T> pList,
+                                                                                     final MetisListSetVersioned pEditSet,
                                                                                      final MetisListChange<T> pChange,
                                                                                      final T pItem) {
         /* Remove from the list and add to changes */
         pList.removeFromList(pItem);
         pChange.registerDeleted(pItem);
+
+        /* Cleanup after the deleted item */
+        pEditSet.cleanupDeletedItem(pItem);
     }
 
     /**
@@ -485,6 +575,8 @@ public class MetisListEditSession {
             if (pItem.isDeleted()) {
                 pBaseChange.registerHidden(myBase);
             } else {
+                /* Ensure links are correct in base */
+                MetisListEditManager.ensureLinks(pItem, theListSet.getBaseListSet());
                 pBaseChange.registerChanged(myBase);
             }
         }
@@ -547,5 +639,18 @@ public class MetisListEditSession {
 
         /* Reset the list */
         MetisListBaseManager.reWindToVersion(theListSet, pVersion);
+
+        /* Loop through the lists */
+        final Iterator<MetisListKey> myIterator = theSessionLists.iterator();
+        while (myIterator.hasNext()) {
+            final MetisListKey myKey = myIterator.next();
+            final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myKey);
+
+            /* If there are no longer any changes for the list */
+            if (myList.getVersion() == 0) {
+                /* Remove the list */
+                myIterator.remove();
+            }
+        }
     }
 }

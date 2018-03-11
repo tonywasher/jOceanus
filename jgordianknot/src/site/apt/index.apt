@@ -56,7 +56,7 @@ for each algorithm as defined in <<Key Wrapping>>.
   The following symmetric key algorithms are supported.  
 
 *-------------*-------------*------------*-------*
-| Algorithm   | BlockLength | KeyLengths | Notes |
+| <<Algorithm>>   | <<BlockLength>> | <<KeyLengths>> | <<Notes>> |
 *-------------*-------------*------------*-------*    
 | AES         | 128         | 128,256    ||  
 *-------------*-------------*------------**
@@ -122,7 +122,7 @@ for each algorithm as defined in <<Key Wrapping>>.
   The following modes are available with the above algorithms
 
 *------*-------*
-| Mode | Notes |
+| <<Mode>> | <<Notes>> |
 *------*-------*
 | ECB  | |
 *------*-*
@@ -134,6 +134,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 | OFB  | GOFB Mode available for Magma  |
 |      | K3413OFB Mode available for Kuznyechik |
 *------*--------------------------------*
+|      | Actually CFB8                  |
 | CFB  | GCFB Mode available for Magma  |
 |      | K3413CFB Mode available for Kuznyechik |
 *------*--------------------------------*
@@ -151,7 +152,7 @@ for each algorithm as defined in <<Key Wrapping>>.
   The following paddings are available for ECB and CBC modes
 
 *---------*-------*
-| Padding | Notes |
+| <<Padding>> | <<Notes>> |
 *---------*-------*
 | CTS | |
 *---------*-------*
@@ -187,7 +188,7 @@ for each algorithm as defined in <<Key Wrapping>>.
   The following Stream Key algorithms are supported.
 
 *-------------*-------------*------------*
-| Algorithm   | KeyLengths  | Notes      |
+| <<Algorithm>>   | <<KeyLengths>>  | <<Notes>>      |
 *-------------*-------------*------------*    
 | ChaCha      | 128,256     | | 
 *-------------*-------------*-*    
@@ -217,7 +218,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 ** Supported Digest algorithms
 
 *-------------*-------------*-----------------*------------*
-| Algorithm   | StateLength | OutputLengths   | Notes      |
+| <<Algorithm>>   | <<StateLength>> | <<OutputLengths>>   | <<Notes>>      |
 *-------------*-------------*-----------------*---------=--*    
 | SHA2        | 512         | 224,256,384,512 | |
 |             | 256         | 224 256 | |
@@ -267,7 +268,7 @@ for each algorithm as defined in <<Key Wrapping>>.
 ** Supported MAC algorithms
 
 *-------------*------------------*------------*
-| Algorithm   | OutputLengths    | Notes      |
+| <<Algorithm>>   | <<OutputLengths>>    | <<Notes>>      |
 *-------------*------------------*------------*    
 | HMac        | digest length    | For all digests. | 
 |             |                  | Jca does not support SM3, BLAKE, SHAKE, JH, Groestl or Kupyna | 

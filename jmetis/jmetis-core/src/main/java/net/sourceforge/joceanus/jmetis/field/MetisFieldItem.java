@@ -151,6 +151,22 @@ public interface MetisFieldItem
         boolean hasVersions();
 
         /**
+         * Does the item have link values?
+         * @return true/false
+         */
+        default boolean hasLinks() {
+            return false;
+        }
+
+        /**
+         * Does the item have pairedLink values?
+         * @return true/false
+         */
+        default boolean hasPairedLinks() {
+            return false;
+        }
+
+        /**
          * Lock the fieldSet.
          */
         void setLocked();
@@ -159,7 +175,7 @@ public interface MetisFieldItem
          * Obtain the itemType.
          * @return the itemType
          */
-        Object getItemType();
+        MetisFieldItemType getItemType();
 
         /**
          * Obtain field from fieldId.

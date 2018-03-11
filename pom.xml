@@ -75,10 +75,10 @@
     <appLibDir/>
     <BouncyCastleVersion>1.59</BouncyCastleVersion>
     <SvnKitVersion>1.9.1</SvnKitVersion>
-    <JGitVersion>4.10.0.201712302008-r</JGitVersion>
+    <JGitVersion>4.11.0.201803080745-r</JGitVersion>
     <HttpClientVersion>4.5.5</HttpClientVersion>
     <JSONVersion>20180130</JSONVersion>
-    <ApacheMavenVersion>3.5.2</ApacheMavenVersion>
+    <ApacheMavenVersion>3.5.3</ApacheMavenVersion>
     <MySQLVersion>5.1.45</MySQLVersion>
     <PostGreSQLVersion>42.2.1</PostGreSQLVersion>
     <JTDSVersion>1.3.1</JTDSVersion>

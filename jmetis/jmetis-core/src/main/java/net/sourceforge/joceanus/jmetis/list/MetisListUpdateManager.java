@@ -130,12 +130,12 @@ public final class MetisListUpdateManager {
 
     /**
      * Commit update batch.
-     * @param pUpdates the updates listSet
+     * @param pUpdateSet the updates listSet
      * @param pPhase the update phase
      * @param pNumItems the number of items to commit
      * @return the number of commit items remaining
      */
-    private static int commitUpdateBatch(final MetisListSetVersioned pUpdates,
+    private static int commitUpdateBatch(final MetisListSetVersioned pUpdateSet,
                                          final MetisUpdatePhase pPhase,
                                          final int pNumItems) {
         /* Access the number of items */
@@ -143,16 +143,16 @@ public final class MetisListUpdateManager {
 
         /* Loop through the lists */
         final Iterator<MetisListKey> myIterator = MetisUpdatePhase.DELETE.equals(pPhase)
-                                                                                         ? pUpdates.reverseKeyIterator()
-                                                                                         : pUpdates.keyIterator();
+                                                                                         ? pUpdateSet.reverseKeyIterator()
+                                                                                         : pUpdateSet.keyIterator();
         while (myIterator.hasNext()) {
             final MetisListKey myKey = myIterator.next();
 
             /* If the list is non-empty */
-            final MetisListVersioned<MetisFieldVersionedItem> myList = pUpdates.getList(myKey);
+            final MetisListVersioned<MetisFieldVersionedItem> myList = pUpdateSet.getList(myKey);
             if (!myList.isEmpty()) {
                 /* Commit the items */
-                myNumItems = commitUpdateBatch(myList, pPhase, pNumItems);
+                myNumItems = commitUpdateBatch(myList, pUpdateSet.getBaseListSet(), pPhase, pNumItems);
 
                 /* Break loop if we have finished */
                 if (myNumItems == 0) {
@@ -169,11 +169,13 @@ public final class MetisListUpdateManager {
      * Commit update batch.
      * @param <T> the itemType for the list
      * @param pUpdates the list of updates
+     * @param pBaseSet the listSet
      * @param pPhase the update phase
      * @param pNumItems the number of items to commit
      * @return the number of commit items remaining
      */
     private static <T extends MetisFieldVersionedItem> int commitUpdateBatch(final MetisListVersioned<T> pUpdates,
+                                                                             final MetisListSetVersioned pBaseSet,
                                                                              final MetisUpdatePhase pPhase,
                                                                              final int pNumItems) {
         /* Access the base list */
@@ -203,6 +205,7 @@ public final class MetisListUpdateManager {
                 /* Commit the underlying item */
                 if (myValues.isDeletion()) {
                     myBaseList.removeFromList(myBase);
+                    pBaseSet.cleanupDeletedItem(myBase);
                 } else {
                     myBase.clearHistory();
                 }
