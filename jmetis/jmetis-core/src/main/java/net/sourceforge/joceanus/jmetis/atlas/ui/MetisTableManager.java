@@ -46,8 +46,8 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableUnits
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataDisableItem;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -71,17 +71,17 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
     /**
      * The fieldSet for the item.
      */
-    private final MetisFieldSet<R> theFieldSet;
+    private final MetisFieldSetDef theFieldSet;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
-     * @param pClazz the class
+     * @param pFieldSet the fieldSet
      */
     protected MetisTableManager(final TethysGuiFactory<N, I> pFactory,
-                                final Class<R> pClazz) {
+                                final MetisFieldSetDef pFieldSet) {
         /* Store parameters */
-        theFieldSet = MetisFieldSet.lookUpFieldSet(pClazz);
+        theFieldSet = pFieldSet;
 
         /* Create the table */
         theTable = pFactory.newTable();
@@ -110,6 +110,14 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
     @Override
     public void setEnabled(final boolean pEnabled) {
         theTable.setEnabled(pEnabled);
+    }
+
+    /**
+     * Set editable.
+     * @param pEditable true/false
+     */
+    protected void setEditable(final boolean pEditable) {
+        theTable.setEditable(pEditable);
     }
 
     /**

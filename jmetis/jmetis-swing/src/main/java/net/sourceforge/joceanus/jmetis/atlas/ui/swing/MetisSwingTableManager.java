@@ -50,8 +50,13 @@ import net.sourceforge.joceanus.jmetis.data.MetisDataFieldValue;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues.MetisFieldEncryptedValue;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
+import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -64,6 +69,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableCharArrayColumn;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutedPriceColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDilutionColumn;
@@ -98,6 +104,11 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     private MetisTableCalculator<R> theCalculator;
 
     /**
+     * Table EditSession.
+     */
+    private final MetisListEditSession theSession;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pClazz the class of the item
@@ -107,10 +118,37 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
                                   final Class<R> pClazz,
                                   final MetisListIndexed<R> pList) {
         /* Initialise underlying class */
-        super(pFactory, pClazz);
+        super(pFactory, MetisFieldSet.lookUpFieldSet(pClazz));
 
         /* Create the table list */
         theList = new MetisSwingTableListManager<>(this, pList);
+        getTable().setItems(theList.getTableList());
+
+        /* Set non editable */
+        theSession = null;
+        setEditable(false);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI factory
+     * @param pItemType the itemType of the item
+     * @param pSession the editSession
+     */
+    public MetisSwingTableManager(final TethysSwingGuiFactory pFactory,
+                                  final MetisListKey pItemType,
+                                  final MetisListEditSession pSession) {
+        /* Initialise underlying class */
+        super(pFactory, MetisFieldSet.lookUpFieldSet(pItemType.getClazz()));
+
+        /* Can only be editable if we are an instance of FieldVersionedItem */
+        theSession = MetisFieldVersionedItem.class.isAssignableFrom(pItemType.getClazz())
+                                                                                          ? pSession
+                                                                                          : null;
+        setEditable(theSession != null);
+
+        /* Create the table list */
+        theList = new MetisSwingTableListManager<>(this, pSession.getList(pItemType));
         getTable().setItems(theList.getTableList());
     }
 
@@ -299,6 +337,36 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
     }
 
     /**
+     * Configure the column.
+     * @param <T> the field type
+     * @param pColumn the column
+     * @param pField the field
+     * @param pClazz the field clazz
+     */
+    <T> void configureColumn(final TethysSwingTableColumn<T, MetisDataFieldId, R> pColumn,
+                             final MetisFieldDef pField,
+                             final Class<T> pClazz) {
+        pColumn.setCellValueFactory(p -> getItemFieldValue(p, pField, pClazz));
+        if (theSession != null && pField instanceof MetisFieldVersionedDef) {
+            pColumn.setOnCommit((r, v) -> theSession.setFieldForItem(r, (MetisFieldVersionedDef) pField, v));
+        }
+    }
+
+    /**
+     * Configure the list column.
+     * @param pColumn the column
+     * @param pField the field
+     */
+    @SuppressWarnings("unchecked")
+    void configureListColumn(final TethysSwingTableListColumn<?, MetisDataFieldId, R> pColumn,
+                             final MetisFieldDef pField) {
+        pColumn.setCellValueFactory(p -> getItemFieldValue(p, pField, List.class));
+        if (theSession != null && pField instanceof MetisFieldVersionedDef) {
+            pColumn.setOnCommit((r, v) -> theSession.setFieldForItem(r, (MetisFieldVersionedDef) pField, v));
+        }
+    }
+
+    /**
      * String Column.
      * @param <R> the item type
      */
@@ -312,7 +380,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableStringColumn(final MetisSwingTableManager<R> pTable,
                                               final TethysSwingTableStringColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), String.class));
+            pTable.configureColumn(pColumn, getField(), String.class);
         }
     }
 
@@ -330,7 +398,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableCharArrayColumn(final MetisSwingTableManager<R> pTable,
                                                  final TethysSwingTableCharArrayColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), char[].class));
+            pTable.configureColumn(pColumn, getField(), char[].class);
         }
     }
 
@@ -348,7 +416,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableShortColumn(final MetisSwingTableManager<R> pTable,
                                              final TethysSwingTableShortColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), Short.class));
+            pTable.configureColumn(pColumn, getField(), Short.class);
         }
     }
 
@@ -366,7 +434,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableIntegerColumn(final MetisSwingTableManager<R> pTable,
                                                final TethysSwingTableIntegerColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), Integer.class));
+            pTable.configureColumn(pColumn, getField(), Integer.class);
         }
     }
 
@@ -384,7 +452,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableLongColumn(final MetisSwingTableManager<R> pTable,
                                             final TethysSwingTableLongColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), Long.class));
+            pTable.configureColumn(pColumn, getField(), Long.class);
         }
     }
 
@@ -402,7 +470,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableRawDecimalColumn(final MetisSwingTableManager<R> pTable,
                                                   final TethysSwingTableRawDecimalColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDecimal.class));
+            pTable.configureColumn(pColumn, getField(), TethysDecimal.class);
         }
     }
 
@@ -420,7 +488,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableMoneyColumn(final MetisSwingTableManager<R> pTable,
                                              final TethysSwingTableMoneyColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysMoney.class));
+            pTable.configureColumn(pColumn, getField(), TethysMoney.class);
         }
     }
 
@@ -438,7 +506,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTablePriceColumn(final MetisSwingTableManager<R> pTable,
                                              final TethysSwingTablePriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysPrice.class));
+            pTable.configureColumn(pColumn, getField(), TethysPrice.class);
         }
     }
 
@@ -456,7 +524,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableRateColumn(final MetisSwingTableManager<R> pTable,
                                             final TethysSwingTableRateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysRate.class));
+            pTable.configureColumn(pColumn, getField(), TethysRate.class);
         }
     }
 
@@ -474,7 +542,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableUnitsColumn(final MetisSwingTableManager<R> pTable,
                                              final TethysSwingTableUnitsColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysUnits.class));
+            pTable.configureColumn(pColumn, getField(), TethysUnits.class);
         }
     }
 
@@ -492,7 +560,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableRatioColumn(final MetisSwingTableManager<R> pTable,
                                              final TethysSwingTableRatioColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysRatio.class));
+            pTable.configureColumn(pColumn, getField(), TethysRatio.class);
         }
     }
 
@@ -510,7 +578,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableDilutionColumn(final MetisSwingTableManager<R> pTable,
                                                 final TethysSwingTableDilutionColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDilution.class));
+            pTable.configureColumn(pColumn, getField(), TethysDilution.class);
         }
     }
 
@@ -528,7 +596,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableDilutedPriceColumn(final MetisSwingTableManager<R> pTable,
                                                     final TethysSwingTableDilutedPriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDilutedPrice.class));
+            pTable.configureColumn(pColumn, getField(), TethysDilutedPrice.class);
         }
     }
 
@@ -546,7 +614,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
         protected MetisSwingTableDateColumn(final MetisSwingTableManager<R> pTable,
                                             final TethysSwingTableDateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), TethysDate.class));
+            pTable.configureColumn(pColumn, getField(), TethysDate.class);
         }
     }
 
@@ -567,7 +635,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
                                             final TethysSwingTableIconColumn<T, MetisDataFieldId, R> pColumn,
                                             final Class<T> pClazz) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), pClazz));
+            pTable.configureColumn(pColumn, getField(), pClazz);
         }
     }
 
@@ -588,7 +656,7 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
                                               final TethysSwingTableScrollColumn<T, MetisDataFieldId, R> pColumn,
                                               final Class<T> pClazz) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), pClazz));
+            pTable.configureColumn(pColumn, getField(), pClazz);
         }
     }
 
@@ -604,11 +672,10 @@ public class MetisSwingTableManager<R extends MetisFieldTableItem>
          * @param pTable the table
          * @param pColumn the column
          */
-        @SuppressWarnings("unchecked")
         protected MetisSwingTableListColumn(final MetisSwingTableManager<R> pTable,
                                             final TethysSwingTableListColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
-            pColumn.setCellValueFactory(p -> pTable.getItemFieldValue(p, getField(), List.class));
+            pTable.configureListColumn(pColumn, getField());
         }
     }
 }

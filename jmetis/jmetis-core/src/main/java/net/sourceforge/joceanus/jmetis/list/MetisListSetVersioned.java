@@ -206,7 +206,7 @@ public class MetisListSetVersioned
 
     /**
      * Obtain the List iterator.
-     * @return true/false
+     * @return the iterator
      */
     public Iterator<MetisListVersioned<MetisFieldVersionedItem>> listIterator() {
         return theListMap.values().iterator();
@@ -221,6 +221,17 @@ public class MetisListSetVersioned
     @SuppressWarnings("unchecked")
     public <T extends MetisFieldVersionedItem> MetisListVersioned<T> getList(final MetisListKey pListKey) {
         return (MetisListVersioned<T>) theListMap.get(pListKey);
+    }
+
+    /**
+     * Obtain the relevant list.
+     * @param <T> the item type
+     * @param pListKey the list key
+     * @return the list (or null)
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends MetisFieldTableItem> MetisListIndexed<T> getIndexedList(final MetisListKey pListKey) {
+        return (MetisListIndexed<T>) theListMap.get(pListKey);
     }
 
     /**

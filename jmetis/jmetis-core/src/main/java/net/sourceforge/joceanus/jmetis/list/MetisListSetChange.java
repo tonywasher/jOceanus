@@ -22,7 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.list;
 
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
@@ -44,7 +45,7 @@ public class MetisListSetChange {
     /**
      * The items that are being added.
      */
-    private final Map<MetisListKey, MetisListChange<? extends MetisFieldVersionedItem>> theChanges;
+    private final Map<MetisListKey, MetisListChange<MetisFieldVersionedItem>> theChanges;
 
     /**
      * Constructor.
@@ -71,7 +72,7 @@ public class MetisListSetChange {
                                final int pVersion) {
         theEventType = pEventType;
         theVersion = pVersion;
-        theChanges = new HashMap<>();
+        theChanges = new LinkedHashMap<>();
     }
 
     /**
@@ -111,10 +112,17 @@ public class MetisListSetChange {
 
     /**
      * Register changed list.
-     * @param <T> the item type
      * @param pChange the changes to the list
      */
-    protected <T extends MetisFieldVersionedItem> void registerChangedList(final MetisListChange<T> pChange) {
+    protected void registerChangedList(final MetisListChange<MetisFieldVersionedItem> pChange) {
         theChanges.put(pChange.getItemType(), pChange);
+    }
+
+    /**
+     * Obtain the change iterator.
+     * @return the iterator
+     */
+    public Iterator<MetisListChange<MetisFieldVersionedItem>> changeIterator() {
+        return theChanges.values().iterator();
     }
 }

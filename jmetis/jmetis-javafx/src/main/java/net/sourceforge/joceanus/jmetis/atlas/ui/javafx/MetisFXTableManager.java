@@ -45,7 +45,12 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
+import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
@@ -84,6 +89,11 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
     private final MetisFXTableListFields<R> theItemFields;
 
     /**
+     * Table EditSession.
+     */
+    private final MetisListEditSession theSession;
+
+    /**
      * Constructor.
      * @param pFactory the GUI Factory
      * @param pClazz the class of the item
@@ -93,10 +103,38 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
                                final Class<R> pClazz,
                                final MetisListIndexed<R> pList) {
         /* Initialise underlying class */
-        super(pFactory, pClazz);
+        super(pFactory, MetisFieldSet.lookUpFieldSet(pClazz));
 
         /* Create the table list */
         theList = new MetisFXTableList<>(pList);
+        theItemFields = theList.getListFields();
+        getTable().setItems(theList.getUnderlyingList());
+
+        /* Set non editable */
+        theSession = null;
+        setEditable(false);
+    }
+
+    /**
+     * Constructor.
+     * @param pFactory the GUI Factory
+     * @param pItemType the itemType of the item
+     * @param pSession the editSession
+     */
+    public MetisFXTableManager(final TethysFXGuiFactory pFactory,
+                               final MetisListKey pItemType,
+                               final MetisListEditSession pSession) {
+        /* Initialise underlying class */
+        super(pFactory, MetisFieldSet.lookUpFieldSet(pItemType.getClazz()));
+
+        /* Can only be editable if we are an instance of FieldVersionedItem */
+        theSession = MetisFieldVersionedItem.class.isAssignableFrom(pItemType.getClazz())
+                                                                                          ? pSession
+                                                                                          : null;
+        setEditable(theSession != null);
+
+        /* Create the table list */
+        theList = new MetisFXTableList<>(pSession.getList(pItemType));
         theItemFields = theList.getListFields();
         getTable().setItems(theList.getUnderlyingList());
     }
@@ -215,6 +253,9 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
     void configureColumn(final TethysFXTableColumn<?, MetisDataFieldId, R> pColumn,
                          final MetisFieldDef pField) {
         pColumn.setCellValueFactory(p -> theItemFields.getObjectProperty(p.getValue(), pField));
+        if (theSession != null && pField instanceof MetisFieldVersionedDef) {
+            pColumn.setOnCommit((r, v) -> theSession.setFieldForItem(r, (MetisFieldVersionedDef) pField, v));
+        }
         theItemFields.declareField(pField);
     }
 

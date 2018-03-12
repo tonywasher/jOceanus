@@ -26,10 +26,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 
 /**
  * Metis VersionedList Edit Session.
@@ -77,6 +80,10 @@ public class MetisListEditSession {
         /* Create the active lists */
         theSessionLists = new ArrayList<>();
         theVersionLists = new ArrayList<>();
+
+        /* Listen to list events */
+        final TethysEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
+        myRegistrar.addEventListener(this::handleListSetEvent);
     }
 
     /**
@@ -131,6 +138,16 @@ public class MetisListEditSession {
     }
 
     /**
+     * Obtain the relevant list.
+     * @param <T> the item type
+     * @param pListKey the list key
+     * @return the list (or null)
+     */
+    public <T extends MetisFieldTableItem> MetisListIndexed<T> getList(final MetisListKey pListKey) {
+        return theListSet.getIndexedList(pListKey);
+    }
+
+    /**
      * Set field for item.
      * @param <T> the item type
      * @param pItem the item
@@ -138,19 +155,22 @@ public class MetisListEditSession {
      * @param pValue the value
      * @return success true/false
      */
-    public <T extends MetisFieldVersionedItem> boolean setFieldForItem(final T pItem,
-                                                                       final MetisFieldVersionedDef pField,
-                                                                       final Object pValue) {
+    public <T extends MetisFieldTableItem> boolean setFieldForItem(final T pItem,
+                                                                   final MetisFieldVersionedDef pField,
+                                                                   final Object pValue) {
+        /* Make sure that item is a VersionedItem */
+        final MetisFieldVersionedItem myItem = (MetisFieldVersionedItem) pItem;
+
         /* Reset any error */
         resetError();
 
         /* Protect against exceptions */
         try {
             /* Prepare the item for edit */
-            prepareItemForEdit(pItem);
+            prepareItemForEdit(myItem);
 
             /* Set the value */
-            pField.setFieldValue(pItem, pValue);
+            pField.setFieldValue(myItem, pValue);
 
             /* TODO autoCorrect the item */
 
@@ -651,6 +671,54 @@ public class MetisListEditSession {
                 /* Remove the list */
                 myIterator.remove();
             }
+        }
+    }
+
+    /**
+     * Handle listSetEvent.
+     * @param pEvent the event
+     */
+    private void handleListSetEvent(final TethysEvent<MetisListEvent> pEvent) {
+        if (MetisListEvent.REFRESH.equals(pEvent.getEventId())) {
+            handleRefreshEvent();
+        } else {
+            handleStandardEvent(pEvent);
+        }
+    }
+
+    /**
+     * Handle refresh Event.
+     */
+    private void handleRefreshEvent() {
+        /* Create a new ListEvent */
+        final MetisListChange<MetisFieldVersionedItem> myChange = new MetisListChange<>(null, MetisListEvent.REFRESH);
+
+        /* Loop through the lists */
+        final Iterator<MetisListVersioned<MetisFieldVersionedItem>> myIterator = theListSet.listIterator();
+        while (myIterator.hasNext()) {
+            final MetisListVersioned<MetisFieldVersionedItem> myList = myIterator.next();
+
+            /* Fire a refresh event */
+            myList.fireEvent(myChange);
+        }
+    }
+
+    /**
+     * Handle standard Event.
+     * @param pEvent the event
+     */
+    private void handleStandardEvent(final TethysEvent<MetisListEvent> pEvent) {
+        /* Access the event */
+        final MetisListSetChange myChanges = pEvent.getDetails(MetisListSetChange.class);
+
+        /* Loop through the changes */
+        final Iterator<MetisListChange<MetisFieldVersionedItem>> myIterator = myChanges.changeIterator();
+        while (myIterator.hasNext()) {
+            final MetisListChange<MetisFieldVersionedItem> myChange = myIterator.next();
+            final MetisListVersioned<MetisFieldVersionedItem> myList = theListSet.getList(myChange.getItemType());
+
+            /* Fire the event */
+            myList.fireEvent(myChange);
         }
     }
 }

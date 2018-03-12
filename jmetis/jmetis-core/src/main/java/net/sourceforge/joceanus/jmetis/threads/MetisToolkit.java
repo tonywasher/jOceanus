@@ -39,7 +39,9 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableManager;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
+import net.sourceforge.joceanus.jmetis.list.MetisListKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceEvent;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSecurity.MetisSecurityPreferences;
@@ -268,7 +270,7 @@ public abstract class MetisToolkit<N, I> {
     public abstract TethysHelpWindow<N, I> newHelpWindow();
 
     /**
-     * Create a TableManager.
+     * Create a ReadOnly TableManager.
      * @param <R> the row type
      * @param pClazz the cxlass of the item
      * @param pList the base list
@@ -276,6 +278,16 @@ public abstract class MetisToolkit<N, I> {
      */
     public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(Class<R> pClazz,
                                                                                                MetisListIndexed<R> pList);
+
+    /**
+     * Create an editable TableManager.
+     * @param <R> the row type
+     * @param pItemType the itemType of the item
+     * @param pSession the editSession
+     * @return the table manager
+     */
+    public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(MetisListKey pItemType,
+                                                                                               MetisListEditSession pSession);
 
     /**
      * Create an ErrorPanel.
