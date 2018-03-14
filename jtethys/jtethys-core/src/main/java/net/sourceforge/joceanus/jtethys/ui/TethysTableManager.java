@@ -97,6 +97,11 @@ public abstract class TethysTableManager<C, R, N, I>
     private TethysOnRowCommit<R> theOnCommit;
 
     /**
+     * The OnSelect Consumer.
+     */
+    private TethysOnRowSelect<R> theOnSelect;
+
+    /**
      * The OnCommitError Consumer.
      */
     private Consumer<OceanusException> theOnCommitError;
@@ -278,6 +283,32 @@ public abstract class TethysTableManager<C, R, N, I>
             theOnCommit.commitRow(pRow);
         }
     }
+
+    /**
+     * Set the on-select consumer.
+     * @param pOnSelect the consumer
+     */
+    public void setOnSelect(final TethysOnRowSelect<R> pOnSelect) {
+        theOnSelect = pOnSelect;
+    }
+
+    /**
+     * process onCommit.
+     * @param pRow the row
+     */
+    protected void processOnSelect(final R pRow) {
+        /* If we have an onSelect consumer */
+        if (theOnSelect != null) {
+            /* call it */
+            theOnSelect.selectRow(pRow);
+        }
+    }
+
+    /**
+     * Select a row and ensure that it is visible.
+     * @param pItem the row to select
+     */
+    public abstract void selectRowWithScroll(R pItem);
 
     /**
      * Set the on-commitError consumer.
@@ -1235,5 +1266,18 @@ public abstract class TethysTableManager<C, R, N, I>
          * @throws OceanusException on error
          */
         void commitRow(R pRow) throws OceanusException;
+    }
+
+    /**
+     * OnRow select callback.
+     * @param <R> the row type
+     */
+    @FunctionalInterface
+    public interface TethysOnRowSelect<R> {
+        /**
+         * CallBack on a rowSelect.
+         * @param pRow the row that is being committed
+         */
+        void selectRow(R pRow);
     }
 }

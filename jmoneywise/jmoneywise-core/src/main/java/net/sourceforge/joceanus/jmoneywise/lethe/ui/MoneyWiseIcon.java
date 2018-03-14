@@ -207,7 +207,7 @@ public enum MoneyWiseIcon implements TethysIconId {
 
         /* Create the FALSE state */
         TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
-        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, PrometheusIcon.COMMIT, TIP_RELEASE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, MetisIcon.COMMIT, TIP_RELEASE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, TIP_RECONCILE);
         myMap.put(Boolean.FALSE, myMapSet);
 

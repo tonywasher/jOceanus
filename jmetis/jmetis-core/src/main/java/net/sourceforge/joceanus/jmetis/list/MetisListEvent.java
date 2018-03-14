@@ -39,7 +39,12 @@ public enum MetisListEvent {
     /**
      * Refresh.
      */
-    REFRESH;
+    REFRESH,
+
+    /**
+     * Error.
+     */
+    ERROR;
 
     /**
      * Does the event have content?

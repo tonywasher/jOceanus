@@ -32,17 +32,52 @@ public enum MetisUIResource implements TethysResourceId {
     /**
      * Download ToolTip.
      */
-    ICON_DOWNLOAD("icons.Tip.Download"),
+    ICON_TIP_DOWNLOAD("icons.Tip.Download"),
 
     /**
      * Print ToolTip.
      */
-    ICON_PRINT("icons.Tip.Print"),
+    ICON_TIP_PRINT("icons.Tip.Print"),
 
     /**
      * Save ToolTip.
      */
-    ICON_SAVE("icons.Tip.SaveToFile"),
+    ICON_TIP_SAVE("icons.Tip.SaveToFile"),
+
+    /**
+     * Icon Commit Tip.
+     */
+    ICON_TIP_COMMIT("icons.Tip.Commit"),
+
+    /**
+     * Icon UnDo Tip.
+     */
+    ICON_TIP_UNDO("icons.Tip.UnDo"),
+
+    /**
+     * Icon Reset Tip.
+     */
+    ICON_TIP_RESET("icons.Tip.Reset"),
+
+    /**
+     * Icon Cancel Tip.
+     */
+    ICON_TIP_CANCEL("icons.Tip.Cancel"),
+
+    /**
+     * Icon Edit Tip.
+     */
+    ICON_TIP_EDIT("icons.Tip.Edit"),
+
+    /**
+     * Icon New Tip.
+     */
+    ICON_TIP_NEW("icons.Tip.New"),
+
+    /**
+     * Icon Delete Tip.
+     */
+    ICON_TIP_DELETE("icons.Tip.Delete"),
 
     /**
      * ErrorPanel Clear Button.

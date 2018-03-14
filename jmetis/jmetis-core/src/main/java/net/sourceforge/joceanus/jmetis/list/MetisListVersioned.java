@@ -50,8 +50,10 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_CLASS, MetisListVersioned::getItemType);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_ITEMTYPE, MetisListVersioned::getItemType);
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisListVersioned::getBaseList);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_LISTSET, MetisListVersioned::getListSet);
     }
 
     /**
@@ -120,6 +122,14 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      */
     public int getVersion() {
         return theVersion;
+    }
+
+    /**
+     * Obtain the listSet.
+     * @return the listSet
+     */
+    private MetisListSetVersioned getListSet() {
+        return theListSet;
     }
 
     /**

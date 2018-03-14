@@ -32,11 +32,12 @@ import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
-import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldIconButtonCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEditor.MetisFieldStringCellEditor;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
+import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -207,7 +208,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
 
         /* Create new button */
         theNewButton = pUtilitySet.getGuiFactory().newScrollButton();
-        PrometheusIcon.configureNewScrollButton(theNewButton);
+        MetisIcon.configureNewScrollButton(theNewButton);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();

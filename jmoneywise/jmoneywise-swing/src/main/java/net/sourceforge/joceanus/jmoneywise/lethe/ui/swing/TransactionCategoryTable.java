@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -239,7 +240,7 @@ public class TransactionCategoryTable
         /* Create new button */
         final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
         theNewButton = myFactory.newButton();
-        PrometheusIcon.configureNewIconButton(theNewButton);
+        MetisIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter components */
         final TethysSwingLabel myPrompt = myFactory.newLabel(TITLE_FILTER);

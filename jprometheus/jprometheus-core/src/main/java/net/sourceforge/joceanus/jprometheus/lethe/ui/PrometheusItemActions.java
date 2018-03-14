@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusItemEditActions.PrometheusItemEditParent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -97,8 +98,8 @@ public class PrometheusItemActions<G extends Enum<G>, N, I>
 
         /* Configure the buttons */
         PrometheusIcon.configureGoToScrollButton(theGoToButton);
-        PrometheusIcon.configureEditIconButton(theEditButton);
-        PrometheusIcon.configureDeleteIconButton(theDeleteButton);
+        MetisIcon.configureEditIconButton(theEditButton);
+        MetisIcon.configureDeleteIconButton(theDeleteButton);
 
         /* Create the panel */
         thePanel = pFactory.newVBoxPane();

@@ -60,12 +60,25 @@ public final class MetisListBaseManager {
     }
 
     /**
+     * Undo the last change to the listSet.
+     * @param pListSet the listSet
+     */
+    public static void undoLastChange(final MetisListSetVersioned pListSet) {
+        /* If we have changes */
+        final int myVersion = pListSet.getVersion();
+        if (myVersion > 0) {
+            /* ReWind to previous version */
+            reWindToVersion(pListSet, myVersion - 1);
+        }
+    }
+
+    /**
      * ReWind the listSet to a particular version.
      * @param pListSet the listSet
      * @param pVersion the version to reWind to
      */
-    public static void reWindToVersion(final MetisListSetVersioned pListSet,
-                                       final int pVersion) {
+    private static void reWindToVersion(final MetisListSetVersioned pListSet,
+                                        final int pVersion) {
         /* Only allowed for Base/Edit ListSets */
         final MetisListSetType myType = pListSet.getListSetType();
         if (!MetisListSetType.BASE.equals(myType)

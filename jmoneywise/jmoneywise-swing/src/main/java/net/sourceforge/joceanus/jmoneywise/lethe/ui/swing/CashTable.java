@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -244,7 +245,7 @@ public class CashTable
 
         /* Create new button */
         theNewButton = myFactory.newButton();
-        PrometheusIcon.configureNewIconButton(theNewButton);
+        MetisIcon.configureNewIconButton(theNewButton);
 
         /* Create the filter panel */
         theFilterPanel = myFactory.newHBoxPane();

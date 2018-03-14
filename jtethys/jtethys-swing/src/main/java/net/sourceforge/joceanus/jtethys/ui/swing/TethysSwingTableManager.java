@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +39,9 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
@@ -126,6 +131,9 @@ public class TethysSwingTableManager<C, R>
 
         /* Listen to the valueSet */
         pFactory.getValueSet().getEventRegistrar().addEventListener(e -> theModel.fireTableDataChanged());
+        final ListSelectionModel myModel = theTable.getSelectionModel();
+        myModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        myModel.addListSelectionListener(this::handleSelection);
 
         /* Create the scrollPane */
         theScroll = new JScrollPane();
@@ -398,6 +406,42 @@ public class TethysSwingTableManager<C, R>
     public void fireTableCellUpdated(final int pRowIndex,
                                      final int pColIndex) {
         theModel.fireTableCellUpdated(pRowIndex, pColIndex);
+    }
+
+    /**
+     * handle listSelection.
+     * @param pEvent the event
+     */
+    private void handleSelection(final ListSelectionEvent pEvent) {
+        final ListSelectionModel myModel = (ListSelectionModel) pEvent.getSource();
+        final R mySelected = myModel.isSelectionEmpty()
+                                                        ? null
+                                                        : theModel.getItemAtIndex(myModel.getMinSelectionIndex());
+        processOnSelect(mySelected);
+    }
+
+    @Override
+    public void selectRowWithScroll(final R pItem) {
+        /* Determine the index of the item */
+        final int iModel = theItems.indexOf(pItem);
+        final int iView = theTable.convertRowIndexToView(iModel);
+
+        /* If we have a row to display */
+        if (iView != -1) {
+            /* Shift display to row */
+            final Rectangle rect = theTable.getCellRect(iView, 0, true);
+            final JViewport viewport = (JViewport) theTable.getParent();
+            final Point pt = viewport.getViewPosition();
+            rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+            viewport.scrollRectToVisible(rect);
+
+            /* Select the row */
+            theTable.setRowSelectionInterval(iView, iView);
+
+            /* else clear the selection */
+        } else {
+            theTable.clearSelection();
+        }
     }
 
     /**

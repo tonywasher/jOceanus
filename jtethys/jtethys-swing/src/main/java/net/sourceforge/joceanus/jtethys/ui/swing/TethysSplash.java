@@ -1,4 +1,4 @@
-package net.sourceforge.joceanus.jtethys.ui;
+package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

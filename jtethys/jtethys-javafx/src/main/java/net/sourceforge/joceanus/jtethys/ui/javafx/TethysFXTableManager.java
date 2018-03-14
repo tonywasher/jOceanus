@@ -40,10 +40,12 @@ import java.util.function.Predicate;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.util.Callback;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
@@ -120,6 +122,11 @@ public class TethysFXTableManager<C, R>
 
         /* Configure the table */
         theTable.setEditable(true);
+
+        /* Set single Selection and listen for selection changes */
+        final TableViewSelectionModel<R> myModel = theTable.getSelectionModel();
+        myModel.setSelectionMode(SelectionMode.SINGLE);
+        myModel.selectedItemProperty().addListener((v, o, n) -> processOnSelect(n));
     }
 
     @Override
@@ -332,6 +339,12 @@ public class TethysFXTableManager<C, R>
     public <T> TethysFXTableIconColumn<T, C, R> declareIconColumn(final C pId,
                                                                   final Class<T> pClazz) {
         return new TethysFXTableIconColumn<>(this, pId, pClazz);
+    }
+
+    @Override
+    public void selectRowWithScroll(final R pItem) {
+        theTable.getSelectionModel().select(pItem);
+        theTable.scrollTo(pItem);
     }
 
     /**

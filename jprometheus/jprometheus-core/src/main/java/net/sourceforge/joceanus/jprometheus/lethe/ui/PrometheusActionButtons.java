@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jprometheus.lethe.views.UpdateSet;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
@@ -110,9 +111,9 @@ public class PrometheusActionButtons<N, I>
         theResetButton = pFactory.newButton();
 
         /* Configure the buttons */
-        PrometheusIcon.configureCommitIconButton(theCommitButton);
-        PrometheusIcon.configureUndoIconButton(theUndoButton);
-        PrometheusIcon.configureResetIconButton(theResetButton);
+        MetisIcon.configureCommitIconButton(theCommitButton);
+        MetisIcon.configureUndoIconButton(theUndoButton);
+        MetisIcon.configureResetIconButton(theResetButton);
 
         /* Add the listener for item changes */
         theCommitButton.getEventRegistrar().addEventListener(e -> theEventManager.fireEvent(PrometheusUIEvent.OK));

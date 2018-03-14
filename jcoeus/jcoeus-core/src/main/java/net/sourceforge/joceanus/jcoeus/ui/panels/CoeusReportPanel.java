@@ -332,7 +332,6 @@ public class CoeusReportPanel<N, I>
 
             /* Show the error */
             theError.addError(myError);
-            handleErrorPane();
 
             /* Restore SavePoint */
             theSelect.restoreSavePoint();

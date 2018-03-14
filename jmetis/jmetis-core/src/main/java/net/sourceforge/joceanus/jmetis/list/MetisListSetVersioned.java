@@ -54,10 +54,14 @@ public class MetisListSetVersioned
     private static final MetisFieldSet<MetisListSetVersioned> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListSetVersioned.class);
 
     /**
-     * Version Field Id.
+     * Field Id.
      */
     static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_TYPE, MetisListSetVersioned::getListSetType);
         FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListSetVersioned::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisListSetVersioned::getBaseListSet);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_PAIREDITEMS, MetisListSetVersioned::getPairedItems);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_PAIREDREFERENCES, MetisListSetVersioned::getPairedReferences);
     }
 
     /**
@@ -169,6 +173,22 @@ public class MetisListSetVersioned
      */
     public MetisListSetVersioned getBaseListSet() {
         return theBaseListSet;
+    }
+
+    /**
+     * Obtain the pairedItems.
+     * @return the pairedItems
+     */
+    private Map<Long, MetisFieldPairedItem> getPairedItems() {
+        return thePairedMap;
+    }
+
+    /**
+     * Obtain the pairedReferences.
+     * @return the pairedReferences
+     */
+    private Map<Integer, MetisFieldVersionedItem> getPairedReferences() {
+        return thePairedReferenceMap;
     }
 
     /**

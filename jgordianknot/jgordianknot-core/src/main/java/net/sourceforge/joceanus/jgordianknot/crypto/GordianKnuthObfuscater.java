@@ -77,9 +77,7 @@ public class GordianKnuthObfuscater {
      * @return the encoded value
      */
     public int knuthEncodeInteger(final int pInput) {
-        return pInput == 0
-                           ? 0
-                           : (int) ((pInput ^ theMask) * (long) thePrime);
+        return (int) ((pInput ^ theMask) * (long) thePrime);
     }
 
     /**
@@ -100,9 +98,7 @@ public class GordianKnuthObfuscater {
      * @return the original input
      */
     public int knuthDecodeInteger(final int pEncoded) {
-        return pEncoded == 0
-                             ? 0
-                             : theMask ^ (int) (pEncoded * (long) theInverse);
+        return theMask ^ (int) (pEncoded * (long) theInverse);
     }
 
     /**

@@ -29,5 +29,10 @@ public enum MetisUIEvent {
     /**
      * VisibilityChanged.
      */
-    VISIBILITY;
+    VISIBILITY,
+
+    /**
+     * New Item.
+     */
+    NEWITEM;
 }

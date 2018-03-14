@@ -23,12 +23,49 @@
 package net.sourceforge.joceanus.jmetis.ui;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 
 /**
  * Metis Icon IDs.
  */
 public enum MetisIcon implements TethysIconId {
+    /**
+     * Delete.
+     */
+    DELETE("icons/OrangeJellyAlphaDelete.png"),
+
+    /**
+     * New.
+     */
+    NEW("icons/GreenJellyPlus.png"),
+
+    /**
+     * Commit.
+     */
+    COMMIT("icons/GreenJellyCheck.png"),
+
+    /**
+     * Cancel.
+     */
+    CANCEL("icons/OrangeJellyUndo.png"),
+
+    /**
+     * Undo.
+     */
+    UNDO("icons/OrangeJellyArrowLeft.png"),
+
+    /**
+     * Reset.
+     */
+    RESET("icons/OrangeJellyDoubleArrowLeft.png"),
+
+    /**
+     * Edit.
+     */
+    EDIT("icons/GreenJellyBusinessEdit.png"),
+
     /**
      * The print icon.
      */
@@ -45,19 +82,54 @@ public enum MetisIcon implements TethysIconId {
     SAVE("icons/GreenJellySaveToFile.png");
 
     /**
+     * New Button ToolTip.
+     */
+    public static final String TIP_NEW = MetisUIResource.ICON_TIP_NEW.getValue();
+
+    /**
+     * Delete Button ToolTip.
+     */
+    public static final String TIP_DELETE = MetisUIResource.ICON_TIP_DELETE.getValue();
+
+    /**
+     * Commit Button ToolTip.
+     */
+    private static final String TIP_COMMIT = MetisUIResource.ICON_TIP_COMMIT.getValue();
+
+    /**
+     * UnDo Button ToolTip.
+     */
+    private static final String TIP_UNDO = MetisUIResource.ICON_TIP_UNDO.getValue();
+
+    /**
+     * Reset Button ToolTip.
+     */
+    private static final String TIP_RESET = MetisUIResource.ICON_TIP_RESET.getValue();
+
+    /**
+     * Edit Button ToolTip.
+     */
+    private static final String TIP_EDIT = MetisUIResource.ICON_TIP_EDIT.getValue();
+
+    /**
+     * Cancel Button ToolTip.
+     */
+    private static final String TIP_CANCEL = MetisUIResource.ICON_TIP_CANCEL.getValue();
+
+    /**
      * Print Button ToolTip.
      */
-    private static final String TIP_PRINT = MetisUIResource.ICON_PRINT.getValue();
+    private static final String TIP_PRINT = MetisUIResource.ICON_TIP_PRINT.getValue();
 
     /**
      * Download Button ToolTip.
      */
-    private static final String TIP_NEW = MetisUIResource.ICON_DOWNLOAD.getValue();
+    private static final String TIP_DOWNLOAD = MetisUIResource.ICON_TIP_DOWNLOAD.getValue();
 
     /**
      * Save Button ToolTip.
      */
-    private static final String TIP_SAVE = MetisUIResource.ICON_SAVE.getValue();
+    private static final String TIP_SAVE = MetisUIResource.ICON_TIP_SAVE.getValue();
 
     /**
      * Default icon size.
@@ -93,6 +165,84 @@ public enum MetisIcon implements TethysIconId {
     }
 
     /**
+     * Configure new scroll button.
+     * @param pButton the button manager
+     */
+    public static void configureNewScrollButton(final TethysScrollButtonManager<?, ?, ?> pButton) {
+        pButton.setSimpleDetails(NEW, TethysIconBuilder.DEFAULT_ICONWIDTH, TIP_NEW);
+    }
+
+    /**
+     * Configure new icon button.
+     * @param pButton the button manager
+     */
+    public static void configureNewIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(NEW);
+        pButton.setToolTip(TIP_NEW);
+    }
+
+    /**
+     * Configure edit icon button.
+     * @param pButton the button manager
+     */
+    public static void configureEditIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(EDIT);
+        pButton.setToolTip(TIP_EDIT);
+    }
+
+    /**
+     * Configure delete icon button.
+     * @param pButton the button manager
+     */
+    public static void configureDeleteIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(DELETE);
+        pButton.setToolTip(TIP_DELETE);
+    }
+
+    /**
+     * Configure commit icon button.
+     * @param pButton the button manager
+     */
+    public static void configureCommitIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(COMMIT);
+        pButton.setToolTip(TIP_COMMIT);
+    }
+
+    /**
+     * Configure undo icon button.
+     * @param pButton the button manager
+     */
+    public static void configureUndoIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(UNDO);
+        pButton.setToolTip(TIP_UNDO);
+    }
+
+    /**
+     * Configure reset icon button.
+     * @param pButton the button manager
+     */
+    public static void configureResetIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(RESET);
+        pButton.setToolTip(TIP_RESET);
+    }
+
+    /**
+     * Configure cancel icon button.
+     * @param pButton the button manager
+     */
+    public static void configureCancelIconButton(final TethysButton<?, ?> pButton) {
+        MetisIcon.configureButton(pButton);
+        pButton.setIcon(CANCEL);
+        pButton.setToolTip(TIP_CANCEL);
+    }
+
+    /**
      * Configure print icon button.
      * @param pButton the button manager
      */
@@ -109,7 +259,7 @@ public enum MetisIcon implements TethysIconId {
     public static void configureDownloadIconButton(final TethysButton<?, ?> pButton) {
         configureButton(pButton);
         pButton.setIcon(DOWNLOAD);
-        pButton.setToolTip(TIP_NEW);
+        pButton.setToolTip(TIP_DOWNLOAD);
     }
 
     /**

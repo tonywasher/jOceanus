@@ -22,13 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.jira;
 
-import java.util.Properties;
-
-import org.apache.log4j.PropertyConfigurator;
-
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
 
 /**
@@ -42,12 +39,7 @@ public class TestJira {
     public static void main(String[] args) {
         try {
             /* Configure log4j */
-            Properties myLogProp = new Properties();
-            myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
-            myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
-            myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
-            myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
-            PropertyConfigurator.configure(myLogProp);
+            TethysLogConfig.configureLog4j();
 
             MetisViewerManager myViewer = new MetisViewerManager();
             ThemisJiraServer myServer = new ThemisJiraServer(new MetisPreferenceManager(myViewer));

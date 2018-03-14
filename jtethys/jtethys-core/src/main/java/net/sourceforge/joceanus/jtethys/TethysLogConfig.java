@@ -22,10 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys;
 
-import java.util.Properties;
-
-import org.apache.log4j.PropertyConfigurator;
-
 /**
  * Log4j Configuration.
  */
@@ -40,12 +36,6 @@ public final class TethysLogConfig {
      * Configure log4j.
      */
     public static void configureLog4j() {
-        /* Configure log4j */
-        final Properties myLogProp = new Properties();
-        myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
-        myLogProp.setProperty("log4j.appender.A1", "org.apache.log4j.ConsoleAppender");
-        myLogProp.setProperty("log4j.appender.A1.layout", "org.apache.log4j.PatternLayout");
-        myLogProp.setProperty("log4j.appender.A1.layout.ConversionPattern", "%-4r [%t] %-5p %c %x - %m%n");
-        PropertyConfigurator.configure(myLogProp);
+        System.setProperty("log4j.configurationFile", "log4j2.xml");
     }
 }

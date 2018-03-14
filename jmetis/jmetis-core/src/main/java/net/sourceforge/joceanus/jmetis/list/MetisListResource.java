@@ -53,14 +53,39 @@ public enum MetisListResource
     FIELD_BASE("field.Base"),
 
     /**
-     * List Type.
+     * ItemType.
+     */
+    FIELD_ITEMTYPE("field.ItemType"),
+
+    /**
+     * ListSet.
+     */
+    FIELD_LISTSET("field.listSet"),
+
+    /**
+     * ListType.
      */
     FIELD_TYPE("field.Type"),
 
     /**
      * List Class.
      */
-    FIELD_CLASS("field.Class");
+    FIELD_CLASS("field.Class"),
+
+    /**
+     * List Error.
+     */
+    FIELD_ERROR("field.Error"),
+
+    /**
+     * List PairedItems.
+     */
+    FIELD_PAIREDITEMS("field.PairedItems"),
+
+    /**
+     * List PairedReferences.
+     */
+    FIELD_PAIREDREFERENCES("field.PairedReferences");
 
     /**
      * The Resource Builder.

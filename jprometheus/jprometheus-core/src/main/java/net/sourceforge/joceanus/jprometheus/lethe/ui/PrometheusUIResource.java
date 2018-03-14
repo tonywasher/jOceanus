@@ -145,44 +145,9 @@ public enum PrometheusUIResource implements TethysResourceId {
     ICON_TIP_DISABLE("Icon.Tip.Disable"),
 
     /**
-     * Icon Commit Tip.
-     */
-    ICON_TIP_COMMIT("Icon.Tip.Commit"),
-
-    /**
-     * Icon UnDo Tip.
-     */
-    ICON_TIP_UNDO("Icon.Tip.UnDo"),
-
-    /**
-     * Icon Reset Tip.
-     */
-    ICON_TIP_RESET("Icon.Tip.Reset"),
-
-    /**
-     * Icon Cancel Tip.
-     */
-    ICON_TIP_CANCEL("Icon.Tip.Cancel"),
-
-    /**
      * Icon GoTo Tip.
      */
     ICON_TIP_GOTO("Icon.Tip.GoTo"),
-
-    /**
-     * Icon Edit Tip.
-     */
-    ICON_TIP_EDIT("Icon.Tip.Edit"),
-
-    /**
-     * Icon New Tip.
-     */
-    ICON_TIP_NEW("Icon.Tip.New"),
-
-    /**
-     * Icon Delete Tip.
-     */
-    ICON_TIP_DELETE("Icon.Tip.Delete"),
 
     /**
      * Table Row Column Title.

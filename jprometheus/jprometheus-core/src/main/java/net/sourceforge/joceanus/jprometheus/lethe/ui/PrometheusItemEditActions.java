@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.views.PrometheusUIEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
@@ -128,10 +129,10 @@ public class PrometheusItemEditActions<N, I>
         theCancelButton = pFactory.newButton();
 
         /* Configure the buttons */
-        PrometheusIcon.configureCommitIconButton(theCommitButton);
-        PrometheusIcon.configureUndoIconButton(theUndoButton);
-        PrometheusIcon.configureResetIconButton(theResetButton);
-        PrometheusIcon.configureCancelIconButton(theCancelButton);
+        MetisIcon.configureCommitIconButton(theCommitButton);
+        MetisIcon.configureUndoIconButton(theUndoButton);
+        MetisIcon.configureResetIconButton(theResetButton);
+        MetisIcon.configureCancelIconButton(theCancelButton);
 
         /* Create the panel */
         thePanel = pFactory.newVBoxPane();

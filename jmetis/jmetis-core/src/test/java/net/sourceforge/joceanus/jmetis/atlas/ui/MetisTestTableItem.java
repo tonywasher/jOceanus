@@ -110,7 +110,7 @@ public class MetisTestTableItem
         setRatio(TethysScrollUITestHelper.RATIO_DEF);
         setDilution(TethysScrollUITestHelper.DILUTION_DEF);
         setList(pHelper.buildSelectedList());
-        setUpdates(new Integer(0));
+        setUpdates(Integer.valueOf(0));
     }
 
     @Override

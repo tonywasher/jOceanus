@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.profile;
 
+import java.lang.reflect.InvocationTargetException;
+
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
@@ -67,10 +69,14 @@ public class MetisProgram {
             TethysLogConfig.configureLog4j();
 
             /* Obtain program details */
-            theApp = pClazz.newInstance();
+            theApp = pClazz.getDeclaredConstructor().newInstance();
 
         } catch (InstantiationException
-                | IllegalAccessException e) {
+                | IllegalAccessException
+                | IllegalArgumentException
+                | InvocationTargetException
+                | NoSuchMethodException
+                | SecurityException e) {
             throw new MetisDataException("failed to access program definitions", e);
         }
     }

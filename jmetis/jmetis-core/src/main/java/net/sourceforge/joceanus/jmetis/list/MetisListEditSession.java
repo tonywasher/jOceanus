@@ -26,18 +26,41 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldTableItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldVersionedDef;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionValues;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 
 /**
  * Metis VersionedList Edit Session.
  */
-public class MetisListEditSession {
+public class MetisListEditSession
+        implements MetisFieldItem, TethysEventProvider<MetisListEvent> {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<MetisListEditSession> FIELD_DEFS = MetisFieldSet.newFieldSet(MetisListEditSession.class);
+
+    /**
+     * Field Id.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_LISTSET, MetisListEditSession::getListSet);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_BASE, MetisListEditSession::getBaseListSet);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_VERSION, MetisListEditSession::getVersion);
+        FIELD_DEFS.declareLocalField(MetisListResource.FIELD_ERROR, MetisListEditSession::getError);
+    }
+
+    /**
+     * The Event Manager.
+     */
+    private final TethysEventManager<MetisListEvent> theEventManager;
+
     /**
      * The ListSet.
      */
@@ -77,6 +100,9 @@ public class MetisListEditSession {
         theListSet = pListSet;
         theNewVersion = -1;
 
+        /* Create the event manager */
+        theEventManager = new TethysEventManager<>();
+
         /* Create the active lists */
         theSessionLists = new ArrayList<>();
         theVersionLists = new ArrayList<>();
@@ -84,6 +110,40 @@ public class MetisListEditSession {
         /* Listen to list events */
         final TethysEventRegistrar<MetisListEvent> myRegistrar = theListSet.getEventRegistrar();
         myRegistrar.addEventListener(this::handleListSetEvent);
+    }
+
+    @Override
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public TethysEventRegistrar<MetisListEvent> getEventRegistrar() {
+        return theEventManager.getEventRegistrar();
+    }
+
+    /**
+     * Obtain the listSet.
+     * @return the listSet
+     */
+    private MetisListSetVersioned getListSet() {
+        return theListSet;
+    }
+
+    /**
+     * Obtain the baseListSet.
+     * @return the baseSet
+     */
+    private MetisListSetVersioned getBaseListSet() {
+        return theListSet.getBaseListSet();
+    }
+
+    /**
+     * Obtain the version.
+     * @return the version
+     */
+    private Integer getVersion() {
+        return theNewVersion;
     }
 
     /**
@@ -114,6 +174,14 @@ public class MetisListEditSession {
      */
     public boolean activeSession() {
         return !theSessionLists.isEmpty();
+    }
+
+    /**
+     * Is the base session active?.
+     * @return true/false
+     */
+    public boolean activeBaseSession() {
+        return getBaseListSet().getVersion() != 0;
     }
 
     /**
@@ -153,11 +221,10 @@ public class MetisListEditSession {
      * @param pItem the item
      * @param pField the field
      * @param pValue the value
-     * @return success true/false
      */
-    public <T extends MetisFieldTableItem> boolean setFieldForItem(final T pItem,
-                                                                   final MetisFieldVersionedDef pField,
-                                                                   final Object pValue) {
+    public <T extends MetisFieldTableItem> void setFieldForItem(final T pItem,
+                                                                final MetisFieldVersionedDef pField,
+                                                                final Object pValue) {
         /* Make sure that item is a VersionedItem */
         final MetisFieldVersionedItem myItem = (MetisFieldVersionedItem) pItem;
 
@@ -176,14 +243,13 @@ public class MetisListEditSession {
 
             /* Commit the version */
             commitEditVersion();
-            return true;
 
             /* Handle exceptions */
         } catch (OceanusException e) {
             /* Store error and cancel version */
             theError = e;
             cancelVersion();
-            return false;
+            theEventManager.fireEvent(MetisListEvent.ERROR, theError);
         }
     }
 
@@ -236,6 +302,9 @@ public class MetisListEditSession {
 
         /* TODO autoCorrect the item */
 
+        /* Add the item to the list */
+        myList.add(myNew);
+
         /* Return the item */
         return myNew;
 
@@ -244,6 +313,7 @@ public class MetisListEditSession {
         /* Store error and cancel version */
         // theError = e;
         // cancelVersion();
+        // theEventManager.fireEvent(MetisListEvent.ERROR, theError);
         // return null;
         // }
     }
@@ -644,21 +714,20 @@ public class MetisListEditSession {
     }
 
     /**
-     * ReWind the listSet to a particular version.
-     * @param pVersion the version to reWind to
+     * Undo the last change to the listSet.
      */
-    public void reWindToVersion(final int pVersion) {
-        /* Check that the rewind version is valid */
-        if (theListSet.getVersion() < pVersion
-            || pVersion < 0) {
-            throw new IllegalArgumentException("Invalid Version");
+    public void undoLastChange() {
+        /* Ignore if there are no changes */
+        final int myVersion = theListSet.getVersion();
+        if (myVersion == 0) {
+            return;
         }
 
         /* Cancel any active version */
         cancelVersion();
 
         /* Reset the list */
-        MetisListBaseManager.reWindToVersion(theListSet, pVersion);
+        MetisListBaseManager.undoLastChange(theListSet);
 
         /* Loop through the lists */
         final Iterator<MetisListKey> myIterator = theSessionLists.iterator();
@@ -671,6 +740,28 @@ public class MetisListEditSession {
                 /* Remove the list */
                 myIterator.remove();
             }
+        }
+    }
+
+    /**
+     * Reset the base listSet to version zero.
+     */
+    public void resetBase() {
+        /* If there is no active Session */
+        if (!activeSession()) {
+            /* Reset the base */
+            MetisListBaseManager.reset(getBaseListSet());
+        }
+    }
+
+    /**
+     * Undo the last change to the base listSet.
+     */
+    public void undoLastBaseChange() {
+        /* If there is no active Session */
+        if (!activeSession()) {
+            /* Reset the base */
+            MetisListBaseManager.undoLastChange(getBaseListSet());
         }
     }
 

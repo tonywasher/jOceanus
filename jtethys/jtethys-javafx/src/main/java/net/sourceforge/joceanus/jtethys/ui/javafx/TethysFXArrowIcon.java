@@ -22,8 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import java.awt.Point;
-
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -36,42 +35,42 @@ public enum TethysFXArrowIcon {
     /**
      * Up Arrow.
      */
-    UP(new Point(1, 9), new Point(5, 1), new Point(9, 9)),
+    UP(new Point2D(1, 9), new Point2D(5, 1), new Point2D(9, 9)),
 
     /**
      * Down Arrow.
      */
-    DOWN(new Point(1, 1), new Point(5, 9), new Point(9, 1)),
+    DOWN(new Point2D(1, 1), new Point2D(5, 9), new Point2D(9, 1)),
 
     /**
      * Left Arrow.
      */
-    LEFT(new Point(1, 5), new Point(9, 1), new Point(9, 9)),
+    LEFT(new Point2D(1, 5), new Point2D(9, 1), new Point2D(9, 9)),
 
     /**
      * Right Arrow.
      */
-    RIGHT(new Point(1, 1), new Point(1, 9), new Point(9, 5)),
+    RIGHT(new Point2D(1, 1), new Point2D(1, 9), new Point2D(9, 5)),
 
     /**
      * DoubleUp Arrow.
      */
-    DOUBLEUP(new Point(1, 5), new Point(5, 1), new Point(9, 5), new Point(5, 5), new Point(9, 9), new Point(1, 9), new Point(5, 5)),
+    DOUBLEUP(new Point2D(1, 5), new Point2D(5, 1), new Point2D(9, 5), new Point2D(5, 5), new Point2D(9, 9), new Point2D(1, 9), new Point2D(5, 5)),
 
     /**
      * DoubleDown Arrow.
      */
-    DOUBLEDOWN(new Point(1, 1), new Point(1, 9), new Point(5, 5), new Point(9, 5), new Point(5, 9), new Point(1, 5), new Point(5, 5)),
+    DOUBLEDOWN(new Point2D(1, 1), new Point2D(1, 9), new Point2D(5, 5), new Point2D(9, 5), new Point2D(5, 9), new Point2D(1, 5), new Point2D(5, 5)),
 
     /**
      * DoubleLeft Arrow.
      */
-    DOUBLELEFT(new Point(1, 5), new Point(5, 1), new Point(5, 5), new Point(9, 1), new Point(9, 9), new Point(5, 5), new Point(5, 9)),
+    DOUBLELEFT(new Point2D(1, 5), new Point2D(5, 1), new Point2D(5, 5), new Point2D(9, 1), new Point2D(9, 9), new Point2D(5, 5), new Point2D(5, 9)),
 
     /**
      * DoubleRight Arrow.
      */
-    DOUBLERIGHT(new Point(1, 1), new Point(1, 9), new Point(5, 5), new Point(5, 9), new Point(9, 5), new Point(5, 1), new Point(5, 5));
+    DOUBLERIGHT(new Point2D(1, 1), new Point2D(1, 9), new Point2D(5, 5), new Point2D(5, 9), new Point2D(9, 5), new Point2D(5, 1), new Point2D(5, 5));
 
     /**
      * locations of points.
@@ -82,7 +81,7 @@ public enum TethysFXArrowIcon {
      * Constructor.
      * @param pPoints the icon points
      */
-    TethysFXArrowIcon(final Point... pPoints) {
+    TethysFXArrowIcon(final Point2D... pPoints) {
         /* Allocate arrays */
         final int myNumPoints = pPoints.length;
         thePoints = new Double[myNumPoints << 1];
@@ -90,8 +89,8 @@ public enum TethysFXArrowIcon {
         /* Loop through the points */
         for (int i = 0, j = 0; i < myNumPoints; i++, j += 2) {
             /* Store locations */
-            thePoints[j] = Double.valueOf(pPoints[i].x);
-            thePoints[j + 1] = Double.valueOf(pPoints[i].y);
+            thePoints[j] = pPoints[i].getX();
+            thePoints[j + 1] = pPoints[i].getY();
         }
     }
 

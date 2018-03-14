@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.TethysSplash;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSplash;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
