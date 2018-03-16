@@ -130,11 +130,6 @@ public enum PrometheusUIResource implements TethysResourceId {
     STATUSBAR_STATUS_CANCEL("StatusBar.Status.Cancelled"),
 
     /**
-     * Icon Active Tip.
-     */
-    ICON_TIP_ACTIVE("Icon.Tip.Active"),
-
-    /**
      * Icon Enable Tip.
      */
     ICON_TIP_ENABLE("Icon.Tip.Enable"),

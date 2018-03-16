@@ -121,9 +121,9 @@ public final class SheetAccountCategory {
 
         /* Access parent */
         MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
-        String myParent = (myCell == null)
-                                           ? null
-                                           : myCell.getStringValue();
+        String myParent = myCell == null
+                                         ? null
+                                         : myCell.getStringValue();
 
         /* Access category class and ignore if doesn't exist */
         myCell = pView.getRowCellByIndex(pRow, ++iAdjust);

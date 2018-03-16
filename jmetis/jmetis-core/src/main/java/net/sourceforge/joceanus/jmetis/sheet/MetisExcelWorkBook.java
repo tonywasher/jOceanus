@@ -453,8 +453,8 @@ public class MetisExcelWorkBook {
         myStyle.setAlignment(getStyleAlignment(myType));
 
         /* If we have a data format */
-        if ((myType != MetisCellStyleType.BOOLEAN)
-            && (MetisDataFormats.hasDataFormat(myType))) {
+        if (myType != MetisCellStyleType.BOOLEAN
+            && MetisDataFormats.hasDataFormat(myType)) {
             /* Determine the format */
             final String myFormat = MetisDataFormats.getDataFormatString(pValue);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
@@ -497,8 +497,8 @@ public class MetisExcelWorkBook {
         myStyle.setAlignment(getStyleAlignment(myType));
 
         /* If we have a data format */
-        if ((myType != MetisCellStyleType.BOOLEAN)
-            && (MetisDataFormats.hasDataFormat(myType))) {
+        if (myType != MetisCellStyleType.BOOLEAN
+            && MetisDataFormats.hasDataFormat(myType)) {
             /* Determine the format */
             final String myFormat = MetisDataFormats.getAlternateFormatString(pValue);
             myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));

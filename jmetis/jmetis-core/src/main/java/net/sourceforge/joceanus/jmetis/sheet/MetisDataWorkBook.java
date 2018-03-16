@@ -125,6 +125,11 @@ public class MetisDataWorkBook {
     private final MetisExcelWorkBook theExcelBook;
 
     /**
+     * JOpen WorkBook.
+     */
+    private final MetisJOpenWorkBook theJOpenBook;
+
+    /**
      * Oasis WorkBook.
      */
     private final MetisOasisWorkBook theOasisBook;
@@ -144,12 +149,20 @@ public class MetisDataWorkBook {
         switch (pType) {
             case EXCELXLS:
                 theExcelBook = new MetisExcelWorkBook(pInput);
+                theJOpenBook = null;
+                theOasisBook = null;
+                theBookType = pType;
+                break;
+            case OASISJOPEN:
+                theJOpenBook = new MetisJOpenWorkBook(pInput);
+                theExcelBook = null;
                 theOasisBook = null;
                 theBookType = pType;
                 break;
             case OASISODS:
                 theOasisBook = new MetisOasisWorkBook(pInput);
                 theExcelBook = null;
+                theJOpenBook = null;
                 theBookType = pType;
                 break;
             default:
@@ -171,12 +184,20 @@ public class MetisDataWorkBook {
         switch (pType) {
             case EXCELXLS:
                 theExcelBook = new MetisExcelWorkBook();
+                theJOpenBook = null;
+                theOasisBook = null;
+                theBookType = pType;
+                break;
+            case OASISJOPEN:
+                theJOpenBook = new MetisJOpenWorkBook();
+                theExcelBook = null;
                 theOasisBook = null;
                 theBookType = pType;
                 break;
             case OASISODS:
                 theOasisBook = new MetisOasisWorkBook();
                 theExcelBook = null;
+                theJOpenBook = null;
                 theBookType = pType;
                 break;
             default:
@@ -210,6 +231,14 @@ public class MetisDataWorkBook {
     }
 
     /**
+     * Obtain JOpen workBook.
+     * @return the book
+     */
+    public MetisJOpenWorkBook getJOpenBook() {
+        return theJOpenBook;
+    }
+
+    /**
      * Obtain Oasis workBook.
      * @return the book
      */
@@ -238,6 +267,9 @@ public class MetisDataWorkBook {
             case EXCELXLS:
                 theExcelBook.saveToStream(pOutput);
                 break;
+            case OASISJOPEN:
+                theJOpenBook.saveToStream(pOutput);
+                break;
             case OASISODS:
                 theOasisBook.saveToStream(pOutput);
                 break;
@@ -260,6 +292,8 @@ public class MetisDataWorkBook {
         switch (theBookType) {
             case EXCELXLS:
                 return theExcelBook.newSheet(pName);
+            case OASISJOPEN:
+                return theJOpenBook.newSheet(pName);
             case OASISODS:
                 return theOasisBook.newSheet(pName);
             default:
@@ -285,6 +319,8 @@ public class MetisDataWorkBook {
         switch (theBookType) {
             case EXCELXLS:
                 return theExcelBook.newSheet(pName);
+            case OASISJOPEN:
+                return theJOpenBook.newSheet(pName, pNumRows, pNumCols);
             case OASISODS:
                 return theOasisBook.newSheet(pName, pNumRows, pNumCols);
             default:
@@ -302,6 +338,8 @@ public class MetisDataWorkBook {
         switch (theBookType) {
             case EXCELXLS:
                 return theExcelBook.getSheet(pName);
+            case OASISJOPEN:
+                return theJOpenBook.getSheet(pName);
             case OASISODS:
                 return theOasisBook.getSheet(pName);
             default:
@@ -320,6 +358,8 @@ public class MetisDataWorkBook {
         switch (theBookType) {
             case EXCELXLS:
                 return theExcelBook.getRangeView(pName);
+            case OASISJOPEN:
+                return theJOpenBook.getRangeView(pName);
             case OASISODS:
                 return theOasisBook.getRangeView(pName);
             default:

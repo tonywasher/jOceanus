@@ -22,27 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.jopendocument.dom.spreadsheet.MutableCell;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 
 /**
- * Class representing a row within a sheet or a view.
+ * JOpenDocument Row.
  */
-public class MetisExcelRow
+public class MetisJOpenRow
         extends MetisDataRow {
     /**
-     * The Excel Sheet.
+     * The JOpen Sheet.
      */
-    private final MetisExcelSheet theExcelSheet;
-
-    /**
-     * The Excel Row.
-     */
-    private final HSSFRow theExcelRow;
+    private final MetisJOpenSheet theJOpenSheet;
 
     /**
      * Is the row readOnly.
@@ -52,50 +45,29 @@ public class MetisExcelRow
     /**
      * Constructor.
      * @param pSheet the sheet for the row
-     * @param pRow the Excel Row
      * @param pRowIndex the RowIndex
      * @param pReadOnly is the row readOnly?
      */
-    protected MetisExcelRow(final MetisExcelSheet pSheet,
-                            final HSSFRow pRow,
+    protected MetisJOpenRow(final MetisJOpenSheet pSheet,
                             final int pRowIndex,
                             final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pRowIndex);
-        theExcelSheet = pSheet;
-        theExcelRow = pRow;
+        theJOpenSheet = pSheet;
         isReadOnly = pReadOnly;
     }
 
-    /**
-     * evaluate the formula for a cell.
-     * @param pCell the cell to evaluate
-     * @return the calculated value
-     */
-    protected CellValue evaluateFormula(final HSSFCell pCell) {
-        return theExcelSheet.evaluateFormula(pCell);
-    }
-
-    /**
-     * Format the cell value.
-     * @param pCell the cell to evaluate
-     * @return the formatted value
-     */
-    protected String formatCellValue(final HSSFCell pCell) {
-        return theExcelSheet.formatCellValue(pCell);
-    }
-
     @Override
-    public MetisExcelRow getNextRow() {
+    public MetisJOpenRow getNextRow() {
         /* Determine the required index */
         final int myIndex = getRowIndex() + 1;
 
         /* Return the next row */
-        return theExcelSheet.getReadOnlyRowByIndex(myIndex);
+        return theJOpenSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     @Override
-    public MetisExcelRow getPreviousRow() {
+    public MetisJOpenRow getPreviousRow() {
         /* Determine the required index */
         final int myIndex = getRowIndex() - 1;
         if (myIndex < 0) {
@@ -103,31 +75,30 @@ public class MetisExcelRow
         }
 
         /* Return the previous row */
-        return theExcelSheet.getReadOnlyRowByIndex(myIndex);
+        return theJOpenSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     @Override
     public int getCellCount() {
-        /* return the cell count */
-        return theExcelRow.getLastCellNum();
+        return theJOpenSheet.getColumnCount();
     }
 
     @Override
-    public MetisExcelCell getReadOnlyCellByIndex(final int pIndex) {
+    public MetisJOpenCell getReadOnlyCellByIndex(final int pIndex) {
         /* Handle negative index */
         if (pIndex < 0) {
             return null;
         }
 
         /* Access the cell */
-        final HSSFCell myExcelCell = theExcelRow.getCell(pIndex, MissingCellPolicy.RETURN_BLANK_AS_NULL);
-        return myExcelCell != null
-                                   ? new MetisExcelCell(this, myExcelCell, pIndex, true)
-                                   : null;
+        final MutableCell<SpreadSheet> myJOpenCell = theJOpenSheet.getCell(pIndex, getRowIndex());
+        return myJOpenCell == null || myJOpenCell.isEmpty()
+                                                            ? null
+                                                            : new MetisJOpenCell(this, myJOpenCell, pIndex, true);
     }
 
     @Override
-    public MetisExcelCell getMutableCellByIndex(final int pIndex) {
+    public MetisJOpenCell getMutableCellByIndex(final int pIndex) {
         /* Handle negative index and readOnly */
         if (pIndex < 0
             || isReadOnly) {
@@ -135,9 +106,9 @@ public class MetisExcelRow
         }
 
         /* Create the cell */
-        final HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
-        return myExcelCell != null
-                                   ? new MetisExcelCell(this, myExcelCell, pIndex, false)
+        final MutableCell<SpreadSheet> myJOpenCell = theJOpenSheet.getMutableCell(pIndex, getRowIndex());
+        return myJOpenCell != null
+                                   ? new MetisJOpenCell(this, myJOpenCell, pIndex, false)
                                    : null;
     }
 
@@ -146,10 +117,10 @@ public class MetisExcelRow
      * @param pCell the cell to style
      * @param pValue the cell value
      */
-    protected void setCellStyle(final MetisExcelCell pCell,
+    protected void setCellStyle(final MetisJOpenCell pCell,
                                 final Object pValue) {
         /* Pass through to the sheet */
-        theExcelSheet.setCellStyle(pCell, pValue);
+        theJOpenSheet.setCellStyle(pCell, pValue);
     }
 
     /**
@@ -157,10 +128,10 @@ public class MetisExcelRow
      * @param pCell the cell to style
      * @param pValue the cell value
      */
-    protected void setAlternateCellStyle(final MetisExcelCell pCell,
+    protected void setAlternateCellStyle(final MetisJOpenCell pCell,
                                          final Object pValue) {
         /* Pass through to the sheet */
-        theExcelSheet.setAlternateCellStyle(pCell, pValue);
+        theJOpenSheet.setAlternateCellStyle(pCell, pValue);
     }
 
     /**
@@ -172,7 +143,7 @@ public class MetisExcelRow
      */
     protected <T> T parseValue(final String pSource,
                                final Class<T> pClass) {
-        final MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final MetisDataFormatter myFormatter = theJOpenSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -185,7 +156,7 @@ public class MetisExcelRow
      */
     protected <T> T parseValue(final Double pSource,
                                final Class<T> pClass) {
-        final MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final MetisDataFormatter myFormatter = theJOpenSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pClass);
     }
 
@@ -200,7 +171,7 @@ public class MetisExcelRow
     protected <T> T parseValue(final Double pSource,
                                final String pCurrCode,
                                final Class<T> pClass) {
-        final MetisDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        final MetisDataFormatter myFormatter = theJOpenSheet.getDataFormatter();
         return myFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 }

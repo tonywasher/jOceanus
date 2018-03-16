@@ -27,7 +27,6 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 
@@ -190,7 +189,7 @@ public enum MoneyWiseIcon implements TethysIconId {
         /* Create the FALSE state */
         myMapSet = new TethysIconMapSet<>(MetisIcon.ICON_SIZE);
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.TRUE, LOCKED, TIP_LOCKED);
-        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, PrometheusIcon.TIP_ACTIVE);
+        myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.FALSE, UNLOCKED, MetisIcon.TIP_ACTIVE);
         myMap.put(Boolean.FALSE, myMapSet);
 
         /* Return the map */

@@ -248,7 +248,7 @@ public class MetisOasisSheet
 
     @Override
     public void createFreezePane(final MetisCellPosition pFreezeCell) {
-        /* TODO */
+        /* NoOp */
     }
 
     /**

@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
@@ -33,11 +32,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
  */
 public enum PrometheusIcon implements TethysIconId {
     /**
-     * Active.
-     */
-    ACTIVE("icons/GreenJellySymbolActive.png"),
-
-    /**
      * Disabled.
      */
     DISABLED("icons/OrangeJellyAlphaDisabled.png"),
@@ -46,11 +40,6 @@ public enum PrometheusIcon implements TethysIconId {
      * Goto.
      */
     GOTO("icons/BlueJellyGoTo.png");
-
-    /**
-     * Active Button ToolTip.
-     */
-    public static final String TIP_ACTIVE = PrometheusUIResource.ICON_TIP_ACTIVE.getValue();
 
     /**
      * Enable Button ToolTip.
@@ -95,24 +84,12 @@ public enum PrometheusIcon implements TethysIconId {
     }
 
     /**
-     * Configure status icon button.
-     * @return the mapSet configuration
-     */
-    public static TethysIconMapSet<PrometheusAction> configureStatusIconButton() {
-        final TethysIconMapSet<PrometheusAction> myMapSet = new TethysIconMapSet<>();
-        myMapSet.setMappingsForValue(PrometheusAction.ACTIVE, PrometheusAction.ACTIVE, ACTIVE, TIP_ACTIVE);
-        myMapSet.setMappingsForValue(PrometheusAction.DELETE, PrometheusAction.DO, MetisIcon.DELETE, MetisIcon.TIP_DELETE);
-        myMapSet.setMappingsForValue(PrometheusAction.INSERT, PrometheusAction.DO, MetisIcon.NEW, MetisIcon.TIP_NEW);
-        return myMapSet;
-    }
-
-    /**
      * Configure enabled icon button.
      * @return the mapSet configuration
      */
     public static TethysIconMapSet<Boolean> configureEnabledIconButton() {
         final TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>();
-        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, ACTIVE, TIP_DISABLE);
+        myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, MetisIcon.ACTIVE, TIP_DISABLE);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, DISABLED, TIP_ENABLE);
         return myMapSet;
     }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPrometheus: Application Framework
+ * jMetis: Java Data Framework
  * Copyright 2012,2017 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.joceanus.jprometheus.lethe.data;
+package net.sourceforge.joceanus.jmetis.ui;
 
 /**
  * Prometheus Actions.
  */
-public enum PrometheusAction {
+public enum MetisAction {
     /**
      * Active.
      */

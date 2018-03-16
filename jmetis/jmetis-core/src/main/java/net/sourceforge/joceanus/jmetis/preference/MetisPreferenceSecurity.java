@@ -28,11 +28,11 @@ import java.net.UnknownHostException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyFactory;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
@@ -59,11 +59,12 @@ public class MetisPreferenceSecurity {
     protected MetisPreferenceSecurity(final MetisPreferenceManager pManager) throws OceanusException {
         /* Create the Bouncy Parameters */
         final GordianParameters myParms = new GordianParameters();
+        myParms.setFactoryType(GordianFactoryType.BC);
         myParms.useRestricted();
         myParms.setSecurityPhrase(getHostName());
 
-        /* Create a Bouncy Factory */
-        final BouncyFactory myFactory = new BouncyFactory(myParms);
+        /* Create a Security Factory */
+        final GordianFactory myFactory = GordianHashManager.newFactory(myParms);
 
         /* Obtain the hash as a preference */
         final MetisBaseSecurityPreferences myPrefs = pManager.getPreferenceSet(MetisBaseSecurityPreferences.class);

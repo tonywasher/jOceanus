@@ -37,6 +37,11 @@
       <version>${ApacheODFDOMVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.jopendocument</groupId>
+      <artifactId>jOpenDocument</artifactId>
+      <version>${JOpenDocumentVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${HttpClientVersion}</version>

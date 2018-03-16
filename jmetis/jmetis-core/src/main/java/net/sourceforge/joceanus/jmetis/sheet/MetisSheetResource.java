@@ -39,6 +39,11 @@ public enum MetisSheetResource implements TethysResourceId {
     WORKBOOK_EXCELXLS("workBook.EXCELXLS"),
 
     /**
+     * WorkBook OasisJOPEN.
+     */
+    WORKBOOK_OASISJOPEN("workBook.OASISJOPEN"),
+
+    /**
      * WorkBook OasisODS.
      */
     WORKBOOK_OASISODS("workBook.OASISODS");
@@ -101,6 +106,7 @@ public enum MetisSheetResource implements TethysResourceId {
         /* Create the map and return it */
         final Map<MetisWorkBookType, TethysResourceId> myMap = new EnumMap<>(MetisWorkBookType.class);
         myMap.put(MetisWorkBookType.EXCELXLS, WORKBOOK_EXCELXLS);
+        myMap.put(MetisWorkBookType.OASISJOPEN, WORKBOOK_OASISJOPEN);
         myMap.put(MetisWorkBookType.OASISODS, WORKBOOK_OASISODS);
         return myMap;
     }

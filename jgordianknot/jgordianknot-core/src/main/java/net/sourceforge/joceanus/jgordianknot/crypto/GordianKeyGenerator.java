@@ -257,10 +257,12 @@ public abstract class GordianKeyGenerator<T> {
         /* Create the standard data */
         final byte[] myAlgo = TethysDataConverter.stringToByteArray(theKeyType.toString());
         final GordianPersonalisation myPersonal = theFactory.getPersonalisation();
+        final byte[] myKeyLen = TethysDataConverter.integerToByteArray(theKeyLength);
 
         /* Update with personalisation, algorithm and section */
         myPersonal.updateMac(myPrime);
         myPrime.update(myAlgo);
+        myPrime.update(myKeyLen);
         myPrime.update(pSection);
 
         /* Loop through the iterations */

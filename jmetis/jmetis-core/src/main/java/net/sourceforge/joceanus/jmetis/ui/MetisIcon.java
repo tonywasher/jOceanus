@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jmetis.ui;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 
 /**
@@ -67,6 +68,11 @@ public enum MetisIcon implements TethysIconId {
     EDIT("icons/GreenJellyBusinessEdit.png"),
 
     /**
+     * Active.
+     */
+    ACTIVE("icons/GreenJellySymbolActive.png"),
+
+    /**
      * The print icon.
      */
     PRINT("icons/BlueJellyPrint.png"),
@@ -90,6 +96,11 @@ public enum MetisIcon implements TethysIconId {
      * Delete Button ToolTip.
      */
     public static final String TIP_DELETE = MetisUIResource.ICON_TIP_DELETE.getValue();
+
+    /**
+     * Active Button ToolTip.
+     */
+    public static final String TIP_ACTIVE = MetisUIResource.ICON_TIP_ACTIVE.getValue();
 
     /**
      * Commit Button ToolTip.
@@ -270,5 +281,17 @@ public enum MetisIcon implements TethysIconId {
         configureButton(pButton);
         pButton.setIcon(SAVE);
         pButton.setToolTip(TIP_SAVE);
+    }
+
+    /**
+     * Configure status icon button.
+     * @return the mapSet configuration
+     */
+    public static TethysIconMapSet<MetisAction> configureStatusIconButton() {
+        final TethysIconMapSet<MetisAction> myMapSet = new TethysIconMapSet<>();
+        myMapSet.setMappingsForValue(MetisAction.ACTIVE, MetisAction.ACTIVE, ACTIVE, TIP_ACTIVE);
+        myMapSet.setMappingsForValue(MetisAction.DELETE, MetisAction.DO, MetisIcon.DELETE, MetisIcon.TIP_DELETE);
+        myMapSet.setMappingsForValue(MetisAction.INSERT, MetisAction.DO, MetisIcon.NEW, MetisIcon.TIP_NEW);
+        return myMapSet;
     }
 }

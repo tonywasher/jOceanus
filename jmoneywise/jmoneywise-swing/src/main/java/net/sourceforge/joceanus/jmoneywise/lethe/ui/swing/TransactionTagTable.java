@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
@@ -47,8 +48,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.TransactionTag.TransactionTagList;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionTagPanel;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusUIResource;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
@@ -501,13 +500,13 @@ public class TransactionTagTable
             super(pTable);
 
             /* Create the relevant formatters */
-            final MetisFieldIconButtonCellEditor<PrometheusAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldIconButtonCellEditor<MetisAction> myIconEditor = theFieldMgr.allocateIconButtonCellEditor(MetisAction.class);
             final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
-            final MetisFieldIconButtonCellRenderer<PrometheusAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldIconButtonCellRenderer<MetisAction> myIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(MetisAction.class);
             final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Configure the iconButton */
-            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
             myIconRenderer.setIconMapSet(r -> myActionMapSet);
             myIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -551,8 +550,8 @@ public class TransactionTagTable
                     return pTransactionTag.getDesc();
                 case COLUMN_ACTIVE:
                     return pTransactionTag.isActive()
-                                                      ? PrometheusAction.ACTIVE
-                                                      : PrometheusAction.DELETE;
+                                                      ? MetisAction.ACTIVE
+                                                      : MetisAction.DELETE;
                 default:
                     return null;
             }

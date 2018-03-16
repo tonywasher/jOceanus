@@ -209,9 +209,9 @@ public class MetisOasisCell
      */
     private Value getValueType() {
         final String myType = theOasisCell.getOfficeValueTypeAttribute();
-        return (myType != null)
-                                ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
-                                : Value.VOID;
+        return myType != null
+                              ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
+                              : Value.VOID;
     }
 
     @Override
@@ -439,9 +439,9 @@ public class MetisOasisCell
             removeCellContent();
 
             /* Set value type and value */
-            theOasisCell.setOfficeValueTypeAttribute((pValue instanceof TethysRate)
-                                                                                    ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
-                                                                                    : OfficeValueTypeAttribute.Value.FLOAT.toString());
+            theOasisCell.setOfficeValueTypeAttribute(pValue instanceof TethysRate
+                                                                                  ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
+                                                                                  : OfficeValueTypeAttribute.Value.FLOAT.toString());
             theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
             setTextContent(formatValue(pValue));
 

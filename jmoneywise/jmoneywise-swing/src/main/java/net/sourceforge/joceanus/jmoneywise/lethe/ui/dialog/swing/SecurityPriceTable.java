@@ -43,6 +43,8 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldDecimalCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.ui.MetisAction;
+import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataException;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.DilutionEvent.DilutionEventMap;
@@ -52,8 +54,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseUIResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.ViewSecurityPrice.ViewSecurityPriceList;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
@@ -508,13 +508,13 @@ public class SecurityPriceTable
             /* Create the relevant formatters */
             final MetisFieldPriceCellEditor myPriceEditor = theFieldMgr.allocatePriceCellEditor();
             final MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
-            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldIconButtonCellEditor<MetisAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(MetisAction.class);
             final MetisFieldCalendarCellRenderer myDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
             final MetisFieldDecimalCellRenderer myDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
-            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldIconButtonCellRenderer<MetisAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(MetisAction.class);
 
             /* Configure the iconButton */
-            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -626,7 +626,7 @@ public class SecurityPriceTable
          */
         private Object getHeaderValue(final int pColIndex) {
             return pColIndex == COLUMN_ACTION
-                                              ? PrometheusAction.INSERT
+                                              ? MetisAction.INSERT
                                               : null;
 
         }
@@ -651,8 +651,8 @@ public class SecurityPriceTable
                     return pItem.getDilutedPrice();
                 case COLUMN_ACTION:
                     return theModel.getViewRowCount() > 1
-                                                          ? PrometheusAction.DELETE
-                                                          : PrometheusAction.DO;
+                                                          ? MetisAction.DELETE
+                                                          : MetisAction.DO;
                 default:
                     return null;
             }

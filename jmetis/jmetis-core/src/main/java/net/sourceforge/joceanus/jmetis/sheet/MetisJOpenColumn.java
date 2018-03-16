@@ -23,15 +23,14 @@
 package net.sourceforge.joceanus.jmetis.sheet;
 
 /**
- * Class representing and Excel column.
- * @author Tony Washer
+ * JOpenDocument Column.
  */
-public class MetisExcelColumn
+public class MetisJOpenColumn
         extends MetisDataColumn {
     /**
-     * The Excel Sheet.
+     * The JOpen Sheet.
      */
-    private final MetisExcelSheet theExcelSheet;
+    private final MetisJOpenSheet theJOpenSheet;
 
     /**
      * Is the column readOnly.
@@ -40,30 +39,30 @@ public class MetisExcelColumn
 
     /**
      * Constructor.
-     * @param pSheet the excel sheet
+     * @param pSheet the jOpen sheet
      * @param pIndex the index
      * @param pReadOnly is the column readOnly?
      */
-    protected MetisExcelColumn(final MetisExcelSheet pSheet,
+    protected MetisJOpenColumn(final MetisJOpenSheet pSheet,
                                final int pIndex,
                                final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pIndex);
-        theExcelSheet = pSheet;
+        theJOpenSheet = pSheet;
         isReadOnly = pReadOnly;
     }
 
     @Override
-    public MetisExcelColumn getNextColumn() {
+    public MetisJOpenColumn getNextColumn() {
         /* Determine the required index */
         final int myIndex = getColumnIndex() + 1;
 
         /* Return the next column */
-        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
+        return theJOpenSheet.getReadOnlyColumnByIndex(myIndex);
     }
 
     @Override
-    public MetisExcelColumn getPreviousColumn() {
+    public MetisJOpenColumn getPreviousColumn() {
         /* Determine the required index */
         final int myIndex = getColumnIndex() - 1;
         if (myIndex < 0) {
@@ -71,27 +70,24 @@ public class MetisExcelColumn
         }
 
         /* Return the previous column */
-        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
+        return theJOpenSheet.getReadOnlyColumnByIndex(myIndex);
     }
 
     @Override
     public void setHidden(final boolean isHidden) {
-        /* Ignore if readOnly */
-        if (!isReadOnly) {
-            theExcelSheet.setColumnHidden(getColumnIndex(), isHidden);
-        }
+        /* NoOp */
     }
 
     @Override
     public boolean isHidden() {
-        return theExcelSheet.isColumnHidden(getColumnIndex());
+        return false;
     }
 
     @Override
     public void setDefaultCellStyle(final MetisCellStyleType pStyle) {
         /* Ignore if readOnly */
         if (!isReadOnly) {
-            theExcelSheet.setDefaultCellStyle(getColumnIndex(), pStyle);
+            theJOpenSheet.setDefaultCellStyle(getColumnIndex(), pStyle);
         }
     }
 }

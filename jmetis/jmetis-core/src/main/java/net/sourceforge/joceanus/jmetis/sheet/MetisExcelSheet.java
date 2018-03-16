@@ -119,17 +119,17 @@ public class MetisExcelSheet
     @Override
     public int getRowCount() {
         final int iLastRowNum = theExcelSheet.getLastRowNum();
-        return (iLastRowNum == 0)
-                                  ? theExcelSheet.getPhysicalNumberOfRows()
-                                  : iLastRowNum + 1;
+        return iLastRowNum == 0
+                                ? theExcelSheet.getPhysicalNumberOfRows()
+                                : iLastRowNum + 1;
     }
 
     @Override
     public MetisExcelRow getReadOnlyRowByIndex(final int pRowIndex) {
         final HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
-        return (myExcelRow == null)
-                                    ? null
-                                    : new MetisExcelRow(this, myExcelRow, pRowIndex, true);
+        return myExcelRow == null
+                                  ? null
+                                  : new MetisExcelRow(this, myExcelRow, pRowIndex, true);
     }
 
     @Override

@@ -37,11 +37,11 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellEdit
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldIconButtonCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
+import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataList.ListStyle;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticData.StaticList;
 import net.sourceforge.joceanus.jprometheus.lethe.data.StaticInterface;
@@ -506,13 +506,13 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
             /* Create the relevant renderers/editors */
             final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
             final MetisFieldStringCellRenderer myStringRenderer = theFieldMgr.allocateStringCellRenderer();
-            final MetisFieldIconButtonCellEditor<PrometheusAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
-            final MetisFieldIconButtonCellRenderer<PrometheusAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldIconButtonCellEditor<MetisAction> myStatusIconEditor = theFieldMgr.allocateIconButtonCellEditor(MetisAction.class);
+            final MetisFieldIconButtonCellRenderer<MetisAction> myStatusIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(MetisAction.class);
             final MetisFieldIconButtonCellEditor<Boolean> myEnabledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
             final MetisFieldIconButtonCellRenderer<Boolean> myEnabledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
 
             /* Configure the iconButtons */
-            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
             myStatusIconRenderer.setIconMapSet(r -> myActionMapSet);
             myStatusIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -587,8 +587,8 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
                     return pItem.getEnabled();
                 case COLUMN_ACTIVE:
                     return pItem.isActive()
-                                            ? PrometheusAction.ACTIVE
-                                            : PrometheusAction.DELETE;
+                                            ? MetisAction.ACTIVE
+                                            : MetisAction.DELETE;
                 default:
                     return null;
             }

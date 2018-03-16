@@ -98,7 +98,7 @@ public final class GordianMcElieceKeySpec {
      * @param pDigestType the digestType
      * @return the keySpec
      */
-    public static GordianMcElieceKeySpec xmssmt(final GordianMcElieceDigestType pDigestType) {
+    public static GordianMcElieceKeySpec cca2(final GordianMcElieceDigestType pDigestType) {
         return new GordianMcElieceKeySpec(GordianMcElieceKeyType.CCA2, pDigestType);
     }
 

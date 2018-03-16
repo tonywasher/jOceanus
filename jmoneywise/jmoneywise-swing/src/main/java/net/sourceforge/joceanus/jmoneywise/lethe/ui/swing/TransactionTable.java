@@ -50,6 +50,7 @@ import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRend
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldCellRenderer.MetisFieldStringCellRenderer;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.ui.MetisAction;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
@@ -72,9 +73,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.controls.MoneyWiseAnalysisSe
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing.TransactionPanel;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisView;
-import net.sourceforge.joceanus.jprometheus.lethe.data.PrometheusAction;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusActionButtons;
-import net.sourceforge.joceanus.jprometheus.lethe.ui.PrometheusIcon;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTable;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn;
 import net.sourceforge.joceanus.jprometheus.lethe.ui.swing.PrometheusDataTableColumn.PrometheusDataTableColumnModel;
@@ -1053,7 +1052,7 @@ public class TransactionTable
             final MetisFieldCalendarCellEditor myDateEditor = theFieldMgr.allocateCalendarCellEditor();
             final MetisFieldIconButtonCellEditor<AssetDirection> myDirectionIconEditor = theFieldMgr.allocateIconButtonCellEditor(AssetDirection.class);
             final MetisFieldIconButtonCellEditor<Boolean> myReconciledIconEditor = theFieldMgr.allocateIconButtonCellEditor(Boolean.class);
-            final MetisFieldIconButtonCellEditor<PrometheusAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(PrometheusAction.class);
+            final MetisFieldIconButtonCellEditor<MetisAction> myActionIconEditor = theFieldMgr.allocateIconButtonCellEditor(MetisAction.class);
             final MetisFieldListButtonCellEditor<TransactionTag> myTagEditor = theFieldMgr.allocateScrollListButtonCellEditor(TransactionTag.class);
             final MetisFieldStringCellEditor myStringEditor = theFieldMgr.allocateStringCellEditor();
             final MetisFieldIntegerCellEditor myIntegerEditor = theFieldMgr.allocateIntegerCellEditor();
@@ -1070,7 +1069,7 @@ public class TransactionTable
             final MetisFieldIntegerCellRenderer myIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
             final MetisFieldIconButtonCellRenderer<AssetDirection> myDirectionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(AssetDirection.class);
             final MetisFieldIconButtonCellRenderer<Boolean> myReconciledIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(Boolean.class);
-            final MetisFieldIconButtonCellRenderer<PrometheusAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(PrometheusAction.class);
+            final MetisFieldIconButtonCellRenderer<MetisAction> myActionIconRenderer = theFieldMgr.allocateIconButtonCellRenderer(MetisAction.class);
 
             /* Configure the iconButtons */
             final Map<Boolean, TethysIconMapSet<Boolean>> myRecMapSets = MoneyWiseIcon.configureReconciledIconButton();
@@ -1079,7 +1078,7 @@ public class TransactionTable
             final Map<Boolean, TethysIconMapSet<AssetDirection>> myDirMapSets = MoneyWiseIcon.configureDirectionIconButton();
             myDirectionIconEditor.setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)));
             myDirectionIconRenderer.setIconMapSet(r -> myDirMapSets.get(determineDirectionState(r)));
-            final TethysIconMapSet<PrometheusAction> myActionMapSet = PrometheusIcon.configureStatusIconButton();
+            final TethysIconMapSet<MetisAction> myActionMapSet = MetisIcon.configureStatusIconButton();
             myActionIconRenderer.setIconMapSet(r -> myActionMapSet);
             myActionIconEditor.setIconMapSet(r -> myActionMapSet);
 
@@ -1297,8 +1296,8 @@ public class TransactionTable
                     return theFilter.getBalanceForTransaction(pTrans);
                 case COLUMN_ACTION:
                     return pTrans.isReconciled()
-                                                 ? PrometheusAction.DO
-                                                 : PrometheusAction.DELETE;
+                                                 ? MetisAction.DO
+                                                 : MetisAction.DELETE;
                 default:
                     return null;
             }
@@ -1319,7 +1318,7 @@ public class TransactionTable
                 case COLUMN_BALANCE:
                     return theFilter.getStartingBalance();
                 case COLUMN_ACTION:
-                    return PrometheusAction.DO;
+                    return MetisAction.DO;
                 default:
                     return null;
             }

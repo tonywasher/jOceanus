@@ -149,8 +149,8 @@ public class MetisProfile
      */
     private TethysDecimal getElapsed() {
         return theStatus.isRunning()
-                                     ? theElapsed
-                                     : null;
+                                     ? null
+                                     : theElapsed;
     }
 
     /**

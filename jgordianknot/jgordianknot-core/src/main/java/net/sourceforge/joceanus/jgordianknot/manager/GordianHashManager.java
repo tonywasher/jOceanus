@@ -85,12 +85,23 @@ public abstract class GordianHashManager {
      */
     protected GordianHashManager(final GordianParameters pParameters) throws OceanusException {
         /* Allocate the factory */
-        theFactory = GordianFactoryType.BC.equals(pParameters.getFactoryType())
-                                                                                ? new BouncyFactory(pParameters)
-                                                                                : new JcaFactory(pParameters);
+        theFactory = newFactory(pParameters);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<>();
+    }
+
+    /**
+     * Create a new factory instance.
+     * @param pParameters the Security parameters
+     * @return the new factory
+     * @throws OceanusException on error
+     */
+    public static GordianFactory newFactory(final GordianParameters pParameters) throws OceanusException {
+        /* Allocate the factory */
+        return GordianFactoryType.BC.equals(pParameters.getFactoryType())
+                                                                          ? new BouncyFactory(pParameters)
+                                                                          : new JcaFactory(pParameters);
     }
 
     /**

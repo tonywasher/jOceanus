@@ -362,9 +362,9 @@ public class MetisOasisWorkBook {
     protected MetisDataSheet getSheet(final String pName) {
         /* Obtain the existing sheet */
         final SheetReference myRef = theSheetMap.get(pName);
-        return (myRef == null)
-                               ? null
-                               : myRef.getReadOnlySheet();
+        return myRef == null
+                             ? null
+                             : myRef.getReadOnlySheet();
     }
 
     /**

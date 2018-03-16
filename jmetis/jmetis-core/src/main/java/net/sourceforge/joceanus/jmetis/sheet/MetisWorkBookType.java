@@ -35,6 +35,11 @@ public enum MetisWorkBookType {
     EXCELXLS("xls"),
 
     /**
+     * Oasis jOpenDoc.
+     */
+    OASISJOPEN("ods"),
+
+    /**
      * Oasis ods.
      */
     OASISODS("ods");
