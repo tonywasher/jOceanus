@@ -317,8 +317,14 @@ public abstract class GordianFactory {
      * @throws OceanusException on error
      */
     public GordianDigest generateRandomDigest() throws OceanusException {
-        final GordianDigestType myType = getIdManager().generateRandomDigestType();
-        return createDigest(new GordianDigestSpec(myType));
+        /* Keep looping until we find a valid digest */
+        for (;;) {
+            final GordianDigestType myType = getIdManager().generateRandomDigestType();
+            final GordianDigestSpec mySpec = new GordianDigestSpec(myType);
+            if (supportedDigestSpecs().test(mySpec)) {
+                return createDigest(new GordianDigestSpec(myType));
+            }
+        }
     }
 
     /**

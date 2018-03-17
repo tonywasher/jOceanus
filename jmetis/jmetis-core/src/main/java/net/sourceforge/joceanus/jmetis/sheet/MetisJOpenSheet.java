@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
+import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
@@ -40,12 +41,12 @@ public class MetisJOpenSheet
     private final int theIndex;
 
     /**
-     * The JOpenDocument WorkBook.
+     * The JOpen WorkBook.
      */
     private final MetisJOpenWorkBook theJOpenBook;
 
     /**
-     * The JOpenDocument Sheet.
+     * The JOpen Sheet.
      */
     private final Sheet theJOpenSheet;
 
@@ -163,8 +164,8 @@ public class MetisJOpenSheet
      * @param pRow the row index
      * @return the cell
      */
-    protected MutableCell<SpreadSheet> getCell(final int pColumn,
-                                               final int pRow) {
+    protected Cell<SpreadSheet> getCell(final int pColumn,
+                                        final int pRow) {
         /* Check indexes */
         if (pColumn < 0 || pColumn >= getColumnCount()) {
             return null;
@@ -174,7 +175,7 @@ public class MetisJOpenSheet
         }
 
         /* Return the cell */
-        return theJOpenSheet.getCellAt(pColumn, pRow);
+        return theJOpenSheet.getImmutableCellAt(pColumn, pRow);
     }
 
     /**

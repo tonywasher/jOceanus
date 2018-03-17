@@ -39,7 +39,7 @@ public class DSTUX7624Mac
             throws IllegalArgumentException {
         if (params instanceof KeyParameter) {
             engine.init(true, params);
-            engine.processBlock(kDelta, 0, kDelta, 0);
+            reset();
         } else {
             throw new IllegalArgumentException("Invalid parameter passed to DSTU7624Mac");
         }

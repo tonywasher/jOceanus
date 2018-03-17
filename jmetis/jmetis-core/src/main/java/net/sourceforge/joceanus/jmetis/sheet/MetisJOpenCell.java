@@ -27,6 +27,7 @@ import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.jopendocument.dom.ODValueType;
+import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
@@ -52,9 +53,9 @@ public class MetisJOpenCell
     private final MetisJOpenRow theJOpenRow;
 
     /**
-     * The Excel Cell.
+     * The jOpen Cell.
      */
-    private final MutableCell<SpreadSheet> theJOpenCell;
+    private final Cell<SpreadSheet> theJOpenCell;
 
     /**
      * Is the cell readOnly.
@@ -66,17 +67,41 @@ public class MetisJOpenCell
      * @param pRow the row for the cell
      * @param pJOpenCell the JOpen Cell
      * @param pColIndex the column index
-     * @param pReadOnly is the cell readOnly?
      */
     protected MetisJOpenCell(final MetisJOpenRow pRow,
                              final MutableCell<SpreadSheet> pJOpenCell,
-                             final int pColIndex,
-                             final boolean pReadOnly) {
+                             final int pColIndex) {
+        this(pRow, pJOpenCell, pColIndex, false);
+    }
+
+    /**
+     * Constructor.
+     * @param pRow the row for the cell
+     * @param pJOpenCell the JOpen Cell
+     * @param pColIndex the column index
+     */
+    protected MetisJOpenCell(final MetisJOpenRow pRow,
+                             final Cell<SpreadSheet> pJOpenCell,
+                             final int pColIndex) {
+        this(pRow, pJOpenCell, pColIndex, true);
+    }
+
+    /**
+     * Constructor.
+     * @param pRow the row for the cell
+     * @param pJOpenCell the JOpen Cell
+     * @param pColIndex the column index
+     * @param pReadOnly is the cell readOnly?
+     */
+    private MetisJOpenCell(final MetisJOpenRow pRow,
+                           final Cell<SpreadSheet> pJOpenCell,
+                           final int pColIndex,
+                           final boolean pReadOnly) {
         /* Store parameters */
         super(pRow, pColIndex);
         theJOpenRow = pRow;
         theJOpenCell = pJOpenCell;
-        isReadOnly = pReadOnly;
+        isReadOnly = true;
     }
 
     /**
@@ -170,7 +195,7 @@ public class MetisJOpenCell
     @Override
     public void setNullValue() throws OceanusException {
         if (!isReadOnly) {
-            theJOpenCell.clearValue();
+            ((MutableCell<SpreadSheet>) theJOpenCell).clearValue();
         }
     }
 
@@ -178,7 +203,7 @@ public class MetisJOpenCell
     protected void setBoolean(final Boolean pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theJOpenCell.setValue(pValue);
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue);
 
             /* Set the style for the cell */
             theJOpenRow.setCellStyle(this, pValue);
@@ -189,7 +214,7 @@ public class MetisJOpenCell
     protected void setDate(final TethysDate pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theJOpenCell.setValue(pValue.toDate());
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue.toDate());
 
             /* Set the style for the cell */
             theJOpenRow.setCellStyle(this, pValue);
@@ -200,7 +225,7 @@ public class MetisJOpenCell
     protected void setInteger(final Integer pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theJOpenCell.setValue(pValue.doubleValue());
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue.doubleValue());
 
             /* Set the style for the cell */
             theJOpenRow.setCellStyle(this, pValue);
@@ -211,7 +236,7 @@ public class MetisJOpenCell
     protected void setLong(final Long pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theJOpenCell.setValue(pValue.doubleValue());
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue.doubleValue());
 
             /* Set the style for the cell */
             theJOpenRow.setCellStyle(this, pValue);
@@ -222,7 +247,7 @@ public class MetisJOpenCell
     protected void setString(final String pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theJOpenCell.setValue(pValue);
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue);
 
             /* Set the style for the cell */
             theJOpenRow.setCellStyle(this, pValue);
@@ -233,7 +258,7 @@ public class MetisJOpenCell
     protected void setHeader(final String pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set as string value */
-            theJOpenCell.setValue(pValue);
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue);
 
             /* Adjust the style for the cell */
             theJOpenRow.setAlternateCellStyle(this, pValue);
@@ -244,7 +269,7 @@ public class MetisJOpenCell
     protected void setDecimal(final TethysDecimal pValue) throws OceanusException {
         if (!isReadOnly) {
             /* Set the value */
-            theJOpenCell.setValue(pValue.toBigDecimal());
+            ((MutableCell<SpreadSheet>) theJOpenCell).setValue(pValue.toBigDecimal());
 
             /* Set the style for the cell */
             theJOpenRow.setCellStyle(this, pValue);

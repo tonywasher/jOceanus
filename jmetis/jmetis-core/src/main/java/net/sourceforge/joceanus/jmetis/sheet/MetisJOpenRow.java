@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.sheet;
 
+import org.jopendocument.dom.spreadsheet.Cell;
 import org.jopendocument.dom.spreadsheet.MutableCell;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
@@ -91,10 +92,10 @@ public class MetisJOpenRow
         }
 
         /* Access the cell */
-        final MutableCell<SpreadSheet> myJOpenCell = theJOpenSheet.getCell(pIndex, getRowIndex());
+        final Cell<SpreadSheet> myJOpenCell = theJOpenSheet.getCell(pIndex, getRowIndex());
         return myJOpenCell == null || myJOpenCell.isEmpty()
                                                             ? null
-                                                            : new MetisJOpenCell(this, myJOpenCell, pIndex, true);
+                                                            : new MetisJOpenCell(this, myJOpenCell, pIndex);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class MetisJOpenRow
         /* Create the cell */
         final MutableCell<SpreadSheet> myJOpenCell = theJOpenSheet.getMutableCell(pIndex, getRowIndex());
         return myJOpenCell != null
-                                   ? new MetisJOpenCell(this, myJOpenCell, pIndex, false)
+                                   ? new MetisJOpenCell(this, myJOpenCell, pIndex)
                                    : null;
     }
 

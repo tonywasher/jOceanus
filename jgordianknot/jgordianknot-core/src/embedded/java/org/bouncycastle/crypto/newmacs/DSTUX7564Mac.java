@@ -49,6 +49,7 @@ public class DSTUX7564Mac
             throw new IllegalArgumentException("Bad parameter passed");
         }
 
+        engine.reset();
         engine.update(paddedKey, 0, paddedKey.length);
     }
 

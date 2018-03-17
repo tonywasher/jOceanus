@@ -1002,21 +1002,31 @@ public final class JcaFactory
     }
 
     @Override
+    protected boolean validDigestType(final GordianDigestType pDigestType) {
+        /* Perform standard checks */
+        if (!super.validDigestType(pDigestType)) {
+            return false;
+        }
+
+        /* Disable JH, and Groestl */
+        switch (pDigestType) {
+            case JH:
+            case GROESTL:
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    @Override
     protected boolean validDigestSpec(final GordianDigestSpec pDigestSpec) {
         /* Perform standard checks */
         if (!super.validDigestSpec(pDigestSpec)) {
             return false;
         }
 
-        /* Disable JH, Groestl and SHAKE */
-        switch (pDigestSpec.getDigestType()) {
-            case JH:
-            case GROESTL:
-            case SHAKE:
-                return false;
-            default:
-                return true;
-        }
+        /* Disable SHAKE via DigestSpec */
+        return !GordianDigestType.SHAKE.equals(pDigestSpec.getDigestType());
     }
 
     @Override

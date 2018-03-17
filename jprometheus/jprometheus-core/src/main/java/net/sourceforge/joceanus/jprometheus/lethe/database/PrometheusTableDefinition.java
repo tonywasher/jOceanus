@@ -31,8 +31,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.SortOrder;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -1515,5 +1513,20 @@ public class PrometheusTableDefinition {
         myBuilder.append(theTableName);
         myBuilder.append(QUOTE_STRING);
         return myBuilder.toString();
+    }
+
+    /**
+     * SortOrder.
+     */
+    public enum SortOrder {
+        /**
+         * Ascending.
+         */
+        ASCENDING,
+
+        /**
+         * Descending.
+         */
+        DESCENDING;
     }
 }

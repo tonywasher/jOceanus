@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.database;
 
-import javax.swing.SortOrder;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -35,6 +33,7 @@ import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusColumnDefin
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusDataStore;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDataItem;
 import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition;
+import net.sourceforge.joceanus.jprometheus.lethe.database.PrometheusTableDefinition.SortOrder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

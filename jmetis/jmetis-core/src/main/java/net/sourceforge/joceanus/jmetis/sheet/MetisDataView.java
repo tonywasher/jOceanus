@@ -123,8 +123,8 @@ public class MetisDataView
      */
     protected int convertRowIndex(final int pRowIndex) {
         /* Reject values outside range */
-        if ((pRowIndex < 0)
-            || (pRowIndex >= theNumRows)) {
+        if (pRowIndex < 0
+            || pRowIndex >= theNumRows) {
             return -1;
         }
 
@@ -140,8 +140,8 @@ public class MetisDataView
      */
     private int convertColumnIndex(final int pColIndex) {
         /* Reject values outside range */
-        if ((pColIndex < 0)
-            || (pColIndex >= theNumColumns)) {
+        if (pColIndex < 0
+            || pColIndex >= theNumColumns) {
             return -1;
         }
 
@@ -158,9 +158,9 @@ public class MetisDataView
     public MetisDataRow getRowByIndex(final int pRowIndex) {
         /* Return the row */
         final int myIndex = convertRowIndex(pRowIndex);
-        return (myIndex < 0)
-                             ? null
-                             : theSheet.getReadOnlyRowByIndex(myIndex);
+        return myIndex < 0
+                           ? null
+                           : theSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     /**
@@ -184,9 +184,9 @@ public class MetisDataView
     public MetisDataCell getCellByPosition(final MetisCellPosition pPosition) {
         /* Return the cell */
         final MetisDataRow myRow = getRowByIndex(pPosition.getRowIndex());
-        return (myRow == null)
-                               ? null
-                               : getRowCellByIndex(myRow, pPosition.getColumnIndex());
+        return myRow == null
+                             ? null
+                             : getRowCellByIndex(myRow, pPosition.getColumnIndex());
     }
 
     /**
@@ -199,9 +199,9 @@ public class MetisDataView
                                            final int pIndex) {
         /* Return the cell */
         final int myIndex = convertColumnIndex(pIndex);
-        return (myIndex < 0)
-                             ? null
-                             : pRow.getReadOnlyCellByIndex(myIndex);
+        return myIndex < 0
+                           ? null
+                           : pRow.getReadOnlyCellByIndex(myIndex);
     }
 
     @Override
@@ -255,14 +255,14 @@ public class MetisDataView
         @Override
         public boolean hasNext() {
             /* Calculate the next index */
-            int iIndex = (theLastRow != null)
-                                              ? theLastRow.getRowIndex() + 1
-                                              : theBaseRow;
+            int iIndex = theLastRow != null
+                                            ? theLastRow.getRowIndex() + 1
+                                            : theBaseRow;
 
             /* Check that the row is within the view */
             iIndex -= theBaseRow;
-            return (iIndex >= 0)
-                   && (iIndex < theView.getRowCount());
+            return iIndex >= 0
+                   && iIndex < theView.getRowCount();
         }
 
         @Override
