@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSplash;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 
 /**
@@ -108,7 +108,7 @@ public final class Control {
             final TethysProgram myApp = myInfo.getProgramDefinitions();
 
             /* Sort out splash frame */
-            TethysSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
+            TethysSwingSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
 
             /* Build the GUI */
             SwingUtilities.invokeLater(() -> createAndShowGUI(myInfo));

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSplash;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 
 /**
  * Coeus Swing StartUp.
@@ -84,7 +84,7 @@ public final class Coeus4Swing {
             final TethysProgram myApp = myInfo.getProgramDefinitions();
 
             /* Sort out splash frame */
-            TethysSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
+            TethysSwingSplash.renderSplashFrame(myApp.getName(), myApp.getVersion());
 
             /* Build the GUI */
             SwingUtilities.invokeLater(() -> createAndShowGUI(myInfo));

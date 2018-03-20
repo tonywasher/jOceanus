@@ -12,7 +12,7 @@ import java.awt.geom.Rectangle2D;
 /**
  * SplashScreen Utilities.
  */
-public final class TethysSplash {
+public final class TethysSwingSplash {
     /**
      * Splash Pitch.
      */
@@ -21,7 +21,7 @@ public final class TethysSplash {
     /**
      * private constructor.
      */
-    private TethysSplash() {
+    private TethysSwingSplash() {
     }
 
     /**

@@ -283,8 +283,8 @@ public class MetisOasisCellAddress {
                 theEscapedName = pName;
 
                 /* If the name is escaped */
-                if ((pName.charAt(0) == CHAR_APOS)
-                    && (pName.charAt(myLen - 1) == CHAR_APOS)) {
+                if (pName.charAt(0) == CHAR_APOS
+                    && pName.charAt(myLen - 1) == CHAR_APOS) {
                     /* Create editor for name */
                     final StringBuilder myBuilder = new StringBuilder(pName);
 

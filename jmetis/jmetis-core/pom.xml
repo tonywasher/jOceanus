@@ -42,6 +42,11 @@
       <version>${JOpenDocumentVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+      <version>${jdomVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${HttpClientVersion}</version>
