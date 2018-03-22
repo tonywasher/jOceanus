@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseLogicException;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseData;
@@ -152,8 +152,8 @@ public class SheetPortfolio
      */
     protected static void processPortfolio(final ArchiveLoader pLoader,
                                            final MoneyWiseData pData,
-                                           final MetisDataView pView,
-                                           final MetisDataRow pRow) throws OceanusException {
+                                           final MetisSheetView pView,
+                                           final MetisSheetRow pRow) throws OceanusException {
         /* Access name */
         int iAdjust = -1;
         final String myName = pView.getRowCellByIndex(pRow, ++iAdjust).getStringValue();
@@ -174,7 +174,7 @@ public class SheetPortfolio
         ++iAdjust;
 
         /* Handle closed which may be missing */
-        MetisDataCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
+        MetisSheetCell myCell = pView.getRowCellByIndex(pRow, ++iAdjust);
         Boolean isClosed = Boolean.FALSE;
         if (myCell != null) {
             isClosed = myCell.getBooleanValue();

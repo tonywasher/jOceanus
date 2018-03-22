@@ -33,8 +33,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySetHash;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipWriteFile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetProvider;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -55,7 +56,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
     /**
      * Writable spreadsheet.
      */
-    private MetisDataWorkBook theWorkBook;
+    private MetisSheetWorkBook theWorkBook;
 
     /**
      * The DataSet.
@@ -87,7 +88,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * get workbook.
      * @return the workbook
      */
-    protected MetisDataWorkBook getWorkBook() {
+    protected MetisSheetWorkBook getWorkBook() {
         return theWorkBook;
     }
 
@@ -116,7 +117,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      */
     public void createBackup(final T pData,
                              final File pFile,
-                             final MetisWorkBookType pType) throws OceanusException {
+                             final MetisSheetWorkBookType pType) throws OceanusException {
         /* Obtain the active profile */
         MetisProfile myTask = theReport.getActiveTask();
         myTask = myTask.startTask("Writing");
@@ -173,9 +174,9 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
      * @param pType the workBookType
      * @throws OceanusException on error
      */
-    private void initialiseWorkBook(final MetisWorkBookType pType) throws OceanusException {
+    private void initialiseWorkBook(final MetisSheetWorkBookType pType) throws OceanusException {
         /* Create the workbook attached to the output stream */
-        theWorkBook = new MetisDataWorkBook(pType);
+        theWorkBook = MetisSheetProvider.newWorkBook(pType);
 
         /* Initialise the list */
         theSheets = new ArrayList<>();

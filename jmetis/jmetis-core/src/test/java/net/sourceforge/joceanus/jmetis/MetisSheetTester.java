@@ -31,14 +31,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Currency;
 
-import net.sourceforge.joceanus.jmetis.sheet.MetisCellStyleType;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataSheet;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmetis.sheet.MetisOasisCellAddress.OasisCellRange;
-import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellRange;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellStyleType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetProvider;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetSheet;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
@@ -60,8 +61,8 @@ public class MetisSheetTester {
         /**
          * Load an ODS Spreadsheet using jOpenDocument
          */
-        OasisCellRange myRange = new OasisCellRange("'19''87'.AA22:.AC45");
-        OasisCellRange myTwo = new OasisCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
+        MetisSheetCellRange myRange = new MetisSheetCellRange("'19''87'.AA22:.AC45");
+        MetisSheetCellRange myTwo = new MetisSheetCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
         String h = myTwo.toString();
         // loadRange();
         writeSample();
@@ -77,28 +78,28 @@ public class MetisSheetTester {
          */
         try {
             /* Create workBook and sheet */
-            MetisDataWorkBook myBook = new MetisDataWorkBook(MetisWorkBookType.OASISODS);
-            MetisDataSheet mySheet = myBook.newSheet("TestData");
+            MetisSheetWorkBook myBook = MetisSheetProvider.newWorkBook(MetisSheetWorkBookType.OASISODS);
+            MetisSheetSheet mySheet = myBook.newSheet("TestData");
 
             /* Set default styles for the columns */
-            mySheet.getMutableColumnByIndex(1).setDefaultCellStyle(MetisCellStyleType.STRING);
-            mySheet.getMutableColumnByIndex(2).setDefaultCellStyle(MetisCellStyleType.DATE);
-            mySheet.getMutableColumnByIndex(10).setDefaultCellStyle(MetisCellStyleType.BOOLEAN);
-            mySheet.getMutableColumnByIndex(4).setDefaultCellStyle(MetisCellStyleType.RATE);
-            mySheet.getMutableColumnByIndex(5).setDefaultCellStyle(MetisCellStyleType.UNITS);
-            mySheet.getMutableColumnByIndex(7).setDefaultCellStyle(MetisCellStyleType.INTEGER);
-            mySheet.getMutableColumnByIndex(3).setDefaultCellStyle(MetisCellStyleType.MONEY);
-            mySheet.getMutableColumnByIndex(11).setDefaultCellStyle(MetisCellStyleType.PRICE);
-            mySheet.getMutableColumnByIndex(12).setDefaultCellStyle(MetisCellStyleType.DILUTION);
-            mySheet.getMutableColumnByIndex(13).setDefaultCellStyle(MetisCellStyleType.RATIO);
+            mySheet.getMutableColumnByIndex(1).setDefaultCellStyle(MetisSheetCellStyleType.STRING);
+            mySheet.getMutableColumnByIndex(2).setDefaultCellStyle(MetisSheetCellStyleType.DATE);
+            mySheet.getMutableColumnByIndex(10).setDefaultCellStyle(MetisSheetCellStyleType.BOOLEAN);
+            mySheet.getMutableColumnByIndex(4).setDefaultCellStyle(MetisSheetCellStyleType.RATE);
+            mySheet.getMutableColumnByIndex(5).setDefaultCellStyle(MetisSheetCellStyleType.UNITS);
+            mySheet.getMutableColumnByIndex(7).setDefaultCellStyle(MetisSheetCellStyleType.INTEGER);
+            mySheet.getMutableColumnByIndex(3).setDefaultCellStyle(MetisSheetCellStyleType.MONEY);
+            mySheet.getMutableColumnByIndex(11).setDefaultCellStyle(MetisSheetCellStyleType.PRICE);
+            mySheet.getMutableColumnByIndex(12).setDefaultCellStyle(MetisSheetCellStyleType.DILUTION);
+            mySheet.getMutableColumnByIndex(13).setDefaultCellStyle(MetisSheetCellStyleType.RATIO);
 
             /* Access an explicit row */
             int i = mySheet.getRowCount();
-            MetisDataRow myRow = mySheet.getMutableRowByIndex(2);
+            MetisSheetRow myRow = mySheet.getMutableRowByIndex(2);
             i = mySheet.getRowCount();
 
             /* Write data into each of the cells */
-            MetisDataCell myCell = myRow.getMutableCellByIndex(1);
+            MetisSheetCell myCell = myRow.getMutableCellByIndex(1);
             myCell.setStringValue("Barclays");
             myCell = myRow.getMutableCellByIndex(2);
             myCell.setDateValue(new TethysDate());
@@ -129,7 +130,7 @@ public class MetisSheetTester {
             /* Load the file and access the sheet */
             FileInputStream myInFile = new FileInputStream(myXFile);
             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            myBook = new MetisDataWorkBook(myInBuffer, MetisWorkBookType.OASISODS);
+            myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
             mySheet = myBook.getSheet("TestData");
             myInBuffer.close();
 
@@ -177,12 +178,12 @@ public class MetisSheetTester {
             File myFile = new File("C:\\Users\\Tony\\Documents\\NewFinance.ods");
             FileInputStream myInFile = new FileInputStream(myFile);
             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            MetisDataWorkBook myBook = new MetisDataWorkBook(myInBuffer, MetisWorkBookType.OASISODS);
-            MetisDataView myView = myBook.getRangeView("Finance82");
+            MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
+            MetisSheetView myView = myBook.getRangeView("Finance82");
             int iNumRows = myView.getRowCount();
             int iNumCols = myView.getColumnCount();
-            for (MetisDataRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
+            for (MetisSheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
+                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
                 String myType = myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 1);
                 String myParent = (myCell == null)

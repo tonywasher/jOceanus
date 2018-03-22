@@ -16,11 +16,6 @@
     </dependency>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jprometheus-javafx</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>jmetis-javafx</artifactId>
       <version>${project.version}</version>
     </dependency>

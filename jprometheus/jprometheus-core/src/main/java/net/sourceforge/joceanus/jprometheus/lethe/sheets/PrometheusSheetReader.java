@@ -35,8 +35,9 @@ import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileContents;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipFileEntry;
 import net.sourceforge.joceanus.jgordianknot.zip.GordianZipReadFile;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
-import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetProvider;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
@@ -61,7 +62,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
     /**
      * Spreadsheet.
      */
-    private MetisDataWorkBook theWorkBook;
+    private MetisSheetWorkBook theWorkBook;
 
     /**
      * DataSet.
@@ -104,7 +105,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * get workbook.
      * @return the workbook
      */
-    protected MetisDataWorkBook getWorkBook() {
+    protected MetisSheetWorkBook getWorkBook() {
         return theWorkBook;
     }
 
@@ -179,7 +180,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
             myTask.startTask("Parsing");
 
             /* Initialise the workbook */
-            initialiseWorkBook(myStream, MetisWorkBookType.determineType(pEntry.getFileName()));
+            initialiseWorkBook(myStream, MetisSheetWorkBookType.determineType(pEntry.getFileName()));
 
             /* Load the workbook */
             myTask.startTask("Reading");
@@ -207,7 +208,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
      * @throws OceanusException on error
      */
     private void initialiseWorkBook(final InputStream pStream,
-                                    final MetisWorkBookType pType) throws OceanusException {
+                                    final MetisSheetWorkBookType pType) throws OceanusException {
         /* Initialise the list */
         theSheets = new ArrayList<>();
 
@@ -227,7 +228,7 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
         theReport.setNewStage("Loading");
 
         /* Access the workbook from the stream */
-        theWorkBook = new MetisDataWorkBook(pStream, pType);
+        theWorkBook = MetisSheetProvider.loadFromStream(pType, pStream);
     }
 
     /**

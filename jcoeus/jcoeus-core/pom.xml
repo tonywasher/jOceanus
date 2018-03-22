@@ -11,11 +11,6 @@
   <dependencies>
     <dependency>
       <groupId>net.sourceforge.joceanus</groupId>
-      <artifactId>jprometheus-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.joceanus</groupId>
       <artifactId>jmetis-core</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -32,6 +32,11 @@
       <version>${ApachePOIVersion}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${ApachePOIVersion}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.odftoolkit</groupId>
       <artifactId>simple-odf</artifactId>
       <version>${ApacheODFDOMVersion}</version>

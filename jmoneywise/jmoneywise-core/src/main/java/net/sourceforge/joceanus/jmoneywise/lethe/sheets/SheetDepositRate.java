@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -132,12 +132,12 @@ public class SheetDepositRate
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisDataWorkBook pWorkBook,
+                                      final MetisSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisDataView myView = pWorkBook.getRangeView(AREA_RATES);
+            final MetisSheetView myView = pWorkBook.getRangeView(AREA_RATES);
 
             /* If the view is present */
             if (myView != null) {
@@ -162,7 +162,7 @@ public class SheetDepositRate
      */
     protected static void loadArchiveRows(final MetisThreadStatusReport pReport,
                                           final MoneyWiseData pData,
-                                          final MetisDataView pView) throws OceanusException {
+                                          final MetisSheetView pView) throws OceanusException {
         /* Access the list of rates */
         final DepositRateList myList = pData.getDepositRates();
 
@@ -178,11 +178,11 @@ public class SheetDepositRate
         /* Loop through the rows of the table */
         for (int i = 0; i < myTotal; i++) {
             /* Access the cell by reference */
-            final MetisDataRow myRow = pView.getRowByIndex(i);
+            final MetisSheetRow myRow = pView.getRowByIndex(i);
             int iAdjust = -1;
 
             /* Access deposit */
-            MetisDataCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
+            MetisSheetCell myCell = pView.getRowCellByIndex(myRow, ++iAdjust);
             final String myDeposit = myCell.getStringValue();
 
             /* Handle Rate */

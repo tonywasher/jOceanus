@@ -25,7 +25,7 @@ package net.sourceforge.joceanus.jprometheus.lethe.sheets;
 import java.io.File;
 
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
-import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -87,7 +87,7 @@ public abstract class PrometheusSpreadSheet<T extends DataSet<T, ?>> {
     public void createBackup(final MetisThreadStatusReport pReport,
                              final T pData,
                              final File pFile,
-                             final MetisWorkBookType pType) throws OceanusException {
+                             final MetisSheetWorkBookType pType) throws OceanusException {
         /* Create a sheet writer object */
         final PrometheusSheetWriter<T> myWriter = getSheetWriter(pReport);
 

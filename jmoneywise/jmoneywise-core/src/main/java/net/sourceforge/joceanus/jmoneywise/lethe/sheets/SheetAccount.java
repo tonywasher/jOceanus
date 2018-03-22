@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -70,13 +70,13 @@ public final class SheetAccount {
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisDataWorkBook pWorkBook,
+                                      final MetisSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisDataView myView = pWorkBook.getRangeView(SHEET_AREA);
+            final MetisSheetView myView = pWorkBook.getRangeView(SHEET_AREA);
 
             /* Declare the new stage */
             pReport.setNewStage(SHEET_AREA);
@@ -90,7 +90,7 @@ public final class SheetAccount {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
-                final MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Process payee account */
                 processPayee(pLoader, pData, myView, myRow);
@@ -105,7 +105,7 @@ public final class SheetAccount {
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
-                final MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Process account */
                 processAccount(pLoader, pData, myView, myRow);
@@ -135,8 +135,8 @@ public final class SheetAccount {
      */
     private static void processPayee(final ArchiveLoader pLoader,
                                      final MoneyWiseData pData,
-                                     final MetisDataView pView,
-                                     final MetisDataRow pRow) throws OceanusException {
+                                     final MetisSheetView pView,
+                                     final MetisSheetRow pRow) throws OceanusException {
         /* Skip name and type column */
         int iAdjust = -1;
         ++iAdjust;
@@ -167,8 +167,8 @@ public final class SheetAccount {
      */
     private static void processAccount(final ArchiveLoader pLoader,
                                        final MoneyWiseData pData,
-                                       final MetisDataView pView,
-                                       final MetisDataRow pRow) throws OceanusException {
+                                       final MetisSheetView pView,
+                                       final MetisSheetRow pRow) throws OceanusException {
         /* Skip name and type column */
         int iAdjust = -1;
         ++iAdjust;

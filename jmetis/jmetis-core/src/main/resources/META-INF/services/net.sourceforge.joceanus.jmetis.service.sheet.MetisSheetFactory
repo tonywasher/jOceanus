@@ -1,0 +1,4 @@
+net.sourceforge.joceanus.jmetis.service.sheet.hssf.MetisExcelHSSFFactory
+net.sourceforge.joceanus.jmetis.service.sheet.xssf.MetisExcelXSSFFactory
+net.sourceforge.joceanus.jmetis.service.sheet.jopen.MetisJOpenFactory
+net.sourceforge.joceanus.jmetis.service.sheet.odfdom.MetisOasisFactory

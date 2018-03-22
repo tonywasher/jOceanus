@@ -22,10 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.sheets;
 
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataCell;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataRow;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataView;
-import net.sourceforge.joceanus.jmetis.sheet.MetisDataWorkBook;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCell;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetRow;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetView;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBook;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
@@ -133,7 +133,7 @@ public class SheetExchangeRate
      * @throws OceanusException on error
      */
     protected static void loadArchive(final MetisThreadStatusReport pReport,
-                                      final MetisDataWorkBook pWorkBook,
+                                      final MetisSheetWorkBook pWorkBook,
                                       final MoneyWiseData pData,
                                       final ArchiveLoader pLoader) throws OceanusException {
         /* Access the list of rates */
@@ -142,7 +142,7 @@ public class SheetExchangeRate
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            final MetisDataView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
+            final MetisSheetView myView = pWorkBook.getRangeView(AREA_XCHGRATES);
 
             /* Declare the new stage */
             pReport.setNewStage(AREA_XCHGRATES);
@@ -159,13 +159,13 @@ public class SheetExchangeRate
             final String myDefCurrency = pData.getDefaultCurrency().getName();
 
             /* Loop through the rows of the table */
-            final MetisDataRow myActRow = myView.getRowByIndex(0);
+            final MetisSheetRow myActRow = myView.getRowByIndex(0);
             for (int i = myRows - 1; i > 0; i--) {
                 /* Access the cell by reference */
-                final MetisDataRow myRow = myView.getRowByIndex(i);
+                final MetisSheetRow myRow = myView.getRowByIndex(i);
 
                 /* Access date */
-                MetisDataCell myCell = myView.getRowCellByIndex(myRow, 0);
+                MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
                 final TethysDate myDate = myCell.getDateValue();
 
                 /* If the rate is too late */

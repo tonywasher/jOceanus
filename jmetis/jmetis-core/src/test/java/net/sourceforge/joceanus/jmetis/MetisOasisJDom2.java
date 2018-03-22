@@ -4,6 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,7 +22,9 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-import net.sourceforge.joceanus.jmetis.sheet.MetisOasisCellAddress.OasisCellRange;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetCellRange;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
+import net.sourceforge.joceanus.jtethys.OceanusException;
 
 public class MetisOasisJDom2 {
     /**
@@ -39,7 +45,7 @@ public class MetisOasisJDom2 {
     /**
      * The rangeMap.
      */
-    private static Map<String, OasisCellRange> RANGEMAP = new HashMap<>();
+    private static Map<String, MetisSheetCellRange> RANGEMAP = new HashMap<>();
 
     /**
      * The sheetMap.
@@ -104,9 +110,34 @@ public class MetisOasisJDom2 {
     private static void buildRangeMap(final Element pSpreadsheet) {
         Element myRanges = pSpreadsheet.getChild("named-expressions", TABLENS);
         for (Element myRange : myRanges.getChildren("named-range", TABLENS)) {
-            OasisCellRange myCellRange = new OasisCellRange(myRange.getAttributeValue("cell-range-address", TABLENS));
+            MetisSheetCellRange myCellRange = new MetisSheetCellRange(myRange.getAttributeValue("cell-range-address", TABLENS));
             RANGEMAP.put(myRange.getAttributeValue("name", TABLENS), myCellRange);
         }
+    }
+
+    /**
+     * Declare the named range.
+     * @param pSpreadsheet document
+     * @param pName the name of the range
+     * @param pRange the range to declare
+     * @throws OceanusException on error
+     */
+    protected void declareRange(final Element pSpreadsheet,
+                                final String pName,
+                                final MetisSheetCellRange pRange) throws OceanusException {
+        /* Check for existing range */
+        if (RANGEMAP.get(pName) != null) {
+            throw new MetisLogicException("Name "
+                                          + pName
+                                          + "already exists in workbook");
+        }
+
+        /* Add the new range */
+        Element myRanges = pSpreadsheet.getChild("named-expressions", TABLENS);
+        Element myRange = new Element("named-range", TABLENS);
+        myRange.setAttribute("cell-range-address", pRange.toString(), TABLENS);
+        myRanges.addContent(myRange);
+        RANGEMAP.put(pName, pRange);
     }
 
     /**
@@ -124,7 +155,7 @@ public class MetisOasisJDom2 {
      */
     private static void displayRange(final String pName) {
         /* Obtain the address */
-        OasisCellRange myRange = RANGEMAP.get(pName);
+        MetisSheetCellRange myRange = RANGEMAP.get(pName);
         if (myRange == null) {
             System.out.println(pName + " range was not found");
             return;
@@ -149,7 +180,7 @@ public class MetisOasisJDom2 {
          * Constructor.
          */
         OasisView(final List<Element> pRows,
-                  final OasisCellRange pRange) {
+                  final MetisSheetCellRange pRange) {
             /* Create the row list */
             theRows = new ArrayList<>();
 
@@ -223,7 +254,7 @@ public class MetisOasisJDom2 {
          * Constructor.
          */
         OasisRow(final List<Element> pCells,
-                 final OasisCellRange pRange) {
+                 final MetisSheetCellRange pRange) {
             /* Create the cell list */
             theCells = new ArrayList<>();
 
@@ -287,6 +318,7 @@ public class MetisOasisJDom2 {
     /**
      * A Cell detail
      */
+    @MetisSheetService(MetisSheetWorkBookType.EXCELXLS)
     private static class OasisCell {
         /**
          * The DataType.
@@ -317,5 +349,15 @@ public class MetisOasisJDom2 {
         public String toString() {
             return "DT=" + theDataType + ",V=" + theValue + ",T=" + theText;
         }
+    }
+
+    /**
+     * Test Annotation.
+     */
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface MetisSheetService {
+        @SuppressWarnings("javadoc")
+        MetisSheetWorkBookType value();
     }
 }

@@ -27,7 +27,7 @@ import java.io.File;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceKey;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceSet;
-import net.sourceforge.joceanus.jmetis.sheet.MetisWorkBookType;
+import net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetWorkBookType;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 
@@ -124,7 +124,7 @@ public interface PrometheusBackup {
         protected void definePreferences() {
             defineDirectoryPreference(PrometheusBackupPreferenceKey.BACKUPDIR);
             defineStringPreference(PrometheusBackupPreferenceKey.BACKUPPFIX);
-            defineEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
+            defineEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisSheetWorkBookType.class);
             defineFilePreference(PrometheusBackupPreferenceKey.ARCHIVE);
             defineDatePreference(PrometheusBackupPreferenceKey.LASTEVENT);
             defineBooleanPreference(PrometheusBackupPreferenceKey.BACKUPTIME);
@@ -151,9 +151,9 @@ public interface PrometheusBackup {
             }
 
             /* Make sure that the enum is specified */
-            final MetisEnumPreference<PrometheusBackupPreferenceKey, MetisWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisWorkBookType.class);
+            final MetisEnumPreference<PrometheusBackupPreferenceKey, MetisSheetWorkBookType> myTypePref = getEnumPreference(PrometheusBackupPreferenceKey.BACKUPTYPE, MetisSheetWorkBookType.class);
             if (!myTypePref.isAvailable()) {
-                myTypePref.setValue(MetisWorkBookType.OASISODS);
+                myTypePref.setValue(MetisSheetWorkBookType.OASISODS);
             }
 
             /* Make sure that the date is specified */
