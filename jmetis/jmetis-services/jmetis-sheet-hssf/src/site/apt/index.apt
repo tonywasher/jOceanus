@@ -1,0 +1,3 @@
+jMetis HSSF Sheet Service
+
+  JMetis Sheet-HSSF provides classes to access old-style Excel files (*.xls) via the POI library.

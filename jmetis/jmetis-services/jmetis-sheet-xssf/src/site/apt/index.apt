@@ -1,0 +1,4 @@
+jMetis XSSF Sheet Service
+
+  JMetis Sheet-XSSF provides classes to access new-style Excel files (*.xlsx) via the POI library.
+

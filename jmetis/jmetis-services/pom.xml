@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sourceforge.joceanus</groupId>
+    <artifactId>jmetis</artifactId>
+    <version>v1.5.3-SNAPSHOT</version>   
+  </parent>
+  <artifactId>jmetis-services</artifactId>
+  <name>jMetis Data Framework Services</name>
+  <description>jMetis Data Framework Services</description>
+  <packaging>pom</packaging>
+  <modules>
+    <module>jmetis-sheet-api</module>
+    <module>jmetis-sheet-hssf</module>
+    <module>jmetis-sheet-jopen</module>
+    <module>jmetis-sheet-odfdom</module>
+    <module>jmetis-sheet-xssf</module>
+  </modules>
+  <properties>
+    <svnComponent>jmetis-services</svnComponent>
+    <packageName>${packageKey}.${svnComponent}</packageName>
+  </properties>
+</project>

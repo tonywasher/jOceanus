@@ -1,0 +1,4 @@
+jMetis odfDom Sheet Service
+
+  JMetis Sheet-odfDom provides classes to access Oasis files (*.ods) via the odfDom library.
+

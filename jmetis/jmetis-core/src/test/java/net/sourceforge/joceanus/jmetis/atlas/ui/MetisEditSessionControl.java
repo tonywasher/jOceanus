@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Edit Session Control.
- * @param <R> the row type
  * @param <N> the node type
  * @param <I> the icon type
  */
