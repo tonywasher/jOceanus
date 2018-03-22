@@ -28,13 +28,12 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.DVConstraint;
-import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -45,6 +44,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -90,9 +90,14 @@ public class MetisExcelXSSFWorkBook
     private final Map<String, XSSFCellStyle> theStyleMap;
 
     /**
-     * Map of Constraints.
+     * Map of Range Constraints.
      */
-    private final Map<Object, DVConstraint> theConstraintMap;
+    private final Map<String, DataValidationConstraint> theRangeConstraintMap;
+
+    /**
+     * Map of Value Constraints.
+     */
+    private final Map<String[], DataValidationConstraint> theValueConstraintMap;
 
     /**
      * Style engine.
@@ -129,7 +134,8 @@ public class MetisExcelXSSFWorkBook
             /* Load the book and set null map */
             theBook = new XSSFWorkbook(pInput);
             theStyleMap = null;
-            theConstraintMap = null;
+            theRangeConstraintMap = null;
+            theValueConstraintMap = null;
             theStyleEngine = null;
             theNumberFont = null;
             theValueFont = null;
@@ -157,7 +163,8 @@ public class MetisExcelXSSFWorkBook
         /* Create new book and map */
         theBook = new XSSFWorkbook();
         theStyleMap = new HashMap<>();
-        theConstraintMap = new HashMap<>();
+        theRangeConstraintMap = new HashMap<>();
+        theValueConstraintMap = new HashMap<>();
 
         /* Allocate the formatter */
         theDataFormatter = createFormatter();
@@ -320,19 +327,16 @@ public class MetisExcelXSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
      */
-    protected void applyDataValidation(final Sheet pSheet,
+    protected void applyDataValidation(final XSSFSheet pSheet,
                                        final CellRangeAddressList pCells,
                                        final String pValidRange) {
         /* Access the constraint */
-        DVConstraint myConstraint = theConstraintMap.get(pValidRange);
-        if (myConstraint == null) {
-            /* Create and add to map */
-            myConstraint = DVConstraint.createFormulaListConstraint(pValidRange);
-            theConstraintMap.put(pValidRange, myConstraint);
-        }
+        final XSSFDataValidationHelper myHelper = new XSSFDataValidationHelper(pSheet);
+        final DataValidationConstraint myConstraint = theRangeConstraintMap.computeIfAbsent(pValidRange,
+                myHelper::createFormulaListConstraint);
 
         /* Link the two and use drop down arrow */
-        final DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        final DataValidation myValidation = myHelper.createValidation(myConstraint, pCells);
         myValidation.setSuppressDropDownArrow(false);
 
         /* Apply to the sheet */
@@ -345,19 +349,16 @@ public class MetisExcelXSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValueList the list of valid values
      */
-    protected void applyDataValidation(final Sheet pSheet,
+    protected void applyDataValidation(final XSSFSheet pSheet,
                                        final CellRangeAddressList pCells,
                                        final String[] pValueList) {
         /* Access the constraint */
-        DVConstraint myConstraint = theConstraintMap.get(pValueList);
-        if (myConstraint == null) {
-            /* Create and add to map */
-            myConstraint = DVConstraint.createExplicitListConstraint(pValueList);
-            theConstraintMap.put(pValueList, myConstraint);
-        }
+        final XSSFDataValidationHelper myHelper = new XSSFDataValidationHelper(pSheet);
+        final DataValidationConstraint myConstraint = theValueConstraintMap.computeIfAbsent(pValueList,
+                myHelper::createExplicitListConstraint);
 
         /* Link the two and use drop down arrow */
-        final DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        final DataValidation myValidation = myHelper.createValidation(myConstraint, pCells);
         myValidation.setSuppressDropDownArrow(false);
 
         /* Apply to the sheet */

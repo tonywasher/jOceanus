@@ -28,10 +28,9 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -40,6 +39,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -90,9 +90,14 @@ public class MetisExcelHSSFWorkBook
     private final Map<String, HSSFCellStyle> theStyleMap;
 
     /**
-     * Map of Constraints.
+     * Map of Range Constraints.
      */
-    private final Map<Object, DVConstraint> theConstraintMap;
+    private final Map<String, DataValidationConstraint> theRangeConstraintMap;
+
+    /**
+     * Map of Value Constraints.
+     */
+    private final Map<String[], DataValidationConstraint> theValueConstraintMap;
 
     /**
      * Style engine.
@@ -129,7 +134,8 @@ public class MetisExcelHSSFWorkBook
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
             theStyleMap = null;
-            theConstraintMap = null;
+            theRangeConstraintMap = null;
+            theValueConstraintMap = null;
             theStyleEngine = null;
             theNumberFont = null;
             theValueFont = null;
@@ -157,7 +163,8 @@ public class MetisExcelHSSFWorkBook
         /* Create new book and map */
         theBook = new HSSFWorkbook();
         theStyleMap = new HashMap<>();
-        theConstraintMap = new HashMap<>();
+        theRangeConstraintMap = new HashMap<>();
+        theValueConstraintMap = new HashMap<>();
 
         /* Allocate the formatter */
         theDataFormatter = createFormatter();
@@ -320,19 +327,16 @@ public class MetisExcelHSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValidRange the name of the validation range
      */
-    protected void applyDataValidation(final Sheet pSheet,
+    protected void applyDataValidation(final HSSFSheet pSheet,
                                        final CellRangeAddressList pCells,
                                        final String pValidRange) {
         /* Access the constraint */
-        DVConstraint myConstraint = theConstraintMap.get(pValidRange);
-        if (myConstraint == null) {
-            /* Create and add to map */
-            myConstraint = DVConstraint.createFormulaListConstraint(pValidRange);
-            theConstraintMap.put(pValidRange, myConstraint);
-        }
+        final HSSFDataValidationHelper myHelper = new HSSFDataValidationHelper(pSheet);
+        final DataValidationConstraint myConstraint = theRangeConstraintMap.computeIfAbsent(pValidRange,
+                myHelper::createFormulaListConstraint);
 
         /* Link the two and use drop down arrow */
-        final DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        final DataValidation myValidation = myHelper.createValidation(myConstraint, pCells);
         myValidation.setSuppressDropDownArrow(false);
 
         /* Apply to the sheet */
@@ -345,19 +349,16 @@ public class MetisExcelHSSFWorkBook
      * @param pCells the Cells to apply validation to
      * @param pValueList the list of valid values
      */
-    protected void applyDataValidation(final Sheet pSheet,
+    protected void applyDataValidation(final HSSFSheet pSheet,
                                        final CellRangeAddressList pCells,
                                        final String[] pValueList) {
         /* Access the constraint */
-        DVConstraint myConstraint = theConstraintMap.get(pValueList);
-        if (myConstraint == null) {
-            /* Create and add to map */
-            myConstraint = DVConstraint.createExplicitListConstraint(pValueList);
-            theConstraintMap.put(pValueList, myConstraint);
-        }
+        final HSSFDataValidationHelper myHelper = new HSSFDataValidationHelper(pSheet);
+        final DataValidationConstraint myConstraint = theValueConstraintMap.computeIfAbsent(pValueList,
+                myHelper::createExplicitListConstraint);
 
         /* Link the two and use drop down arrow */
-        final DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        final DataValidation myValidation = myHelper.createValidation(myConstraint, pCells);
         myValidation.setSuppressDropDownArrow(false);
 
         /* Apply to the sheet */
