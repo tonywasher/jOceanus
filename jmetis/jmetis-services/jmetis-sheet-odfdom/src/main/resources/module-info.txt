@@ -21,30 +21,14 @@
  * $Date: 2017-06-01 18:20:48 +0100 (Thu, 01 Jun 2017) $
  ******************************************************************************/
 /**
- * module-info for jmetis-core.
+ * module-info for jmetis-sheet-odfdom.
  */
-module jmetis.core {
-    requires java.prefs;
-    requires java.xml;
+module jmetis.sheet.odfdom {
+    requires jmetis.sheet.api;
 
-    requires httpclient;
-    requires json;
-    requires slf4j.api;
- 
-    requires transitive jgordianknot.core;
-    requires transitive jmetis.sheet.api;
+    requires odfdom.java; /* odfdom provides w3c.dom in both Xerces and xml.apis */
+    requires simple.odf;
 
-    exports net.sourceforge.joceanus.jmetis.data;
-    exports net.sourceforge.joceanus.jmetis.field;
-    exports net.sourceforge.joceanus.jmetis.http;
-    exports net.sourceforge.joceanus.jmetis.list;
-    exports net.sourceforge.joceanus.jmetis.preference;
-    exports net.sourceforge.joceanus.jmetis.profile;
-    exports net.sourceforge.joceanus.jmetis.report;
-    exports net.sourceforge.joceanus.jmetis.threads;
-    exports net.sourceforge.joceanus.jmetis.viewer;
-    exports net.sourceforge.joceanus.jmetis.ui;
-    exports net.sourceforge.joceanus.jmetis.atlas.ui;
-    exports net.sourceforge.joceanus.jmetis.lethe.data;
-    exports net.sourceforge.joceanus.jmetis.lethe.field;
+    provides net.sourceforge.joceanus.jmetis.service.sheet.MetisSheetFactory
+            with net.sourceforge.joceanus.jmetis.service.sheet.odfdom.MetisOasisFactory;
 }
