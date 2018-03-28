@@ -131,7 +131,7 @@ public enum AssetCurrencyClass implements StaticInterface {
     /**
      * Belarus Rouble.
      */
-    BYR(20, 19),
+    BYN(20, 19),
 
     /**
      * Swiss Franc.

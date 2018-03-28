@@ -338,6 +338,11 @@ public class TethysFXGuiFactory
     }
 
     @Override
+    public TethysFXToolBarManager newToolBar() {
+        return new TethysFXToolBarManager(this);
+    }
+
+    @Override
     public TethysFXTabPaneManager newTabPane() {
         return new TethysFXTabPaneManager(this);
     }

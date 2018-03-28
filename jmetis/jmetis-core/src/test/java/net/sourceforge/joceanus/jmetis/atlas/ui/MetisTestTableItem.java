@@ -23,7 +23,6 @@
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -47,11 +46,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 public class MetisTestTableItem
         extends MetisFieldVersionedItem {
     /**
-     * The Next itemId.
-     */
-    private static final AtomicInteger NEXT_ID = new AtomicInteger(1);
-
-    /**
      * Report fields.
      */
     private static final MetisFieldVersionedSet<MetisTestTableItem> FIELD_DEFS = MetisFieldVersionedSet.newVersionedFieldSet(MetisTestTableItem.class);
@@ -64,6 +58,7 @@ public class MetisTestTableItem
         FIELD_DEFS.declareCharArrayField(MetisTestDataField.PASSWORD, 50);
         FIELD_DEFS.declareDateField(MetisTestDataField.DATE);
         FIELD_DEFS.declareBooleanField(MetisTestDataField.BOOLEAN);
+        FIELD_DEFS.declareBooleanField(MetisTestDataField.XTRABOOL);
         FIELD_DEFS.declareShortField(MetisTestDataField.SHORT);
         FIELD_DEFS.declareIntegerField(MetisTestDataField.INTEGER);
         FIELD_DEFS.declareLongField(MetisTestDataField.LONG);
@@ -80,15 +75,7 @@ public class MetisTestTableItem
     }
 
     /**
-     * Constructor.
-     */
-    public MetisTestTableItem() {
-        /* Set new id */
-        setIndexedId(NEXT_ID.getAndIncrement());
-    }
-
-    /**
-     * Constructor.
+     * initialise the values.
      * @param pHelper the Helper
      * @param pName the Name
      * @throws OceanusException on error

@@ -48,6 +48,28 @@ public final class MetisListBaseManager {
     }
 
     /**
+     * Refresh the listSet and dependents.
+     * @param pListSet the listSet
+     */
+    public static void refresh(final MetisListSetVersioned pListSet) {
+        /* Only allowed for Edit ListSets */
+        if (!MetisListSetType.BASE.equals(pListSet.getListSetType())) {
+            throw new IllegalArgumentException();
+        }
+
+        /* ListSet version must be 0 */
+        if (pListSet.getVersion() != 0) {
+            throw new IllegalStateException("Versioned ListSet being refreshed");
+        }
+
+        /* Create a new ListSet event */
+        final MetisListSetChange myChanges = new MetisListSetChange(MetisListEvent.REFRESH);
+
+        /* Fire the event */
+        pListSet.fireEvent(myChanges);
+    }
+
+    /**
      * Reset the listSet to version zero.
      * @param pListSet the listSet
      */
@@ -82,7 +104,7 @@ public final class MetisListBaseManager {
         /* Only allowed for Base/Edit ListSets */
         final MetisListSetType myType = pListSet.getListSetType();
         if (!MetisListSetType.BASE.equals(myType)
-            || !MetisListSetType.EDIT.equals(myType)) {
+            && !MetisListSetType.EDIT.equals(myType)) {
             throw new IllegalArgumentException();
         }
 
@@ -185,6 +207,10 @@ public final class MetisListBaseManager {
     }
 
     /**
+     * Refresh content of listSets.
+     * @param pListSet the listSet
+     */
+    /**
      * Reset the content of a listSet.
      * @param pTarget the target listSet
      * @param pSource the source content to reset to
@@ -192,8 +218,7 @@ public final class MetisListBaseManager {
     public static void resetContent(final MetisListSetVersioned pTarget,
                                     final MetisListSetVersioned pSource) {
         /* Only allowed for Base ListSets */
-        if (!MetisListSetType.BASE.equals(pTarget.getListSetType())
-            || !MetisListSetType.EDIT.equals(pSource.getListSetType())) {
+        if (!MetisListSetType.BASE.equals(pTarget.getListSetType())) {
             throw new IllegalArgumentException();
         }
 
@@ -267,14 +292,13 @@ public final class MetisListBaseManager {
     public static void reBaseListSet(final MetisListSetVersioned pTarget,
                                      final MetisListSetVersioned pBase) {
         /* Only allowed for Base ListSets */
-        if (!MetisListSetType.BASE.equals(pTarget.getListSetType())
-            || !MetisListSetType.EDIT.equals(pBase.getListSetType())) {
+        if (!MetisListSetType.BASE.equals(pTarget.getListSetType())) {
             throw new IllegalArgumentException();
         }
 
         /* ListSet versions must be 0 */
-        if ((pTarget.getVersion() != 0)
-            || (pBase.getVersion() != 0)) {
+        if (pTarget.getVersion() != 0
+            || pBase.getVersion() != 0) {
             throw new IllegalStateException("Versioned ListSet being reBased");
         }
 

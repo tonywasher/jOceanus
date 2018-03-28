@@ -256,9 +256,12 @@ public class MetisListSetVersioned
 
     /**
      * Declare list.
+     * @param <T> the item type
      * @param pItemType the itemType for the list
+     * @return the list
      */
-    public void declareList(final MetisListKey pItemType) {
+    @SuppressWarnings("unchecked")
+    public <T extends MetisFieldVersionedItem> MetisListVersioned<T> declareList(final MetisListKey pItemType) {
         /* Check uniqueness and validity */
         final int myItemType = pItemType.getItemId();
         if (theKeyMap.containsKey(myItemType)) {
@@ -270,7 +273,9 @@ public class MetisListSetVersioned
         }
 
         /* Create the list and declare it */
-        declareList(pItemType, new MetisListVersioned<>(this, pItemType));
+        final MetisListVersioned<MetisFieldVersionedItem> myList = new MetisListVersioned<>(this, pItemType);
+        declareList(pItemType, myList);
+        return (MetisListVersioned<T>) myList;
     }
 
     /**

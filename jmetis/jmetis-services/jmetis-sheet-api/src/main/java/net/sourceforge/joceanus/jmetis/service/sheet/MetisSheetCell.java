@@ -58,7 +58,7 @@ public abstract class MetisSheetCell {
      * @param pColIndex the column index
      */
     protected MetisSheetCell(final MetisSheetRow pRow,
-                            final int pColIndex) {
+                             final int pColIndex) {
         /* Store parameters */
         theRow = pRow;
         theView = pRow.getView();
@@ -186,9 +186,9 @@ public abstract class MetisSheetCell {
      */
     public byte[] getBytesValue() {
         final String myValue = getStringValue();
-        return (myValue == null)
-                                 ? null
-                                 : TethysDataConverter.base64ToByteArray(myValue);
+        return myValue == null
+                               ? null
+                               : TethysDataConverter.base64ToByteArray(myValue);
     }
 
     /**
@@ -198,9 +198,9 @@ public abstract class MetisSheetCell {
      */
     public char[] getCharArrayValue() throws OceanusException {
         final byte[] myValue = getBytesValue();
-        return (myValue == null)
-                                 ? null
-                                 : TethysDataConverter.bytesToCharArray(myValue);
+        return myValue == null
+                               ? null
+                               : TethysDataConverter.bytesToCharArray(myValue);
     }
 
     /**

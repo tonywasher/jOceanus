@@ -178,7 +178,7 @@ public class MetisFieldVersionHistory
      * Is there any history.
      * @return whether there are entries in the history list
      */
-    protected boolean hasHistory() {
+    public boolean hasHistory() {
         return !theStack.isEmpty();
     }
 

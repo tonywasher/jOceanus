@@ -214,7 +214,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
      * @param pId the id
      * @return the new item
      */
-    protected T newListItem(final Integer pId) {
+    public T newListItem(final Integer pId) {
         /* Determine the id */
         Integer myId = pId;
         if (myId == null || myId == 0) {
@@ -227,6 +227,7 @@ public class MetisListVersioned<T extends MetisFieldVersionedItem>
         final T myItem = theItemType.newItem(theListSet);
         myItem.setIndexedId(myId);
         myItem.setItemType(theItemType);
+        myItem.adjustState();
 
         /* Return the new id */
         return myItem;

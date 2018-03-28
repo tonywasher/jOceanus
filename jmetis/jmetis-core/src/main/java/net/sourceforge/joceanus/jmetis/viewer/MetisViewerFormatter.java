@@ -34,6 +34,8 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem.MetisFieldSetDef;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldStorage;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldValidation;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionHistory;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataValues;
@@ -288,9 +290,25 @@ public class MetisViewerFormatter {
             return ((Map<?, ?>) myValue).isEmpty();
         }
 
+        /* Skip empty history/errors */
+        if (myValue instanceof MetisFieldVersionHistory) {
+            return !((MetisFieldVersionHistory) myValue).hasHistory();
+        }
+        if (myValue instanceof MetisFieldValidation) {
+            return !((MetisFieldValidation) myValue).hasErrors();
+        }
+
         /* Skip zero decimals */
         if (myValue instanceof TethysDecimal) {
             return ((TethysDecimal) myValue).isZero();
+        }
+        if (myValue instanceof Number) {
+            return ((Number) myValue).longValue() == 0;
+        }
+
+        /* Skip false */
+        if (myValue instanceof Boolean) {
+            return !((Boolean) myValue);
         }
 
         /* Skip value if required */

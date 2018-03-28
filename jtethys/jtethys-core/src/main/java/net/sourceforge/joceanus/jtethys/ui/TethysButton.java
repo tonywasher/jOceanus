@@ -172,7 +172,7 @@ public abstract class TethysButton<N, I>
 
     /**
      * Set toolTip for button.
-     * @param pTip the icon
+     * @param pTip the toolTip
      */
     public abstract void setToolTip(String pTip);
 

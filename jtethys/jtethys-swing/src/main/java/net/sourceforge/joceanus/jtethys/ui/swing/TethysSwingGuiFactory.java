@@ -243,6 +243,11 @@ public class TethysSwingGuiFactory
     }
 
     @Override
+    public TethysSwingToolBarManager newToolBar() {
+        return new TethysSwingToolBarManager(this);
+    }
+
+    @Override
     public TethysSwingTabPaneManager newTabPane() {
         return new TethysSwingTabPaneManager(this);
     }

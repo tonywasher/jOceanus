@@ -88,9 +88,9 @@ public abstract class TethysMenuBarManager {
     @SuppressWarnings("unchecked")
     public <I> TethysMenuSubMenu<I> lookUpSubMenu(final I pId) {
         final TethysMenuElement<?> myElement = theElementMap.get(pId);
-        return (myElement instanceof TethysMenuSubMenu)
-                                                        ? (TethysMenuSubMenu<I>) myElement
-                                                        : null;
+        return myElement instanceof TethysMenuSubMenu
+                                                      ? (TethysMenuSubMenu<I>) myElement
+                                                      : null;
     }
 
     /**

@@ -131,6 +131,11 @@ public enum MetisViewerResource
     VIEWER_ENTRY_DATA("stdEntry.data"),
 
     /**
+     * Updates Entry.
+     */
+    VIEWER_ENTRY_UPDATES("stdEntry.updates"),
+
+    /**
      * View Entry.
      */
     VIEWER_ENTRY_VIEW("stdEntry.view"),
@@ -235,6 +240,7 @@ public enum MetisViewerResource
         myMap.put(MetisViewerStandardEntry.ERROR, VIEWER_ENTRY_ERROR);
         myMap.put(MetisViewerStandardEntry.PROFILE, VIEWER_ENTRY_PROFILE);
         myMap.put(MetisViewerStandardEntry.DATA, VIEWER_ENTRY_DATA);
+        myMap.put(MetisViewerStandardEntry.UPDATES, VIEWER_ENTRY_UPDATES);
         myMap.put(MetisViewerStandardEntry.VIEW, VIEWER_ENTRY_VIEW);
         myMap.put(MetisViewerStandardEntry.PREFERENCES, VIEWER_ENTRY_PREF);
         return myMap;

@@ -267,12 +267,13 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
         theViewerMap.put(PrometheusViewerEntryId.ERROR, myViewer.getStandardEntry(MetisViewerStandardEntry.ERROR));
         theViewerMap.put(PrometheusViewerEntryId.PROFILE, myViewer.getStandardEntry(MetisViewerStandardEntry.PROFILE));
         theViewerMap.put(PrometheusViewerEntryId.DATA, myViewer.getStandardEntry(MetisViewerStandardEntry.DATA));
+        theViewerMap.put(PrometheusViewerEntryId.UPDATES, myViewer.getStandardEntry(MetisViewerStandardEntry.UPDATES));
         theViewerMap.put(PrometheusViewerEntryId.VIEW, myViewer.getStandardEntry(MetisViewerStandardEntry.VIEW));
 
         /* Create Data entries */
+
         final MetisViewerEntry myData = getViewerEntry(PrometheusViewerEntryId.DATA);
         theViewerMap.put(PrometheusViewerEntryId.DATASET, myViewer.newEntry(myData, PrometheusViewerEntryId.DATASET.toString()));
-        theViewerMap.put(PrometheusViewerEntryId.UPDATES, myViewer.newEntry(myData, PrometheusViewerEntryId.UPDATES.toString()));
         theViewerMap.put(PrometheusViewerEntryId.ANALYSIS, myViewer.newEntry(myData, PrometheusViewerEntryId.ANALYSIS.toString()));
 
         /* Create View entries */

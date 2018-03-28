@@ -128,7 +128,7 @@ public class MetisListIndexed<T extends MetisDataIndexedItem>
 
     @Override
     public String toString() {
-        return getDataFieldSet().getName() + "(" + size() + ")";
+        return getDataFieldSet().getName();
     }
 
     /**

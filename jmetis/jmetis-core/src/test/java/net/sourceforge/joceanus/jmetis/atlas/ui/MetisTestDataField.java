@@ -136,7 +136,7 @@ public enum MetisTestDataField
      * @param pField the field
      */
     MetisTestDataField(final MetisDataType pField) {
-        theField = new MetisFieldSimpleId(pField.toString());
+        theField = new MetisFieldSimpleId(name());
         theDataType = pField;
     }
 

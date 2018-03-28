@@ -38,7 +38,7 @@ public final class CurrencyCheck {
             "MZM", "PTE", "SIT", "ATS", "CYP", "ZWN", "SKK", "ADP", "FIM", "XTS", "FRF", "USN", "ZMK", "CHE",
             "GWP", "VEB", "DEM", "XBD", "UYI", "BYB", "XPT", "EEK", "ZWD", "GHC", "BEF", "XFU", "XAU", "XSU",
             "BGL", "MGF", "IEP", "TPE", "XUA", "CLF", "LUF", "XPD", "SRG", "RUR", "ESP", "TMM", "GRD", "CHW",
-            "TRL", "XAG", "BOV", "ITL", "CSD", "MXV", "NLG", "AYM", "ZWL" };
+            "TRL", "XAG", "BOV", "ITL", "CSD", "MXV", "NLG", "AYM", "ZWL", "BYR" };
 
     /**
      * Constructor.

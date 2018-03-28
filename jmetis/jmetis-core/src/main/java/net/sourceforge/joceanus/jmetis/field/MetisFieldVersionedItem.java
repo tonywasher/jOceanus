@@ -44,14 +44,14 @@ public class MetisFieldVersionedItem
      * FieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID.getValue(), MetisFieldVersionedItem::getIndexedId);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ITEMTYPE.getValue(), MetisFieldVersionedItem::getItemType);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisFieldVersionedItem::getVersion);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED.getValue(), MetisFieldVersionedItem::isDeleted);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE.getValue(), MetisFieldVersionedItem::getState);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_EDITSTATE.getValue(), MetisFieldVersionedItem::getEditState);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_HISTORY.getValue(), MetisFieldVersionedItem::getHistory);
-        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS.getValue(), MetisFieldVersionedItem::getValidation);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ID, MetisFieldVersionedItem::getIndexedId);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ITEMTYPE, MetisFieldVersionedItem::getItemType);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_VERSION, MetisFieldVersionedItem::getVersion);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_DELETED, MetisFieldVersionedItem::isDeleted);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_STATE, MetisFieldVersionedItem::getState);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_EDITSTATE, MetisFieldVersionedItem::getEditState);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_HISTORY, MetisFieldVersionedItem::getHistory);
+        FIELD_DEFS.declareLocalField(MetisDataResource.DATA_ERRORS, MetisFieldVersionedItem::getValidation);
     }
 
     /**

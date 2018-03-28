@@ -42,6 +42,11 @@ public enum MetisViewerStandardEntry {
     DATA,
 
     /**
+     * Updates entry.
+     */
+    UPDATES,
+
+    /**
      * View entry.
      */
     VIEW,

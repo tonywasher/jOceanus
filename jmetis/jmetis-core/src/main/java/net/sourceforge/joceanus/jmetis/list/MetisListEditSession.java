@@ -90,7 +90,7 @@ public class MetisListEditSession
      * Constructor.
      * @param pListSet the listSet
      */
-    protected MetisListEditSession(final MetisListSetVersioned pListSet) {
+    public MetisListEditSession(final MetisListSetVersioned pListSet) {
         /* Only allowed for Edit ListSets */
         if (!MetisListSetType.EDIT.equals(pListSet.getListSetType())) {
             throw new IllegalArgumentException();

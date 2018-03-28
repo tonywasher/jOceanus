@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.data;
 
+import java.util.List;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataIndexedItem;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilutedPrice;
@@ -31,7 +33,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
-import net.sourceforge.joceanus.jtethys.ui.TethysItemList;
 
 /**
  * Enumeration of data types.
@@ -215,7 +216,7 @@ public enum MetisDataType {
             case LINK:
                 return MetisDataIndexedItem.class;
             case LINKSET:
-                return TethysItemList.class;
+                return List.class;
             default:
                 return null;
         }

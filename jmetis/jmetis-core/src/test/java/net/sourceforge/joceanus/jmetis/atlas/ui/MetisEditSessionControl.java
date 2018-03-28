@@ -28,18 +28,25 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
 import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
 import net.sourceforge.joceanus.jmetis.list.MetisListKey;
+import net.sourceforge.joceanus.jmetis.list.MetisListSetVersioned;
+import net.sourceforge.joceanus.jmetis.list.MetisListUpdateManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmetis.ui.MetisUIEvent;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerWindow;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Edit Session Control.
@@ -48,6 +55,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
  */
 public class MetisEditSessionControl<N, I>
         implements TethysNode<N>, TethysEventProvider<MetisUIEvent> {
+    /**
+     * The overall pane.
+     */
+    private final TethysBorderPaneManager<N, I> thePane;
+
+    /**
+     * The data panel.
+     */
+    private final TethysNode<N> theDataPanel;
+
     /**
      * The card panel.
      */
@@ -64,9 +81,9 @@ public class MetisEditSessionControl<N, I>
     private final MetisEditPanel theEditPanel;
 
     /**
-     * The data panel.
+     * The browse panel.
      */
-    private final MetisDataPanel theDataPanel;
+    private final MetisBrowsePanel theBrowsePanel;
 
     /**
      * The Event Manager.
@@ -79,9 +96,19 @@ public class MetisEditSessionControl<N, I>
     private final MetisListEditSession theSession;
 
     /**
+     * The UpdateSet.
+     */
+    private final MetisListSetVersioned theUpdateSet;
+
+    /**
      * The Selected items.
      */
     private final Map<MetisListKey, MetisFieldVersionedItem> theSelectedMap;
+
+    /**
+     * The viewer window.
+     */
+    private final MetisViewerWindow<N, I> theViewer;
 
     /**
      * The ListKey.
@@ -104,14 +131,34 @@ public class MetisEditSessionControl<N, I>
     private boolean isEditing;
 
     /**
-     * Constructor.
-     * @param pFactory the GUI factory
-     * @param pSession the session
+     * Are we enabled?
      */
-    public MetisEditSessionControl(final TethysGuiFactory<N, I> pFactory,
-                                   final MetisListEditSession pSession) {
-        /* Record the session */
+    private boolean isEnabled;
+
+    /**
+     * Are we showing the viewer?
+     */
+    private boolean viewerShowing;
+
+    /**
+     * Constructor.
+     * @param pToolkit the toolkit
+     * @param pSession the session
+     * @param pUpdateSet the updateSet
+     * @param pDataPanel the dataPanel
+     * @throws OceanusException on error
+     */
+    public MetisEditSessionControl(final MetisToolkit<N, I> pToolkit,
+                                   final MetisListEditSession pSession,
+                                   final MetisListSetVersioned pUpdateSet,
+                                   final TethysNode<N> pDataPanel) throws OceanusException {
+        /* Record the parameters */
         theSession = pSession;
+        theUpdateSet = pUpdateSet;
+        theDataPanel = pDataPanel;
+
+        /* Access the GUI factory */
+        TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -120,35 +167,44 @@ public class MetisEditSessionControl<N, I>
         theSelectedMap = new HashMap<>();
 
         /* Create the panel */
-        theCard = pFactory.newCardPane();
+        theCard = myFactory.newCardPane();
 
-        /* Create Data panel */
-        theDataPanel = new MetisDataPanel(pFactory);
-        theCard.addCard(EditCard.DATA.toString(), theDataPanel);
+        /* Create Browse panel */
+        theBrowsePanel = new MetisBrowsePanel(myFactory);
+        theCard.addCard(EditCard.BROWSE.toString(), theBrowsePanel);
 
         /* Create Edit panel */
-        theEditPanel = new MetisEditPanel(pFactory);
+        theEditPanel = new MetisEditPanel(myFactory);
         theCard.addCard(EditCard.EDIT.toString(), theEditPanel);
 
         /* Create the error panel */
-        theErrorPanel = null;
+        theErrorPanel = new MetisErrorPanel(myFactory);
         theCard.addCard(EditCard.ERROR.toString(), theErrorPanel);
 
+        /* Create the pane */
+        thePane = myFactory.newBorderPane();
+        thePane.setCentre(theDataPanel);
+        thePane.setNorth(theCard);
+
         /* Buttons are initially disabled */
-        setEnabled(false);
+        setEnabled(true);
 
         /* Add the listeners for the session */
         theSession.getEventRegistrar().addEventListener(e -> flagError());
+
+        /* Create the viewer window */
+        theViewer = pToolkit.newViewerWindow();
+        theViewer.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> clearViewer());
     }
 
     @Override
     public Integer getId() {
-        return theCard.getId();
+        return thePane.getId();
     }
 
     @Override
     public N getNode() {
-        return theCard.getNode();
+        return thePane.getNode();
     }
 
     @Override
@@ -158,13 +214,20 @@ public class MetisEditSessionControl<N, I>
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theCard.setVisible(pVisible);
+        thePane.setVisible(pVisible);
     }
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        theDataPanel.setEnabled(bEnabled);
-        theEditPanel.setEnabled(bEnabled);
+        isEnabled = bEnabled;
+        if (hasError()) {
+            theErrorPanel.setEnabled(bEnabled);
+            theDataPanel.setEnabled(false);
+        } else {
+            theDataPanel.setEnabled(bEnabled);
+            theBrowsePanel.setEnabled(bEnabled);
+            theEditPanel.setEnabled(bEnabled);
+        }
     }
 
     /**
@@ -173,6 +236,15 @@ public class MetisEditSessionControl<N, I>
      */
     public boolean hasError() {
         return hasError;
+    }
+
+    /**
+     * Are we editing?
+     * @return true/false
+     */
+    public boolean isEditing() {
+        return isEditing
+               && !hasError;
     }
 
     /**
@@ -200,12 +272,14 @@ public class MetisEditSessionControl<N, I>
     }
 
     /**
-     * Select dataMode.
+     * Select browseMode.
      */
-    void selectDataMode() {
+    void selectBrowseMode() {
         isEditing = false;
         if (!hasError) {
-            theCard.selectCard(EditCard.DATA.toString());
+            theCard.selectCard(EditCard.BROWSE.toString());
+            setEnabled(isEnabled);
+            theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
         }
     }
 
@@ -216,6 +290,8 @@ public class MetisEditSessionControl<N, I>
         isEditing = true;
         if (!hasError) {
             theCard.selectCard(EditCard.EDIT.toString());
+            setEnabled(isEnabled);
+            theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
         }
     }
 
@@ -225,6 +301,8 @@ public class MetisEditSessionControl<N, I>
     void setErrorMode() {
         hasError = true;
         theCard.selectCard(EditCard.ERROR.toString());
+        setEnabled(isEnabled);
+        theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
     }
 
     /**
@@ -232,10 +310,12 @@ public class MetisEditSessionControl<N, I>
      */
     void clearErrorMode() {
         hasError = false;
-        EditCard myCard = isEditing
-                                    ? EditCard.EDIT
-                                    : EditCard.DATA;
-        theCard.selectCard(myCard.EDIT.toString());
+        final EditCard myCard = isEditing
+                                          ? EditCard.EDIT
+                                          : EditCard.BROWSE;
+        theCard.selectCard(myCard.toString());
+        setEnabled(isEnabled);
+        theEventManager.fireEvent(MetisUIEvent.VISIBILITY);
     }
 
     /**
@@ -246,6 +326,36 @@ public class MetisEditSessionControl<N, I>
     }
 
     /**
+     * Clear the viewer.
+     */
+    private void showViewer() {
+        /* If we are not currently showing */
+        if (!viewerShowing) {
+            /* Show the dialog */
+            theViewer.showDialog();
+            viewerShowing = true;
+            setEnabled(isEnabled);
+        }
+    }
+
+    /**
+     * Clear the viewer.
+     */
+    private void clearViewer() {
+        viewerShowing = false;
+        setEnabled(isEnabled);
+    }
+
+    /**
+     * Save updates to file.
+     */
+    private void saveToFile() {
+        while (!theUpdateSet.isEmpty()) {
+            MetisListUpdateManager.commitUpdateBatch(theUpdateSet, 50);
+        }
+    }
+
+    /**
      * Edit Session Control.
      */
     private class MetisEditPanel
@@ -253,37 +363,7 @@ public class MetisEditSessionControl<N, I>
         /**
          * The panel.
          */
-        private final TethysBoxPaneManager<N, I> thePanel;
-
-        /**
-         * The Commit button.
-         */
-        private final TethysButton<N, I> theCommitButton;
-
-        /**
-         * The Undo button.
-         */
-        private final TethysButton<N, I> theUndoButton;
-
-        /**
-         * The Reset button.
-         */
-        private final TethysButton<N, I> theResetButton;
-
-        /**
-         * The Cancel button.
-         */
-        private final TethysButton<N, I> theCancelButton;
-
-        /**
-         * The New button.
-         */
-        private final TethysButton<N, I> theNewButton;
-
-        /**
-         * The Delete button.
-         */
-        private final TethysButton<N, I> theDeleteButton;
+        private final TethysToolBarManager<N, I> thePanel;
 
         /**
          * Constructor.
@@ -292,42 +372,20 @@ public class MetisEditSessionControl<N, I>
          * @param pListKey the listKey
          */
         public MetisEditPanel(final TethysGuiFactory<N, I> pFactory) {
+            /* Create the toolBar Manager */
+            thePanel = pFactory.newToolBar();
+            thePanel.setIconWidth(MetisIcon.ICON_SIZE);
+
             /* Create the buttons */
-            theCommitButton = pFactory.newButton();
-            theUndoButton = pFactory.newButton();
-            theResetButton = pFactory.newButton();
-            theCancelButton = pFactory.newButton();
-            theNewButton = pFactory.newButton();
-            theDeleteButton = pFactory.newButton();
-
-            /* Configure the buttons */
-            MetisIcon.configureCommitIconButton(theCommitButton);
-            MetisIcon.configureUndoIconButton(theUndoButton);
-            MetisIcon.configureResetIconButton(theResetButton);
-            MetisIcon.configureCancelIconButton(theCancelButton);
-            MetisIcon.configureNewIconButton(theNewButton);
-            MetisIcon.configureDeleteIconButton(theDeleteButton);
-
-            /* Create the panel */
-            thePanel = pFactory.newHBoxPane();
-            thePanel.setBorderPadding(5);
-            thePanel.setBorderTitle("Edit Session Control");
-
-            /* Create the layout */
-            thePanel.addNode(theCommitButton);
-            thePanel.addNode(theUndoButton);
-            thePanel.addNode(theResetButton);
-            thePanel.addNode(theCancelButton);
-            thePanel.addNode(theNewButton);
-            thePanel.addNode(theDeleteButton);
-
-            /* Add the listeners for the buttons */
-            theCommitButton.getEventRegistrar().addEventListener(e -> commitEditSession());
-            theUndoButton.getEventRegistrar().addEventListener(e -> undoLastUpdate());
-            theResetButton.getEventRegistrar().addEventListener(e -> resetAllChanges());
-            theCancelButton.getEventRegistrar().addEventListener(e -> cancelEditSession());
-            theNewButton.getEventRegistrar().addEventListener(e -> createNewItem());
-            theDeleteButton.getEventRegistrar().addEventListener(e -> deleteSelectedItem());
+            thePanel.newIcon(MetisIcon.COMMIT, MetisIcon.TIP_COMMIT, e -> commitEditSession());
+            thePanel.newIcon(MetisIcon.UNDO, MetisIcon.TIP_UNDO, e -> undoLastUpdate());
+            thePanel.newIcon(MetisIcon.RESET, MetisIcon.TIP_RESET, e -> resetAllChanges());
+            thePanel.newIcon(MetisIcon.CANCEL, MetisIcon.TIP_CANCEL, e -> cancelEditSession());
+            thePanel.newSeparator();
+            thePanel.newIcon(MetisIcon.NEW, MetisIcon.TIP_NEW, e -> createNewItem());
+            thePanel.newIcon(MetisIcon.DELETE, MetisIcon.TIP_DELETE, e -> deleteSelectedItem());
+            thePanel.newSeparator();
+            thePanel.newIcon(MetisIcon.VIEWER, MetisIcon.TIP_VIEWER, e -> showViewer());
 
             /* Buttons are initially disabled */
             setEnabled(false);
@@ -352,25 +410,29 @@ public class MetisEditSessionControl<N, I>
         public void setEnabled(final boolean bEnabled) {
             /* If the table is locked clear the buttons */
             if (!bEnabled) {
-                theCommitButton.setEnabled(false);
-                theUndoButton.setEnabled(false);
-                theResetButton.setEnabled(false);
-                theCancelButton.setEnabled(false);
-                theNewButton.setEnabled(false);
-                theDeleteButton.setEnabled(false);
+                thePanel.setEnabled(MetisIcon.COMMIT, false);
+                thePanel.setEnabled(MetisIcon.UNDO, false);
+                thePanel.setEnabled(MetisIcon.RESET, false);
+                thePanel.setEnabled(MetisIcon.CANCEL, false);
+                thePanel.setEnabled(MetisIcon.NEW, false);
+                thePanel.setEnabled(MetisIcon.DELETE, false);
+                thePanel.setEnabled(MetisIcon.VIEWER, false);
 
                 /* Else look at the edit state */
             } else {
                 /* Determine whether we have changes */
                 boolean hasUpdates = theSession.activeSession();
-                theUndoButton.setEnabled(hasUpdates);
-                theResetButton.setEnabled(hasUpdates);
-                theCommitButton.setEnabled(hasUpdates);
+                thePanel.setEnabled(MetisIcon.UNDO, hasUpdates);
+                thePanel.setEnabled(MetisIcon.RESET, hasUpdates);
+                thePanel.setEnabled(MetisIcon.COMMIT, hasUpdates);
 
                 /* Enable the new and cancel button */
-                theCancelButton.setEnabled(true);
-                theNewButton.setEnabled(true);
-                theDeleteButton.setEnabled(theSelectedItem != null);
+                thePanel.setEnabled(MetisIcon.CANCEL, true);
+                thePanel.setEnabled(MetisIcon.NEW, true);
+                thePanel.setEnabled(MetisIcon.DELETE, theSelectedItem != null);
+
+                /* Show the viewer button */
+                thePanel.setEnabled(MetisIcon.VIEWER, !viewerShowing);
             }
         }
 
@@ -379,7 +441,7 @@ public class MetisEditSessionControl<N, I>
          */
         private void commitEditSession() {
             theSession.commitEditSession();
-            selectDataMode();
+            selectBrowseMode();
         }
 
         /**
@@ -401,7 +463,7 @@ public class MetisEditSessionControl<N, I>
          */
         private void cancelEditSession() {
             resetAllChanges();
-            selectDataMode();
+            selectBrowseMode();
         }
 
         /**
@@ -423,29 +485,14 @@ public class MetisEditSessionControl<N, I>
     }
 
     /**
-     * Data Session Control.
+     * Browse Session Control.
      */
-    private class MetisDataPanel
+    private class MetisBrowsePanel
             implements TethysNode<N> {
         /**
          * The panel.
          */
-        private final TethysBoxPaneManager<N, I> thePanel;
-
-        /**
-         * The Edit button.
-         */
-        private final TethysButton<N, I> theEditButton;
-
-        /**
-         * The Undo button.
-         */
-        private final TethysButton<N, I> theUndoButton;
-
-        /**
-         * The Reset button.
-         */
-        private final TethysButton<N, I> theResetButton;
+        private final TethysToolBarManager<N, I> thePanel;
 
         /**
          * Constructor.
@@ -453,31 +500,19 @@ public class MetisEditSessionControl<N, I>
          * @param pSession the session
          * @param pListKey the listKey
          */
-        public MetisDataPanel(final TethysGuiFactory<N, I> pFactory) {
+        public MetisBrowsePanel(final TethysGuiFactory<N, I> pFactory) {
+            /* Create the toolBar Manager */
+            thePanel = pFactory.newToolBar();
+            thePanel.setIconWidth(MetisIcon.ICON_SIZE);
+
             /* Create the buttons */
-            theEditButton = pFactory.newButton();
-            theUndoButton = pFactory.newButton();
-            theResetButton = pFactory.newButton();
-
-            /* Configure the buttons */
-            MetisIcon.configureEditIconButton(theEditButton);
-            MetisIcon.configureUndoIconButton(theUndoButton);
-            MetisIcon.configureResetIconButton(theResetButton);
-
-            /* Create the panel */
-            thePanel = pFactory.newHBoxPane();
-            thePanel.setBorderPadding(5);
-            thePanel.setBorderTitle("Data Session Control");
-
-            /* Create the layout */
-            thePanel.addNode(theEditButton);
-            thePanel.addNode(theUndoButton);
-            thePanel.addNode(theResetButton);
-
-            /* Add the listeners for the buttons */
-            theEditButton.getEventRegistrar().addEventListener(e -> startEditSession());
-            theUndoButton.getEventRegistrar().addEventListener(e -> undoLastBaseUpdate());
-            theResetButton.getEventRegistrar().addEventListener(e -> resetAllBaseChanges());
+            thePanel.newIcon(MetisIcon.EDIT, MetisIcon.TIP_EDIT, e -> startEditSession());
+            thePanel.newSeparator();
+            thePanel.newIcon(MetisIcon.UNDO, MetisIcon.TIP_UNDO, e -> undoLastBaseUpdate());
+            thePanel.newIcon(MetisIcon.RESET, MetisIcon.TIP_RESET, e -> resetAllBaseChanges());
+            thePanel.newSeparator();
+            thePanel.newIcon(MetisIcon.SAVE, MetisIcon.TIP_SAVE, e -> saveToFile());
+            thePanel.newIcon(MetisIcon.VIEWER, MetisIcon.TIP_VIEWER, e -> showViewer());
 
             /* Buttons are initially disabled */
             setEnabled(false);
@@ -502,19 +537,25 @@ public class MetisEditSessionControl<N, I>
         public void setEnabled(final boolean bEnabled) {
             /* If the table is locked clear the buttons */
             if (!bEnabled) {
-                theEditButton.setEnabled(false);
-                theUndoButton.setEnabled(false);
-                theResetButton.setEnabled(false);
+                thePanel.setEnabled(MetisIcon.EDIT, false);
+                thePanel.setEnabled(MetisIcon.UNDO, false);
+                thePanel.setEnabled(MetisIcon.RESET, false);
+                thePanel.setEnabled(MetisIcon.SAVE, false);
+                thePanel.setEnabled(MetisIcon.VIEWER, false);
 
                 /* Else look at the edit state */
             } else {
                 /* Determine whether we have changes */
                 boolean hasUpdates = theSession.activeBaseSession();
-                theUndoButton.setEnabled(hasUpdates);
-                theResetButton.setEnabled(hasUpdates);
+                thePanel.setEnabled(MetisIcon.UNDO, hasUpdates);
+                thePanel.setEnabled(MetisIcon.RESET, hasUpdates);
+                thePanel.setEnabled(MetisIcon.SAVE, hasUpdates);
 
-                /* Enable the new and cancel button */
-                theEditButton.setEnabled(true);
+                /* Enable the edit button */
+                thePanel.setEnabled(MetisIcon.EDIT, true);
+
+                /* Show the viewer button */
+                thePanel.setEnabled(MetisIcon.VIEWER, !viewerShowing);
             }
         }
 
@@ -561,6 +602,11 @@ public class MetisEditSessionControl<N, I>
         private final TethysButton<N, I> theClearButton;
 
         /**
+         * The Viewer button.
+         */
+        private final TethysButton<N, I> theViewerButton;
+
+        /**
          * Constructor.
          * @param pFactory the GUI factory
          */
@@ -574,8 +620,13 @@ public class MetisEditSessionControl<N, I>
             theClearButton.setTextOnly();
             theClearButton.setText("Clear");
 
+            /* Create the viewer button */
+            theViewerButton = pFactory.newButton();
+            MetisIcon.configureViewerIconButton(theViewerButton);
+
             /* Add the listener for item changes */
             theClearButton.getEventRegistrar().addEventListener(e -> clearErrors());
+            theViewerButton.getEventRegistrar().addEventListener(e -> showViewer());
 
             /* Create the error panel */
             thePanel = pFactory.newHBoxPane();
@@ -584,6 +635,7 @@ public class MetisEditSessionControl<N, I>
             /* Define the layout */
             thePanel.addNode(theClearButton);
             thePanel.addNode(theErrorField);
+            thePanel.addNode(theViewerButton);
 
             /* Set the Error panel to be red and invisible */
             thePanel.setVisible(false);
@@ -608,6 +660,9 @@ public class MetisEditSessionControl<N, I>
         public void setEnabled(final boolean bEnabled) {
             /* Pass on to important elements */
             theClearButton.setEnabled(bEnabled);
+
+            /* Show the viewer button */
+            theViewerButton.setEnabled(bEnabled && !viewerShowing);
         }
 
         /**
@@ -657,9 +712,9 @@ public class MetisEditSessionControl<N, I>
         ERROR,
 
         /**
-         * Data.
+         * Browse.
          */
-        DATA,
+        BROWSE,
 
         /**
          * Edit.

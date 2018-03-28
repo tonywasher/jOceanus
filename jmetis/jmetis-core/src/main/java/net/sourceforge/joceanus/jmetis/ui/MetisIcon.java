@@ -85,7 +85,12 @@ public enum MetisIcon implements TethysIconId {
     /**
      * The save icon.
      */
-    SAVE("icons/GreenJellySaveToFile.png");
+    SAVE("icons/GreenJellySaveToFile.png"),
+
+    /**
+     * The viewer icon.
+     */
+    VIEWER("icons/BlueJellyViewer.png");
 
     /**
      * New Button ToolTip.
@@ -105,27 +110,27 @@ public enum MetisIcon implements TethysIconId {
     /**
      * Commit Button ToolTip.
      */
-    private static final String TIP_COMMIT = MetisUIResource.ICON_TIP_COMMIT.getValue();
+    public static final String TIP_COMMIT = MetisUIResource.ICON_TIP_COMMIT.getValue();
 
     /**
      * UnDo Button ToolTip.
      */
-    private static final String TIP_UNDO = MetisUIResource.ICON_TIP_UNDO.getValue();
+    public static final String TIP_UNDO = MetisUIResource.ICON_TIP_UNDO.getValue();
 
     /**
      * Reset Button ToolTip.
      */
-    private static final String TIP_RESET = MetisUIResource.ICON_TIP_RESET.getValue();
+    public static final String TIP_RESET = MetisUIResource.ICON_TIP_RESET.getValue();
 
     /**
      * Edit Button ToolTip.
      */
-    private static final String TIP_EDIT = MetisUIResource.ICON_TIP_EDIT.getValue();
+    public static final String TIP_EDIT = MetisUIResource.ICON_TIP_EDIT.getValue();
 
     /**
      * Cancel Button ToolTip.
      */
-    private static final String TIP_CANCEL = MetisUIResource.ICON_TIP_CANCEL.getValue();
+    public static final String TIP_CANCEL = MetisUIResource.ICON_TIP_CANCEL.getValue();
 
     /**
      * Print Button ToolTip.
@@ -140,7 +145,12 @@ public enum MetisIcon implements TethysIconId {
     /**
      * Save Button ToolTip.
      */
-    private static final String TIP_SAVE = MetisUIResource.ICON_TIP_SAVE.getValue();
+    public static final String TIP_SAVE = MetisUIResource.ICON_TIP_SAVE.getValue();
+
+    /**
+     * Viewer Button ToolTip.
+     */
+    public static final String TIP_VIEWER = MetisUIResource.ICON_TIP_VIEWER.getValue();
 
     /**
      * Default icon size.
@@ -281,6 +291,16 @@ public enum MetisIcon implements TethysIconId {
         configureButton(pButton);
         pButton.setIcon(SAVE);
         pButton.setToolTip(TIP_SAVE);
+    }
+
+    /**
+     * Configure viewer icon button.
+     * @param pButton the button manager
+     */
+    public static void configureViewerIconButton(final TethysButton<?, ?> pButton) {
+        configureButton(pButton);
+        pButton.setIcon(VIEWER);
+        pButton.setToolTip(TIP_VIEWER);
     }
 
     /**

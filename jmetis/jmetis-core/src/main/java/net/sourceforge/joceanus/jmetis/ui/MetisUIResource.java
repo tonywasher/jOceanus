@@ -85,6 +85,11 @@ public enum MetisUIResource implements TethysResourceId {
     ICON_TIP_ACTIVE("icons.Tip.Active"),
 
     /**
+     * Icon Viewer Tip.
+     */
+    ICON_TIP_VIEWER("icons.Tip.Viewer"),
+
+    /**
      * ErrorPanel Clear Button.
      */
     ERROR_BUTTON_CLEAR("ErrorPanel.Button.Clear"),

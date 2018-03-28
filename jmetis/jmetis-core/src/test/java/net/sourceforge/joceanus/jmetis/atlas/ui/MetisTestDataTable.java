@@ -29,12 +29,23 @@ import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableInteg
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableListColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShortColumn;
-import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldVersionedItem;
+import net.sourceforge.joceanus.jmetis.list.MetisListBaseManager;
+import net.sourceforge.joceanus.jmetis.list.MetisListEditManager;
+import net.sourceforge.joceanus.jmetis.list.MetisListEditSession;
+import net.sourceforge.joceanus.jmetis.list.MetisListKey;
+import net.sourceforge.joceanus.jmetis.list.MetisListSetVersioned;
+import net.sourceforge.joceanus.jmetis.list.MetisListUpdateManager;
+import net.sourceforge.joceanus.jmetis.list.MetisListVersioned;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
+import net.sourceforge.joceanus.jmetis.viewer.MetisViewerStandardEntry;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysListId;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
 
@@ -43,7 +54,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollUITestHelper.IconState;
  * @param <N> the node type
  * @param <I> the icon type
  */
-public class MetisTestDataTable<N, I> {
+public class MetisTestDataTable<N, I>
+        implements TethysNode<N> {
     /**
      * The TableManager.
      */
@@ -55,6 +67,31 @@ public class MetisTestDataTable<N, I> {
     private final TethysScrollUITestHelper<?, ?> theHelper;
 
     /**
+     * The ListSet.
+     */
+    private final MetisListSetVersioned theListSet;
+
+    /**
+     * The EditListSet.
+     */
+    private final MetisListSetVersioned theEditSet;
+
+    /**
+     * The UpdateListSet.
+     */
+    private final MetisListSetVersioned theUpdateSet;
+
+    /**
+     * The Session.
+     */
+    private final MetisListEditSession theSession;
+
+    /**
+     * The Session Control.
+     */
+    private final MetisEditSessionControl<N, I> theSessionControl;
+
+    /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
@@ -63,18 +100,88 @@ public class MetisTestDataTable<N, I> {
         /* Create helper */
         theHelper = new TethysScrollUITestHelper<>();
 
-        /* Create test Data */
-        final MetisListIndexed<MetisTestTableItem> myData = new MetisListIndexed<>();
-        myData.add(createItem("Damage"));
-        myData.add(createItem("Tony"));
-        myData.add(createItem("Dave"));
+        /* Create listSet */
+        theListSet = MetisListBaseManager.newListSet();
+        final MetisListVersioned<MetisTestTableItem> myList = theListSet.declareList(MetisTestItemKey.TEST);
+
+        /* Create update listSet */
+        theUpdateSet = MetisListUpdateManager.deriveUpdateListSet(theListSet);
+
+        /* Create edit listSet */
+        theEditSet = MetisListEditManager.deriveEditListSet(theListSet);
+
+        /* Create the session */
+        theSession = new MetisListEditSession(theEditSet);
 
         /* Create tableView */
-        theTable = pToolkit.newTableManager(MetisTestTableItem.class, myData);
+        theTable = pToolkit.newTableManager(MetisTestItemKey.TEST, theSession);
         theTable.setRepaintRowOnCommit(true);
         theTable.setComparator((l, r) -> l.getName().compareTo(r.getName()));
         theTable.setOnCommit(r -> r.incrementUpdates());
+        theTable.setEditable(false);
 
+        /* Configure the table */
+        configureTable();
+
+        /* Add elements */
+        myList.add(createItem(myList, "Damage"));
+        myList.add(createItem(myList, "Tony"));
+        myList.add(createItem(myList, "Dave"));
+        MetisListBaseManager.refresh(theListSet);
+
+        /* Create the session control */
+        theSessionControl = new MetisEditSessionControl<>(pToolkit, theSession, theUpdateSet, theTable);
+        theSessionControl.setActiveKey(MetisTestItemKey.TEST);
+        theSessionControl.getEventRegistrar().addEventListener(e -> theTable.setEditable(theSessionControl.isEditing()));
+
+        /* Access the viewer manager */
+        final MetisViewerManager myViewer = pToolkit.getViewerManager();
+        final MetisViewerEntry myData = myViewer.getStandardEntry(MetisViewerStandardEntry.DATA);
+        myData.setTreeObject(theListSet);
+        final MetisViewerEntry myUpdates = myViewer.getStandardEntry(MetisViewerStandardEntry.UPDATES);
+        myUpdates.setTreeObject(theUpdateSet);
+        final MetisViewerEntry myEdit = myViewer.getStandardEntry(MetisViewerStandardEntry.VIEW);
+        myEdit.setTreeObject(theEditSet);
+    }
+
+    /**
+     * Create new item.
+     * @param pList the list
+     * @param pName the Name
+     * @return the new item
+     * @throws OceanusException on error
+     */
+    private MetisTestTableItem createItem(final MetisListVersioned<MetisTestTableItem> pList,
+                                          final String pName) throws OceanusException {
+        MetisTestTableItem myItem = pList.newListItem(null);
+        myItem.initValues(theHelper, pName);
+        return myItem;
+    }
+
+    @Override
+    public N getNode() {
+        return theSessionControl.getNode();
+    }
+
+    @Override
+    public void setEnabled(boolean pEnabled) {
+        theSessionControl.setEnabled(pEnabled);
+    }
+
+    @Override
+    public void setVisible(boolean pVisible) {
+        theSessionControl.setVisible(pVisible);
+    }
+
+    @Override
+    public Integer getId() {
+        return theSessionControl.getId();
+    }
+
+    /**
+     * Configure the table.
+     */
+    private void configureTable() {
         /* Create the name column */
         theTable.declareStringColumn(MetisTestDataField.NAME);
 
@@ -151,14 +258,66 @@ public class MetisTestDataTable<N, I> {
     }
 
     /**
-     * Create new item.
-     * @param pName the Name
-     * @return the new item
-     * @throws OceanusException on error
+     * The ItemKey.
      */
-    private MetisTestTableItem createItem(final String pName) throws OceanusException {
-        MetisTestTableItem myItem = new MetisTestTableItem();
-        myItem.initValues(theHelper, pName);
-        return myItem;
+    private enum MetisTestItemKey
+            implements MetisListKey {
+        /**
+         * TestItem.
+         */
+        TEST(1, MetisTestTableItem.class);
+
+        /**
+         * The id.
+         */
+        private Integer theId;
+
+        /**
+         * The Class.
+         */
+        private Class<? extends MetisFieldVersionedItem> theClazz;
+
+        /**
+         * Constructor.
+         * @param pId the Id.
+         */
+        MetisTestItemKey(final int pId,
+                         Class<MetisTestTableItem> pClazz) {
+            theId = pId;
+            theClazz = pClazz;
+        }
+
+        @Override
+        public String getItemName() {
+            return getClazz().getSimpleName();
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Class<? extends MetisFieldVersionedItem> getClazz() {
+            return theClazz;
+        }
+
+        @Override
+        public Integer getItemId() {
+            return theId;
+        }
+
+        @Override
+        public String getListName() {
+            return getItemName() + "s";
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public MetisFieldVersionedItem newItem(MetisListSetVersioned pListSet) {
+            try {
+                return theClazz.newInstance();
+            } catch (InstantiationException
+                    | IllegalAccessException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 }
