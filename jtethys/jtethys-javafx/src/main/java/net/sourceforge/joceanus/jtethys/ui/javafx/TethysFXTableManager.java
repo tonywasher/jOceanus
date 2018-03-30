@@ -37,8 +37,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.Node;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableCell;
@@ -107,6 +110,11 @@ public class TethysFXTableManager<C, R>
     private TethysFXTableCell<?, C, R> theActiveCell;
 
     /**
+     * The Sort Comparator.
+     */
+    private ObjectProperty<Comparator<R>> theCompValue;
+
+    /**
      * Constructor.
      * @param pFactory the GUI factory
      */
@@ -127,6 +135,8 @@ public class TethysFXTableManager<C, R>
         final TableViewSelectionModel<R> myModel = theTable.getSelectionModel();
         myModel.setSelectionMode(SelectionMode.SINGLE);
         myModel.selectedItemProperty().addListener((v, o, n) -> processOnSelect(n));
+
+        theCompValue = new SimpleObjectProperty<>();
     }
 
     @Override
@@ -224,6 +234,8 @@ public class TethysFXTableManager<C, R>
             if (myComparator != null) {
                 myItems = myItems.sorted(myComparator);
                 theSorted = myItems;
+                theCompValue.setValue(myComparator);
+                ((SortedList<R>) theSorted).comparatorProperty().bind(theCompValue);
             }
 
             /* Apply filter if specified */
@@ -235,6 +247,18 @@ public class TethysFXTableManager<C, R>
 
         /* Declare the items */
         theTable.setItems(myItems);
+    }
+
+    /**
+     * Force a sort operation.
+     */
+    public void forceSort() {
+        /* Apply sort if specified */
+        final Comparator<R> myComparator = getComparator();
+        if (myComparator != null) {
+            theCompValue.setValue(null);
+            theCompValue.setValue(myComparator);
+        }
     }
 
     /**

@@ -106,7 +106,7 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
         super(pFactory, MetisFieldSet.lookUpFieldSet(pClazz));
 
         /* Create the table list */
-        theList = new MetisFXTableList<>(pList);
+        theList = new MetisFXTableList<>(this, pList);
         theItemFields = theList.getListFields();
         getTable().setItems(theList.getUnderlyingList());
 
@@ -134,7 +134,7 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
         setEditable(theSession != null);
 
         /* Create the table list */
-        theList = new MetisFXTableList<>(pSession.getList(pItemType));
+        theList = new MetisFXTableList<>(this, pSession.getList(pItemType));
         theItemFields = theList.getListFields();
         getTable().setItems(theList.getUnderlyingList());
     }
@@ -150,6 +150,13 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      */
     MetisFXTableListFields<R> getItemFields() {
         return theItemFields;
+    }
+
+    /**
+     * Force a sort operation.
+     */
+    void forceSort() {
+        getTable().forceSort();
     }
 
     @Override

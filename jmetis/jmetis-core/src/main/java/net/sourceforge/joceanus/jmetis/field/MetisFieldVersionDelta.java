@@ -43,7 +43,7 @@ public class MetisFieldVersionDelta
      * Initialise the Version Field.
      */
     static {
-        FIELD_SET.declareLocalField(MetisDataResource.DATA_VERSION.getValue(), MetisFieldVersionDelta::getVersion);
+        FIELD_SET.declareLocalField(MetisDataResource.DATA_VERSION, MetisFieldVersionDelta::getVersion);
     }
 
     /**

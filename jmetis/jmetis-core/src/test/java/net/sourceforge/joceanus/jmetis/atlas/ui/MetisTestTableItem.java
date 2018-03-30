@@ -71,7 +71,15 @@ public class MetisTestTableItem
         FIELD_DEFS.declareDilutedPriceField(MetisTestDataField.DILUTEDPRICE);
         FIELD_DEFS.declareLinkField(MetisTestDataField.SCROLL);
         FIELD_DEFS.declareLinkSetField(MetisTestDataField.LIST);
-        FIELD_DEFS.declareIntegerField(MetisTestDataField.UPDATES);
+    }
+
+    /**
+     * Constructor.
+     * @throws OceanusException on error
+     */
+    public MetisTestTableItem() throws OceanusException {
+        setName("New");
+        setBoolean(Boolean.FALSE);
     }
 
     /**
@@ -97,7 +105,6 @@ public class MetisTestTableItem
         setRatio(TethysScrollUITestHelper.RATIO_DEF);
         setDilution(TethysScrollUITestHelper.DILUTION_DEF);
         setList(pHelper.buildSelectedList());
-        setUpdates(Integer.valueOf(0));
     }
 
     @Override
@@ -398,30 +405,5 @@ public class MetisTestTableItem
      */
     public void setList(final List<TethysListId> pValue) throws OceanusException {
         getVersionedField(MetisTestDataField.LIST).setFieldValue(this, pValue);
-    }
-
-    /**
-     * Obtain the updates property.
-     * @return the updates property
-     */
-    public Integer getUpdates() {
-        return getVersionedField(MetisTestDataField.UPDATES).getFieldValue(this, Integer.class);
-    }
-
-    /**
-     * increment updates.
-     * @throws OceanusException on error
-     */
-    public void incrementUpdates() throws OceanusException {
-        setUpdates(getUpdates() + 1);
-    }
-
-    /**
-     * Set the updates property.
-     * @param pValue the new value
-     * @throws OceanusException on error
-     */
-    private void setUpdates(final Integer pValue) throws OceanusException {
-        getVersionedField(MetisTestDataField.UPDATES).setFieldValue(this, pValue);
     }
 }

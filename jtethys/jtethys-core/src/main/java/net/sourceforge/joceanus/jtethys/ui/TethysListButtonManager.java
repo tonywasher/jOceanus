@@ -265,7 +265,6 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
             while (myIterator.hasNext()) {
                 /* Create the list item */
                 final T myItem = myIterator.next();
-                theActiveValue.setSelectableItem(myItem);
                 theActiveValue.setSelectedItem(myItem);
             }
         }
@@ -471,7 +470,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      * @return the formatted values
      */
     public String getText() {
-        if (theActiveValue == null) {
+        if (theValue == null) {
             return null;
         }
 
@@ -480,9 +479,11 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
         boolean isFirst = true;
 
         /* Loop through the list */
-        final Iterator<?> myIterator = theActiveValue.iterator();
+        final Iterator<T> myIterator = theValue.iterator();
         while (myIterator.hasNext()) {
-            final Object myLink = myIterator.next();
+            final T myLink = myIterator.next();
+
+            /* Only add if selected */
 
             /* If this is not the first item */
             if (!isFirst) {

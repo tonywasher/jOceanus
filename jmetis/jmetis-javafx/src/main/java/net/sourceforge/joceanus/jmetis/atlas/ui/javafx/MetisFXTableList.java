@@ -41,6 +41,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 public class MetisFXTableList<R extends MetisFieldTableItem>
         implements MetisDataList<R> {
     /**
+     * The table.
+     */
+    private final MetisFXTableManager<R> theTable;
+
+    /**
      * The core List.
      */
     private final MetisListIndexed<R> theCoreList;
@@ -57,10 +62,13 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
 
     /**
      * Constructor.
+     * @param pTable the table
      * @param pList the list
      */
-    protected MetisFXTableList(final MetisListIndexed<R> pList) {
+    protected MetisFXTableList(final MetisFXTableManager<R> pTable,
+                               final MetisListIndexed<R> pList) {
         /* Store parameters */
+        theTable = pTable;
         theCoreList = pList;
 
         /* Create the list field manager */
@@ -120,6 +128,9 @@ public class MetisFXTableList<R extends MetisFieldTableItem>
 
         /* Handle added items */
         handleAddedItems(myChange.addedIterator());
+
+        /* Force a sort */
+        theTable.forceSort();
     }
 
     /**

@@ -305,6 +305,9 @@ public class MetisListEditSession
         /* Add the item to the list */
         myList.add(myNew);
 
+        /* Commit the version */
+        commitEditVersion();
+
         /* Return the item */
         return myNew;
 
@@ -425,6 +428,7 @@ public class MetisListEditSession
             if (!myChanges.isEmpty()) {
                 /* report the changes */
                 theListSet.fireEvent(myChanges);
+                theEventManager.fireEvent(MetisListEvent.VERSION);
             }
         }
     }
@@ -602,6 +606,7 @@ public class MetisListEditSession
         final T myItem = newItemFromBase(myBaseList, pItem);
         myItem.getValueSet().setVersion(theNewVersion);
         myBaseList.add(myItem);
+        myItem.adjustState();
 
         /* Ensure links are correct in base */
         MetisListEditManager.ensureLinks(pItem, theListSet.getBaseListSet());
@@ -660,6 +665,7 @@ public class MetisListEditSession
             final MetisFieldVersionValues myBaseSet = myBase.getValueSet();
             final MetisFieldVersionValues mySet = pItem.getValueSet();
             myBaseSet.copyFrom(mySet);
+            myBase.adjustState();
 
             /* Add to the base changes */
             if (pItem.isDeleted()) {

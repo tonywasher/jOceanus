@@ -25,7 +25,6 @@ package net.sourceforge.joceanus.jmetis.atlas.ui;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIconColumn;
-import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIntegerColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableListColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableShortColumn;
@@ -117,7 +116,6 @@ public class MetisTestDataTable<N, I>
         theTable = pToolkit.newTableManager(MetisTestItemKey.TEST, theSession);
         theTable.setRepaintRowOnCommit(true);
         theTable.setComparator((l, r) -> l.getName().compareTo(r.getName()));
-        theTable.setOnCommit(r -> r.incrementUpdates());
         theTable.setEditable(false);
 
         /* Configure the table */
@@ -247,11 +245,6 @@ public class MetisTestDataTable<N, I>
 
         /* Create the password column */
         theTable.declareCharArrayColumn(MetisTestDataField.PASSWORD);
-
-        /* Create the updates column */
-        final MetisTableIntegerColumn<MetisTestTableItem, N, I> myUpdatesColumn = theTable.declareIntegerColumn(MetisTestDataField.UPDATES);
-        myUpdatesColumn.setName("U");
-        myUpdatesColumn.setEditable(false);
 
         /* Set Disabled indicator */
         theTable.setDisabled(r -> r.getBoolean());

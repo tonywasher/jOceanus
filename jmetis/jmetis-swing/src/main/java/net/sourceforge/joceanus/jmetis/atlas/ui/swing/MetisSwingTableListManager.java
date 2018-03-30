@@ -152,12 +152,12 @@ public class MetisSwingTableListManager<R extends MetisFieldTableItem> {
             final R myCurr = pIterator.next();
             final Integer myId = myCurr.getIndexedId();
 
-            /* report the addition */
-            theTable.fireTableRowAdded(theTableList.size());
-
             /* Add the item to the list */
             theTableList.add(myCurr);
             theIdList.add(myId);
+
+            /* report the addition */
+            theTable.fireTableRowAdded(theTableList.size() - 1);
         }
     }
 

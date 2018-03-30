@@ -379,7 +379,8 @@ public class TethysSwingTableManager<C, R>
      * @param pRowIndex the index of the row that has been added
      */
     public void fireTableRowAdded(final int pRowIndex) {
-        theModel.fireTableRowsInserted(pRowIndex, pRowIndex);
+        int myIndex = pRowIndex;
+        theModel.fireTableRowsInserted(myIndex, myIndex);
     }
 
     /**
@@ -387,7 +388,8 @@ public class TethysSwingTableManager<C, R>
      * @param pRowIndex the index of the row that has changed
      */
     public void fireTableRowChanged(final int pRowIndex) {
-        theModel.fireTableRowUpdated(pRowIndex);
+        int myIndex = theTable.convertRowIndexToView(pRowIndex);
+        theModel.fireTableRowUpdated(myIndex);
     }
 
     /**
@@ -395,7 +397,8 @@ public class TethysSwingTableManager<C, R>
      * @param pRowIndex the index of the row that has been deleted
      */
     public void fireTableRowDeleted(final int pRowIndex) {
-        theModel.fireTableRowsDeleted(pRowIndex, pRowIndex);
+        int myIndex = theTable.convertRowIndexToView(pRowIndex);
+        theModel.fireTableRowsDeleted(myIndex, myIndex);
     }
 
     /**
@@ -405,7 +408,9 @@ public class TethysSwingTableManager<C, R>
      */
     public void fireTableCellUpdated(final int pRowIndex,
                                      final int pColIndex) {
-        theModel.fireTableCellUpdated(pRowIndex, pColIndex);
+        int myRowIndex = theTable.convertRowIndexToView(pRowIndex);
+        int myColIndex = theTable.convertColumnIndexToView(pColIndex);
+        theModel.fireTableCellUpdated(myRowIndex, myColIndex);
     }
 
     /**
@@ -500,10 +505,11 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Notify model that the row has been updated.
-         * @param pRowIndex the row index
+         * @param pRowIndex the view row index
          */
         protected void fireTableRowUpdated(final int pRowIndex) {
             fireTableRowsUpdated(pRowIndex, pRowIndex);
+            getSorter().reportMappingChanged();
         }
     }
 

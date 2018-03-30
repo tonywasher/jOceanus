@@ -190,7 +190,7 @@ public class MetisEditSessionControl<N, I>
         setEnabled(true);
 
         /* Add the listeners for the session */
-        theSession.getEventRegistrar().addEventListener(e -> flagError());
+        theSession.getEventRegistrar().addEventListener(e -> adjustVisibility());
 
         /* Create the viewer window */
         theViewer = pToolkit.newViewerWindow();
@@ -319,10 +319,14 @@ public class MetisEditSessionControl<N, I>
     }
 
     /**
-     * Flag the error.
+     * Adjust Visibility.
      */
-    private void flagError() {
-        theErrorPanel.setError(theSession.getError());
+    private void adjustVisibility() {
+        if (theSession.getError() != null) {
+            theErrorPanel.setError(theSession.getError());
+        } else {
+            setEnabled(isEnabled);
+        }
     }
 
     /**
@@ -449,6 +453,7 @@ public class MetisEditSessionControl<N, I>
          */
         private void undoLastUpdate() {
             theSession.undoLastChange();
+            setEnabled(isEnabled);
         }
 
         /**
@@ -456,6 +461,7 @@ public class MetisEditSessionControl<N, I>
          */
         private void resetAllChanges() {
             theSession.reset();
+            setEnabled(isEnabled);
         }
 
         /**
@@ -571,6 +577,7 @@ public class MetisEditSessionControl<N, I>
          */
         private void undoLastBaseUpdate() {
             theSession.undoLastBaseChange();
+            setEnabled(isEnabled);
         }
 
         /**
@@ -578,6 +585,7 @@ public class MetisEditSessionControl<N, I>
          */
         private void resetAllBaseChanges() {
             theSession.resetBase();
+            setEnabled(isEnabled);
         }
     }
 
