@@ -22,27 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.tasks;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.eclipse.jgit.api.AddCommand;
-import org.eclipse.jgit.api.CheckoutCommand;
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.GarbageCollectCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.StatusCommand;
-import org.eclipse.jgit.api.TagCommand;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -62,6 +41,26 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnExtra
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnExtractView;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnTagExtractPlan;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
+import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.GarbageCollectCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
+import org.eclipse.jgit.api.TagCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Migrate a SubVersion Component to a new Git Repository.
@@ -351,8 +350,9 @@ public class ThemisBuildGit {
 
             /* Report plan steps */
             pReport.setNumSteps(pTagPlan.numViews());
+
             /* Commit the plan */
-            commitPlan(pReport, myOwner, pLastCommit, pTagPlan.viewIterator());
+            final Date myTagDate = commitPlan(pReport, myOwner, pLastCommit, pTagPlan.viewIterator());
 
             /* Create tag if no cancellation */
             pReport.checkForCancellation();
@@ -361,7 +361,7 @@ public class ThemisBuildGit {
             final TagCommand myTag = theGit.tag();
             myTag.setName(myOwner.getTagName());
             myTag.setAnnotated(true);
-            myTag.setTagger(new PersonIdent(theCommitter, new Date()));
+            myTag.setTagger(new PersonIdent(theCommitter, myTagDate));
             myTag.call();
 
             /* Catch Git exceptions */
@@ -376,9 +376,10 @@ public class ThemisBuildGit {
      * @param pOwner the owner
      * @param pBaseCommit the base commit
      * @param pIterator the view iterator
+     * @return the date of the last Commit
      * @throws OceanusException on error
      */
-    private void commitPlan(final MetisThreadStatusReport pReport,
+    private Date commitPlan(final MetisThreadStatusReport pReport,
                             final Object pOwner,
                             final RevCommit pBaseCommit,
                             final Iterator<ThemisSvnExtractView> pIterator) throws OceanusException {
@@ -436,6 +437,9 @@ public class ThemisBuildGit {
                 final ThemisSvnExtractAnchor myAnchor = new ThemisSvnExtractAnchor(myOwner, myView.getRevision());
                 theCommitMap.addAnchor(myAnchor, myLastCommit);
             }
+
+            /* Return the date of the tag */
+            return myLastCommit.getAuthorIdent().getWhen();
 
             /* Catch Git Exceptions */
         } catch (GitAPIException e) {

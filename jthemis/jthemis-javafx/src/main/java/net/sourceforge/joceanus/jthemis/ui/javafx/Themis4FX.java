@@ -22,9 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui.javafx;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Application;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
@@ -32,6 +29,8 @@ import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ui.ThemisApp;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Themis javaFX entryPoint.
@@ -42,7 +41,7 @@ public class Themis4FX
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Themis4FX.class);
+    private static final Logger LOGGER = LogManager.getLogger(Themis4FX.class);
 
     /**
      * Main panel.
