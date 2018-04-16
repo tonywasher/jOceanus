@@ -22,13 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.views;
 
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataEditState;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
@@ -45,6 +38,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides control of a set of update-able DataLists.
@@ -68,7 +67,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateSet.class);
+    private static final Logger LOGGER = LogManager.getLogger(UpdateSet.class);
 
     /**
      * The Event Manager.

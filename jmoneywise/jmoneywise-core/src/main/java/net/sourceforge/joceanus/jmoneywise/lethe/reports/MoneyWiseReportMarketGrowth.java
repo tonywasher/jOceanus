@@ -22,13 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.reports;
 
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.report.MetisReportBase;
 import net.sourceforge.joceanus.jmetis.report.MetisReportHTMLBuilder;
@@ -47,6 +40,12 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.SecurityFilter;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Iterator;
 
 /**
  * MarketGrowth report builder.
@@ -56,7 +55,7 @@ public class MoneyWiseReportMarketGrowth
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MoneyWiseReportMarketGrowth.class);
+    private static final Logger LOGGER = LogManager.getLogger(MoneyWiseReportMarketGrowth.class);
 
     /**
      * The Title text.

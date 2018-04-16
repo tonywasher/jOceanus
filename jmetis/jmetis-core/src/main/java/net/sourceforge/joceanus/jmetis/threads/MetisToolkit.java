@@ -22,14 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -57,6 +49,13 @@ import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Metis Toolkit.
@@ -67,7 +66,7 @@ public abstract class MetisToolkit<N, I> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisToolkit.class);
+    private static final Logger LOGGER = LogManager.getLogger(MetisToolkit.class);
 
     /**
      * Formatter.

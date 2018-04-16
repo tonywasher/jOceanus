@@ -22,17 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.resource;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
 
 /**
  * Resource Builder.
@@ -101,7 +102,7 @@ public final class TethysResourceBuilder {
         /* If the bundle is not cached */
         if (myBundle == null) {
             /* Access and cache the bundle */
-            myBundle = ResourceBundle.getBundle(theBundleName);
+            myBundle = ResourceBundle.getBundle(theBundleName, Locale.getDefault(), pKey.getClass().getClassLoader());
             theBundle = new WeakReference<>(myBundle);
         }
 

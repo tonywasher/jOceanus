@@ -22,15 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
@@ -39,6 +30,14 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Manager class for preference sets.
@@ -49,7 +48,7 @@ public class MetisPreferenceManager
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisPreferenceManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(MetisPreferenceManager.class);
 
     /**
      * Report fields.

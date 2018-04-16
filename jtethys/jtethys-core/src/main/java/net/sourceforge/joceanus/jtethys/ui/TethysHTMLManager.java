@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Tree Manager.
@@ -39,7 +38,7 @@ public abstract class TethysHTMLManager<N, I>
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysHTMLManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysHTMLManager.class);
 
     /**
      * Reference Separator.

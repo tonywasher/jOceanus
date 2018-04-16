@@ -22,12 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -46,6 +40,11 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.TransactionTagBucket.T
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Analysis manager.
@@ -55,7 +54,7 @@ public class AnalysisManager
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(AnalysisManager.class);
 
     /**
      * Local Report fields.

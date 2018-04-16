@@ -58,8 +58,8 @@ public class GordianSignatureSpec {
      * @param pAsymKeyType the asymKeyType
      * @param pDigestSpec the digestSpec
      */
-    protected GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
-                                   final GordianDigestSpec pDigestSpec) {
+    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                                final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
         this(pAsymKeyType, GordianSignatureType.NATIVE, pDigestSpec);
     }
@@ -70,9 +70,9 @@ public class GordianSignatureSpec {
      * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
      */
-    protected GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
-                                   final GordianSignatureType pSignatureType,
-                                   final GordianDigestSpec pDigestSpec) {
+    public GordianSignatureSpec(final GordianAsymKeyType pAsymKeyType,
+                                final GordianSignatureType pSignatureType,
+                                final GordianDigestSpec pDigestSpec) {
         /* Store parameters */
         theAsymKeyType = pAsymKeyType;
         theSignatureType = pSignatureType;

@@ -22,11 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -49,6 +44,10 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Iterator;
 
 /**
  * Analysis Edit View.
@@ -72,7 +71,7 @@ public class AnalysisView
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisView.class);
+    private static final Logger LOGGER = LogManager.getLogger(AnalysisView.class);
 
     /**
      * The Event Manager.

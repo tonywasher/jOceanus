@@ -22,18 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
@@ -42,6 +30,17 @@ import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.
 import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusJDBCDriver;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Properties;
 
 /**
  * Class that encapsulates a database connection.
@@ -71,7 +70,7 @@ public abstract class PrometheusDataStore<T extends DataSet<T, ?>> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusDataStore.class);
+    private static final Logger LOGGER = LogManager.getLogger(PrometheusDataStore.class);
 
     /**
      * Database connection.

@@ -22,16 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.stream;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipher;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
@@ -45,6 +35,15 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianPadding;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianStreamKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Stream Manager.
@@ -53,7 +52,7 @@ public final class GordianStreamManager {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GordianStreamManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(GordianStreamManager.class);
 
     /**
      * Close error.

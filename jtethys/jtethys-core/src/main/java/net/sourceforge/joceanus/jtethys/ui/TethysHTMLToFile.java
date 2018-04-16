@@ -22,22 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.TethysDataException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.TethysDataException;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 /**
  * HTML to File.
@@ -48,7 +47,7 @@ public class TethysHTMLToFile<N, I> {
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysHTMLToFile.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysHTMLToFile.class);
 
     /**
      * Link element name.

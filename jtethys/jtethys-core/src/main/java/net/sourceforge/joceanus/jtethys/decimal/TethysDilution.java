@@ -93,8 +93,8 @@ public class TethysDilution
      * @return true/false
      */
     public final boolean outOfRange() {
-        return (compareTo(MIN_DILUTION) < 0)
-               || (compareTo(MAX_DILUTION) > 0);
+        return compareTo(MIN_DILUTION) < 0
+               || compareTo(MAX_DILUTION) > 0;
     }
 
     @Override

@@ -24,14 +24,7 @@
       <artifactId>jtethys-swing</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jmetis-core</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+   </dependencies>
   <build>
     <plugins>
       <plugin>

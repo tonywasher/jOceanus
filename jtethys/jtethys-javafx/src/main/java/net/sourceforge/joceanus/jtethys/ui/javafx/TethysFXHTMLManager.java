@@ -22,17 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
-import org.w3c.dom.events.EventTarget;
-
 import javafx.concurrent.Worker;
 import javafx.concurrent.Worker.State;
 import javafx.print.PageLayout;
@@ -46,6 +35,17 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import netscape.javascript.JSObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
+import org.w3c.dom.events.EventTarget;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * JavaFX HTML Manager.
@@ -55,7 +55,7 @@ public class TethysFXHTMLManager
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysFXHTMLManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysFXHTMLManager.class);
 
     /**
      * Click event type.

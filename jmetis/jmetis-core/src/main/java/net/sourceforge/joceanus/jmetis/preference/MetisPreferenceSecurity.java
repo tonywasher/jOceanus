@@ -22,12 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.preference;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactoryType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeySet;
@@ -36,6 +30,11 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Security for Preferences.
@@ -44,7 +43,7 @@ public class MetisPreferenceSecurity {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisPreferenceSecurity.class);
+    private static final Logger LOGGER = LogManager.getLogger(MetisPreferenceSecurity.class);
 
     /**
      * The KeySet.

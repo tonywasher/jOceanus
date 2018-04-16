@@ -22,7 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer;
 
-import java.io.StringWriter;
+import net.sourceforge.joceanus.jmetis.MetisIOException;
+import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
+import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,17 +39,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import net.sourceforge.joceanus.jmetis.MetisIOException;
-import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
-import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
+import java.io.StringWriter;
 
 /**
  * Data Viewer Builder.
@@ -50,7 +48,7 @@ public class MetisViewerBuilder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisViewerBuilder.class);
+    private static final Logger LOGGER = LogManager.getLogger(MetisViewerBuilder.class);
 
     /**
      * Wrap for hex string.

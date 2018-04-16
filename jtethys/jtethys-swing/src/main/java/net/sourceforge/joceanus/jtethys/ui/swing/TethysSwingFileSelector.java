@@ -22,18 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Component;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
+import java.awt.Component;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Swing File Selector.
@@ -43,7 +41,7 @@ public class TethysSwingFileSelector
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingFileSelector.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysSwingFileSelector.class);
 
     /**
      * Parent frame.

@@ -22,17 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import java.io.File;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Platform;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * JavaFX Directory Selector.
@@ -42,7 +41,7 @@ public class TethysFXDirectorySelector
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysFXDirectorySelector.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysFXDirectorySelector.class);
 
     /**
      * Parent stage.

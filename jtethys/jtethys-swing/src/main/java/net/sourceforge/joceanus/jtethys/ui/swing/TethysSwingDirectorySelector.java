@@ -22,17 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Component;
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.SwingUtilities;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysDirectorySelector;
+import java.awt.Component;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Swing Directory Selector.
@@ -42,7 +40,7 @@ public class TethysSwingDirectorySelector
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingDirectorySelector.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysSwingDirectorySelector.class);
 
     /**
      * Parent stage.

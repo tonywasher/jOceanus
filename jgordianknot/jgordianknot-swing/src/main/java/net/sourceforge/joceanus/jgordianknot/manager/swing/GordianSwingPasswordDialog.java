@@ -22,23 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.swing;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FocusTraversalPolicy;
-import java.lang.reflect.InvocationTargetException;
+import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -48,7 +46,7 @@ public class GordianSwingPasswordDialog
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GordianSwingPasswordDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(GordianSwingPasswordDialog.class);
 
     /**
      * Dialog.

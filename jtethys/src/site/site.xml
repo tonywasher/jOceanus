@@ -17,8 +17,6 @@
 
     <menu name="jTethys">
       <item name="Introduction" href="index.html"/>
-      <item name="TableFilter Demo" href="demo/TableDemo.html"/>
-      <item name="DateDay Demo" href="demo/DateDemo.html"/>
     </menu>
 
     <menu ref="parent"/>

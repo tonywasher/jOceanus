@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sourceforge.joceanus</groupId>
+    <artifactId>jmetis</artifactId>
+    <version>v1.5.3-SNAPSHOT</version>
+  </parent>
+  <artifactId>jmetis-test</artifactId>
+  <name>jMetis Data Test Framework</name>
+  <description>jMetis Data Test Framework</description>
+  <packaging>pom</packaging>
+  <modules>
+    <module>jmetis-test-core</module>
+    <module>jmetis-test-javafx</module>
+    <module>jmetis-test-swing</module>
+  </modules>
+  <properties>
+    <svnComponent>jmetis</svnComponent>
+    <packageName>${packageKey}.${svnComponent}</packageName>
+  </properties>
+</project>

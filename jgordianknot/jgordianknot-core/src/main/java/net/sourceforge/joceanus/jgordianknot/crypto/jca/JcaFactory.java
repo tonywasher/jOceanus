@@ -22,23 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto.jca;
 
-import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.Provider;
-import java.security.Security;
-import java.security.Signature;
-import java.util.function.BiPredicate;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.Mac;
-import javax.crypto.NoSuchPaddingException;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
@@ -92,6 +75,21 @@ import net.sourceforge.joceanus.jgordianknot.crypto.jca.JcaSignature.JcaXMSSVali
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianBaseSecureRandom;
 import net.sourceforge.joceanus.jgordianknot.crypto.prng.GordianRandomFactory;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
+import java.security.KeyFactory;
+import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.Security;
+import java.security.Signature;
+import java.util.function.BiPredicate;
 
 /**
  * Factory for JCA BouncyCastle Classes.
@@ -306,7 +304,7 @@ public final class JcaFactory
     }
 
     @Override
-    protected GordianWrapCipher createWrapCipher(final GordianSymKeySpec pKeySpec) throws OceanusException {
+    public GordianWrapCipher createWrapCipher(final GordianSymKeySpec pKeySpec) throws OceanusException {
         /* Check validity of SymKey */
         if (!supportedSymKeySpecs().test(pKeySpec)) {
             throw new GordianDataException(getInvalidText(pKeySpec));

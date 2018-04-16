@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sourceforge.joceanus</groupId>
+    <artifactId>jgordianknot</artifactId>
+    <version>v1.5.3-SNAPSHOT</version>   
+  </parent>
+  <artifactId>jgordianknot-test</artifactId>
+  <name>jGordianKnot Security Test Framework</name>
+  <description>A Security framework for Java</description>
+  <packaging>pom</packaging>
+  <modules>
+    <module>jgordianknot-test-swing</module>
+    <module>jgordianknot-test-javafx</module>
+    <module>jgordianknot-test-core</module>
+  </modules>
+  <properties>
+    <svnComponent>jgordianknot</svnComponent>
+    <packageName>${packageKey}.${svnComponent}</packageName>
+  </properties>
+</project>

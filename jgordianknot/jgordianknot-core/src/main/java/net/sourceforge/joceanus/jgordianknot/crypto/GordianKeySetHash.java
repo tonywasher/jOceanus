@@ -22,14 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.util.Arrays;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Arrays;
 
 /**
  * Hash from which to derive KeySet.
@@ -38,7 +37,7 @@ public final class GordianKeySetHash {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GordianKeySetHash.class);
+    private static final Logger LOGGER = LogManager.getLogger(GordianKeySetHash.class);
 
     /**
      * Hash size for password hash.

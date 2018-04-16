@@ -22,16 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
  * Program Definitions.
@@ -40,7 +39,7 @@ public abstract class TethysProgram {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysProgram.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysProgram.class);
 
     /**
      * APP Key.

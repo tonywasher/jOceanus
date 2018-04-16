@@ -22,12 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.javafx;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -38,6 +32,11 @@ import javafx.stage.Window;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -57,7 +56,7 @@ public class GordianFXPasswordDialog
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GordianFXPasswordDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(GordianFXPasswordDialog.class);
 
     /**
      * The stage.

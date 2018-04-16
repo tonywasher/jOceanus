@@ -22,20 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadEvent;
@@ -66,6 +52,18 @@ import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMen
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import java.awt.BorderLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Main window for application.
@@ -76,7 +74,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusMainWindow.class);
+    private static final Logger LOGGER = LogManager.getLogger(PrometheusMainWindow.class);
 
     /**
      * Discard prompt.

@@ -22,15 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui.javafx;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javafx.application.Preloader;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusApp;
 import net.sourceforge.joceanus.jmetis.atlas.ui.javafx.MetisFXSplash;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Coeus javaFX preLoader.
@@ -40,7 +39,7 @@ public class CoeusFXpreLoader
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoeusFXpreLoader.class);
+    private static final Logger LOGGER = LogManager.getLogger(CoeusFXpreLoader.class);
 
     /**
      * The splashPane.

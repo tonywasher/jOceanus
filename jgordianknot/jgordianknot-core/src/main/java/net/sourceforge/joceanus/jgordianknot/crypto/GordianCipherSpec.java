@@ -125,9 +125,9 @@ public abstract class GordianCipherSpec<T> {
          * @param pMode the mode
          * @param pPadding the padding
          */
-        protected GordianSymCipherSpec(final GordianSymKeySpec pKeySpec,
-                                       final GordianCipherMode pMode,
-                                       final GordianPadding pPadding) {
+        public GordianSymCipherSpec(final GordianSymKeySpec pKeySpec,
+                                    final GordianCipherMode pMode,
+                                    final GordianPadding pPadding) {
             super(pKeySpec);
             theMode = pMode;
             thePadding = pPadding;

@@ -22,15 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import java.awt.Image;
-import java.util.Arrays;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
@@ -38,8 +29,15 @@ import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseApp;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplash;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import java.awt.Image;
+import java.util.Arrays;
 
 /**
  * Main entry point for program.
@@ -48,7 +46,7 @@ public final class Control {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(Control.class);
+    private static final Logger LOGGER = LogManager.getLogger(Control.class);
 
     /**
      * Private constructor to avoid instantiation.

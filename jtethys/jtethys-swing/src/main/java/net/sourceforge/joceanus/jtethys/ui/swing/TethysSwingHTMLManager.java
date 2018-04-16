@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.print.PrinterAbortException;
-import java.awt.print.PrinterException;
-import java.io.IOException;
-import java.net.URL;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
@@ -36,11 +35,10 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import java.awt.print.PrinterAbortException;
+import java.awt.print.PrinterException;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * JavaFX HTML Manager.
@@ -50,7 +48,7 @@ public class TethysSwingHTMLManager
     /**
      * The logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysSwingHTMLManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysSwingHTMLManager.class);
 
     /**
      * The stream close error.

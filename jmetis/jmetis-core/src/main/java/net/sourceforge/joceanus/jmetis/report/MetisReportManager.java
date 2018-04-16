@@ -22,9 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.report;
 
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+import net.sourceforge.joceanus.jmetis.MetisIOException;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
+import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -32,19 +40,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import net.sourceforge.joceanus.jmetis.MetisIOException;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides functionality to hide and restore sections of an HTML document. This is useful for
@@ -57,7 +55,7 @@ public class MetisReportManager<F>
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetisReportManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(MetisReportManager.class);
 
     /**
      * The Event Manager.

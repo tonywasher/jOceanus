@@ -22,16 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
+import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianStreamCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianCipherSpec.GordianSymCipherSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.GordianKEMSender;
-import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * GordianKnot base for Factory.
@@ -609,7 +609,7 @@ public abstract class GordianFactory {
      * @return the new Cipher
      * @throws OceanusException on error
      */
-    protected abstract GordianWrapCipher createWrapCipher(GordianSymKeySpec pKeySpec) throws OceanusException;
+    public abstract GordianWrapCipher createWrapCipher(GordianSymKeySpec pKeySpec) throws OceanusException;
 
     /**
      * Create a wrapCipher.

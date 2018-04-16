@@ -22,6 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.atlas.database;
 
+import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
+import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
+import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -33,15 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jprometheus.PrometheusIOException;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferenceKey;
-import net.sourceforge.joceanus.jprometheus.atlas.preference.PrometheusDatabase.PrometheusDatabasePreferences;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-
 /**
  * Database.
  */
@@ -49,7 +48,7 @@ public abstract class PrometheusAtlasDatabase {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrometheusAtlasDatabase.class);
+    private static final Logger LOGGER = LogManager.getLogger(PrometheusAtlasDatabase.class);
 
     /**
      * The quote string.

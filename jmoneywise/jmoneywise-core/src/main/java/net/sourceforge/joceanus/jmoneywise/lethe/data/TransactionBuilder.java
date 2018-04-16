@@ -22,12 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
-import java.util.Currency;
-import java.util.Iterator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -45,6 +39,11 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Currency;
+import java.util.Iterator;
 
 /**
  * Transaction builder.
@@ -54,7 +53,7 @@ public class TransactionBuilder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionBuilder.class);
+    private static final Logger LOGGER = LogManager.getLogger(TransactionBuilder.class);
 
     /**
      * The updateSet.

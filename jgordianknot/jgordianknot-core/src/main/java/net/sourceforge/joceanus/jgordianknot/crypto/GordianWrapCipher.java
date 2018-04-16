@@ -22,13 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.security.spec.PKCS8EncodedKeySpec;
-
-import org.bouncycastle.util.Arrays;
-
 import net.sourceforge.joceanus.jgordianknot.GordianDataException;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
+import org.bouncycastle.util.Arrays;
+
+import java.security.spec.PKCS8EncodedKeySpec;
 
 /**
  * GordianKnot base for WrapCipher.
@@ -107,8 +106,8 @@ public class GordianWrapCipher {
      * @return the securedKey
      * @throws OceanusException on error
      */
-    protected byte[] secureKey(final GordianKey<GordianSymKeySpec> pKey,
-                               final GordianKey<?> pKeyToSecure) throws OceanusException {
+    public byte[] secureKey(final GordianKey<GordianSymKeySpec> pKey,
+                            final GordianKey<?> pKeyToSecure) throws OceanusException {
         /* Secure the bytes */
         return secureBytes(pKey, pKeyToSecure.getKeyBytes());
     }
@@ -122,9 +121,9 @@ public class GordianWrapCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
-    protected <T> GordianKey<T> deriveKey(final GordianKey<GordianSymKeySpec> pKey,
-                                          final byte[] pSecuredKey,
-                                          final T pKeyType) throws OceanusException {
+    public <T> GordianKey<T> deriveKey(final GordianKey<GordianSymKeySpec> pKey,
+                                       final byte[] pSecuredKey,
+                                       final T pKeyType) throws OceanusException {
         /* Unwrap the bytes */
         final byte[] myBytes = deriveBytes(pKey, pSecuredKey);
 
@@ -140,8 +139,8 @@ public class GordianWrapCipher {
      * @return the wrapped bytes
      * @throws OceanusException on error
      */
-    protected byte[] securePrivateKey(final GordianKey<GordianSymKeySpec> pKey,
-                                      final GordianKeyPair pKeyPairToSecure) throws OceanusException {
+    public byte[] securePrivateKey(final GordianKey<GordianSymKeySpec> pKey,
+                                   final GordianKeyPair pKeyPairToSecure) throws OceanusException {
         /* Access the KeyPair Generator */
         final GordianKeyPairGenerator myGenerator = theFactory.getKeyPairGenerator(pKeyPairToSecure.getKeySpec());
         final PKCS8EncodedKeySpec myPKCS8Key = myGenerator.getPKCS8Encoding(pKeyPairToSecure);
@@ -155,8 +154,8 @@ public class GordianWrapCipher {
      * @return the derived key
      * @throws OceanusException on error
      */
-    protected PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeySpec> pKey,
-                                                final byte[] pSecuredPrivateKey) throws OceanusException {
+    public PKCS8EncodedKeySpec deriveKeySpec(final GordianKey<GordianSymKeySpec> pKey,
+                                             final byte[] pSecuredPrivateKey) throws OceanusException {
         /* Derive the keySpec */
         final byte[] myBytes = deriveBytes(pKey, pSecuredPrivateKey);
         return new PKCS8EncodedKeySpec(myBytes);
@@ -169,8 +168,8 @@ public class GordianWrapCipher {
      * @return the secured bytes
      * @throws OceanusException on error
      */
-    protected byte[] secureBytes(final GordianKey<GordianSymKeySpec> pKey,
-                                 final byte[] pBytesToSecure) throws OceanusException {
+    public byte[] secureBytes(final GordianKey<GordianSymKeySpec> pKey,
+                              final byte[] pBytesToSecure) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
 
@@ -259,8 +258,8 @@ public class GordianWrapCipher {
      * @return the derived bytes
      * @throws OceanusException on error
      */
-    protected byte[] deriveBytes(final GordianKey<GordianSymKeySpec> pKey,
-                                 final byte[] pSecuredBytes) throws OceanusException {
+    public byte[] deriveBytes(final GordianKey<GordianSymKeySpec> pKey,
+                              final byte[] pSecuredBytes) throws OceanusException {
         /* Check validity of key */
         theCipher.checkValidKey(pKey);
 

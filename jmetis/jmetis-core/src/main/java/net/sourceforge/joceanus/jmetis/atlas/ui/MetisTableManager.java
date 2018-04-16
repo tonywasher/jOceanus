@@ -22,10 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.function.Predicate;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDilutedPriceColumn;
@@ -54,6 +50,10 @@ import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysOnRowCommit;
 import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableColumn;
+
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.function.Predicate;
 
 /**
  * Table Manager.
@@ -116,7 +116,7 @@ public abstract class MetisTableManager<R extends MetisFieldTableItem, N, I>
      * Set editable.
      * @param pEditable true/false
      */
-    protected void setEditable(final boolean pEditable) {
+    public void setEditable(final boolean pEditable) {
         theTable.setEditable(pEditable);
     }
 

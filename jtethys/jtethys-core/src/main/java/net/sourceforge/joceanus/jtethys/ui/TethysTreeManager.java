@@ -22,15 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Tree Manager.
@@ -43,7 +42,7 @@ public abstract class TethysTreeManager<T, N, I>
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TethysTreeManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(TethysTreeManager.class);
 
     /**
      * The id.

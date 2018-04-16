@@ -22,12 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.quicken.file;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AccountAttribute;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.PortfolioBucket;
@@ -55,6 +49,11 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Portfolio Builder class for QIF File.
@@ -63,7 +62,7 @@ public class QIFPortfolioBuilder {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(QIFPortfolioBuilder.class);
+    private static final Logger LOGGER = LogManager.getLogger(QIFPortfolioBuilder.class);
 
     /**
      * The QIF File.
