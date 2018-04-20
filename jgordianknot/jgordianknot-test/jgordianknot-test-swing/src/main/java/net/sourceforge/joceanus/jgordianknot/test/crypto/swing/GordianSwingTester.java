@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test.crypto.swing;
 
+import javax.swing.SwingUtilities;
+
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
@@ -30,13 +32,19 @@ import net.sourceforge.joceanus.jgordianknot.test.crypto.GordianTestSuite;
 import net.sourceforge.joceanus.jgordianknot.test.crypto.GordianTestSuite.SecurityManagerCreator;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
-import javax.swing.SwingUtilities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Security Test suite.
  */
 public class GordianSwingTester
         implements SecurityManagerCreator {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(GordianSwingTester.class);
+
     /**
      * The Test suite.
      */
@@ -105,8 +113,7 @@ public class GordianSwingTester
             GordianSwingTester myTests = new GordianSwingTester();
             myTests.runTests(args);
         } catch (Exception e) {
-            System.out.println("Help");
-            e.printStackTrace();
+            LOGGER.fatal("Help", e);
         }
         System.exit(0);
     }

@@ -45,6 +45,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPreferences;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraPreference.ThemisJiraPreferences;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -253,9 +254,9 @@ public abstract class ThemisSvnManager<N, I> {
         /* If we have a repository */
         if (myRepository != null) {
             /* Loop through the components */
-            final Iterator<ThemisSvnComponent> myIterator = myRepository.getComponents().iterator();
+            final Iterator<ThemisScmComponent> myIterator = myRepository.getComponents().iterator();
             while (myIterator.hasNext()) {
-                final ThemisSvnComponent myComp = myIterator.next();
+                final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
 
                 /* Create a new menu item for the component */
                 myMenu.newMenuItem(myComp, e -> createGitRepo(myComp));

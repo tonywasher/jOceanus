@@ -22,6 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jtethys.decimal.TethysDilution;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
 import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
@@ -33,12 +40,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollSubMenu;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Helper functions for Scroll Examples.
@@ -55,11 +56,6 @@ public class TethysScrollUITestHelper<N, I> {
      * Default icon width.
      */
     private static final int DEFAULT_ICONWIDTH = 24;
-
-    /**
-     * The default password value.
-     */
-    public static final char[] PASS_DEF = "Password".toCharArray();
 
     /**
      * The default short value.
@@ -120,7 +116,7 @@ public class TethysScrollUITestHelper<N, I> {
         addMenuItem(pMenu, "Second");
         addMenuItem(pMenu, "Third");
         addMenuItem(pMenu, "Fourth");
-        TethysScrollSubMenu<String, ?> myMenu = addSubMenu(pMenu, "SubMenu");
+        final TethysScrollSubMenu<String, ?> myMenu = addSubMenu(pMenu, "SubMenu");
         addSubMenuItem(myMenu, "AAAAA");
         addSubMenuItem(myMenu, "BBBBB");
         addMenuItem(pMenu, "Fifth");
@@ -131,11 +127,19 @@ public class TethysScrollUITestHelper<N, I> {
 
     /**
      * Add Menu Item for string.
+     * @return the char Array password
+     */
+    public static char[] getPassword() {
+        return "Password".toCharArray();
+    }
+
+    /**
+     * Add Menu Item for string.
      * @param pMenu the menu to add to
      * @param pValue the value to add
      */
-    private void addMenuItem(final TethysScrollMenu<String, ?> pMenu,
-                             final String pValue) {
+    private static void addMenuItem(final TethysScrollMenu<String, ?> pMenu,
+                                    final String pValue) {
         /* Add to context menu */
         pMenu.addItem(pValue);
     }
@@ -146,8 +150,8 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pValue the name to add
      * @return the subMenu
      */
-    private TethysScrollSubMenu<String, ?> addSubMenu(final TethysScrollMenu<String, ?> pMenu,
-                                                      final String pValue) {
+    private static TethysScrollSubMenu<String, ?> addSubMenu(final TethysScrollMenu<String, ?> pMenu,
+                                                             final String pValue) {
         /* Add to context menu */
         return pMenu.addSubMenu(pValue);
     }
@@ -157,8 +161,8 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pMenu the subMenu
      * @param pValue the value to add
      */
-    private void addSubMenuItem(final TethysScrollSubMenu<String, ?> pMenu,
-                                final String pValue) {
+    private static void addSubMenuItem(final TethysScrollSubMenu<String, ?> pMenu,
+                                       final String pValue) {
         /* Add to sub menu */
         pMenu.getSubMenu().addItem(pValue);
     }
@@ -169,7 +173,7 @@ public class TethysScrollUITestHelper<N, I> {
      */
     public List<TethysListId> buildSelectedList() {
         /* Create the list */
-        List<TethysListId> myValues = new ArrayList<>();
+        final List<TethysListId> myValues = new ArrayList<>();
         myValues.add(TethysListId.IMPORTANT);
         myValues.add(TethysListId.WORK);
 
@@ -183,7 +187,7 @@ public class TethysScrollUITestHelper<N, I> {
      */
     public Iterator<TethysListId> buildSelectableList() {
         /* Create the list */
-        List<TethysListId> myValues = new ArrayList<>();
+        final List<TethysListId> myValues = new ArrayList<>();
 
         /* Loop through the items */
         for (TethysListId myValue : TethysListId.values()) {
@@ -204,7 +208,7 @@ public class TethysScrollUITestHelper<N, I> {
     public <K extends Enum<K> & TethysIconId> TethysIconMapSet<Boolean> buildSimpleIconState(final K pFalseIcon,
                                                                                              final K pTrueIcon) {
         /* Create the state */
-        TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(DEFAULT_ICONWIDTH);
+        final TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(DEFAULT_ICONWIDTH);
         myMapSet.setMappingsForValue(Boolean.FALSE, Boolean.TRUE, pFalseIcon, "False");
         myMapSet.setMappingsForValue(Boolean.TRUE, Boolean.FALSE, pTrueIcon, "True");
         return myMapSet;
@@ -222,7 +226,7 @@ public class TethysScrollUITestHelper<N, I> {
                                                                                                             final K pTrueIcon,
                                                                                                             final K pAltTrueIcon) {
         /* Create the map */
-        Map<IconState, TethysIconMapSet<Boolean>> myMap = new HashMap<>();
+        final Map<IconState, TethysIconMapSet<Boolean>> myMap = new EnumMap<>(IconState.class);
 
         /* Create the CLOSED state */
         TethysIconMapSet<Boolean> myMapSet = new TethysIconMapSet<>(DEFAULT_ICONWIDTH);
@@ -245,7 +249,7 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pManager the button manager
      */
     public void buildStateButton(final TethysScrollButtonManager<IconState, N, I> pManager) {
-        TethysScrollMenu<IconState, I> myMenu = pManager.getMenu();
+        final TethysScrollMenu<IconState, I> myMenu = pManager.getMenu();
         myMenu.addItem(IconState.OPEN);
         myMenu.addItem(IconState.CLOSED);
         pManager.setValue(IconState.CLOSED);
@@ -292,7 +296,7 @@ public class TethysScrollUITestHelper<N, I> {
          * Constructor.
          * @param pDisplay the display string
          */
-        private IconState(final String pDisplay) {
+        IconState(final String pDisplay) {
             theDisplay = pDisplay;
         }
 

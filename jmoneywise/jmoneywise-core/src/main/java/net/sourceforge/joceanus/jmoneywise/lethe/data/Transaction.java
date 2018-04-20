@@ -693,7 +693,7 @@ public class Transaction
         if (myDate == null) {
             addError(ERROR_MISSING, FIELD_DATE);
             /* The date must be in-range */
-        } else if (myRange.compareTo(myDate) != 0) {
+        } else if (myRange.compareToDate(myDate) != 0) {
             addError(ERROR_RANGE, FIELD_DATE);
         }
 
@@ -1145,7 +1145,7 @@ public class Transaction
             /* Set the Date as the start of the range */
             TethysDate myDate = new TethysDate();
             final TethysDateRange myRange = getDataSet().getDateRange();
-            if (myRange.compareTo(myDate) != 0) {
+            if (myRange.compareToDate(myDate) != 0) {
                 myDate = myRange.getStart();
             }
             myTrans.setDate(myDate);

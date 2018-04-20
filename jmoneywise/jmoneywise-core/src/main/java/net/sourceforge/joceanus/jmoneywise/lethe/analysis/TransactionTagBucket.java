@@ -133,7 +133,7 @@ public final class TransactionTagBucket
             final Transaction myTrans = myIterator.next();
 
             /* Check the range */
-            final int iRange = pRange.compareTo(myTrans.getDate());
+            final int iRange = pRange.compareToDate(myTrans.getDate());
             if (iRange < 0) {
                 break;
             } else if (iRange == 0) {

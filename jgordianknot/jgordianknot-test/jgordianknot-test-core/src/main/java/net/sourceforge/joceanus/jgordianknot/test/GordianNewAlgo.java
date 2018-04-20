@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * jGordianKnot: Security Suite
+ * Copyright 2012,2017 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test;
 
 import java.security.SecureRandom;
@@ -17,7 +39,7 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigestType;
 /**
  * Check new algorithm.
  */
-public class GordianNewAlgo {
+public final class GordianNewAlgo {
     /**
      * The test data.
      */
@@ -46,21 +68,27 @@ public class GordianNewAlgo {
     }
 
     /**
+     * Private constructor.
+     */
+    private GordianNewAlgo() {
+    }
+
+    /**
      * testCipher.
      */
     private static void testCipher() {
         /* Create message and key */
-        byte[] myMessage = "ASmall16byteMsg.".getBytes();
-        byte[] key = ("abcdefghijklmnop" +
-                      "abcdefghijklmnop").getBytes();
+        final byte[] myMessage = "ASmall16byteMsg.".getBytes();
+        final byte[] key = ("abcdefghijklmnop" +
+                            "abcdefghijklmnop").getBytes();
 
         /* Create buffers */
-        byte[] myEncrypted = new byte[16];
-        byte[] myDecrypted = new byte[16];
+        final byte[] myEncrypted = new byte[16];
+        final byte[] myDecrypted = new byte[16];
 
         /* Setup the cipher */
-        MARSEngine myCipher = new MARSEngine();
-        CipherParameters myParms = new KeyParameter(key);
+        final MARSEngine myCipher = new MARSEngine();
+        final CipherParameters myParms = new KeyParameter(key);
 
         /* Perform encrypt and decrypt */
         myCipher.init(true, myParms);
@@ -78,16 +106,16 @@ public class GordianNewAlgo {
      */
     private static List<Results> testDigest(final GordianDigestType pDigestType) {
         /* Lengths to check */
-        int[] myLengths =
+        final int[] myLengths =
         { 224, 256, 384, 512 };
 
         /* Create the list */
-        List<Results> myList = new ArrayList<>();
+        final List<Results> myList = new ArrayList<>();
 
         /* Loop through the lengths */
         for (int mySize : myLengths) {
             /* Create the digest */
-            Results myDigest = createDigest(pDigestType, mySize);
+            final Results myDigest = createDigest(pDigestType, mySize);
             myList.add(myDigest);
 
             /* check and profile it */
@@ -125,8 +153,8 @@ public class GordianNewAlgo {
      */
     private static void checkDigest(final Results pDigest) {
         /* Perform a simple hash */
-        ExtendedDigest myDigest = pDigest.getDigest();
-        byte[] myResult = new byte[pDigest.getSize()];
+        final ExtendedDigest myDigest = pDigest.getDigest();
+        final byte[] myResult = new byte[pDigest.getSize()];
         myDigest.update(BYTES, 0, BYTES.length);
         myDigest.doFinal(myResult, 0);
         pDigest.setResult(myResult);
@@ -138,21 +166,21 @@ public class GordianNewAlgo {
      */
     private static void checkLargeDigest(final Results pDigest) {
         /* Create a large, randomly populated buffer */
-        int myDataLength = 21819;
-        byte[] myInput = new byte[myDataLength];
-        SecureRandom myRandom = new SecureRandom();
+        final int myDataLength = 21819;
+        final byte[] myInput = new byte[myDataLength];
+        final SecureRandom myRandom = new SecureRandom();
         myRandom.nextBytes(myInput);
 
         /* Create a digest using buffer all in one hit */
-        ExtendedDigest myDigest = pDigest.getDigest();
-        byte[] myResult = new byte[pDigest.getSize()];
+        final ExtendedDigest myDigest = pDigest.getDigest();
+        final byte[] myResult = new byte[pDigest.getSize()];
         myDigest.update(myInput, 0, myDataLength);
         myDigest.doFinal(myResult, 0);
 
         /* Now create a digest in parts that are discrete arrays */
-        int myBoundary = 1427;
-        byte[] myResult2 = new byte[pDigest.getSize()];
-        byte[] myPartial = new byte[myBoundary];
+        final int myBoundary = 1427;
+        final byte[] myResult2 = new byte[pDigest.getSize()];
+        final byte[] myPartial = new byte[myBoundary];
         for (int i = 0; i < myDataLength; i += myBoundary) {
             int myLen = myDataLength - i;
             if (myLen > myBoundary) {
@@ -190,9 +218,9 @@ public class GordianNewAlgo {
      */
     private static void profileDigest(final Results pDigest) {
         /* Perform a simple loop */
-        byte[] myResult = new byte[pDigest.getSize()];
-        ExtendedDigest myDigest = pDigest.getDigest();
-        long myStart = System.nanoTime();
+        final byte[] myResult = new byte[pDigest.getSize()];
+        final ExtendedDigest myDigest = pDigest.getDigest();
+        final long myStart = System.nanoTime();
         for (int i = 0; i < 1000; i++) {
             myDigest.update(BYTES, 0, BYTES.length);
             myDigest.doFinal(myResult, 0);
@@ -233,7 +261,7 @@ public class GordianNewAlgo {
         /**
          * Constructor.
          * @param pDigestType the digestType
-         * @param pSize the size
+         * @param pDigest the digest
          */
         Results(final GordianDigestType pDigestType,
                 final ExtendedDigest pDigest) {
@@ -292,7 +320,7 @@ public class GordianNewAlgo {
 
         /**
          * Set the elapsed.
-         * @param pResult the elapsed
+         * @param pElapsed the elapsed
          */
         public void setElapsed(final long pElapsed) {
             theElapsed = pElapsed;

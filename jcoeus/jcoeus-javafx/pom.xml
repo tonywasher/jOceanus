@@ -48,7 +48,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-   	      <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
+   	          <JavaFX-Preloader-Class>${packagePreLoader}</JavaFX-Preloader-Class>
             </manifestEntries>
           </archive>
         </configuration>

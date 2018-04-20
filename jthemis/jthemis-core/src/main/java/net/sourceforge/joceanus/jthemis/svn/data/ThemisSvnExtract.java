@@ -29,13 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-import org.tmatesoft.svn.core.wc.SVNUpdateClient;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
@@ -46,10 +39,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
+
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
 /**
  * Extract plan for path.
@@ -114,9 +116,9 @@ public class ThemisSvnExtract
         buildTags(myTrunk);
 
         /* Loop through the branches in reverse order */
-        final ListIterator<ThemisSvnBranch> myIterator = theComponent.branchListIterator();
+        final ListIterator<ThemisScmBranch> myIterator = theComponent.branchListIterator();
         while (myIterator.hasPrevious()) {
-            final ThemisSvnBranch myBranch = myIterator.previous();
+            final ThemisSvnBranch myBranch = (ThemisSvnBranch) myIterator.previous();
 
             /* Ignore if trunk */
             if (myBranch.isTrunk()) {
@@ -233,9 +235,9 @@ public class ThemisSvnExtract
      */
     private void buildTags(final ThemisSvnBranch pBranch) throws OceanusException {
         /* Loop through the tags */
-        final Iterator<ThemisSvnTag> myIterator = pBranch.tagIterator();
+        final Iterator<ThemisScmTag> myIterator = pBranch.tagIterator();
         while (myIterator.hasNext()) {
-            final ThemisSvnTag myTag = myIterator.next();
+            final ThemisSvnTag myTag = (ThemisSvnTag) myIterator.next();
 
             /* Build the plan */
             final ThemisSvnTagExtractPlan myPlan = new ThemisSvnTagExtractPlan(myTag);

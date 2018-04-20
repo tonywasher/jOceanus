@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
+import java.util.Currency;
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataType;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetBase.AssetBaseList;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
@@ -39,11 +42,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.decimal.TethysMoney;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Currency;
-import java.util.Iterator;
 
 /**
  * Transaction builder.
@@ -212,7 +213,7 @@ public class TransactionBuilder {
 
         /* Determine date */
         TethysDate myDate = new TethysDate();
-        final int iResult = myRange.compareTo(myDate);
+        final int iResult = myRange.compareToDate(myDate);
         if (iResult < 0) {
             myDate = myRange.getEnd();
         } else if (iResult > 0) {
@@ -392,9 +393,6 @@ public class TransactionBuilder {
 
         /* Build default category */
         final TransactionCategory myCategory = getDefaultCategoryForAccount(pHolding);
-        if (myCategory == null) {
-            return null;
-        }
         myTrans.setCategory(myCategory);
 
         /* Build default partner */
@@ -533,7 +531,7 @@ public class TransactionBuilder {
         }
 
         /* No category available */
-        return null;
+        throw new IllegalArgumentException();
     }
 
     /**

@@ -26,7 +26,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Currency;
@@ -49,10 +48,18 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 import net.sourceforge.joceanus.jtethys.decimal.TethysUnits;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Sheet Tester.
  */
-public class MetisSheetTester {
+public final class MetisSheetTester {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(MetisSheetTester.class);
+
     /**
      * Main entry point.
      * @param args the command line arguments
@@ -61,11 +68,17 @@ public class MetisSheetTester {
         /**
          * Load an ODS Spreadsheet using jOpenDocument
          */
-        MetisSheetCellRange myRange = new MetisSheetCellRange("'19''87'.AA22:.AC45");
-        MetisSheetCellRange myTwo = new MetisSheetCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
+        final MetisSheetCellRange myRange = new MetisSheetCellRange("'19''87'.AA22:.AC45");
+        final MetisSheetCellRange myTwo = new MetisSheetCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
         String h = myTwo.toString();
         // loadRange();
         writeSample();
+    }
+
+    /**
+     * Private constructor.
+     */
+    private MetisSheetTester() {
     }
 
     /**
@@ -121,18 +134,26 @@ public class MetisSheetTester {
             myCell.setDecimalValue(new TethysRatio("0.66"));
 
             /* Write the spreadsheet out */
-            File myXFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
-            FileOutputStream myOutFile = new FileOutputStream(myXFile);
-            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
-            myBook.saveToStream(myOutBuffer);
-            myOutBuffer.close();
+            final File myXFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
+            try (FileOutputStream myOutFile = new FileOutputStream(myXFile);
+                 BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile)) {
+                myBook.saveToStream(myOutBuffer);
+            } catch (IOException
+                     | OceanusException e){
+                LOGGER.fatal("Failed to save file", e);
+                return;
+            }
 
             /* Load the file and access the sheet */
-            FileInputStream myInFile = new FileInputStream(myXFile);
-            BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
-            mySheet = myBook.getSheet("TestData");
-            myInBuffer.close();
+            try (FileInputStream myInFile = new FileInputStream(myXFile);
+                 BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
+                myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
+                mySheet = myBook.getSheet("TestData");
+            } catch (IOException
+                    | OceanusException e) {
+                LOGGER.fatal("Failed to load file", e);
+                return;
+            }
 
             /* Access the row */
             myRow = mySheet.getReadOnlyRowByIndex(2);
@@ -159,10 +180,8 @@ public class MetisSheetTester {
             myCell = myRow.getReadOnlyCellByIndex(3);
             myValue = myCell.getRatioValue();
             myCell = null;
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (OceanusException e) {
-            e.printStackTrace();
+            LOGGER.fatal("Failed to parse file", e);
         }
     }
 
@@ -174,52 +193,50 @@ public class MetisSheetTester {
         /**
          * Load an ODS Spreadsheet using jOpenDocument
          */
-        try {
-            File myFile = new File("C:\\Users\\Tony\\Documents\\NewFinance.ods");
-            FileInputStream myInFile = new FileInputStream(myFile);
-            BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
-            MetisSheetView myView = myBook.getRangeView("Finance82");
-            int iNumRows = myView.getRowCount();
-            int iNumCols = myView.getColumnCount();
+        final File myFile = new File("C:\\Users\\Tony\\Documents\\NewFinance.ods");
+        try (FileInputStream myInFile = new FileInputStream(myFile);
+             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile)) {
+            final MetisSheetWorkBook myBook = MetisSheetProvider.loadFromStream(MetisSheetWorkBookType.OASISODS, myInBuffer);
+            final MetisSheetView myView = myBook.getRangeView("Finance82");
+            final int iNumRows = myView.getRowCount();
+            final int iNumCols = myView.getColumnCount();
             for (MetisSheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
                 MetisSheetCell myCell = myView.getRowCellByIndex(myRow, 0);
-                String myType = myCell.getStringValue();
+                final String myType = myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 1);
-                String myParent = (myCell == null)
+                final String myParent = myCell == null
                                                    ? null
                                                    : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 2);
-                String myAlias = (myCell == null)
+                final String myAlias = myCell == null
                                                   ? null
                                                   : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 3);
-                String myPortfolio = (myCell == null)
+                final String myPortfolio = myCell == null
                                                       ? null
                                                       : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 4);
-                String myBalance = (myCell == null)
+                final String myBalance = myCell == null
                                                     ? null
                                                     : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 5);
-                String mySymbol = (myCell == null)
+                final String mySymbol = myCell == null
                                                    ? null
                                                    : myCell.getStringValue();
                 myCell = myView.getRowCellByIndex(myRow, 6);
-                Boolean isTaxFree = (myCell == null)
+                final Boolean isTaxFree = myCell == null
                                                      ? null
                                                      : myCell.getBooleanValue();
                 myCell = myView.getRowCellByIndex(myRow, 7);
-                Boolean isClosed = (myCell == null)
+                final Boolean isClosed = myCell == null
                                                     ? null
                                                     : myCell.getBooleanValue();
                 myCell = myView.getRowCellByIndex(myRow, 8);
                 myCell = null;
             }
-        } catch (FileNotFoundException e) {
-            e = null;
-        } catch (OceanusException e) {
-            e = null;
+        } catch (IOException
+                | OceanusException e) {
+            LOGGER.fatal("Failed to load range", e);
         }
     }
 }

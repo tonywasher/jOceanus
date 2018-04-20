@@ -62,18 +62,13 @@ public class TethysSwingDemoFilter {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
+     }
 
     /**
      * Create and show the GUI.
      */
-    static void createAndShowGUI() {
+    public static void createAndShowGUI() {
         try {
             /* Create the frame */
             final JFrame myFrame = new JFrame("DataFilter Test");
@@ -140,7 +135,7 @@ public class TethysSwingDemoFilter {
             setModel(theModel);
 
             /* Create the filter and record it */
-            final TethysSwingTableSorter<RowData> myFilter = new TethysSwingTableSorter<RowData>(theModel);
+            final TethysSwingTableSorter<RowData> myFilter = new TethysSwingTableSorter<>(theModel);
             theModel.registerFilter(myFilter);
             setRowSorter(myFilter);
 
@@ -299,7 +294,7 @@ public class TethysSwingDemoFilter {
          */
         public TestTableModel() {
             /* Allocate the list */
-            theList = new ArrayList<RowData>();
+            theList = new ArrayList<>();
         }
 
         /**

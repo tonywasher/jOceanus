@@ -35,11 +35,9 @@ import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch.ThemisScmBranch
 /**
  * Represents a component in the repository.
  * @author Tony Washer
- * @param <C> the component data type
- * @param <R> the repository data type
  */
-public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-        implements MetisFieldItem, Comparable<C> {
+public abstract class ThemisScmComponent
+        implements MetisFieldItem, Comparable<ThemisScmComponent> {
     /**
      * Report fields.
      */
@@ -58,7 +56,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
     /**
      * Parent Repository.
      */
-    private final R theRepository;
+    private final ThemisScmRepository theRepository;
 
     /**
      * Component Name.
@@ -68,14 +66,14 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
     /**
      * BranchList.
      */
-    private ThemisScmBranchList<?, C, R> theBranches;
+    private ThemisScmBranchList theBranches;
 
     /**
      * Constructor.
      * @param pParent the Parent repository
      * @param pName the component name
      */
-    protected ThemisScmComponent(final R pParent,
+    protected ThemisScmComponent(final ThemisScmRepository pParent,
                                  final String pName) {
         /* Store values */
         theName = pName;
@@ -91,7 +89,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * Get the repository for this component.
      * @return the repository
      */
-    public R getRepository() {
+    public ThemisScmRepository getRepository() {
         return theRepository;
     }
 
@@ -107,7 +105,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * Get the branch list for this component.
      * @return the branch list
      */
-    public ThemisScmBranchList<?, C, R> getBranches() {
+    public ThemisScmBranchList getBranches() {
         return theBranches;
     }
 
@@ -115,12 +113,12 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
      * Set the branch list.
      * @param pBranches the branch list
      */
-    protected void setBranches(final ThemisScmBranchList<?, C, R> pBranches) {
+    protected void setBranches(final ThemisScmBranchList pBranches) {
         theBranches = pBranches;
     }
 
     @Override
-    public int compareTo(final C pThat) {
+    public int compareTo(final ThemisScmComponent pThat) {
         /* Handle trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -153,7 +151,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         if (!(pThat instanceof ThemisScmComponent)) {
             return false;
         }
-        final ThemisScmComponent<?, ?> myThat = (ThemisScmComponent<?, ?>) pThat;
+        final ThemisScmComponent myThat = (ThemisScmComponent) pThat;
 
         /* Compare fields */
         if (!theRepository.equals(myThat.getRepository())) {
@@ -170,11 +168,9 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
 
     /**
      * List of components.
-     * @param <C> the component type
-     * @param <R> the repository data type
-     */
-    public abstract static class ThemisScmComponentList<C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-            implements MetisFieldItem, MetisDataList<C> {
+      */
+    public abstract static class ThemisScmComponentList
+            implements MetisFieldItem, MetisDataList<ThemisScmComponent> {
         /**
          * Report fields.
          */
@@ -191,7 +187,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         /**
          * Component List.
          */
-        private final List<C> theList;
+        private final List<ThemisScmComponent> theList;
 
         /**
          * Constructor.
@@ -201,7 +197,7 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
         }
 
         @Override
-        public List<C> getUnderlyingList() {
+        public List<ThemisScmComponent> getUnderlyingList() {
             return theList;
         }
 
@@ -215,11 +211,11 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
          * @param pName the component to locate
          * @return the relevant component or Null
          */
-        protected C locateComponent(final String pName) {
+        protected ThemisScmComponent locateComponent(final String pName) {
             /* Loop through the entries */
-            final Iterator<C> myIterator = iterator();
+            final Iterator<ThemisScmComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final C myComponent = myIterator.next();
+                final ThemisScmComponent myComponent = myIterator.next();
 
                 /* If this is the correct component */
                 if (pName.equals(myComponent.getName())) {
@@ -238,12 +234,12 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
          * @param pVersion the version to locate
          * @return the relevant branch or Null
          */
-        protected ThemisScmBranch<?, C, R> locateBranch(final String pComponent,
-                                                        final String pVersion) {
+        protected ThemisScmBranch locateBranch(final String pComponent,
+                                               final String pVersion) {
             /* While we have entries */
-            final Iterator<C> myIterator = iterator();
+            final Iterator<ThemisScmComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final C myComponent = myIterator.next();
+                final ThemisScmComponent myComponent = myIterator.next();
 
                 /* If this is the correct component */
                 if (pComponent.equals(myComponent.getName())) {
@@ -263,13 +259,13 @@ public abstract class ThemisScmComponent<C extends ThemisScmComponent<C, R>, R e
          * @param pTag the tag to locate
          * @return the relevant tag or Null
          */
-        protected ThemisScmTag<?, ?, C, R> locateTag(final String pComponent,
-                                                     final String pVersion,
-                                                     final int pTag) {
+        protected ThemisScmTag locateTag(final String pComponent,
+                                         final String pVersion,
+                                         final int pTag) {
             /* While we have entries */
-            final Iterator<C> myIterator = iterator();
+            final Iterator<ThemisScmComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final C myComponent = myIterator.next();
+                final ThemisScmComponent myComponent = myIterator.next();
 
                 /* If this is the correct component */
                 if (pComponent.equals(myComponent.getName())) {

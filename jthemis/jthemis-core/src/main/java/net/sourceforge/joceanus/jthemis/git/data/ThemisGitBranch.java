@@ -25,6 +25,16 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
@@ -33,21 +43,12 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-
 /**
  * Represents a branch of a component in the repository.
  * @author Tony Washer
  */
 public final class ThemisGitBranch
-        extends ThemisScmBranch<ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+        extends ThemisScmBranch {
     /**
      * Master branch.
      */
@@ -154,11 +155,16 @@ public final class ThemisGitBranch
         return (ThemisGitTag) super.nextTag();
     }
 
+    @Override
+    public ThemisGitComponent getComponent() {
+        return (ThemisGitComponent) super.getComponent();
+    }
+
     /**
      * List of branches.
      */
     public static final class ThemisGitBranchList
-            extends ThemisScmBranchList<ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+            extends ThemisScmBranchList {
         /**
          * Branch references Prefix.
          */
@@ -192,11 +198,11 @@ public final class ThemisGitBranch
         }
 
         @Override
-        protected ThemisGitBranch createNewBranch(final ThemisGitComponent pComponent,
+        protected ThemisGitBranch createNewBranch(final ThemisScmComponent pComponent,
                                                   final int pMajor,
                                                   final int pMinor,
                                                   final int pDelta) {
-            return new ThemisGitBranch(pComponent, pMajor, pMinor, pDelta);
+            return new ThemisGitBranch((ThemisGitComponent) pComponent, pMajor, pMinor, pDelta);
         }
 
         /**
@@ -371,10 +377,10 @@ public final class ThemisGitBranch
             }
 
             /* Loop through the entries */
-            final Iterator<ThemisGitBranch> myIterator = iterator();
+            final Iterator<ThemisScmBranch> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next branch */
-                final ThemisGitBranch myBranch = myIterator.next();
+                final ThemisGitBranch myBranch = (ThemisGitBranch) myIterator.next();
 
                 /* Skip trunk branch */
                 if (myBranch.isTrunk()) {
@@ -401,17 +407,15 @@ public final class ThemisGitBranch
             }
         }
 
-        /**
-         * Locate Tag.
-         * @param pVersion the version to locate
-         * @param pTag the tag to locate
-         * @return the relevant tag or Null
-         */
+        @Override
+        protected ThemisGitBranch locateTrunk() {
+            return (ThemisGitBranch) super.locateTrunk();
+        }
+
         @Override
         protected ThemisGitTag locateTag(final String pVersion,
                                          final int pTag) {
-            /* Access list iterator */
-            return (ThemisGitTag) super.locateTag(pVersion, pTag);
+             return (ThemisGitTag) super.locateTag(pVersion, pTag);
         }
     }
 }

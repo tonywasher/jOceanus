@@ -547,7 +547,7 @@ public class ExchangeRate
             }
 
             /* The date must be in-range */
-            if (myRange.compareTo(myDate) != 0) {
+            if (myRange.compareToDate(myDate) != 0) {
                 addError(ERROR_RANGE, FIELD_DATE);
             }
         }
@@ -1106,7 +1106,7 @@ public class ExchangeRate
 
                     /* Check for the range of the date */
                     final TethysDate myDate = myCurr.getDate();
-                    final int iComp = pRange.compareTo(myDate);
+                    final int iComp = pRange.compareToDate(myDate);
 
                     /* If this is later than the range we are finished */
                     if (iComp < 0) {

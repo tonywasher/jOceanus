@@ -22,6 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.swing;
 
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysDataId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
@@ -47,18 +57,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysS
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableShortColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableUnitsColumn;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Test Swing Table Cells.
@@ -113,22 +114,22 @@ public class TethysSwingTableExample {
         theTable.getNode().setPreferredSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
         theTable.setRepaintRowOnCommit(true);
         theTable.setComparator((l, r) -> l.getName().compareTo(r.getName()));
-        theTable.setOnCommit(r -> r.incrementUpdates());
+        theTable.setOnCommit(TethysSwingTableItem::incrementUpdates);
 
         /* Create the name column */
         final TethysSwingTableStringColumn<TethysDataId, TethysSwingTableItem> myNameColumn = theTable.declareStringColumn(TethysDataId.NAME);
-        myNameColumn.setCellValueFactory(p -> p.getName());
+        myNameColumn.setCellValueFactory(TethysSwingTableItem::getName);
         myNameColumn.setOnCommit((r, v) -> r.setName(v));
         myNameColumn.setRepaintColumnOnCommit(true);
 
         /* Create the date column */
         final TethysSwingTableDateColumn<TethysDataId, TethysSwingTableItem> myDateColumn = theTable.declareDateColumn(TethysDataId.DATE);
-        myDateColumn.setCellValueFactory(p -> p.getDate());
+        myDateColumn.setCellValueFactory(TethysSwingTableItem::getDate);
         myDateColumn.setOnCommit((r, v) -> r.setDate(v));
 
         /* Create the short column */
         final TethysSwingTableShortColumn<TethysDataId, TethysSwingTableItem> myShortColumn = theTable.declareShortColumn(TethysDataId.SHORT);
-        myShortColumn.setCellValueFactory(p -> p.getShort());
+        myShortColumn.setCellValueFactory(TethysSwingTableItem::getShort);
         myShortColumn.setOnCommit((r, v) -> r.setShort(v));
         myShortColumn.setValidator((v, r) -> v < 0
                                                    ? "Must be positive"
@@ -136,52 +137,52 @@ public class TethysSwingTableExample {
 
         /* Create the integer column */
         final TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myIntColumn = theTable.declareIntegerColumn(TethysDataId.INTEGER);
-        myIntColumn.setCellValueFactory(p -> p.getInteger());
+        myIntColumn.setCellValueFactory(TethysSwingTableItem::getInteger);
         myIntColumn.setOnCommit((r, v) -> r.setInteger(v));
 
         /* Create the long column */
         final TethysSwingTableLongColumn<TethysDataId, TethysSwingTableItem> myLongColumn = theTable.declareLongColumn(TethysDataId.LONG);
-        myLongColumn.setCellValueFactory(p -> p.getLong());
+        myLongColumn.setCellValueFactory(TethysSwingTableItem::getLong);
         myLongColumn.setOnCommit((r, v) -> r.setLong(v));
 
         /* Create the money column */
         final TethysSwingTableMoneyColumn<TethysDataId, TethysSwingTableItem> myMoneyColumn = theTable.declareMoneyColumn(TethysDataId.MONEY);
-        myMoneyColumn.setCellValueFactory(p -> p.getMoney());
+        myMoneyColumn.setCellValueFactory(TethysSwingTableItem::getMoney);
         myMoneyColumn.setOnCommit((r, v) -> r.setMoney(v));
 
         /* Create the price column */
         final TethysSwingTablePriceColumn<TethysDataId, TethysSwingTableItem> myPriceColumn = theTable.declarePriceColumn(TethysDataId.PRICE);
-        myPriceColumn.setCellValueFactory(p -> p.getPrice());
+        myPriceColumn.setCellValueFactory(TethysSwingTableItem::getPrice);
         myPriceColumn.setOnCommit((r, v) -> r.setPrice(v));
 
         /* Create the units column */
         final TethysSwingTableUnitsColumn<TethysDataId, TethysSwingTableItem> myUnitsColumn = theTable.declareUnitsColumn(TethysDataId.UNITS);
-        myUnitsColumn.setCellValueFactory(p -> p.getUnits());
+        myUnitsColumn.setCellValueFactory(TethysSwingTableItem::getUnits);
         myUnitsColumn.setOnCommit((r, v) -> r.setUnits(v));
 
         /* Create the rate column */
         final TethysSwingTableRateColumn<TethysDataId, TethysSwingTableItem> myRateColumn = theTable.declareRateColumn(TethysDataId.RATE);
-        myRateColumn.setCellValueFactory(p -> p.getRate());
+        myRateColumn.setCellValueFactory(TethysSwingTableItem::getRate);
         myRateColumn.setOnCommit((r, v) -> r.setRate(v));
 
         /* Create the ratio column */
         final TethysSwingTableRatioColumn<TethysDataId, TethysSwingTableItem> myRatioColumn = theTable.declareRatioColumn(TethysDataId.RATIO);
-        myRatioColumn.setCellValueFactory(p -> p.getRatio());
+        myRatioColumn.setCellValueFactory(TethysSwingTableItem::getRatio);
         myRatioColumn.setOnCommit((r, v) -> r.setRatio(v));
 
         /* Create the dilution column */
         final TethysSwingTableDilutionColumn<TethysDataId, TethysSwingTableItem> myDilutionColumn = theTable.declareDilutionColumn(TethysDataId.DILUTION);
-        myDilutionColumn.setCellValueFactory(p -> p.getDilution());
+        myDilutionColumn.setCellValueFactory(TethysSwingTableItem::getDilution);
         myDilutionColumn.setOnCommit((r, v) -> r.setDilution(v));
 
         /* Create the dilutedPrice column */
         final TethysSwingTableDilutedPriceColumn<TethysDataId, TethysSwingTableItem> myDilutedPriceColumn = theTable.declareDilutedPriceColumn(TethysDataId.DILUTEDPRICE);
-        myDilutedPriceColumn.setCellValueFactory(p -> p.getDilutedPrice());
+        myDilutedPriceColumn.setCellValueFactory(TethysSwingTableItem::getDilutedPrice);
         myDilutedPriceColumn.setOnCommit((r, v) -> r.setDilutedPrice(v));
 
         /* Create the boolean column */
         final TethysSwingTableIconColumn<Boolean, TethysDataId, TethysSwingTableItem> myBoolColumn = theTable.declareIconColumn(TethysDataId.BOOLEAN, Boolean.class);
-        myBoolColumn.setCellValueFactory(p -> p.getBoolean());
+        myBoolColumn.setCellValueFactory(TethysSwingTableItem::getBoolean);
         myBoolColumn.setOnCommit((r, v) -> r.setBoolean(v));
         myBoolColumn.setName("B");
         final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
@@ -189,10 +190,10 @@ public class TethysSwingTableExample {
 
         /* Create the extra boolean column */
         final TethysSwingTableIconColumn<Boolean, TethysDataId, TethysSwingTableItem> myXtraBoolColumn = theTable.declareIconColumn(TethysDataId.XTRABOOL, Boolean.class);
-        myXtraBoolColumn.setCellValueFactory(p -> p.getXtraBoolean());
+        myXtraBoolColumn.setCellValueFactory(TethysSwingTableItem::getXtraBoolean);
         myXtraBoolColumn.setOnCommit((r, v) -> r.setXtraBoolean(v));
         myXtraBoolColumn.setName("X");
-        myXtraBoolColumn.setCellEditable(p -> p.getBoolean());
+        myXtraBoolColumn.setCellEditable(TethysSwingTableItem::getBoolean);
         final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
         myXtraBoolColumn.setIconMapSet(p -> myMap.get(p.getBoolean()
                                                                      ? IconState.OPEN
@@ -201,30 +202,30 @@ public class TethysSwingTableExample {
 
         /* Create the scroll column */
         final TethysSwingTableScrollColumn<String, TethysDataId, TethysSwingTableItem> myScrollColumn = theTable.declareScrollColumn(TethysDataId.SCROLL, String.class);
-        myScrollColumn.setCellValueFactory(p -> p.getScroll());
+        myScrollColumn.setCellValueFactory(TethysSwingTableItem::getScroll);
         myScrollColumn.setOnCommit((r, v) -> r.setScroll(v));
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
         final TethysSwingTableListColumn<TethysListId, TethysDataId, TethysSwingTableItem> myListColumn = theTable.declareListColumn(TethysDataId.LIST);
-        myListColumn.setCellValueFactory(p -> p.getList());
+        myListColumn.setCellValueFactory(TethysSwingTableItem::getList);
         myListColumn.setOnCommit((r, v) -> r.setList(v));
         myListColumn.setSelectables(r -> theHelper.buildSelectableList());
 
         /* Create the password column */
         final TethysSwingTableCharArrayColumn<TethysDataId, TethysSwingTableItem> myPassColumn = theTable.declareCharArrayColumn(TethysDataId.PASSWORD);
-        myPassColumn.setCellValueFactory(p -> p.getPassword());
+        myPassColumn.setCellValueFactory(TethysSwingTableItem::getPassword);
         myPassColumn.setOnCommit((r, v) -> r.setPassword(v));
 
         /* Create the updates column */
         final TethysSwingTableIntegerColumn<TethysDataId, TethysSwingTableItem> myUpdatesColumn = theTable.declareIntegerColumn(TethysDataId.UPDATES);
-        myUpdatesColumn.setCellValueFactory(p -> p.getUpdates());
+        myUpdatesColumn.setCellValueFactory(TethysSwingTableItem::getUpdates);
         myUpdatesColumn.setName("U");
         myUpdatesColumn.setEditable(false);
 
         /* Set Disabled indicator */
         theTable.setChanged((c, r) -> c == TethysDataId.NAME && r.getUpdates() > 0);
-        theTable.setDisabled(r -> r.getBoolean());
+        theTable.setDisabled(TethysSwingTableItem::getBoolean);
     }
 
     /**

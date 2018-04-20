@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -94,10 +95,10 @@ public class ThemisDiscoverData<N, I>
      */
     private void deriveExtractPlans() throws OceanusException {
         /* Loop through the components */
-        final Iterator<ThemisSvnComponent> myIterator = theRepository.getComponents().iterator();
+        final Iterator<ThemisScmComponent> myIterator = theRepository.getComponents().iterator();
         while (myIterator.hasNext()) {
             /* Create an extract plan for the component */
-            final ThemisSvnComponent myComp = myIterator.next();
+            final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
             final ThemisSvnExtract myPlan = new ThemisSvnExtract(myComp);
             theExtractPlanMap.put(myComp.getName(), myPlan);
         }

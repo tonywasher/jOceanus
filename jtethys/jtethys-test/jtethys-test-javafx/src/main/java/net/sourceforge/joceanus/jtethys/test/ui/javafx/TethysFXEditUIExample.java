@@ -22,11 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
+import java.util.Currency;
+import java.util.List;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -65,9 +68,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXLabel;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
-
-import java.util.Currency;
-import java.util.List;
 
 /**
  * Scroll utilities examples.
@@ -331,7 +331,7 @@ public class TethysFXEditUIExample
         myGrid.allowCellGrowth(thePassField);
         myGrid.newRow();
         thePassField.getEventRegistrar().addEventListener(e -> processActionEvent(thePassField, e));
-        thePassField.setValue(TethysScrollUITestHelper.PASS_DEF);
+        thePassField.setValue(TethysScrollUITestHelper.getPassword());
 
         /* Create Short field line */
         myLabel = theGuiFactory.newLabel("Short:");
@@ -451,7 +451,7 @@ public class TethysFXEditUIExample
         myGrid.allowCellGrowth(theScrollField);
         myGrid.newRow();
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
-        theScrollField.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
+        theScrollField.setMenuConfigurator(theHelper::buildContextMenu);
         theScrollField.setValue("First");
 
         /* Create DateButton field line */
@@ -662,8 +662,6 @@ public class TethysFXEditUIExample
             theValue.setText(theDecimalFormatter.formatLong((Long) pResults));
         } else if (pResults instanceof TethysDecimal) {
             theValue.setText(theDecimalFormatter.formatDecimal((TethysDecimal) pResults));
-        } else if (pResults instanceof Boolean) {
-            theValue.setText(pResults.toString());
         } else if (pResults instanceof Boolean) {
             theValue.setText(pResults.toString());
         } else if (pResults instanceof List) {

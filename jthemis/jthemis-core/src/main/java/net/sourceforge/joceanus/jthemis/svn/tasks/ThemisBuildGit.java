@@ -22,6 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.tasks;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -41,6 +49,7 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnExtra
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnExtractView;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnTagExtractPlan;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
+
 import org.eclipse.jgit.api.AddCommand;
 import org.eclipse.jgit.api.CheckoutCommand;
 import org.eclipse.jgit.api.CommitCommand;
@@ -53,14 +62,6 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Migrate a SubVersion Component to a new Git Repository.

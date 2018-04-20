@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
@@ -44,10 +46,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Iterator;
 
 /**
  * Analysis Edit View.
@@ -303,7 +304,7 @@ public class AnalysisView
                 }
 
                 /* Check the range */
-                final int myResult = pRange.compareTo(myCurr.getDate());
+                final int myResult = pRange.compareToDate(myCurr.getDate());
 
                 /* Handle out of range */
                 if (myResult > 0) {

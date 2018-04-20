@@ -1,8 +1,26 @@
+/*******************************************************************************
+ * jGordianKnot: Security Suite
+ * Copyright 2012,2017 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test;
-
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
-import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -17,10 +35,16 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.spec.McElieceCCA2KeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.McElieceKeyGenParameterSpec;
+
 /**
  * Test for McEliece JCE bugs.
  */
-public class GordianMcElieceTest {
+public final class GordianMcElieceTest {
     /**
      * McEliece algorithm.
      */
@@ -37,25 +61,37 @@ public class GordianMcElieceTest {
     private static final Provider BCPQPROV = new BouncyCastlePQCProvider();
 
     /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(GordianMcElieceTest.class);
+
+    /**
      * Run Tests.
      * @param pArgs arguments
      */
     public static void main(final String[] pArgs) {
-        TestMcElieceInit();
-        TestMcElieceCCA2Init();
-        TestMcElieceKeySpec();
-        TestMcElieceCCA2KeySpec();
+        testMcElieceInit();
+        testMcElieceCCA2Init();
+        testMcElieceKeySpec();
+        testMcElieceCCA2KeySpec();
+    }
+
+    /**
+     * Private constructor.
+     */
+
+    private GordianMcElieceTest() {
     }
 
     /**
      * Test McEliece Init.
      */
-    private static void TestMcElieceInit() {
+    private static void testMcElieceInit() {
         /* Catch Exceptions */
         try {
             /* Create and initialise the generator */
-            KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECE_ALGO, BCPQPROV);
-            McElieceKeyGenParameterSpec mySpec = new McElieceKeyGenParameterSpec(McElieceKeyGenParameterSpec.DEFAULT_M,
+            final KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECE_ALGO, BCPQPROV);
+            final McElieceKeyGenParameterSpec mySpec = new McElieceKeyGenParameterSpec(McElieceKeyGenParameterSpec.DEFAULT_M,
                     McElieceKeyGenParameterSpec.DEFAULT_T);
             myGenerator.initialize(mySpec, new SecureRandom());
 
@@ -64,30 +100,28 @@ public class GordianMcElieceTest {
              * initialise used is a NoOp
              */
             myGenerator.generateKeyPair();
-            System.out.println("McElieceCCA2 init Bug fixed");
+            LOGGER.error("McElieceCCA2 init Bug fixed");
 
             /* Catch Null Pointer Exception */
         } catch (NullPointerException e) {
-            System.out.println("McEliece init Bug still exists");
-            // e.printStackTrace();
+            LOGGER.error("McElieceCCA2 init Bug still exists", e);
 
             /* Catch general exceptions */
         } catch (NoSuchAlgorithmException
                 | InvalidAlgorithmParameterException e) {
-            System.out.println("Failed to create generator");
-            e.printStackTrace();
+            LOGGER.error("Failed to create generator", e);
         }
     }
 
     /**
      * Test McElieceCCA2 Init.
      */
-    private static void TestMcElieceCCA2Init() {
+    private static void testMcElieceCCA2Init() {
         /* Catch Exceptions */
         try {
             /* Create and initialise the generator */
-            KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECECCA2_ALGO, BCPQPROV);
-            McElieceCCA2KeyGenParameterSpec mySpec = new McElieceCCA2KeyGenParameterSpec(McElieceCCA2KeyGenParameterSpec.DEFAULT_M,
+            final KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECECCA2_ALGO, BCPQPROV);
+            final McElieceCCA2KeyGenParameterSpec mySpec = new McElieceCCA2KeyGenParameterSpec(McElieceCCA2KeyGenParameterSpec.DEFAULT_M,
                     McElieceCCA2KeyGenParameterSpec.DEFAULT_T, McElieceCCA2KeyGenParameterSpec.SHA512);
             myGenerator.initialize(mySpec, new SecureRandom());
 
@@ -96,112 +130,101 @@ public class GordianMcElieceTest {
              * initialise used is a NoOp
              */
             myGenerator.generateKeyPair();
-            System.out.println("McElieceCCA2 init Bug fixed");
+            LOGGER.error("McElieceCCA2 init Bug fixed");
 
             /* Catch Null Pointer Exception */
         } catch (NullPointerException e) {
-            System.out.println("McElieceCCA2 init Bug still exists");
-            // e.printStackTrace();
+            LOGGER.error("McElieceCCA2 init Bug still exists", e);
 
             /* Catch general exceptions */
         } catch (NoSuchAlgorithmException
                 | InvalidAlgorithmParameterException e) {
-            System.out.println("Failed to create generator");
-            e.printStackTrace();
+            LOGGER.error("Failed to create generator", e);
         }
     }
 
     /**
      * Test McEliece KeySpec.
      */
-    private static void TestMcElieceKeySpec() {
+    private static void testMcElieceKeySpec() {
         /* Catch Exceptions */
         try {
             /* Create and initialise the generator */
-            KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECE_ALGO, BCPQPROV);
+            final KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECE_ALGO, BCPQPROV);
             myGenerator.initialize(McElieceKeyGenParameterSpec.DEFAULT_M, new SecureRandom());
 
             /* Generate the keyPair. */
-            KeyPair myPair = myGenerator.generateKeyPair();
+            final KeyPair myPair = myGenerator.generateKeyPair();
 
             /* Create the Factory */
-            KeyFactory myFactory = KeyFactory.getInstance(MCELIECE_ALGO, BCPQPROV);
+            final KeyFactory myFactory = KeyFactory.getInstance(MCELIECE_ALGO, BCPQPROV);
 
             /* Access KeySpecs. This will return NULL keys since the call has not been coded */
-            PKCS8EncodedKeySpec myPrivateSpec = myFactory.getKeySpec(myPair.getPrivate(), PKCS8EncodedKeySpec.class);
-            X509EncodedKeySpec myPublicSpec = myFactory.getKeySpec(myPair.getPublic(), X509EncodedKeySpec.class);
-            if ((myPrivateSpec != null) && (myPublicSpec != null)) {
-                System.out.println("McEliece keySpec Bug fixed");
+            final PKCS8EncodedKeySpec myPrivateSpec = myFactory.getKeySpec(myPair.getPrivate(), PKCS8EncodedKeySpec.class);
+            final X509EncodedKeySpec myPublicSpec = myFactory.getKeySpec(myPair.getPublic(), X509EncodedKeySpec.class);
+            if (myPrivateSpec != null
+                    && myPublicSpec != null) {
+                LOGGER.error("McElieceCCA2 keySpec Bug fixed");
             } else {
-                System.out.println("McEliece keySpec Bug still exists");
+                LOGGER.error("McElieceCCA2 keySpec Bug still exists");
             }
 
             /* Translate Keys. This will return NULL keys since the call has not been coded */
-            Key myPrivate = myFactory.translateKey(myPair.getPrivate());
-            Key myPublic = myFactory.translateKey(myPair.getPublic());
+            final Key myPrivate = myFactory.translateKey(myPair.getPrivate());
+            final Key myPublic = myFactory.translateKey(myPair.getPublic());
             if ((myPrivate != null) && (myPublic != null)) {
-                System.out.println("McEliece translate Bug fixed");
+                LOGGER.error("McElieceCCA2 translate Bug fixed");
             } else {
-                System.out.println("McEliece translate Bug still exists");
+                LOGGER.error("McElieceCCA2 translate Bug still exists");
             }
 
             /* Catch general exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Failed to create generator");
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            System.out.println("Failed to obtain keySpec");
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            System.out.println("Failed to translate key");
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException
+                | InvalidKeySpecException
+                | InvalidKeyException e) {
+            LOGGER.error("Failed to create generator", e);
         }
     }
 
     /**
      * Test McElieceCCA2 KeySpec.
      */
-    private static void TestMcElieceCCA2KeySpec() {
+    private static void testMcElieceCCA2KeySpec() {
         /* Catch Exceptions */
         try {
             /* Create and initialise the generator */
-            KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECECCA2_ALGO, BCPQPROV);
+            final KeyPairGenerator myGenerator = KeyPairGenerator.getInstance(MCELIECECCA2_ALGO, BCPQPROV);
             myGenerator.initialize(McElieceCCA2KeyGenParameterSpec.DEFAULT_M, new SecureRandom());
 
             /* Generate the keyPair. */
-            KeyPair myPair = myGenerator.generateKeyPair();
+            final KeyPair myPair = myGenerator.generateKeyPair();
 
             /* Create the Factory */
-            KeyFactory myFactory = KeyFactory.getInstance(MCELIECECCA2_ALGO, BCPQPROV);
+            final KeyFactory myFactory = KeyFactory.getInstance(MCELIECECCA2_ALGO, BCPQPROV);
 
             /* Access KeySpecs. This will return NULL keys since the call has not been coded */
-            PKCS8EncodedKeySpec myPrivateSpec = myFactory.getKeySpec(myPair.getPrivate(), PKCS8EncodedKeySpec.class);
-            X509EncodedKeySpec myPublicSpec = myFactory.getKeySpec(myPair.getPublic(), X509EncodedKeySpec.class);
+            final PKCS8EncodedKeySpec myPrivateSpec = myFactory.getKeySpec(myPair.getPrivate(), PKCS8EncodedKeySpec.class);
+            final X509EncodedKeySpec myPublicSpec = myFactory.getKeySpec(myPair.getPublic(), X509EncodedKeySpec.class);
             if ((myPrivateSpec != null) && (myPublicSpec != null)) {
-                System.out.println("McElieceCCA2 keySpec Bug fixed");
+                LOGGER.error("McElieceCCA2 keySpec Bug fixed");
             } else {
-                System.out.println("McElieceCCA2 keySpec Bug still exists");
+                LOGGER.error("McElieceCCA2 keySpec Bug still exists");
             }
 
             /* Translate Keys. This will return NULL keys since the call has not been coded */
-            Key myPrivate = myFactory.translateKey(myPair.getPrivate());
-            Key myPublic = myFactory.translateKey(myPair.getPublic());
+            final Key myPrivate = myFactory.translateKey(myPair.getPrivate());
+            final Key myPublic = myFactory.translateKey(myPair.getPublic());
             if ((myPrivate != null) && (myPublic != null)) {
-                System.out.println("McElieceCCA2 translate Bug fixed");
+                LOGGER.error("McElieceCCA2 translate Bug fixed");
             } else {
-                System.out.println("McElieceCCA2 translate Bug still exists");
+                LOGGER.error("McElieceCCA2 translate Bug still exists");
             }
 
             /* Catch general exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Failed to create generator");
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            System.out.println("Failed to obtain keySpec");
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            System.out.println("Failed to translate key");
-            e.printStackTrace();
+        } catch (NoSuchAlgorithmException
+                | InvalidKeySpecException
+                | InvalidKeyException e) {
+            LOGGER.error("Failed to create generator", e);
         }
     }
 }

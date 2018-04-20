@@ -1,4 +1,29 @@
+/*******************************************************************************
+ * jGordianKnot: Security Suite
+ * Copyright 2012,2017 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
 
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.DataLengthException;
@@ -11,17 +36,23 @@ import org.bouncycastle.crypto.modes.KGCMBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 
-import java.security.SecureRandom;
-import java.util.Arrays;
-
 /**
  * Test for DSTU7624 Padding problems in modes.
  */
-public class GordianDSTUPadding {
-    /* Create standard 64-byte input for encryption */
+public final class GordianDSTUPadding {
+    /**
+     * BlockSize
+     */
+    private static final int BLOCKSIZE = 128;
+
+    /**
+     * Create standard 64-byte input for encryption
+     */
     private static final byte[] BYTES_64 = "A123456789B123456789C123456789D123456789E123456789F123456789G123".getBytes();
 
-    /* Create longer 65-byte input for encryption */
+    /**
+     * Create longer 65-byte input for encryption
+     */
     private static final byte[] BYTES_67 = "A123456789B123456789C123456789D123456789E123456789F123456789G123456".getBytes();
 
     /**
@@ -29,22 +60,28 @@ public class GordianDSTUPadding {
      * @param pArgs arguments
      */
     public static void main(final String[] pArgs) {
-        TestDSTU7624CCM(128, BYTES_64, true, false);
-        TestDSTU7624CCM(128, BYTES_64, false, true);
-        TestDSTU7624CCM(128, BYTES_64, true, true);
-        TestDSTU7624CCM(128, BYTES_67, true, false);
-        TestDSTU7624CCM(128, BYTES_67, false, true);
-        TestDSTU7624CCM(128, BYTES_67, true, true);
+        testDSTU7624CCM(BLOCKSIZE, BYTES_64, true, false);
+        testDSTU7624CCM(BLOCKSIZE, BYTES_64, false, true);
+        testDSTU7624CCM(BLOCKSIZE, BYTES_64, true, true);
+        testDSTU7624CCM(BLOCKSIZE, BYTES_67, true, false);
+        testDSTU7624CCM(BLOCKSIZE, BYTES_67, false, true);
+        testDSTU7624CCM(BLOCKSIZE, BYTES_67, true, true);
 
-        TestDSTU7624GCM(128, BYTES_64, true, false);
-        TestDSTU7624GCM(128, BYTES_64, false, true);
-        TestDSTU7624GCM(128, BYTES_64, true, true);
-        TestDSTU7624GCM(128, BYTES_67, true, false);
-        TestDSTU7624GCM(128, BYTES_67, false, true);
-        TestDSTU7624GCM(128, BYTES_67, true, true);
+        testDSTU7624GCM(BLOCKSIZE, BYTES_64, true, false);
+        testDSTU7624GCM(BLOCKSIZE, BYTES_64, false, true);
+        testDSTU7624GCM(BLOCKSIZE, BYTES_64, true, true);
+        testDSTU7624GCM(BLOCKSIZE, BYTES_67, true, false);
+        testDSTU7624GCM(BLOCKSIZE, BYTES_67, false, true);
+        testDSTU7624GCM(BLOCKSIZE, BYTES_67, true, true);
 
-        TestKGMac(128, BYTES_64);
-        TestKGMac(128, BYTES_67);
+        testKGMac(BLOCKSIZE, BYTES_64);
+        testKGMac(BLOCKSIZE, BYTES_67);
+    }
+
+    /**
+     * Private constructor.
+     */
+    private GordianDSTUPadding() {
     }
 
     /**
@@ -54,30 +91,30 @@ public class GordianDSTUPadding {
      * @param useAAD pass data as AAD to cipher
      * @param useData pass data as data to cipher
      */
-    private static void TestDSTU7624CCM(final int pBlockSize,
+    private static void testDSTU7624CCM(final int pBlockSize,
                                         final byte[] pData,
                                         final boolean useAAD,
                                         final boolean useData) {
         /* Create the generator and generate a key */
-        CipherKeyGenerator myGenerator = new CipherKeyGenerator();
-        SecureRandom myRandom = new SecureRandom();
-        KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, pBlockSize);
+        final CipherKeyGenerator myGenerator = new CipherKeyGenerator();
+        final SecureRandom myRandom = new SecureRandom();
+        final KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, pBlockSize);
         myGenerator.init(myParams);
-        byte[] myKey = myGenerator.generateKey();
+        final byte[] myKey = myGenerator.generateKey();
 
         /* Create an base engine */
-        DSTU7624Engine myEngine = new DSTU7624Engine(pBlockSize);
+        final DSTU7624Engine myEngine = new DSTU7624Engine(pBlockSize);
 
         /* Create IV */
-        byte[] myIV = new byte[myEngine.getBlockSize()];
+        final byte[] myIV = new byte[myEngine.getBlockSize()];
         myRandom.nextBytes(myIV);
 
         /* Create a parameterSpec */
-        KeyParameter myParms = new KeyParameter(myKey);
-        ParametersWithIV myIVParms = new ParametersWithIV(myParms, myIV);
+        final KeyParameter myParms = new KeyParameter(myKey);
+        final ParametersWithIV myIVParms = new ParametersWithIV(myParms, myIV);
 
         /* Create cipher */
-        KCCMBlockCipher myCipher = new KCCMBlockCipher(myEngine);
+        final KCCMBlockCipher myCipher = new KCCMBlockCipher(myEngine);
 
         /* Catch Exceptions */
         try {
@@ -112,7 +149,7 @@ public class GordianDSTUPadding {
                 myClearText = Arrays.copyOf(myClearText, myLen);
             }
 
-            boolean bSuccess = useData
+            final boolean bSuccess = useData
                                        ? Arrays.equals(pData, myClearText)
                                        : myLen == 0;
             if (bSuccess) {
@@ -134,30 +171,30 @@ public class GordianDSTUPadding {
      * @param useAAD pass data as AAD to cipher
      * @param useData pass data as data to cipher
      */
-    private static void TestDSTU7624GCM(final int pBlockSize,
+    private static void testDSTU7624GCM(final int pBlockSize,
                                         final byte[] pData,
                                         final boolean useAAD,
                                         final boolean useData) {
         /* Create the generator and generate a key */
-        CipherKeyGenerator myGenerator = new CipherKeyGenerator();
-        SecureRandom myRandom = new SecureRandom();
-        KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, pBlockSize);
+        final CipherKeyGenerator myGenerator = new CipherKeyGenerator();
+        final SecureRandom myRandom = new SecureRandom();
+        final KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, pBlockSize);
         myGenerator.init(myParams);
-        byte[] myKey = myGenerator.generateKey();
+        final byte[] myKey = myGenerator.generateKey();
 
         /* Create an base engine */
-        DSTU7624Engine myEngine = new DSTU7624Engine(pBlockSize);
+        final DSTU7624Engine myEngine = new DSTU7624Engine(pBlockSize);
 
         /* Create IV */
-        byte[] myIV = new byte[myEngine.getBlockSize()];
+        final byte[] myIV = new byte[myEngine.getBlockSize()];
         myRandom.nextBytes(myIV);
 
         /* Create a parameterSpec */
-        KeyParameter myParms = new KeyParameter(myKey);
-        ParametersWithIV myIVParms = new ParametersWithIV(myParms, myIV);
+        final KeyParameter myParms = new KeyParameter(myKey);
+        final ParametersWithIV myIVParms = new ParametersWithIV(myParms, myIV);
 
         /* Create cipher */
-        KGCMBlockCipher myCipher = new KGCMBlockCipher(myEngine);
+        final KGCMBlockCipher myCipher = new KGCMBlockCipher(myEngine);
 
         /* Catch Exceptions */
         try {
@@ -192,7 +229,7 @@ public class GordianDSTUPadding {
                 myClearText = Arrays.copyOf(myClearText, myLen);
             }
 
-            boolean bSuccess = useData
+            final boolean bSuccess = useData
                                        ? Arrays.equals(pData, myClearText)
                                        : myLen == 0;
             if (bSuccess) {
@@ -202,9 +239,7 @@ public class GordianDSTUPadding {
             }
 
             /* Catch general exceptions */
-        } catch (
-
-        InvalidCipherTextException e) {
+        } catch (InvalidCipherTextException e) {
             System.out.println("DSTU7624-" + pBlockSize + " Bug still exists");
         }
     }
@@ -214,40 +249,40 @@ public class GordianDSTUPadding {
      * @param pBlockSize the blockSize
      * @param pData the data to digest
      */
-    private static void TestKGMac(final int pBlockSize,
+    private static void testKGMac(final int pBlockSize,
                                   final byte[] pData) {
         /* Catch Exceptions */
         try {
             /* Create the generator and generate a key */
-            CipherKeyGenerator myGenerator = new CipherKeyGenerator();
-            SecureRandom myRandom = new SecureRandom();
-            KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
+            final CipherKeyGenerator myGenerator = new CipherKeyGenerator();
+            final SecureRandom myRandom = new SecureRandom();
+            final KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
             myGenerator.init(myParams);
-            byte[] myKey = myGenerator.generateKey();
+            final byte[] myKey = myGenerator.generateKey();
 
             /* Create an base engine */
-            DSTU7624Engine myEngine = new DSTU7624Engine(pBlockSize);
+            final DSTU7624Engine myEngine = new DSTU7624Engine(pBlockSize);
 
             /* Create IV */
-            byte[] myIV = new byte[myEngine.getBlockSize()];
+            final byte[] myIV = new byte[myEngine.getBlockSize()];
             myRandom.nextBytes(myIV);
 
             /* Create a parameterSpec */
-            KeyParameter myParms = new KeyParameter(myKey);
-            ParametersWithIV myIVParms = new ParametersWithIV(myParms, myIV);
+            final KeyParameter myParms = new KeyParameter(myKey);
+            final ParametersWithIV myIVParms = new ParametersWithIV(myParms, myIV);
 
             /* Create cipher */
-            KGCMBlockCipher myCipher = new KGCMBlockCipher(myEngine);
+            final KGCMBlockCipher myCipher = new KGCMBlockCipher(myEngine);
 
             /* Create a KGMac */
-            KGMac myMac = new KGMac(myCipher);
+            final KGMac myMac = new KGMac(myCipher);
             myMac.init(myIVParms);
 
             /* Update the Mac */
             myMac.update(pData, 0, pData.length);
 
             /* Access output */
-            byte[] myResult = new byte[myMac.getMacSize()];
+            final byte[] myResult = new byte[myMac.getMacSize()];
             myMac.doFinal(myResult, 0);
 
             System.out.println("DSTU7624 Padding Bug fixed");

@@ -714,7 +714,7 @@ public class TethysDate
      * @param pRange the range to compare to
      * @return -1 if date is before range, 0 if date is within range, 1 if date is after range
      */
-    public int compareTo(final TethysDateRange pRange) {
+    public int compareToRange(final TethysDateRange pRange) {
         /* Check start of range */
         final TethysDate myStart = pRange.getStart();
         if (myStart != null

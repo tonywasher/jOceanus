@@ -760,16 +760,15 @@ public final class TransactionCategoryBucket
             theTaxBasis = theAnalysis.getTaxBasis();
 
             /* Obtain the implied buckets */
-            final TransactionCategoryList myList = theData.getTransCategories();
-            theTaxCredit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.TAXCREDIT));
-            theEmployeeNatIns = getBucket(myList.getEventInfoCategory(TransactionInfoClass.EMPLOYEENATINS));
-            theEmployerNatIns = getBucket(myList.getEventInfoCategory(TransactionInfoClass.EMPLOYERNATINS));
-            theDeemedBenefit = getBucket(myList.getEventInfoCategory(TransactionInfoClass.DEEMEDBENEFIT));
-            theWithheld = getBucket(myList.getEventInfoCategory(TransactionInfoClass.WITHHELD));
-            theTaxRelief = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXRELIEF));
-            theChargeableGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CHARGEABLEGAIN));
-            theTaxFreeGains = getBucket(myList.getSingularClass(TransactionCategoryClass.TAXFREEGAIN));
-            theCapitalGains = getBucket(myList.getSingularClass(TransactionCategoryClass.CAPITALGAIN));
+            theTaxCredit = getEventInfoBucket(TransactionInfoClass.TAXCREDIT);
+            theEmployeeNatIns = getEventInfoBucket(TransactionInfoClass.EMPLOYEENATINS);
+            theEmployerNatIns = getEventInfoBucket(TransactionInfoClass.EMPLOYERNATINS);
+            theDeemedBenefit = getEventInfoBucket(TransactionInfoClass.DEEMEDBENEFIT);
+            theWithheld = getEventInfoBucket(TransactionInfoClass.WITHHELD);
+            theTaxRelief = getEventSingularBucket(TransactionCategoryClass.TAXRELIEF);
+            theChargeableGains = getEventSingularBucket(TransactionCategoryClass.CHARGEABLEGAIN);
+            theTaxFreeGains = getEventSingularBucket(TransactionCategoryClass.TAXFREEGAIN);
+            theCapitalGains = getEventSingularBucket(TransactionCategoryClass.CAPITALGAIN);
         }
 
         /**
@@ -910,6 +909,37 @@ public final class TransactionCategoryBucket
         }
 
         /**
+         * Obtain the TransactionCategoryBucket for a given transaction infoClass.
+         * @param pClass the transaction infoClass
+         * @return the bucket
+         */
+        protected TransactionCategoryBucket getEventInfoBucket(final TransactionInfoClass pClass) {
+            /* Determine category */
+            final TransactionCategoryList myList = theData.getTransCategories();
+            final TransactionCategory myCategory = myList.getEventInfoCategory(pClass);
+
+            /* Access bucket */
+            return myCategory == null
+                    ? null
+                    : getBucket(myCategory);
+        }
+
+        /**
+         * Obtain the TransactionCategoryBucket for a given transactionClass.
+         * @param pClass the transaction infoClass
+         * @return the bucket
+         */
+        protected TransactionCategoryBucket getEventSingularBucket(final TransactionCategoryClass pClass) {
+            /* Determine category */
+            final TransactionCategoryList myList = theData.getTransCategories();
+            final TransactionCategory myCategory = myList.getSingularClass(pClass);
+
+            /* Access bucket */
+            return myCategory == null
+                    ? null
+                    : getBucket(myCategory);
+        }
+        /**
          * Obtain the TransactionCategoryBucket for a given transaction category.
          * @param pCategory the transaction category
          * @return the bucket
@@ -917,7 +947,7 @@ public final class TransactionCategoryBucket
         protected TransactionCategoryBucket getBucket(final TransactionCategory pCategory) {
             /* Handle null category */
             if (pCategory == null) {
-                return null;
+                throw new IllegalArgumentException();
             }
 
             /* Locate the bucket in the list */

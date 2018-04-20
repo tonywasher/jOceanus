@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * jGordianKnot: Security Suite
+ * Copyright 2012,2017 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test;
 
 import java.security.SecureRandom;
@@ -13,41 +35,47 @@ import org.bouncycastle.util.Arrays;
 /**
  * Test for Jca OCB support bugs.
  */
-public class GordianDSTUMacTest {
+public final class GordianDSTUMacTest {
     /**
      * Run Tests.
      * @param pArgs arguments
      */
     public static void main(final String[] pArgs) {
-        TestDSTU7624Padding();
-        TestDSTU7624Reuse();
-        TestDSTU7564Reuse();
+        testDSTU7624Padding();
+        testDSTU7624Reuse();
+        testDSTU7564Reuse();
+    }
+
+    /**
+     * Private constructor.
+     */
+    private GordianDSTUMacTest() {
     }
 
     /**
      * Test DSTU7624 Mac Padding.
      */
-    private static void TestDSTU7624Padding() {
+    private static void testDSTU7624Padding() {
         /* Catch Exceptions */
         try {
             /* Create the generator and generate a key */
-            CipherKeyGenerator myGenerator = new CipherKeyGenerator();
-            SecureRandom myRandom = new SecureRandom();
-            KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
+            final CipherKeyGenerator myGenerator = new CipherKeyGenerator();
+            final SecureRandom myRandom = new SecureRandom();
+            final KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
             myGenerator.init(myParams);
-            byte[] myKey = myGenerator.generateKey();
+            final byte[] myKey = myGenerator.generateKey();
 
             /* Create a KalynaMac */
-            DSTU7624Mac myMac = new DSTU7624Mac(128, 128);
-            KeyParameter myParms = new KeyParameter(myKey);
+            final DSTU7624Mac myMac = new DSTU7624Mac(128, 128);
+            final KeyParameter myParms = new KeyParameter(myKey);
             myMac.init(myParms);
 
             /* Create short 40-byte input for digest */
-            byte[] myInput = "A123456789B123456789C123456789D123456789".getBytes();
+            final byte[] myInput = "A123456789B123456789C123456789D123456789".getBytes();
             myMac.update(myInput, 0, myInput.length);
 
             /* Access output */
-            byte[] myResult = new byte[myMac.getMacSize()];
+            final byte[] myResult = new byte[myMac.getMacSize()];
             myMac.doFinal(myResult, 0);
 
             System.out.println("DSTU7624 Padding Bug fixed");
@@ -60,29 +88,29 @@ public class GordianDSTUMacTest {
     /**
      * Test DSTU7624 Mac Reuse.
      */
-    private static void TestDSTU7624Reuse() {
+    private static void testDSTU7624Reuse() {
         /* Create the generator and generate a key */
-        CipherKeyGenerator myGenerator = new CipherKeyGenerator();
-        SecureRandom myRandom = new SecureRandom();
-        KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
+        final CipherKeyGenerator myGenerator = new CipherKeyGenerator();
+        final SecureRandom myRandom = new SecureRandom();
+        final KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
         myGenerator.init(myParams);
-        byte[] myKey = myGenerator.generateKey();
+        final byte[] myKey = myGenerator.generateKey();
 
         /* Create a KalynaMac */
-        DSTU7624Mac myMac = new DSTU7624Mac(128, 128);
-        KeyParameter myParms = new KeyParameter(myKey);
+        final DSTU7624Mac myMac = new DSTU7624Mac(128, 128);
+        final KeyParameter myParms = new KeyParameter(myKey);
         myMac.init(myParms);
 
         /* Create 32-byte input for digest */
-        byte[] myInput = "A123456789B123456789C123456789D1".getBytes();
+        final byte[] myInput = "A123456789B123456789C123456789D1".getBytes();
         myMac.update(myInput, 0, myInput.length);
 
         /* Access output */
-        byte[] myResult = new byte[myMac.getMacSize()];
+        final byte[] myResult = new byte[myMac.getMacSize()];
         myMac.doFinal(myResult, 0);
 
         /* Access output */
-        byte[] myRepeat = new byte[myMac.getMacSize()];
+        final byte[] myRepeat = new byte[myMac.getMacSize()];
         myMac.update(myInput, 0, myInput.length);
         myMac.doFinal(myRepeat, 0);
 
@@ -96,29 +124,29 @@ public class GordianDSTUMacTest {
     /**
      * Test DSTU7564 Mac Reuse.
      */
-    private static void TestDSTU7564Reuse() {
+    private static void testDSTU7564Reuse() {
         /* Create the generator and generate a key */
-        CipherKeyGenerator myGenerator = new CipherKeyGenerator();
-        SecureRandom myRandom = new SecureRandom();
-        KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
+        final CipherKeyGenerator myGenerator = new CipherKeyGenerator();
+        final SecureRandom myRandom = new SecureRandom();
+        final KeyGenerationParameters myParams = new KeyGenerationParameters(myRandom, 256);
         myGenerator.init(myParams);
-        byte[] myKey = myGenerator.generateKey();
+        final byte[] myKey = myGenerator.generateKey();
 
         /* Create a KalynaMac */
-        DSTU7564Mac myMac = new DSTU7564Mac(256);
-        KeyParameter myParms = new KeyParameter(myKey);
+        final DSTU7564Mac myMac = new DSTU7564Mac(256);
+        final KeyParameter myParms = new KeyParameter(myKey);
         myMac.init(myParms);
 
         /* Create 40-byte input for digest */
-        byte[] myInput = "A123456789B123456789C123456789D123456789".getBytes();
+        final byte[] myInput = "A123456789B123456789C123456789D123456789".getBytes();
         myMac.update(myInput, 0, myInput.length);
 
         /* Access output */
-        byte[] myResult = new byte[myMac.getMacSize()];
+        final byte[] myResult = new byte[myMac.getMacSize()];
         myMac.doFinal(myResult, 0);
 
         /* Access output */
-        byte[] myRepeat = new byte[myMac.getMacSize()];
+        final byte[] myRepeat = new byte[myMac.getMacSize()];
         myMac.update(myInput, 0, myInput.length);
         myMac.doFinal(myRepeat, 0);
 

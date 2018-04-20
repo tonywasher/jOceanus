@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.test.atlas.ui;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableIconColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableListColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableScrollColumn;
@@ -47,8 +50,8 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconSta
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Test Table.
@@ -57,6 +60,11 @@ import java.util.Map;
  */
 public class MetisTestDataTable<N, I>
         implements TethysNode<N> {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(MetisTestDataTable.class);
+
     /**
      * The TableManager.
      */
@@ -230,7 +238,7 @@ public class MetisTestDataTable<N, I>
         /* Create the extra boolean column */
         final MetisTableIconColumn<Boolean, MetisTestTableItem, N, I> myXtraBoolColumn = theTable.declareIconColumn(MetisTestDataField.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setName("X");
-        myXtraBoolColumn.setCellEditable(p -> p.getBoolean());
+        myXtraBoolColumn.setCellEditable(MetisTestTableItem::getBoolean);
         final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
         myXtraBoolColumn.setIconMapSet(p -> myMap.get(p.getBoolean()
                                                                      ? IconState.OPEN
@@ -249,7 +257,7 @@ public class MetisTestDataTable<N, I>
         theTable.declareCharArrayColumn(MetisTestDataField.PASSWORD);
 
         /* Set Disabled indicator */
-        theTable.setDisabled(r -> r.getBoolean());
+        theTable.setDisabled(MetisTestTableItem::getBoolean);
     }
 
     /**
@@ -278,7 +286,7 @@ public class MetisTestDataTable<N, I>
          * @param pClazz the class
          */
         MetisTestItemKey(final int pId,
-                         final Class<MetisTestTableItem> pClazz) {
+                         final Class<? extends MetisTestTableItem> pClazz) {
             theId = pId;
             theClazz = pClazz;
         }
@@ -290,8 +298,8 @@ public class MetisTestDataTable<N, I>
 
         @SuppressWarnings("unchecked")
         @Override
-        public Class<? extends MetisFieldVersionedItem> getClazz() {
-            return theClazz;
+        public <T extends MetisFieldVersionedItem> Class<T> getClazz() {
+            return (Class<T>) theClazz;
         }
 
         @Override
@@ -306,14 +314,14 @@ public class MetisTestDataTable<N, I>
 
         @SuppressWarnings("unchecked")
         @Override
-        public MetisFieldVersionedItem newItem(final MetisListSetVersioned pListSet) {
+        public <T extends MetisFieldVersionedItem> T newItem(final MetisListSetVersioned pListSet) {
             try {
-                return theClazz.getConstructor().newInstance();
+                return (T) theClazz.getConstructor().newInstance();
             } catch (InstantiationException
                     | InvocationTargetException
                     | NoSuchMethodException
                     | IllegalAccessException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to create item", e);
                 return null;
             }
         }

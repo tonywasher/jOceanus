@@ -25,9 +25,6 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.io.File;
 import java.io.IOException;
 
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -41,12 +38,15 @@ import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
 
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+
 /**
  * Represents a repository.
  * @author Tony Washer
  */
 public class ThemisGitRepository
-        extends ThemisScmRepository<ThemisGitRepository> {
+        extends ThemisScmRepository {
     /**
      * Report fields.
      */
@@ -65,11 +65,6 @@ public class ThemisGitRepository
     private final ThemisGitPreferences thePreferences;
 
     /**
-     * Repository Base.
-     */
-    private final String theBase;
-
-    /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
      * @param pReport the report object
@@ -84,7 +79,7 @@ public class ThemisGitRepository
         thePreferences = pPreferenceMgr.getPreferenceSet(ThemisGitPreferences.class);
 
         /* Access the Repository base */
-        theBase = thePreferences.getStringValue(ThemisGitPreferenceKey.BASE);
+        setBase(thePreferences.getStringValue(ThemisGitPreferenceKey.BASE));
         setName(thePreferences.getStringValue(ThemisGitPreferenceKey.NAME));
 
         /* Create component list */
@@ -109,14 +104,6 @@ public class ThemisGitRepository
     }
 
     /**
-     * Obtain the repository base.
-     * @return the name
-     */
-    public String getBase() {
-        return theBase;
-    }
-
-    /**
      * Obtain the preferences.
      * @return the preferences
      */
@@ -127,55 +114,6 @@ public class ThemisGitRepository
     @Override
     public ThemisGitComponentList getComponents() {
         return (ThemisGitComponentList) super.getComponents();
-    }
-
-    @Override
-    public int compareTo(final ThemisGitRepository pThat) {
-        /* Handle trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare bases */
-        final int iResult = theBase.compareTo(pThat.theBase);
-        if (iResult != 0) {
-            return iResult;
-        }
-
-        /* Compare names */
-        return super.compareTo(pThat);
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-
-        /* Check that the classes are the same */
-        if (!(pThat instanceof ThemisGitRepository)) {
-            return false;
-        }
-        final ThemisGitRepository myThat = (ThemisGitRepository) pThat;
-
-        /* Compare fields */
-        if (!theBase.equals(myThat.theBase)) {
-            return false;
-        }
-        return super.equals(myThat);
-    }
-
-    @Override
-    public int hashCode() {
-        return theBase.hashCode() * HASH_PRIME
-               + super.hashCode();
     }
 
     @Override
@@ -221,7 +159,7 @@ public class ThemisGitRepository
         try {
             /* StringBuilder */
             final StringBuilder myPathBuilder = new StringBuilder();
-            myPathBuilder.append(theBase)
+            myPathBuilder.append(getBase())
                     .append(File.separatorChar)
                     .append(pName);
             final String myRepoPath = myPathBuilder.toString();

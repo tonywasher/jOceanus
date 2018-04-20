@@ -22,12 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test.crypto.javafx;
 
+import java.util.List;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianFXHashManager;
@@ -37,7 +39,8 @@ import net.sourceforge.joceanus.jgordianknot.test.crypto.GordianTestSuite.Securi
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Security Test suite.
@@ -45,6 +48,11 @@ import java.util.List;
 public class GordianFXTester
         extends Application
         implements SecurityManagerCreator {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(GordianFXTester.class);
+
     /**
      * The Test suite.
      */
@@ -129,8 +137,7 @@ public class GordianFXTester
                 try {
                     runTests(myArgs);
                 } catch (Exception e) {
-                    System.out.println("Help");
-                    e.printStackTrace();
+                    LOGGER.fatal("Help", e);
                 }
                 System.exit(0);
             }

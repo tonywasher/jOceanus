@@ -243,12 +243,7 @@ public class TethysSwingDateExample {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     /**
@@ -366,7 +361,7 @@ public class TethysSwingDateExample {
 
         /* Create the date column */
         final TethysSwingTableDateColumn<String, DateItem> myDateColumn = theTable.declareDateColumn(DateItem.PROP_DATE);
-        myDateColumn.setCellValueFactory(p -> p.getDate());
+        myDateColumn.setCellValueFactory(DateItem::getDate);
         myDateColumn.setOnCommit((p, v) -> p.setDate(v));
         myDateColumn.setColumnWidth(COL_1_WIDTH);
         myDateColumn.setDateConfigurator((r, c) -> {
@@ -377,7 +372,7 @@ public class TethysSwingDateExample {
 
         /* Create the comments column */
         final TethysSwingTableStringColumn<String, DateItem> myCommentsColumn = theTable.declareStringColumn(DateItem.PROP_COMMENTS);
-        myCommentsColumn.setCellValueFactory(p -> p.getComments());
+        myCommentsColumn.setCellValueFactory(DateItem::getComments);
         myCommentsColumn.setOnCommit((p, v) -> p.setComments(v));
         myCommentsColumn.setColumnWidth(COL_2_WIDTH);
     }

@@ -160,7 +160,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the initial Date */
-            final int iRange = pRange.compareTo(myTrans.getDate());
+            final int iRange = pRange.compareToDate(myTrans.getDate());
             if (iRange <= 0) {
                 /* If we are within the range */
                 if (iRange == 0) {
@@ -196,7 +196,7 @@ public class BucketHistory<T extends BucketValues<T, E>, E extends Enum<E> & Buc
             final BucketSnapShot<T, E> myTrans = myEntry.getValue();
 
             /* If we are past the range, break the loop */
-            if (pRange.compareTo(myTrans.getDate()) < 0) {
+            if (pRange.compareToDate(myTrans.getDate()) < 0) {
                 break;
             }
 

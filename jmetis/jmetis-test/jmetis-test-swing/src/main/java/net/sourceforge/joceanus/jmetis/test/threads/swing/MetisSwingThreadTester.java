@@ -137,11 +137,11 @@ public class MetisSwingThreadTester {
     private static void createAndShowGUI() {
         try {
             /* Create the UI */
-            MetisSwingThreadTester myThread = new MetisSwingThreadTester();
-            JFrame myFrame = myThread.theFrame;
+            final MetisSwingThreadTester myThread = new MetisSwingThreadTester();
+            final JFrame myFrame = myThread.theFrame;
 
             /* Build the panel */
-            JComponent myPanel = myThread.buildPanel();
+            final JComponent myPanel = myThread.buildPanel();
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);
@@ -163,13 +163,13 @@ public class MetisSwingThreadTester {
      * @return the panel
      */
     private JComponent buildPanel() {
-        TethysSwingBoxPaneManager myButtons = theGuiFactory.newHBoxPane();
+        final TethysSwingBoxPaneManager myButtons = theGuiFactory.newHBoxPane();
         myButtons.addNode(theLaunchButton);
         myButtons.addSpacer();
         myButtons.addNode(theDebugButton);
 
         /* Create boxPane for the window */
-        TethysSwingBoxPaneManager myBox = theGuiFactory.newVBoxPane();
+        final TethysSwingBoxPaneManager myBox = theGuiFactory.newVBoxPane();
         myBox.addSpacer();
         myBox.addNode(myButtons);
         myBox.addSpacer();
@@ -221,12 +221,12 @@ public class MetisSwingThreadTester {
      */
     private void showDebug() {
         try {
-            MetisSwingViewerWindow myWindow = theToolkit.newViewerWindow();
+            final MetisSwingViewerWindow myWindow = theToolkit.newViewerWindow();
             theDebugButton.setEnabled(false);
             myWindow.getEventRegistrar().addEventListener(TethysUIEvent.WINDOWCLOSED, e -> theDebugButton.setEnabled(true));
             myWindow.showDialog();
         } catch (OceanusException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to show debug", e);
         }
     }
 }

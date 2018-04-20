@@ -22,6 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.swing;
 
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import java.awt.HeadlessException;
+import java.util.Currency;
+import java.util.List;
+
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -60,17 +69,9 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.HeadlessException;
-import java.util.Currency;
-import java.util.List;
 
 /**
  * Scroll utilities examples.
@@ -262,12 +263,7 @@ public class TethysSwingEditUIExample {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(() ->  createAndShowGUI());
     }
 
     /**
@@ -356,7 +352,7 @@ public class TethysSwingEditUIExample {
         myGrid.allowCellGrowth(thePassField);
         myGrid.newRow();
         thePassField.getEventRegistrar().addEventListener(e -> processActionEvent(thePassField, e));
-        thePassField.setValue(TethysScrollUITestHelper.PASS_DEF);
+        thePassField.setValue(TethysScrollUITestHelper.getPassword());
 
         /* Create Short field line */
         myLabel = theGuiFactory.newLabel("Short:");
@@ -476,7 +472,7 @@ public class TethysSwingEditUIExample {
         myGrid.allowCellGrowth(theScrollField);
         myGrid.newRow();
         theScrollField.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> processActionEvent(theScrollField, e));
-        theScrollField.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
+        theScrollField.setMenuConfigurator(theHelper::buildContextMenu);
         theScrollField.setValue("First");
 
         /* Create DateButton field line */
@@ -650,7 +646,7 @@ public class TethysSwingEditUIExample {
      * Configure a cmdMenu.
      * @param pField the command menu to configure
      */
-    private void configureCmdMenu(final TethysSwingDataTextField<?> pField) {
+    private static void configureCmdMenu(final TethysSwingDataTextField<?> pField) {
         /* Configure the command menu */
         pField.showCmdButton(true);
         pField.setCmdMenuConfigurator(c -> {

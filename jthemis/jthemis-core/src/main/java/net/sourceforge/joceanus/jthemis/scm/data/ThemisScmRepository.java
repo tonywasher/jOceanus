@@ -37,10 +37,9 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 /**
  * Represents a repository.
  * @author Tony Washer
- * @param <R> the data type
  */
-public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
-        implements MetisFieldItem, Comparable<R> {
+public abstract class ThemisScmRepository
+        implements MetisFieldItem, Comparable<ThemisScmRepository> {
     /**
      * The Hash Prime.
      */
@@ -68,6 +67,11 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     private final MetisPreferenceManager thePreferenceMgr;
 
     /**
+     * Repository Base.
+     */
+    private String theBase;
+
+    /**
      * Repository Name.
      */
     private String theName;
@@ -75,7 +79,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     /**
      * ComponentList.
      */
-    private ThemisScmComponentList<?, R> theComponents;
+    private ThemisScmComponentList theComponents;
 
     /**
      * Branch Map.
@@ -101,6 +105,14 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     }
 
     /**
+     * Obtain the repository base.
+     * @return the name
+     */
+    public String getBase() {
+        return theBase;
+    }
+
+    /**
      * Obtain the repository name.
      * @return the name
      */
@@ -120,7 +132,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * Get the component list for this repository.
      * @return the component list
      */
-    public ThemisScmComponentList<?, R> getComponents() {
+    public ThemisScmComponentList getComponents() {
         return theComponents;
     }
 
@@ -141,6 +153,14 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
     }
 
     /**
+     * Set the base.
+     * @param pBase the repository base
+     */
+    protected void setBase(final String pBase) {
+        theBase = pBase;
+    }
+
+    /**
      * Set the name.
      * @param pName the repository name
      */
@@ -152,18 +172,24 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * Set the component list.
      * @param pComponents the component list
      */
-    protected void setComponents(final ThemisScmComponentList<?, R> pComponents) {
+    protected void setComponents(final ThemisScmComponentList pComponents) {
         theComponents = pComponents;
     }
 
     @Override
-    public int compareTo(final R pThat) {
+    public int compareTo(final ThemisScmRepository pThat) {
         /* Handle trivial cases */
         if (this.equals(pThat)) {
             return 0;
         }
         if (pThat == null) {
             return -1;
+        }
+
+        /* Compare bases */
+        final int iResult = theBase.compareTo(pThat.theBase);
+        if (iResult != 0) {
+            return iResult;
         }
 
         /* Compare names */
@@ -184,15 +210,19 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         if (!(pThat instanceof ThemisScmRepository)) {
             return false;
         }
-        final ThemisScmRepository<?> myThat = (ThemisScmRepository<?>) pThat;
+        final ThemisScmRepository myThat = (ThemisScmRepository) pThat;
 
         /* Compare fields */
+        if (!theBase.equals(myThat.theBase)) {
+            return false;
+        }
         return theName.equals(myThat.getName());
     }
 
     @Override
     public int hashCode() {
-        return theName.hashCode();
+        return theBase.hashCode() * HASH_PRIME
+               +  theName.hashCode();
     }
 
     /**
@@ -200,7 +230,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pName the component to locate
      * @return the relevant component or Null
      */
-    public ThemisScmComponent<?, R> locateComponent(final String pName) {
+    public ThemisScmComponent locateComponent(final String pName) {
         /* Locate component in component list */
         return theComponents.locateComponent(pName);
     }
@@ -211,8 +241,8 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pVersion the version to locate
      * @return the relevant branch or Null
      */
-    public ThemisScmBranch<?, ?, R> locateBranch(final String pComponent,
-                                                 final String pVersion) {
+    public ThemisScmBranch locateBranch(final String pComponent,
+                                        final String pVersion) {
         /* Locate branch in component list */
         return theComponents.locateBranch(pComponent, pVersion);
     }
@@ -224,9 +254,9 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pTag the tag to locate
      * @return the relevant branch or Null
      */
-    public ThemisScmTag<?, ?, ?, R> locateTag(final String pComponent,
-                                              final String pVersion,
-                                              final int pTag) {
+    public ThemisScmTag locateTag(final String pComponent,
+                                  final String pVersion,
+                                  final int pTag) {
         /* Locate Tag in component list */
         return theComponents.locateTag(pComponent, pVersion, pTag);
     }
@@ -236,7 +266,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pId the project id for the branch
      * @return the branch
      */
-    protected ThemisScmBranch<?, ?, R> locateBranch(final ThemisMvnProjectId pId) {
+    protected ThemisScmBranch locateBranch(final ThemisMvnProjectId pId) {
         /* Lookup mapping */
         return theBranchMap.get(pId);
     }
@@ -246,7 +276,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pId the project id for the tag
      * @return the tag
      */
-    protected ThemisScmTag<?, ?, ?, R> locateTag(final ThemisMvnProjectId pId) {
+    protected ThemisScmTag locateTag(final ThemisMvnProjectId pId) {
         /* Lookup mapping */
         return theTagMap.get(pId);
     }
@@ -257,7 +287,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pBranch the branch
      */
     public void registerBranch(final ThemisMvnProjectId pId,
-                               final ThemisScmBranch<?, ?, R> pBranch) {
+                               final ThemisScmBranch pBranch) {
         /* Store mapping */
         theBranchMap.put(pId, pBranch);
     }
@@ -268,7 +298,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * @param pTag the tag
      */
     public void registerTag(final ThemisMvnProjectId pId,
-                            final ThemisScmTag<?, ?, ?, R> pTag) {
+                            final ThemisScmTag pTag) {
         /* Store mapping */
         theTagMap.put(pId, pTag);
     }
@@ -277,11 +307,11 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * Branch Map.
      */
     private final class ThemisBranchMap
-            implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> {
+            implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmBranch> {
         /**
          * The map.
          */
-        private final Map<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> theMap;
+        private final Map<ThemisMvnProjectId, ThemisScmBranch> theMap;
 
         /**
          * Constructor.
@@ -291,7 +321,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         }
 
         @Override
-        public Map<ThemisMvnProjectId, ThemisScmBranch<?, ?, R>> getUnderlyingMap() {
+        public Map<ThemisMvnProjectId, ThemisScmBranch> getUnderlyingMap() {
             return theMap;
         }
 
@@ -305,11 +335,11 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
      * Tag Map.
      */
     private final class ThemisTagMap
-            implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> {
+            implements MetisDataObjectFormat, MetisDataMap<ThemisMvnProjectId, ThemisScmTag> {
         /**
          * The map.
          */
-        private final Map<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> theMap;
+        private final Map<ThemisMvnProjectId, ThemisScmTag> theMap;
 
         /**
          * Constructor.
@@ -319,7 +349,7 @@ public abstract class ThemisScmRepository<R extends ThemisScmRepository<R>>
         }
 
         @Override
-        public Map<ThemisMvnProjectId, ThemisScmTag<?, ?, ?, R>> getUnderlyingMap() {
+        public Map<ThemisMvnProjectId, ThemisScmTag> getUnderlyingMap() {
             return theMap;
         }
 

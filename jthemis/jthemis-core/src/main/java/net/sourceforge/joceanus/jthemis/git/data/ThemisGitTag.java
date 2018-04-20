@@ -25,25 +25,26 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
+
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-
 /**
  * Represents a tag of a branch.
  */
 public final class ThemisGitTag
-        extends ThemisScmTag<ThemisGitTag, ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+        extends ThemisScmTag {
     /**
      * Tag References Prefix.
      */
@@ -140,11 +141,16 @@ public final class ThemisGitTag
         return theComponent;
     }
 
+    @Override
+    public ThemisGitBranch getBranch() {
+      return (ThemisGitBranch) super.getBranch();
+    }
+
     /**
      * List of tags.
      */
     public static class ThemisGitTagList
-            extends ThemisScmTagList<ThemisGitTag, ThemisGitBranch, ThemisGitComponent, ThemisGitRepository> {
+            extends ThemisScmTagList {
         /**
          * Report fields.
          */
@@ -164,9 +170,9 @@ public final class ThemisGitTag
             super(pParent);
 
             /* Store parent for use by entry handler */
-            theComponent = (pParent == null)
-                                             ? null
-                                             : pParent.getComponent();
+            theComponent = pParent == null
+                                           ? null
+                                           : pParent.getComponent();
         }
 
         @Override
@@ -175,9 +181,14 @@ public final class ThemisGitTag
         }
 
         @Override
-        protected ThemisGitTag createNewTag(final ThemisGitBranch pBranch,
+        protected ThemisGitTag createNewTag(final ThemisScmBranch pBranch,
                                             final int pTag) {
-            return new ThemisGitTag(pBranch, pTag);
+            return new ThemisGitTag((ThemisGitBranch) pBranch, pTag);
+        }
+
+        @Override
+        public ThemisGitBranch getBranch() {
+            return (ThemisGitBranch) super.getBranch();
         }
 
         /**
@@ -256,10 +267,10 @@ public final class ThemisGitTag
             final ThemisGitRepository myRepo = theComponent.getRepository();
 
             /* Loop through the entries */
-            final Iterator<ThemisGitTag> myIterator = iterator();
+            final Iterator<ThemisScmTag> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next tag */
-                final ThemisGitTag myTag = myIterator.next();
+                final ThemisGitTag myTag = (ThemisGitTag) myIterator.next();
 
                 /* Report stage */
                 pReport.setNewStage("Analysing tag " + myTag.getTagName());

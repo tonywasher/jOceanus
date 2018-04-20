@@ -185,12 +185,7 @@ public class TethysSwingScrollUIExample {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+        SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
     /**
@@ -273,7 +268,7 @@ public class TethysSwingScrollUIExample {
         /* Add listener */
         theScrollButtonMgr.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE,
                 e -> setScrollValue(e.getDetails(String.class)));
-        theScrollButtonMgr.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
+        theScrollButtonMgr.setMenuConfigurator(theHelper::buildContextMenu);
 
         /* Create list button line */
         theListButtonMgr.setBorderTitle("ListButton");
@@ -361,9 +356,7 @@ public class TethysSwingScrollUIExample {
         myGrid.newRow();
 
         /* Add listener */
-        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> {
-            setColorValue(e.getDetails(String.class));
-        });
+        theColorPicker.getEventRegistrar().addEventListener(TethysUIEvent.NEWVALUE, e -> setColorValue(e.getDetails(String.class)));
 
         /* Configure the grid */
         myGrid.setBorderPadding(3);

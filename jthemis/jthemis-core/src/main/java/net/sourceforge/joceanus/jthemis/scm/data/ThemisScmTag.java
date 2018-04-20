@@ -34,13 +34,9 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 /**
  * Core representation of a tag.
- * @param <T> the tag data type
- * @param <B> the branch data type
- * @param <C> the component data type
- * @param <R> the repository data type
  */
-public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends ThemisScmBranch<B, C, R>, C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-        implements MetisFieldItem, Comparable<T> {
+public abstract class ThemisScmTag
+        implements MetisFieldItem, Comparable<ThemisScmTag> {
     /**
      * The tag prefix.
      */
@@ -64,7 +60,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
     /**
      * The Branch to which this Tag belongs.
      */
-    private final B theBranch;
+    private final ThemisScmBranch theBranch;
 
     /**
      * The Tag number.
@@ -81,7 +77,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
      * @param pParent the Parent branch
      * @param pTag the tag number
      */
-    protected ThemisScmTag(final B pParent,
+    protected ThemisScmTag(final ThemisScmBranch pParent,
                            final int pTag) {
         /* Store values */
         theBranch = pParent;
@@ -105,7 +101,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
      * Get the branch for this tag.
      * @return the branch
      */
-    public B getBranch() {
+    public ThemisScmBranch getBranch() {
         return theBranch;
     }
 
@@ -134,7 +130,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
     }
 
     @Override
-    public int compareTo(final T pThat) {
+    public int compareTo(final ThemisScmTag pThat) {
         /* Handle trivial cases */
         if (this.equals(pThat)) {
             return 0;
@@ -173,7 +169,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         if (!(pThat instanceof ThemisScmTag)) {
             return false;
         }
-        final ThemisScmTag<?, ?, ?, ?> myThat = (ThemisScmTag<?, ?, ?, ?>) pThat;
+        final ThemisScmTag myThat = (ThemisScmTag) pThat;
 
         /* Compare fields */
         if (!theBranch.equals(myThat.getBranch())) {
@@ -190,13 +186,9 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
 
     /**
      * List of tags.
-     * @param <T> the tag data type
-     * @param <B> the branch data type
-     * @param <C> the component data type
-     * @param <R> the repository data type
      */
-    public abstract static class ThemisScmTagList<T extends ThemisScmTag<T, B, C, R>, B extends ThemisScmBranch<B, C, R>, C extends ThemisScmComponent<C, R>, R extends ThemisScmRepository<R>>
-            implements MetisFieldItem, MetisDataList<T> {
+    public abstract static class ThemisScmTagList
+            implements MetisFieldItem, MetisDataList<ThemisScmTag> {
         /**
          * Report fields.
          */
@@ -213,12 +205,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         /**
          * Tag List.
          */
-        private final List<T> theList;
+        private final List<ThemisScmTag> theList;
 
         /**
          * The parent branch.
          */
-        private final B theBranch;
+        private final ThemisScmBranch theBranch;
 
         /**
          * The prefix.
@@ -229,7 +221,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * Constructor.
          * @param pParent the parent branch
          */
-        protected ThemisScmTagList(final B pParent) {
+        protected ThemisScmTagList(final ThemisScmBranch pParent) {
             /* Store parent for use by entry handler */
             theBranch = pParent;
             theList = new ArrayList<>();
@@ -241,7 +233,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
         }
 
         @Override
-        public List<T> getUnderlyingList() {
+        public List<ThemisScmTag> getUnderlyingList() {
             return theList;
         }
 
@@ -254,7 +246,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * Get the parent branch.
          * @return the branch
          */
-        public B getBranch() {
+        public ThemisScmBranch getBranch() {
             return theBranch;
         }
 
@@ -271,11 +263,11 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * @param pTag the tag
          * @return the relevant tag or Null
          */
-        public T locateTag(final T pTag) {
+        public ThemisScmTag locateTag(final ThemisScmTag pTag) {
             /* Loop through the entries */
-            final Iterator<T> myIterator = iterator();
+            final Iterator<ThemisScmTag> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final T myTag = myIterator.next();
+                final ThemisScmTag myTag = myIterator.next();
 
                 /* If this is the correct tag */
                 final int iCompare = myTag.compareTo(pTag);
@@ -297,11 +289,11 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * @param pTag the tag to locate
          * @return the relevant tag or Null
          */
-        protected T locateTag(final int pTag) {
+        protected ThemisScmTag locateTag(final int pTag) {
             /* Loop through the entries */
-            final Iterator<T> myIterator = iterator();
+            final Iterator<ThemisScmTag> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final T myTag = myIterator.next();
+                final ThemisScmTag myTag = myIterator.next();
 
                 /* If this is the correct tag */
                 if (pTag == myTag.getTagNo()) {
@@ -318,12 +310,12 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * Determine latest tag.
          * @return the latest tag
          */
-        public T latestTag() {
+        public ThemisScmTag latestTag() {
             /* Declare default */
-            T myTag = null;
+            ThemisScmTag myTag = null;
 
             /* Loop to the last entry */
-            final Iterator<T> myIterator = iterator();
+            final Iterator<ThemisScmTag> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the next tag */
                 myTag = myIterator.next();
@@ -337,14 +329,14 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * Determine next tag.
          * @return the next tag
          */
-        public T nextTag() {
+        public ThemisScmTag nextTag() {
             /* Access latest tag */
-            final T myTag = latestTag();
+            final ThemisScmTag myTag = latestTag();
 
             /* Determine the largest current tag */
-            final int myTagNo = (myTag == null)
-                                                ? 0
-                                                : myTag.getTagNo();
+            final int myTagNo = myTag == null
+                                              ? 0
+                                              : myTag.getTagNo();
 
             /* Create the tag */
             return createNewTag(theBranch, myTagNo + 1);
@@ -356,7 +348,7 @@ public abstract class ThemisScmTag<T extends ThemisScmTag<T, B, C, R>, B extends
          * @param pTag the tag number
          * @return the new tag
          */
-        protected abstract T createNewTag(B pBranch,
-                                          int pTag);
+        protected abstract ThemisScmTag createNewTag(ThemisScmBranch pBranch,
+                                                     int pTag);
     }
 }

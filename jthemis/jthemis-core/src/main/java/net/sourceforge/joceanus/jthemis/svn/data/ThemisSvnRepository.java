@@ -43,7 +43,7 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPr
  * @author Tony Washer
  */
 public class ThemisSvnRepository
-        extends ThemisScmRepository<ThemisSvnRepository> {
+        extends ThemisScmRepository {
     /**
      * URL separator character.
      */
@@ -78,11 +78,6 @@ public class ThemisSvnRepository
     private final ThemisSvnPreferences thePreferences;
 
     /**
-     * Repository Base.
-     */
-    private final String theBase;
-
-    /**
      * The Client Manager.
      */
     private final ThemisSvnClientManager theClientMgrPool;
@@ -107,7 +102,7 @@ public class ThemisSvnRepository
         thePreferences = pPreferenceMgr.getPreferenceSet(ThemisSvnPreferences.class);
 
         /* Access the Repository base */
-        theBase = thePreferences.getStringValue(ThemisSvnPreferenceKey.BASE);
+        setBase(thePreferences.getStringValue(ThemisSvnPreferenceKey.BASE));
         setName(thePreferences.getStringValue(ThemisSvnPreferenceKey.NAME));
 
         /* Create a client manager pool */
@@ -135,14 +130,6 @@ public class ThemisSvnRepository
     @Override
     public MetisFieldSet<ThemisSvnRepository> getDataFieldSet() {
         return FIELD_DEFS;
-    }
-
-    /**
-     * Obtain the repository base.
-     * @return the name
-     */
-    public String getBase() {
-        return theBase;
     }
 
     /**
@@ -199,7 +186,7 @@ public class ThemisSvnRepository
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Build the repository */
-        myBuilder.append(theBase)
+        myBuilder.append(getBase())
                 .append(SEP_URL)
                 .append(PFIX_URL)
                 .append(SEP_URL)
@@ -231,55 +218,6 @@ public class ThemisSvnRepository
         } catch (SVNException e) {
             throw new ThemisIOException("Failed to parse path " + pPath, e);
         }
-    }
-
-    @Override
-    public int compareTo(final ThemisSvnRepository pThat) {
-        /* Handle trivial cases */
-        if (this.equals(pThat)) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* Compare bases */
-        final int iResult = theBase.compareTo(pThat.theBase);
-        if (iResult != 0) {
-            return iResult;
-        }
-
-        /* Compare names */
-        return super.compareTo(pThat);
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-
-        /* Check that the classes are the same */
-        if (!(pThat instanceof ThemisSvnRepository)) {
-            return false;
-        }
-        final ThemisSvnRepository myThat = (ThemisSvnRepository) pThat;
-
-        /* Compare fields */
-        if (!theBase.equals(myThat.theBase)) {
-            return false;
-        }
-        return super.equals(myThat);
-    }
-
-    @Override
-    public int hashCode() {
-        return theBase.hashCode() * HASH_PRIME
-               + super.hashCode();
     }
 
     @Override

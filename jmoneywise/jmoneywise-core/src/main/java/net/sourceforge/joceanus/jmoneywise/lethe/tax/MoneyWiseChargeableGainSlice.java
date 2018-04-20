@@ -186,7 +186,7 @@ public class MoneyWiseChargeableGainSlice
                 final MoneyWiseChargeableGainSlice mySlice = myIterator.next();
 
                 /* Check the range */
-                final int iDiff = pRange.compareTo(mySlice.getDate());
+                final int iDiff = pRange.compareToDate(mySlice.getDate());
 
                 /* If we are past the range, break the loop */
                 if (iDiff < 0) {

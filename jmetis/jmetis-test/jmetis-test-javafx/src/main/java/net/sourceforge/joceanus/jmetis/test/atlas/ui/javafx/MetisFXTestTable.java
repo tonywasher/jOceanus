@@ -77,11 +77,11 @@ public class MetisFXTestTable extends Application {
     @Override
     public void start(final Stage pStage) {
         /* Create parent panel */
-        TethysFXBorderPaneManager myMainPanel = theGuiFactory.newBorderPane();
+        final TethysFXBorderPaneManager myMainPanel = theGuiFactory.newBorderPane();
         myMainPanel.setCentre(theTable);
 
         /* Create scene */
-        Scene myScene = new Scene(myMainPanel.getNode());
+        final Scene myScene = new Scene(myMainPanel.getNode());
         pStage.setTitle("MetisFXTable Demo");
         pStage.setScene(myScene);
 

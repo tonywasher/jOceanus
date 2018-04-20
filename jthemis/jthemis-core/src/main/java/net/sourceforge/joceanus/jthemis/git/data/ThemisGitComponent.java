@@ -22,6 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -31,6 +36,7 @@ import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.jgit.api.Git;
@@ -48,17 +54,12 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-
 /**
  * Represents a component in the repository.
  * @author Tony Washer
  */
 public final class ThemisGitComponent
-        extends ThemisScmComponent<ThemisGitComponent, ThemisGitRepository> {
+        extends ThemisScmComponent {
     /**
      * The buffer length.
      */
@@ -106,6 +107,11 @@ public final class ThemisGitComponent
     @Override
     public MetisFieldSet<ThemisGitComponent> getDataFieldSet() {
         return FIELD_DEFS;
+    }
+
+    @Override
+    public ThemisGitRepository getRepository() {
+        return (ThemisGitRepository) super.getRepository();
     }
 
     /**
@@ -272,7 +278,7 @@ public final class ThemisGitComponent
      * List of components.
      */
     public static final class ThemisGitComponentList
-            extends ThemisScmComponentList<ThemisGitComponent, ThemisGitRepository> {
+            extends ThemisScmComponentList {
         /**
          * Report fields.
          */
@@ -327,10 +333,10 @@ public final class ThemisGitComponent
             pReport.setNumStages(size() + 2);
 
             /* Loop through the components */
-            final Iterator<ThemisGitComponent> myIterator = iterator();
+            final Iterator<ThemisScmComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the Component */
-                final ThemisGitComponent myComponent = myIterator.next();
+                final ThemisGitComponent myComponent = (ThemisGitComponent) myIterator.next();
                 final ThemisGitBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */

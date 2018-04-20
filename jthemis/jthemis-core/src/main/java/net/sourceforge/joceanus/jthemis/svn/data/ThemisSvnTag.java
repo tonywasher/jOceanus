@@ -22,14 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
+import java.util.Iterator;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -42,13 +46,11 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import java.util.Iterator;
-
 /**
  * Represents a tag of a branch.
  */
 public final class ThemisSvnTag
-        extends ThemisScmTag<ThemisSvnTag, ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
+        extends ThemisScmTag {
     /**
      * The buffer length.
      */
@@ -177,11 +179,16 @@ public final class ThemisSvnTag
         theRevisionPath = myHistMap.discoverTag(this);
     }
 
+    @Override
+    public ThemisSvnBranch getBranch() {
+        return (ThemisSvnBranch) super.getBranch();
+    }
+
     /**
      * List of tags.
      */
     public static class ThemisSvnTagList
-            extends ThemisScmTagList<ThemisSvnTag, ThemisSvnBranch, ThemisSvnComponent, ThemisSvnRepository> {
+            extends ThemisScmTagList {
         /**
          * Report fields.
          */
@@ -212,9 +219,14 @@ public final class ThemisSvnTag
         }
 
         @Override
-        protected ThemisSvnTag createNewTag(final ThemisSvnBranch pBranch,
+        public ThemisSvnBranch getBranch() {
+            return (ThemisSvnBranch) super.getBranch();
+        }
+
+        @Override
+        protected ThemisSvnTag createNewTag(final ThemisScmBranch pBranch,
                                             final int pTag) {
-            return new ThemisSvnTag(pBranch, pTag);
+            return new ThemisSvnTag((ThemisSvnBranch) pBranch, pTag);
         }
 
         /**
@@ -245,9 +257,9 @@ public final class ThemisSvnTag
             }
 
             /* Loop through the tags */
-            final Iterator<ThemisSvnTag> myIterator = iterator();
+            final Iterator<ThemisScmTag> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final ThemisSvnTag myTag = myIterator.next();
+                final ThemisSvnTag myTag = (ThemisSvnTag) myIterator.next();
 
                 /* Report stage */
                 pReport.setNewStage("Analysing tag " + myTag.getTagName());

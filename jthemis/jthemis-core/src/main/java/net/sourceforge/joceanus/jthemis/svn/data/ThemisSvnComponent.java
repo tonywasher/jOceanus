@@ -22,14 +22,23 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.ListIterator;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch.ThemisSvnBranchList;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -44,19 +53,12 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.ListIterator;
-
 /**
  * Represents a component in the repository.
  * @author Tony Washer
  */
 public final class ThemisSvnComponent
-        extends ThemisScmComponent<ThemisSvnComponent, ThemisSvnRepository> {
+        extends ThemisScmComponent {
     /**
      * The trunk directory.
      */
@@ -113,6 +115,11 @@ public final class ThemisSvnComponent
     }
 
     @Override
+    public ThemisSvnRepository getRepository() {
+        return (ThemisSvnRepository) super.getRepository();
+    }
+
+    @Override
     public ThemisSvnBranchList getBranches() {
         return (ThemisSvnBranchList) super.getBranches();
     }
@@ -121,7 +128,7 @@ public final class ThemisSvnComponent
      * Get the branch iterator for this component.
      * @return the iterator
      */
-    public Iterator<ThemisSvnBranch> branchIterator() {
+    public Iterator<ThemisScmBranch> branchIterator() {
         return getBranches().iterator();
     }
 
@@ -129,7 +136,7 @@ public final class ThemisSvnComponent
      * Get the branch listIterator for this component.
      * @return the iterator
      */
-    public ListIterator<ThemisSvnBranch> branchListIterator() {
+    public ListIterator<ThemisScmBranch> branchListIterator() {
         final ThemisSvnBranchList myBranches = getBranches();
         return myBranches.listIterator(myBranches.size());
     }
@@ -329,7 +336,7 @@ public final class ThemisSvnComponent
      * List of components.
      */
     public static final class ThemisSvnComponentList
-            extends ThemisScmComponentList<ThemisSvnComponent, ThemisSvnRepository> {
+            extends ThemisScmComponentList {
         /**
          * Report fields.
          */
@@ -387,10 +394,10 @@ public final class ThemisSvnComponent
             getUnderlyingList().sort(null);
 
             /* Loop through the components */
-            final Iterator<ThemisSvnComponent> myIterator = iterator();
+            final Iterator<ThemisScmComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 /* Access the Component */
-                final ThemisSvnComponent myComponent = myIterator.next();
+                final ThemisSvnComponent myComponent = (ThemisSvnComponent) myIterator.next();
                 final ThemisSvnBranchList myBranches = myComponent.getBranches();
 
                 /* Report discovery of component */
@@ -408,15 +415,16 @@ public final class ThemisSvnComponent
          */
         protected ThemisSvnBranch locateBranch(final SVNURL pURL) {
             /* Loop through the components */
-            final Iterator<ThemisSvnComponent> myIterator = iterator();
+            final Iterator<ThemisScmComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final ThemisSvnComponent myComponent = myIterator.next();
+                final ThemisSvnComponent myComponent = (ThemisSvnComponent) myIterator.next();
 
                 /* Access branch URL */
                 final SVNURL myCompURL = myComponent.getURL();
 
                 /* Skip if the repositories are different */
-                if (!pURL.getHost().equals(myCompURL.getHost())) {
+                if (myCompURL == null
+                    || !pURL.getHost().equals(myCompURL.getHost())) {
                     continue;
                 }
 

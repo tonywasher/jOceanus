@@ -1809,7 +1809,7 @@ public class TransactionAnalyser
             case PORTFOLIO:
                 return thePortfolioBuckets.getCashBucket((Portfolio) pAsset);
             default:
-                return null;
+                throw new IllegalArgumentException();
         }
     }
 }

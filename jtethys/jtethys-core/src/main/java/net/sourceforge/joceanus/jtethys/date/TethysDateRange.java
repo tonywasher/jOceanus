@@ -106,16 +106,16 @@ public class TethysDateRange
      * @return -1 if the date is after the range, 0 if the date is within the range, 1 if the date
      * is before the range
      */
-    public short compareTo(final TethysDate pDate) {
+    public int compareToDate(final TethysDate pDate) {
         /* Check start date */
-        if ((theStart != null)
-            && (theStart.compareTo(pDate) > 0)) {
+        if (theStart != null
+            && theStart.compareTo(pDate) > 0) {
             return 1;
         }
 
         /* Check end date */
-        if ((theEnd != null)
-            && (theEnd.compareTo(pDate) < 0)) {
+        if (theEnd != null
+            && theEnd.compareTo(pDate) < 0) {
             return -1;
         }
 
@@ -189,15 +189,15 @@ public class TethysDateRange
     public String toString() {
         /* Build range description */
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append((theStart == null)
-                                            ? DESC_UNBOUNDED
-                                            : theStart.toString());
+        myBuilder.append(theStart == null
+                                          ? DESC_UNBOUNDED
+                                          : theStart.toString());
         myBuilder.append(CHAR_BLANK);
         myBuilder.append(DESC_LINK);
         myBuilder.append(CHAR_BLANK);
-        myBuilder.append((theEnd == null)
-                                          ? DESC_UNBOUNDED
-                                          : theEnd.toString());
+        myBuilder.append(theEnd == null
+                                        ? DESC_UNBOUNDED
+                                        : theEnd.toString());
 
         /* return the format */
         return myBuilder.toString();
