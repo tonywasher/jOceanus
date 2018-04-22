@@ -42,7 +42,7 @@ import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
 
@@ -141,7 +141,7 @@ public class ThemisSvnExtract
                     /* Reject if not possible to repair */
                     final SVNRevision myRev = myView.getRevision();
                     if (!myRev.equals(myTrunkView.getRevision())) {
-                        throw new ThemisDataException(myPlan, "Branch Plan is not anchored");
+                        //throw new ThemisDataException(myPlan, "Branch Plan is not anchored");
                     }
 
                     /* Migrate the view to the trunk */
@@ -447,6 +447,11 @@ public class ThemisSvnExtract
         }
 
         @Override
+        public String toString() {
+            return FIELD_DEFS.getName();
+        }
+
+        @Override
         public MetisFieldSet<ThemisSvnTagExtractPlanList> getDataFieldSet() {
             return FIELD_DEFS;
         }
@@ -659,7 +664,7 @@ public class ThemisSvnExtract
                 /* If the entry is not based on this owner */
                 if (!theOwner.equals(myEntry.getOwner())) {
                     /* Create anchor point */
-                    final SvnRevisionKey myKey = myEntry.getRevisionKey();
+                    final ThemisSvnRevisionKey myKey = myEntry.getRevisionKey();
                     theAnchor = new ThemisSvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
 
                     /* Break the loop */
@@ -673,7 +678,7 @@ public class ThemisSvnExtract
                 }
 
                 /* Declare the view */
-                final SvnRevisionKey myKey = myEntry.getRevisionKey();
+                final ThemisSvnRevisionKey myKey = myEntry.getRevisionKey();
                 final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, myKey.getRevision(), myEntry);
                 final String myBase = myKey.getPath();
                 myView.setBaseDir(theRepo.getURL(myBase));
@@ -726,7 +731,7 @@ public class ThemisSvnExtract
                                       final ThemisSvnSourceDir pDir,
                                       final ThemisSvnRevisionHistory pEntry) throws OceanusException {
             /* Access the required view */
-            SvnRevisionKey mySource = pDir.getSource();
+            ThemisSvnRevisionKey mySource = pDir.getSource();
             String myComp = pDir.getComponent();
             adjustView(pStartRev, myComp, mySource, pEntry);
 
@@ -754,7 +759,7 @@ public class ThemisSvnExtract
                 /* If the entry is not based on this owner */
                 if (!theOwner.equals(myEntry.getOwner())) {
                     /* Create anchor point */
-                    final SvnRevisionKey myKey = myEntry.getRevisionKey();
+                    final ThemisSvnRevisionKey myKey = myEntry.getRevisionKey();
                     theAnchor = new ThemisSvnExtractAnchor(myEntry.getOwner(), myKey.getRevision());
 
                     /* Break the loop */
@@ -768,7 +773,7 @@ public class ThemisSvnExtract
                 }
 
                 /* Access the view */
-                final SvnRevisionKey myKey = myEntry.getRevisionKey();
+                final ThemisSvnRevisionKey myKey = myEntry.getRevisionKey();
                 adjustView(mySource.getRevision(), myComp, myKey, myEntry);
 
                 /* If we have an origin */
@@ -799,7 +804,7 @@ public class ThemisSvnExtract
          */
         private void adjustView(final SVNRevision pStartRev,
                                 final String pComp,
-                                final SvnRevisionKey pKey,
+                                final ThemisSvnRevisionKey pKey,
                                 final ThemisSvnRevisionHistory pEntry) throws OceanusException {
             /* Determine the required revision */
             final long myStart = pStartRev.getNumber();
@@ -975,7 +980,7 @@ public class ThemisSvnExtract
          * fieldIds.
          */
         static {
-            FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnExtractView::getRevision);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnExtractView::getRevisionNo);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnExtractView::getDate);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnExtractView::getLogMessage);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_ITEMS, ThemisSvnExtractView::getItems);
@@ -1093,6 +1098,14 @@ public class ThemisSvnExtract
          */
         public SVNRevision getRevision() {
             return theRevision;
+        }
+
+        /**
+         * Obtain the revision#.
+         * @return the revision
+         */
+        private long getRevisionNo() {
+            return theRevision.getNumber();
         }
 
         /**
@@ -1227,7 +1240,7 @@ public class ThemisSvnExtract
          */
         static {
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_TARGET, ThemisSvnExtractItem::getTarget);
-            FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE, ThemisSvnExtractItem::getSource);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_SOURCE, ThemisSvnExtractItem::getSourceName);
         }
 
         /**
@@ -1279,6 +1292,14 @@ public class ThemisSvnExtract
          */
         public SVNURL getSource() {
             return theSource;
+        }
+
+        /**
+         * Obtain the source.
+         * @return the source
+         */
+        private String getSourceName() {
+            return theSource.toString();
         }
 
         /**

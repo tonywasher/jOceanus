@@ -29,7 +29,6 @@ import java.util.Map;
 import net.sourceforge.joceanus.jmetis.data.MetisDataDelta;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisDataObject.MetisDataContents;
 
@@ -466,8 +465,7 @@ public class MetisViewerPage {
         }
 
         /* Handle structured object */
-        if (myObject instanceof MetisFieldItem
-            || myObject instanceof MetisDataObjectFormat) {
+        if (myObject instanceof MetisFieldItem) {
             return true;
         }
 

@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -130,16 +131,29 @@ public class ThemisDiscoverData<N, I>
             final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
             final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
+            /* Start the analyse repository task */
+            final MetisProfile myBaseTask = myManager.getActiveTask();
+            MetisProfile myTask = myBaseTask.startTask("analyseRepository");
+
             /* Discover repository details */
             theRepository = new ThemisSvnRepository(myPreferences, myManager);
+
+            /* Start the discoverWorkingSet task */
+            myTask = myBaseTask.startTask("analyseWorkingSet");
 
             /* Discover workingSet details */
             myManager.checkForCancellation();
             theWorkingCopySet = new ThemisSvnWorkingCopySet(theRepository, myManager);
 
+            /* Start the derivePlans task */
+            myTask = myBaseTask.startTask("deriveExtractPlans");
+
             /* Build the Extract Plans */
             myManager.checkForCancellation();
             deriveExtractPlans();
+
+            /* Complete the task */
+            myTask.end();
 
             /* Return null */
             return null;

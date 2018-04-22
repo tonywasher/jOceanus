@@ -98,7 +98,7 @@ public class ThemisFXSvnManager
         pStage.getIcons().addAll(Arrays.asList(myIcons));
 
         /* Record startUp completion */
-        theToolkit.getActiveProfile().end();
+        //theToolkit.getActiveProfile().end();
     }
 
     @Override

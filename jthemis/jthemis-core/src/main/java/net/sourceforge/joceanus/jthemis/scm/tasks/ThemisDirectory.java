@@ -194,6 +194,7 @@ public final class ThemisDirectory {
      */
     private static void removeFile(final Path pFile) throws IOException {
         /* Loop to retry deleting the file */
+        Throwable myEx = null;
         for (int i = 0; i < PAUSE_REPEAT; i++) {
             /* Try to delete the file */
             try {
@@ -202,6 +203,9 @@ public final class ThemisDirectory {
                 return;
 
             } catch (IOException e) {
+                /* Store error */
+                myEx = e;
+
                 /* This can be a transient error so wait a bit before retrying */
                 try {
                     Thread.sleep(PAUSE_DURATION);
@@ -214,7 +218,7 @@ public final class ThemisDirectory {
 
         /* Report the failure */
         throw new IOException("Failed to delete file: "
-                              + pFile.toAbsolutePath());
+                              + pFile.toAbsolutePath(), myEx);
     }
 
     /**

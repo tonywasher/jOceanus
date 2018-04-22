@@ -143,7 +143,7 @@ public class MetisViewerFormatter {
                                                                   ? ((MetisDataDelta) pObject).getObject()
                                                                   : pObject;
 
-        /* If we are DataEosFieldItem */
+        /* If we are FieldItem */
         if (myObject instanceof MetisFieldItem) {
             formatHTMLEosFieldItem((MetisFieldItem) myObject);
 

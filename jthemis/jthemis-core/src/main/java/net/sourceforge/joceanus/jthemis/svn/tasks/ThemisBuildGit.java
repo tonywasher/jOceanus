@@ -32,6 +32,7 @@ import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -277,8 +278,15 @@ public class ThemisBuildGit {
         /* Report plan steps */
         pReport.setNumSteps(myPlan.numViews());
 
+        /* Obtain the active profile */
+        MetisProfile myTask = pReport.getActiveTask();
+        myTask = myTask.startTask("buildTrunk");
+
         /* Commit the plan */
         commitPlan(pReport, myOwner, null, myPlan.viewIterator());
+
+        /* Complete the task */
+        myTask.end();
     }
 
     /**
@@ -295,6 +303,10 @@ public class ThemisBuildGit {
         try {
             /* Access the plan owner */
             final ThemisSvnBranch myOwner = pBranchPlan.getOwner();
+
+            /* Obtain the active profile */
+            MetisProfile myTask = pReport.getActiveTask();
+            myTask = myTask.startTask("buildBranch:" + myOwner.getBranchName());
 
             /* Check that we are starting with a clean directory */
             final StatusCommand myStatusCmd = theGit.status();
@@ -316,6 +328,9 @@ public class ThemisBuildGit {
             /* Commit the plan */
             commitPlan(pReport, myOwner, pLastCommit, pBranchPlan.viewIterator());
 
+            /* Complete the task */
+            myTask.end();
+
             /* Catch Git exceptions */
         } catch (GitAPIException e) {
             throw new ThemisIOException("Failed to build branch", e);
@@ -336,6 +351,10 @@ public class ThemisBuildGit {
         try {
             /* Access the plan owner */
             final ThemisSvnTag myOwner = pTagPlan.getOwner();
+
+            /* Obtain the active profile */
+            MetisProfile myTask = pReport.getActiveTask();
+            myTask = myTask.startTask("buildBranch:" + myOwner.getTagName());
 
             /* If there are changes in working directory */
             final StatusCommand myStatusCmd = theGit.status();
@@ -365,6 +384,9 @@ public class ThemisBuildGit {
             myTag.setTagger(new PersonIdent(theCommitter, myTagDate));
             myTag.call();
 
+            /* Complete the task */
+            myTask.end();
+
             /* Catch Git exceptions */
         } catch (GitAPIException e) {
             throw new ThemisIOException("Failed to build tag", e);
@@ -391,6 +413,7 @@ public class ThemisBuildGit {
 
             /* Access a date formatter */
             final TethysDateFormatter myFormatter = new TethysDateFormatter();
+            int myIteration = 1;
 
             /* Iterate through the elements */
             while (pIterator.hasNext()) {
@@ -400,6 +423,10 @@ public class ThemisBuildGit {
                 final String myFormat = myFormatter.formatJavaDate(myView.getDate());
                 pReport.setNextStep(myFormat);
 
+                /* Obtain the active profile */
+                final MetisProfile myBaseTask = pReport.getActiveTask();
+                MetisProfile myTask = myBaseTask.startTask("extractCode:" + myIteration + ":" + myView.getRevision().toString());
+
                 /* Extract the details to the directory, preserving the GitDir */
                 myView.extractItem(theWorkDir, ThemisGitComponent.NAME_GITDIR);
 
@@ -407,6 +434,9 @@ public class ThemisBuildGit {
                 StatusCommand myStatusCmd = theGit.status();
                 Status myStatus = myStatusCmd.call();
                 if (!myStatus.isClean()) {
+                    /* Start the commit task */
+                    myTask = myBaseTask.startTask("commitCode:" + myIteration + ":" + myView.getRevision().toString());
+
                     /* Ensure that all items are staged */
                     final AddCommand myAdd = theGit.add();
                     myAdd.addFilepattern(".");
@@ -416,9 +446,12 @@ public class ThemisBuildGit {
                     final CommitCommand myCommit = theGit.commit();
                     myCommit.setAll(true);
                     myCommit.setCommitter(new PersonIdent(theCommitter, myView.getDate()));
-                    myCommit.setMessage(myView.getLogMessage());
+                    myCommit.setMessage(myView.getRevision().toString() + ": " +  myView.getLogMessage());
                     myLastCommit = myCommit.call();
                 }
+
+                /* Complete the task */
+                myTask.end();
 
                 /* Check that we have ended up with a clean directory */
                 myStatusCmd = theGit.status();
@@ -437,6 +470,7 @@ public class ThemisBuildGit {
                 /* Store details of the commit */
                 final ThemisSvnExtractAnchor myAnchor = new ThemisSvnExtractAnchor(myOwner, myView.getRevision());
                 theCommitMap.addAnchor(myAnchor, myLastCommit);
+                myIteration++;
             }
 
             /* Return the date of the tag */

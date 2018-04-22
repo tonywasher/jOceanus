@@ -28,11 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.tmatesoft.svn.core.SVNLogEntry;
-import org.tmatesoft.svn.core.SVNLogEntryPath;
-import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
@@ -43,12 +38,24 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tmatesoft.svn.core.SVNLogEntry;
+import org.tmatesoft.svn.core.SVNLogEntryPath;
+import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+
 /**
  * Methods to access revision history.
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistory
         implements MetisFieldItem {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(ThemisSvnRevisionHistory.class);
+
     /**
      * DataFields.
      */
@@ -76,7 +83,7 @@ public class ThemisSvnRevisionHistory
     /**
      * The revisionKey.
      */
-    private final SvnRevisionKey theRevisionKey;
+    private final ThemisSvnRevisionKey theRevisionKey;
 
     /**
      * The date.
@@ -111,7 +118,7 @@ public class ThemisSvnRevisionHistory
     /**
      * The origin.
      */
-    private SvnRevisionKey theOrigin;
+    private ThemisSvnRevisionKey theOrigin;
 
     /**
      * The origin source definition.
@@ -149,9 +156,12 @@ public class ThemisSvnRevisionHistory
         theSourceDirs = new ThemisSvnSourceDirList();
 
         /* Set the revision key */
-        theRevisionKey = new SvnRevisionKey(pPath, theRevision);
+        theRevisionKey = new ThemisSvnRevisionKey(pPath, theRevision);
 
-        /* Iterate through the file changes */
+        /* Log instance */
+        LOGGER.debug("Path {} @ Rev{}", pPath, pEntry.getRevision());
+
+         /* Iterate through the file changes */
         for (final Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
             /* Access the key */
             final String myPath = myEntry.getKey();
@@ -182,15 +192,33 @@ public class ThemisSvnRevisionHistory
                                 throw new ThemisDataException(theRevisionKey, "second origin for path");
                             }
 
+                            /* Log origin copy */
+                            LOGGER.debug("O:{} <- {}", myDetail, myCopyPath);
+
                             /* Record the origin */
-                            theOrigin = new SvnRevisionKey(myDetail);
+                            theOrigin = new ThemisSvnRevisionKey(myDetail);
                             theOriginDef = new ThemisSvnSourceDefinition(myCopyPath);
                             isOrigin = true;
 
-                            /* else if this a copy into the directory */
+                            /* else if this a copy into the directory from another location */
                         } else if (!myCopyPath.startsWith(pPath)) {
-                            /* Record the copyDir */
-                            theSourceDirs.addItem(new ThemisSvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
+                            /* Record the file change */
+                            hasFileChanges = true;
+
+                            /* Determine the name of the inner component */
+                            final String myInnerComp = myDir.substring(pPath.length());
+                            if (checkComponentCopy(pPath, myDir, myCopyPath)) {
+                                /* Log subDir copy */
+                                LOGGER.debug("S:{} <- {}@{}", myDetail, myCopyPath, myDetail.getCopyRevision());
+
+                                /* Record the copyDir */
+                                theSourceDirs.addItem(new ThemisSvnSourceDir(myCopyPath, myDetail.getCopyRevision()));
+                            }
+
+                            /* This is a copy within the directory */
+                        } else {
+                            /* Record the file change */
+                            hasFileChanges = true;
                         }
                     }
                 }
@@ -210,18 +238,44 @@ public class ThemisSvnRevisionHistory
 
                 /* Record the origin */
                 final String myNewPath = myBuilder.toString();
-                theOrigin = new SvnRevisionKey(myNewPath, SVNRevision.create(myDetail.getCopyRevision()));
+                theOrigin = new ThemisSvnRevisionKey(myNewPath, SVNRevision.create(myDetail.getCopyRevision()));
                 theOriginDef = new ThemisSvnSourceDefinition(myNewPath);
                 isOrigin = true;
+
+                /* Log root origin copy */
+                LOGGER.debug("R:{} <- {}@{}", myDetail, myNewPath, myDetail.getCopyRevision());
             }
         }
+
+        /* Log completion */
+        LOGGER.debug("Complete Path {} @ Rev{}", pPath, pEntry.getRevision());
     }
+
+    /**
+     * Check for valid component copy.
+     * @param pPath the component path
+     * @param pTarget the target path
+     * @param pSource the source path
+     *
+     */
+    private boolean checkComponentCopy(final String pPath,
+                                       final String pTarget,
+                                       final String pSource) {
+        /* Look for a standard component copy */
+        final String myInnerPath = pTarget.substring(pPath.length());
+        if (pSource.startsWith(myInnerPath)) {
+            return true;
+        }
+
+        /* Look for creation of component */
+        return pSource.startsWith("/branches/");
+     }
 
     /**
      * Obtain the revisionKey.
      * @return the key
      */
-    public SvnRevisionKey getRevisionKey() {
+    public ThemisSvnRevisionKey getRevisionKey() {
         return theRevisionKey;
     }
 
@@ -295,7 +349,7 @@ public class ThemisSvnRevisionHistory
      * Obtain the origin key.
      * @return the key
      */
-    public SvnRevisionKey getOrigin() {
+    public ThemisSvnRevisionKey getOrigin() {
         return theOrigin;
     }
 
@@ -379,7 +433,7 @@ public class ThemisSvnRevisionHistory
     /**
      * RevisionKey.
      */
-    public static class SvnRevisionKey
+    public static class ThemisSvnRevisionKey
             implements MetisDataObjectFormat {
         /**
          * Hash prime.
@@ -401,7 +455,7 @@ public class ThemisSvnRevisionHistory
          * @param pRevision the SVNRevision
          * @param pPath the path
          */
-        protected SvnRevisionKey(final String pPath,
+        protected ThemisSvnRevisionKey(final String pPath,
                                  final SVNRevision pRevision) {
             /* Store parameters */
             theRevision = pRevision;
@@ -412,7 +466,7 @@ public class ThemisSvnRevisionHistory
          * Constructor.
          * @param pEntry the log entry
          */
-        SvnRevisionKey(final SVNLogEntryPath pEntry) {
+        ThemisSvnRevisionKey(final SVNLogEntryPath pEntry) {
             /* Store parameters */
             theRevision = SVNRevision.create(pEntry.getCopyRevision());
             thePath = pEntry.getCopyPath();
@@ -450,12 +504,12 @@ public class ThemisSvnRevisionHistory
             }
 
             /* Handle bad instance */
-            if (!(pThat instanceof SvnRevisionKey)) {
+            if (!(pThat instanceof ThemisSvnRevisionKey)) {
                 return false;
             }
 
             /* Access correctly */
-            final SvnRevisionKey myThat = (SvnRevisionKey) pThat;
+            final ThemisSvnRevisionKey myThat = (ThemisSvnRevisionKey) pThat;
 
             /* Check values */
             return theRevision.equals(myThat.getRevision())
@@ -495,7 +549,7 @@ public class ThemisSvnRevisionHistory
         /**
          * Source RevisionKey.
          */
-        private final SvnRevisionKey theSource;
+        private final ThemisSvnRevisionKey theSource;
 
         /**
          * The basedOn revision.
@@ -515,7 +569,7 @@ public class ThemisSvnRevisionHistory
 
             /* Store details */
             theComponent = mySource.getComponent();
-            theSource = new SvnRevisionKey(mySource.getSource(), SVNRevision.create(pRevision));
+            theSource = new ThemisSvnRevisionKey(mySource.getSource(), SVNRevision.create(pRevision));
         }
 
         /**
@@ -530,7 +584,7 @@ public class ThemisSvnRevisionHistory
          * Obtain the source.
          * @return the source
          */
-        public SvnRevisionKey getSource() {
+        public ThemisSvnRevisionKey getSource() {
             return theSource;
         }
 

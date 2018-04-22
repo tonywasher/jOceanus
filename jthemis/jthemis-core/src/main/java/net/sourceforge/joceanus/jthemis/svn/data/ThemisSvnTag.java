@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -238,6 +239,10 @@ public final class ThemisSvnTag
             /* Reset the list */
             clear();
 
+            /* Obtain the active profile */
+            final MetisProfile myBaseTask = pReport.getActiveTask();
+            MetisProfile myTask = myBaseTask.startTask("discoverTags");
+
             /* Access a LogClient */
             final ThemisSvnRepository myRepo = theComponent.getRepository();
             final SVNClientManager myMgr = myRepo.getClientManager();
@@ -261,8 +266,14 @@ public final class ThemisSvnTag
             while (myIterator.hasNext()) {
                 final ThemisSvnTag myTag = (ThemisSvnTag) myIterator.next();
 
+                /* Start the discoverTag task */
+                myTask = myBaseTask.startTask("discoverTag:" + myTag.getTagName());
+
                 /* Report stage */
                 pReport.setNewStage("Analysing tag " + myTag.getTagName());
+
+                /* Start parse task */
+                myTask.startTask("parseProject");
 
                 /* Parse project file */
                 final ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(myTag.getURLPath());
@@ -273,9 +284,18 @@ public final class ThemisSvnTag
                     myRepo.registerTag(myProject.getDefinition(), myTag);
                 }
 
+                /* Discover History */
+                final MetisProfile mySubTask = myTask.startTask("discoverHistory");
+
                 /* Analyse history map */
                 myTag.discoverHistory();
+
+                /* End the subTask */
+                mySubTask.end();
             }
+
+            /* Complete the task */
+            myTask.end();
         }
 
         /**

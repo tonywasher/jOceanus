@@ -251,7 +251,7 @@ public class MetisThreadStatus {
         theNumSteps = -1;
         theStepsDone = -1;
         if (theStagesDone != theNumStages) {
-            LOGGER.info("Incorrect # of stages for Task: $1 ($2/$3)", theTask, theStagesDone, theNumStages);
+            LOGGER.info("Incorrect # of stages for Task: {} ({}/{})", theTask, theStagesDone, theNumStages);
         }
     }
 }

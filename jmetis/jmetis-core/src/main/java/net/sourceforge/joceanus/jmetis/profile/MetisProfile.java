@@ -175,8 +175,8 @@ public class MetisProfile
             /* Create the new task */
             final MetisProfile myTask = new MetisProfile(pName);
             theSubTasks.add(myTask);
-            theFields.declareLocalField(pName, p -> myTask);
             theCurrentTask = myTask;
+            theFields.declareLocalField(pName, p -> myTask);
         }
 
         /* Return the current task */

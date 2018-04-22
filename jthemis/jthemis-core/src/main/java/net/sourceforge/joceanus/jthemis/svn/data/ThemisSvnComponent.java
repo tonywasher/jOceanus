@@ -30,13 +30,13 @@ import java.util.Iterator;
 import java.util.ListIterator;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch.ThemisSvnBranchList;
 
 import org.apache.logging.log4j.LogManager;
@@ -262,22 +262,22 @@ public final class ThemisSvnComponent
             final ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
 
             /* Loop through the subModules */
-            final Iterator<MvnSubModule> myIterator = myProject.subIterator();
-            while (myIterator.hasNext()) {
-                final MvnSubModule myModule = myIterator.next();
+            //final Iterator<MvnSubModule> myIterator = myProject.subIterator();
+            //while (myIterator.hasNext()) {
+              //  final MvnSubModule myModule = myIterator.next();
 
                 /* Reset the string buffer */
-                myBuilder.setLength(0);
+                //myBuilder.setLength(0);
 
                 /* Build the path name */
-                myBuilder.append(pPath);
-                myBuilder.append(ThemisSvnRepository.SEP_URL);
-                myBuilder.append(myModule.getName());
+                //myBuilder.append(pPath);
+                //myBuilder.append(ThemisSvnRepository.SEP_URL);
+                //myBuilder.append(myModule.getName());
 
                 /* Parse the project URL */
-                final ThemisMvnProjectDefinition mySubDef = parseProjectURL(myBuilder.toString());
-                myModule.setProjectDefinition(mySubDef);
-            }
+                //final ThemisMvnProjectDefinition mySubDef = parseProjectURL(myBuilder.toString());
+                //myModule.setProjectDefinition(mySubDef);
+            //}
 
             /* Return the definition */
             return myProject;
@@ -370,6 +370,10 @@ public final class ThemisSvnComponent
             /* Reset the list */
             clear();
 
+            /* Obtain the active profile */
+            final MetisProfile myBaseTask = pReport.getActiveTask();
+            MetisProfile myTask = myBaseTask.startTask("discoverComponents");
+
             /* Access a LogClient */
             final SVNClientManager myMgr = theRepository.getClientManager();
             final SVNLogClient myClient = myMgr.getLogClient();
@@ -400,12 +404,21 @@ public final class ThemisSvnComponent
                 final ThemisSvnComponent myComponent = (ThemisSvnComponent) myIterator.next();
                 final ThemisSvnBranchList myBranches = myComponent.getBranches();
 
+                //if (!"JDateButton".equals(myComponent.getName())) {
+                //    continue;
+                //}
+                /* Start the discoverComponent task */
+                myTask = myBaseTask.startTask("discoverComponent:" + myComponent.getName());
+
                 /* Report discovery of component */
                 pReport.setNewStage("Analysing component " + myComponent.getName());
 
                 /* Discover branches for the component */
                 myBranches.discover(pReport);
             }
+
+            /* Complete the task */
+            myTask.end();
         }
 
         /**

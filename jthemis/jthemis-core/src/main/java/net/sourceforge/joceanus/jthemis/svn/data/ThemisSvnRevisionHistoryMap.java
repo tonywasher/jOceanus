@@ -26,6 +26,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnRevisionKey;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
+
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -37,23 +48,12 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.SvnRevisionKey;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
-
 /**
  * Map of RevisionHistory.
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistoryMap
-        implements MetisDataObjectFormat, MetisDataMap<SvnRevisionKey, ThemisSvnRevisionHistory> {
+        implements MetisDataObjectFormat, MetisDataMap<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> {
     /**
      * The repository.
      */
@@ -67,7 +67,7 @@ public class ThemisSvnRevisionHistoryMap
     /**
      * HistoryMap.
      */
-    private final Map<SvnRevisionKey, ThemisSvnRevisionHistory> theHistoryMap;
+    private final Map<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> theHistoryMap;
 
     /**
      * Constructor.
@@ -80,7 +80,7 @@ public class ThemisSvnRevisionHistoryMap
     }
 
     @Override
-    public Map<SvnRevisionKey, ThemisSvnRevisionHistory> getUnderlyingMap() {
+    public Map<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> getUnderlyingMap() {
         return theHistoryMap;
     }
 
@@ -160,7 +160,7 @@ public class ThemisSvnRevisionHistoryMap
          */
         static {
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_PATH, ThemisSvnRevisionPath::getPath);
-            FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevisionPath::getRevision);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevisionPath::getRevisionNo);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_HISTORY, ThemisSvnRevisionPath::getHistory);
         }
 
@@ -197,7 +197,7 @@ public class ThemisSvnRevisionHistoryMap
         /**
          * The origin.
          */
-        private SvnRevisionKey theOrigin;
+        private ThemisSvnRevisionKey theOrigin;
 
         /**
          * The sourcePath.
@@ -223,7 +223,7 @@ public class ThemisSvnRevisionHistoryMap
          * @throws OceanusException on error
          */
         public ThemisSvnRevisionPath(final ThemisSvnRevisionHistoryMap pHistoryMap,
-                                     final SvnRevisionKey pKey) throws OceanusException {
+                                     final ThemisSvnRevisionKey pKey) throws OceanusException {
             /* Extract the details from the revisionKey */
             this(pHistoryMap, pKey.getPath(), pKey.getRevision());
         }
@@ -285,6 +285,14 @@ public class ThemisSvnRevisionHistoryMap
          */
         private SVNRevision getRevision() {
             return theBaseRevision;
+        }
+
+        /**
+         * Obtain the revision#.
+         * @return the revision
+         */
+        private long getRevisionNo() {
+            return theBaseRevision.getNumber();
         }
 
         /**
@@ -360,7 +368,7 @@ public class ThemisSvnRevisionHistoryMap
                     /* If the directory has not been expanded */
                     if (mySourceDir.getBasedOn() == null) {
                         /* Analyse the source */
-                        final SvnRevisionKey mySource = mySourceDir.getSource();
+                        final ThemisSvnRevisionKey mySource = mySourceDir.getSource();
                         final ThemisSvnRevisionPath myPath = new ThemisSvnRevisionPath(theHistoryMap, mySource);
 
                         /* Store the details */
@@ -402,7 +410,7 @@ public class ThemisSvnRevisionHistoryMap
             @Override
             public void handleLogEntry(final SVNLogEntry pEntry) throws SVNException {
                 /* Create the revisionKey */
-                final SvnRevisionKey myKey = new SvnRevisionKey(thePath, SVNRevision.create(pEntry.getRevision()));
+                final ThemisSvnRevisionKey myKey = new ThemisSvnRevisionKey(thePath, SVNRevision.create(pEntry.getRevision()));
 
                 /* Check whether we have analysed this already */
                 ThemisSvnRevisionHistory myHistory = theHistoryMap.get(myKey);

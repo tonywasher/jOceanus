@@ -25,6 +25,7 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
@@ -298,6 +299,10 @@ public final class ThemisSvnBranch
             /* Reset the list */
             clear();
 
+            /* Obtain the active profile */
+            final MetisProfile myBaseTask = pReport.getActiveTask();
+            MetisProfile myTask = myBaseTask.startTask("discoverBranches");
+
             /* Access a LogClient */
             final ThemisSvnRepository myRepo = theComponent.getRepository();
             final SVNClientManager myMgr = myRepo.getClientManager();
@@ -308,6 +313,9 @@ public final class ThemisSvnBranch
 
             /* Protect against exceptions */
             try {
+                /* Start parse task */
+                MetisProfile mySubTask = myTask.startTask("parseTrunkProject");
+
                 /* Parse project file for trunk */
                 final ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(theComponent.getTrunkPath());
 
@@ -330,6 +338,9 @@ public final class ThemisSvnBranch
                     }
                 }
 
+                /* Start task */
+                mySubTask = myTask.startTask("searchForBranches");
+
                 /* Access the branch directory URL */
                 SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getBranchesPath());
 
@@ -337,12 +348,18 @@ public final class ThemisSvnBranch
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false,
                         SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler(false));
 
+                /* Start task */
+                mySubTask = myTask.startTask("searchForTags");
+
                 /* Access the tags directory URL */
                 myURL = SVNURL.parseURIEncoded(theComponent.getTagsPath());
 
-                /* List the branch directories */
+                /* List the tags directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false,
                         SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler(true));
+
+                /* End the subTask */
+                mySubTask.end();
 
             } catch (SVNException e) {
                 throw new ThemisIOException("Failed to discover branches for " + theComponent.getName(), e);
@@ -352,14 +369,26 @@ public final class ThemisSvnBranch
 
             /* If we have a trunk */
             if (myTrunk != null) {
+                /* Start the discoverTrunk task */
+                myTask = myBaseTask.startTask("processTrunk");
+
                 /* Report stage */
                 pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
+
+                /* Start parse task */
+                myTask.startTask("discoverHistory");
 
                 /* Analyse history map */
                 myTrunk.discoverHistory();
 
+                /* Start tags task */
+                final MetisProfile mySubTask = myTask.startTask("processTags");
+
                 /* Discover trunk tags */
                 myTrunk.getTagList().discover(pReport);
+
+                /* End the subTask */
+                mySubTask.end();
             }
 
             /* Sort the list */
@@ -376,11 +405,17 @@ public final class ThemisSvnBranch
                     continue;
                 }
 
+                /* Start the discoverBranch task */
+                myTask = myBaseTask.startTask("discoverBranch:" + myBranch.getBranchName());
+
                 /* Report stage */
                 pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
 
                 /* If this is not a virtual branch */
                 if (!myBranch.isVirtual()) {
+                    /* Start parse task */
+                    myTask.startTask("parseProject");
+
                     /* Parse project file */
                     final ThemisMvnProjectDefinition myProject = theComponent.parseProjectURL(myBranch.getURLPath());
                     myBranch.setProjectDefinition(myProject);
@@ -390,13 +425,25 @@ public final class ThemisSvnBranch
                         myRepo.registerBranch(myProject.getDefinition(), myBranch);
                     }
 
+                    /* Start parse task */
+                    myTask.startTask("discoverHistory");
+
                     /* Analyse history map */
                     myBranch.discoverHistory();
                 }
 
+                /* Start tags task */
+                final MetisProfile mySubTask = myTask.startTask("processTags");
+
                 /* Discover tags */
                 myBranch.getTagList().discover(pReport);
+
+                /* End the subTask */
+                mySubTask.end();
             }
+
+            /* Complete the task */
+            myTask.end();
         }
 
         /**

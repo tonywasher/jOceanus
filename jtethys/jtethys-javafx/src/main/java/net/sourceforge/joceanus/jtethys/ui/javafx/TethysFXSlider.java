@@ -60,12 +60,8 @@ public class TethysFXSlider
         theSlider.getStyleClass().add(STYLE_SLIDER);
 
         /* Handle events */
-        theSlider.valueProperty().addListener(e -> {
-            if (!theSlider.isValueChanging()) {
-                handleNewValue();
-            }
-        });
-    }
+        theSlider.valueProperty().addListener((v, o, n) -> handleNewValue());
+     }
 
     @Override
     public Node getNode() {
