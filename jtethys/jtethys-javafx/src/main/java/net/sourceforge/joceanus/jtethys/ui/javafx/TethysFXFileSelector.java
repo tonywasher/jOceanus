@@ -53,7 +53,7 @@ public class TethysFXFileSelector
      * File Chooser.
      */
     private final FileChooser theChooser;
-
+    
     /**
      * The selected file.
      */

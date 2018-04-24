@@ -69,7 +69,7 @@ public class TestFXHelpWindow
         pStage.setScene(myScene);
         pStage.show();
     }
-
+    
     /**
      * Build the panel.
      * @return the panel

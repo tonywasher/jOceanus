@@ -48,7 +48,7 @@ public class TethysFXTreeManager<T>
      * The focused item.
      */
     private TethysFXTreeItem<T> theFocusedItem;
-
+    
     /**
      * Constructor.
      * @param pFactory the GUI factory

@@ -83,7 +83,7 @@ public class TethysFXGuiFactory
      * Event Manager.
      */
     private final TethysEventManager<TethysUIEvent> theEventManager;
-
+    
     /**
      * Scenes.
      */

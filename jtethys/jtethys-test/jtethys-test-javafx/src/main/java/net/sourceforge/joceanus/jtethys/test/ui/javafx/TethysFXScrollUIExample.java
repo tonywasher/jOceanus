@@ -83,7 +83,7 @@ public class TethysFXScrollUIExample
      * The simple icon button manager.
      */
     private final TethysFXIconButtonManager<Boolean> theSimpleIconButtonMgr;
-
+    
     /**
      * The state icon button manager.
      */

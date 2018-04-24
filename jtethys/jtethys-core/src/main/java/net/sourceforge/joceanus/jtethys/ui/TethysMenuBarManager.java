@@ -50,7 +50,7 @@ public abstract class TethysMenuBarManager {
      * @return the new subMenu
      */
     public abstract <I> TethysMenuSubMenu<I> newSubMenu(I pId);
-
+    
     /**
      * Set visible state for element.
      * @param <I> the type of the id

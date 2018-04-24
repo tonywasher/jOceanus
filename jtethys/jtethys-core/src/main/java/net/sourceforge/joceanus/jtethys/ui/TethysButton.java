@@ -38,7 +38,7 @@ public abstract class TethysButton<N, I>
      * Default icon width.
      */
     protected static final int DEFAULT_ICONWIDTH = TethysIconBuilder.DEFAULT_ICONWIDTH;
-
+    
     /**
      * Event Manager.
      */

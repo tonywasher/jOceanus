@@ -40,7 +40,7 @@ public enum TethysListId {
      * Personal.
      */
     PERSONAL("Personal");
-
+	
     /**
      * The name.
      */

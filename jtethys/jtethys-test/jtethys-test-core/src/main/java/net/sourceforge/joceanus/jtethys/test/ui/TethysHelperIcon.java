@@ -47,7 +47,7 @@ public enum TethysHelperIcon implements TethysIconId {
      * Source name.
      */
     private final String theSource;
-
+    
     /**
      * Constructor.
      * @param pSourceName the source name

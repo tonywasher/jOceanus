@@ -29,16 +29,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch.ThemisSvnBranchList;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -53,12 +43,24 @@ import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch.ThemisSvnBranchList;
+
 /**
  * Represents a component in the repository.
  * @author Tony Washer
  */
 public final class ThemisSvnComponent
-        extends ThemisScmComponent {
+        extends
+        ThemisScmComponent {
     /**
      * The trunk directory.
      */
@@ -254,33 +256,11 @@ public final class ThemisSvnComponent
 
             /* Access URL as input stream */
             myInput = getFileURLasInputStream(myURL);
-            if (myInput == null) {
-                return null;
-            }
 
             /* Parse the project definition and return it */
-            final ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
-
-            /* Loop through the subModules */
-            //final Iterator<MvnSubModule> myIterator = myProject.subIterator();
-            //while (myIterator.hasNext()) {
-              //  final MvnSubModule myModule = myIterator.next();
-
-                /* Reset the string buffer */
-                //myBuilder.setLength(0);
-
-                /* Build the path name */
-                //myBuilder.append(pPath);
-                //myBuilder.append(ThemisSvnRepository.SEP_URL);
-                //myBuilder.append(myModule.getName());
-
-                /* Parse the project URL */
-                //final ThemisMvnProjectDefinition mySubDef = parseProjectURL(myBuilder.toString());
-                //myModule.setProjectDefinition(mySubDef);
-            //}
-
-            /* Return the definition */
-            return myProject;
+            return myInput == null
+                                   ? null
+                                   : new ThemisMvnProjectDefinition(myInput);
 
         } catch (SVNException e) {
             throw new ThemisIOException("Failed to parse project file for " + pPath, e);
@@ -291,6 +271,36 @@ public final class ThemisSvnComponent
                 } catch (IOException e) {
                     LOGGER.error("Close Failure", e);
                 }
+            }
+        }
+    }
+
+    /**
+     * Get FileURL as input stream.
+     * @param pPath the base URL path
+     * @param pProject the project definition
+     * @throws OceanusException on error
+     */
+    public void parseSubProjects(final String pPath,
+                                 final ThemisMvnProjectDefinition pProject) throws OceanusException {
+        /* Loop through the subModules */
+        final Iterator<MvnSubModule> myIterator = pProject.subIterator();
+        while (myIterator.hasNext()) {
+            final MvnSubModule myModule = myIterator.next();
+
+            /* If the module has not got a project definition */
+            if (myModule.getProjectDefinition() == null) {
+                /* Build the underlying string */
+                final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+                myBuilder.append(pPath);
+                myBuilder.append(ThemisSvnRepository.SEP_URL);
+                myBuilder.append(myModule.getName());
+                final String myPath = myBuilder.toString();
+
+                /* Parse the project URL */
+                final ThemisMvnProjectDefinition mySubDef = parseProjectURL(myPath);
+                myModule.setProjectDefinition(mySubDef);
+                parseSubProjects(myPath, mySubDef);
             }
         }
     }
@@ -336,7 +346,8 @@ public final class ThemisSvnComponent
      * List of components.
      */
     public static final class ThemisSvnComponentList
-            extends ThemisScmComponentList {
+            extends
+            ThemisScmComponentList {
         /**
          * Report fields.
          */
@@ -404,9 +415,6 @@ public final class ThemisSvnComponent
                 final ThemisSvnComponent myComponent = (ThemisSvnComponent) myIterator.next();
                 final ThemisSvnBranchList myBranches = myComponent.getBranches();
 
-                //if (!"JDateButton".equals(myComponent.getName())) {
-                //    continue;
-                //}
                 /* Start the discoverComponent task */
                 myTask = myBaseTask.startTask("discoverComponent:" + myComponent.getName());
 
@@ -471,7 +479,8 @@ public final class ThemisSvnComponent
          * The Directory Entry Handler.
          */
         private final class ListDirHandler
-                implements ISVNDirEntryHandler {
+                implements
+                ISVNDirEntryHandler {
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Ignore if not a directory and if it is top-level */

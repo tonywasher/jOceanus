@@ -66,7 +66,7 @@ public class TestSwingHelpWindow {
             }
         });
     }
-
+    
     /**
      * Create and show the GUI.
      */

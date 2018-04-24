@@ -48,7 +48,6 @@ public abstract class ThemisScmRepository
     /**
      * Report fields.
      */
-    @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<ThemisScmRepository> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmRepository.class);
 
     /**

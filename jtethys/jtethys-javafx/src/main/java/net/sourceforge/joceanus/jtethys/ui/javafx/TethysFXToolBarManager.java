@@ -60,7 +60,7 @@ public class TethysFXToolBarManager
     public void setEnabled(final boolean pEnabled) {
         theToolBar.setDisable(!pEnabled);
     }
-
+    
     @Override
     public void setVisible(final boolean pVisible) {
         theToolBar.setVisible(pVisible);

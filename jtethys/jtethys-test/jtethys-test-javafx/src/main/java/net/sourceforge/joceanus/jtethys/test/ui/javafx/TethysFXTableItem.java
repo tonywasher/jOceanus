@@ -61,7 +61,7 @@ public class TethysFXTableItem {
      * XtraBoolean property.
      */
     private final ObjectProperty<Boolean> theXtraBoolean = new SimpleObjectProperty<>(this, TethysDataId.XTRABOOL.toString());
-
+    
     /**
      * Short property.
      */

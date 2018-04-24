@@ -57,7 +57,7 @@ public class TethysDate
      * The Number of months in a Quarter.
      */
     protected static final int MONTHS_IN_QUARTER = 3;
-
+    
     /**
      * Text for Null Date Error.
      */

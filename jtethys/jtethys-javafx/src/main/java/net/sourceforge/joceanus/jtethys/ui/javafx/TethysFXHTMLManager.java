@@ -71,7 +71,7 @@ public class TethysFXHTMLManager
      * Style element name.
      */
     private static final String ELEMENT_STYLE = "style";
-
+    
     /**
      * Anchor element name.
      */

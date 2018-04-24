@@ -33,7 +33,7 @@ public class TethysDateRange
      * Unbounded range description.
      */
     protected static final String DESC_UNBOUNDED = TethysDateResource.RANGE_UNBOUNDED.getValue();
-
+    
     /**
      * link range description.
      */

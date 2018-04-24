@@ -41,7 +41,6 @@ public abstract class ThemisScmComponent
     /**
      * Report fields.
      */
-    @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<ThemisScmComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmComponent.class);
 
     /**
@@ -174,7 +173,6 @@ public abstract class ThemisScmComponent
         /**
          * Report fields.
          */
-        @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<ThemisScmComponentList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmComponentList.class);
 
         /**

@@ -64,7 +64,7 @@ public class TethysSwingDemoFilter {
     public static void main(final String[] args) {
         SwingUtilities.invokeLater(() -> createAndShowGUI());
      }
-
+    
     /**
      * Create and show the GUI.
      */

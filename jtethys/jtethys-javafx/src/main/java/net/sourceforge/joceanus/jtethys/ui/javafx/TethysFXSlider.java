@@ -45,7 +45,7 @@ public class TethysFXSlider
      * The Slider.
      */
     private final Slider theSlider;
-
+    
     /**
      * Constructor.
      * @param pFactory the GUI Factory

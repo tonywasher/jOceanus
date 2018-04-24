@@ -43,7 +43,7 @@ public final class TethysTestDecimal {
      */
     private TethysTestDecimal() {
     }
-
+    
     /**
      * Main entry point.
      * @param pArgs the arguments

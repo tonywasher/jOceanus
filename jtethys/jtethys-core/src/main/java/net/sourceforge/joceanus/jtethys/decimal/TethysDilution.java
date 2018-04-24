@@ -48,7 +48,7 @@ public class TethysDilution
      */
     protected TethysDilution() {
     }
-
+    
     /**
      * Construct a new Dilution from an integral number.
      * @param pValue the dilution value to correct number of places

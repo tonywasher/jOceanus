@@ -103,7 +103,7 @@ public class TethysFXEditUIExample
      * The password edit field.
      */
     private final TethysFXCharArrayTextField thePassField;
-
+    
     /**
      * The short edit field.
      */

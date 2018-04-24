@@ -36,7 +36,7 @@ public enum TethysFXArrowIcon {
      * Up Arrow.
      */
     UP(new Point2D(1, 9), new Point2D(5, 1), new Point2D(9, 9)),
-
+    
     /**
      * Down Arrow.
      */

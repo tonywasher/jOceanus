@@ -58,7 +58,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      * Item separator.
      */
     public static final String ITEM_SEP = ",";
-
+    
     /**
      * The GUI Manager.
      */

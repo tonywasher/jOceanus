@@ -45,7 +45,6 @@ public abstract class ThemisScmTag
     /**
      * Report fields.
      */
-    @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<ThemisScmTag> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmTag.class);
 
     /**
@@ -192,7 +191,6 @@ public abstract class ThemisScmTag
         /**
          * Report fields.
          */
-        @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<ThemisScmTagList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmTagList.class);
 
         /**

@@ -58,7 +58,7 @@ public class TethysSwingTableItem {
      * XtraBoolean property.
      */
     private Boolean theXtraBoolean;
-
+    
     /**
      * Short property.
      */

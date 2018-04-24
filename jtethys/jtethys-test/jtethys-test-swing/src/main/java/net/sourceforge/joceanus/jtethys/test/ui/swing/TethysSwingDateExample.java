@@ -80,7 +80,7 @@ public class TethysSwingDateExample {
      * Second Column Width.
      */
     private static final int COL_2_WIDTH = 250;
-
+    
     /**
      * Start sample date.
      */

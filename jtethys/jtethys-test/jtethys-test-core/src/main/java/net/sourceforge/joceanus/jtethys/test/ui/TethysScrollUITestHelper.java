@@ -51,7 +51,7 @@ public class TethysScrollUITestHelper<N, I> {
      * The max items.
      */
     private static final int MAX_ITEMS = 4;
-
+    
     /**
      * Default icon width.
      */

@@ -93,7 +93,7 @@ public final class TethysFXDateExample
      * End sample date.
      */
     private static final TethysDate DATE_END = makeDate(2018, Month.AUGUST, 9);
-
+    
     /**
      * First sample date.
      */

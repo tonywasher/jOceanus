@@ -26,17 +26,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnRevisionKey;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
-
 import org.tmatesoft.svn.core.ISVNLogEntryHandler;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -48,12 +37,25 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnRevisionKey;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
+
 /**
  * Map of RevisionHistory.
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistoryMap
-        implements MetisDataObjectFormat, MetisDataMap<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> {
+        implements
+        MetisDataObjectFormat,
+        MetisDataMap<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> {
     /**
      * The repository.
      */
@@ -149,7 +151,8 @@ public class ThemisSvnRevisionHistoryMap
      * Details of a revision path for a directory in a SubVersion repository.
      */
     public static class ThemisSvnRevisionPath
-            implements MetisFieldItem {
+            implements
+            MetisFieldItem {
         /**
          * DataFields.
          */
@@ -280,14 +283,6 @@ public class ThemisSvnRevisionHistoryMap
         }
 
         /**
-         * Obtain the revision.
-         * @return the revision
-         */
-        private SVNRevision getRevision() {
-            return theBaseRevision;
-        }
-
-        /**
          * Obtain the revision#.
          * @return the revision
          */
@@ -406,7 +401,8 @@ public class ThemisSvnRevisionHistoryMap
          * EventHandler.
          */
         private final class LogHandler
-                implements ISVNLogEntryHandler {
+                implements
+                ISVNLogEntryHandler {
             @Override
             public void handleLogEntry(final SVNLogEntry pEntry) throws SVNException {
                 /* Create the revisionKey */

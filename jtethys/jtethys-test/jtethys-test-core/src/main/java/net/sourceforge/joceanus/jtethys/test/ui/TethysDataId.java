@@ -45,7 +45,7 @@ public enum TethysDataId {
      * Short.
      */
     SHORT("Short"),
-
+    
     /**
      * Integer.
      */

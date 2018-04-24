@@ -76,7 +76,7 @@ public class TethysFXTableExample
      * The Test helper.
      */
     private final TethysScrollUITestHelper<?, ?> theHelper;
-
+    
     /**
      * Constructor.
      */

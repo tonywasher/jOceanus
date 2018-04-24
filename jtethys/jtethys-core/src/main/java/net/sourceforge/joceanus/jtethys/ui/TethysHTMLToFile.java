@@ -53,7 +53,7 @@ public class TethysHTMLToFile<N, I> {
      * Link element name.
      */
     private static final String ELEMENT_A = "a";
-
+    
     /**
      * HRef attribute name.
      */

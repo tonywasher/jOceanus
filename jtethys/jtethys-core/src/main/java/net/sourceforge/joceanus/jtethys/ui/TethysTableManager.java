@@ -668,7 +668,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableStringColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<String, R>, TethysTableColumn<String, C, R, N, I> {
+            extends TethysTableValidatedColumn<String, R>,
+            TethysTableColumn<String, C, R, N, I> {
     }
 
     /**
@@ -679,7 +680,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableCharArrayColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<char[], R>, TethysTableColumn<char[], C, R, N, I> {
+            extends TethysTableValidatedColumn<char[], R>,
+            TethysTableColumn<char[], C, R, N, I> {
     }
 
     /**
@@ -690,7 +692,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableShortColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<Short, R>, TethysTableColumn<Short, C, R, N, I> {
+            extends TethysTableValidatedColumn<Short, R>,
+            TethysTableColumn<Short, C, R, N, I> {
     }
 
     /**
@@ -701,7 +704,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableIntegerColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<Integer, R>, TethysTableColumn<Integer, C, R, N, I> {
+            extends TethysTableValidatedColumn<Integer, R>,
+            TethysTableColumn<Integer, C, R, N, I> {
     }
 
     /**
@@ -712,7 +716,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableLongColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<Long, R>, TethysTableColumn<Long, C, R, N, I> {
+            extends TethysTableValidatedColumn<Long, R>,
+            TethysTableColumn<Long, C, R, N, I> {
     }
 
     /**
@@ -750,7 +755,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableRawDecimalColumn<C, R, N, I>
-            extends TethysTableDecimalColumn<R>, TethysTableColumn<TethysDecimal, C, R, N, I> {
+            extends TethysTableDecimalColumn<R>,
+            TethysTableColumn<TethysDecimal, C, R, N, I> {
     }
 
     /**
@@ -761,7 +767,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableMoneyColumn<C, R, N, I>
-            extends TethysTableCurrencyColumn<TethysMoney, R>, TethysTableColumn<TethysMoney, C, R, N, I> {
+            extends TethysTableCurrencyColumn<TethysMoney, R>,
+            TethysTableColumn<TethysMoney, C, R, N, I> {
     }
 
     /**
@@ -772,7 +779,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTablePriceColumn<C, R, N, I>
-            extends TethysTableCurrencyColumn<TethysPrice, R>, TethysTableColumn<TethysPrice, C, R, N, I> {
+            extends TethysTableCurrencyColumn<TethysPrice, R>,
+            TethysTableColumn<TethysPrice, C, R, N, I> {
     }
 
     /**
@@ -783,7 +791,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableUnitsColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<TethysUnits, R>, TethysTableColumn<TethysUnits, C, R, N, I> {
+            extends TethysTableValidatedColumn<TethysUnits, R>,
+            TethysTableColumn<TethysUnits, C, R, N, I> {
     }
 
     /**
@@ -794,7 +803,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableRateColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<TethysRate, R>, TethysTableColumn<TethysRate, C, R, N, I> {
+            extends TethysTableValidatedColumn<TethysRate, R>,
+            TethysTableColumn<TethysRate, C, R, N, I> {
     }
 
     /**
@@ -805,7 +815,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableDilutionColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<TethysDilution, R>, TethysTableColumn<TethysDilution, C, R, N, I> {
+            extends TethysTableValidatedColumn<TethysDilution, R>,
+            TethysTableColumn<TethysDilution, C, R, N, I> {
     }
 
     /**
@@ -816,7 +827,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableRatioColumn<C, R, N, I>
-            extends TethysTableValidatedColumn<TethysRatio, R>, TethysTableColumn<TethysRatio, C, R, N, I> {
+            extends TethysTableValidatedColumn<TethysRatio, R>,
+            TethysTableColumn<TethysRatio, C, R, N, I> {
     }
 
     /**
@@ -827,7 +839,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the icon type
      */
     public interface TethysTableDilutedPriceColumn<C, R, N, I>
-            extends TethysTableCurrencyColumn<TethysDilutedPrice, R>, TethysTableColumn<TethysDilutedPrice, C, R, N, I> {
+            extends TethysTableCurrencyColumn<TethysDilutedPrice, R>,
+            TethysTableColumn<TethysDilutedPrice, C, R, N, I> {
     }
 
     /**
@@ -852,7 +865,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableIconColumn<T, C, R, N, I>
-            extends TethysTableIconConfig<T, R>, TethysTableColumn<T, C, R, N, I> {
+            extends TethysTableIconConfig<T, R>,
+            TethysTableColumn<T, C, R, N, I> {
     }
 
     /**
@@ -875,7 +889,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableDateColumn<C, R, N, I>
-            extends TethysTableDateConfig<R>, TethysTableColumn<TethysDate, C, R, N, I> {
+            extends TethysTableDateConfig<R>,
+            TethysTableColumn<TethysDate, C, R, N, I> {
     }
 
     /**
@@ -901,7 +916,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableScrollColumn<T, C, R, N, I>
-            extends TethysTableScrollConfig<T, R, I>, TethysTableColumn<T, C, R, N, I> {
+            extends TethysTableScrollConfig<T, R, I>,
+            TethysTableColumn<T, C, R, N, I> {
     }
 
     /**
@@ -926,7 +942,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <I> the Icon type
      */
     public interface TethysTableListColumn<T extends Comparable<T>, C, R, N, I>
-            extends TethysTableListConfig<T, R>, TethysTableColumn<List<T>, C, R, N, I> {
+            extends TethysTableListConfig<T, R>,
+            TethysTableColumn<List<T>, C, R, N, I> {
     }
 
     /**

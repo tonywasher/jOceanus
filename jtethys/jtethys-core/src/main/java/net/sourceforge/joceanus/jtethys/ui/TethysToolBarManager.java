@@ -57,7 +57,7 @@ public abstract class TethysToolBarManager<N, I>
      * The icon Width.
      */
     private int theWidth;
-
+    
     /**
      * Constructor.
      * @param pFactory the Gui factory

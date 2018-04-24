@@ -61,7 +61,7 @@ public final class TethysResourceBuilder {
     private TethysResourceBuilder(final String pBundleName) {
         theBundleName = pBundleName;
     }
-
+    
     /**
      * Obtain standard builder.
      * @param pBundleName the Bundle Name

@@ -39,7 +39,7 @@ public abstract class TethysHTMLManager<N, I>
      * The logger.
      */
     private static final Logger LOGGER = LogManager.getLogger(TethysHTMLManager.class);
-
+    
     /**
      * Reference Separator.
      */

@@ -67,7 +67,6 @@ public abstract class ThemisScmBranch
     /**
      * Report fields.
      */
-    @SuppressWarnings("rawtypes")
     private static final MetisFieldSet<ThemisScmBranch> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmBranch.class);
 
     /**
@@ -413,7 +412,6 @@ public abstract class ThemisScmBranch
         /**
          * Report fields.
          */
-        @SuppressWarnings("rawtypes")
         private static final MetisFieldSet<ThemisScmBranchList> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisScmBranchList.class);
 
         /**

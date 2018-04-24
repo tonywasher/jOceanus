@@ -58,7 +58,7 @@ public abstract class TethysGuiFactory<N, I> {
      * Data Formatter.
      */
     private final TethysDataFormatter theFormatter;
-
+    
     /**
      * ValueSet.
      */

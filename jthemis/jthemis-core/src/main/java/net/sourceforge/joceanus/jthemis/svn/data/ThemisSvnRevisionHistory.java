@@ -28,6 +28,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tmatesoft.svn.core.SVNLogEntry;
+import org.tmatesoft.svn.core.SVNLogEntryPath;
+import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataDifference;
 import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
@@ -38,19 +45,13 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.tmatesoft.svn.core.SVNLogEntry;
-import org.tmatesoft.svn.core.SVNLogEntryPath;
-import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.wc.SVNRevision;
-
 /**
  * Methods to access revision history.
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistory
-        implements MetisFieldItem {
+        implements
+        MetisFieldItem {
     /**
      * Logger.
      */
@@ -161,7 +162,7 @@ public class ThemisSvnRevisionHistory
         /* Log instance */
         LOGGER.debug("Path {} @ Rev{}", pPath, pEntry.getRevision());
 
-         /* Iterate through the file changes */
+        /* Iterate through the file changes */
         for (final Entry<String, SVNLogEntryPath> myEntry : pEntry.getChangedPaths().entrySet()) {
             /* Access the key */
             final String myPath = myEntry.getKey();
@@ -205,8 +206,7 @@ public class ThemisSvnRevisionHistory
                             /* Record the file change */
                             hasFileChanges = true;
 
-                            /* Determine the name of the inner component */
-                            final String myInnerComp = myDir.substring(pPath.length());
+                            /* Check whether we should copy this component */
                             if (checkComponentCopy(pPath, myDir, myCopyPath)) {
                                 /* Log subDir copy */
                                 LOGGER.debug("S:{} <- {}@{}", myDetail, myCopyPath, myDetail.getCopyRevision());
@@ -269,7 +269,7 @@ public class ThemisSvnRevisionHistory
 
         /* Look for creation of component */
         return pSource.startsWith("/branches/");
-     }
+    }
 
     /**
      * Obtain the revisionKey.
@@ -434,7 +434,8 @@ public class ThemisSvnRevisionHistory
      * RevisionKey.
      */
     public static class ThemisSvnRevisionKey
-            implements MetisDataObjectFormat {
+            implements
+            MetisDataObjectFormat {
         /**
          * Hash prime.
          */
@@ -456,7 +457,7 @@ public class ThemisSvnRevisionHistory
          * @param pPath the path
          */
         protected ThemisSvnRevisionKey(final String pPath,
-                                 final SVNRevision pRevision) {
+                                       final SVNRevision pRevision) {
             /* Store parameters */
             theRevision = pRevision;
             thePath = pPath;
@@ -527,7 +528,8 @@ public class ThemisSvnRevisionHistory
      * SvnSourceDir entry.
      */
     public static final class ThemisSvnSourceDir
-            implements MetisFieldItem {
+            implements
+            MetisFieldItem {
         /**
          * DataFields.
          */
@@ -634,7 +636,9 @@ public class ThemisSvnRevisionHistory
      * Source Directory list.
      */
     public static final class ThemisSvnSourceDirList
-            implements MetisFieldItem, MetisDataList<ThemisSvnSourceDir> {
+            implements
+            MetisFieldItem,
+            MetisDataList<ThemisSvnSourceDir> {
         /**
          * DataFields.
          */
@@ -750,7 +754,8 @@ public class ThemisSvnRevisionHistory
      * Source definition.
      */
     public static class ThemisSvnSourceDefinition
-            implements MetisFieldItem {
+            implements
+            MetisFieldItem {
         /**
          * DataFields.
          */

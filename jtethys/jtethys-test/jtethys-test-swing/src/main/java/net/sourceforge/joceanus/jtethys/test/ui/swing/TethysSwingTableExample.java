@@ -79,7 +79,7 @@ public class TethysSwingTableExample {
      * Logger.
      */
     private static final Logger LOGGER = LogManager.getLogger(TethysSwingTableExample.class);
-
+    
     /**
      * The GUI Factory.
      */

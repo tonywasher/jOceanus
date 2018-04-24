@@ -91,7 +91,7 @@ public class TethysSwingEditUIExample {
      * The value width.
      */
     private static final int VALUE_WIDTH = 300;
-
+    
     /**
      * The GuiFactory.
      */

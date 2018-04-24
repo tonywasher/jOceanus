@@ -93,7 +93,7 @@ public class TethysFXTableManager<C, R>
      * The CellFactory.
      */
     private final TethysFXTableCellFactory<C, R> theCellFactory;
-
+    
     /**
      * The Items.
      */

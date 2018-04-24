@@ -71,7 +71,7 @@ public class TethysSwingScrollUIExample {
      * The GuiFactory.
      */
     private final TethysSwingGuiFactory theGuiFactory;
-
+    
     /**
      * The Test helper.
      */

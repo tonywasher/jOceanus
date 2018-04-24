@@ -55,7 +55,7 @@ public abstract class TethysProgram {
      * Name Key.
      */
     private static final String KEY_NAME = PFX_APP + "name";
-
+    
     /**
      * Version Key.
      */
