@@ -16,7 +16,7 @@
     <module>jmoneywise-test</module>
   </modules>
   <properties>
-    <svnComponent>jmoneywise</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jmoneywise</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

@@ -37,13 +37,13 @@
   </developers>
   <issueManagement>
     <system>Jira</system>
-    <url>http://${svnHost}:8080/</url>
+    <url>http://${scmHost}:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}</developerConnection>
+    <connection>scm:svn:http://${scmHost}/svn/${scmRepository}/${scmBase}</connection>
+    <developerConnection>scm:svn:https://${scmHost}/svn/${scmRepository}/${scmBase}</developerConnection>
     <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}</url>
+    <url>http://${scmHost}/viewvc/${scmRepository}/${scmBase}</url>
   </scm>
   <repositories>
     <repository>
@@ -63,16 +63,17 @@
     <currentYear>${maven.build.timestamp}</currentYear>
     <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
-    <svnHost>localhost</svnHost>
-    <svnRepository>Finance</svnRepository>
-    <svnParent>jOceanus</svnParent>
-    <svnComponent>${svnParent}</svnComponent>
-    <svnBranch>v1.5.3</svnBranch>
-    <svnTag>SNAPSHOT</svnTag>
-    <svnBase>${svnParent}/trunk</svnBase>
+    <scmHost>localhost</scmHost>
+    <scmRepository>Finance</scmRepository>
+    <scmParent>jOceanus</scmParent>
+    <scmComponent>${scmParent}</scmComponent>
+    <scmBranch>v1.5.3</scmBranch>
+    <scmTag>SNAPSHOT</scmTag>
+    <scmBase>${scmParent}/trunk</scmBase>
     <packageKey>net.sourceforge.joceanus</packageKey>
     <packageMain/>
-    <appLibDir/>
+    <appDir>${env.BACKUPDIR}</appDir>
+    <appLibDir>lib/</appLibDir>
     <BouncyCastleVersion>1.59</BouncyCastleVersion>
     <SvnKitVersion>1.9.2</SvnKitVersion>
     <JGitVersion>4.11.0.201803080745-r</JGitVersion>
@@ -157,7 +158,7 @@
             <annotationProcessorPath>
               <groupId>org.jetbrains</groupId>
               <artifactId>annotations</artifactId>
-              <version>15.0</version>
+              <version>16.0.1</version>
             </annotationProcessorPath>
           </annotationProcessorPaths>
         </configuration>
@@ -336,7 +337,7 @@
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               </manifest>
               <manifestEntries>
-                <Revision>${svnRepository}-r${buildNumber}</Revision>
+                <Revision>${scmRepository}-r${buildNumber}</Revision>
               </manifestEntries>
             </archive>
           </configuration>

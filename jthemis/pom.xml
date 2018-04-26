@@ -15,7 +15,7 @@
     <module>jthemis-javafx</module>
   </modules>
   <properties>
-    <svnComponent>jthemis</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jthemis</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

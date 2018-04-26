@@ -15,7 +15,7 @@
     <module>jprometheus-javafx</module>
   </modules>
   <properties>
-    <svnComponent>jprometheus</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jprometheus</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

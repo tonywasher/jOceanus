@@ -16,7 +16,7 @@
     <module>jtethys-test</module>
   </modules>
   <properties>
-    <svnComponent>jtethys</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jtethys</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

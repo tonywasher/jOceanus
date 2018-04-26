@@ -17,7 +17,7 @@
     <module>jmetis-test</module>
   </modules>
   <properties>
-    <svnComponent>jmetis</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jmetis</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

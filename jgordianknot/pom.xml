@@ -16,7 +16,7 @@
     <module>jgordianknot-test</module>
   </modules>
   <properties>
-    <svnComponent>jgordianknot</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jgordianknot</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>

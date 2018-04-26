@@ -1,18 +1,9 @@
 @echo off
 setlocal
 
-if ".%1" == "." goto :default
-set projectName=jdatebutton
-set source=c:\Users\Tony\jOceanus\%projectName%
-set target=c:\Users\Tony\sourceforge\%projectName%\trunk
-set dirNames=jdatebutton-core jdatebutton-swing jdatebutton-javafx
-set dirNames=%dirNames% .
-goto :docopy
-
-:default
 set projectName=jOceanus
-set source=c:\Users\Tony\%projectName%
-set target=c:\Users\Tony\sourceforge\%projectName%\trunk
+set source=%USERPROFILE%\work\%projectName%
+set target=%USERPROFILE%\sourceforge\%projectName%\trunk
 set dirNames=jtethys jtethys\jtethys-core jtethys\jtethys-swing jtethys\jtethys-javafx 
 set dirNames=%dirNames% jtethys\jtethys-test jtethys\jtethys-test\jtethys-test-core
 set dirNames=%dirNames% jtethys\jtethys-test\jtethys-test-swing jtethys\jtethys-test\jtethys-test-javafx

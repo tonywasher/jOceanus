@@ -15,7 +15,7 @@
     <module>jcoeus-core</module>
   </modules>
   <properties>
-    <svnComponent>jcoeus</svnComponent>
-    <packageName>${packageKey}.${svnComponent}</packageName>
+    <scmComponent>jcoeus</scmComponent>
+    <packageName>${packageKey}.${scmComponent}</packageName>
   </properties>
 </project>
