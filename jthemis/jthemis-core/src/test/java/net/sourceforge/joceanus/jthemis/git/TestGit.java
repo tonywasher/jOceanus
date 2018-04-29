@@ -1,6 +1,6 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git;
 
@@ -41,37 +35,43 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 /**
  * Git test suite.
  */
-public class TestGit {
+public final class TestGit {
+    /**
+     * Private constructor.
+     */
+    private TestGit() {
+    }
+
     /**
      * Main entry point.
      * @param args the parameters
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         try {
             /* Access repository */
-            FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
+            final FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
             myBuilder.setWorkTree(new File("c:\\Users\\Tony\\GitTest"));
             myBuilder.readEnvironment();
             myBuilder.findGitDir();
-            Repository myRepo = myBuilder.build();
+            final Repository myRepo = myBuilder.build();
 
             /* Create access */
-            Git myGit = new Git(myRepo);
-            PersonIdent myRepoId = new PersonIdent(myRepo);
+            final Git myGit = new Git(myRepo);
+            final PersonIdent myRepoId = new PersonIdent(myRepo);
 
             /* Declare all files to git */
-            AddCommand myAdd = myGit.add();
+            final AddCommand myAdd = myGit.add();
             myAdd.addFilepattern(".");
             myAdd.call();
 
             /* Perform a commit */
-            CommitCommand myCommit = myGit.commit();
+            final CommitCommand myCommit = myGit.commit();
             myCommit.setCommitter(new PersonIdent(myRepoId, new Date()));
             myCommit.setMessage("Trial commit");
-            RevCommit myCommitId = myCommit.call();
+            final RevCommit myCommitId = myCommit.call();
 
             /* Create a branch from this point */
-            CreateBranchCommand myBranch = myGit.branchCreate();
+            final CreateBranchCommand myBranch = myGit.branchCreate();
             myBranch.setStartPoint(myCommitId);
             myBranch.setName("v1.0.0");
             myBranch.call();
@@ -96,7 +96,7 @@ public class TestGit {
             /* Commit the detached head */
 
             /* Create the tag */
-            TagCommand myTag = myGit.tag();
+            final TagCommand myTag = myGit.tag();
             myTag.setName("v1.0.0-b1");
             myTag.setTagger(new PersonIdent(myRepoId, new Date()));
             myTag.setMessage("New Tag");

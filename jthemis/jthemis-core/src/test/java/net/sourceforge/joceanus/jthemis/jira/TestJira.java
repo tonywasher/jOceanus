@@ -1,6 +1,6 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.jira;
 
@@ -31,18 +25,24 @@ import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
 /**
  * Jira test suite.
  */
-public class TestJira {
+public final class TestJira {
+    /**
+     * Private constructor.
+     */
+    private TestJira() {
+    }
+
     /**
      * Main entry point.
      * @param args the parameters
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         try {
             /* Configure log4j */
             TethysLogConfig.configureLog4j();
 
-            MetisViewerManager myViewer = new MetisViewerManager();
-            ThemisJiraServer myServer = new ThemisJiraServer(new MetisPreferenceManager(myViewer));
+            final MetisViewerManager myViewer = new MetisViewerManager();
+            final ThemisJiraServer myServer = new ThemisJiraServer(new MetisPreferenceManager(myViewer));
             myServer.getIssue("FIN-47");
             System.exit(0);
         } catch (OceanusException e) {

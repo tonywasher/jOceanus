@@ -1,44 +1,42 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 /**
  * Represents a tag of a branch.
@@ -61,6 +59,7 @@ public final class ThemisGitTag
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitTag::getRepository);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisGitTag::getComponent);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitTag::getCommitId);
     }
 
     /**
@@ -76,7 +75,7 @@ public final class ThemisGitTag
     /**
      * Object Id of the commit.
      */
-    private final ObjectId theCommitId;
+    private final ThemisGitCommitId theCommitId;
 
     /**
      * Constructor.
@@ -86,7 +85,7 @@ public final class ThemisGitTag
      */
     protected ThemisGitTag(final ThemisGitBranch pParent,
                            final int pTag,
-                           final ObjectId pCommitId) {
+                           final ThemisGitCommitId pCommitId) {
         /* Call super constructor */
         super(pParent, pTag);
 
@@ -121,7 +120,7 @@ public final class ThemisGitTag
      * Get the commit id.
      * @return the commit id
      */
-    public ObjectId getCommitId() {
+    public ThemisGitCommitId getCommitId() {
         return theCommitId;
     }
 
@@ -143,7 +142,7 @@ public final class ThemisGitTag
 
     @Override
     public ThemisGitBranch getBranch() {
-      return (ThemisGitBranch) super.getBranch();
+        return (ThemisGitBranch) super.getBranch();
     }
 
     /**
@@ -194,9 +193,11 @@ public final class ThemisGitTag
         /**
          * Discover tag list from repository.
          * @param pReport the report object
+         * @param pHistory the revision history
          * @throws OceanusException on error
          */
-        public void discover(final MetisThreadStatusReport pReport) throws OceanusException {
+        public void discover(final MetisThreadStatusReport pReport,
+                             final ThemisGitRevisionHistory pHistory) throws OceanusException {
             /* Reset the list */
             clear();
 
@@ -207,7 +208,7 @@ public final class ThemisGitTag
             discoverTags(myGit);
 
             /* Analyse tags */
-            analyseTags(pReport);
+            analyseTags(pReport, pHistory);
         }
 
         /**
@@ -217,8 +218,8 @@ public final class ThemisGitTag
          */
         private void discoverTags(final Git pGit) throws OceanusException {
             /* Protect against exceptions */
-            try {
-                /* Access list of branches */
+            try (RevWalk myRevWalk = new RevWalk(theComponent.getGitRepo())) {
+                /* Access list of tags */
                 final ListTagCommand myCommand = pGit.tagList();
                 final List<Ref> myTags = myCommand.call();
                 final String myBranch = getBranch().getBranchName() + ThemisGitTag.PREFIX_TAG;
@@ -230,7 +231,7 @@ public final class ThemisGitTag
 
                     /* Access tag details */
                     String myName = myRef.getName();
-                    final ObjectId myCommitId = myRef.getObjectId();
+                    final ObjectId myObjectId = myRef.getObjectId();
                     if (myName.startsWith(REF_TAGS)) {
                         myName = myName.substring(REF_TAGS.length());
                     }
@@ -244,7 +245,8 @@ public final class ThemisGitTag
                         final int myTagNo = Integer.parseInt(myName);
 
                         /* Create the new tag and add it */
-                        final ThemisGitTag myTag = new ThemisGitTag(getBranch(), myTagNo, myCommitId);
+                        final RevCommit myCommit = myRevWalk.parseCommit(myObjectId);
+                        final ThemisGitTag myTag = new ThemisGitTag(getBranch(), myTagNo, new ThemisGitCommitId(myCommit));
                         add(myTag);
                     }
                 }
@@ -252,7 +254,8 @@ public final class ThemisGitTag
                 /* Sort the list */
                 getUnderlyingList().sort(null);
 
-            } catch (GitAPIException e) {
+            } catch (IOException
+                    | GitAPIException e) {
                 throw new ThemisIOException("Failed to list tags", e);
             }
         }
@@ -260,9 +263,11 @@ public final class ThemisGitTag
         /**
          * Analyses tags.
          * @param pReport the report object
+         * @param pHistory the revision history
          * @throws OceanusException on error
          */
-        private void analyseTags(final MetisThreadStatusReport pReport) throws OceanusException {
+        private void analyseTags(final MetisThreadStatusReport pReport,
+                                 final ThemisGitRevisionHistory pHistory) throws OceanusException {
             /* Access repository */
             final ThemisGitRepository myRepo = theComponent.getRepository();
 
@@ -283,6 +288,9 @@ public final class ThemisGitTag
                 if (myProject != null) {
                     myRepo.registerTag(myProject.getDefinition(), myTag);
                 }
+
+                /* Parse the revision history */
+                pHistory.parseCommitHistory(myTag.getCommitId());
             }
         }
     }

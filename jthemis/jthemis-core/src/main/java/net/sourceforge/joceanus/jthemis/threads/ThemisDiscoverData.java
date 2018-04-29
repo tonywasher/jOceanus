@@ -1,24 +1,18 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.threads;
 
@@ -34,6 +28,7 @@ import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract;
@@ -48,9 +43,14 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.ThemisSvnW
 public class ThemisDiscoverData<N, I>
         implements MetisThread<Void, N, I> {
     /**
-     * The Repository.
+     * The SubVersion Repository.
      */
-    private ThemisSvnRepository theRepository;
+    private ThemisSvnRepository theSvnRepository;
+
+    /**
+     * The Git Repository.
+     */
+    private ThemisGitRepository theGitRepository;
 
     /**
      * The WorkingCopySet.
@@ -73,8 +73,16 @@ public class ThemisDiscoverData<N, I>
      * Obtain the repository.
      * @return the repository
      */
-    public ThemisSvnRepository getRepository() {
-        return theRepository;
+    public ThemisSvnRepository getSvnRepository() {
+        return theSvnRepository;
+    }
+
+    /**
+     * Obtain the repository.
+     * @return the repository
+     */
+    public ThemisGitRepository getGitRepository() {
+        return theGitRepository;
     }
 
     /**
@@ -96,7 +104,7 @@ public class ThemisDiscoverData<N, I>
      */
     private void deriveExtractPlans() throws OceanusException {
         /* Loop through the components */
-        final Iterator<ThemisScmComponent> myIterator = theRepository.getComponents().iterator();
+        final Iterator<ThemisScmComponent> myIterator = theSvnRepository.getComponents().iterator();
         while (myIterator.hasNext()) {
             /* Create an extract plan for the component */
             final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
@@ -131,19 +139,19 @@ public class ThemisDiscoverData<N, I>
             final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
             final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
-            /* Start the analyse repository task */
+            /* Start the analyse svnRepository task */
             final MetisProfile myBaseTask = myManager.getActiveTask();
-            MetisProfile myTask = myBaseTask.startTask("analyseRepository");
+            MetisProfile myTask = myBaseTask.startTask("analyseSvnRepository");
 
-            /* Discover repository details */
-            theRepository = new ThemisSvnRepository(myPreferences, myManager);
+            /* Discover subVersion repository details */
+            theSvnRepository = new ThemisSvnRepository(myPreferences, myManager);
 
             /* Start the discoverWorkingSet task */
             myTask = myBaseTask.startTask("analyseWorkingSet");
 
             /* Discover workingSet details */
             myManager.checkForCancellation();
-            theWorkingCopySet = new ThemisSvnWorkingCopySet(theRepository, myManager);
+            theWorkingCopySet = new ThemisSvnWorkingCopySet(theSvnRepository, myManager);
 
             /* Start the derivePlans task */
             myTask = myBaseTask.startTask("deriveExtractPlans");
@@ -151,6 +159,12 @@ public class ThemisDiscoverData<N, I>
             /* Build the Extract Plans */
             myManager.checkForCancellation();
             deriveExtractPlans();
+
+            /* Start the discover gitRepository task */
+            myTask = myBaseTask.startTask("analyseGitRepository");
+
+            /* Discover Git repository details */
+            theGitRepository = new ThemisGitRepository(myPreferences, myManager);
 
             /* Complete the task */
             myTask.end();
@@ -160,8 +174,8 @@ public class ThemisDiscoverData<N, I>
 
         } finally {
             /* Dispose of any connections */
-            if (theRepository != null) {
-                theRepository.dispose();
+            if (theSvnRepository != null) {
+                theSvnRepository.dispose();
             }
         }
     }

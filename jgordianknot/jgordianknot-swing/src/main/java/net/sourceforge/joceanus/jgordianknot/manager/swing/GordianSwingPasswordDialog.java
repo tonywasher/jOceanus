@@ -1,42 +1,38 @@
 /*******************************************************************************
- * jGordianKnot: Security Suite
- * Copyright 2012,2017 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * GordianKnot: Security Suite
+ * Copyright 2012,2018 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager.swing;
 
-import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FocusTraversalPolicy;
-import java.lang.reflect.InvocationTargetException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.

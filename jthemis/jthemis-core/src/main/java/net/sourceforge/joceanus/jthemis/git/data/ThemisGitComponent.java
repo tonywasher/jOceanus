@@ -1,24 +1,18 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
@@ -26,16 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.ThemisGitBranchList;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.MvnSubModule;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +37,18 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
+
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.ThemisGitBranchList;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.ThemisMvnSubModule;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 
 /**
  * Represents a component in the repository.
@@ -76,9 +72,21 @@ public final class ThemisGitComponent
     private static final MetisFieldSet<ThemisGitComponent> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitComponent.class);
 
     /**
+     * Base field id.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_HISTORY, ThemisGitComponent::getRevisionHistory);
+    }
+
+    /**
      * Logger.
      */
     private static final Logger LOGGER = LogManager.getLogger(ThemisGitComponent.class);
+
+    /**
+     * The revision history.
+     */
+    private final ThemisGitRevisionHistory theHistory;
 
     /**
      * jGit repository access object.
@@ -98,6 +106,9 @@ public final class ThemisGitComponent
 
         /* Access the repository */
         theGitRepo = getRepositoryAccess();
+
+        /* Create the revision history */
+        theHistory = new ThemisGitRevisionHistory(this);
 
         /* Create branch list */
         final ThemisGitBranchList myBranches = new ThemisGitBranchList(this);
@@ -120,6 +131,14 @@ public final class ThemisGitComponent
      */
     public Repository getGitRepo() {
         return theGitRepo;
+    }
+
+    /**
+     * Obtain GitRepository access.
+     * @return the access object
+     */
+    public ThemisGitRevisionHistory getRevisionHistory() {
+        return theHistory;
     }
 
     /**
@@ -170,7 +189,7 @@ public final class ThemisGitComponent
      * @return the stream of null if file does not exists
      * @throws OceanusException on error
      */
-    public ThemisMvnProjectDefinition parseProjectObject(final ObjectId pCommitId,
+    public ThemisMvnProjectDefinition parseProjectObject(final ThemisGitCommitId pCommitId,
                                                          final String pPath) throws OceanusException {
         InputStream myInput = null;
 
@@ -180,9 +199,11 @@ public final class ThemisGitComponent
             final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Build the initial path and POM Name */
-            myBuilder.append(pPath)
-                    .append(File.separatorChar)
-                    .append(ThemisMvnProjectDefinition.POM_NAME);
+            if (pPath.length() > 0) {
+                myBuilder.append(pPath)
+                        .append(ThemisSvnRepository.SEP_URL);
+            }
+            myBuilder.append(ThemisMvnProjectDefinition.POM_NAME);
 
             /* Access object as input stream */
             myInput = getFileObjectAsInputStream(pCommitId, myBuilder.toString());
@@ -194,16 +215,18 @@ public final class ThemisGitComponent
             final ThemisMvnProjectDefinition myProject = new ThemisMvnProjectDefinition(myInput);
 
             /* Loop through the subModules */
-            final Iterator<MvnSubModule> myIterator = myProject.subIterator();
+            final Iterator<ThemisMvnSubModule> myIterator = myProject.subIterator();
             while (myIterator.hasNext()) {
-                final MvnSubModule myModule = myIterator.next();
+                final ThemisMvnSubModule myModule = myIterator.next();
 
                 /* Reset the string buffer */
                 myBuilder.setLength(0);
 
                 /* Build the path name */
-                myBuilder.append(pPath);
-                myBuilder.append(ThemisSvnRepository.SEP_URL);
+                if (pPath.length() > 0) {
+                    myBuilder.append(pPath)
+                            .append(ThemisSvnRepository.SEP_URL);
+                }
                 myBuilder.append(myModule.getName());
 
                 /* Parse the project Object */
@@ -232,13 +255,13 @@ public final class ThemisGitComponent
      * @return the stream of null if file does not exists
      * @throws OceanusException on error
      */
-    public InputStream getFileObjectAsInputStream(final ObjectId pCommitId,
+    public InputStream getFileObjectAsInputStream(final ThemisGitCommitId pCommitId,
                                                   final String pPath) throws OceanusException {
         /* Protect against exceptions */
         try (RevWalk myRevWalk = new RevWalk(theGitRepo);
              TreeWalk myTreeWalk = new TreeWalk(theGitRepo)) {
             /* Access the tree associated with the commit as part of a Revision Walk */
-            final RevCommit myCommit = myRevWalk.parseCommit(pCommitId);
+            final RevCommit myCommit = myRevWalk.parseCommit(pCommitId.getCommit());
             final RevTree myTree = myCommit.getTree();
 
             /* Look for the file matching the path */

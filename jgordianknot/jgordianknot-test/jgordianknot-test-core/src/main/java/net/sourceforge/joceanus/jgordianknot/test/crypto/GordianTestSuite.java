@@ -1,26 +1,24 @@
 /*******************************************************************************
- * jGordianKnot: Security Suite
- * Copyright 2012,2017 Tony Washer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
+ * GordianKnot: Security Suite
+ * Copyright 2012,2018 Tony Washer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test.crypto;
+
+import java.io.File;
+
+import org.bouncycastle.util.Arrays;
 
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianDigest;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianFactory;
@@ -38,9 +36,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianSymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import org.bouncycastle.util.Arrays;
-
-import java.io.File;
 
 /**
  * Security Test suite.
@@ -134,8 +129,8 @@ public class GordianTestSuite {
                               final GordianFactoryType pType) throws OceanusException {
         /* Determine test name */
         final String myTestName = pType.toString() + "-" + (pRestricted
-                                                                  ? "Restricted"
-                                                                  : "Unlimited");
+                                                                        ? "Restricted"
+                                                                        : "Unlimited");
         System.out.println("Running tests for " + myTestName);
 
         /* Create new Password Hash */
@@ -152,9 +147,9 @@ public class GordianTestSuite {
         final GordianKey<GordianStreamKeyType> myStream = myFactory.generateRandomStreamKey();
 
         /* Secure the keys */
-        GordianKeyGenerator<GordianSymKeySpec> mySymGen =  myFactory.getKeyGenerator(mySym.getKeyType());
+        GordianKeyGenerator<GordianSymKeySpec> mySymGen = myFactory.getKeyGenerator(mySym.getKeyType());
         final byte[] mySymSafe = mySymGen.secureKey(mySym, myKeySet);
-        GordianKeyGenerator<GordianStreamKeyType> myStreamGen =  myFactory.getKeyGenerator(myStream.getKeyType());
+        GordianKeyGenerator<GordianStreamKeyType> myStreamGen = myFactory.getKeyGenerator(myStream.getKeyType());
         final byte[] myStreamSafe = myStreamGen.secureKey(myStream, myKeySet);
 
         /* Encrypt short block */
@@ -185,7 +180,7 @@ public class GordianTestSuite {
         final byte[] myMacBytes = myMac.finish();
 
         /* Secure the keys */
-        GordianKeyGenerator<GordianMacSpec> myMacGen =  myFactory.getKeyGenerator(myMac.getKey().getKeyType());
+        GordianKeyGenerator<GordianMacSpec> myMacGen = myFactory.getKeyGenerator(myMac.getKey().getKeyType());
         final byte[] myMacSafe = myMacGen.secureKey(myMac.getKey(), myKeySet);
         final byte[] myIV = myMac.getInitVector();
         final int myMacId = myKnuth.deriveExternalIdFromType(myMac.getMacSpec());
@@ -209,7 +204,7 @@ public class GordianTestSuite {
 
         /* Derive the Mac */
         final GordianMacSpec myMacSpec = myKnuth.deriveTypeFromExternalId(myMacId, GordianMacSpec.class);
-        myMacGen =  myFactory.getKeyGenerator(myMacSpec);
+        myMacGen = myFactory.getKeyGenerator(myMacSpec);
         final GordianKey<GordianMacSpec> myMacKey = myMacGen.deriveKey(myMacSafe, myKeySet1);
         myMac = myFactory.createMac(myMacSpec);
         myMac.initMac(myMacKey, myIV);
@@ -232,9 +227,9 @@ public class GordianTestSuite {
         }
 
         /* Derive the keys */
-        mySymGen =  myFactory.getKeyGenerator(mySym.getKeyType());
+        mySymGen = myFactory.getKeyGenerator(mySym.getKeyType());
         final GordianKey<GordianSymKeySpec> mySym1 = mySymGen.deriveKey(mySymSafe, myKeySet1);
-        myStreamGen =  myFactory.getKeyGenerator(myStream.getKeyType());
+        myStreamGen = myFactory.getKeyGenerator(myStream.getKeyType());
         final GordianKey<GordianStreamKeyType> myStm1 = myStreamGen.deriveKey(myStreamSafe, myKeySet1);
 
         /* Check the keys are the same */

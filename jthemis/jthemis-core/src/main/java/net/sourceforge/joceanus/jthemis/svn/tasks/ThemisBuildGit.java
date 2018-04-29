@@ -1,24 +1,18 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.svn.tasks;
 
@@ -29,6 +23,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.jgit.api.AddCommand;
+import org.eclipse.jgit.api.CheckoutCommand;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.GarbageCollectCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.StatusCommand;
+import org.eclipse.jgit.api.TagCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
@@ -50,19 +57,6 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnExtra
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnExtractView;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract.ThemisSvnTagExtractPlan;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
-
-import org.eclipse.jgit.api.AddCommand;
-import org.eclipse.jgit.api.CheckoutCommand;
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.GarbageCollectCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.StatusCommand;
-import org.eclipse.jgit.api.TagCommand;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
  * Migrate a SubVersion Component to a new Git Repository.
@@ -446,7 +440,7 @@ public class ThemisBuildGit {
                     final CommitCommand myCommit = theGit.commit();
                     myCommit.setAll(true);
                     myCommit.setCommitter(new PersonIdent(theCommitter, myView.getDate()));
-                    myCommit.setMessage(myView.getRevision().toString() + ": " +  myView.getLogMessage());
+                    myCommit.setMessage("svn" + myView.getRevision().toString() + ": " + myView.getLogMessage());
                     myLastCommit = myCommit.call();
                 }
 

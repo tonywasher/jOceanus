@@ -1,26 +1,23 @@
 /*******************************************************************************
- * jTethys: Java Utilities
- * Copyright 2012,2017 Tony Washer
- *
+ * Tethys: Java Utilities
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jtethys/jtethys-javafx/src/test/java/net/sourceforge/joceanus/jtethys/help/javafx/TestFXHelpWindow.java $
- * $Revision: 842 $
- * $Author: Tony $
- * $Date: 2017-09-10 17:23:42 +0100 (Sun, 10 Sep 2017) $
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.help.javafx;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -36,8 +33,6 @@ import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Help Window.
@@ -69,9 +64,10 @@ public class TestFXHelpWindow
         pStage.setScene(myScene);
         pStage.show();
     }
-    
+
     /**
      * Build the panel.
+     * @param pStage the stage
      * @return the panel
      */
     private Node buildPanel(final Stage pStage) {

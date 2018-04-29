@@ -1,26 +1,22 @@
 /*******************************************************************************
- * jTethys: Java Utilities
- * Copyright 2012,2013 Tony Washer
- *
+ * Tethys: Java Utilities
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.decimal;
+
+import java.util.Currency;
 
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
@@ -32,8 +28,6 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysPrice;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.decimal.TethysRatio;
 
-import java.util.Currency;
-
 /**
  * JDecimal test class.
  */
@@ -43,7 +37,7 @@ public final class TethysTestDecimal {
      */
     private TethysTestDecimal() {
     }
-    
+
     /**
      * Main entry point.
      * @param pArgs the arguments
@@ -59,20 +53,20 @@ public final class TethysTestDecimal {
      */
     private static TethysMoney testDecimal() {
         /* Create the required presentation formatter and parser */
-        TethysDecimalParser myParser = new TethysDecimalParser();
-        TethysDecimalFormatter myFormatter = new TethysDecimalFormatter();
+        final TethysDecimalParser myParser = new TethysDecimalParser();
+        final TethysDecimalFormatter myFormatter = new TethysDecimalFormatter();
 
         /* Create a ratio of 21/20 */
         TethysRatio myRatio1 = myParser.parseRatioValue("1.05");
         TethysRate myResult = new TethysRate(myRatio1);
         TethysRatio myRatio2 = myParser.parseRatioValue("0.90");
         myResult = new TethysRate(myRatio2);
-        TethysRatio myRatio3 = myRatio2.multiplyBy(myRatio1);
+        final TethysRatio myRatio3 = myRatio2.multiplyBy(myRatio1);
         myRatio1 = myParser.parseRatioValue("1.21");
         myRatio2 = myRatio1.annualise(500);
 
         /* Create a USD value */
-        TethysMoney myUSD = TethysMoney.getWholeUnits(-1000, Currency.getInstance("GBP"));
+        final TethysMoney myUSD = TethysMoney.getWholeUnits(-1000, Currency.getInstance("GBP"));
         String myX = myUSD.toString();
         myX = myFormatter.toCurrencyString(myUSD);
         TethysMoney myRes = myParser.parseMoneyValue(myX);

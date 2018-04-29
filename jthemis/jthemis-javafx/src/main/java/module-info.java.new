@@ -1,6 +1,6 @@
 /*******************************************************************************
- * jCoeus: Peer2Peer Analysis
- * Copyright 2012,2017 Tony Washer
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL: http://localhost/svn/Finance/jOceanus/trunk/jcoeus/jcoeus-core/src/main/java/net/sourceforge/joceanus/jcoeus/CoeusDataException.java $
- * $Revision: 794 $
- * $Author: Tony $
- * $Date: 2017-06-01 18:20:48 +0100 (Thu, 01 Jun 2017) $
  ******************************************************************************/
 /**
  * module-info for jthemis-javafx.

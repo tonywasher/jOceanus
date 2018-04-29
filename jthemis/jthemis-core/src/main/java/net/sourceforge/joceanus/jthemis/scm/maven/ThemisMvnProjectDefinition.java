@@ -1,24 +1,18 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.scm.maven;
 
@@ -68,6 +62,7 @@ public class ThemisMvnProjectDefinition
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ID, ThemisMvnProjectDefinition::getDefinition);
         FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_DEPENDENCIES, ThemisMvnProjectDefinition::getDependencies);
+        FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_SUBMODULES, ThemisMvnProjectDefinition::getSubModules);
     }
 
     /**
@@ -88,7 +83,7 @@ public class ThemisMvnProjectDefinition
     /**
      * SubModules.
      */
-    private final List<MvnSubModule> theSubModules;
+    private final List<ThemisMvnSubModule> theSubModules;
 
     /**
      * Constructor.
@@ -148,10 +143,18 @@ public class ThemisMvnProjectDefinition
     }
 
     /**
+     * Get subModules.
+     * @return the project subModules
+     */
+    public List<ThemisMvnSubModule> getSubModules() {
+        return theSubModules;
+    }
+
+    /**
      * Get SubModules iterator.
      * @return the iterator
      */
-    public Iterator<MvnSubModule> subIterator() {
+    public Iterator<ThemisMvnSubModule> subIterator() {
         return theSubModules.iterator();
     }
 
@@ -208,7 +211,7 @@ public class ThemisMvnProjectDefinition
             final String myModule = myIterator.next();
 
             /* Build new SubModule */
-            final MvnSubModule mySub = new MvnSubModule(myModule);
+            final ThemisMvnSubModule mySub = new ThemisMvnSubModule(myModule);
             theSubModules.add(mySub);
         }
     }
@@ -285,7 +288,20 @@ public class ThemisMvnProjectDefinition
     /**
      * SubModule.
      */
-    public static final class MvnSubModule {
+    public static final class ThemisMvnSubModule
+            implements MetisFieldItem {
+        /**
+         * Report fields.
+         */
+        private static final MetisFieldSet<ThemisMvnSubModule> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisMvnSubModule.class);
+
+        /**
+         * Id field id.
+         */
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.MAVEN_ID, ThemisMvnSubModule::getProjectDefinition);
+        }
+
         /**
          * Module name.
          */
@@ -300,7 +316,7 @@ public class ThemisMvnProjectDefinition
          * Constructor.
          * @param pName the name of the subModule
          */
-        MvnSubModule(final String pName) {
+        ThemisMvnSubModule(final String pName) {
             theName = pName;
         }
 
@@ -326,6 +342,16 @@ public class ThemisMvnProjectDefinition
          */
         public void setProjectDefinition(final ThemisMvnProjectDefinition pDef) {
             theProject = pDef;
+        }
+
+        @Override
+        public String formatObject(final MetisDataFormatter pFormatter) {
+            return theProject.formatObject(pFormatter);
+        }
+
+        @Override
+        public MetisFieldSetDef getDataFieldSet() {
+            return FIELD_DEFS;
         }
     }
 }

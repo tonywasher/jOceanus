@@ -1,39 +1,24 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
-
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
@@ -42,6 +27,19 @@ import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitTag.ThemisGitTagList;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 
 /**
  * Represents a branch of a component in the repository.
@@ -64,6 +62,7 @@ public final class ThemisGitBranch
      */
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitBranch::getRepository);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitBranch::getCommitId);
     }
 
     /**
@@ -74,7 +73,7 @@ public final class ThemisGitBranch
     /**
      * Object Id of the commit.
      */
-    private final ObjectId theCommitId;
+    private final ThemisGitCommitId theCommitId;
 
     /**
      * Constructor.
@@ -84,7 +83,7 @@ public final class ThemisGitBranch
      */
     protected ThemisGitBranch(final ThemisGitComponent pParent,
                               final String pVersion,
-                              final ObjectId pCommitId) {
+                              final ThemisGitCommitId pCommitId) {
         /* Call super constructor */
         super(pParent, pVersion);
 
@@ -140,7 +139,7 @@ public final class ThemisGitBranch
      * Get the commit id.
      * @return the commit id
      */
-    public ObjectId getCommitId() {
+    public ThemisGitCommitId getCommitId() {
         return theCommitId;
     }
 
@@ -181,6 +180,11 @@ public final class ThemisGitBranch
         private final ThemisGitComponent theComponent;
 
         /**
+         * The revision history.
+         */
+        private final ThemisGitRevisionHistory theHistory;
+
+        /**
          * Discover branch list from repository.
          * @param pParent the parent component
          */
@@ -190,6 +194,7 @@ public final class ThemisGitBranch
 
             /* Store parent for use by entry handler */
             theComponent = pParent;
+            theHistory = theComponent.getRevisionHistory();
         }
 
         @Override
@@ -236,7 +241,7 @@ public final class ThemisGitBranch
          */
         private void discoverBranches(final Git pGit) throws OceanusException {
             /* Protect against exceptions */
-            try {
+            try (RevWalk myRevWalk = new RevWalk(theComponent.getGitRepo())) {
                 /* Access list of branches */
                 final ListBranchCommand myCommand = pGit.branchList();
                 myCommand.setListMode(ListMode.ALL);
@@ -249,7 +254,9 @@ public final class ThemisGitBranch
 
                     /* Access branch details */
                     String myName = myRef.getName();
-                    final ObjectId myCommitId = myRef.getObjectId();
+                    final ObjectId myObjectId = myRef.getObjectId();
+                    final RevCommit myCommit = myRevWalk.parseCommit(myObjectId);
+                    final ThemisGitCommitId myCommitId = new ThemisGitCommitId(myCommit);
                     if (myName.startsWith(REF_BRANCHES)) {
                         myName = myName.substring(REF_BRANCHES.length());
                     }
@@ -273,6 +280,10 @@ public final class ThemisGitBranch
                                 final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
                                 add(myBranch);
                                 myBranch.setTrunk();
+
+                                /* Register the branch */
+                                myBranch.setProjectDefinition(myProject);
+                                theComponent.getRepository().registerBranch(myProject.getDefinition(), myBranch);
                             }
                         }
 
@@ -286,7 +297,8 @@ public final class ThemisGitBranch
                         add(myBranch);
                     }
                 }
-            } catch (GitAPIException e) {
+            } catch (IOException
+                    | GitAPIException e) {
                 throw new ThemisIOException("Failed to list branches", e);
             }
         }
@@ -363,17 +375,8 @@ public final class ThemisGitBranch
                 /* Report stage */
                 pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
 
-                /* Parse project file */
-                final ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTrunk.getCommitId(), "");
-                myTrunk.setProjectDefinition(myProject);
-
-                /* Register the branch */
-                if (myProject != null) {
-                    myRepo.registerBranch(myProject.getDefinition(), myTrunk);
-                }
-
                 /* Discover tags */
-                myTrunk.getTagList().discover(pReport);
+                myTrunk.getTagList().discover(pReport, theHistory);
             }
 
             /* Loop through the entries */
@@ -400,10 +403,13 @@ public final class ThemisGitBranch
                     if (myProject != null) {
                         myRepo.registerBranch(myProject.getDefinition(), myBranch);
                     }
+
+                    /* Parse the revision history */
+                    theHistory.parseCommitHistory(myBranch.getCommitId());
                 }
 
                 /* Discover tags */
-                myBranch.getTagList().discover(pReport);
+                myBranch.getTagList().discover(pReport, theHistory);
             }
         }
 
@@ -415,7 +421,7 @@ public final class ThemisGitBranch
         @Override
         protected ThemisGitTag locateTag(final String pVersion,
                                          final int pTag) {
-             return (ThemisGitTag) super.locateTag(pVersion, pTag);
+            return (ThemisGitTag) super.locateTag(pVersion, pTag);
         }
     }
 }

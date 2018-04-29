@@ -1,24 +1,18 @@
 /*******************************************************************************
- * jThemis: Java Project Framework
- * Copyright 2012,2017 Tony Washer
- *
+ * Themis: Java Project Framework
+ * Copyright 2012,2018 Tony Washer
+ * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * ------------------------------------------------------------
- * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui;
 
@@ -232,11 +226,16 @@ public abstract class ThemisSvnManager<N, I> {
      * @param pData the discover thread
      */
     protected void setSubversionData(final ThemisDiscoverData<?, ?> pData) {
-        /* Declare repository to data manager */
-        final MetisViewerEntry myRepEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
-        final ThemisSvnRepository myRepository = pData.getRepository();
-        myRepEntry.setObject(myRepository);
-        myRepEntry.setFocus();
+        /* Declare subversion repository to data manager */
+        final MetisViewerEntry mySvnEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
+        final ThemisSvnRepository mySvnRepository = pData.getSvnRepository();
+        mySvnEntry.setObject(mySvnRepository);
+        mySvnEntry.setFocus();
+
+        /* Declare Git repositories to data manager */
+        final MetisViewerEntry myGitEntry = theViewerMgr.newEntry(theDataEntry, "GitRepository");
+        final ThemisGitRepository myGitRepository = pData.getGitRepository();
+        myGitEntry.setObject(myGitRepository);
 
         /* Declare WorkingCopySet to data manager */
         final MetisViewerEntry mySetEntry = theViewerMgr.newEntry(theDataEntry, "WorkingSet");
@@ -252,9 +251,9 @@ public abstract class ThemisSvnManager<N, I> {
         myMenu.clearItems();
 
         /* If we have a repository */
-        if (myRepository != null) {
+        if (mySvnRepository != null) {
             /* Loop through the components */
-            final Iterator<ThemisScmComponent> myIterator = myRepository.getComponents().iterator();
+            final Iterator<ThemisScmComponent> myIterator = mySvnRepository.getComponents().iterator();
             while (myIterator.hasNext()) {
                 final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
 
