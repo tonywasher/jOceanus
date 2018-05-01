@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-swing</artifactId>
-  <name>jMetis Swing Data Framework</name>
-  <description>jMetis Swing Data Framework</description>
+  <name>Metis Swing Data Framework</name>
+  <description>Metis Swing Data Framework</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

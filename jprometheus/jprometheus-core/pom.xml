@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jprometheus-core</artifactId>
-  <name>jPrometheus Core Application Framework</name>
+  <name>Prometheus Core Application Framework</name>
   <description>Java Core Application Framework</description>
   <dependencies>
     <dependency>

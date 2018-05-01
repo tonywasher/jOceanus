@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys-test-swing</artifactId>
-  <name>jTethys Java Swing Test Utilities</name>
-  <description>jTethys Java Swing Test Utilities</description>
+  <name>Tethys Java Swing Test Utilities</name>
+  <description>Tethys Java Swing Test Utilities</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

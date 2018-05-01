@@ -1,6 +1,6 @@
-jCoeus Project
+Coeus Project
 
-  jCoeus is a subComponent of the jOceanus project. It provides analysis of various Peer2Peer loan books.
+  Coeus is a subComponent of the jOceanus project. It provides analysis of various Peer2Peer loan books.
 It is named after the titan Coeus who was the god of intellect.
 
   The application will load in the statements from the Peer2Peer provider, and will provide analysis and reports on the loanBooks.

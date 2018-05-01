@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jthemis</artifactId>
-  <name>jThemis Project Framework</name>
+  <name>Themis Project Framework</name>
   <description>Java Project Framework</description>
   <packaging>pom</packaging>
   <modules>

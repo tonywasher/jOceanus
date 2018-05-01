@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys-javafx</artifactId>
-  <name>jTethys JavaFX Utilities</name>
+  <name>Tethys JavaFX Utilities</name>
   <description>Java JavaFX Utilities</description>
   <dependencies>
     <dependency>

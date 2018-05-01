@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jcoeus-swing</artifactId>
-  <name>jCoeus Swing Peer2Peer Analysis</name>
+  <name>Coeus Swing Peer2Peer Analysis</name>
   <description>Peer2Peer Swing Analysis</description>
   <dependencies>
     <dependency>

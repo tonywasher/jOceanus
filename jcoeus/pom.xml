@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jcoeus</artifactId>
-  <name>jCoeus Peer2Peer Analysis</name>
+  <name>Coeus Peer2Peer Analysis</name>
   <description>Peer2Peer Analysis</description>
   <packaging>pom</packaging>
   <modules>

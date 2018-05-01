@@ -1,17 +1,14 @@
 /*******************************************************************************
- * GordianKnot: Security Suite
- * Copyright 2012,2018 Tony Washer
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
+ * GordianKnot: Security Suite Copyright 2012,2018 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.test.crypto;
@@ -39,17 +36,17 @@ public final class GordianListAlgorithms {
      * List the supported algorithms.
      */
     public static void listAlgorithms() {
-        Set<String> ciphers = new HashSet<String>();
-        Set<String> secretKeyFactories = new HashSet<String>();
-        Set<String> keyFactories = new HashSet<String>();
-        Set<String> keyAgreements = new HashSet<String>();
-        Set<String> keyGenerators = new HashSet<String>();
-        Set<String> keyPairGenerators = new HashSet<String>();
-        Set<String> messageDigests = new HashSet<String>();
-        Set<String> macs = new HashSet<String>();
-        Set<String> signatures = new HashSet<String>();
-        Set<String> randoms = new HashSet<String>();
-        Set<String> remaining = new HashSet<String>();
+        final Set<String> ciphers = new HashSet<String>();
+        final Set<String> secretKeyFactories = new HashSet<String>();
+        final Set<String> keyFactories = new HashSet<String>();
+        final Set<String> keyAgreements = new HashSet<String>();
+        final Set<String> keyGenerators = new HashSet<String>();
+        final Set<String> keyPairGenerators = new HashSet<String>();
+        final Set<String> messageDigests = new HashSet<String>();
+        final Set<String> macs = new HashSet<String>();
+        final Set<String> signatures = new HashSet<String>();
+        final Set<String> randoms = new HashSet<String>();
+        final Set<String> remaining = new HashSet<String>();
 
         Security.addProvider(new BouncyCastleProvider());
         Security.addProvider(new BouncyCastlePQCProvider());
@@ -59,7 +56,7 @@ public final class GordianListAlgorithms {
                 && !"BCPQC".equals(myProvider.getName())) {
                 continue;
             }
-            Iterator<Object> it = myProvider.keySet().iterator();
+            final Iterator<Object> it = myProvider.keySet().iterator();
             while (it.hasNext()) {
                 String entry = (String) it.next();
                 if (entry.startsWith("Alg.Alias.")) {
@@ -120,9 +117,9 @@ public final class GordianListAlgorithms {
         if (algorithms.isEmpty()) {
             System.out.println("            None available.");
         } else {
-            Iterator<String> it = algorithms.iterator();
+            final Iterator<String> it = algorithms.iterator();
             while (it.hasNext()) {
-                String name = it.next();
+                final String name = it.next();
                 System.out.println("            "
                                    + name);
             }

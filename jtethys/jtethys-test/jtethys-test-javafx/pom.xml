@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys-test-javafx</artifactId>
-  <name>jTethys Java JavaFX Test Utilities</name>
-  <description>jTethys Java JavaFX Test Utilities</description>
+  <name>Tethys Java JavaFX Test Utilities</name>
+  <description>Tethys Java JavaFX Test Utilities</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

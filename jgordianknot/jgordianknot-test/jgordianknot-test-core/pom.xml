@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-test-core</artifactId>
-  <name>jGordianKnot Core Security Test Core Framework</name>
+  <name>GordianKnot Core Security Test Core Framework</name>
   <description>A Security framework for Java</description>
   <dependencies>
     <dependency>

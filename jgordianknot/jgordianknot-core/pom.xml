@@ -22,7 +22,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-core</artifactId>
-  <name>jGordianKnot Core Security Framework</name>
+  <name>GordianKnot Core Security Framework</name>
   <description>A Security framework for Java. This embeds the 7Zip SDK v9.20 which is under public domain license</description>
   <dependencies>
     <dependency>

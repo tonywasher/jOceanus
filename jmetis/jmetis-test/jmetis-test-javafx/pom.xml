@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-test-javafx</artifactId>
-  <name>jMetis Data Test JavaFX</name>
-  <description>jMetis Data Test JavaFX</description>
+  <name>Metis Data Test JavaFX</name>
+  <description>Metis Data Test JavaFX</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

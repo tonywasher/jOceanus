@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-sheet-jopen</artifactId>
-  <name>jMetis Sheet jOpenDocument Service</name>
-  <description>jMetis Sheet jOpenDocument Service</description>
+  <name>Metis Sheet jOpenDocument Service</name>
+  <description>Metis Sheet jOpenDocument Service</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

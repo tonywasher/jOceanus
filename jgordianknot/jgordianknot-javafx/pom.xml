@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-javafx</artifactId>
-  <name>jGordianKnot JavaFX Security Framework</name>
+  <name>GordianKnot JavaFX Security Framework</name>
   <description>A Security framework for Java.</description>
   <dependencies>
     <dependency>

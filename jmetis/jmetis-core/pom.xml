@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-core</artifactId>
-  <name>jMetis Core Data Framework</name>
-  <description>jMetis Core Data Framework</description>
+  <name>Metis Core Data Framework</name>
+  <description>Metis Core Data Framework</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

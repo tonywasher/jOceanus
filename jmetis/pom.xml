@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis</artifactId>
-  <name>jMetis Data Framework</name>
-  <description>jMetis Data Framework</description>
+  <name>Metis Data Framework</name>
+  <description>Metis Data Framework</description>
   <packaging>pom</packaging>
   <modules>
     <module>jmetis-core</module>

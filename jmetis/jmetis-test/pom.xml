@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>
   </parent>
   <artifactId>jmetis-test</artifactId>
-  <name>jMetis Data Test Framework</name>
-  <description>jMetis Data Test Framework</description>
+  <name>Metis Data Test Framework</name>
+  <description>Metis Data Test Framework</description>
   <packaging>pom</packaging>
   <modules>
     <module>jmetis-test-core</module>

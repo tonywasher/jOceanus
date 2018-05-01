@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys-test</artifactId>
-  <name>jTethys Java Test</name>
-  <description>jTethys Java Test</description>
+  <name>Tethys Java Test</name>
+  <description>Tethys Java Test</description>
   <packaging>pom</packaging>
   <modules>
     <module>jtethys-test-swing</module>

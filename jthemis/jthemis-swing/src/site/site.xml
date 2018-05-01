@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-  jThemis: Java Project Framework
+  Themis: Java Project Framework
   Copyright 2012,2018 Tony Washer
   
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@
 -->
 <project>
   <bannerLeft>
-    <name>jThemis Swing</name>
+    <name>Themis Swing</name>
     <!--<src>http://maven.apache.org/images/apache-maven-project-2.png</src>
     <href>http://maven.apache.org/</href>-->
   </bannerLeft>
@@ -31,7 +31,7 @@
       <item name="Maven 2" href="http://maven.apache.org/"/>
     </links>-->
 
-    <menu name="jThemis Swing">
+    <menu name="Themis Swing">
       <item name="Introduction" href="index.html"/>
     </menu>
 

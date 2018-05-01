@@ -1,9 +1,9 @@
-jPrometheus Project
+Prometheus Project
 
-  jPrometheus is a subComponent of the jOceanus project, which provides a framework for applications. It is named after the titan
+  Prometheus is a subComponent of the jOceanus project, which provides a framework for applications. It is named after the titan
 Prometheus, who was viewed as the champion of mankind. 
 
-  jPrometheus provides a framework for a secure application with data backed up by database (MySQL/PostgreSQL/SQLServer).
+  Prometheus provides a framework for a secure application with data backed up by database (MySQL/PostgreSQL/SQLServer).
 It is primarily intended to support the <<jMoneyWise>> package, and comprises the generic parts of that application.
 
   The model used is that of a single set of encrypted data that is loaded into memory, and edited in situ.
@@ -14,7 +14,7 @@ the database, or else re-load from database and discard in memory changes.
 
   When there are no unsaved changes in memory, the option is provided to create a backup of the database. This comprises
 a spreadsheet with one sheet per database table and one row per database row. The spreadsheet is automatically zipped and
-encrypted using <<jGordianKnot>>. Data may be reloaded from backup as if loading from database.
+encrypted using <<GordianKnot>>. Data may be reloaded from backup as if loading from database.
 
   An alternative backup mechanism is provided whereby the each table is rendered as an XML document. 
 

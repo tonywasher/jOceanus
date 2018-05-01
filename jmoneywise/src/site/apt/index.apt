@@ -1,8 +1,8 @@
-jMoneyWise Project
+MoneyWise Project
 
-  jMoneyWise is a subComponent of the jOceanus project.
+  MoneyWise is a subComponent of the jOceanus project.
 
-  jMoneyWise is a Personal Finance project that provides a single view of personal finances. Data is held on all assets
+  MoneyWise is a Personal Finance project that provides a single view of personal finances. Data is held on all assets
 and transactions relating to those assets. Reports are provided including point in time valuations, income/expense over a period and taxation calculations.
 All taxation is UK tax-based.
 

@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmoneywise-test</artifactId>
-  <name>jMoneyWise Personal Finance - Tests</name>
+  <name>MoneyWise Personal Finance - Tests</name>
   <description>Personal Finance Application Tests</description>
   <dependencies>
     <dependency>

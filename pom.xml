@@ -358,9 +358,10 @@
         <version>${CheckStylePluginVersion}</version>
         <configuration>
           <configLocation>src/main/checkstyle/checks.xml</configLocation>
+          <excludes>**/test/**/*.java</excludes>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
         <version>${PMDPluginVersion}</version>
@@ -374,9 +375,10 @@
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
             <exclude>**/org/**/*.java</exclude>
+            <exclude>**/test/**/*.java</exclude>
           </excludes>
         </configuration>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
@@ -387,6 +389,7 @@
           <excludes>
             <exclude>**/SevenZip/**/*.java</exclude>
             <exclude>**/org/**/*.java</exclude>
+            <exclude>**/test/**/*.java</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -401,11 +404,11 @@
           <excludePackageNames>SevenZip:org</excludePackageNames>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
         <version>${FindBugsPluginVersion}</version>
-      </plugin>
+      </plugin>-->
     </plugins>
   </reporting>
 </project>

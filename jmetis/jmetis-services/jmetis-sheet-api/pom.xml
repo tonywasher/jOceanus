@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-sheet-api</artifactId>
-  <name>jMetis Sheet Service API</name>
-  <description>jMetis Sheet Service API</description>
+  <name>Metis Sheet Service API</name>
+  <description>Metis Sheet Service API</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

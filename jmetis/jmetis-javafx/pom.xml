@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-javafx</artifactId>
-  <name>jMetis javaFX Data Framework</name>
-  <description>jMetis javaFX Data Framework</description>
+  <name>Metis javaFX Data Framework</name>
+  <description>Metis javaFX Data Framework</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

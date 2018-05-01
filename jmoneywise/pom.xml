@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmoneywise</artifactId>
-  <name>jMoneyWise Personal Finance</name>
+  <name>MoneyWise Personal Finance</name>
   <description>Personal Finance Application</description>
   <packaging>pom</packaging>
   <modules>

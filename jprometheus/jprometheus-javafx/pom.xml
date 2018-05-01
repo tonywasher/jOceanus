@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jprometheus-javafx</artifactId>
-  <name>jPrometheus JavaFX Application Framework</name>
+  <name>Prometheus JavaFX Application Framework</name>
   <description>Java JavaFX Application Framework</description>
   <dependencies>
     <dependency>

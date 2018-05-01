@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jprometheus</artifactId>
-  <name>jPrometheus Application Framework</name>
+  <name>Prometheus Application Framework</name>
   <description>Java Application Framework</description>
   <packaging>pom</packaging>
   <modules>

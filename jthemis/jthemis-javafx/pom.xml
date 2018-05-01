@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jthemis-javafx</artifactId>
-  <name>jThemis JavaFX Project Framework</name>
+  <name>Themis JavaFX Project Framework</name>
   <description>Java JavaFX Project Framework</description>
   <dependencies>
     <dependency>

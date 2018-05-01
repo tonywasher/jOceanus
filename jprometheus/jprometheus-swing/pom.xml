@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jprometheus-swing</artifactId>
-  <name>jPrometheus Swing Application Framework</name>
+  <name>Prometheus Swing Application Framework</name>
   <description>Java Swing Application Framework</description>
   <dependencies>
     <dependency>

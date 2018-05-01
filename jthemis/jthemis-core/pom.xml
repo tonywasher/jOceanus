@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jthemis-core</artifactId>
-  <name>jThemis Core Project Framework</name>
+  <name>Themis Core Project Framework</name>
   <description>Java Core Project Framework</description>
   <dependencies>
     <dependency>

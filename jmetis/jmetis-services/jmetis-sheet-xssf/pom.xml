@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-sheet-xssf</artifactId>
-  <name>jMetis Sheet XSSF Service</name>
-  <description>jMetis Sheet XSSF Service</description>
+  <name>Metis Sheet XSSF Service</name>
+  <description>Metis Sheet XSSF Service</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -17,7 +17,7 @@
 -->
 <project>
   <bannerLeft>
-    <name>jGordianKnot Core</name>
+    <name>GordianKnot Core</name>
     <!--<src>http://maven.apache.org/images/apache-maven-project-2.png</src>
     <href>http://maven.apache.org/</href>-->
   </bannerLeft>
@@ -31,7 +31,7 @@
       <item name="Maven 2" href="http://maven.apache.org/"/>
     </links>-->
 
-    <menu name="jGordianKnot Core">
+    <menu name="GordianKnot Core">
       <item name="Introduction" href="index.html"/>
     </menu>
 

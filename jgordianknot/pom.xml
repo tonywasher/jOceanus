@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot</artifactId>
-  <name>jGordianKnot Security Framework</name>
+  <name>GordianKnot Security Framework</name>
   <description>A Security framework for Java. This embeds the 7Zip SDK v9.20 which is under public domain license</description>
   <packaging>pom</packaging>
   <modules>

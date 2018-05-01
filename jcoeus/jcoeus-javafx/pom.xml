@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jcoeus-javafx</artifactId>
-  <name>jCoeus javaFX Peer2Peer Analysis</name>
+  <name>Coeus javaFX Peer2Peer Analysis</name>
   <description>Peer2Peer javaFX Analysis</description>
   <dependencies>
     <dependency>

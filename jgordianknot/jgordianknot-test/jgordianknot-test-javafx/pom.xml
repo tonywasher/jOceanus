@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-test-javafx</artifactId>
-  <name>jGordianKnot JavaFX Security Test Framework</name>
+  <name>GordianKnot JavaFX Security Test Framework</name>
   <description>A Security framework for Java.</description>
   <dependencies>
     <dependency>

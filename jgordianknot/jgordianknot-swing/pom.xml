@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-swing</artifactId>
-  <name>jGordianKnot Swing Security Framework</name>
+  <name>GordianKnot Swing Security Framework</name>
   <description>A Security framework for Java.</description>
   <dependencies>
     <dependency>

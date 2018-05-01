@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys-core</artifactId>
-  <name>jTethys Java Core Utilities</name>
+  <name>Tethys Java Core Utilities</name>
   <description>Java Core Utilities</description>
   <dependencies>
     <dependency>

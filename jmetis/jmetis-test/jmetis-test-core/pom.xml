@@ -5,8 +5,8 @@
     <artifactId>jmetis-test</artifactId>
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
-  <artifactId>jmetis-test-core</artifactId>
-  <name>jMetis Data Test Core</name>
+  <artifactId>metis-test-core</artifactId>
+  <name>Metis Data Test Core</name>
   <description>jMetis Data Test Core</description>
   <dependencies>
     <dependency>

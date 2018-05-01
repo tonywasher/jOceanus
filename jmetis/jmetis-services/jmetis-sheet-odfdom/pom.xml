@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-sheet-odfdom</artifactId>
-  <name>jMetis Sheet odfDom Service</name>
-  <description>jMetis Sheet odfDom Service</description>
+  <name>Metis Sheet odfDom Service</name>
+  <description>Metis Sheet odfDom Service</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

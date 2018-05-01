@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys-swing</artifactId>
-  <name>jTethys Java Swing Utilities</name>
+  <name>Tethys Java Swing Utilities</name>
   <description>Java Swing Utilities</description>
   <dependencies>
     <dependency>

@@ -6,8 +6,8 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jmetis-test-swing</artifactId>
-  <name>jMetis Data Test Swing</name>
-  <description>jMetis Data Test Swing</description>
+  <name>Metis Data Test Swing</name>
+  <description>Metis Data Test Swing</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

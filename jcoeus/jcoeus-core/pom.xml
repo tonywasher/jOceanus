@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jcoeus-core</artifactId>
-  <name>jCoeus Core Peer2Peer Analysis</name>
+  <name>Coeus Core Peer2Peer Analysis</name>
   <description>Peer2Peer Core Analysis</description>
   <dependencies>
     <dependency>

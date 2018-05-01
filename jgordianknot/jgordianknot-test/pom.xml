@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jgordianknot-test</artifactId>
-  <name>jGordianKnot Security Test Framework</name>
+  <name>GordianKnot Security Test Framework</name>
   <description>A Security framework for Java</description>
   <packaging>pom</packaging>
   <modules>
