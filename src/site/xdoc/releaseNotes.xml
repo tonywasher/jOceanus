@@ -38,6 +38,7 @@
         <dt>v1.5.2-b4</dt> <dd>Rework fieldData</dd>
         <dt>v1.5.2-b5</dt> <dd>Support Pensions/Foreign Dividends</dd>
         <dt>v1.5.2-b6</dt> <dd>Adjust Security algorithms</dd>
+        <dt>v1.5.3-b1</dt> <dd>Repackage for java 9 modularisation</dd>
       </dl>
     </section>
   </body>
