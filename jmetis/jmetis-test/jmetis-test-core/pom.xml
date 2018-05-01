@@ -5,9 +5,9 @@
     <artifactId>jmetis-test</artifactId>
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
-  <artifactId>metis-test-core</artifactId>
+  <artifactId>jmetis-test-core</artifactId>
   <name>Metis Data Test Core</name>
-  <description>jMetis Data Test Core</description>
+  <description>Metis Data Test Core</description>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
