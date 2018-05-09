@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.ThemisSvnWorkingCopySet;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
 import net.sourceforge.joceanus.jthemis.threads.ThemisCreateGitRepo;
 import net.sourceforge.joceanus.jthemis.threads.ThemisDiscoverData;
 import net.sourceforge.joceanus.jthemis.threads.ThemisSubversionBackup;
@@ -226,6 +227,8 @@ public abstract class ThemisSvnManager<N, I> {
      * @param pData the discover thread
      */
     protected void setSubversionData(final ThemisDiscoverData<?, ?> pData) {
+        /* TODO clear data entries */
+
         /* Declare subversion repository to data manager */
         final MetisViewerEntry mySvnEntry = theViewerMgr.newEntry(theDataEntry, "SvnRepository");
         final ThemisSvnRepository mySvnRepository = pData.getSvnRepository();
@@ -257,8 +260,11 @@ public abstract class ThemisSvnManager<N, I> {
             while (myIterator.hasNext()) {
                 final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
 
+                /* Locate the corresponding Git Component (if it exists) */
+                final ThemisSvnExtract myExtract = pData.getExtractForComponent(myComp);
+
                 /* Create a new menu item for the component */
-                myMenu.newMenuItem(myComp, e -> createGitRepo(myComp));
+                myMenu.newMenuItem(myComp, e -> createGitRepo(myComp, myExtract));
             }
         }
 
@@ -326,10 +332,12 @@ public abstract class ThemisSvnManager<N, I> {
     /**
      * Run create GitRepo.
      * @param pSource the source component
+     * @param pExtract the extract plan
      */
-    private void createGitRepo(final ThemisSvnComponent pSource) {
+    private void createGitRepo(final ThemisSvnComponent pSource,
+                               final ThemisSvnExtract pExtract) {
         /* Create the worker thread */
-        final ThemisCreateGitRepo<N, I> myThread = new ThemisCreateGitRepo<>(pSource);
+        final ThemisCreateGitRepo<N, I> myThread = new ThemisCreateGitRepo<>(pSource, pExtract);
         runThread(myThread);
     }
 

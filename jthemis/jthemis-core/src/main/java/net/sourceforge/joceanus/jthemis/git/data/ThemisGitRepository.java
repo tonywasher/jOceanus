@@ -19,6 +19,9 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -31,9 +34,6 @@ import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPr
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmRepository;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectId;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
-
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
  * Represents a repository.
@@ -81,7 +81,7 @@ public class ThemisGitRepository
         setComponents(myComponents);
 
         /* Report start of analysis */
-        pReport.initTask("Analysing components");
+        pReport.initTask("Analysing Git components");
 
         /* Discover components */
         myComponents.discover(pReport);

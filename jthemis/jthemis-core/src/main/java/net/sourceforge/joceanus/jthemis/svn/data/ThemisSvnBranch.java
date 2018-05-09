@@ -18,6 +18,18 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.tmatesoft.svn.core.ISVNDirEntryHandler;
+import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNDirEntry;
+import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNLogClient;
+import org.tmatesoft.svn.core.wc.SVNRevision;
+
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
@@ -30,18 +42,6 @@ import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag.ThemisSvnTagList;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.tmatesoft.svn.core.ISVNDirEntryHandler;
-import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNLogClient;
-import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
  * Represents a branch of a component in the repository.
@@ -173,7 +173,7 @@ public final class ThemisSvnBranch
             myBuilder.append(ThemisSvnRepository.SEP_URL);
 
             /* Build the version directory */
-            myBuilder.append(getBranchName());
+            myBuilder.append(getName());
         }
 
         /* Create the repository path */
@@ -200,7 +200,7 @@ public final class ThemisSvnBranch
             myBuilder.append(ThemisSvnRepository.SEP_URL);
 
             /* Build the version directory */
-            myBuilder.append(getBranchName());
+            myBuilder.append(getName());
         }
 
         /* Create the repository path */
@@ -367,7 +367,7 @@ public final class ThemisSvnBranch
                 myTask = myBaseTask.startTask("processTrunk");
 
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
+                pReport.setNewStage("Analysing branch " + myTrunk.getName());
 
                 /* Start parse task */
                 myTask.startTask("discoverHistory");
@@ -400,10 +400,10 @@ public final class ThemisSvnBranch
                 }
 
                 /* Start the discoverBranch task */
-                myTask = myBaseTask.startTask("discoverBranch:" + myBranch.getBranchName());
+                myTask = myBaseTask.startTask("discoverBranch:" + myBranch.getName());
 
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
+                pReport.setNewStage("Analysing branch " + myBranch.getName());
 
                 /* If this is not a virtual branch */
                 if (!myBranch.isVirtual()) {

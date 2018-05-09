@@ -60,6 +60,7 @@ public final class ThemisGitTag
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitTag::getRepository);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisGitTag::getComponent);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitTag::getCommitId);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REMOTE, ThemisGitTag::isRemote);
     }
 
     /**
@@ -145,6 +146,11 @@ public final class ThemisGitTag
         return (ThemisGitBranch) super.getBranch();
     }
 
+    @Override
+    public boolean isRemote() {
+        return getBranch().isRemote();
+    }
+
     /**
      * List of tags.
      */
@@ -222,7 +228,7 @@ public final class ThemisGitTag
                 /* Access list of tags */
                 final ListTagCommand myCommand = pGit.tagList();
                 final List<Ref> myTags = myCommand.call();
-                final String myBranch = getBranch().getBranchName() + ThemisGitTag.PREFIX_TAG;
+                final String myBranch = getBranch().getName() + ThemisGitTag.PREFIX_TAG;
 
                 /* Loop through the tags */
                 final Iterator<Ref> myIterator = myTags.iterator();
@@ -278,7 +284,7 @@ public final class ThemisGitTag
                 final ThemisGitTag myTag = (ThemisGitTag) myIterator.next();
 
                 /* Report stage */
-                pReport.setNewStage("Analysing tag " + myTag.getTagName());
+                pReport.setNewStage("Analysing tag " + myTag.getName());
 
                 /* Parse project file */
                 final ThemisMvnProjectDefinition myProject = theComponent.parseProjectObject(myTag.getCommitId(), "");
@@ -290,7 +296,7 @@ public final class ThemisGitTag
                 }
 
                 /* Parse the revision history */
-                pHistory.parseCommitHistory(myTag.getCommitId());
+                pHistory.parseCommitHistory(myTag, myTag.getCommitId());
             }
         }
     }

@@ -22,7 +22,7 @@ import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisBackup;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnBackup;
 
 /**
  * Thread to handle subVersion backups.
@@ -44,7 +44,7 @@ public class ThemisSubversionBackup<N, I>
         final GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
 
         /* Create backup */
-        final ThemisBackup myAccess = new ThemisBackup(myManager, myPreferences);
+        final ThemisSvnBackup myAccess = new ThemisSvnBackup(myManager, myPreferences);
         myAccess.backUpRepositories(mySecureMgr);
 
         /* Return nothing */

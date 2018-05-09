@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.data;
+package net.sourceforge.joceanus.jthemis.tasks;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,12 +40,22 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
 import net.sourceforge.joceanus.jthemis.scm.tasks.ThemisDirectory;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnBranch;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnTag;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisGitAnalyser.ThemisGitAnchorMap;
 
 /**
  * Extract plan for path.
@@ -74,6 +84,16 @@ public class ThemisSvnExtract
     private final ThemisSvnComponent theComponent;
 
     /**
+     * GitRepository.
+     */
+    private final ThemisGitRepository theGitRepository;
+
+    /**
+     * GitComponent.
+     */
+    private final ThemisGitComponent theGitComponent;
+
+    /**
      * Trunk extract list.
      */
     private final ThemisSvnBranchExtractPlan theTrunk;
@@ -89,17 +109,31 @@ public class ThemisSvnExtract
     private final ThemisSvnTagExtractPlanList theTags;
 
     /**
+     * The Anchor Map.
+     */
+    private final ThemisGitAnchorMap theAnchorMap;
+
+    /**
      * Constructor.
      * @param pComponent the component.
+     * @param pGitRepository the gitRepository.
      * @throws OceanusException on error
      */
-    public ThemisSvnExtract(final ThemisSvnComponent pComponent) throws OceanusException {
+    public ThemisSvnExtract(final ThemisSvnComponent pComponent,
+                            final ThemisGitRepository pGitRepository) throws OceanusException {
         /* Store parameters */
         theComponent = pComponent;
+        theGitRepository = pGitRepository;
+
+        /* Locate the corresponding gitComponent (if it exists) */
+        theGitComponent = theGitRepository.locateComponent(theComponent.getName());
 
         /* Allocate lists */
         theBranches = new ThemisSvnBranchExtractPlanList();
         theTags = new ThemisSvnTagExtractPlanList();
+
+        /* Allocate the anchorMap */
+        theAnchorMap = new ThemisGitAnchorMap();
 
         /* Obtain the trunk branch */
         final ThemisSvnBranch myTrunk = theComponent.getTrunk();
@@ -146,6 +180,10 @@ public class ThemisSvnExtract
             /* Build tags */
             buildTags(myBranch);
         }
+
+        /* analyse the plans */
+        final ThemisGitAnalyser myAnalyser = new ThemisGitAnalyser(this);
+        myAnalyser.analysePlans();
     }
 
     @Override
@@ -172,6 +210,22 @@ public class ThemisSvnExtract
      */
     private ThemisSvnComponent getComponent() {
         return theComponent;
+    }
+
+    /**
+     * Obtain the gitComponent.
+     * @return the component
+     */
+    ThemisGitComponent getGitComponent() {
+        return theGitComponent;
+    }
+
+    /**
+     * Obtain the gitRepository.
+     * @return the repository
+     */
+    ThemisGitRepository getGitRepository() {
+        return theGitRepository;
     }
 
     /**
@@ -220,6 +274,14 @@ public class ThemisSvnExtract
      */
     public int numPlans() {
         return 1 + theBranches.size() + theTags.size();
+    }
+
+    /**
+     * Obtain the anchorMap.
+     * @return the anchorMap
+     */
+    ThemisGitAnchorMap getGitAnchorMap() {
+        return theAnchorMap;
     }
 
     /**
@@ -286,7 +348,7 @@ public class ThemisSvnExtract
         /**
          * The owner.
          */
-        private final Object theOwner;
+        private final ThemisScmOwner theOwner;
 
         /**
          * The revision.
@@ -298,7 +360,7 @@ public class ThemisSvnExtract
          * @param pOwner the Owner
          * @param pRevision the revision
          */
-        public ThemisSvnExtractAnchor(final Object pOwner,
+        public ThemisSvnExtractAnchor(final ThemisScmOwner pOwner,
                                       final SVNRevision pRevision) {
             /* store parameters */
             theOwner = pOwner;
@@ -309,7 +371,7 @@ public class ThemisSvnExtract
          * Obtain owner.
          * @return the owner
          */
-        public Object getOwner() {
+        public ThemisScmOwner getOwner() {
             return theOwner;
         }
 
@@ -323,7 +385,7 @@ public class ThemisSvnExtract
 
         @Override
         public String toString() {
-            return theOwner.toString() + ":" + theRevision.toString();
+            return theOwner.toString() + ":" + theRevision.getNumber();
         }
     }
 
@@ -471,11 +533,6 @@ public class ThemisSvnExtract
         }
 
         @Override
-        public String toString() {
-            return FIELD_DEFS.getName();
-        }
-
-        @Override
         public MetisFieldSet<ThemisSvnTagExtractPlan> getDataFieldSet() {
             return FIELD_DEFS;
         }
@@ -494,7 +551,7 @@ public class ThemisSvnExtract
      * Extract Plan.
      * @param <T> owner data type
      */
-    private abstract static class ThemisSvnExtractPlan<T>
+    protected abstract static class ThemisSvnExtractPlan<T extends ThemisScmOwner>
             implements MetisFieldItem {
         /**
          * DataFields.
@@ -506,7 +563,7 @@ public class ThemisSvnExtract
          * fieldIds.
          */
         static {
-            FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER, ThemisSvnExtractPlan::getOwner);
+            FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSvnExtractPlan::getOwner);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHOR, ThemisSvnExtractPlan::getAnchor);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_VIEWS, ThemisSvnExtractPlan::getViews);
         }
@@ -673,7 +730,7 @@ public class ThemisSvnExtract
 
                 /* Declare the view */
                 final ThemisSvnRevisionKey myKey = myEntry.getRevisionKey();
-                final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, myKey.getRevision(), myEntry);
+                final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, theOwner, myKey.getRevision(), myEntry);
                 final String myBase = myKey.getPath();
                 myView.setBaseDir(theRepo.getURL(myBase));
                 theViews.add(0, myView);
@@ -828,7 +885,7 @@ public class ThemisSvnExtract
                 /* If this is beyond the desired revision */
                 if (myCurr < myRev) {
                     /* Need an intermediate view, so allocate new view */
-                    myView = new ThemisSvnExtractView(myView, myRevision, pEntry);
+                    myView = new ThemisSvnExtractView(myView, theOwner, myRevision, pEntry);
                     myIterator.next();
                     myIterator.add(myView);
                 }
@@ -839,7 +896,7 @@ public class ThemisSvnExtract
             }
 
             /* None found before end of list, so allocate new view */
-            final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, myRevision, pEntry);
+            final ThemisSvnExtractView myView = new ThemisSvnExtractView(theRepo, theOwner, myRevision, pEntry);
             theViews.add(0, myView);
             myView.addDirectory(pComp, theRepo.getURL(myBase));
         }
@@ -923,13 +980,13 @@ public class ThemisSvnExtract
          * Owner field.
          */
         static {
-            FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER, ThemisSvnExtractMigratedView::getOwner);
+            FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSvnExtractMigratedView::getOwner);
         }
 
         /**
          * Original owner.
          */
-        private final Object theOwner;
+        private final ThemisScmOwner theOwner;
 
         /**
          * Constructor.
@@ -937,10 +994,10 @@ public class ThemisSvnExtract
          * @param pSource the original view
          * @throws OceanusException on error
          */
-        private ThemisSvnExtractMigratedView(final Object pOwner,
+        private ThemisSvnExtractMigratedView(final ThemisScmOwner pOwner,
                                              final ThemisSvnExtractView pSource) throws OceanusException {
             /* Call the super-constructor */
-            super(pSource);
+            super(pSource, pOwner);
 
             /* Store the owner */
             theOwner = pOwner;
@@ -955,7 +1012,7 @@ public class ThemisSvnExtract
          * Obtain the owner.
          * @return the owner
          */
-        public Object getOwner() {
+        public ThemisScmOwner getOwner() {
             return theOwner;
         }
     }
@@ -974,11 +1031,19 @@ public class ThemisSvnExtract
          * fieldIds.
          */
         static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHOR, ThemisSvnExtractView::getAnchor);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnExtractView::getRevisionNo);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnExtractView::getDate);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnExtractView::getLogMessage);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_ITEMS, ThemisSvnExtractView::getItems);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONNO, ThemisSvnExtractView::getGitRevisionNo);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISION, ThemisSvnExtractView::getGitRevision);
         }
+
+        /**
+         * Anchor.
+         */
+        private final ThemisSvnExtractAnchor theAnchor;
 
         /**
          * Repository.
@@ -1006,17 +1071,32 @@ public class ThemisSvnExtract
         private final ThemisSvnExtractItemList theItems;
 
         /**
+         * The associated Git revision.
+         */
+        private String theGitRevisionNo;
+
+        /**
+         * The associated Git revisionKey.
+         */
+        private ThemisGitRevision theGitRevision;
+
+        /**
          * Constructor.
          * @param pRepo the repository
+         * @param pOwner the owner
          * @param pRevision the revision
          * @param pEntry the history details
          */
         private ThemisSvnExtractView(final ThemisSvnRepository pRepo,
+                                     final ThemisScmOwner pOwner,
                                      final SVNRevision pRevision,
                                      final ThemisSvnRevisionHistory pEntry) {
             /* Store parameters */
             theRepo = pRepo;
             theRevision = pRevision;
+
+            /* Create the anchor */
+            theAnchor = new ThemisSvnExtractAnchor(pOwner, pRevision);
 
             /* Obtain details from the entry */
             theDate = pEntry.getDate();
@@ -1029,15 +1109,17 @@ public class ThemisSvnExtract
         /**
          * Constructor.
          * @param pView the view to copy from
+         * @param pOwner the owner
          * @param pRevision the revision
          * @param pEntry the history details
          * @throws OceanusException on error
          */
         private ThemisSvnExtractView(final ThemisSvnExtractView pView,
+                                     final ThemisScmOwner pOwner,
                                      final SVNRevision pRevision,
                                      final ThemisSvnRevisionHistory pEntry) throws OceanusException {
             /* Initialise item */
-            this(pView.theRepo, pRevision, pEntry);
+            this(pView.theRepo, pOwner, pRevision, pEntry);
 
             /* Loop through the underlying items */
             final Iterator<ThemisSvnExtractItem> myIterator = pView.elementIterator();
@@ -1052,12 +1134,17 @@ public class ThemisSvnExtract
         /**
          * Constructor.
          * @param pView the view to copy from
+         * @param pOwner the owner
          * @throws OceanusException on error
          */
-        protected ThemisSvnExtractView(final ThemisSvnExtractView pView) throws OceanusException {
+        protected ThemisSvnExtractView(final ThemisSvnExtractView pView,
+                                       final ThemisScmOwner pOwner) throws OceanusException {
             /* Store parameters */
             theRepo = pView.theRepo;
             theRevision = pView.getRevision();
+
+            /* Create the anchor */
+            theAnchor = new ThemisSvnExtractAnchor(pOwner, theRevision);
 
             /* Obtain details from the source view */
             theDate = pView.getDate();
@@ -1087,6 +1174,14 @@ public class ThemisSvnExtract
         }
 
         /**
+         * Obtain the anchor.
+         * @return the anchor
+         */
+        public ThemisSvnExtractAnchor getAnchor() {
+            return theAnchor;
+        }
+
+        /**
          * Obtain the revision.
          * @return the revision
          */
@@ -1100,6 +1195,38 @@ public class ThemisSvnExtract
          */
         private long getRevisionNo() {
             return theRevision.getNumber();
+        }
+
+        /**
+         * Obtain the gitRevision#.
+         * @return the revision#
+         */
+        public String getGitRevisionNo() {
+            return theGitRevisionNo;
+        }
+
+        /**
+         * Set the gitRevision#.
+         * @param pRevision the gitRevision#
+         */
+        protected void setGitRevisionNo(final String pRevision) {
+            theGitRevisionNo = pRevision;
+        }
+
+        /**
+         * Obtain the gitRevision.
+         * @return the gitRevision
+         */
+        public ThemisGitRevision getGitRevision() {
+            return theGitRevision;
+        }
+
+        /**
+         * Set the gitRevision.
+         * @param pRevision the gitRevision
+         */
+        protected void setGitRevision(final ThemisGitRevision pRevision) {
+            theGitRevision = pRevision;
         }
 
         /**

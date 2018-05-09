@@ -17,32 +17,52 @@
 package net.sourceforge.joceanus.jthemis.git.data;
 
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 
-import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
-import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 
 /**
  * Revision History for a Git Component.
  */
 public class ThemisGitRevisionHistory
-        implements MetisDataObjectFormat, MetisDataMap<ThemisGitCommitId, ThemisGitRevision> {
+        implements MetisFieldItem {
+    /**
+     * The SubVersion commit header.
+     */
+    public static final String SVN_COMMIT_HDR = "svn";
+
+    /**
+     * The SubVersion commit separator.
+     */
+    public static final String SVN_COMMIT_SEP = ":";
+
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisGitRevisionHistory> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisGitRevisionHistory.class);
+
+    /**
+     * fieldIds.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisGitRevisionHistory::getComponent);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITMAP, ThemisGitRevisionHistory::getCommitMap);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONMAP, ThemisGitRevisionHistory::getRevisionMap);
+    }
+
     /**
      * The Git Component.
      */
@@ -54,9 +74,9 @@ public class ThemisGitRevisionHistory
     private final Map<ThemisGitCommitId, ThemisGitRevision> theCommitMap;
 
     /**
-     * The queue of commitIds.
+     * The map of revisions.
      */
-    private final Queue<ObjectId> theQueue;
+    private final Map<String, ThemisGitRevision> theRevisionMap;
 
     /**
      * Constructor.
@@ -65,31 +85,64 @@ public class ThemisGitRevisionHistory
     ThemisGitRevisionHistory(final ThemisGitComponent pComponent) {
         theComponent = pComponent;
         theCommitMap = new HashMap<>();
-        theQueue = new ArrayDeque<>();
+        theRevisionMap = new HashMap<>();
     }
 
     @Override
-    public Map<ThemisGitCommitId, ThemisGitRevision> getUnderlyingMap() {
+    public MetisFieldSetDef getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Obtain the component.
+     * @return the component
+     */
+    private ThemisGitComponent getComponent() {
+        return theComponent;
+    }
+
+    /**
+     * Obtain the commitMap.
+     * @return the commitMap
+     */
+    private Map<ThemisGitCommitId, ThemisGitRevision> getCommitMap() {
         return theCommitMap;
     }
 
     /**
+     * Obtain the commitMap.
+     * @return the commitMap
+     */
+    private Map<String, ThemisGitRevision> getRevisionMap() {
+        return theRevisionMap;
+    }
+
+    /**
+     * Clear the maps.
+     */
+    public void clearMaps() {
+        theCommitMap.clear();
+        theRevisionMap.clear();
+    }
+
+    /**
      * Parse commit history.
+     * @param pOwner the owner of the commit
      * @param pCommitId the commit id
      * @throws OceanusException on error
      */
-    public void parseCommitHistory(final ThemisGitCommitId pCommitId) throws OceanusException {
+    public void parseCommitHistory(final ThemisScmOwner pOwner,
+                                   final ThemisGitCommitId pCommitId) throws OceanusException {
         /* Protect against exceptions */
         try (RevWalk myRevWalk = new RevWalk(theComponent.getGitRepo())) {
-            /* Access the primary commit and process it */
+            /* Access the primary commit and initiate the walk using it */
             final RevCommit myCommit = myRevWalk.parseCommit(pCommitId.getCommit());
-            processCommit(myCommit);
+            myRevWalk.markStart(myCommit);
 
-            /* While there are parent commits in the queue */
-            while (!theQueue.isEmpty()) {
-                /* Process the next commit in the queue */
-                final ObjectId myId = theQueue.poll();
-                processCommit(myRevWalk.parseCommit(myId));
+            /* Walk the revision tree */
+            final Iterator<RevCommit> myIterator = myRevWalk.iterator();
+            while (myIterator.hasNext()) {
+                processCommit(pOwner, myIterator.next());
             }
 
         } catch (IOException e) {
@@ -99,10 +152,12 @@ public class ThemisGitRevisionHistory
 
     /**
      * Process the commit.
+     * @param pOwner the owner of the commit
      * @param pCommit the commit
      * @throws OceanusException on error
      */
-    public void processCommit(final RevCommit pCommit) throws OceanusException {
+    public void processCommit(final ThemisScmOwner pOwner,
+                              final RevCommit pCommit) throws OceanusException {
         /* Check to see whether the commit is already processed */
         final ThemisGitCommitId myCommitId = new ThemisGitCommitId(pCommit);
         if (theCommitMap.get(myCommitId) != null) {
@@ -110,18 +165,44 @@ public class ThemisGitRevisionHistory
         }
 
         /* Add the commit to the map */
-        final ThemisGitRevision myRevision = new ThemisGitRevision(myCommitId);
+        final ThemisGitRevision myRevision = new ThemisGitRevision(pOwner, myCommitId);
         theCommitMap.put(myCommitId, myRevision);
 
-        /* Add all parents to the input queue */
-        for (RevCommit myCommit : pCommit.getParents()) {
-            theQueue.add(myCommit.getId());
+        /* If this is subVersion */
+        if (myRevision.isSubversion()) {
+            /* Add to the revision map */
+            theRevisionMap.put(myRevision.getRevisionKey(), myRevision);
         }
     }
 
     @Override
     public String toString() {
         return ThemisGitRevisionHistory.class.getSimpleName();
+    }
+
+    /**
+     * Obtain commit for revisionKey.
+     * @param pOwner the owner
+     * @param pRevision the revision
+     * @return the commit or null if not found
+     */
+    protected ThemisGitRevision getGitRevisionForRevisionKey(final ThemisScmOwner pOwner,
+                                                             final String pRevision) {
+        final String myKey = pOwner.getName() + SVN_COMMIT_SEP + pRevision;
+        return theRevisionMap.get(myKey);
+    }
+
+    /**
+     * Obtain commit for new commit.
+     * @param pOwner the owner
+     * @param pRevision the revision
+     * @param pCommit the new commit
+     * @return the commit or null if not found
+     */
+    protected ThemisGitRevision getGitRevisionForNewCommit(final ThemisScmOwner pOwner,
+                                                           final String pRevision,
+                                                           final RevCommit pCommit) {
+        return new ThemisGitRevision(pOwner, pRevision, pCommit);
     }
 
     /**
@@ -139,6 +220,7 @@ public class ThemisGitRevisionHistory
          * @param pCommit the commit
          */
         public ThemisGitCommitId(final RevCommit pCommit) {
+            /* Store parameters */
             theCommit = pCommit;
         }
 
@@ -204,6 +286,8 @@ public class ThemisGitRevisionHistory
          */
         static {
             FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitRevision::getCommitId);
+            FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisGitRevision::getOwner);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONNO, ThemisGitRevision::getGitRevisionNo);
             FIELD_DEFS.declareLocalField(ThemisResource.GIT_PARENTS, ThemisGitRevision::getParents);
         }
 
@@ -213,20 +297,81 @@ public class ThemisGitRevisionHistory
         private final ThemisGitCommitId theCommitId;
 
         /**
+         * The owning branch/tag.
+         */
+        private final ThemisScmOwner theOwner;
+
+        /**
+         * The corresponding subVersion revision.
+         */
+        private final String theRevision;
+
+        /**
          * The Parent commitIds.
          */
         private final List<ThemisGitCommitId> theParents;
 
         /**
          * Constructor.
+         * @param pOwner the commit owner
          * @param pCommitId the commitId
          */
-        ThemisGitRevision(final ThemisGitCommitId pCommitId) {
+        ThemisGitRevision(final ThemisScmOwner pOwner,
+                          final ThemisGitCommitId pCommitId) {
             /* Store parameters */
             theCommitId = pCommitId;
+            theOwner = pOwner;
 
             /* Add the parents to the list */
             theParents = new ArrayList<>();
+            processParents();
+
+            /* Access the commit message */
+            theRevision = determineSvnRevision();
+        }
+
+        /**
+         * Constructor.
+         * @param pOwner the commit owner
+         * @param pRevision the revision
+         * @param pCommit the commit
+         */
+        ThemisGitRevision(final ThemisScmOwner pOwner,
+                          final String pRevision,
+                          final RevCommit pCommit) {
+            /* Store parameters */
+            theCommitId = new ThemisGitCommitId(pCommit);
+            theOwner = pOwner;
+            theRevision = pRevision;
+
+            /* Add the parents to the list */
+            theParents = new ArrayList<>();
+            processParents();
+        }
+
+        /**
+         * Determine svnRevision from commit message.
+         * @return the revision (or null)
+         */
+        private String determineSvnRevision() {
+            /* Access the commit message */
+            final String myMessage = theCommitId.getCommit().getFullMessage();
+            final int myIndex = myMessage.indexOf(SVN_COMMIT_SEP);
+            if (myIndex != -1
+                && myMessage.startsWith(SVN_COMMIT_HDR)) {
+                final String mySvnRev = myMessage.substring(SVN_COMMIT_HDR.length(), myIndex);
+                return mySvnRev.matches("\\d+(\\.\\d+)?")
+                                                          ? mySvnRev
+                                                          : null;
+            }
+            return null;
+        }
+
+        /**
+         * Process parents.
+         */
+        private void processParents() {
+            /* Process parents */
             for (RevCommit myCommit : getCommit().getParents()) {
                 theParents.add(new ThemisGitCommitId(myCommit));
             }
@@ -234,7 +379,10 @@ public class ThemisGitRevisionHistory
 
         @Override
         public String toString() {
-            return theCommitId.toString();
+            final String myRevision = theRevision == null
+                                                          ? ""
+                                                          : getRevisionKey();
+            return myRevision + "@" + theCommitId.toString();
         }
 
         /**
@@ -254,6 +402,30 @@ public class ThemisGitRevisionHistory
         }
 
         /**
+         * Obtain the owner.
+         * @return the revision
+         */
+        public ThemisScmOwner getOwner() {
+            return theOwner;
+        }
+
+        /**
+         * Is the commit a subversion revision.
+         * @return true/false
+         */
+        public boolean isSubversion() {
+            return theRevision != null;
+        }
+
+        /**
+         * Obtain the git revision#.
+         * @return the revision
+         */
+        public String getGitRevisionNo() {
+            return theRevision;
+        }
+
+        /**
          * Obtain the parent list.
          * @return the parent list
          */
@@ -267,6 +439,16 @@ public class ThemisGitRevisionHistory
          */
         public boolean hasParents() {
             return !theParents.isEmpty();
+        }
+
+        /**
+         * Obtain the revisionKey.
+         * @return the revisionKey
+         */
+        public String getRevisionKey() {
+            return isSubversion()
+                                  ? theOwner.getName() + SVN_COMMIT_SEP + theRevision
+                                  : null;
         }
 
         @Override

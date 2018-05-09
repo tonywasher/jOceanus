@@ -29,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
 import net.sourceforge.joceanus.jthemis.ThemisCancelException;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferenceKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
-import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisBackup;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnBackup;
 
 /**
  * Thread to handle subVersion backups.
@@ -80,7 +80,7 @@ public class ThemisSubversionRestore<N, I>
         myRepo = new File(myRepo.getPath(), myName);
 
         /* restore the backup */
-        final ThemisBackup myAccess = new ThemisBackup(myManager, myPreferenceMgr);
+        final ThemisSvnBackup myAccess = new ThemisSvnBackup(myManager, myPreferenceMgr);
         myAccess.loadRepository(myRepo, mySecureMgr, myFile);
 
         /* Return nothing */

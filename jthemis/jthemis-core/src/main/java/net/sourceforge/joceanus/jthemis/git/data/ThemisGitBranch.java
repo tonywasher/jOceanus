@@ -17,6 +17,7 @@
 package net.sourceforge.joceanus.jthemis.git.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,6 +64,7 @@ public final class ThemisGitBranch
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisGitBranch::getRepository);
         FIELD_DEFS.declareLocalField(ThemisResource.GIT_COMMITID, ThemisGitBranch::getCommitId);
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REMOTE, ThemisGitBranch::isRemote);
     }
 
     /**
@@ -74,6 +76,11 @@ public final class ThemisGitBranch
      * Object Id of the commit.
      */
     private final ThemisGitCommitId theCommitId;
+
+    /**
+     * Is this a remote branch?
+     */
+    private boolean isRemote;
 
     /**
      * Constructor.
@@ -144,6 +151,19 @@ public final class ThemisGitBranch
     }
 
     @Override
+    public boolean isRemote() {
+        return isRemote;
+    }
+
+    /**
+     * Set the remote flag.
+     * @param pRemote true/false
+     */
+    public void setRemote(final boolean pRemote) {
+        isRemote = pRemote;
+    }
+
+    @Override
     public ThemisGitTagList getTagList() {
         return (ThemisGitTagList) super.getTagList();
     }
@@ -168,6 +188,11 @@ public final class ThemisGitBranch
          * Branch references Prefix.
          */
         private static final String REF_BRANCHES = "refs/heads/";
+
+        /**
+         * Remote branch references Prefix.
+         */
+        private static final String REF_REMOTE_BRANCHES = "refs/remotes/origin/";
 
         /**
          * Report fields.
@@ -246,6 +271,7 @@ public final class ThemisGitBranch
                 final ListBranchCommand myCommand = pGit.branchList();
                 myCommand.setListMode(ListMode.ALL);
                 final List<Ref> myBranches = myCommand.call();
+                final List<String> myFound = new ArrayList<>();
 
                 /* Loop through the branches */
                 final Iterator<Ref> myIterator = myBranches.iterator();
@@ -254,11 +280,25 @@ public final class ThemisGitBranch
 
                     /* Access branch details */
                     String myName = myRef.getName();
+                    boolean isRemote = false;
                     final ObjectId myObjectId = myRef.getObjectId();
                     final RevCommit myCommit = myRevWalk.parseCommit(myObjectId);
                     final ThemisGitCommitId myCommitId = new ThemisGitCommitId(myCommit);
                     if (myName.startsWith(REF_BRANCHES)) {
                         myName = myName.substring(REF_BRANCHES.length());
+                    }
+                    if (myName.startsWith(REF_REMOTE_BRANCHES)) {
+                        myName = myName.substring(REF_REMOTE_BRANCHES.length());
+                        isRemote = true;
+                    }
+
+                    /* Check for branch that is both local and remote */
+                    if (myFound.contains(myName)) {
+                        /* Skip the second reference (which we assume is the remote reference) */
+                        if (!isRemote) {
+                            System.out.println("Help");
+                        }
+                        continue;
                     }
 
                     /* If this is the master branch */
@@ -284,6 +324,8 @@ public final class ThemisGitBranch
                                 /* Register the branch */
                                 myBranch.setProjectDefinition(myProject);
                                 theComponent.getRepository().registerBranch(myProject.getDefinition(), myBranch);
+                                myFound.add(myName);
+                                myBranch.setRemote(isRemote);
                             }
                         }
 
@@ -295,6 +337,8 @@ public final class ThemisGitBranch
                         /* Create the new branch and add it */
                         final ThemisGitBranch myBranch = new ThemisGitBranch(theComponent, myName, myCommitId);
                         add(myBranch);
+                        myFound.add(myName);
+                        myBranch.setRemote(isRemote);
                     }
                 }
             } catch (IOException
@@ -373,7 +417,10 @@ public final class ThemisGitBranch
             final ThemisGitBranch myTrunk = locateTrunk();
             if (myTrunk != null) {
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myTrunk.getBranchName());
+                pReport.setNewStage("Analysing branch " + myTrunk.getName());
+
+                /* Parse the revision history */
+                theHistory.parseCommitHistory(myTrunk, myTrunk.getCommitId());
 
                 /* Discover tags */
                 myTrunk.getTagList().discover(pReport, theHistory);
@@ -391,7 +438,7 @@ public final class ThemisGitBranch
                 }
 
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
+                pReport.setNewStage("Analysing branch " + myBranch.getName());
 
                 /* If this is a real branch */
                 if (!myBranch.isVirtual()) {
@@ -405,7 +452,7 @@ public final class ThemisGitBranch
                     }
 
                     /* Parse the revision history */
-                    theHistory.parseCommitHistory(myBranch.getCommitId());
+                    theHistory.parseCommitHistory(myBranch, myBranch.getCommitId());
                 }
 
                 /* Discover tags */

@@ -32,7 +32,7 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
  * @author Tony Washer
  */
 public abstract class ThemisScmBranch
-        implements MetisFieldItem, Comparable<ThemisScmBranch> {
+        implements MetisFieldItem, ThemisScmOwner, Comparable<ThemisScmBranch> {
     /**
      * The branch prefix.
      */
@@ -67,7 +67,7 @@ public abstract class ThemisScmBranch
      * fieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmBranch::getBranchName);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmBranch::getName);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_COMPONENT, ThemisScmBranch::getComponent);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisScmBranch::getTagList);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT, ThemisScmBranch::getProjectDefinition);
@@ -159,7 +159,17 @@ public abstract class ThemisScmBranch
 
     @Override
     public String toString() {
-        return getBranchName();
+        return getName();
+    }
+
+    @Override
+    public String getBranchName() {
+        return getName();
+    }
+
+    @Override
+    public boolean isBranch() {
+        return true;
     }
 
     /**
@@ -199,7 +209,7 @@ public abstract class ThemisScmBranch
      * @return the component branch list
      */
     public ThemisScmBranchList getComponentBranchList() {
-        return  theComponent.getBranches();
+        return theComponent.getBranches();
     }
 
     /**
@@ -264,11 +274,8 @@ public abstract class ThemisScmBranch
         theProject = pProject;
     }
 
-    /**
-     * Get the branch name for this tag.
-     * @return the branch name
-     */
-    public String getBranchName() {
+    @Override
+    public String getName() {
         /* Build the underlying string */
         final StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
@@ -400,7 +407,7 @@ public abstract class ThemisScmBranch
 
     /**
      * List of branches.
-      */
+     */
     public abstract static class ThemisScmBranchList
             implements MetisFieldItem, MetisDataList<ThemisScmBranch> {
         /**
@@ -483,7 +490,7 @@ public abstract class ThemisScmBranch
                 final ThemisScmBranch myBranch = myIterator.next();
 
                 /* If this is the correct branch */
-                if (pVersion.equals(myBranch.getBranchName())) {
+                if (pVersion.equals(myBranch.getName())) {
                     /* Return it */
                     return myBranch;
                 }
@@ -528,9 +535,32 @@ public abstract class ThemisScmBranch
                 final ThemisScmBranch myBranch = myIterator.next();
 
                 /* If this is the correct branch */
-                if (pVersion.equals(myBranch.getBranchName())) {
+                if (pVersion.equals(myBranch.getName())) {
                     /* Search in this branches tags */
                     return myBranch.getTagList().locateTag(pTag);
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Locate Tag.
+         * @param pOwner the owner to locate
+         * @return the relevant tag or Null
+         */
+        protected ThemisScmTag locateTag(final ThemisScmOwner pOwner) {
+            /* Loop through the entries */
+            final String myName = pOwner.getBranchName();
+            final Iterator<ThemisScmBranch> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                final ThemisScmBranch myBranch = myIterator.next();
+
+                /* If this is the correct branch */
+                if (myName.equals(myBranch.getName())) {
+                    /* Search in this branches tags */
+                    return myBranch.getTagList().locateTag(pOwner);
                 }
             }
 
@@ -545,7 +575,7 @@ public abstract class ThemisScmBranch
          * @return the next branch
          */
         public ThemisScmBranch nextBranch(final ThemisScmBranch pBase,
-                                          final ScmBranchOpType pBranchType) {
+                                          final ThemisScmBranchIncrement pBranchType) {
             /* Switch on branch type */
             switch (pBranchType) {
                 case MAJOR:
@@ -573,8 +603,8 @@ public abstract class ThemisScmBranch
 
             /* Determine the largest current major version */
             final int myMajor = myBranch == null
-                                                   ? 0
-                                                   : myBranch.getMajorVersion();
+                                                 ? 0
+                                                 : myBranch.getMajorVersion();
 
             /* Create the major revision */
             return createNewBranch(theComponent, myMajor + 1, 0, 0);
@@ -611,8 +641,8 @@ public abstract class ThemisScmBranch
 
             /* Determine the largest current minor version */
             final int myMinor = myBranch == null
-                                                   ? 0
-                                                   : myBranch.getMinorVersion();
+                                                 ? 0
+                                                 : myBranch.getMinorVersion();
 
             /* Create the minor revision */
             return createNewBranch(theComponent, myMajor, myMinor + 1, 0);
@@ -654,8 +684,8 @@ public abstract class ThemisScmBranch
 
             /* Determine the largest current revision */
             final int myDelta = myBranch == null
-                                                   ? 0
-                                                   : myBranch.getDeltaVersion();
+                                                 ? 0
+                                                 : myBranch.getDeltaVersion();
 
             /* Create the delta revision */
             return createNewBranch(theComponent, myMajor, myMinor, myDelta + 1);
@@ -678,7 +708,7 @@ public abstract class ThemisScmBranch
     /**
      * Branch operation.
      */
-    public enum ScmBranchOpType {
+    public enum ThemisScmBranchIncrement {
         /**
          * Major branch. Increment major version
          */

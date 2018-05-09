@@ -18,4 +18,4 @@
  * Tasks for subversion.
  * @author Tony Washer
  */
-package net.sourceforge.joceanus.jthemis.svn.tasks;
+package net.sourceforge.joceanus.jthemis.tasks;

@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
  * Core representation of a tag.
  */
 public abstract class ThemisScmTag
-        implements MetisFieldItem, Comparable<ThemisScmTag> {
+        implements MetisFieldItem, ThemisScmOwner, Comparable<ThemisScmTag> {
     /**
      * The tag prefix.
      */
@@ -46,7 +46,7 @@ public abstract class ThemisScmTag
      */
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCH, ThemisScmTag::getBranch);
-        FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmTag::getTagName);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_NAME, ThemisScmTag::getName);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_PROJECT, ThemisScmTag::getProjectDefinition);
     }
 
@@ -79,15 +79,22 @@ public abstract class ThemisScmTag
 
     @Override
     public String toString() {
-        return getTagName();
+        return getName();
     }
 
-    /**
-     * Get the tag name for this tag.
-     * @return the tag name
-     */
-    public String getTagName() {
-        return theBranch.getBranchName() + PREFIX_TAG + theTag;
+    @Override
+    public boolean isTag() {
+        return true;
+    }
+
+    @Override
+    public String getName() {
+        return theBranch.getName() + PREFIX_TAG + theTag;
+    }
+
+    @Override
+    public String getBranchName() {
+        return theBranch.getName();
     }
 
     /**
@@ -219,9 +226,9 @@ public abstract class ThemisScmTag
             theList = new ArrayList<>();
 
             /* Build prefix */
-            thePrefix = (pParent == null)
-                                          ? null
-                                          : theBranch.getBranchName() + PREFIX_TAG;
+            thePrefix = pParent == null
+                                        ? null
+                                        : theBranch.getName() + PREFIX_TAG;
         }
 
         @Override
@@ -289,6 +296,29 @@ public abstract class ThemisScmTag
 
                 /* If this is the correct tag */
                 if (pTag == myTag.getTagNo()) {
+                    /* return the tag */
+                    return myTag;
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Locate Tag.
+         * @param pOwner the owner to locate
+         * @return the relevant tag or Null
+         */
+        protected ThemisScmTag locateTag(final ThemisScmOwner pOwner) {
+            /* Loop through the entries */
+            final String myName = pOwner.getName();
+            final Iterator<ThemisScmTag> myIterator = iterator();
+            while (myIterator.hasNext()) {
+                final ThemisScmTag myTag = myIterator.next();
+
+                /* If this is the correct tag */
+                if (myName.equals(myTag.getName())) {
                     /* return the tag */
                     return myTag;
                 }

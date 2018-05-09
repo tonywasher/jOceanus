@@ -160,8 +160,24 @@ public abstract class ThemisScmComponent
     }
 
     /**
+     * Locate Branch.
+     * @param pOwner the owner to locate
+     * @return the relevant branch or Null
+     */
+    public ThemisScmOwner locateOwner(final ThemisScmOwner pOwner) {
+        /* If the owner is a branch */
+        if (pOwner.isBranch()) {
+            return theBranches.locateBranch(pOwner.getName());
+
+            /* else must be a tag */
+        } else {
+            return theBranches.locateTag(pOwner);
+        }
+    }
+
+    /**
      * List of components.
-      */
+     */
     public abstract static class ThemisScmComponentList
             implements MetisFieldItem, MetisDataList<ThemisScmComponent> {
         /**

@@ -81,6 +81,11 @@ public enum ThemisResource
     SCM_BASE("scm.base"),
 
     /**
+     * SCM Owner.
+     */
+    SCM_OWNER("scm.owner"),
+
+    /**
      * SVN Trunk.
      */
     SVN_TRUNK("svn.trunk"),
@@ -139,11 +144,6 @@ public enum ThemisResource
      * SVN CopyRevision.
      */
     SVN_COPYREVISION("svn.copyRevision"),
-
-    /**
-     * SVN Owner.
-     */
-    SVN_OWNER("svn.owner"),
 
     /**
      * SVN Date.
@@ -211,6 +211,16 @@ public enum ThemisResource
     SVN_VIEWS("svn.views"),
 
     /**
+     * Git CommitMap.
+     */
+    GIT_COMMITMAP("git.commitMap"),
+
+    /**
+     * Git RevisionMap.
+     */
+    GIT_REVISIONMAP("git.revisionMap"),
+
+    /**
      * Git CommitId.
      */
     GIT_COMMITID("git.commitId"),
@@ -219,6 +229,26 @@ public enum ThemisResource
      * Git Parents.
      */
     GIT_PARENTS("git.parents"),
+
+    /**
+     * Git Revision.
+     */
+    GIT_REVISION("git.revision"),
+
+    /**
+     * Git Revision#.
+     */
+    GIT_REVISIONNO("git.revisionNo"),
+
+    /**
+     * Git Revision.
+     */
+    GIT_REVISIONKEY("git.revisionKey"),
+
+    /**
+     * Git Remote.
+     */
+    GIT_REMOTE("git.remote"),
 
     /**
      * MAVEN Group.

@@ -17,3 +17,4 @@
 /**
  * Currency checks.
  */
+package net.sourceforge.joceanus.jmoneywise.test.lethe.data.statics;

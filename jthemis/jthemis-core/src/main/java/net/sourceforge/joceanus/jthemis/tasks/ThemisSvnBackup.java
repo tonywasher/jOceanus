@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.svn.tasks;
+package net.sourceforge.joceanus.jthemis.tasks;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +55,7 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
  * Handles backup of a repository.
  * @author Tony Washer
  */
-public class ThemisBackup {
+public class ThemisSvnBackup {
     /**
      * The Number Of Revisions.
      */
@@ -101,8 +101,8 @@ public class ThemisBackup {
      * @param pStatus the status reporter
      * @param pPrefMgr the preference manager
      */
-    public ThemisBackup(final MetisThreadStatusReport pStatus,
-                        final MetisPreferenceManager pPrefMgr) {
+    public ThemisSvnBackup(final MetisThreadStatusReport pStatus,
+                           final MetisPreferenceManager pPrefMgr) {
         /* Store parameters */
         theStatus = pStatus;
         thePreferenceMgr = pPrefMgr;

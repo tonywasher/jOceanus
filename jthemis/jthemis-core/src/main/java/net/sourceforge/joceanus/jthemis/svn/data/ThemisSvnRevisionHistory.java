@@ -38,14 +38,13 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 
 /**
  * Methods to access revision history.
- * @author Tony Washer
  */
 public class ThemisSvnRevisionHistory
-        implements
-        MetisFieldItem {
+        implements MetisFieldItem {
     /**
      * Logger.
      */
@@ -60,7 +59,7 @@ public class ThemisSvnRevisionHistory
      * fieldIds.
      */
     static {
-        FIELD_DEFS.declareLocalField(ThemisResource.SVN_OWNER, ThemisSvnRevisionHistory::getOwner);
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSvnRevisionHistory::getOwner);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnRevisionHistory::getDate);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevisionHistory::getRevision);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnRevisionHistory::getLogMessage);
@@ -73,7 +72,7 @@ public class ThemisSvnRevisionHistory
     /**
      * The owner.
      */
-    private final Object theOwner;
+    private final ThemisScmOwner theOwner;
 
     /**
      * The revisionKey.
@@ -137,7 +136,7 @@ public class ThemisSvnRevisionHistory
      * @param pEntry the log source
      * @throws OceanusException on error
      */
-    protected ThemisSvnRevisionHistory(final Object pOwner,
+    protected ThemisSvnRevisionHistory(final ThemisScmOwner pOwner,
                                        final String pPath,
                                        final SVNLogEntry pEntry) throws OceanusException {
         /* Record details */
@@ -277,7 +276,7 @@ public class ThemisSvnRevisionHistory
      * Obtain the owner.
      * @return the owner
      */
-    public Object getOwner() {
+    public ThemisScmOwner getOwner() {
         return theOwner;
     }
 
@@ -428,8 +427,7 @@ public class ThemisSvnRevisionHistory
      * RevisionKey.
      */
     public static class ThemisSvnRevisionKey
-            implements
-            MetisDataObjectFormat {
+            implements MetisDataObjectFormat {
         /**
          * Hash prime.
          */
@@ -522,8 +520,7 @@ public class ThemisSvnRevisionHistory
      * SvnSourceDir entry.
      */
     public static final class ThemisSvnSourceDir
-            implements
-            MetisFieldItem {
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
@@ -630,9 +627,7 @@ public class ThemisSvnRevisionHistory
      * Source Directory list.
      */
     public static final class ThemisSvnSourceDirList
-            implements
-            MetisFieldItem,
-            MetisDataList<ThemisSvnSourceDir> {
+            implements MetisFieldItem, MetisDataList<ThemisSvnSourceDir> {
         /**
          * DataFields.
          */
@@ -748,8 +743,7 @@ public class ThemisSvnRevisionHistory
      * Source definition.
      */
     public static class ThemisSvnSourceDefinition
-            implements
-            MetisFieldItem {
+            implements MetisFieldItem {
         /**
          * DataFields.
          */

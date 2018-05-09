@@ -18,14 +18,14 @@ package net.sourceforge.joceanus.jthemis.threads;
 
 import java.time.LocalTime;
 
-import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.tasks.ThemisBuildGit;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisGitBuild;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
 
 /**
  * Thread to handle creation of GitRepo from Subversion component.
@@ -40,6 +40,11 @@ public class ThemisCreateGitRepo<N, I>
     private final ThemisSvnComponent theSource;
 
     /**
+     * The Extract plan.
+     */
+    private final ThemisSvnExtract theExtract;
+
+    /**
      * The Git Repository.
      */
     private ThemisGitRepository theGitRepo;
@@ -47,9 +52,12 @@ public class ThemisCreateGitRepo<N, I>
     /**
      * Constructor.
      * @param pSource the source subversion component
+     * @param pExtract the extract plan
      */
-    public ThemisCreateGitRepo(final ThemisSvnComponent pSource) {
+    public ThemisCreateGitRepo(final ThemisSvnComponent pSource,
+                               final ThemisSvnExtract pExtract) {
         theSource = pSource;
+        theExtract = pExtract;
     }
 
     /**
@@ -69,13 +77,9 @@ public class ThemisCreateGitRepo<N, I>
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
         final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
-        final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
-
-        /* Access git repository */
-        theGitRepo = new ThemisGitRepository(myPreferences, myManager);
 
         /* Create a new Git repository */
-        final ThemisBuildGit myBuild = new ThemisBuildGit(theSource, theGitRepo);
+        final ThemisGitBuild myBuild = new ThemisGitBuild(theSource, theExtract);
         final Long myStart = System.nanoTime();
         myBuild.buildRepository(myManager);
         final Long myEnd = System.nanoTime();

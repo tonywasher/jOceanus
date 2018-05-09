@@ -110,7 +110,7 @@ public class ThemisSvnRepository
         theRevisionHistory = new ThemisSvnRevisionHistoryMap(this);
 
         /* Report start of analysis */
-        pReport.initTask("Analysing components");
+        pReport.initTask("Analysing Subversion components");
 
         /* Discover components */
         myComponents.discover(pReport);

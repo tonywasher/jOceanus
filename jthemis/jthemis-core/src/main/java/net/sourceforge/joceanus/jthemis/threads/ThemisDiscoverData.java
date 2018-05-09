@@ -31,9 +31,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnExtract;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnWorkingCopy.ThemisSvnWorkingCopySet;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
 
 /**
  * Thread to handle analysis of repository.
@@ -106,9 +106,10 @@ public class ThemisDiscoverData<N, I>
         /* Loop through the components */
         final Iterator<ThemisScmComponent> myIterator = theSvnRepository.getComponents().iterator();
         while (myIterator.hasNext()) {
-            /* Create an extract plan for the component */
             final ThemisSvnComponent myComp = (ThemisSvnComponent) myIterator.next();
-            final ThemisSvnExtract myPlan = new ThemisSvnExtract(myComp);
+
+            /* Create an extract plan for the component */
+            final ThemisSvnExtract myPlan = new ThemisSvnExtract(myComp, theGitRepository);
             theExtractPlanMap.put(myComp.getName(), myPlan);
         }
     }
@@ -129,6 +130,15 @@ public class ThemisDiscoverData<N, I>
             final MetisViewerEntry myEntry = pDataMgr.newEntry(pParent, myPlan.getName());
             myEntry.setObject(myPlan);
         }
+    }
+
+    /**
+     * Obtain the extract for the component.
+     * @param pComponent the component
+     * @return the extract plan
+     */
+    public ThemisSvnExtract getExtractForComponent(final ThemisSvnComponent pComponent) {
+        return theExtractPlanMap.get(pComponent.getName());
     }
 
     @Override
@@ -153,18 +163,19 @@ public class ThemisDiscoverData<N, I>
             myManager.checkForCancellation();
             theWorkingCopySet = new ThemisSvnWorkingCopySet(theSvnRepository, myManager);
 
+            /* Start the discover gitRepository task */
+            myTask = myBaseTask.startTask("analyseGitRepository");
+
+            /* Discover Git repository details */
+            myManager.checkForCancellation();
+            theGitRepository = new ThemisGitRepository(myPreferences, myManager);
+
             /* Start the derivePlans task */
             myTask = myBaseTask.startTask("deriveExtractPlans");
 
             /* Build the Extract Plans */
             myManager.checkForCancellation();
             deriveExtractPlans();
-
-            /* Start the discover gitRepository task */
-            myTask = myBaseTask.startTask("analyseGitRepository");
-
-            /* Discover Git repository details */
-            theGitRepository = new ThemisGitRepository(myPreferences, myManager);
 
             /* Complete the task */
             myTask.end();

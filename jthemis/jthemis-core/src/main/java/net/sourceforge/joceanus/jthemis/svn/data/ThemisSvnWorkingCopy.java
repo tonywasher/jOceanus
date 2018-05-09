@@ -159,7 +159,7 @@ public final class ThemisSvnWorkingCopy
      * @return the full name
      */
     public String getFullName() {
-        return getComponentName() + "_" + theBranch.getBranchName();
+        return getComponentName() + "_" + theBranch.getName();
     }
 
     /**

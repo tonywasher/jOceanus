@@ -16,9 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,7 +36,7 @@ import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.TransportException;
-import org.eclipse.jgit.lib.NullProgressMonitor;
+import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.pack.PackConfig;
@@ -39,6 +45,7 @@ import org.eclipse.jgit.transport.FetchConnection;
 import org.eclipse.jgit.transport.TransportBundleStream;
 import org.eclipse.jgit.transport.URIish;
 
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 
@@ -47,45 +54,96 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
  */
 public final class ThemisGitBundle {
     /**
-     * Private constructor.
+     * The Status reporter.
      */
-    private ThemisGitBundle() {
+    private final MetisThreadStatusReport theStatus;
+
+    /**
+     * Private constructor.
+     * @param pStatus the report status
+     */
+    public ThemisGitBundle(final MetisThreadStatusReport pStatus) {
+        theStatus = pStatus;
     }
 
     /**
      * Create a new gitComponent from Bundle InputStream.
      * @param pRepository the gitRepository
      * @param pName the name of the component
+     * @param pSource the source file
+     * @throws OceanusException on error
+     */
+    public void createComponentFromBundle(final ThemisGitRepository pRepository,
+                                          final String pName,
+                                          final File pSource) throws OceanusException {
+        /* Create the bundle stream */
+        try (FileInputStream myInFile = new FileInputStream(pSource);
+             BufferedInputStream myStream = new BufferedInputStream(myInFile)) {
+            final URIish myURI = new URIish("file:" + pSource.getAbsolutePath());
+
+            /* Create the component */
+            createComponentFromBundle(pRepository, pName, myURI, myStream);
+
+        } catch (IOException
+                | URISyntaxException e) {
+            throw new ThemisIOException("Failed to process bundle", e);
+        }
+    }
+
+    /**
+     * Create a new gitComponent from Bundle InputStream.
+     * @param pRepository the gitRepository
+     * @param pName the name of the component
+     * @param pURI the URI of the input file
      * @param pBundle the bundle input stream
      * @throws OceanusException on error
      */
-    public static void createComponentFromBundle(final ThemisGitRepository pRepository,
-                                                 final String pName,
-                                                 final InputStream pBundle) throws OceanusException {
+    private void createComponentFromBundle(final ThemisGitRepository pRepository,
+                                           final String pName,
+                                           final URIish pURI,
+                                           final InputStream pBundle) throws OceanusException {
         /* Create the target component */
         final ThemisGitComponent myTarget = pRepository.createComponent(pName);
-        final URIish myURI = null;
 
         /* Create the bundle stream */
-        try (TransportBundleStream myStream = new TransportBundleStream(myTarget.getGitRepo(), myURI, pBundle)) {
+        try (TransportBundleStream myStream = new TransportBundleStream(myTarget.getGitRepo(), pURI, pBundle)) {
             final FetchConnection myFetch = myStream.openFetch();
             final Collection<Ref> myRefs = myFetch.getRefs();
 
             /* Fetch what we can */
-            myFetch.fetch(NullProgressMonitor.INSTANCE, myRefs, Collections.emptySet());
+            myFetch.fetch(new GitProgressMonitor(), myRefs, Collections.emptySet());
         } catch (TransportException e) {
             throw new ThemisIOException("Failed to process bundle", e);
         }
     }
 
     /**
-     * ioo Write a gitBundle for a gitComponent to OutputStream.
+     * Create a new gitBundle from component.
+     * @param pComponent the component
+     * @param pTarget the target file
+     * @throws OceanusException on error
+     */
+    public void createBundleFromComponent(final ThemisGitComponent pComponent,
+                                          final File pTarget) throws OceanusException {
+        /* Create the bundle stream */
+        try (FileOutputStream myOutFile = new FileOutputStream(pTarget);
+             BufferedOutputStream myStream = new BufferedOutputStream(myOutFile)) {
+            /* Create the bundle */
+            createBundleFromComponent(pComponent, myStream);
+
+        } catch (IOException e) {
+            throw new ThemisIOException("Failed to create bundle", e);
+        }
+    }
+
+    /**
+     * Write a gitBundle for a gitComponent to OutputStream.
      * @param pComponent the gitComponent
      * @param pBundle the bundle output stream
      * @throws OceanusException on error
      */
-    public static void createBundleFromComponent(final ThemisGitComponent pComponent,
-                                                 final OutputStream pBundle) throws OceanusException {
+    private void createBundleFromComponent(final ThemisGitComponent pComponent,
+                                           final OutputStream pBundle) throws OceanusException {
         /* Create the BundleWriter */
         final Repository myRepo = pComponent.getGitRepo();
         try (Git myGit = new Git(myRepo)) {
@@ -120,11 +178,48 @@ public final class ThemisGitBundle {
             }
 
             /* Write to the output stream */
-            myWriter.writeBundle(NullProgressMonitor.INSTANCE, pBundle);
+            myWriter.writeBundle(new GitProgressMonitor(), pBundle);
 
         } catch (IOException
                 | GitAPIException e) {
             throw new ThemisIOException("Failed to create bundle", e);
+        }
+    }
+
+    /**
+     * Progress Monitor class.
+     */
+    protected final class GitProgressMonitor
+            implements ProgressMonitor {
+        @Override
+        public boolean isCancelled() {
+            try {
+                theStatus.checkForCancellation();
+            } catch (OceanusException e) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void beginTask(final String pTitle,
+                              final int pTotalWork) {
+            /* Not needed */
+        }
+
+        @Override
+        public void start(final int pTotalTasks) {
+            /* Not needed */
+        }
+
+        @Override
+        public void update(final int pCompleted) {
+            /* Not needed */
+        }
+
+        @Override
+        public void endTask() {
+            /* Not needed */
         }
     }
 }

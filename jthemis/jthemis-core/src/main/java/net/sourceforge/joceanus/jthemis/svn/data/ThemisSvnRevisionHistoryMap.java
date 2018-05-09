@@ -39,6 +39,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnRevisionKey;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.ThemisSvnSourceDir;
 
@@ -47,9 +48,7 @@ import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistory.Themis
  * @author Tony Washer
  */
 public class ThemisSvnRevisionHistoryMap
-        implements
-        MetisDataObjectFormat,
-        MetisDataMap<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> {
+        implements MetisDataObjectFormat, MetisDataMap<ThemisSvnRevisionKey, ThemisSvnRevisionHistory> {
     /**
      * The repository.
      */
@@ -58,7 +57,7 @@ public class ThemisSvnRevisionHistoryMap
     /**
      * The current owner.
      */
-    private Object theOwner;
+    private ThemisScmOwner theOwner;
 
     /**
      * HistoryMap.
@@ -97,7 +96,7 @@ public class ThemisSvnRevisionHistoryMap
      * Obtain the owner.
      * @return the owner
      */
-    private Object getOwner() {
+    private ThemisScmOwner getOwner() {
         return theOwner;
     }
 
@@ -145,8 +144,7 @@ public class ThemisSvnRevisionHistoryMap
      * Details of a revision path for a directory in a SubVersion repository.
      */
     public static class ThemisSvnRevisionPath
-            implements
-            MetisFieldItem {
+            implements MetisFieldItem {
         /**
          * DataFields.
          */
@@ -169,7 +167,7 @@ public class ThemisSvnRevisionHistoryMap
         /**
          * The owner.
          */
-        private final Object theOwner;
+        private final ThemisScmOwner theOwner;
 
         /**
          * The path for the revision.
@@ -304,7 +302,7 @@ public class ThemisSvnRevisionHistoryMap
          * Obtain the owner.
          * @return the owner
          */
-        public Object getOwner() {
+        public ThemisScmOwner getOwner() {
             return theOwner;
         }
 
@@ -395,8 +393,7 @@ public class ThemisSvnRevisionHistoryMap
          * EventHandler.
          */
         private final class LogHandler
-                implements
-                ISVNLogEntryHandler {
+                implements ISVNLogEntryHandler {
             @Override
             public void handleLogEntry(final SVNLogEntry pEntry) throws SVNException {
                 /* Create the revisionKey */

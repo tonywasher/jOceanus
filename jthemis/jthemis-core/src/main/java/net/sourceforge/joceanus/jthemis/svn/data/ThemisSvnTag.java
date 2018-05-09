@@ -18,17 +18,6 @@ package net.sourceforge.joceanus.jthemis.svn.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
-import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
-import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.ThemisIOException;
-import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
-import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
-import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -40,6 +29,17 @@ import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
+
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisIOException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmTag;
+import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
+import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRevisionHistoryMap.ThemisSvnRevisionPath;
 
 /**
  * Represents a tag of a branch.
@@ -142,7 +142,7 @@ public final class ThemisSvnTag
         myBuilder.append(ThemisSvnRepository.SEP_URL);
 
         /* Build the tag directory */
-        myBuilder.append(getTagName());
+        myBuilder.append(getName());
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -250,7 +250,7 @@ public final class ThemisSvnTag
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new ThemisIOException("Failed to discover tags for " + getBranch().getBranchName(), e);
+                throw new ThemisIOException("Failed to discover tags for " + getBranch().getName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -261,10 +261,10 @@ public final class ThemisSvnTag
                 final ThemisSvnTag myTag = (ThemisSvnTag) myIterator.next();
 
                 /* Start the discoverTag task */
-                myTask = myBaseTask.startTask("discoverTag:" + myTag.getTagName());
+                myTask = myBaseTask.startTask("discoverTag:" + myTag.getName());
 
                 /* Report stage */
-                pReport.setNewStage("Analysing tag " + myTag.getTagName());
+                pReport.setNewStage("Analysing tag " + myTag.getName());
 
                 /* Start parse task */
                 myTask.startTask("parseProject");

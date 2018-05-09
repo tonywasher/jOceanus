@@ -45,7 +45,9 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBranch.ThemisGitBranchList;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
 import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition.ThemisMvnSubModule;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -153,6 +155,23 @@ public final class ThemisGitComponent
     @Override
     public ThemisGitBranchList getBranches() {
         return (ThemisGitBranchList) super.getBranches();
+    }
+
+    /**
+     * reDiscover history.
+     * @param pReport the thread report
+     * @throws OceanusException on error
+     */
+    public void reDiscover(final MetisThreadStatusReport pReport) throws OceanusException {
+        /* Access the branches */
+        final ThemisGitBranchList myBranches = getBranches();
+
+        /* Clear maps and lists */
+        theHistory.clearMaps();
+        myBranches.clear();
+
+        /* reDiscover branches */
+        myBranches.discover(pReport);
     }
 
     /**
@@ -295,6 +314,36 @@ public final class ThemisGitComponent
                 | GitAPIException e) {
             throw new ThemisIOException("Failed to get status", e);
         }
+    }
+
+    /**
+     * Obtain the gitRevision for a subversion extract.
+     * @param pOwner the owner
+     * @param pRevision the revision
+     * @return the commit or null if not found
+     */
+    public ThemisGitRevision getGitRevisionForRevisionKey(final ThemisScmOwner pOwner,
+                                                          final String pRevision) {
+        final ThemisScmOwner myOwner = locateOwner(pOwner);
+        return myOwner == null
+                               ? null
+                               : theHistory.getGitRevisionForRevisionKey(myOwner, pRevision);
+    }
+
+    /**
+     * Obtain gitRevision for new commit.
+     * @param pOwner the owner
+     * @param pRevision the revision
+     * @param pCommit the commit
+     * @return the gitRevision
+     */
+    public ThemisGitRevision getGitRevisionForNewCommit(final ThemisScmOwner pOwner,
+                                                        final String pRevision,
+                                                        final RevCommit pCommit) {
+        final ThemisScmOwner myOwner = locateOwner(pOwner);
+        return myOwner == null
+                               ? null
+                               : theHistory.getGitRevisionForNewCommit(pOwner, pRevision, pCommit);
     }
 
     /**
