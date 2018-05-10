@@ -78,7 +78,7 @@ public class MetisSwingThreadManager
 
     @Override
     public void checkForCancellation() throws OceanusException {
-        if ((theWorker != null)
+        if (theWorker != null
             && theWorker.isCancelled()) {
             throw new MetisThreadCancelException("Cancelled");
         }

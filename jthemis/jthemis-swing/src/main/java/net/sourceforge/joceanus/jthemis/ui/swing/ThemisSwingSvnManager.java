@@ -38,8 +38,7 @@ import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
  * Top level Swing SvnManager window.
  */
 public class ThemisSwingSvnManager
-        extends
-        ThemisSvnManager<JComponent, Icon> {
+        extends ThemisSvnManager<JComponent, Icon> {
     /**
      * The frame.
      */
@@ -74,9 +73,6 @@ public class ThemisSwingSvnManager
         theFrame.pack();
         theFrame.setLocationRelativeTo(null);
         theFrame.setVisible(true);
-
-        /* Record startUp completion */
-        pToolkit.getActiveProfile().end();
     }
 
     @Override
@@ -88,8 +84,7 @@ public class ThemisSwingSvnManager
      * Window Close Adapter.
      */
     private class WindowClose
-            extends
-            WindowAdapter {
+            extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
             /* terminate the executor */

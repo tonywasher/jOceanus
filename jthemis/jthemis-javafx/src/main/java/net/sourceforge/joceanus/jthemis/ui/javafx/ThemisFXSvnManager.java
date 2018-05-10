@@ -90,9 +90,6 @@ public class ThemisFXSvnManager
         final TethysIconId[] myIds = myApp.getIcons();
         final Image[] myIcons = TethysFXGuiUtils.getIcons(myIds);
         pStage.getIcons().addAll(Arrays.asList(myIcons));
-
-        /* Record startUp completion */
-        //theToolkit.getActiveProfile().end();
     }
 
     @Override
