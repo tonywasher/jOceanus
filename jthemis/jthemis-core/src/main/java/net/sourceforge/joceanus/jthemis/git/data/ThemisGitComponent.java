@@ -317,6 +317,16 @@ public final class ThemisGitComponent
     }
 
     /**
+     * Locate Branch.
+     * @param pOwner the owner to locate
+     * @return the relevant branch or Null
+     */
+    @Override
+    public ThemisGitOwner locateOwner(final ThemisScmOwner pOwner) {
+        return (ThemisGitOwner) super.locateOwner(pOwner);
+    }
+
+    /**
      * Obtain the gitRevision for a subversion extract.
      * @param pOwner the owner
      * @param pRevision the revision
@@ -324,7 +334,7 @@ public final class ThemisGitComponent
      */
     public ThemisGitRevision getGitRevisionForRevisionKey(final ThemisScmOwner pOwner,
                                                           final String pRevision) {
-        final ThemisScmOwner myOwner = locateOwner(pOwner);
+        final ThemisGitOwner myOwner = locateOwner(pOwner);
         return myOwner == null
                                ? null
                                : theHistory.getGitRevisionForRevisionKey(myOwner, pRevision);
@@ -340,10 +350,10 @@ public final class ThemisGitComponent
     public ThemisGitRevision getGitRevisionForNewCommit(final ThemisScmOwner pOwner,
                                                         final String pRevision,
                                                         final RevCommit pCommit) {
-        final ThemisScmOwner myOwner = locateOwner(pOwner);
+        final ThemisGitOwner myOwner = locateOwner(pOwner);
         return myOwner == null
                                ? null
-                               : theHistory.getGitRevisionForNewCommit(pOwner, pRevision, pCommit);
+                               : theHistory.getGitRevisionForNewCommit(myOwner, pRevision, pCommit);
     }
 
     /**

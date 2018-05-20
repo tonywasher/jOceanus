@@ -22,13 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jgit.revwalk.RevCommit;
-
+import net.sourceforge.joceanus.jmetis.data.MetisDataFormatter;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataList;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataMap;
+import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataObjectFormat;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisLogicException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitOwner;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract.ThemisSvnBranchExtractPlan;
@@ -80,6 +82,11 @@ public class ThemisGitAnalyser {
 
             /* Analyse the plan */
             analysePlan(myPlan);
+
+            /* Remove plan if it is complete */
+            if (myPlan.isComplete()) {
+                myBranchIterator.remove();
+            }
         }
 
         /* Analyse the tags */
@@ -89,6 +96,11 @@ public class ThemisGitAnalyser {
 
             /* Analyse the plan */
             analysePlan(myPlan);
+
+            /* Remove plan if it is complete */
+            if (myPlan.isComplete()) {
+                myTagIterator.remove();
+            }
         }
     }
 
@@ -105,7 +117,7 @@ public class ThemisGitAnalyser {
         int myIteration = 0;
 
         /* Record the last commit */
-        ThemisGitRevision myLastCommit = null;
+        ThemisGitRevision myLastCommit = theAnchorMap.findCommit(pPlan.getAnchor());
 
         /* Iterate through the elements */
         final Iterator<ThemisSvnExtractView> myIterator = pPlan.viewIterator();
@@ -124,7 +136,7 @@ public class ThemisGitAnalyser {
             /* Determine revision string */
             String myRevString = Long.toString(myRevision);
             if (myIteration != 0) {
-                myRevString += '.' + myIteration;
+                myRevString += "." + myIteration;
             }
 
             /* Store the revision string */
@@ -148,19 +160,116 @@ public class ThemisGitAnalyser {
             } else {
                 /* If we have some null commits */
                 if (!myNullCommits.isEmpty()) {
-                    /* Register these with the last commit */
-                    final ThemisGitRevision myNullRevision = myLastCommit;
-                    myNullCommits.forEach(p -> p.setGitRevision(myNullRevision));
+                    /* Mark as a null view */
+                    myNullCommits.forEach(p -> p.setNullView());
 
                     /* Clear the list */
                     myNullCommits.clear();
                 }
 
+                /* Validate the parentage */
+                if (checkForBadParentage(myGitRevision, myLastCommit)) {
+                    pPlan.markBadParent(myView);
+                }
+
                 /* Record the commit and register as last commit */
                 myView.setGitRevision(myGitRevision);
-                theAnchorMap.addAnchor(myView.getAnchor(), myGitRevision.getCommit());
+                theAnchorMap.addAnchor(myView.getAnchor(), myGitRevision);
                 myLastCommit = myGitRevision;
             }
+        }
+
+        /* Prune the plan */
+        prunePlan(pPlan);
+
+        /* Check completeness */
+        checkCompleteness(pPlan);
+
+        /* Report errors */
+        if (pPlan.isError()) {
+            theExtract.noteErrors();
+        }
+    }
+
+    /**
+     * Check parentage.
+     * @param pCommit the commit
+     * @param pParent the parent
+     * @return has badParentage true/false
+     */
+    private boolean checkForBadParentage(final ThemisGitRevision pCommit,
+                                         final ThemisGitRevision pParent) {
+        /* Check for orphans */
+        final boolean isExpectedOrphan = pParent == null;
+        final boolean isOrphan = pCommit.getParents().size() == 0;
+
+        /* Check for matching orphan status */
+        if (isOrphan != isExpectedOrphan) {
+            return true;
+        }
+
+        /* Check for matching parentage */
+        if (!isOrphan) {
+            final ThemisGitCommitId myCommitId = pCommit.getParents().get(0);
+            if (!myCommitId.equals(pParent.getCommitId())) {
+                return true;
+            }
+        }
+
+        /* Parentage is OK */
+        return false;
+    }
+
+    /**
+     * Check completeness.
+     * @param pPlan the plan
+     */
+    private void checkCompleteness(final ThemisSvnExtractPlan<?> pPlan) {
+        /* If we are existing and have good parentage */
+        if (pPlan.isExisting()
+            && !pPlan.isBadParent()) {
+            /* Obtain the anchor commitId */
+            final ThemisGitRevision myRevision = theAnchorMap.findCommit(pPlan.getAnchor());
+            final ThemisGitCommitId myAnchorCommitId = myRevision.getCommitId();
+
+            /* Obtain the owner latest commitId */
+            final ThemisGitOwner myOwner = pPlan.getTarget();
+            final ThemisGitCommitId myLatestCommitId = myOwner.getCommitId();
+
+            /* Check for conflicting commits */
+            if (!myLatestCommitId.equals(myAnchorCommitId)) {
+                pPlan.noteConflicts();
+            }
+        }
+    }
+
+    /**
+     * Prune a plan.
+     * @param pPlan the plan
+     */
+    private void prunePlan(final ThemisSvnExtractPlan<?> pPlan) {
+        /* Don't prune the plan if it has a bad parent */
+        if (pPlan.isBadParent()) {
+            return;
+        }
+
+        /* Iterate through the elements */
+        final Iterator<ThemisSvnExtractView> myIterator = pPlan.viewIterator();
+        while (myIterator.hasNext()) {
+            final ThemisSvnExtractView myView = myIterator.next();
+
+            /* If we do not have a commit */
+            if (!myView.isNull()
+                && myView.getGitRevision() == null) {
+                /* Break the loop */
+                break;
+            }
+
+            /* We have already applied this commit, so remove it */
+            myIterator.remove();
+
+            /* Adjust the anchor */
+            pPlan.adjustAnchor(myView);
         }
     }
 
@@ -168,7 +277,7 @@ public class ThemisGitAnalyser {
      * Map of anchor to Git revision.
      */
     public static class ThemisGitAnchorMap
-            implements MetisDataMap<ThemisScmOwner, ThemisSvnRevisionCommitList> {
+            implements MetisDataObjectFormat, MetisDataMap<ThemisScmOwner, ThemisSvnRevisionCommitList> {
         /**
          * The map.
          */
@@ -186,13 +295,18 @@ public class ThemisGitAnalyser {
             return theMap;
         }
 
+        @Override
+        public String formatObject(final MetisDataFormatter pFormatter) {
+            return ThemisGitAnchorMap.class.getSimpleName();
+        }
+
         /**
          * Add mapping.
          * @param pAnchor the anchor
          * @param pCommit the commit
          */
         void addAnchor(final ThemisSvnExtractAnchor pAnchor,
-                       final RevCommit pCommit) {
+                       final ThemisGitRevision pCommit) {
             /* Access the list */
             final ThemisScmOwner myOwner = pAnchor.getOwner();
             final ThemisSvnRevisionCommitList myList = theMap.computeIfAbsent(myOwner, o -> new ThemisSvnRevisionCommitList());
@@ -207,7 +321,7 @@ public class ThemisGitAnalyser {
          * @return the commit
          * @throws OceanusException on error
          */
-        RevCommit getCommit(final ThemisSvnExtractAnchor pAnchor) throws OceanusException {
+        ThemisGitRevision getCommit(final ThemisSvnExtractAnchor pAnchor) throws OceanusException {
             /* Access the list */
             final ThemisSvnRevisionCommitList myList = theMap.get(pAnchor.getOwner());
             if (myList != null) {
@@ -219,12 +333,31 @@ public class ThemisGitAnalyser {
             return null;
         }
 
+        /**
+         * Obtain the commit for the anchor.
+         * @param pAnchor the anchor
+         * @return the commit
+         */
+        ThemisGitRevision findCommit(final ThemisSvnExtractAnchor pAnchor) {
+            /* Access the list */
+            final ThemisSvnRevisionCommitList myList = pAnchor == null
+                                                                       ? null
+                                                                       : theMap.get(pAnchor.getOwner());
+            if (myList != null) {
+                /* Access the commit */
+                return myList.findCommit(pAnchor.getRevision().getNumber());
+            }
+
+            /* Not yet extracted */
+            return null;
+        }
     }
 
     /**
      * Revision Commit entry.
      */
-    private static final class ThemisSvnRevisionCommit {
+    private static final class ThemisSvnRevisionCommit
+            implements MetisDataObjectFormat {
         /**
          * The revision.
          */
@@ -233,7 +366,7 @@ public class ThemisGitAnalyser {
         /**
          * The commit.
          */
-        private final RevCommit theCommit;
+        private final ThemisGitRevision theCommit;
 
         /**
          * Constructor.
@@ -241,7 +374,7 @@ public class ThemisGitAnalyser {
          * @param pCommit the commit
          */
         ThemisSvnRevisionCommit(final long pRevision,
-                                final RevCommit pCommit) {
+                                final ThemisGitRevision pCommit) {
             theRevision = pRevision;
             theCommit = pCommit;
         }
@@ -258,8 +391,13 @@ public class ThemisGitAnalyser {
          * Obtain the commit.
          * @return the commit
          */
-        RevCommit getCommit() {
+        ThemisGitRevision getCommit() {
             return theCommit;
+        }
+
+        @Override
+        public String toString() {
+            return Long.toString(theRevision) + "=" + theCommit.toString();
         }
     }
 
@@ -267,7 +405,7 @@ public class ThemisGitAnalyser {
      * Revision Commit List.
      */
     private static final class ThemisSvnRevisionCommitList
-            implements MetisDataList<ThemisSvnRevisionCommit> {
+            implements MetisDataObjectFormat, MetisDataList<ThemisSvnRevisionCommit> {
         /**
          * The list.
          */
@@ -285,15 +423,19 @@ public class ThemisGitAnalyser {
             return theList;
         }
 
+        @Override
+        public String formatObject(final MetisDataFormatter pFormatter) {
+            return ThemisSvnRevisionCommitList.class.getSimpleName();
+        }
+
         /**
-         * Obtain the commit for the revision.
+         * Find the commit for the revision.
          * @param pRevision the revision
          * @return the commit
-         * @throws OceanusException on error
          */
-        RevCommit getCommit(final long pRevision) throws OceanusException {
+        ThemisGitRevision findCommit(final long pRevision) {
             /* Note commit */
-            RevCommit myCommit = null;
+            ThemisGitRevision myCommit = null;
 
             /* Loop through the revisions */
             final Iterator<ThemisSvnRevisionCommit> myIterator = iterator();
@@ -308,6 +450,20 @@ public class ThemisGitAnalyser {
                 /* Note the commit */
                 myCommit = myRevision.getCommit();
             }
+
+            /* Return the commit */
+            return myCommit;
+        }
+
+        /**
+         * Obtain the commit for the revision.
+         * @param pRevision the revision
+         * @return the commit
+         * @throws OceanusException on error
+         */
+        ThemisGitRevision getCommit(final long pRevision) throws OceanusException {
+            /* Note commit */
+            final ThemisGitRevision myCommit = findCommit(pRevision);
 
             /* If there is no relevant revision */
             if (myCommit == null) {

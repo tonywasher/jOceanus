@@ -88,11 +88,6 @@ public abstract class ThemisSvnManager<N, I> {
     private final MetisViewerEntry theDataEntry;
 
     /**
-     * The GitRepo entry.
-     */
-    private final MetisViewerEntry theGitEntry;
-
-    /**
      * The Error entry.
      */
     private final MetisViewerEntry theErrorEntry;
@@ -138,10 +133,8 @@ public abstract class ThemisSvnManager<N, I> {
         theErrorEntry = theViewerMgr.getStandardEntry(MetisViewerStandardEntry.ERROR);
         theErrorEntry.setVisible(false);
 
-        /* Access date entry */
+        /* Access data entry */
         theDataEntry = theViewerMgr.getStandardEntry(MetisViewerStandardEntry.DATA);
-        theGitEntry = theViewerMgr.newEntry(theDataEntry, "GitRepo");
-        theGitEntry.setVisible(false);
 
         /* Create the Tabbed Pane */
         theTabs = theGuiFactory.newTabPane();
@@ -263,25 +256,16 @@ public abstract class ThemisSvnManager<N, I> {
                 /* Locate the corresponding Git Component (if it exists) */
                 final ThemisSvnExtract myExtract = pData.getExtractForComponent(myComp);
 
-                /* Create a new menu item for the component */
-                myMenu.newMenuItem(myComp, e -> createGitRepo(myComp, myExtract));
+                /* If the extract is usable */
+                if (!myExtract.isComplete() && !myExtract.hasErrors()) {
+                    /* Create a new menu item for the component */
+                    myMenu.newMenuItem(myComp, e -> createGitRepo(myComp, myExtract));
+                }
             }
         }
 
         /* Enable the GIT menu if we have components */
         theMenuBar.setEnabled(ThemisThreadId.CREATEGITREPO, myMenu.countItems() > 0);
-    }
-
-    /**
-     * Declare git data.
-     * @param pGit the git thread
-     */
-    protected void setGitData(final ThemisCreateGitRepo<?, ?> pGit) {
-        /* Declare repository to data manager */
-        final ThemisGitRepository myRepo = pGit.getGitRepo();
-        theGitEntry.setObject(myRepo);
-        theGitEntry.setVisible(true);
-        theGitEntry.setFocus();
     }
 
     /**
@@ -296,15 +280,6 @@ public abstract class ThemisSvnManager<N, I> {
 
             /* Report data to manager */
             setSubversionData(myThread);
-        }
-
-        /* If this is the discoverData thread */
-        if (pTask instanceof ThemisCreateGitRepo) {
-            /* Access correctly */
-            final ThemisCreateGitRepo<?, ?> myThread = (ThemisCreateGitRepo<?, ?>) pTask;
-
-            /* Report data to manager */
-            setGitData(myThread);
         }
 
         /* Enable other tasks */

@@ -258,7 +258,7 @@ public class ThemisSvnRevisionHistoryMap
 
         @Override
         public String formatObject(final MetisDataFormatter pFormatter) {
-            return FIELD_DEFS.getName();
+            return toString();
         }
 
         @Override
@@ -278,8 +278,8 @@ public class ThemisSvnRevisionHistoryMap
          * Obtain the revision#.
          * @return the revision
          */
-        private long getRevisionNo() {
-            return theBaseRevision.getNumber();
+        private String getRevisionNo() {
+            return theBaseRevision.toString();
         }
 
         /**

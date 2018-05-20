@@ -35,7 +35,7 @@ public final class ThemisDirectory {
     /**
      * Pause duration for object delete.
      */
-    private static final long PAUSE_DURATION = 100;
+    private static final long PAUSE_DURATION = 10;
 
     /**
      * Pause repeat for object delete.
@@ -103,7 +103,7 @@ public final class ThemisDirectory {
      */
     public static void removeDirectory(final Path pDir) throws OceanusException {
         /* If the directory does not exist just return */
-        if ((pDir == null)
+        if (pDir == null
             || !pDir.toFile().exists()) {
             return;
         }
@@ -166,7 +166,7 @@ public final class ThemisDirectory {
     public static void clearDirectory(final Path pDir,
                                       final String pKeep) throws OceanusException {
         /* If the directory does not exist just return */
-        if ((pDir == null)
+        if (pDir == null
             || !pDir.toFile().exists()) {
             return;
         }

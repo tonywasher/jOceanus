@@ -42,7 +42,8 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
  * Represents a tag of a branch.
  */
 public final class ThemisGitTag
-        extends ThemisScmTag {
+        extends ThemisScmTag
+        implements ThemisGitOwner {
     /**
      * Tag References Prefix.
      */
@@ -117,10 +118,7 @@ public final class ThemisGitTag
         return FIELD_DEFS;
     }
 
-    /**
-     * Get the commit id.
-     * @return the commit id
-     */
+    @Override
     public ThemisGitCommitId getCommitId() {
         return theCommitId;
     }

@@ -47,7 +47,8 @@ import net.sourceforge.joceanus.jthemis.scm.maven.ThemisMvnProjectDefinition;
  * @author Tony Washer
  */
 public final class ThemisGitBranch
-        extends ThemisScmBranch {
+        extends ThemisScmBranch
+        implements ThemisGitOwner {
     /**
      * Master branch.
      */
@@ -142,10 +143,7 @@ public final class ThemisGitBranch
         return theRepository;
     }
 
-    /**
-     * Get the commit id.
-     * @return the commit id
-     */
+    @Override
     public ThemisGitCommitId getCommitId() {
         return theCommitId;
     }

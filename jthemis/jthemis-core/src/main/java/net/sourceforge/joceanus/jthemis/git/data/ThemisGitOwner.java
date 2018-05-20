@@ -14,37 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.scm.data;
+package net.sourceforge.joceanus.jthemis.git.data;
+
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitCommitId;
+import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 
 /**
  * Owner representation.
  */
-public interface ThemisScmOwner {
+public interface ThemisGitOwner
+        extends ThemisScmOwner {
     /**
-     * Obtain name.
-     * @return name
+     * Get the commit id.
+     * @return the commit id
      */
-    String getName();
+    ThemisGitCommitId getCommitId();
 
     /**
-     * Is this a branch?
+     * Is this a remote branch?
      * @return true/false
      */
-    default boolean isBranch() {
+    default boolean isRemote() {
         return false;
     }
-
-    /**
-     * Is this a tag?
-     * @return true/false
-     */
-    default boolean isTag() {
-        return false;
-    }
-
-    /**
-     * Obtain the name of the branch.
-     * @return the name of the branch
-     */
-    String getBranchName();
 }

@@ -196,7 +196,7 @@ public class ThemisGitBuild {
             }
 
             /* If we have seen this anchor point */
-            final RevCommit myLastCommit = theAnchorMap.getCommit(myAnchor);
+            final ThemisGitRevision myLastCommit = theAnchorMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
                 pReport.initTask("Building branch " + myPlan.getOwner());
@@ -246,7 +246,7 @@ public class ThemisGitBuild {
             }
 
             /* If we have seen this anchor point */
-            final RevCommit myLastCommit = theAnchorMap.getCommit(myAnchor);
+            final ThemisGitRevision myLastCommit = theAnchorMap.getCommit(myAnchor);
             if (myLastCommit != null) {
                 /* Report stage */
                 pReport.initTask("Building tag " + myPlan.getOwner());
@@ -274,22 +274,34 @@ public class ThemisGitBuild {
      * @throws OceanusException on error
      */
     private void buildTrunk(final MetisThreadStatusReport pReport) throws OceanusException {
-        /* Access the plan */
-        final ThemisSvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
-        final ThemisSvnBranch myOwner = myPlan.getOwner();
+        /* Protect against exceptions */
+        try {
+            /* Access the plan */
+            final ThemisSvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
+            final ThemisSvnBranch myOwner = myPlan.getOwner();
 
-        /* Report plan steps */
-        pReport.setNumSteps(myPlan.numViews());
+            /* Report plan steps */
+            pReport.setNumSteps(myPlan.numViews());
 
-        /* Obtain the active profile */
-        MetisProfile myTask = pReport.getActiveTask();
-        myTask = myTask.startTask("buildTrunk");
+            /* Obtain the active profile */
+            MetisProfile myTask = pReport.getActiveTask();
+            myTask = myTask.startTask("buildTrunk");
 
-        /* Commit the plan */
-        commitPlan(pReport, myOwner, null, myPlan.viewIterator());
+            /* Ensure that we are on master branch */
+            final CheckoutCommand myCheckout = theGit.checkout();
+            myCheckout.setName(ThemisGitBranch.BRN_MASTER);
+            myCheckout.call();
 
-        /* Complete the task */
-        myTask.end();
+            /* Commit the plan */
+            commitPlan(pReport, myOwner, null, myPlan.viewIterator());
+
+            /* Complete the task */
+            myTask.end();
+
+            /* Catch Git exceptions */
+        } catch (GitAPIException e) {
+            throw new ThemisIOException("Failed to build trunk", e);
+        }
     }
 
     /**
@@ -301,7 +313,7 @@ public class ThemisGitBuild {
      */
     private void buildBranch(final MetisThreadStatusReport pReport,
                              final ThemisSvnBranchExtractPlan pBranchPlan,
-                             final RevCommit pLastCommit) throws OceanusException {
+                             final ThemisGitRevision pLastCommit) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
@@ -318,11 +330,18 @@ public class ThemisGitBuild {
                 throw new ThemisLogicException("Dirty working directory");
             }
 
-            /* Create a branch from this commit and check it out */
+            /* Create a checkoutCommand for this branch */
             final CheckoutCommand myCheckout = theGit.checkout();
-            myCheckout.setStartPoint(pLastCommit);
             myCheckout.setName(myOwner.getName());
-            myCheckout.setCreateBranch(true);
+
+            /* If we need to create the branch */
+            if (!pBranchPlan.isExisting()) {
+                /* Ask to create the branch from the anchor point */
+                myCheckout.setStartPoint(pLastCommit.getCommit());
+                myCheckout.setCreateBranch(true);
+            }
+
+            /* CheckOut the branch */
             myCheckout.call();
 
             /* Report plan steps */
@@ -349,7 +368,7 @@ public class ThemisGitBuild {
      */
     private void buildTag(final MetisThreadStatusReport pReport,
                           final ThemisSvnTagExtractPlan pTagPlan,
-                          final RevCommit pLastCommit) throws OceanusException {
+                          final ThemisGitRevision pLastCommit) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the plan owner */
@@ -368,7 +387,7 @@ public class ThemisGitBuild {
 
             /* Check the commit out as a head-less checkout */
             final CheckoutCommand myCheckout = theGit.checkout();
-            myCheckout.setName(pLastCommit.name());
+            myCheckout.setName(pLastCommit.getCommit().name());
             myCheckout.call();
 
             /* Report plan steps */
@@ -407,12 +426,12 @@ public class ThemisGitBuild {
      */
     private Date commitPlan(final MetisThreadStatusReport pReport,
                             final ThemisScmOwner pOwner,
-                            final RevCommit pBaseCommit,
+                            final ThemisGitRevision pBaseCommit,
                             final Iterator<ThemisSvnExtractView> pIterator) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Determine the base commit */
-            RevCommit myLastCommit = pBaseCommit;
+            ThemisGitRevision myLastCommit = pBaseCommit;
 
             /* Access a date formatter */
             final TethysDateFormatter myFormatter = new TethysDateFormatter();
@@ -435,32 +454,40 @@ public class ThemisGitBuild {
                 /* Extract the details to the directory, preserving the GitDir */
                 myView.extractItem(theWorkDir, ThemisGitComponent.NAME_GITDIR);
 
+                /* Note whether this is the last extract */
+                final boolean isLast = !pIterator.hasNext();
+
                 /* If there are changes to commit */
                 StatusCommand myStatusCmd = theGit.status();
                 Status myStatus = myStatusCmd.call();
-                if (!myStatus.isClean()) {
+                final boolean isClean = myStatus.isClean();
+                if (!isClean || isLast) {
                     /* Start the commit task */
                     myTask = myBaseTask.startTask("commitCode:" + myRevString);
 
-                    /* Ensure that all items are staged */
-                    final AddCommand myAdd = theGit.add();
-                    myAdd.addFilepattern(".");
-                    myAdd.call();
+                    /* If we are not clean */
+                    if (!isClean) {
+                        /* Ensure that all items are staged */
+                        final AddCommand myAdd = theGit.add();
+                        myAdd.addFilepattern(".");
+                        myAdd.call();
+                    }
 
-                    /* Commit the changes */
+                    /* Build the commit command */
                     final CommitCommand myCommit = theGit.commit();
                     myCommit.setAll(true);
                     myCommit.setCommitter(new PersonIdent(theCommitter, myView.getDate()));
-                    myCommit.setMessage(ThemisGitRevisionHistory.SVN_COMMIT_HDR
-                                        + myRevString
-                                        + ThemisGitRevisionHistory.SVN_COMMIT_SEP
-                                        + " "
-                                        + myView.getLogMessage());
-                    myLastCommit = myCommit.call();
+                    myCommit.setMessage(ThemisGitRevisionHistory.createGitLogMessage(myRevString, myView.getLogMessage()));
+                    if (isClean) {
+                        myCommit.setAllowEmpty(true);
+                    }
+
+                    /* Commit the changes */
+                    final RevCommit myRevision = myCommit.call();
 
                     /* Record the commit */
-                    final ThemisGitRevision myGitRevision = theComponent.getGitRevisionForNewCommit(pOwner, myRevString, myLastCommit);
-                    myView.setGitRevision(myGitRevision);
+                    myLastCommit = theComponent.getGitRevisionForNewCommit(pOwner, myRevString, myRevision);
+                    myView.setGitRevision(myLastCommit);
                 }
 
                 /* Complete the task */
@@ -479,7 +506,7 @@ public class ThemisGitBuild {
             }
 
             /* Return the date of the tag */
-            return myLastCommit.getAuthorIdent().getWhen();
+            return myLastCommit.getCommit().getAuthorIdent().getWhen();
 
             /* Catch Git Exceptions */
         } catch (GitAPIException e) {
@@ -497,7 +524,6 @@ public class ThemisGitBuild {
             /* Switch back to master */
             final CheckoutCommand myCheckout = theGit.checkout();
             myCheckout.setName(ThemisGitBranch.BRN_MASTER);
-            myCheckout.setForce(true);
             myCheckout.call();
 
             /* Call garbage collection */

@@ -169,7 +169,9 @@ public class ThemisGitRepository
             myRepo.close();
 
             /* Create the base component */
-            return new ThemisGitComponent(this, pName);
+            final ThemisGitComponent myComponent = new ThemisGitComponent(this, pName);
+            getComponents().add(myComponent);
+            return myComponent;
 
         } catch (IOException e) {
             throw new ThemisIOException("Failed to create", e);

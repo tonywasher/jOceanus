@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jthemis.ThemisDataException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitComponent;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitOwner;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRevisionHistory.ThemisGitRevision;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmBranch;
@@ -76,6 +77,7 @@ public class ThemisSvnExtract
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_TRUNK, ThemisSvnExtract::getTrunkPlan);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES, ThemisSvnExtract::getBranches);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisSvnExtract::getTags);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHORMAP, ThemisSvnExtract::getGitAnchorMap);
     }
 
     /**
@@ -114,6 +116,11 @@ public class ThemisSvnExtract
     private final ThemisGitAnchorMap theAnchorMap;
 
     /**
+     * Does the extract have errors?
+     */
+    private boolean hasErrors;
+
+    /**
      * Constructor.
      * @param pComponent the component.
      * @param pGitRepository the gitRepository.
@@ -137,7 +144,7 @@ public class ThemisSvnExtract
 
         /* Obtain the trunk branch */
         final ThemisSvnBranch myTrunk = theComponent.getTrunk();
-        theTrunk = new ThemisSvnBranchExtractPlan(myTrunk);
+        theTrunk = new ThemisSvnBranchExtractPlan(myTrunk, getTargetOwner(myTrunk));
         theTrunk.buildView();
 
         /* Build tags */
@@ -156,7 +163,7 @@ public class ThemisSvnExtract
             /* If non-virtual */
             if (!myBranch.isVirtual()) {
                 /* Build the plan */
-                final ThemisSvnBranchExtractPlan myPlan = new ThemisSvnBranchExtractPlan(myBranch);
+                final ThemisSvnBranchExtractPlan myPlan = new ThemisSvnBranchExtractPlan(myBranch, getTargetOwner(myBranch));
                 theBranches.add(myPlan);
                 myPlan.buildView();
 
@@ -285,6 +292,17 @@ public class ThemisSvnExtract
     }
 
     /**
+     * Obtain the target owner.
+     * @param pOwner the owner
+     * @return the target
+     */
+    private ThemisGitOwner getTargetOwner(final ThemisScmOwner pOwner) {
+        return theGitComponent == null
+                                       ? null
+                                       : theGitComponent.locateOwner(pOwner);
+    }
+
+    /**
      * Build tags.
      * @param pBranch the branch
      * @throws OceanusException on error
@@ -296,7 +314,7 @@ public class ThemisSvnExtract
             final ThemisSvnTag myTag = (ThemisSvnTag) myIterator.next();
 
             /* Build the plan */
-            final ThemisSvnTagExtractPlan myPlan = new ThemisSvnTagExtractPlan(myTag);
+            final ThemisSvnTagExtractPlan myPlan = new ThemisSvnTagExtractPlan(myTag, getTargetOwner(myTag));
             theTags.add(myPlan);
             myPlan.buildView();
 
@@ -338,6 +356,31 @@ public class ThemisSvnExtract
 
         /* Return the details */
         return myBuilder.toString();
+    }
+
+    /**
+     * Is this extract complete?
+     * @return true/false
+     */
+    public boolean isComplete() {
+        return theTrunk.isComplete()
+               && theBranches.isEmpty()
+               && theTags.isEmpty();
+    }
+
+    /**
+     * Does this extract have errors?
+     * @return true/false
+     */
+    public boolean hasErrors() {
+        return hasErrors;
+    }
+
+    /**
+     * Note that plan has conflicts.
+     */
+    protected void noteErrors() {
+        hasErrors = true;
     }
 
     /**
@@ -447,10 +490,12 @@ public class ThemisSvnExtract
         /**
          * Constructor.
          * @param pBranch the branch
+         * @param pTarget the target
          */
-        public ThemisSvnBranchExtractPlan(final ThemisSvnBranch pBranch) {
+        public ThemisSvnBranchExtractPlan(final ThemisSvnBranch pBranch,
+                                          final ThemisGitOwner pTarget) {
             /* Call super-constructor */
-            super(pBranch.getRepository(), pBranch);
+            super(pBranch.getRepository(), pBranch, pTarget);
         }
 
         @Override
@@ -526,10 +571,12 @@ public class ThemisSvnExtract
         /**
          * Constructor.
          * @param pTag the tag
+         * @param pTarget the target
          */
-        public ThemisSvnTagExtractPlan(final ThemisSvnTag pTag) {
+        public ThemisSvnTagExtractPlan(final ThemisSvnTag pTag,
+                                       final ThemisGitOwner pTarget) {
             /* Call super-constructor */
-            super(pTag.getRepository(), pTag);
+            super(pTag.getRepository(), pTag, pTarget);
         }
 
         @Override
@@ -564,8 +611,12 @@ public class ThemisSvnExtract
          */
         static {
             FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSvnExtractPlan::getOwner);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_TARGET, ThemisSvnExtractPlan::getTarget);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHOR, ThemisSvnExtractPlan::getAnchor);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_VIEWS, ThemisSvnExtractPlan::getViews);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_BADPARENT, ThemisSvnExtractPlan::isBadParent);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_CONFLICTS, ThemisSvnExtractPlan::hasConflicts);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_REMOTE, ThemisSvnExtractPlan::isRemote);
         }
 
         /**
@@ -577,6 +628,11 @@ public class ThemisSvnExtract
          * The owner for this extract.
          */
         private final T theOwner;
+
+        /**
+         * The target owner (if it exists).
+         */
+        private final ThemisGitOwner theTargetOwner;
 
         /**
          * The list of views.
@@ -594,14 +650,27 @@ public class ThemisSvnExtract
         private boolean haveExtracted;
 
         /**
+         * Is this a plan with a bad parent?
+         */
+        private boolean isBadParent;
+
+        /**
+         * Does the owner have conflicting commits?
+         */
+        private boolean hasConflicts;
+
+        /**
          * Constructor.
          * @param pRepo the repository
          * @param pOwner the owner
+         * @param pTarget the target
          */
         protected ThemisSvnExtractPlan(final ThemisSvnRepository pRepo,
-                                       final T pOwner) {
+                                       final T pOwner,
+                                       final ThemisGitOwner pTarget) {
             /* Store parameters */
             theOwner = pOwner;
+            theTargetOwner = pTarget;
             theRepo = pRepo;
             haveExtracted = false;
 
@@ -618,6 +687,14 @@ public class ThemisSvnExtract
         }
 
         /**
+         * Obtain the target.
+         * @return the target owner
+         */
+        public ThemisGitOwner getTarget() {
+            return theTargetOwner;
+        }
+
+        /**
          * Obtain the anchor.
          * @return the anchor
          */
@@ -631,6 +708,66 @@ public class ThemisSvnExtract
          */
         public boolean isAnchored() {
             return theAnchor != null;
+        }
+
+        /**
+         * Does the target exist?
+         * @return true/false
+         */
+        public boolean isExisting() {
+            return theTargetOwner != null;
+        }
+
+        /**
+         * Is this plan complete?
+         * @return true/false
+         */
+        public boolean isComplete() {
+            return theViews.isEmpty()
+                   && isExisting()
+                   && !hasConflicts;
+        }
+
+        /**
+         * Is this plan in error?
+         * @return true/false
+         */
+        public boolean isError() {
+            return isBadParent
+                   || hasConflicts;
+        }
+
+        /**
+         * Is the plan remote?
+         * @return true/false
+         */
+        public boolean isRemote() {
+            return theTargetOwner == null
+                                          ? false
+                                          : theTargetOwner.isRemote();
+        }
+
+        /**
+         * is this a plan with a badParent?
+         * @return true/false
+         */
+        public boolean isBadParent() {
+            return isBadParent;
+        }
+
+        /**
+         * Does this plan have conflicts?
+         * @return true/false
+         */
+        public boolean hasConflicts() {
+            return hasConflicts;
+        }
+
+        /**
+         * Note that plan has conflicts.
+         */
+        protected void noteConflicts() {
+            hasConflicts = true;
         }
 
         /**
@@ -919,6 +1056,25 @@ public class ThemisSvnExtract
             final ThemisSvnExtractMigratedView myMigrate = new ThemisSvnExtractMigratedView(theOwner, pView);
             pTarget.theViews.add(0, myMigrate);
         }
+
+        /**
+         * Adjust anchor to view.
+         * @param pView the view.
+         */
+        public void adjustAnchor(final ThemisSvnExtractView pView) {
+            if (!pView.isNull()) {
+                theAnchor = pView.getAnchor();
+            }
+        }
+
+        /**
+         * Mark a view as having a bad parent.
+         * @param pView the view.
+         */
+        protected void markBadParent(final ThemisSvnExtractView pView) {
+            pView.setBadParent();
+            isBadParent = true;
+        }
     }
 
     /**
@@ -1036,6 +1192,8 @@ public class ThemisSvnExtract
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnExtractView::getDate);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnExtractView::getLogMessage);
             FIELD_DEFS.declareLocalField(ThemisResource.SVN_ITEMS, ThemisSvnExtractView::getItems);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_NULL, ThemisSvnExtractView::isNull);
+            FIELD_DEFS.declareLocalField(ThemisResource.GIT_BADPARENT, ThemisSvnExtractView::isBadParent);
             FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONNO, ThemisSvnExtractView::getGitRevisionNo);
             FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISION, ThemisSvnExtractView::getGitRevision);
         }
@@ -1079,6 +1237,16 @@ public class ThemisSvnExtract
          * The associated Git revisionKey.
          */
         private ThemisGitRevision theGitRevision;
+
+        /**
+         * Is this a null view?
+         */
+        private boolean isNull;
+
+        /**
+         * Is this a view with a bad parent?
+         */
+        private boolean isBadParent;
 
         /**
          * Constructor.
@@ -1211,6 +1379,36 @@ public class ThemisSvnExtract
          */
         protected void setGitRevisionNo(final String pRevision) {
             theGitRevisionNo = pRevision;
+        }
+
+        /**
+         * is this a null view?
+         * @return true/false
+         */
+        public boolean isNull() {
+            return isNull;
+        }
+
+        /**
+         * is this a view with a badParent?
+         * @return true/false
+         */
+        public boolean isBadParent() {
+            return isBadParent;
+        }
+
+        /**
+         * Set the badParent indication.
+         */
+        protected void setBadParent() {
+            isBadParent = true;
+        }
+
+        /**
+         * Set the view as null.
+         */
+        protected void setNullView() {
+            isNull = true;
         }
 
         /**

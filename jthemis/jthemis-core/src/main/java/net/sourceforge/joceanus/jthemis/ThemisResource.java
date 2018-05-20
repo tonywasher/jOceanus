@@ -211,6 +211,11 @@ public enum ThemisResource
     SVN_VIEWS("svn.views"),
 
     /**
+     * SVN AnchorMap.
+     */
+    SVN_ANCHORMAP("svn.anchorMap"),
+
+    /**
      * Git CommitMap.
      */
     GIT_COMMITMAP("git.commitMap"),
@@ -251,7 +256,27 @@ public enum ThemisResource
     GIT_REMOTE("git.remote"),
 
     /**
-     * MAVEN Group.
+     * Git Target.
+     */
+    GIT_TARGET("git.target"),
+
+    /**
+     * Git Null.
+     */
+    GIT_NULL("git.null"),
+
+    /**
+     * Git BadParent.
+     */
+    GIT_BADPARENT("git.badParent"),
+
+    /**
+     * Git Conflicts.
+     */
+    GIT_CONFLICTS("git.hasConflicts"),
+
+    /**
+     * MAVEN Group. ]
      */
     MAVEN_GROUP("maven.group"),
 

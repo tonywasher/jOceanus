@@ -32,7 +32,6 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.ThemisIOException;
 import net.sourceforge.joceanus.jthemis.ThemisResource;
-import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmOwner;
 
 /**
  * Revision History for a Git Component.
@@ -42,12 +41,12 @@ public class ThemisGitRevisionHistory
     /**
      * The SubVersion commit header.
      */
-    public static final String SVN_COMMIT_HDR = "svn";
+    private static final String SVN_COMMIT_HDR = "svn";
 
     /**
      * The SubVersion commit separator.
      */
-    public static final String SVN_COMMIT_SEP = ":";
+    private static final String SVN_COMMIT_SEP = ":";
 
     /**
      * Report fields.
@@ -131,7 +130,7 @@ public class ThemisGitRevisionHistory
      * @param pCommitId the commit id
      * @throws OceanusException on error
      */
-    public void parseCommitHistory(final ThemisScmOwner pOwner,
+    public void parseCommitHistory(final ThemisGitOwner pOwner,
                                    final ThemisGitCommitId pCommitId) throws OceanusException {
         /* Protect against exceptions */
         try (RevWalk myRevWalk = new RevWalk(theComponent.getGitRepo())) {
@@ -156,7 +155,7 @@ public class ThemisGitRevisionHistory
      * @param pCommit the commit
      * @throws OceanusException on error
      */
-    public void processCommit(final ThemisScmOwner pOwner,
+    public void processCommit(final ThemisGitOwner pOwner,
                               final RevCommit pCommit) throws OceanusException {
         /* Check to see whether the commit is already processed */
         final ThemisGitCommitId myCommitId = new ThemisGitCommitId(pCommit);
@@ -186,7 +185,7 @@ public class ThemisGitRevisionHistory
      * @param pRevision the revision
      * @return the commit or null if not found
      */
-    protected ThemisGitRevision getGitRevisionForRevisionKey(final ThemisScmOwner pOwner,
+    protected ThemisGitRevision getGitRevisionForRevisionKey(final ThemisGitOwner pOwner,
                                                              final String pRevision) {
         final String myKey = pOwner.getName() + SVN_COMMIT_SEP + pRevision;
         return theRevisionMap.get(myKey);
@@ -199,10 +198,27 @@ public class ThemisGitRevisionHistory
      * @param pCommit the new commit
      * @return the commit or null if not found
      */
-    protected ThemisGitRevision getGitRevisionForNewCommit(final ThemisScmOwner pOwner,
+    protected ThemisGitRevision getGitRevisionForNewCommit(final ThemisGitOwner pOwner,
                                                            final String pRevision,
                                                            final RevCommit pCommit) {
         return new ThemisGitRevision(pOwner, pRevision, pCommit);
+    }
+
+    /**
+     * create gitLogMessage.
+     * @param pRevision the revision
+     * @param pLogMessage the subversion log message
+     * @return the gitMessage
+     */
+    public static String createGitLogMessage(final String pRevision,
+                                             final String pLogMessage) {
+        final StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(SVN_COMMIT_HDR)
+                .append(pRevision)
+                .append(SVN_COMMIT_SEP)
+                .append(" ")
+                .append(pLogMessage);
+        return myBuilder.toString();
     }
 
     /**
@@ -299,7 +315,7 @@ public class ThemisGitRevisionHistory
         /**
          * The owning branch/tag.
          */
-        private final ThemisScmOwner theOwner;
+        private final ThemisGitOwner theOwner;
 
         /**
          * The corresponding subVersion revision.
@@ -316,7 +332,7 @@ public class ThemisGitRevisionHistory
          * @param pOwner the commit owner
          * @param pCommitId the commitId
          */
-        ThemisGitRevision(final ThemisScmOwner pOwner,
+        ThemisGitRevision(final ThemisGitOwner pOwner,
                           final ThemisGitCommitId pCommitId) {
             /* Store parameters */
             theCommitId = pCommitId;
@@ -336,7 +352,7 @@ public class ThemisGitRevisionHistory
          * @param pRevision the revision
          * @param pCommit the commit
          */
-        ThemisGitRevision(final ThemisScmOwner pOwner,
+        ThemisGitRevision(final ThemisGitOwner pOwner,
                           final String pRevision,
                           final RevCommit pCommit) {
             /* Store parameters */
@@ -405,7 +421,7 @@ public class ThemisGitRevisionHistory
          * Obtain the owner.
          * @return the revision
          */
-        public ThemisScmOwner getOwner() {
+        public ThemisGitOwner getOwner() {
             return theOwner;
         }
 

@@ -351,7 +351,7 @@ public final class ThemisSvnWorkingCopy
         static {
             FIELD_DEFS.declareLocalField(ThemisResource.LIST_SIZE, ThemisSvnWorkingCopySet::size);
             FIELD_DEFS.declareLocalField(ThemisResource.SCM_REPOSITORY, ThemisSvnWorkingCopySet::getRepository);
-            FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOCATION, ThemisSvnWorkingCopySet::getLocation);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOCATION, ThemisSvnWorkingCopySet::getLocationName);
         }
 
         /**
@@ -430,6 +430,14 @@ public final class ThemisSvnWorkingCopy
          */
         public File getLocation() {
             return theLocation;
+        }
+
+        /**
+         * Get Location.
+         * @return the location
+         */
+        private String getLocationName() {
+            return theLocation.getAbsolutePath();
         }
 
         /**

@@ -61,7 +61,7 @@ public class ThemisSvnRevisionHistory
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSvnRevisionHistory::getOwner);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_DATE, ThemisSvnRevisionHistory::getDate);
-        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevisionHistory::getRevision);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevisionHistory::getRevisionNo);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnRevisionHistory::getLogMessage);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGIN, ThemisSvnRevisionHistory::getOrigin);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_ORIGINDEF, ThemisSvnRevisionHistory::getOriginDefinition);
@@ -288,6 +288,14 @@ public class ThemisSvnRevisionHistory
         final Date myDate = new Date();
         myDate.setTime(theDate.getTime());
         return myDate;
+    }
+
+    /**
+     * Obtain the revision#.
+     * @return the revision#
+     */
+    private long getRevisionNo() {
+        return theRevision.getNumber();
     }
 
     /**
