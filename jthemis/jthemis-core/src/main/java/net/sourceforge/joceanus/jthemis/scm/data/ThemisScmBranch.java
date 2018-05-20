@@ -291,6 +291,15 @@ public abstract class ThemisScmBranch
         return myBuilder.toString();
     }
 
+    /**
+     * Obtain the base name.
+     * @return the baseName
+     */
+    public String getBaseName() {
+        /* Strip off branch prefix */
+        return getName().substring(BRANCH_PREFIX.length());
+    }
+
     @Override
     public int compareTo(final ThemisScmBranch pThat) {
         /* Handle trivial cases */

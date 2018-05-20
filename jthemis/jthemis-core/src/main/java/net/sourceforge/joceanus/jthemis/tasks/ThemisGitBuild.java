@@ -134,8 +134,10 @@ public class ThemisGitBuild {
         /* Report stage */
         pReport.initTask("Building Trunk");
 
-        /* Build the trunk */
-        buildTrunk(pReport);
+        /* Build the trunk if required */
+        if (thePlan.hasTrunk()) {
+            buildTrunk(pReport);
+        }
 
         /* Loop to build the branches */
         SvnExtractStatus myStatus = SvnExtractStatus.REPEAT;
@@ -287,10 +289,16 @@ public class ThemisGitBuild {
             MetisProfile myTask = pReport.getActiveTask();
             myTask = myTask.startTask("buildTrunk");
 
-            /* Ensure that we are on master branch */
-            final CheckoutCommand myCheckout = theGit.checkout();
-            myCheckout.setName(ThemisGitBranch.BRN_MASTER);
-            myCheckout.call();
+            /* If the master branch exists */
+            if (myPlan.isExisting()) {
+                /* Ensure that we are on master branch */
+                final CheckoutCommand myCheckout = theGit.checkout();
+                myCheckout.setName(ThemisGitBranch.BRN_MASTER);
+                myCheckout.call();
+            } else {
+                /* Declare the branch */
+                theComponent.declareNewBranch(myOwner);
+            }
 
             /* Commit the plan */
             commitPlan(pReport, myOwner, null, myPlan.viewIterator());
@@ -339,6 +347,9 @@ public class ThemisGitBuild {
                 /* Ask to create the branch from the anchor point */
                 myCheckout.setStartPoint(pLastCommit.getCommit());
                 myCheckout.setCreateBranch(true);
+
+                /* Declare the branch */
+                theComponent.declareNewBranch(myOwner);
             }
 
             /* CheckOut the branch */
@@ -389,6 +400,11 @@ public class ThemisGitBuild {
             final CheckoutCommand myCheckout = theGit.checkout();
             myCheckout.setName(pLastCommit.getCommit().name());
             myCheckout.call();
+
+            /* Declare the tag if needed */
+            if (!pTagPlan.isExisting()) {
+                theComponent.declareNewTag(myOwner);
+            }
 
             /* Report plan steps */
             pReport.setNumSteps(pTagPlan.numViews());

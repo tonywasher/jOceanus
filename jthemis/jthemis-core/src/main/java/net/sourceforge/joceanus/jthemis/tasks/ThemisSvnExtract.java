@@ -240,7 +240,9 @@ public class ThemisSvnExtract
      * @return the trunk plan
      */
     public ThemisSvnBranchExtractPlan getTrunkPlan() {
-        return theTrunk;
+        return hasTrunk()
+                          ? theTrunk
+                          : null;
     }
 
     /**
@@ -363,9 +365,17 @@ public class ThemisSvnExtract
      * @return true/false
      */
     public boolean isComplete() {
-        return theTrunk.isComplete()
+        return !hasTrunk()
                && theBranches.isEmpty()
                && theTags.isEmpty();
+    }
+
+    /**
+     * Do we have a trunk plan?
+     * @return true/false
+     */
+    public boolean hasTrunk() {
+        return !theTrunk.isComplete();
     }
 
     /**
