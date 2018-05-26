@@ -16,34 +16,26 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.git.data;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jgit.api.DeleteBranchCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
-import org.eclipse.jgit.api.ListTagCommand;
+import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.RemoteRemoveCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.errors.TransportException;
 import org.eclipse.jgit.lib.ProgressMonitor;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.pack.PackConfig;
 import org.eclipse.jgit.transport.BundleWriter;
-import org.eclipse.jgit.transport.FetchConnection;
-import org.eclipse.jgit.transport.TransportBundleStream;
-import org.eclipse.jgit.transport.URIish;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jtethys.OceanusException;
@@ -53,6 +45,11 @@ import net.sourceforge.joceanus.jthemis.ThemisIOException;
  * Themis gitBundle support.
  */
 public final class ThemisGitBundle {
+    /**
+     * Bundle remote name.
+     */
+    protected static final String REMOTE_BUNDLE = "bundle";
+
     /**
      * The Status reporter.
      */
@@ -76,43 +73,45 @@ public final class ThemisGitBundle {
     public void createComponentFromBundle(final ThemisGitRepository pRepository,
                                           final String pName,
                                           final File pSource) throws OceanusException {
-        /* Create the bundle stream */
-        try (FileInputStream myInFile = new FileInputStream(pSource);
-             BufferedInputStream myStream = new BufferedInputStream(myInFile)) {
-            final URIish myURI = new URIish("file:" + pSource.getAbsolutePath());
+        /* Create the component */
+        final ThemisGitComponent myComp = pRepository.createComponent(pName, pSource);
 
-            /* Create the component */
-            createComponentFromBundle(pRepository, pName, myURI, myStream);
+        /* Pull all branches */
+        try (Git myGit = new Git(myComp.getGitRepo())) {
+            /* Access list of remote branches */
+            final ListBranchCommand myCommand = myGit.branchList();
+            myCommand.setListMode(ListMode.REMOTE);
+            final List<Ref> myBranches = myCommand.call();
 
-        } catch (IOException
-                | URISyntaxException e) {
-            throw new ThemisIOException("Failed to process bundle", e);
-        }
-    }
+            /* Loop through the branches */
+            final Iterator<Ref> myIterator = myBranches.iterator();
+            while (myIterator.hasNext()) {
+                final Ref myRef = myIterator.next();
 
-    /**
-     * Create a new gitComponent from Bundle InputStream.
-     * @param pRepository the gitRepository
-     * @param pName the name of the component
-     * @param pURI the URI of the input file
-     * @param pBundle the bundle input stream
-     * @throws OceanusException on error
-     */
-    private void createComponentFromBundle(final ThemisGitRepository pRepository,
-                                           final String pName,
-                                           final URIish pURI,
-                                           final InputStream pBundle) throws OceanusException {
-        /* Create the target component */
-        final ThemisGitComponent myTarget = pRepository.createComponent(pName);
+                /* Convert to remote branch name */
+                final String myName = ThemisGitBranch.getRemoteBranchName(myRef, REMOTE_BUNDLE);
+                if (myName == null) {
+                    continue;
+                }
 
-        /* Create the bundle stream */
-        try (TransportBundleStream myStream = new TransportBundleStream(myTarget.getGitRepo(), pURI, pBundle)) {
-            final FetchConnection myFetch = myStream.openFetch();
-            final Collection<Ref> myRefs = myFetch.getRefs();
+                /* Pull the contents of the remote branch */
+                final PullCommand myPull = myGit.pull();
+                myPull.setRemote(REMOTE_BUNDLE);
+                myPull.setRemoteBranchName(myName);
+                myPull.call();
 
-            /* Fetch what we can */
-            myFetch.fetch(new GitProgressMonitor(), myRefs, Collections.emptySet());
-        } catch (TransportException e) {
+                /* Delete the remote branch */
+                final DeleteBranchCommand myDelete = myGit.branchDelete();
+                myDelete.setBranchNames(REMOTE_BUNDLE + "/" + myName);
+                myDelete.call();
+            }
+
+            /* Delete the remote configuration */
+            final RemoteRemoveCommand myRemove = myGit.remoteRemove();
+            myRemove.setName(REMOTE_BUNDLE);
+            myRemove.call();
+
+        } catch (GitAPIException e) {
             throw new ThemisIOException("Failed to process bundle", e);
         }
     }
@@ -150,30 +149,16 @@ public final class ThemisGitBundle {
             final BundleWriter myWriter = new BundleWriter(myRepo);
             myWriter.setPackConfig(new PackConfig(myRepo));
 
-            /* Access list of branches */
+            /* Access list of local branches */
             final ListBranchCommand myBrnCommand = myGit.branchList();
-            myBrnCommand.setListMode(ListMode.ALL);
             final List<Ref> myBranches = myBrnCommand.call();
 
             /* Loop through the branches */
-            Iterator<Ref> myIterator = myBranches.iterator();
+            final Iterator<Ref> myIterator = myBranches.iterator();
             while (myIterator.hasNext()) {
                 final Ref myRef = myIterator.next();
 
-                /* Ask to include the branch */
-                myWriter.include(myRef);
-            }
-
-            /* Access list of tags */
-            final ListTagCommand myTagCommand = myGit.tagList();
-            final List<Ref> myTags = myTagCommand.call();
-
-            /* Loop through the tags */
-            myIterator = myTags.iterator();
-            while (myIterator.hasNext()) {
-                final Ref myRef = myIterator.next();
-
-                /* Ask to include the tag */
+                /* include any local branch */
                 myWriter.include(myRef);
             }
 

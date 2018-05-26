@@ -480,8 +480,8 @@ public class TransactionPanel
 
         /* Determine whether the reconciled field should be visible */
         final boolean bShowReconciled = isEditable || bIsReconciled;
-        theReconciledState = !bIsLocked;
-        theDirectionState = !bIsReconciled;
+        theReconciledState = bIsLocked;
+        theDirectionState = bIsReconciled;
         myFieldSet.setVisibility(Transaction.FIELD_RECONCILED, bShowReconciled);
         myFieldSet.setEditable(Transaction.FIELD_RECONCILED, isEditable && !bIsLocked);
 

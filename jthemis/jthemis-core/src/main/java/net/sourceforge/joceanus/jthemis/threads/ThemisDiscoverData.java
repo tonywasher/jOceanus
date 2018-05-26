@@ -16,6 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.threads;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -24,10 +25,12 @@ import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
+import net.sourceforge.joceanus.jmetis.threads.MetisThreadStatusReport;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.git.data.ThemisGitBundle;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
@@ -189,5 +192,18 @@ public class ThemisDiscoverData<N, I>
                 theSvnRepository.dispose();
             }
         }
+    }
+
+    /**
+     * Test backup.
+     * @param pReport the report status
+     * @throws OceanusException on error
+     */
+    protected void testBackup(final MetisThreadStatusReport pReport) throws OceanusException {
+        /* Create a backup */
+        final ThemisGitBundle myBundle = new ThemisGitBundle(pReport);
+        final File myFile = new File("c:\\Users\\Tony\\jhunters.bdl");
+        myBundle.createBundleFromComponent(theGitRepository.locateComponent("jhunters"), myFile);
+        myBundle.createComponentFromBundle(theGitRepository, "Test", myFile);
     }
 }

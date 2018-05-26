@@ -103,7 +103,7 @@
     <EnforcerPluginVersion>3.0.0-M1</EnforcerPluginVersion>
     <CompilerPluginVersion>3.7.0</CompilerPluginVersion>
     <ShadePluginVersion>3.1.1</ShadePluginVersion>
-    <DependencyPluginVersion>3.1.0</DependencyPluginVersion>
+    <DependencyPluginVersion>3.1.1</DependencyPluginVersion>
     <SurefirePluginVersion>2.20.1</SurefirePluginVersion>
     <BuildNumberPluginVersion>1.4</BuildNumberPluginVersion>
     <JarPluginVersion>3.1.0</JarPluginVersion>

@@ -1166,7 +1166,7 @@ public class TransactionTable
          */
         private boolean determineDirectionState(final int pRowIndex) {
             final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
-            return !myTrans.isReconciled();
+            return myTrans.isReconciled();
         }
 
         /**

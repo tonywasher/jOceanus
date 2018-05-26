@@ -281,6 +281,10 @@ public class ThemisGitBuild {
             /* Access the plan */
             final ThemisSvnBranchExtractPlan myPlan = thePlan.getTrunkPlan();
             final ThemisSvnBranch myOwner = myPlan.getOwner();
+            final ThemisSvnExtractAnchor myAnchor = myPlan.getAnchor();
+            final ThemisGitRevision myLastCommit = myAnchor == null
+                                                                    ? null
+                                                                    : theAnchorMap.getCommit(myAnchor);
 
             /* Report plan steps */
             pReport.setNumSteps(myPlan.numViews());
@@ -301,7 +305,7 @@ public class ThemisGitBuild {
             }
 
             /* Commit the plan */
-            commitPlan(pReport, myOwner, null, myPlan.viewIterator());
+            commitPlan(pReport, myOwner, myLastCommit, myPlan.viewIterator());
 
             /* Complete the task */
             myTask.end();

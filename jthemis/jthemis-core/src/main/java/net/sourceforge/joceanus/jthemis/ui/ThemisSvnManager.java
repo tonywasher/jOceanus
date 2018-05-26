@@ -257,7 +257,9 @@ public abstract class ThemisSvnManager<N, I> {
                 final ThemisSvnExtract myExtract = pData.getExtractForComponent(myComp);
 
                 /* If the extract is usable */
-                if (!myExtract.isComplete() && !myExtract.hasErrors()) {
+                if (myExtract != null
+                    && !myExtract.isComplete()
+                    && !myExtract.hasErrors()) {
                     /* Create a new menu item for the component */
                     myMenu.newMenuItem(myComp, e -> createGitRepo(myComp, myExtract));
                 }

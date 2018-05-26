@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jthemis.git.data;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
@@ -174,6 +176,45 @@ public class ThemisGitRepository
             return myComponent;
 
         } catch (IOException e) {
+            throw new ThemisIOException("Failed to create", e);
+        }
+    }
+
+    /**
+     * Clone repository.
+     * @param pName the name of the component
+     * @param pSource the source bundle file
+     * @return the new component
+     * @throws OceanusException on error
+     */
+    public ThemisGitComponent createComponent(final String pName,
+                                              final File pSource) throws OceanusException {
+        try {
+            /* StringBuilder */
+            final StringBuilder myPathBuilder = new StringBuilder();
+            myPathBuilder.append(getBase())
+                    .append(File.separatorChar)
+                    .append(pName);
+            final String myRepoPath = myPathBuilder.toString();
+
+            /* Make sure that the path is deleted */
+            ThemisDirectory.removeDirectory(new File(myRepoPath));
+
+            /* Clone the component */
+            final CloneCommand myClone = new CloneCommand();
+            myClone.setCloneAllBranches(true);
+            myClone.setRemote(ThemisGitBundle.REMOTE_BUNDLE);
+            myClone.setBranch(ThemisGitBranch.BRN_MASTER);
+            myClone.setDirectory(new File(myRepoPath));
+            myClone.setURI(pSource.getAbsolutePath());
+            myClone.call();
+
+            /* Create the base component */
+            final ThemisGitComponent myComponent = new ThemisGitComponent(this, pName);
+            getComponents().add(myComponent);
+            return myComponent;
+
+        } catch (GitAPIException e) {
             throw new ThemisIOException("Failed to create", e);
         }
     }
