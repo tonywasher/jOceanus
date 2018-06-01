@@ -16,15 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Themis.
  */
 public enum ThemisResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * List Size.
      */
@@ -308,7 +310,8 @@ public enum ThemisResource
     /**
      * The Resource Builder.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(ThemisDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(ThemisDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -343,7 +346,7 @@ public enum ThemisResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

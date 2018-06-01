@@ -16,13 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jPrometheus UI Fields.
  */
-public enum PrometheusUIResource implements TethysResourceId {
+public enum PrometheusUIResource implements TethysBundleId {
     /**
      * Menu Data.
      */
@@ -169,9 +171,10 @@ public enum PrometheusUIResource implements TethysResourceId {
     STATIC_TITLE_ACTIVE("Static.Title.Active");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(PrometheusUIResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(PrometheusUIResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -206,7 +209,7 @@ public enum PrometheusUIResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

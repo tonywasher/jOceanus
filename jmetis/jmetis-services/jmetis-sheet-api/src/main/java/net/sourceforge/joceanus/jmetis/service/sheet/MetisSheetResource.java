@@ -18,14 +18,15 @@ package net.sourceforge.joceanus.jmetis.service.sheet;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for JMetis Sheet.
  */
-public enum MetisSheetResource implements TethysResourceId {
+public enum MetisSheetResource implements TethysBundleId {
     /**
      * WorkBook ExcelXLS.
      */
@@ -49,12 +50,13 @@ public enum MetisSheetResource implements TethysResourceId {
     /**
      * The WorkBook Map.
      */
-    private static final Map<MetisSheetWorkBookType, TethysResourceId> WORKBOOK_MAP = buildWorkBookMap();
+    private static final Map<MetisSheetWorkBookType, TethysBundleId> WORKBOOK_MAP = buildWorkBookMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisSheetException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisSheetException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -89,7 +91,7 @@ public enum MetisSheetResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -100,9 +102,9 @@ public enum MetisSheetResource implements TethysResourceId {
      * Build workBook map.
      * @return the map
      */
-    private static Map<MetisSheetWorkBookType, TethysResourceId> buildWorkBookMap() {
+    private static Map<MetisSheetWorkBookType, TethysBundleId> buildWorkBookMap() {
         /* Create the map and return it */
-        final Map<MetisSheetWorkBookType, TethysResourceId> myMap = new EnumMap<>(MetisSheetWorkBookType.class);
+        final Map<MetisSheetWorkBookType, TethysBundleId> myMap = new EnumMap<>(MetisSheetWorkBookType.class);
         myMap.put(MetisSheetWorkBookType.EXCELXLS, WORKBOOK_EXCELXLS);
         myMap.put(MetisSheetWorkBookType.EXCELXLSX, WORKBOOK_EXCELXLSX);
         myMap.put(MetisSheetWorkBookType.OASISJOPEN, WORKBOOK_OASISJOPEN);
@@ -115,7 +117,7 @@ public enum MetisSheetResource implements TethysResourceId {
      * @param pType the Type
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForWorkBook(final MetisSheetWorkBookType pType) {
-        return TethysResourceBuilder.getKeyForEnum(WORKBOOK_MAP, pType);
+    protected static TethysBundleId getKeyForWorkBook(final MetisSheetWorkBookType pType) {
+        return TethysBundleLoader.getKeyForEnum(WORKBOOK_MAP, pType);
     }
 }

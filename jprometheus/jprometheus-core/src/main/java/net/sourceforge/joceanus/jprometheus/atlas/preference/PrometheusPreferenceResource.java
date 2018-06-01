@@ -18,15 +18,16 @@ package net.sourceforge.joceanus.jprometheus.atlas.preference;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jprometheus.PrometheusDataException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jPrometheus Preference Fields.
  */
-public enum PrometheusPreferenceResource implements TethysResourceId {
+public enum PrometheusPreferenceResource implements TethysBundleId {
     /**
      * DBDriver SQLServer.
      */
@@ -130,12 +131,13 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
     /**
      * The Driver Map.
      */
-    private static final Map<PrometheusJDBCDriver, TethysResourceId> DRIVER_MAP = buildDriverMap();
+    private static final Map<PrometheusJDBCDriver, TethysBundleId> DRIVER_MAP = buildDriverMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(PrometheusDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(PrometheusDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -170,7 +172,7 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -181,9 +183,9 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
      * Build driver map.
      * @return the map
      */
-    private static Map<PrometheusJDBCDriver, TethysResourceId> buildDriverMap() {
+    private static Map<PrometheusJDBCDriver, TethysBundleId> buildDriverMap() {
         /* Create the map and return it */
-        final Map<PrometheusJDBCDriver, TethysResourceId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
+        final Map<PrometheusJDBCDriver, TethysBundleId> myMap = new EnumMap<>(PrometheusJDBCDriver.class);
         myMap.put(PrometheusJDBCDriver.SQLSERVER, DRIVER_SQLSERVER);
         myMap.put(PrometheusJDBCDriver.POSTGRESQL, DRIVER_POSTGRESQL);
         myMap.put(PrometheusJDBCDriver.MYSQL, DRIVER_MYSQL);
@@ -195,7 +197,7 @@ public enum PrometheusPreferenceResource implements TethysResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForDriver(final PrometheusJDBCDriver pValue) {
-        return TethysResourceBuilder.getKeyForEnum(DRIVER_MAP, pValue);
+    protected static TethysBundleId getKeyForDriver(final PrometheusJDBCDriver pValue) {
+        return TethysBundleLoader.getKeyForEnum(DRIVER_MAP, pValue);
     }
 }

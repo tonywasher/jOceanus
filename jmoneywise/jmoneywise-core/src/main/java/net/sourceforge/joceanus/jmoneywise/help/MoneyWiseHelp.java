@@ -32,22 +32,22 @@ public class MoneyWiseHelp
      */
     public MoneyWiseHelp() throws OceanusException {
         /* Initialise the underlying module */
-        super(MoneyWiseHelp.class, "MoneyWise Help");
+        super("MoneyWise Help");
 
         /* Create accounts tree */
         final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
-        myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
-        myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
+        myAccounts.addChildEntry(defineHelpEntry("Deposits", MoneyWiseHelpPage.HELP_DEPOSITS));
+        myAccounts.addChildEntry(defineHelpEntry("Loans", MoneyWiseHelpPage.HELP_LOANS));
 
         /* Create static tree */
         final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
-        myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
-        myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
+        myStatic.addChildEntry(defineHelpEntry("AccountTypes", MoneyWiseHelpPage.HELP_ACCOUNTTYPES));
+        myStatic.addChildEntry(defineHelpEntry("TransactionTypes", MoneyWiseHelpPage.HELP_TRANTYPES));
 
         /* Load help pages */
         loadHelpPages();
 
         /* Load the CSS */
-        loadCSS("MoneyWiseHelp.css");
+        loadCSS(MoneyWiseHelpStyleSheet.CSS_HELP);
     }
 }

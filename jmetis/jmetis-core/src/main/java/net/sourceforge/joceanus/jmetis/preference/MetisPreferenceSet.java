@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
 
 /**
  * Wrapper class for java preferences.
@@ -117,7 +117,7 @@ public abstract class MetisPreferenceSet<K extends Enum<K> & MetisPreferenceKey>
      */
     protected MetisPreferenceSet(final MetisPreferenceManager pManager,
                                  final Class<K> pClazz,
-                                 final TethysResourceId pId) throws OceanusException {
+                                 final TethysBundleId pId) throws OceanusException {
         this(pManager, pClazz, pId.getValue());
     }
 

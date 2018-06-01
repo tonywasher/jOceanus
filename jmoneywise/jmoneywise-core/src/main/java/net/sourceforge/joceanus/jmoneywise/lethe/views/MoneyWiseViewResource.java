@@ -16,16 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.views;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise View Fields.
  */
 public enum MoneyWiseViewResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * View Name.
      */
@@ -107,9 +109,10 @@ public enum MoneyWiseViewResource
     FILTER_ATTR("Filter.Attr");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(Analysis.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -144,7 +147,7 @@ public enum MoneyWiseViewResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

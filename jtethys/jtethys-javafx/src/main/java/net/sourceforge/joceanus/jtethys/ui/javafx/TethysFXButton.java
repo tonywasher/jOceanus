@@ -25,7 +25,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Tethys FX Button.

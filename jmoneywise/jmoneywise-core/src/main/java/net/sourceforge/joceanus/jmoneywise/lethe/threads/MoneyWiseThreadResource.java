@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for MoneyWise Threads.
  */
 public enum MoneyWiseThreadResource
-        implements TethysResourceId {
+        implements TethysBundleId {
     /**
      * LoadArchive.
      */
@@ -35,9 +37,10 @@ public enum MoneyWiseThreadResource
     CREATEQIF("CreateQIF");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseThreadResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseThreadResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -72,7 +75,7 @@ public enum MoneyWiseThreadResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

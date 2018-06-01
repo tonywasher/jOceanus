@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import java.io.InputStream;
 
 /**
  * Scroll Icon IDs.
@@ -43,5 +43,10 @@ public enum TethysScrollIcon implements TethysIconId {
     @Override
     public String getSourceName() {
         return theSource;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return TethysScrollIcon.class.getResourceAsStream(theSource);
     }
 }

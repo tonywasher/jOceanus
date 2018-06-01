@@ -26,7 +26,7 @@ import javax.swing.SwingConstants;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Tethys Swing Button.

@@ -18,16 +18,17 @@ package net.sourceforge.joceanus.jcoeus.ui;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Coeus UI.
  */
 public enum CoeusUIResource
-        implements TethysResourceId {
+        implements TethysBundleId {
     /**
      * Filter Selection Title.
      */
@@ -114,14 +115,15 @@ public enum CoeusUIResource
     TAB_PREFERENCES("tab.preferences");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(CoeusDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The MenuItem Map.
      */
-    private static final Map<CoeusMenuItem, TethysResourceId> MENUITEM_MAP = buildMenuItemMap();
+    private static final Map<CoeusMenuItem, TethysBundleId> MENUITEM_MAP = buildMenuItemMap();
 
     /**
      * The Id.
@@ -156,7 +158,7 @@ public enum CoeusUIResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -167,9 +169,9 @@ public enum CoeusUIResource
      * Build menuItem map.
      * @return the map
      */
-    private static Map<CoeusMenuItem, TethysResourceId> buildMenuItemMap() {
+    private static Map<CoeusMenuItem, TethysBundleId> buildMenuItemMap() {
         /* Create the map and return it */
-        final Map<CoeusMenuItem, TethysResourceId> myMap = new EnumMap<>(CoeusMenuItem.class);
+        final Map<CoeusMenuItem, TethysBundleId> myMap = new EnumMap<>(CoeusMenuItem.class);
         myMap.put(CoeusMenuItem.HELP, MENU_HELP);
         myMap.put(CoeusMenuItem.DATAVIEWER, MENU_DATAVIEWER);
         myMap.put(CoeusMenuItem.ABOUT, MENU_ABOUT);
@@ -181,7 +183,7 @@ public enum CoeusUIResource
      * @param pMenuItem the menuItem
      * @return the resource key
      */
-    public static TethysResourceId getKeyForMenuItem(final CoeusMenuItem pMenuItem) {
-        return TethysResourceBuilder.getKeyForEnum(MENUITEM_MAP, pMenuItem);
+    public static TethysBundleId getKeyForMenuItem(final CoeusMenuItem pMenuItem) {
+        return TethysBundleLoader.getKeyForEnum(MENUITEM_MAP, pMenuItem);
     }
 }

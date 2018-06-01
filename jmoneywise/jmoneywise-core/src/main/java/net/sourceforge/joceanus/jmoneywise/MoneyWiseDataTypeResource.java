@@ -18,16 +18,17 @@ package net.sourceforge.joceanus.jmoneywise;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise DataType Fields.
  */
 public enum MoneyWiseDataTypeResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * DepositType Name.
      */
@@ -441,17 +442,18 @@ public enum MoneyWiseDataTypeResource
     /**
      * The MarketProvider Map.
      */
-    private static final Map<MoneyWiseDataType, TethysResourceId> NAME_MAP = buildNameMap();
+    private static final Map<MoneyWiseDataType, TethysBundleId> NAME_MAP = buildNameMap();
 
     /**
      * The MarketProvider Map.
      */
-    private static final Map<MoneyWiseDataType, TethysResourceId> LIST_MAP = buildListMap();
+    private static final Map<MoneyWiseDataType, TethysBundleId> LIST_MAP = buildListMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataType.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseDataType.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -486,7 +488,7 @@ public enum MoneyWiseDataTypeResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -502,9 +504,9 @@ public enum MoneyWiseDataTypeResource
      * Build name map.
      * @return the map
      */
-    private static Map<MoneyWiseDataType, TethysResourceId> buildNameMap() {
+    private static Map<MoneyWiseDataType, TethysBundleId> buildNameMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseDataType.class);
         myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_NAME);
         myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_NAME);
         myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_NAME);
@@ -549,17 +551,17 @@ public enum MoneyWiseDataTypeResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForDataType(final MoneyWiseDataType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(NAME_MAP, pValue);
+    protected static TethysBundleId getKeyForDataType(final MoneyWiseDataType pValue) {
+        return TethysBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
     /**
      * Build list map.
      * @return the map
      */
-    private static Map<MoneyWiseDataType, TethysResourceId> buildListMap() {
+    private static Map<MoneyWiseDataType, TethysBundleId> buildListMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseDataType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseDataType.class);
         myMap.put(MoneyWiseDataType.DEPOSITTYPE, DEPOSITTYPE_LIST);
         myMap.put(MoneyWiseDataType.CASHTYPE, CASHTYPE_LIST);
         myMap.put(MoneyWiseDataType.LOANTYPE, LOANTYPE_LIST);
@@ -604,7 +606,7 @@ public enum MoneyWiseDataTypeResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForDataList(final MoneyWiseDataType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(LIST_MAP, pValue);
+    protected static TethysBundleId getKeyForDataList(final MoneyWiseDataType pValue) {
+        return TethysBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

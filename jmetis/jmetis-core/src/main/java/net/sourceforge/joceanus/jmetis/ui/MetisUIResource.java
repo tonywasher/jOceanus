@@ -16,13 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.ui;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMetis UI Fields.
  */
-public enum MetisUIResource implements TethysResourceId {
+public enum MetisUIResource implements TethysBundleId {
     /**
      * Download ToolTip.
      */
@@ -94,9 +96,10 @@ public enum MetisUIResource implements TethysResourceId {
     ERROR_TITLE("ErrorPanel.Title");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MetisUIResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MetisUIResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -131,7 +134,7 @@ public enum MetisUIResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

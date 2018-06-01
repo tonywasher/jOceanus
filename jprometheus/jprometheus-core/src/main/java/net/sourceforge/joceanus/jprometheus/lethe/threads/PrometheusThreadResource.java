@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.threads;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import java.util.ResourceBundle;
+
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Prometheus Threads.
  */
 public enum PrometheusThreadResource
-        implements TethysResourceId {
+        implements TethysBundleId {
     /**
      * LoadDB.
      */
@@ -85,9 +87,10 @@ public enum PrometheusThreadResource
     TASK_SELECT_BACKUP("task.SelectBackup");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(PrometheusThreadResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(PrometheusThreadResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -122,7 +125,7 @@ public enum PrometheusThreadResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

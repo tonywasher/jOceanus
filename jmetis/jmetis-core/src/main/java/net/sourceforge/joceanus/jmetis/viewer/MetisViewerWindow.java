@@ -26,7 +26,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistration;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
@@ -131,7 +130,7 @@ public abstract class MetisViewerWindow<N, I>
         theFormatter = new MetisViewerFormatter(pFactory.getDataFormatter());
 
         /* Load the CSS */
-        loadCSS("MetisViewer.css");
+        theHtml.setCSSContent(MetisViewerStyleSheet.CSS_VIEWER);
 
         /* Initialise the tree */
         initialiseTree();
@@ -173,16 +172,6 @@ public abstract class MetisViewerWindow<N, I>
      * CloseWindow on parent termination.
      */
     public abstract void closeWindow();
-
-    /**
-     * Load CSS.
-     * @param pName the name of the CSS
-     * @throws OceanusException on error
-     */
-    private void loadCSS(final String pName) throws OceanusException {
-        final String myCSS = TethysResourceBuilder.loadResourceToString(MetisViewerWindow.class, pName);
-        theHtml.setCSSContent(myCSS);
-    }
 
     /**
      * Initialise tree.

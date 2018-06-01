@@ -49,7 +49,7 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
@@ -1091,7 +1091,7 @@ public class TethysSwingScrollContextMenu<T>
             /* Create a Label for the graphic */
             theIcon = new JLabel();
             theIcon.setIcon(pGraphic);
-            final Dimension myDim = new Dimension(TethysIconBuilder.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
+            final Dimension myDim = new Dimension(TethysIconId.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
             theIcon.setMaximumSize(myDim);
@@ -1295,7 +1295,7 @@ public class TethysSwingScrollContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? TethysSwingGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconBuilder.DEFAULT_ICONWIDTH)
+                               ? TethysSwingGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconId.DEFAULT_ICONWIDTH)
                                : null);
         }
 

@@ -16,13 +16,14 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * MoneyWise Icon IDs.
@@ -164,6 +165,11 @@ public enum MoneyWiseIcon implements TethysIconId {
     @Override
     public String getSourceName() {
         return theSource;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return MoneyWiseIcon.class.getResourceAsStream(theSource);
     }
 
     /**

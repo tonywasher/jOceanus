@@ -28,6 +28,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -36,14 +37,21 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Simple UI Utilities for Swing.
  */
 public final class TethysSwingGuiUtils {
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(TethysSwingGuiUtils.class);
+
     /**
      * Height adjustment for field.
      */
@@ -443,7 +451,12 @@ public final class TethysSwingGuiUtils {
      * @return the icon
      */
     public static ImageIcon getIcon(final TethysIconId pId) {
-        return new ImageIcon(TethysIconBuilder.getResource(pId));
+        try {
+            return new ImageIcon(pId.loadResourceToBytes());
+        } catch (IOException e) {
+            LOGGER.error("Failed to load Icon " + pId.getSourceName(), e);
+            return null;
+        }
     }
 
     /**

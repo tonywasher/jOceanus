@@ -32,6 +32,8 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
 import net.sourceforge.joceanus.jtethys.help.javafx.TethysFXHelpWindow;
+import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpPage;
+import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpStyleSheet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 
 /**
@@ -114,23 +116,23 @@ public class TestFXHelpWindow
          */
         public TestHelp() throws OceanusException {
             /* Initialise the underlying module */
-            super(TethysHelpModule.class, "Test Help System");
+            super("Test Help System");
 
             /* Create accounts tree */
             final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
-            myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
-            myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
+            myAccounts.addChildEntry(defineHelpEntry("Deposits", TethysTestHelpPage.HELP_DEPOSITS));
+            myAccounts.addChildEntry(defineHelpEntry("Loans", TethysTestHelpPage.HELP_LOANS));
 
             /* Create static tree */
             final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
-            myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
-            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
+            myStatic.addChildEntry(defineHelpEntry("AccountTypes", TethysTestHelpPage.HELP_ACCOUNTTYPES));
+            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", TethysTestHelpPage.HELP_TRANTYPES));
 
             /* Load help pages */
             loadHelpPages();
 
             /* Load the CSS */
-            loadCSS("TethysHelp.css");
+            loadCSS(TethysTestHelpStyleSheet.CSS_HELP);
         }
     }
 }

@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jcoeus.ui;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
@@ -28,7 +28,7 @@ public class CoeusApp
      * Constructor.
      */
     public CoeusApp() {
-        super("CoeusApp.properties");
+        super(CoeusApp.class.getResourceAsStream("CoeusApp.properties"));
     }
 
     @Override

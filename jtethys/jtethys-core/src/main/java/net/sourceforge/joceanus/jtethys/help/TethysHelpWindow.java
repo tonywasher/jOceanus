@@ -18,12 +18,14 @@ package net.sourceforge.joceanus.jtethys.help;
 
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager.TethysTreeItem;
@@ -140,13 +142,14 @@ public abstract class TethysHelpWindow<N, I>
     /**
      * Set the help module.
      * @param pModule the helpModule
+     * @throws OceanusException on error
      */
-    public void setModule(final TethysHelpModule pModule) {
+    public void setModule(final TethysHelpModule pModule) throws OceanusException {
         /* Access the Help entries and list */
         final List<TethysHelpEntry> myEntries = pModule.getHelpEntries();
 
         /* Declare CSS */
-        final String myCSS = pModule.getCSS();
+        final TethysStyleSheetId myCSS = pModule.getCSS();
         if (myCSS != null) {
             theHtml.setCSSContent(myCSS);
         }

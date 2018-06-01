@@ -18,19 +18,20 @@ package net.sourceforge.joceanus.jmoneywise.lethe.analysis;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.MoneyWiseDataResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise Analysis Fields.
  */
 public enum AnalysisResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * Analysis Name.
      */
@@ -489,37 +490,38 @@ public enum AnalysisResource
     /**
      * The AccountAttr Map.
      */
-    private static final Map<AccountAttribute, TethysResourceId> ACCOUNT_MAP = buildAccountMap();
+    private static final Map<AccountAttribute, TethysBundleId> ACCOUNT_MAP = buildAccountMap();
 
     /**
      * The TransactionAttr Map.
      */
-    private static final Map<TransactionAttribute, TethysResourceId> TRANSACTION_MAP = buildTransMap();
+    private static final Map<TransactionAttribute, TethysBundleId> TRANSACTION_MAP = buildTransMap();
 
     /**
      * The PayeeAttr Map.
      */
-    private static final Map<PayeeAttribute, TethysResourceId> PAYEE_MAP = buildPayeeMap();
+    private static final Map<PayeeAttribute, TethysBundleId> PAYEE_MAP = buildPayeeMap();
 
     /**
      * The SecurityAttr Map.
      */
-    private static final Map<SecurityAttribute, TethysResourceId> SECURITY_MAP = buildSecurityMap();
+    private static final Map<SecurityAttribute, TethysBundleId> SECURITY_MAP = buildSecurityMap();
 
     /**
      * The TaxAttr Map.
      */
-    private static final Map<TaxBasisAttribute, TethysResourceId> TAX_MAP = buildTaxMap();
+    private static final Map<TaxBasisAttribute, TethysBundleId> TAX_MAP = buildTaxMap();
 
     /**
      * The AnalysisType Map.
      */
-    private static final Map<AnalysisType, TethysResourceId> ANALYSIS_MAP = buildAnalysisMap();
+    private static final Map<AnalysisType, TethysBundleId> ANALYSIS_MAP = buildAnalysisMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(Analysis.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(Analysis.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -543,7 +545,7 @@ public enum AnalysisResource
      * Constructor.
      * @param pResource the underlying resource
      */
-    AnalysisResource(final TethysResourceId pResource) {
+    AnalysisResource(final TethysBundleId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -563,7 +565,7 @@ public enum AnalysisResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -579,9 +581,9 @@ public enum AnalysisResource
      * Build account map.
      * @return the map
      */
-    private static Map<AccountAttribute, TethysResourceId> buildAccountMap() {
+    private static Map<AccountAttribute, TethysBundleId> buildAccountMap() {
         /* Create the map and return it */
-        final Map<AccountAttribute, TethysResourceId> myMap = new EnumMap<>(AccountAttribute.class);
+        final Map<AccountAttribute, TethysBundleId> myMap = new EnumMap<>(AccountAttribute.class);
         myMap.put(AccountAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(AccountAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(AccountAttribute.LOCALVALUE, ACCOUNTATTR_LOCALVALUE);
@@ -601,17 +603,17 @@ public enum AnalysisResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForAccountAttr(final AccountAttribute pValue) {
-        return TethysResourceBuilder.getKeyForEnum(ACCOUNT_MAP, pValue);
+    protected static TethysBundleId getKeyForAccountAttr(final AccountAttribute pValue) {
+        return TethysBundleLoader.getKeyForEnum(ACCOUNT_MAP, pValue);
     }
 
     /**
      * Build transaction map.
      * @return the map
      */
-    private static Map<TransactionAttribute, TethysResourceId> buildTransMap() {
+    private static Map<TransactionAttribute, TethysBundleId> buildTransMap() {
         /* Create the map and return it */
-        final Map<TransactionAttribute, TethysResourceId> myMap = new EnumMap<>(TransactionAttribute.class);
+        final Map<TransactionAttribute, TethysBundleId> myMap = new EnumMap<>(TransactionAttribute.class);
         myMap.put(TransactionAttribute.INCOME, PAYEEATTR_INCOME);
         myMap.put(TransactionAttribute.EXPENSE, PAYEEATTR_EXPENSE);
         myMap.put(TransactionAttribute.PROFIT, ACCOUNTATTR_PROFIT);
@@ -623,17 +625,17 @@ public enum AnalysisResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForTransactionAttr(final TransactionAttribute pValue) {
-        return TethysResourceBuilder.getKeyForEnum(TRANSACTION_MAP, pValue);
+    protected static TethysBundleId getKeyForTransactionAttr(final TransactionAttribute pValue) {
+        return TethysBundleLoader.getKeyForEnum(TRANSACTION_MAP, pValue);
     }
 
     /**
      * Build payee map.
      * @return the map
      */
-    private static Map<PayeeAttribute, TethysResourceId> buildPayeeMap() {
+    private static Map<PayeeAttribute, TethysBundleId> buildPayeeMap() {
         /* Create the map and return it */
-        final Map<PayeeAttribute, TethysResourceId> myMap = new EnumMap<>(PayeeAttribute.class);
+        final Map<PayeeAttribute, TethysBundleId> myMap = new EnumMap<>(PayeeAttribute.class);
         myMap.put(PayeeAttribute.INCOME, PAYEEATTR_INCOME);
         myMap.put(PayeeAttribute.EXPENSE, PAYEEATTR_EXPENSE);
         myMap.put(PayeeAttribute.PROFIT, ACCOUNTATTR_PROFIT);
@@ -645,17 +647,17 @@ public enum AnalysisResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForPayeeAttr(final PayeeAttribute pValue) {
-        return TethysResourceBuilder.getKeyForEnum(PAYEE_MAP, pValue);
+    protected static TethysBundleId getKeyForPayeeAttr(final PayeeAttribute pValue) {
+        return TethysBundleLoader.getKeyForEnum(PAYEE_MAP, pValue);
     }
 
     /**
      * Build security map.
      * @return the map
      */
-    private static Map<SecurityAttribute, TethysResourceId> buildSecurityMap() {
+    private static Map<SecurityAttribute, TethysBundleId> buildSecurityMap() {
         /* Create the map and return it */
-        final Map<SecurityAttribute, TethysResourceId> myMap = new EnumMap<>(SecurityAttribute.class);
+        final Map<SecurityAttribute, TethysBundleId> myMap = new EnumMap<>(SecurityAttribute.class);
         myMap.put(SecurityAttribute.VALUATION, ACCOUNTATTR_VALUATION);
         myMap.put(SecurityAttribute.FOREIGNVALUE, ACCOUNTATTR_FOREIGNVALUE);
         myMap.put(SecurityAttribute.VALUEDELTA, ACCOUNTATTR_VALUEDELTA);
@@ -692,17 +694,17 @@ public enum AnalysisResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForSecurityAttr(final SecurityAttribute pValue) {
-        return TethysResourceBuilder.getKeyForEnum(SECURITY_MAP, pValue);
+    protected static TethysBundleId getKeyForSecurityAttr(final SecurityAttribute pValue) {
+        return TethysBundleLoader.getKeyForEnum(SECURITY_MAP, pValue);
     }
 
     /**
      * Build taxBasis map.
      * @return the map
      */
-    private static Map<TaxBasisAttribute, TethysResourceId> buildTaxMap() {
+    private static Map<TaxBasisAttribute, TethysBundleId> buildTaxMap() {
         /* Create the map and return it */
-        final Map<TaxBasisAttribute, TethysResourceId> myMap = new EnumMap<>(TaxBasisAttribute.class);
+        final Map<TaxBasisAttribute, TethysBundleId> myMap = new EnumMap<>(TaxBasisAttribute.class);
         myMap.put(TaxBasisAttribute.GROSS, TAXATTR_GROSS);
         myMap.put(TaxBasisAttribute.NETT, TAXATTR_NETT);
         myMap.put(TaxBasisAttribute.TAXCREDIT, TAXATTR_TAX);
@@ -714,17 +716,17 @@ public enum AnalysisResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForTaxAttr(final TaxBasisAttribute pValue) {
-        return TethysResourceBuilder.getKeyForEnum(TAX_MAP, pValue);
+    protected static TethysBundleId getKeyForTaxAttr(final TaxBasisAttribute pValue) {
+        return TethysBundleLoader.getKeyForEnum(TAX_MAP, pValue);
     }
 
     /**
      * Build analysis map.
      * @return the map
      */
-    private static Map<AnalysisType, TethysResourceId> buildAnalysisMap() {
+    private static Map<AnalysisType, TethysBundleId> buildAnalysisMap() {
         /* Create the map and return it */
-        final Map<AnalysisType, TethysResourceId> myMap = new EnumMap<>(AnalysisType.class);
+        final Map<AnalysisType, TethysBundleId> myMap = new EnumMap<>(AnalysisType.class);
         myMap.put(AnalysisType.DEPOSIT, MoneyWiseDataTypeResource.DEPOSIT_NAME);
         myMap.put(AnalysisType.CASH, MoneyWiseDataTypeResource.CASH_NAME);
         myMap.put(AnalysisType.LOAN, MoneyWiseDataTypeResource.LOAN_NAME);
@@ -743,7 +745,7 @@ public enum AnalysisResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForAnalysisType(final AnalysisType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(ANALYSIS_MAP, pValue);
+    protected static TethysBundleId getKeyForAnalysisType(final AnalysisType pValue) {
+        return TethysBundleLoader.getKeyForEnum(ANALYSIS_MAP, pValue);
     }
 }

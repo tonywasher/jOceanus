@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
@@ -28,7 +28,7 @@ public class MoneyWiseApp
      * Constructor.
      */
     public MoneyWiseApp() {
-        super("MoneyWiseApp.properties");
+        super(MoneyWiseApp.class.getResourceAsStream("MoneyWiseApp.properties"));
     }
 
     @Override

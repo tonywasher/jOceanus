@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for TethysUI package.
  */
-public enum TethysUIResource implements TethysResourceId {
+public enum TethysUIResource implements TethysBundleId {
     /**
      * Bad value on parse.
      */
@@ -50,9 +52,10 @@ public enum TethysUIResource implements TethysResourceId {
     ABOUT_OK("about.OK");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(OceanusException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -87,7 +90,7 @@ public enum TethysUIResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

@@ -18,14 +18,15 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise UI Fields.
  */
-public enum MoneyWiseUIResource implements TethysResourceId {
+public enum MoneyWiseUIResource implements TethysBundleId {
     /**
      * Frozen ToolTip.
      */
@@ -424,12 +425,13 @@ public enum MoneyWiseUIResource implements TethysResourceId {
     /**
      * The ColumnSet Map.
      */
-    private static final Map<AnalysisColumnSet, TethysResourceId> COLUMN_MAP = buildColumnMap();
+    private static final Map<AnalysisColumnSet, TethysBundleId> COLUMN_MAP = buildColumnMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseUIResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseUIResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -464,7 +466,7 @@ public enum MoneyWiseUIResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -475,9 +477,9 @@ public enum MoneyWiseUIResource implements TethysResourceId {
      * Build column map.
      * @return the map
      */
-    private static Map<AnalysisColumnSet, TethysResourceId> buildColumnMap() {
+    private static Map<AnalysisColumnSet, TethysBundleId> buildColumnMap() {
         /* Create the map and return it */
-        final Map<AnalysisColumnSet, TethysResourceId> myMap = new EnumMap<>(AnalysisColumnSet.class);
+        final Map<AnalysisColumnSet, TethysBundleId> myMap = new EnumMap<>(AnalysisColumnSet.class);
         myMap.put(AnalysisColumnSet.BALANCE, COLUMNSET_BALANCE);
         myMap.put(AnalysisColumnSet.STANDARD, COLUMNSET_STANDARD);
         myMap.put(AnalysisColumnSet.SALARY, COLUMNSET_SALARY);
@@ -493,7 +495,7 @@ public enum MoneyWiseUIResource implements TethysResourceId {
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForColumnSet(final AnalysisColumnSet pValue) {
-        return TethysResourceBuilder.getKeyForEnum(COLUMN_MAP, pValue);
+    protected static TethysBundleId getKeyForColumnSet(final AnalysisColumnSet pValue) {
+        return TethysBundleLoader.getKeyForEnum(COLUMN_MAP, pValue);
     }
 }

@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jtethys.help;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule.TethysHelpId;
+
 /**
  * Help Entry class. This class provides structure to the help system, providing parent child
  * relationships to implement chapters and also providing maps between the name of a help page and
@@ -36,9 +38,9 @@ public class TethysHelpEntry {
     private final String theName;
 
     /**
-     * FileName of the entry.
+     * HelpId of the entry.
      */
-    private final String theFileName;
+    private final TethysHelpId theId;
 
     /**
      * Children of the entry.
@@ -52,16 +54,17 @@ public class TethysHelpEntry {
 
     /**
      * Constructor for an HTML element.
+     * @param <K> the key type
      * @param pName the name by which this entry is referenced
      * @param pTitle the title for this page in the table of contents
-     * @param pFileName the name of the file containing the HTML for this entry
+     * @param pHelpId the helpId representing the HTML for this entry
      */
-    public TethysHelpEntry(final String pName,
-                           final String pTitle,
-                           final String pFileName) {
+    public <K extends Enum<K> & TethysHelpId> TethysHelpEntry(final String pName,
+                                                              final String pTitle,
+                                                              final K pHelpId) {
         theName = pName;
         theTitle = pTitle;
-        theFileName = pFileName;
+        theId = pHelpId;
     }
 
     /**
@@ -73,7 +76,7 @@ public class TethysHelpEntry {
                            final String pTitle) {
         theName = pName;
         theTitle = pTitle;
-        theFileName = null;
+        theId = null;
     }
 
     /**
@@ -106,11 +109,11 @@ public class TethysHelpEntry {
     }
 
     /**
-     * Obtain the filename.
-     * @return the filename
+     * Obtain the helpId.
+     * @return the id
      */
-    public String getFileName() {
-        return theFileName;
+    public TethysHelpId getHelpId() {
+        return theId;
     }
 
     /**

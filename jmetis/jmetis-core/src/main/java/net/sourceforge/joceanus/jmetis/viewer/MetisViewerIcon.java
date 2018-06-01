@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import java.io.InputStream;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Viewer Icon IDs.
@@ -53,5 +55,10 @@ public enum MetisViewerIcon implements TethysIconId {
     @Override
     public String getSourceName() {
         return theSource;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return MetisViewerIcon.class.getResourceAsStream(theSource);
     }
 }

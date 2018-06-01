@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for JMetis Field.
  */
-public enum MetisColorResource implements TethysResourceId {
+public enum MetisColorResource implements TethysBundleId {
     /**
      * FieldColor Standard.
      */
@@ -90,9 +92,10 @@ public enum MetisColorResource implements TethysResourceId {
     FIELDCOLOR_HEADER("colorpref.display.HEADER");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -127,7 +130,7 @@ public enum MetisColorResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

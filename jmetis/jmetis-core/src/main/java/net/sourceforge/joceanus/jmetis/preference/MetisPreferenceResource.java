@@ -18,15 +18,16 @@ package net.sourceforge.joceanus.jmetis.preference;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for JMetis preferences.
  */
-public enum MetisPreferenceResource implements TethysResourceId {
+public enum MetisPreferenceResource implements TethysBundleId {
     /**
      * Preference type STRING.
      */
@@ -190,12 +191,13 @@ public enum MetisPreferenceResource implements TethysResourceId {
     /**
      * The PreferenceType Map.
      */
-    private static final Map<MetisPreferenceType, TethysResourceId> PREF_MAP = buildPreferenceMap();
+    private static final Map<MetisPreferenceType, TethysBundleId> PREF_MAP = buildPreferenceMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -230,7 +232,7 @@ public enum MetisPreferenceResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -241,9 +243,9 @@ public enum MetisPreferenceResource implements TethysResourceId {
      * Build preference map.
      * @return the map
      */
-    private static Map<MetisPreferenceType, TethysResourceId> buildPreferenceMap() {
+    private static Map<MetisPreferenceType, TethysBundleId> buildPreferenceMap() {
         /* Create the map and return it */
-        final Map<MetisPreferenceType, TethysResourceId> myMap = new EnumMap<>(MetisPreferenceType.class);
+        final Map<MetisPreferenceType, TethysBundleId> myMap = new EnumMap<>(MetisPreferenceType.class);
         myMap.put(MetisPreferenceType.STRING, TYPE_STRING);
         myMap.put(MetisPreferenceType.INTEGER, TYPE_INTEGER);
         myMap.put(MetisPreferenceType.BOOLEAN, TYPE_BOOLEAN);
@@ -262,7 +264,7 @@ public enum MetisPreferenceResource implements TethysResourceId {
      * @param pType the type
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForPrefType(final MetisPreferenceType pType) {
-        return TethysResourceBuilder.getKeyForEnum(PREF_MAP, pType);
+    protected static TethysBundleId getKeyForPrefType(final MetisPreferenceType pType) {
+        return TethysBundleLoader.getKeyForEnum(PREF_MAP, pType);
     }
 }

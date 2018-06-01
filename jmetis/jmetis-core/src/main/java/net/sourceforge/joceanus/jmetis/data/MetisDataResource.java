@@ -18,17 +18,18 @@ package net.sourceforge.joceanus.jmetis.data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.MetisDataException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for JMetis viewer.
  */
 public enum MetisDataResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * Difference IDENTICAL.
      */
@@ -142,17 +143,18 @@ public enum MetisDataResource
     /**
      * The Difference Map.
      */
-    private static final Map<MetisDataDifference, TethysResourceId> DIFF_MAP = buildDifferenceMap();
+    private static final Map<MetisDataDifference, TethysBundleId> DIFF_MAP = buildDifferenceMap();
 
     /**
      * The FieldValue Map.
      */
-    private static final Map<MetisDataFieldValue, TethysResourceId> VALUE_MAP = buildValueMap();
+    private static final Map<MetisDataFieldValue, TethysBundleId> VALUE_MAP = buildValueMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -187,7 +189,7 @@ public enum MetisDataResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -203,9 +205,9 @@ public enum MetisDataResource
      * Build difference map.
      * @return the map
      */
-    private static Map<MetisDataDifference, TethysResourceId> buildDifferenceMap() {
+    private static Map<MetisDataDifference, TethysBundleId> buildDifferenceMap() {
         /* Create the map and return it */
-        final Map<MetisDataDifference, TethysResourceId> myMap = new EnumMap<>(MetisDataDifference.class);
+        final Map<MetisDataDifference, TethysBundleId> myMap = new EnumMap<>(MetisDataDifference.class);
         myMap.put(MetisDataDifference.IDENTICAL, DIFFERENCE_IDENTICAL);
         myMap.put(MetisDataDifference.SECURITY, DIFFERENCE_SECURITY);
         myMap.put(MetisDataDifference.DIFFERENT, DIFFERENCE_DIFFERENT);
@@ -217,17 +219,17 @@ public enum MetisDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForDifference(final MetisDataDifference pValue) {
-        return TethysResourceBuilder.getKeyForEnum(DIFF_MAP, pValue);
+    protected static TethysBundleId getKeyForDifference(final MetisDataDifference pValue) {
+        return TethysBundleLoader.getKeyForEnum(DIFF_MAP, pValue);
     }
 
     /**
      * Build value map.
      * @return the map
      */
-    private static Map<MetisDataFieldValue, TethysResourceId> buildValueMap() {
+    private static Map<MetisDataFieldValue, TethysBundleId> buildValueMap() {
         /* Create the map and return it */
-        final Map<MetisDataFieldValue, TethysResourceId> myMap = new EnumMap<>(MetisDataFieldValue.class);
+        final Map<MetisDataFieldValue, TethysBundleId> myMap = new EnumMap<>(MetisDataFieldValue.class);
         myMap.put(MetisDataFieldValue.UNKNOWN, FIELDVALUE_UNKNOWN);
         myMap.put(MetisDataFieldValue.SKIP, FIELDVALUE_SKIP);
         return myMap;
@@ -238,7 +240,7 @@ public enum MetisDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForFieldValue(final MetisDataFieldValue pValue) {
-        return TethysResourceBuilder.getKeyForEnum(VALUE_MAP, pValue);
+    protected static TethysBundleId getKeyForFieldValue(final MetisDataFieldValue pValue) {
+        return TethysBundleLoader.getKeyForEnum(VALUE_MAP, pValue);
     }
 }

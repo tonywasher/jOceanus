@@ -18,17 +18,18 @@ package net.sourceforge.joceanus.jprometheus.lethe.data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet.CryptographyDataType;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jPrometheus Data Fields.
  */
 public enum PrometheusDataResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * DataSet Name.
      */
@@ -547,17 +548,18 @@ public enum PrometheusDataResource
     /**
      * The Name Map.
      */
-    private static final Map<CryptographyDataType, TethysResourceId> NAME_MAP = buildNameMap();
+    private static final Map<CryptographyDataType, TethysBundleId> NAME_MAP = buildNameMap();
 
     /**
      * The List Map.
      */
-    private static final Map<CryptographyDataType, TethysResourceId> LIST_MAP = buildListMap();
+    private static final Map<CryptographyDataType, TethysBundleId> LIST_MAP = buildListMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(DataSet.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -592,7 +594,7 @@ public enum PrometheusDataResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -608,9 +610,9 @@ public enum PrometheusDataResource
      * Build item map.
      * @return the map
      */
-    private static Map<CryptographyDataType, TethysResourceId> buildNameMap() {
+    private static Map<CryptographyDataType, TethysBundleId> buildNameMap() {
         /* Create the map and return it */
-        final Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
+        final Map<CryptographyDataType, TethysBundleId> myMap = new EnumMap<>(CryptographyDataType.class);
         myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_NAME);
         myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_NAME);
         myMap.put(CryptographyDataType.DATAKEY, DATAKEY_NAME);
@@ -623,17 +625,17 @@ public enum PrometheusDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForCryptoItem(final CryptographyDataType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(NAME_MAP, pValue);
+    protected static TethysBundleId getKeyForCryptoItem(final CryptographyDataType pValue) {
+        return TethysBundleLoader.getKeyForEnum(NAME_MAP, pValue);
     }
 
     /**
      * Build list map.
      * @return the map
      */
-    private static Map<CryptographyDataType, TethysResourceId> buildListMap() {
+    private static Map<CryptographyDataType, TethysBundleId> buildListMap() {
         /* Create the map and return it */
-        final Map<CryptographyDataType, TethysResourceId> myMap = new EnumMap<>(CryptographyDataType.class);
+        final Map<CryptographyDataType, TethysBundleId> myMap = new EnumMap<>(CryptographyDataType.class);
         myMap.put(CryptographyDataType.CONTROLKEY, CONTROLKEY_LIST);
         myMap.put(CryptographyDataType.DATAKEYSET, DATAKEYSET_LIST);
         myMap.put(CryptographyDataType.DATAKEY, DATAKEY_LIST);
@@ -646,7 +648,7 @@ public enum PrometheusDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForCryptoList(final CryptographyDataType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(LIST_MAP, pValue);
+    protected static TethysBundleId getKeyForCryptoList(final CryptographyDataType pValue) {
+        return TethysBundleLoader.getKeyForEnum(LIST_MAP, pValue);
     }
 }

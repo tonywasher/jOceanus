@@ -18,16 +18,17 @@ package net.sourceforge.joceanus.jprometheus.lethe.views;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
 import net.sourceforge.joceanus.jprometheus.lethe.data.DataSet;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jPrometheus View Fields.
  */
-public enum PrometheusViewResource implements TethysResourceId {
+public enum PrometheusViewResource implements TethysBundleId {
     /**
      * ViewerEntry DataSet.
      */
@@ -61,12 +62,13 @@ public enum PrometheusViewResource implements TethysResourceId {
     /**
      * The Entry Map.
      */
-    private static final Map<PrometheusViewerEntryId, TethysResourceId> ENTRY_MAP = buildEntryMap();
+    private static final Map<PrometheusViewerEntryId, TethysBundleId> ENTRY_MAP = buildEntryMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(DataSet.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(DataSet.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -101,7 +103,7 @@ public enum PrometheusViewResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -112,9 +114,9 @@ public enum PrometheusViewResource implements TethysResourceId {
      * Build entry map.
      * @return the map
      */
-    private static Map<PrometheusViewerEntryId, TethysResourceId> buildEntryMap() {
+    private static Map<PrometheusViewerEntryId, TethysBundleId> buildEntryMap() {
         /* Create the map and return it */
-        final Map<PrometheusViewerEntryId, TethysResourceId> myMap = new EnumMap<>(PrometheusViewerEntryId.class);
+        final Map<PrometheusViewerEntryId, TethysBundleId> myMap = new EnumMap<>(PrometheusViewerEntryId.class);
         myMap.put(PrometheusViewerEntryId.ERROR, MetisViewerResource.VIEWER_ENTRY_ERROR);
         myMap.put(PrometheusViewerEntryId.PROFILE, MetisViewerResource.VIEWER_ENTRY_PROFILE);
         myMap.put(PrometheusViewerEntryId.DATA, MetisViewerResource.VIEWER_ENTRY_DATA);
@@ -132,7 +134,7 @@ public enum PrometheusViewResource implements TethysResourceId {
      * @param pEntry the entry
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForViewerEntry(final PrometheusViewerEntryId pEntry) {
-        return TethysResourceBuilder.getKeyForEnum(ENTRY_MAP, pEntry);
+    protected static TethysBundleId getKeyForViewerEntry(final PrometheusViewerEntryId pEntry) {
+        return TethysBundleLoader.getKeyForEnum(ENTRY_MAP, pEntry);
     }
 }

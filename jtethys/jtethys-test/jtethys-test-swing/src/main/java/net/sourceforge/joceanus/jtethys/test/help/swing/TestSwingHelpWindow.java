@@ -16,27 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.help.swing;
 
-import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
-import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
-import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.awt.BorderLayout;
+import java.awt.HeadlessException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-import java.awt.BorderLayout;
-import java.awt.HeadlessException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
+import net.sourceforge.joceanus.jtethys.help.TethysHelpModule;
+import net.sourceforge.joceanus.jtethys.help.swing.TethysSwingHelpWindow;
+import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpPage;
+import net.sourceforge.joceanus.jtethys.test.help.TethysTestHelpStyleSheet;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 
 /**
  * Help Window.
  */
-public class TestSwingHelpWindow {
+public final class TestSwingHelpWindow {
     /**
      * Logger.
      */
@@ -60,7 +63,7 @@ public class TestSwingHelpWindow {
             }
         });
     }
-    
+
     /**
      * Create and show the GUI.
      */
@@ -130,23 +133,23 @@ public class TestSwingHelpWindow {
          */
         public TestHelp() throws OceanusException {
             /* Initialise the underlying module */
-            super(TethysHelpModule.class, "Test Help System");
+            super("Test Help System");
 
             /* Create accounts tree */
             final TethysHelpEntry myAccounts = addRootEntry(defineContentsEntry("Accounts"));
-            myAccounts.addChildEntry(defineHelpEntry("Deposits", "Deposits.html"));
-            myAccounts.addChildEntry(defineHelpEntry("Loans", "Loans.html"));
+            myAccounts.addChildEntry(defineHelpEntry("Deposits", TethysTestHelpPage.HELP_DEPOSITS));
+            myAccounts.addChildEntry(defineHelpEntry("Loans", TethysTestHelpPage.HELP_LOANS));
 
             /* Create static tree */
             final TethysHelpEntry myStatic = addRootEntry(defineContentsEntry("StaticData"));
-            myStatic.addChildEntry(defineHelpEntry("AccountTypes", "AccountTypes.html"));
-            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", "TransactionTypes.html"));
+            myStatic.addChildEntry(defineHelpEntry("AccountTypes", TethysTestHelpPage.HELP_ACCOUNTTYPES));
+            myStatic.addChildEntry(defineHelpEntry("TransactionTypes", TethysTestHelpPage.HELP_TRANTYPES));
 
             /* Load pages */
             loadHelpPages();
 
             /* Load the CSS */
-            loadCSS("TethysHelp.css");
+            loadCSS(TethysTestHelpStyleSheet.CSS_HELP);
         }
     }
 }

@@ -33,7 +33,7 @@ import net.sourceforge.joceanus.jmoneywise.lethe.analysis.Analysis;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.AnalysisManager;
 import net.sourceforge.joceanus.jmoneywise.lethe.analysis.SecurityBucket;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportBuilder;
-import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportResource;
+import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportStyleSheet;
 import net.sourceforge.joceanus.jmoneywise.lethe.reports.MoneyWiseReportType;
 import net.sourceforge.joceanus.jmoneywise.lethe.swing.SwingView;
 import net.sourceforge.joceanus.jmoneywise.lethe.ui.MoneyWiseGoToId;
@@ -51,7 +51,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -169,7 +168,7 @@ public class ReportTab
         thePanel.setCentre(myHTMLScroll);
 
         /* Load the CSS */
-        loadCSS("MoneyWiseReports.css");
+        theHTMLPane.setCSSContent(MoneyWiseReportStyleSheet.CSS_REPORT);
 
         /* Create listeners */
         theView.getEventRegistrar().addEventListener(e -> refreshData());
@@ -211,16 +210,6 @@ public class ReportTab
     @Override
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
-    }
-
-    /**
-     * Load CSS.
-     * @param pName the name of the CSS
-     * @throws OceanusException on error
-     */
-    private void loadCSS(final String pName) throws OceanusException {
-        final String myCSS = TethysResourceBuilder.loadResourceToString(MoneyWiseReportResource.class, pName);
-        theHTMLPane.setCSSContent(myCSS);
     }
 
     /**

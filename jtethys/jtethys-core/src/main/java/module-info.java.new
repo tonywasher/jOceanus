@@ -18,7 +18,7 @@
  * module-info for jtethys-core.
  */
 module jtethys.core {
-    requires jsoup;
+    requires org.jsoup;
     requires jfreechart;
     requires org.apache.logging.log4j;
 

@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.manager;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Cryptographic package.
  */
-public enum GordianMgrResource implements TethysResourceId {
+public enum GordianMgrResource implements TethysBundleId {
     /**
      * Provider BC.
      */
@@ -85,9 +87,10 @@ public enum GordianMgrResource implements TethysResourceId {
     ERROR_LENGTH2("error.length2");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(GordianCryptoException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -122,7 +125,7 @@ public enum GordianMgrResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

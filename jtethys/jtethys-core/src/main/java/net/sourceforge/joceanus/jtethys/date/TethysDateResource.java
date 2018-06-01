@@ -18,15 +18,16 @@ package net.sourceforge.joceanus.jtethys.date;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for TethysDate package.
  */
-public enum TethysDateResource implements TethysResourceId {
+public enum TethysDateResource implements TethysBundleId {
     /**
      * Null Date disallowed.
      */
@@ -190,12 +191,13 @@ public enum TethysDateResource implements TethysResourceId {
     /**
      * The Period Map.
      */
-    private static final Map<TethysDatePeriod, TethysResourceId> PERIOD_MAP = buildPeriodMap();
+    private static final Map<TethysDatePeriod, TethysBundleId> PERIOD_MAP = buildPeriodMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(OceanusException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(OceanusException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -230,7 +232,7 @@ public enum TethysDateResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -241,9 +243,9 @@ public enum TethysDateResource implements TethysResourceId {
      * Build period map.
      * @return the map
      */
-    private static Map<TethysDatePeriod, TethysResourceId> buildPeriodMap() {
+    private static Map<TethysDatePeriod, TethysBundleId> buildPeriodMap() {
         /* Create the map and return it */
-        final Map<TethysDatePeriod, TethysResourceId> myMap = new EnumMap<>(TethysDatePeriod.class);
+        final Map<TethysDatePeriod, TethysBundleId> myMap = new EnumMap<>(TethysDatePeriod.class);
         myMap.put(TethysDatePeriod.ONEWEEK, PERIOD_ONEWEEK);
         myMap.put(TethysDatePeriod.FORTNIGHT, PERIOD_FORTNIGHT);
         myMap.put(TethysDatePeriod.ONEMONTH, PERIOD_ONEMONTH);
@@ -265,7 +267,7 @@ public enum TethysDateResource implements TethysResourceId {
      * @param pPeriod the period
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForPeriod(final TethysDatePeriod pPeriod) {
-        return TethysResourceBuilder.getKeyForEnum(PERIOD_MAP, pPeriod);
+    protected static TethysBundleId getKeyForPeriod(final TethysDatePeriod pPeriod) {
+        return TethysBundleLoader.getKeyForEnum(PERIOD_MAP, pPeriod);
     }
 }

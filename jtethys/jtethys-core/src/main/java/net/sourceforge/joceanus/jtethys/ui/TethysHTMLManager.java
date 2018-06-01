@@ -1,24 +1,30 @@
 /*******************************************************************************
- * Tethys: Java Utilities Copyright 2012,2018 Tony Washer
+ * Tethys: Java Utilities
+ * Copyright 2012,2018 Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
 
 /**
  * Tree Manager.
@@ -27,6 +33,12 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
  */
 public abstract class TethysHTMLManager<N, I>
         implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+    /**
+     * StyleSheetId.
+     */
+    public interface TethysStyleSheetId extends TethysResourceId {
+    }
+
     /**
      * The logger.
      */
@@ -194,10 +206,11 @@ public abstract class TethysHTMLManager<N, I>
     /**
      * Set the CSS.
      * @param pStyleSheet the CSS content.
+     * @throws OceanusException on error
      */
-    public void setCSSContent(final String pStyleSheet) {
+    public void setCSSContent(final TethysStyleSheetId pStyleSheet) throws OceanusException {
         /* Store the base sheet */
-        theCSSBase = pStyleSheet;
+        theCSSBase = TethysResourceLoader.loadResourceToString(pStyleSheet);
         theCSSProcessed = null;
 
         /* Process the CSS */

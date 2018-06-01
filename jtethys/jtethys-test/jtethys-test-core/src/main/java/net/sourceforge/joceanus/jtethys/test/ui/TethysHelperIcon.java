@@ -16,7 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import java.io.InputStream;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Helper Icon IDs.
@@ -53,5 +55,10 @@ public enum TethysHelperIcon implements TethysIconId {
     @Override
     public String getSourceName() {
         return theSource;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return TethysHelperIcon.class.getResourceAsStream(theSource);
     }
 }

@@ -18,19 +18,20 @@ package net.sourceforge.joceanus.jmoneywise.lethe.data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
 import net.sourceforge.joceanus.jmoneywise.MoneyWiseDataTypeResource;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.AssetPair.AssetDirection;
 import net.sourceforge.joceanus.jmoneywise.lethe.data.statics.StaticDataResource;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise Data Fields.
  */
 public enum MoneyWiseDataResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * MoneyWiseData Name.
      */
@@ -554,17 +555,18 @@ public enum MoneyWiseDataResource
     /**
      * The Asset Type Map.
      */
-    private static final Map<AssetType, TethysResourceId> TYPE_MAP = buildTypeMap();
+    private static final Map<AssetType, TethysBundleId> TYPE_MAP = buildTypeMap();
 
     /**
      * The Asset Direction Map.
      */
-    private static final Map<AssetDirection, TethysResourceId> DIRECTION_MAP = buildDirectionMap();
+    private static final Map<AssetDirection, TethysBundleId> DIRECTION_MAP = buildDirectionMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseDataResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseDataResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -588,7 +590,7 @@ public enum MoneyWiseDataResource
      * Constructor.
      * @param pResource the underlying resource
      */
-    MoneyWiseDataResource(final TethysResourceId pResource) {
+    MoneyWiseDataResource(final TethysBundleId pResource) {
         theKeyName = null;
         theValue = pResource.getValue();
     }
@@ -608,7 +610,7 @@ public enum MoneyWiseDataResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -624,9 +626,9 @@ public enum MoneyWiseDataResource
      * Build asset type map.
      * @return the map
      */
-    private static Map<AssetType, TethysResourceId> buildTypeMap() {
+    private static Map<AssetType, TethysBundleId> buildTypeMap() {
         /* Create the map and return it */
-        final Map<AssetType, TethysResourceId> myMap = new EnumMap<>(AssetType.class);
+        final Map<AssetType, TethysBundleId> myMap = new EnumMap<>(AssetType.class);
         myMap.put(AssetType.PAYEE, ASSETTYPE_PAYEE);
         myMap.put(AssetType.SECURITY, ASSETTYPE_SECURITY);
         myMap.put(AssetType.DEPOSIT, ASSETTYPE_DEPOSIT);
@@ -643,17 +645,17 @@ public enum MoneyWiseDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForAssetType(final AssetType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(TYPE_MAP, pValue);
+    protected static TethysBundleId getKeyForAssetType(final AssetType pValue) {
+        return TethysBundleLoader.getKeyForEnum(TYPE_MAP, pValue);
     }
 
     /**
      * Build asset direction map.
      * @return the map
      */
-    private static Map<AssetDirection, TethysResourceId> buildDirectionMap() {
+    private static Map<AssetDirection, TethysBundleId> buildDirectionMap() {
         /* Create the map and return it */
-        final Map<AssetDirection, TethysResourceId> myMap = new EnumMap<>(AssetDirection.class);
+        final Map<AssetDirection, TethysBundleId> myMap = new EnumMap<>(AssetDirection.class);
         myMap.put(AssetDirection.TO, ASSETDIRECTION_TO);
         myMap.put(AssetDirection.FROM, ASSETDIRECTION_FROM);
         return myMap;
@@ -664,7 +666,7 @@ public enum MoneyWiseDataResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForAssetDirection(final AssetDirection pValue) {
-        return TethysResourceBuilder.getKeyForEnum(DIRECTION_MAP, pValue);
+    protected static TethysBundleId getKeyForAssetDirection(final AssetDirection pValue) {
+        return TethysBundleLoader.getKeyForEnum(DIRECTION_MAP, pValue);
     }
 }

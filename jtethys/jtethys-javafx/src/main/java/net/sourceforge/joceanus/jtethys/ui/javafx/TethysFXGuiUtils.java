@@ -38,8 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 import net.sourceforge.joceanus.jtethys.TethysDataConverter;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Simple UI Utilities for javaFX.
@@ -445,7 +444,7 @@ public final class TethysFXGuiUtils {
      * @return the icon
      */
     public static ImageView getIcon(final TethysIconId pId) {
-        final Image myImage = new Image(TethysIconBuilder.getResourceAsStream(pId));
+        final Image myImage = new Image(pId.getInputStream());
         return new ImageView(myImage);
     }
 

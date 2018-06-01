@@ -1,19 +1,23 @@
 /*******************************************************************************
- * Tethys: Java Utilities Copyright 2012,2018 Tony Washer
+ * Tethys: Java Utilities
+ * Copyright 2012,2018 Tony Washer
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,8 +25,6 @@ import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
  * Program Definitions.
@@ -80,9 +82,9 @@ public abstract class TethysProgram {
 
     /**
      * Constructor.
-     * @param pName the name of the Program properties
+     * @param pProperties the inputStream of the properties
      */
-    protected TethysProgram(final String pName) {
+    protected TethysProgram(final InputStream pProperties) {
         /* Create the maps */
         theDetails = new LinkedHashMap<>();
         theDependencies = new LinkedHashMap<>();
@@ -91,7 +93,7 @@ public abstract class TethysProgram {
         try {
             /* Load the properties */
             final Properties myProperties = new Properties();
-            myProperties.load(getClass().getResourceAsStream(pName));
+            myProperties.load(pProperties);
 
             /* Load values */
             loadValues(myProperties);

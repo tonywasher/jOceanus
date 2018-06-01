@@ -20,12 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
+import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager.TethysStyleSheetId;
 
 /**
  * The help module that is implemented by each Help System.
  */
 public abstract class TethysHelpModule {
+    /**
+     * HelpId.
+     */
+    public interface TethysHelpId extends TethysResourceId {
+    }
+
     /**
      * The Hash prime.
      */
@@ -47,11 +55,6 @@ public abstract class TethysHelpModule {
     private final List<TethysHelpEntry> theEntries;
 
     /**
-     * The class of the Help System.
-     */
-    private final Class<?> theClazz;
-
-    /**
      * The title of the Help System.
      */
     private final String theTitle;
@@ -59,7 +62,7 @@ public abstract class TethysHelpModule {
     /**
      * The CSS of the help system.
      */
-    private String theCSS;
+    private TethysStyleSheetId theCSS;
 
     /**
      * The initial entry of the help system.
@@ -68,13 +71,10 @@ public abstract class TethysHelpModule {
 
     /**
      * Constructor.
-     * @param pClazz the class representing the resource
      * @param pTitle the title
      */
-    public TethysHelpModule(final Class<?> pClazz,
-                            final String pTitle) {
+    public TethysHelpModule(final String pTitle) {
         /* Store parameters */
-        theClazz = pClazz;
         theTitle = pTitle;
 
         /* Create entry list */
@@ -109,7 +109,7 @@ public abstract class TethysHelpModule {
      * Obtain the CSS.
      * @return the CSS
      */
-    protected String getCSS() {
+    protected TethysStyleSheetId getCSS() {
         return theCSS;
     }
 
@@ -133,26 +133,28 @@ public abstract class TethysHelpModule {
 
     /**
      * Define Standard Help entry.
+     * @param <K> the type of the key
      * @param pName the name
-     * @param pFileName the filename
+     * @param pHelpId the helpId
      * @return the HelpEntry
      */
-    public static TethysHelpEntry defineHelpEntry(final String pName,
-                                                  final String pFileName) {
-        return defineTitledHelpEntry(pName, pName, pFileName);
+    public static <K extends Enum<K> & TethysHelpId> TethysHelpEntry defineHelpEntry(final String pName,
+                                                                                     final K pHelpId) {
+        return defineTitledHelpEntry(pName, pName, pHelpId);
     }
 
     /**
      * Define Titled Help entry.
+     * @param <K> the type of the key
      * @param pName the name
      * @param pTitle the title
-     * @param pFileName the filename
+     * @param pHelpId the helpId
      * @return the HelpEntry
      */
-    public static TethysHelpEntry defineTitledHelpEntry(final String pName,
-                                                        final String pTitle,
-                                                        final String pFileName) {
-        return new TethysHelpEntry(pName, pTitle, pFileName);
+    public static <K extends Enum<K> & TethysHelpId> TethysHelpEntry defineTitledHelpEntry(final String pName,
+                                                                                           final String pTitle,
+                                                                                           final K pHelpId) {
+        return new TethysHelpEntry(pName, pTitle, pHelpId);
     }
 
     /**
@@ -185,11 +187,12 @@ public abstract class TethysHelpModule {
 
     /**
      * Load CSS.
-     * @param pName the name of the CSS
+     * @param <K> the keyType
+     * @param pKey the styleSheetKey
      * @throws OceanusException on error
      */
-    protected void loadCSS(final String pName) throws OceanusException {
-        theCSS = TethysResourceBuilder.loadResourceToString(theClazz, pName);
+    protected <K extends Enum<K> & TethysStyleSheetId> void loadCSS(final K pKey) throws OceanusException {
+        theCSS = pKey;
     }
 
     /**
@@ -200,10 +203,10 @@ public abstract class TethysHelpModule {
     private void loadHelpPages(final List<TethysHelpEntry> pEntries) throws OceanusException {
         /* Loop through the entities */
         for (TethysHelpEntry myEntry : pEntries) {
-            /* If we have a file name */
-            if (myEntry.getFileName() != null) {
+            /* If we have a helpId */
+            if (myEntry.getHelpId() != null) {
                 /* Reset the builder */
-                final String myPage = TethysResourceBuilder.loadResourceToString(theClazz, myEntry.getFileName());
+                final String myPage = TethysResourceLoader.loadResourceToString(myEntry.getHelpId());
 
                 /* Set the HTML for the entry */
                 myEntry.setHtml(myPage);

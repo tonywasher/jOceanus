@@ -16,7 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jthemis.ui;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 
 /**
@@ -28,7 +28,7 @@ public class ThemisApp
      * Constructor.
      */
     public ThemisApp() {
-        super("ThemisApp.properties");
+        super(ThemisApp.class.getResourceAsStream("ThemisApp.properties"));
     }
 
     @Override

@@ -24,7 +24,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButton;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 
 /**
  * IconButton Manager.
@@ -350,7 +349,7 @@ public abstract class TethysIconButtonManager<T, N, I>
          * Constructor.
          */
         public TethysIconMapSet() {
-            this(TethysIconBuilder.DEFAULT_ICONWIDTH);
+            this(TethysIconId.DEFAULT_ICONWIDTH);
         }
 
         /**

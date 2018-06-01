@@ -16,14 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.joceanus.jmetis.MetisDataException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Thread Resources.
  */
-public enum MetisThreadResource implements TethysResourceId {
+public enum MetisThreadResource implements TethysBundleId {
     /**
      * StatusBar Cancel Button.
      */
@@ -70,9 +72,10 @@ public enum MetisThreadResource implements TethysResourceId {
     THDPREF_REPORTING("thdpref.reporting");
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(MetisDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(MetisDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -107,7 +110,7 @@ public enum MetisThreadResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */

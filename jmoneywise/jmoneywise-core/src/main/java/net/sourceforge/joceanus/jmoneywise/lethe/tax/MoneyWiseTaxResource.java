@@ -18,16 +18,17 @@ package net.sourceforge.joceanus.jmoneywise.lethe.tax;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for jMoneyWise Tax Fields.
  */
 public enum MoneyWiseTaxResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * Basic Allowance.
      */
@@ -291,17 +292,18 @@ public enum MoneyWiseTaxResource
     /**
      * The Marginal Map.
      */
-    private static final Map<MoneyWiseMarginalReduction, TethysResourceId> MARGINAL_MAP = buildMarginalMap();
+    private static final Map<MoneyWiseMarginalReduction, TethysBundleId> MARGINAL_MAP = buildMarginalMap();
 
     /**
      * The CashType Map.
      */
-    private static final Map<MoneyWiseCashType, TethysResourceId> CASHTYPE_MAP = buildCashTypeMap();
+    private static final Map<MoneyWiseCashType, TethysBundleId> CASHTYPE_MAP = buildCashTypeMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getResourceBuilder(MoneyWiseTaxResource.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getLoader(MoneyWiseTaxResource.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -336,7 +338,7 @@ public enum MoneyWiseTaxResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -352,9 +354,9 @@ public enum MoneyWiseTaxResource
      * Build marginal map.
      * @return the map
      */
-    private static Map<MoneyWiseMarginalReduction, TethysResourceId> buildMarginalMap() {
+    private static Map<MoneyWiseMarginalReduction, TethysBundleId> buildMarginalMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseMarginalReduction, TethysResourceId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
+        final Map<MoneyWiseMarginalReduction, TethysBundleId> myMap = new EnumMap<>(MoneyWiseMarginalReduction.class);
         myMap.put(MoneyWiseMarginalReduction.ONEINTWO, MARGINAL_ONEINTWO);
         myMap.put(MoneyWiseMarginalReduction.TWOINTHREE, MARGINAL_TWOINTHREE);
         return myMap;
@@ -365,17 +367,17 @@ public enum MoneyWiseTaxResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
-        return TethysResourceBuilder.getKeyForEnum(MARGINAL_MAP, pValue);
+    protected static TethysBundleId getKeyForMarginalReduction(final MoneyWiseMarginalReduction pValue) {
+        return TethysBundleLoader.getKeyForEnum(MARGINAL_MAP, pValue);
     }
 
     /**
      * Build cashType map.
      * @return the map
      */
-    private static Map<MoneyWiseCashType, TethysResourceId> buildCashTypeMap() {
+    private static Map<MoneyWiseCashType, TethysBundleId> buildCashTypeMap() {
         /* Create the map and return it */
-        final Map<MoneyWiseCashType, TethysResourceId> myMap = new EnumMap<>(MoneyWiseCashType.class);
+        final Map<MoneyWiseCashType, TethysBundleId> myMap = new EnumMap<>(MoneyWiseCashType.class);
         myMap.put(MoneyWiseCashType.LARGECASH, CASHTYPE_LARGE);
         myMap.put(MoneyWiseCashType.SMALLCASH, CASHTYPE_SMALL);
         return myMap;
@@ -386,7 +388,7 @@ public enum MoneyWiseTaxResource
      * @param pValue the Value
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForCashType(final MoneyWiseCashType pValue) {
-        return TethysResourceBuilder.getKeyForEnum(CASHTYPE_MAP, pValue);
+    protected static TethysBundleId getKeyForCashType(final MoneyWiseCashType pValue) {
+        return TethysBundleLoader.getKeyForEnum(CASHTYPE_MAP, pValue);
     }
 }

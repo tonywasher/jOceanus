@@ -21,6 +21,8 @@
 module jgordianknot.test.core {
     requires bcprov.jdk15on;
 
+    requires org.apache.logging.log4j;
+
     requires jgordianknot.core;
     requires jtethys.core;
 

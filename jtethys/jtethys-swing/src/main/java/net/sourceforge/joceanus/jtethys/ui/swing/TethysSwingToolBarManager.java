@@ -22,7 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
 
 /**

@@ -16,25 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.resource;
 
+import java.io.InputStream;
+
 /**
  * Interface for resourceIds.
  */
 public interface TethysResourceId {
     /**
-     * Get Key Name.
-     * @return the key name.
+     * Obtain the source file name.
+     * @return the fileName
      */
-    String getKeyName();
+    String getSourceName();
 
     /**
-     * Get NameSpace.
-     * @return the nameSpace.
+     * Obtain the resource as an inputStream.
+     * @return the inputStream
      */
-    String getNameSpace();
-
-    /**
-     * Get Value.
-     * @return the value.
-     */
-    String getValue();
+    InputStream getInputStream();
 }

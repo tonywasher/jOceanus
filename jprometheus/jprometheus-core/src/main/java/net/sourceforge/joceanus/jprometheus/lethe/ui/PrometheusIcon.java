@@ -16,9 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.ui;
 
+import java.io.InputStream;
+
 import net.sourceforge.joceanus.jmetis.ui.MetisIcon;
-import net.sourceforge.joceanus.jtethys.ui.TethysIconBuilder.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
+import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 
 /**
@@ -66,6 +68,11 @@ public enum PrometheusIcon implements TethysIconId {
     @Override
     public String getSourceName() {
         return theSource;
+    }
+
+    @Override
+    public InputStream getInputStream() {
+        return PrometheusIcon.class.getResourceAsStream(theSource);
     }
 
     /**

@@ -27,7 +27,7 @@ import net.sourceforge.joceanus.jcoeus.ui.CoeusDataEvent;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusFilter;
 import net.sourceforge.joceanus.jcoeus.ui.CoeusMarketCache;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportBuilder;
-import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportResource;
+import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportStyleSheet;
 import net.sourceforge.joceanus.jcoeus.ui.report.CoeusReportType;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.report.MetisReportEvent;
@@ -43,7 +43,6 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
@@ -154,7 +153,7 @@ public class CoeusReportPanel<N, I>
         thePanel.setCentre(myHTMLScroll);
 
         /* Load the CSS */
-        loadCSS("CoeusReports.css");
+        theHTMLPane.setCSSContent(CoeusReportStyleSheet.CSS_REPORT);
 
         /* Create listeners */
         theCache.getEventRegistrar().addEventListener(e -> refreshData());
@@ -195,16 +194,6 @@ public class CoeusReportPanel<N, I>
     @Override
     public void setVisible(final boolean pVisible) {
         thePanel.setVisible(pVisible);
-    }
-
-    /**
-     * Load CSS.
-     * @param pName the name of the CSS
-     * @throws OceanusException on error
-     */
-    private void loadCSS(final String pName) throws OceanusException {
-        final String myCSS = TethysResourceBuilder.loadResourceToString(CoeusReportResource.class, pName);
-        theHTMLPane.setCSSContent(myCSS);
     }
 
     /**

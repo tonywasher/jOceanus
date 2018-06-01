@@ -18,15 +18,16 @@ package net.sourceforge.joceanus.jgordianknot.crypto;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jgordianknot.GordianCryptoException;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Cryptographic package.
  */
-public enum GordianCryptoResource implements TethysResourceId {
+public enum GordianCryptoResource implements TethysBundleId {
     /**
      * Factory BC.
      */
@@ -365,32 +366,33 @@ public enum GordianCryptoResource implements TethysResourceId {
     /**
      * The Factory Map.
      */
-    private static final Map<GordianFactoryType, TethysResourceId> FACTORY_MAP = buildFactoryMap();
+    private static final Map<GordianFactoryType, TethysBundleId> FACTORY_MAP = buildFactoryMap();
 
     /**
      * The Digest Map.
      */
-    private static final Map<GordianDigestType, TethysResourceId> DIGEST_MAP = buildDigestMap();
+    private static final Map<GordianDigestType, TethysBundleId> DIGEST_MAP = buildDigestMap();
 
     /**
      * The MAC Map.
      */
-    private static final Map<GordianMacType, TethysResourceId> MAC_MAP = buildMacMap();
+    private static final Map<GordianMacType, TethysBundleId> MAC_MAP = buildMacMap();
 
     /**
      * The SymKey Map.
      */
-    private static final Map<GordianSymKeyType, TethysResourceId> SYM_MAP = buildSymKeyMap();
+    private static final Map<GordianSymKeyType, TethysBundleId> SYM_MAP = buildSymKeyMap();
 
     /**
      * The StreamKey Map.
      */
-    private static final Map<GordianStreamKeyType, TethysResourceId> STREAM_MAP = buildStreamKeyMap();
+    private static final Map<GordianStreamKeyType, TethysBundleId> STREAM_MAP = buildStreamKeyMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(GordianCryptoException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(GordianCryptoException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -425,7 +427,7 @@ public enum GordianCryptoResource implements TethysResourceId {
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -436,9 +438,9 @@ public enum GordianCryptoResource implements TethysResourceId {
      * Build factory map.
      * @return the map
      */
-    private static Map<GordianFactoryType, TethysResourceId> buildFactoryMap() {
+    private static Map<GordianFactoryType, TethysBundleId> buildFactoryMap() {
         /* Create the map and return it */
-        final Map<GordianFactoryType, TethysResourceId> myMap = new EnumMap<>(GordianFactoryType.class);
+        final Map<GordianFactoryType, TethysBundleId> myMap = new EnumMap<>(GordianFactoryType.class);
         myMap.put(GordianFactoryType.BC, FACTORY_BC);
         myMap.put(GordianFactoryType.JCA, FACTORY_JCA);
         return myMap;
@@ -449,17 +451,17 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @param pFactoryType the factoryType
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
-        return TethysResourceBuilder.getKeyForEnum(FACTORY_MAP, pFactoryType);
+    protected static TethysBundleId getKeyForFactoryType(final GordianFactoryType pFactoryType) {
+        return TethysBundleLoader.getKeyForEnum(FACTORY_MAP, pFactoryType);
     }
 
     /**
      * Build digest map.
      * @return the map
      */
-    private static Map<GordianDigestType, TethysResourceId> buildDigestMap() {
+    private static Map<GordianDigestType, TethysBundleId> buildDigestMap() {
         /* Create the map and return it */
-        final Map<GordianDigestType, TethysResourceId> myMap = new EnumMap<>(GordianDigestType.class);
+        final Map<GordianDigestType, TethysBundleId> myMap = new EnumMap<>(GordianDigestType.class);
         myMap.put(GordianDigestType.SHA2, DIGEST_SHA2);
         myMap.put(GordianDigestType.TIGER, DIGEST_TIGER);
         myMap.put(GordianDigestType.WHIRLPOOL, DIGEST_WHIRLPOOL);
@@ -486,17 +488,17 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @param pDigest the DigestType
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForDigest(final GordianDigestType pDigest) {
-        return TethysResourceBuilder.getKeyForEnum(DIGEST_MAP, pDigest);
+    protected static TethysBundleId getKeyForDigest(final GordianDigestType pDigest) {
+        return TethysBundleLoader.getKeyForEnum(DIGEST_MAP, pDigest);
     }
 
     /**
      * Build MAC map.
      * @return the map
      */
-    private static Map<GordianMacType, TethysResourceId> buildMacMap() {
+    private static Map<GordianMacType, TethysBundleId> buildMacMap() {
         /* Create the map and return it */
-        final Map<GordianMacType, TethysResourceId> myMap = new EnumMap<>(GordianMacType.class);
+        final Map<GordianMacType, TethysBundleId> myMap = new EnumMap<>(GordianMacType.class);
         myMap.put(GordianMacType.HMAC, MAC_HMAC);
         myMap.put(GordianMacType.GMAC, MAC_GMAC);
         myMap.put(GordianMacType.CMAC, MAC_CMAC);
@@ -514,17 +516,17 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @param pMac the MacType
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForMac(final GordianMacType pMac) {
-        return TethysResourceBuilder.getKeyForEnum(MAC_MAP, pMac);
+    protected static TethysBundleId getKeyForMac(final GordianMacType pMac) {
+        return TethysBundleLoader.getKeyForEnum(MAC_MAP, pMac);
     }
 
     /**
      * Build SymKey map.
      * @return the map
      */
-    private static Map<GordianSymKeyType, TethysResourceId> buildSymKeyMap() {
+    private static Map<GordianSymKeyType, TethysBundleId> buildSymKeyMap() {
         /* Create the map and return it */
-        final Map<GordianSymKeyType, TethysResourceId> myMap = new EnumMap<>(GordianSymKeyType.class);
+        final Map<GordianSymKeyType, TethysBundleId> myMap = new EnumMap<>(GordianSymKeyType.class);
         myMap.put(GordianSymKeyType.AES, SYMKEY_AES);
         myMap.put(GordianSymKeyType.SERPENT, SYMKEY_SERPENT);
         myMap.put(GordianSymKeyType.TWOFISH, SYMKEY_TWOFISH);
@@ -561,17 +563,17 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForSym(final GordianSymKeyType pKeyType) {
-        return TethysResourceBuilder.getKeyForEnum(SYM_MAP, pKeyType);
+    protected static TethysBundleId getKeyForSym(final GordianSymKeyType pKeyType) {
+        return TethysBundleLoader.getKeyForEnum(SYM_MAP, pKeyType);
     }
 
     /**
      * Build StreamKey map.
      * @return the map
      */
-    private static Map<GordianStreamKeyType, TethysResourceId> buildStreamKeyMap() {
+    private static Map<GordianStreamKeyType, TethysBundleId> buildStreamKeyMap() {
         /* Create the map and return it */
-        final Map<GordianStreamKeyType, TethysResourceId> myMap = new EnumMap<>(GordianStreamKeyType.class);
+        final Map<GordianStreamKeyType, TethysBundleId> myMap = new EnumMap<>(GordianStreamKeyType.class);
         myMap.put(GordianStreamKeyType.XSALSA20, STREAMKEY_XSALSA20);
         myMap.put(GordianStreamKeyType.SALSA20, STREAMKEY_SALSA20);
         myMap.put(GordianStreamKeyType.HC, STREAMKEY_HC);
@@ -590,7 +592,7 @@ public enum GordianCryptoResource implements TethysResourceId {
      * @param pKeyType the keyType
      * @return the resource key
      */
-    protected static TethysResourceId getKeyForStream(final GordianStreamKeyType pKeyType) {
-        return TethysResourceBuilder.getKeyForEnum(STREAM_MAP, pKeyType);
+    protected static TethysBundleId getKeyForStream(final GordianStreamKeyType pKeyType) {
+        return TethysBundleLoader.getKeyForEnum(STREAM_MAP, pKeyType);
     }
 }

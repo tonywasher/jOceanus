@@ -18,17 +18,18 @@ package net.sourceforge.joceanus.jcoeus.data;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.joceanus.jcoeus.CoeusDataException;
 import net.sourceforge.joceanus.jmetis.data.MetisDataItem.MetisDataFieldId;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceBuilder;
-import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleId;
+import net.sourceforge.joceanus.jtethys.resource.TethysBundleLoader;
 
 /**
  * Resource IDs for Coeus.
  */
 public enum CoeusResource
-        implements TethysResourceId, MetisDataFieldId {
+        implements TethysBundleId, MetisDataFieldId {
     /**
      * FundingCircle Market.
      */
@@ -467,37 +468,38 @@ public enum CoeusResource
     /**
      * The MarketProvider Map.
      */
-    private static final Map<CoeusMarketProvider, TethysResourceId> MARKET_MAP = buildMarketMap();
+    private static final Map<CoeusMarketProvider, TethysBundleId> MARKET_MAP = buildMarketMap();
 
     /**
      * The MarketType Map.
      */
-    private static final Map<CoeusMarketType, TethysResourceId> MARKETTYPE_MAP = buildMarketTypeMap();
+    private static final Map<CoeusMarketType, TethysBundleId> MARKETTYPE_MAP = buildMarketTypeMap();
 
     /**
      * The LoanStatus Map.
      */
-    private static final Map<CoeusLoanStatus, TethysResourceId> STATUS_MAP = buildStatusMap();
+    private static final Map<CoeusLoanStatus, TethysBundleId> STATUS_MAP = buildStatusMap();
 
     /**
      * The LoanRisk Map.
      */
-    private static final Map<CoeusLoanRisk, TethysResourceId> RISK_MAP = buildRiskMap();
+    private static final Map<CoeusLoanRisk, TethysBundleId> RISK_MAP = buildRiskMap();
 
     /**
      * The TotalSet Map.
      */
-    private static final Map<CoeusTotalSet, TethysResourceId> TOTALSET_MAP = buildTotalSetMap();
+    private static final Map<CoeusTotalSet, TethysBundleId> TOTALSET_MAP = buildTotalSetMap();
 
     /**
      * The TransactionType Map.
      */
-    private static final Map<CoeusTransactionType, TethysResourceId> TRANS_MAP = buildTransMap();
+    private static final Map<CoeusTransactionType, TethysBundleId> TRANS_MAP = buildTransMap();
 
     /**
-     * The Resource Builder.
+     * The Resource Loader.
      */
-    private static final TethysResourceBuilder BUILDER = TethysResourceBuilder.getPackageResourceBuilder(CoeusDataException.class.getCanonicalName());
+    private static final TethysBundleLoader LOADER = TethysBundleLoader.getPackageLoader(CoeusDataException.class.getCanonicalName(),
+            ResourceBundle::getBundle);
 
     /**
      * The Id.
@@ -532,7 +534,7 @@ public enum CoeusResource
         /* If we have not initialised the value */
         if (theValue == null) {
             /* Derive the value */
-            theValue = BUILDER.getValue(this);
+            theValue = LOADER.getValue(this);
         }
 
         /* return the value */
@@ -548,9 +550,9 @@ public enum CoeusResource
      * Build market map.
      * @return the map
      */
-    private static Map<CoeusMarketProvider, TethysResourceId> buildMarketMap() {
+    private static Map<CoeusMarketProvider, TethysBundleId> buildMarketMap() {
         /* Create the map and return it */
-        final Map<CoeusMarketProvider, TethysResourceId> myMap = new EnumMap<>(CoeusMarketProvider.class);
+        final Map<CoeusMarketProvider, TethysBundleId> myMap = new EnumMap<>(CoeusMarketProvider.class);
         myMap.put(CoeusMarketProvider.FUNDINGCIRCLE, MARKET_FUNDINGCIRCLE);
         myMap.put(CoeusMarketProvider.LENDINGWORKS, MARKET_LENDINGWORKS);
         myMap.put(CoeusMarketProvider.RATESETTER, MARKET_RATESETTER);
@@ -563,17 +565,17 @@ public enum CoeusResource
      * @param pMarket the market
      * @return the resource key
      */
-    public static TethysResourceId getKeyForMarket(final CoeusMarketProvider pMarket) {
-        return TethysResourceBuilder.getKeyForEnum(MARKET_MAP, pMarket);
+    public static TethysBundleId getKeyForMarket(final CoeusMarketProvider pMarket) {
+        return TethysBundleLoader.getKeyForEnum(MARKET_MAP, pMarket);
     }
 
     /**
      * Build marketType map.
      * @return the map
      */
-    private static Map<CoeusMarketType, TethysResourceId> buildMarketTypeMap() {
+    private static Map<CoeusMarketType, TethysBundleId> buildMarketTypeMap() {
         /* Create the map and return it */
-        final Map<CoeusMarketType, TethysResourceId> myMap = new EnumMap<>(CoeusMarketType.class);
+        final Map<CoeusMarketType, TethysBundleId> myMap = new EnumMap<>(CoeusMarketType.class);
         myMap.put(CoeusMarketType.SNAPSHOT, MARKETTYPE_SNAPSHOT);
         myMap.put(CoeusMarketType.ANNUAL, MARKETTYPE_ANNUAL);
         return myMap;
@@ -584,17 +586,17 @@ public enum CoeusResource
      * @param pMarketType the marketType
      * @return the resource key
      */
-    public static TethysResourceId getKeyForMarketType(final CoeusMarketType pMarketType) {
-        return TethysResourceBuilder.getKeyForEnum(MARKETTYPE_MAP, pMarketType);
+    public static TethysBundleId getKeyForMarketType(final CoeusMarketType pMarketType) {
+        return TethysBundleLoader.getKeyForEnum(MARKETTYPE_MAP, pMarketType);
     }
 
     /**
      * Build status map.
      * @return the map
      */
-    private static Map<CoeusLoanStatus, TethysResourceId> buildStatusMap() {
+    private static Map<CoeusLoanStatus, TethysBundleId> buildStatusMap() {
         /* Create the map and return it */
-        final Map<CoeusLoanStatus, TethysResourceId> myMap = new EnumMap<>(CoeusLoanStatus.class);
+        final Map<CoeusLoanStatus, TethysBundleId> myMap = new EnumMap<>(CoeusLoanStatus.class);
         myMap.put(CoeusLoanStatus.OFFERED, LOAN_OFFERED);
         myMap.put(CoeusLoanStatus.ACTIVE, LOAN_ACTIVE);
         myMap.put(CoeusLoanStatus.POORLY, LOAN_POORLY);
@@ -609,17 +611,17 @@ public enum CoeusResource
      * @param pStatus the status
      * @return the resource key
      */
-    public static TethysResourceId getKeyForLoanStatus(final CoeusLoanStatus pStatus) {
-        return TethysResourceBuilder.getKeyForEnum(STATUS_MAP, pStatus);
+    public static TethysBundleId getKeyForLoanStatus(final CoeusLoanStatus pStatus) {
+        return TethysBundleLoader.getKeyForEnum(STATUS_MAP, pStatus);
     }
 
     /**
      * Build transaction type map.
      * @return the map
      */
-    private static Map<CoeusTransactionType, TethysResourceId> buildTransMap() {
+    private static Map<CoeusTransactionType, TethysBundleId> buildTransMap() {
         /* Create the map and return it */
-        final Map<CoeusTransactionType, TethysResourceId> myMap = new EnumMap<>(CoeusTransactionType.class);
+        final Map<CoeusTransactionType, TethysBundleId> myMap = new EnumMap<>(CoeusTransactionType.class);
         myMap.put(CoeusTransactionType.TRANSFER, TRANS_TRANSFER);
         myMap.put(CoeusTransactionType.CAPITALLOAN, TRANS_LOAN);
         myMap.put(CoeusTransactionType.CAPITALREPAYMENT, TRANS_REPAYMENT);
@@ -639,17 +641,17 @@ public enum CoeusResource
      * @param pTrans the transactionType
      * @return the resource key
      */
-    public static TethysResourceId getKeyForTransType(final CoeusTransactionType pTrans) {
-        return TethysResourceBuilder.getKeyForEnum(TRANS_MAP, pTrans);
+    public static TethysBundleId getKeyForTransType(final CoeusTransactionType pTrans) {
+        return TethysBundleLoader.getKeyForEnum(TRANS_MAP, pTrans);
     }
 
     /**
      * Build risk map.
      * @return the map
      */
-    private static Map<CoeusLoanRisk, TethysResourceId> buildRiskMap() {
+    private static Map<CoeusLoanRisk, TethysBundleId> buildRiskMap() {
         /* Create the map and return it */
-        final Map<CoeusLoanRisk, TethysResourceId> myMap = new EnumMap<>(CoeusLoanRisk.class);
+        final Map<CoeusLoanRisk, TethysBundleId> myMap = new EnumMap<>(CoeusLoanRisk.class);
         myMap.put(CoeusLoanRisk.APLUS, RISK_APLUS);
         myMap.put(CoeusLoanRisk.A, RISK_A);
         myMap.put(CoeusLoanRisk.B, RISK_B);
@@ -666,17 +668,17 @@ public enum CoeusResource
      * @param pRisk the risk
      * @return the resource key
      */
-    public static TethysResourceId getKeyForRisk(final CoeusLoanRisk pRisk) {
-        return TethysResourceBuilder.getKeyForEnum(RISK_MAP, pRisk);
+    public static TethysBundleId getKeyForRisk(final CoeusLoanRisk pRisk) {
+        return TethysBundleLoader.getKeyForEnum(RISK_MAP, pRisk);
     }
 
     /**
      * Build totalSet map.
      * @return the map
      */
-    private static Map<CoeusTotalSet, TethysResourceId> buildTotalSetMap() {
+    private static Map<CoeusTotalSet, TethysBundleId> buildTotalSetMap() {
         /* Create the map and return it */
-        final Map<CoeusTotalSet, TethysResourceId> myMap = new EnumMap<>(CoeusTotalSet.class);
+        final Map<CoeusTotalSet, TethysBundleId> myMap = new EnumMap<>(CoeusTotalSet.class);
         myMap.put(CoeusTotalSet.INVESTED, DATA_INVESTED);
         myMap.put(CoeusTotalSet.EARNINGS, DATA_EARNINGS);
         myMap.put(CoeusTotalSet.TAXABLEEARNINGS, DATA_TAXABLEEARNINGS);
@@ -699,7 +701,7 @@ public enum CoeusResource
      * @param pTotalSet the set
      * @return the resource key
      */
-    public static TethysResourceId getKeyForTotalSet(final CoeusTotalSet pTotalSet) {
-        return TethysResourceBuilder.getKeyForEnum(TOTALSET_MAP, pTotalSet);
+    public static TethysBundleId getKeyForTotalSet(final CoeusTotalSet pTotalSet) {
+        return TethysBundleLoader.getKeyForEnum(TOTALSET_MAP, pTotalSet);
     }
 }

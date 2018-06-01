@@ -16,51 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceId;
 
 /**
- * IconBuilder.
+ * IconId.
  */
-public abstract class TethysIconBuilder {
+public interface TethysIconId extends TethysResourceId {
     /**
      * Default icon width.
      */
     public static final int DEFAULT_ICONWIDTH = 16;
 
     /**
-     * Interface for eNums.
-     */
-    @FunctionalInterface
-    public interface TethysIconId {
-        /**
-         * Obtain Icon source.
-         * @return the source filename
-         */
-        String getSourceName();
-    }
-
-    /**
-     * Private constructor.
-     */
-    private TethysIconBuilder() {
-    }
-
-    /**
-     * Obtain resource.
+     * Obtain resource as bytes.
      * @param pId the icon Id
-     * @return the URL reference
+     * @return the bytes
+     * @throws IOException on error
      */
-    public static URL getResource(final TethysIconId pId) {
-        return pId.getClass().getResource(pId.getSourceName());
-    }
-
-    /**
-     * Obtain resource as Stream.
-     * @param pId the icon Id
-     * @return the inputStream
-     */
-    public static InputStream getResourceAsStream(final TethysIconId pId) {
-        return pId.getClass().getResourceAsStream(pId.getSourceName());
+    default byte[] loadResourceToBytes() throws IOException {
+        try (InputStream myInput = getInputStream()) {
+            return myInput.readAllBytes();
+        }
     }
 }
