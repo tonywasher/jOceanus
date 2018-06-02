@@ -20,6 +20,8 @@
 module jmetis.test.javafx {
     requires javafx.graphics;
 
+    requires org.apache.logging.log4j;
+
     requires jmetis.core;
     requires jmetis.javafx;
     requires jtethys.core;

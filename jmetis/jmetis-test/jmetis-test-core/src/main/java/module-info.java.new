@@ -18,6 +18,8 @@
  * module-info for jmetis-test-core.
  */
 module jmetis.test.core {
+    requires org.apache.logging.log4j;
+
     requires jmetis.core;
     requires jmetis.sheet.api;
     requires jtethys.core;

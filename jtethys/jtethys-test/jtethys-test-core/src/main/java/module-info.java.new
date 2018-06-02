@@ -22,5 +22,6 @@ module jtethys.test.core {
 
     requires jtethys.core;
 
+    exports net.sourceforge.joceanus.jtethys.test.help;
     exports net.sourceforge.joceanus.jtethys.test.ui;
 }
