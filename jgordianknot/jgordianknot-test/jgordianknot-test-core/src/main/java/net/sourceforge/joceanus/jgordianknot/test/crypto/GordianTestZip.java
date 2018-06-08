@@ -79,7 +79,6 @@ public class GordianTestZip {
 
             /* Make sure that we have a directory */
             if (!pDirectory.isDirectory()) {
-                myZipFile.close();
                 throw new GordianDataException("Invalid source directory");
             }
 
@@ -104,9 +103,6 @@ public class GordianTestZip {
                     throw new GordianIOException("Failed to create Zip File", e);
                 }
             }
-
-            /* Close the Zip File */
-            myZipFile.close();
 
             /* Return the zip file entries */
             return myZipFile.getContents();
@@ -191,12 +187,6 @@ public class GordianTestZip {
                     myOutBuffer.write(myBuffer, 0, myRead);
                 }
 
-                /* Close the streams */
-                myInput.close();
-                myOutBuffer.close();
-
-            } catch (OceanusException e) {
-                throw e;
             } catch (IOException e) {
                 throw new GordianIOException("Failed to extract Zip File", e);
             }

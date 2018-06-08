@@ -18,6 +18,8 @@ package net.sourceforge.joceanus.jgordianknot.test;
 
 import java.security.SecureRandom;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.KeyGenerationParameters;
@@ -30,6 +32,11 @@ import org.bouncycastle.util.Arrays;
  * Test for Jca OCB support bugs.
  */
 public final class GordianDSTUMacTest {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(GordianDSTUMacTest.class);
+
     /**
      * Run Tests.
      * @param pArgs arguments
@@ -72,10 +79,10 @@ public final class GordianDSTUMacTest {
             final byte[] myResult = new byte[myMac.getMacSize()];
             myMac.doFinal(myResult, 0);
 
-            System.out.println("DSTU7624 Padding Bug fixed");
+            LOGGER.error("DSTU7624 Padding Bug fixed");
 
         } catch (DataLengthException e) {
-            System.out.println("DSTU7624 Padding Bug still exists");
+            LOGGER.error("DSTU7624 Padding Bug still exists");
         }
     }
 
@@ -109,9 +116,9 @@ public final class GordianDSTUMacTest {
         myMac.doFinal(myRepeat, 0);
 
         if (Arrays.areEqual(myResult, myRepeat)) {
-            System.out.println("DSTU7624 Reuse Bug fixed");
+            LOGGER.error("DSTU7624 Reuse Bug fixed");
         } else {
-            System.out.println("DSTU7624 Reuse Bug still exists");
+            LOGGER.error("DSTU7624 Reuse Bug still exists");
         }
     }
 
@@ -145,9 +152,9 @@ public final class GordianDSTUMacTest {
         myMac.doFinal(myRepeat, 0);
 
         if (Arrays.areEqual(myResult, myRepeat)) {
-            System.out.println("DSTU7624 Reuse Bug fixed");
+            LOGGER.error("DSTU7624 Reuse Bug fixed");
         } else {
-            System.out.println("DSTU7624 Reuse Bug still exists");
+            LOGGER.error("DSTU7624 Reuse Bug still exists");
         }
     }
 }

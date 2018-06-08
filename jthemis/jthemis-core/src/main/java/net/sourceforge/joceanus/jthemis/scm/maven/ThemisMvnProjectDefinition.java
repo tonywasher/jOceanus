@@ -245,9 +245,6 @@ public class ThemisMvnProjectDefinition
             final MavenXpp3Writer myWriter = new MavenXpp3Writer();
             myWriter.write(myOutBuffer, theModel);
 
-            /* Close the output file */
-            myOutBuffer.close();
-
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw Exception */

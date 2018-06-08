@@ -161,7 +161,7 @@ public class ThemisGitAnalyser {
                 /* If we have some null commits */
                 if (!myNullCommits.isEmpty()) {
                     /* Mark as a null view */
-                    myNullCommits.forEach(p -> p.setNullView());
+                    myNullCommits.forEach(ThemisSvnExtractView::setNullView);
 
                     /* Clear the list */
                     myNullCommits.clear();

@@ -192,7 +192,7 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
         theReport.setNumStages(pData.getListMap().size());
 
         /* Protect the workbook access */
-        boolean doDelete = true;
+        boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(pFile)) {
             /* Loop through the data lists */
             final Iterator<DataList<?, E>> myIterator = pData.iterator();
@@ -212,13 +212,13 @@ public class DataValuesFormatter<T extends DataSet<T, E>, E extends Enum<E>> {
 
             /* Complete the task */
             myStage.end();
-            doDelete = false;
 
         } catch (IOException e) {
+            writeFailed = true;
             throw new PrometheusIOException("Failed to create extract XML", e);
         } finally {
             /* Try to delete the file if required */
-            if (doDelete) {
+            if (writeFailed) {
                 MetisToolkit.cleanUpFile(pFile);
             }
         }

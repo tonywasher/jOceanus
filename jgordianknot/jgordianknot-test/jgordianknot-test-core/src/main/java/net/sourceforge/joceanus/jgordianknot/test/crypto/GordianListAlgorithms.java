@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
@@ -29,6 +31,11 @@ import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
  * Security Test suite - List Algorithms.
  */
 public final class GordianListAlgorithms {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(GordianListAlgorithms.class);
+
     /**
      * Constructor.
      */
@@ -39,17 +46,17 @@ public final class GordianListAlgorithms {
      * List the supported algorithms.
      */
     public static void listAlgorithms() {
-        final Set<String> ciphers = new HashSet<String>();
-        final Set<String> secretKeyFactories = new HashSet<String>();
-        final Set<String> keyFactories = new HashSet<String>();
-        final Set<String> keyAgreements = new HashSet<String>();
-        final Set<String> keyGenerators = new HashSet<String>();
-        final Set<String> keyPairGenerators = new HashSet<String>();
-        final Set<String> messageDigests = new HashSet<String>();
-        final Set<String> macs = new HashSet<String>();
-        final Set<String> signatures = new HashSet<String>();
-        final Set<String> randoms = new HashSet<String>();
-        final Set<String> remaining = new HashSet<String>();
+        final Set<String> ciphers = new HashSet<>();
+        final Set<String> secretKeyFactories = new HashSet<>();
+        final Set<String> keyFactories = new HashSet<>();
+        final Set<String> keyAgreements = new HashSet<>();
+        final Set<String> keyGenerators = new HashSet<>();
+        final Set<String> keyPairGenerators = new HashSet<>();
+        final Set<String> messageDigests = new HashSet<>();
+        final Set<String> macs = new HashSet<>();
+        final Set<String> signatures = new HashSet<>();
+        final Set<String> randoms = new HashSet<>();
+        final Set<String> remaining = new HashSet<>();
 
         Security.addProvider(new BouncyCastleProvider());
         Security.addProvider(new BouncyCastlePQCProvider());
@@ -115,16 +122,16 @@ public final class GordianListAlgorithms {
      */
     private static void printSet(final String setName,
                                  final Set<String> algorithms) {
-        System.out.println(setName
-                           + ":");
+        LOGGER.error(setName
+                     + ":");
         if (algorithms.isEmpty()) {
-            System.out.println("            None available.");
+            LOGGER.error("            None available.");
         } else {
             final Iterator<String> it = algorithms.iterator();
             while (it.hasNext()) {
                 final String name = it.next();
-                System.out.println("            "
-                                   + name);
+                LOGGER.error("            "
+                             + name);
             }
         }
     }

@@ -16,6 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.swing;
 
+import java.awt.HeadlessException;
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
@@ -35,18 +49,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableStringColumn;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.HeadlessException;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * <p>
@@ -73,7 +75,7 @@ public class TethysSwingDateExample {
      * Second Column Width.
      */
     private static final int COL_2_WIDTH = 250;
-    
+
     /**
      * Start sample date.
      */
@@ -342,7 +344,7 @@ public class TethysSwingDateExample {
         theTable = theGuiFactory.newTable();
 
         /* Create the list */
-        final List<DateItem> myList = new ArrayList<DateItem>();
+        final List<DateItem> myList = new ArrayList<>();
         myList.add(new DateItem(DATE_FIRST, "First Entry"));
         myList.add(new DateItem(DATE_SECOND, "Second Entry"));
         myList.add(new DateItem(DATE_THIRD, "Third Entry"));

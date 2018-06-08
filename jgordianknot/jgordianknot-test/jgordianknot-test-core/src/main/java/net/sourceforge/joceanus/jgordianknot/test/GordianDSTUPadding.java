@@ -19,6 +19,8 @@ package net.sourceforge.joceanus.jgordianknot.test;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.DataLengthException;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -34,6 +36,11 @@ import org.bouncycastle.crypto.params.ParametersWithIV;
  * Test for DSTU7624 Padding problems in modes.
  */
 public final class GordianDSTUPadding {
+    /**
+     * Create a logger.
+     */
+    private static final Logger LOGGER = LogManager.getLogger(GordianDSTUPadding.class);
+
     /**
      * BlockSize.
      */
@@ -147,14 +154,14 @@ public final class GordianDSTUPadding {
                                              ? Arrays.equals(pData, myClearText)
                                              : myLen == 0;
             if (bSuccess) {
-                System.out.println("DSTU7624-" + pBlockSize + " Bug fixed");
+                LOGGER.error("DSTU7624-" + pBlockSize + " Bug fixed");
             } else {
-                System.out.println("DSTU7624-" + pBlockSize + " Bug still exists");
+                LOGGER.error("DSTU7624-" + pBlockSize + " Bug still exists");
             }
 
             /* Catch general exceptions */
         } catch (IllegalArgumentException | IllegalStateException | InvalidCipherTextException e) {
-            System.out.println("DSTU7624-" + pBlockSize + " Bug still exists");
+            LOGGER.error("DSTU7624-" + pBlockSize + " Bug still exists");
         }
     }
 
@@ -227,14 +234,14 @@ public final class GordianDSTUPadding {
                                              ? Arrays.equals(pData, myClearText)
                                              : myLen == 0;
             if (bSuccess) {
-                System.out.println("DSTU7624-" + pBlockSize + " Bug fixed");
+                LOGGER.error("DSTU7624-" + pBlockSize + " Bug fixed");
             } else {
-                System.out.println("DSTU7624-" + pBlockSize + " Bug still exists");
+                LOGGER.error("DSTU7624-" + pBlockSize + " Bug still exists");
             }
 
             /* Catch general exceptions */
         } catch (InvalidCipherTextException e) {
-            System.out.println("DSTU7624-" + pBlockSize + " Bug still exists");
+            LOGGER.error("DSTU7624-" + pBlockSize + " Bug still exists");
         }
     }
 
@@ -279,10 +286,10 @@ public final class GordianDSTUPadding {
             final byte[] myResult = new byte[myMac.getMacSize()];
             myMac.doFinal(myResult, 0);
 
-            System.out.println("DSTU7624 Padding Bug fixed");
+            LOGGER.error("DSTU7624 Padding Bug fixed");
 
         } catch (DataLengthException e) {
-            System.out.println("DSTU7624 Padding Bug still exists");
+            LOGGER.error("DSTU7624 Padding Bug still exists");
         }
     }
 }

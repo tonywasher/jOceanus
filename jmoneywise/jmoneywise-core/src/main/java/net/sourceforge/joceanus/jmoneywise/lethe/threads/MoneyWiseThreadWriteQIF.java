@@ -16,6 +16,16 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.threads;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -31,15 +41,6 @@ import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFStreamWriter;
 import net.sourceforge.joceanus.jmoneywise.lethe.quicken.file.QIFWriter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.View;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 
 /**
  * WorkerThread extension to create a QIF archive.
@@ -103,19 +104,18 @@ public class MoneyWiseThreadWriteQIF<N, I>
         final QIFWriter myQWriter = new QIFWriter(myManager, myQFile);
 
         /* Protect against exceptions */
-        boolean doDelete = true;
+        boolean writeFailed = false;
         try (QIFStreamWriter myWriter = new QIFStreamWriter(myOutFile)) {
             /* Output the data */
             myQWriter.writeFile(myWriter);
-            myWriter.close();
-            doDelete = false;
 
         } catch (IOException e) {
             /* Report the error */
+            writeFailed = true;
             throw new MoneyWiseIOException("Failed to write to file: " + myOutFile.getName(), e);
         } finally {
             /* Try to delete the file if required */
-            if (doDelete) {
+            if (writeFailed) {
                 MetisToolkit.cleanUpFile(myOutFile);
             }
         }

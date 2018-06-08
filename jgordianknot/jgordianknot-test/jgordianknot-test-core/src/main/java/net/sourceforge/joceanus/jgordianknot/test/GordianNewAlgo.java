@@ -70,7 +70,7 @@ public final class GordianNewAlgo {
     /**
      * testCipher.
      */
-    private static void testCipher() {
+    public static void testCipher() {
         /* Create message and key */
         final byte[] myMessage = "ASmall16byteMsg.".getBytes();
         final byte[] key = ("abcdefghijklmnop" +
@@ -98,7 +98,7 @@ public final class GordianNewAlgo {
      * @param pDigestType the digestType to check
      * @return the resultSet
      */
-    private static List<Results> testDigest(final GordianDigestType pDigestType) {
+    public static List<Results> testDigest(final GordianDigestType pDigestType) {
         /* Lengths to check */
         final int[] myLengths =
         { 224, 256, 384, 512 };
@@ -226,7 +226,7 @@ public final class GordianNewAlgo {
     /**
      * ResultSet.
      */
-    private static class Results {
+    public static class Results {
         /**
          * DigestType.
          */

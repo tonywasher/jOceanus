@@ -16,6 +16,18 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.swing;
 
+import java.awt.HeadlessException;
+import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
@@ -36,16 +48,6 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import java.awt.HeadlessException;
-import java.util.Map;
 
 /**
  * Scroll utilities examples.
@@ -65,7 +67,7 @@ public class TethysSwingScrollUIExample {
      * The GuiFactory.
      */
     private final TethysSwingGuiFactory theGuiFactory;
-    
+
     /**
      * The Test helper.
      */
@@ -215,6 +217,7 @@ public class TethysSwingScrollUIExample {
 
     /**
      * Build the panel.
+     * @return the panel
      */
     private TethysSwingGridPaneManager buildPanel() {
         /* Create a panel */

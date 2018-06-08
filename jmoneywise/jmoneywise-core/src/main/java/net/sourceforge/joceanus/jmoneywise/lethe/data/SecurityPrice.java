@@ -829,7 +829,7 @@ public class SecurityPrice
             }
 
             /* Access the list */
-            final PriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, s -> new PriceList(s));
+            final PriceList myList = theMapOfPrices.computeIfAbsent(mySecurity, PriceList::new);
 
             /* Add element to the list */
             myList.add(pItem);

@@ -937,7 +937,7 @@ public class DepositRate
             }
 
             /* Access the list */
-            final RateList myList = theMapOfRates.computeIfAbsent(myDeposit, d -> new RateList(d));
+            final RateList myList = theMapOfRates.computeIfAbsent(myDeposit, RateList::new);
 
             /* Add element to the list */
             myList.add(pItem);

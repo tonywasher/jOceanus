@@ -182,7 +182,6 @@ public abstract class PrometheusSheetReader<T extends DataSet<T, ?>> {
 
             /* Close the Stream to force out errors */
             myTask.startTask("Closing");
-            myStream.close();
 
         } catch (IOException e) {
             /* Report the error */

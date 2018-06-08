@@ -16,21 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.swing;
 
-import net.sourceforge.joceanus.jtethys.TethysLogConfig;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
-import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-import javax.swing.table.AbstractTableModel;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -41,11 +26,28 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.table.AbstractTableModel;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.sourceforge.joceanus.jtethys.TethysLogConfig;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSwingTableSorterModel;
+
 /**
  * Demo application for JTableFilter.
  * @author Tony Washer
  */
-public class TethysSwingDemoFilter {
+public final class TethysSwingDemoFilter {
     /**
      * Logger.
      */
@@ -57,8 +59,14 @@ public class TethysSwingDemoFilter {
      */
     public static void main(final String[] args) {
         SwingUtilities.invokeLater(() -> createAndShowGUI());
-     }
-    
+    }
+
+    /**
+     * Private Constructor.
+     */
+    private TethysSwingDemoFilter() {
+    }
+
     /**
      * Create and show the GUI.
      */
@@ -393,7 +401,7 @@ public class TethysSwingDemoFilter {
         }
 
         /**
-         * include the row
+         * include the row.
          * @param pRow the row
          * @return true/false
          */

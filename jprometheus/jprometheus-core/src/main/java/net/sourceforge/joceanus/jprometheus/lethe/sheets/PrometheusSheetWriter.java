@@ -125,7 +125,7 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
         final String myName = PrometheusSpreadSheet.FILE_NAME + pType.getExtension();
 
         /* Protect the workbook access */
-        boolean doDelete = true;
+        boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, pFile);
              OutputStream myStream = myZipFile.getOutputStream(new File(myName))) {
             /* Record the DataSet */
@@ -137,19 +137,13 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
             /* Write the data to the work book */
             writeWorkBook(myStream);
 
-            /* Close the Stream to force out errors */
-            myStream.close();
-
-            /* Close the Zip file */
-            myZipFile.close();
-            doDelete = false;
-
         } catch (IOException e) {
             /* Report the error */
+            writeFailed = true;
             throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);
         } finally {
             /* Try to delete the file if required */
-            if (doDelete) {
+            if (writeFailed) {
                 MetisToolkit.cleanUpFile(pFile);
             }
         }

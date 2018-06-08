@@ -249,14 +249,12 @@ public class ThemisSvnBackup {
         final int myNumRevisions = (int) revLast;
         theStatus.setNumSteps(myNumRevisions);
 
-        /* Note presumption of failure */
-        boolean doDelete = true;
-
         /* Create a new password hash */
         final GordianKeySetHash myHash = pManager.newKeySetHash(myName);
         final File myEntryName = new File(DATA_NAME);
 
         /* Protect against exceptions */
+        boolean writeFailed = false;
         try (GordianZipWriteFile myZipFile = new GordianZipWriteFile(myHash, myZipName);
              OutputStream myStream = myZipFile.getOutputStream(myEntryName)) {
             /* Access the current entry and set the number of revisions */
@@ -270,18 +268,16 @@ public class ThemisSvnBackup {
             myStream.close();
             myZipFile.close();
 
-            /* Note success */
-            doDelete = false;
-
             /* Handle other exceptions */
         } catch (SVNException
                 | IOException e) {
+            writeFailed = true;
             throw new ThemisIOException("Failed to dump repository to zipfile", e);
 
             /* Clean up on exit */
         } finally {
             /* Try to delete the file if required */
-            if (doDelete) {
+            if (writeFailed) {
                 MetisToolkit.cleanUpFile(myZipName);
             }
         }

@@ -1008,7 +1008,7 @@ public class ExchangeRate
             }
 
             /* Access the list */
-            final RateList myList = theMapOfRates.computeIfAbsent(myCurrency, c -> new RateList(c));
+            final RateList myList = theMapOfRates.computeIfAbsent(myCurrency, RateList::new);
 
             /* Add element to the list */
             myList.add(pItem);

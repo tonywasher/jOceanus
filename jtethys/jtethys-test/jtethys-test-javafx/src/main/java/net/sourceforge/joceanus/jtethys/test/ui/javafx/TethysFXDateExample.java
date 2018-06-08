@@ -16,6 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
+import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import javafx.application.Application;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -45,11 +50,6 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableStringColumn;
-
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * <p>
@@ -87,7 +87,7 @@ public final class TethysFXDateExample
      * End sample date.
      */
     private static final TethysDate DATE_END = makeDate(2018, Month.AUGUST, 9);
-    
+
     /**
      * First sample date.
      */
@@ -156,7 +156,7 @@ public final class TethysFXDateExample
     /**
      * The selected locale.
      */
-    private final SimpleObjectProperty<Locale> theLocale = new SimpleObjectProperty<Locale>(Locale.UK);
+    private final SimpleObjectProperty<Locale> theLocale = new SimpleObjectProperty<>(Locale.UK);
 
     /**
      * The first date format.
@@ -526,7 +526,7 @@ public final class TethysFXDateExample
      */
     private void makeTable() {
         /* Create the list */
-        final List<DateItem> myList = new ArrayList<DateItem>();
+        final List<DateItem> myList = new ArrayList<>();
         myList.add(new DateItem(DATE_FIRST, "First Entry"));
         myList.add(new DateItem(DATE_SECOND, "Second Entry"));
         myList.add(new DateItem(DATE_THIRD, "Third Entry"));
@@ -572,7 +572,7 @@ public final class TethysFXDateExample
         /**
          * Date Property.
          */
-        private final SimpleObjectProperty<TethysDate> theDate = new SimpleObjectProperty<TethysDate>(this, PROP_DATE);
+        private final SimpleObjectProperty<TethysDate> theDate = new SimpleObjectProperty<>(this, PROP_DATE);
 
         /**
          * Comments Property.
