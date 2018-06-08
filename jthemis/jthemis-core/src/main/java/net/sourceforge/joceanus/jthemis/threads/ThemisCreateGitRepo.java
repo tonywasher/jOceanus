@@ -18,6 +18,7 @@ package net.sourceforge.joceanus.jthemis.threads;
 
 import java.time.LocalTime;
 
+import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
@@ -77,6 +78,7 @@ public class ThemisCreateGitRepo<N, I>
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
         final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
         /* Create a new Git repository */
         final ThemisGitBuild myBuild = new ThemisGitBuild(theSource, theExtract);

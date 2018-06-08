@@ -116,6 +116,11 @@ public class ThemisSvnExtract
     private final ThemisGitAnchorMap theAnchorMap;
 
     /**
+     * The Revisions.
+     */
+    private final ThemisSvnRevisions theRevisions;
+
+    /**
      * Does the extract have errors?
      */
     private boolean hasErrors;
@@ -187,6 +192,9 @@ public class ThemisSvnExtract
             /* Build tags */
             buildTags(myBranch);
         }
+
+        /* Create a new Revisions log */
+        theRevisions = new ThemisSvnRevisions(this);
 
         /* analyse the plans */
         final ThemisGitAnalyser myAnalyser = new ThemisGitAnalyser(this);
@@ -291,6 +299,14 @@ public class ThemisSvnExtract
      */
     ThemisGitAnchorMap getGitAnchorMap() {
         return theAnchorMap;
+    }
+
+    /**
+     * Obtain the svnRevisions.
+     * @return the revisions
+     */
+    ThemisSvnRevisions getSvnRevisions() {
+        return theRevisions;
     }
 
     /**

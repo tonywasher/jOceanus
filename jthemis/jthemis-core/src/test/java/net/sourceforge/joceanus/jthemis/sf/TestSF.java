@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-package net.sourceforge.joceanus.jthemis.jira;
+package net.sourceforge.joceanus.jthemis.sf;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
+import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfServer;
 
 /**
- * Jira test suite.
+ * Sourceforge Tests.
  */
-public final class TestJira {
+public final class TestSF {
     /**
      * Private constructor.
      */
-    private TestJira() {
+    private TestSF() {
     }
 
     /**
@@ -40,13 +40,11 @@ public final class TestJira {
         try {
             /* Configure log4j */
             TethysLogConfig.configureLog4j();
-
             final MetisViewerManager myViewer = new MetisViewerManager();
-            final ThemisJiraServer myServer = new ThemisJiraServer(new MetisPreferenceManager(myViewer));
-            myServer.getIssue("FIN-47");
+            final ThemisSfServer myServer = new ThemisSfServer(new MetisPreferenceManager(myViewer));
             System.exit(0);
         } catch (OceanusException e) {
-            System.out.println("Help");
         }
     }
+
 }

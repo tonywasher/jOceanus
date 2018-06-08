@@ -175,7 +175,7 @@ public class ThemisJiraIssue
         try {
             /* Access fields */
             final JSONObject myFields = pIssue.getJSONObject("fields");
-            theSummary = myFields.getString("summary");
+            theSummary = myFields.getString(ThemisHTTPJiraClient.JIRANAME_SUMMARY);
             theDesc = myFields.optString(JiraNamedDescIdObject.FIELD_DESC, null);
             theEnvironment = myFields.optString("environment", null);
             theCreated = ThemisJiraServer.parseJiraDateTime(myFields.getString("created"));
@@ -195,9 +195,9 @@ public class ThemisJiraIssue
             myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_PRIORITY);
             thePriority = theServer.getPriority(myObject.getString(JiraStatus.FIELD_NAME));
             myObject = myFields.optJSONObject(ThemisHTTPJiraClient.JIRANAME_RESOLUTION);
-            theResolution = (myObject == null)
-                                               ? null
-                                               : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));
+            theResolution = myObject == null
+                                             ? null
+                                             : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));
 
             /* Determine the assignee and reporter */
             myObject = myFields.getJSONObject("creator");
@@ -205,9 +205,9 @@ public class ThemisJiraIssue
             myObject = myFields.getJSONObject("reporter");
             theReporter = theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
             myObject = myFields.optJSONObject("assignee");
-            theAssignee = (myObject == null)
-                                             ? null
-                                             : theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
+            theAssignee = myObject == null
+                                           ? null
+                                           : theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
 
             /* Create the lists */
             theIssueLinks = new ArrayList<>();

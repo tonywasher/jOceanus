@@ -6,7 +6,7 @@
     <version>v1.5.3-SNAPSHOT</version>   
   </parent>
   <artifactId>jtethys</artifactId>
-  <name>jTethys Java Utilities</name>
+  <name>Tethys Java Utilities</name>
   <description>Java Utilities</description>
   <packaging>pom</packaging>
   <modules>

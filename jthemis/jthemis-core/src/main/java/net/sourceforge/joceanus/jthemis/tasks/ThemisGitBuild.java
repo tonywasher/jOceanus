@@ -89,6 +89,11 @@ public class ThemisGitBuild {
     private final ThemisGitAnchorMap theAnchorMap;
 
     /**
+     * The Revisions.
+     */
+    private final ThemisSvnRevisions theRevisions;
+
+    /**
      * Constructor.
      * @param pSource the source subversion component
      * @param pExtract the extract plan
@@ -117,6 +122,7 @@ public class ThemisGitBuild {
         /* Store the extract plan for the component */
         thePlan = pExtract;
         theAnchorMap = thePlan.getGitAnchorMap();
+        theRevisions = thePlan.getSvnRevisions();
     }
 
     /**
@@ -497,7 +503,7 @@ public class ThemisGitBuild {
                     final CommitCommand myCommit = theGit.commit();
                     myCommit.setAll(true);
                     myCommit.setCommitter(new PersonIdent(theCommitter, myView.getDate()));
-                    myCommit.setMessage(ThemisGitRevisionHistory.createGitLogMessage(myRevString, myView.getLogMessage()));
+                    myCommit.setMessage(ThemisGitRevisionHistory.createGitLogMessage(myRevString, theRevisions.getCommentForView(myView)));
                     if (isClean) {
                         myCommit.setAllowEmpty(true);
                     }

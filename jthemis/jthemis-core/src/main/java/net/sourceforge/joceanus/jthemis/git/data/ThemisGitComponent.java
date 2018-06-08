@@ -192,9 +192,8 @@ public final class ThemisGitComponent
 
             /* Describe repository */
             final FileRepositoryBuilder myBuilder = new FileRepositoryBuilder();
-            myBuilder.setWorkTree(new File(myPathBuilder.toString()));
-            myBuilder.readEnvironment();
-            myBuilder.findGitDir();
+            myBuilder.setWorkTree(new File(myPathBuilder.toString()))
+                    .readEnvironment();
 
             /* Build the repository access object */
             return myBuilder.build();

@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import net.sourceforge.joceanus.jmetis.http.MetisHTTPDataClient;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraNamedDescIdObject;
 
 /**
  * Jira REST Client.
@@ -40,6 +41,11 @@ public class ThemisHTTPJiraClient
      * Project name.
      */
     public static final String JIRANAME_PROJECT = "project";
+
+    /**
+     * Summary name.
+     */
+    public static final String JIRANAME_SUMMARY = "summary";
 
     /**
      * Status name.
@@ -80,7 +86,7 @@ public class ThemisHTTPJiraClient
     public ThemisHTTPJiraClient(final String pWebLoc,
                                 final String pAuth) throws OceanusException {
         /* Initialise underlying class */
-        super(pWebLoc + JIRA_WEBLOC, pAuth);
+        super(pWebLoc + JIRA_WEBLOC, MetisHTTPAuthType.BASIC, pAuth);
     }
 
     /**
@@ -251,12 +257,12 @@ public class ThemisHTTPJiraClient
     /**
      * Obtain list of issues in project.
      * @param pProjectKey the project Key
-     * @return the list of issues in the project.
+     * @return the list of responses.
      * @throws OceanusException on error
      */
-    public List<String> getIssueKeysForProject(final String pProjectKey) throws OceanusException {
+    public List<JSONObject> getIssueKeysForProject(final String pProjectKey) throws OceanusException {
         /* Create the list to return */
-        final List<String> myList = new ArrayList<>();
+        final List<JSONObject> myList = new ArrayList<>();
 
         /* Enter loop */
         final int iMaxSearch = MAX_SEARCH;
@@ -266,15 +272,18 @@ public class ThemisHTTPJiraClient
             /* Access the next portion of the search */
             final JSONObject myResponse = queryJSONObjectWithHeaderAndTrailer("search?jql=",
                     "project=\"" + pProjectKey + "\"",
-                    "&startAt=" + iStartAt + "&maxResults=" + iMaxSearch + "&fields=summary");
+                    "&startAt=" + iStartAt + "&maxResults=" + iMaxSearch
+                                                       + "&fields=" + JIRANAME_SUMMARY + ","
+                                                       + JiraNamedDescIdObject.FIELD_DESC + "," + JIRANAME_STATUS + ","
+                                                       + JIRANAME_PRIORITY + "," + JIRANAME_RESOLUTION + ","
+                                                       + JIRANAME_ISSUETYPE);
 
             /* process the response */
             final JSONArray myArray = myResponse.getJSONArray("issues");
             final int myNumIssues = myArray.length();
             for (int i = 0; i < myNumIssues; i++) {
-                /* Access issue key */
-                final JSONObject myIssue = myArray.getJSONObject(i);
-                myList.add(myIssue.getString("key"));
+                /* Add to the list */
+                myList.add(myArray.getJSONObject(i));
             }
 
             /* determine the number of issues */

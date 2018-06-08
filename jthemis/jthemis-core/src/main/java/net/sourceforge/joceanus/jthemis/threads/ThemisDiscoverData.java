@@ -206,4 +206,17 @@ public class ThemisDiscoverData<N, I>
         myBundle.createBundleFromComponent(theGitRepository.locateComponent("jhunters"), myFile);
         myBundle.createComponentFromBundle(theGitRepository, "Test", myFile);
     }
+
+    /**
+     * Test backup2.
+     * @param pReport the report status
+     * @throws OceanusException on error
+     */
+    protected void testBackup2(final MetisThreadStatusReport pReport) throws OceanusException {
+        /* Create a backup */
+        final ThemisGitBundle myBundle = new ThemisGitBundle(pReport);
+        final File myFile = new File("c:\\Users\\Tony\\jhunters.bdl");
+        myBundle.createBundleFromComponent(theGitRepository.locateComponent("jhunters"), myFile);
+        myBundle.createComponentFromBundle(theGitRepository, myFile);
+    }
 }

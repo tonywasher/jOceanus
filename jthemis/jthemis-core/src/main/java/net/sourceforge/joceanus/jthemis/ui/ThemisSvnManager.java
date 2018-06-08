@@ -40,6 +40,7 @@ import net.sourceforge.joceanus.jthemis.git.data.ThemisGitPreference.ThemisGitPr
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraPreference.ThemisJiraPreferences;
 import net.sourceforge.joceanus.jthemis.scm.data.ThemisScmComponent;
+import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfPreference.ThemisSfPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnPreference.ThemisSvnPreferences;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnRepository;
@@ -148,6 +149,7 @@ public abstract class ThemisSvnManager<N, I> {
         thePrefMgr.getPreferenceSet(ThemisJiraPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisSvnPreferences.class);
         thePrefMgr.getPreferenceSet(ThemisGitPreferences.class);
+        thePrefMgr.getPreferenceSet(ThemisSfPreferences.class);
 
         /* Create the menu bar */
         theMenuBar = theGuiFactory.newMenuBar();

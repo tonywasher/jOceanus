@@ -69,9 +69,9 @@ public class ThemisJiraProject
     private final JiraUser theLead;
 
     /**
-     * Issue Keys.
+     * Issue Summaries.
      */
-    private final List<String> theIssueKeys;
+    private final Map<String, ThemisJiraShortIssue> theIssueSummaries;
 
     /**
      * Issues.
@@ -120,8 +120,9 @@ public class ThemisJiraProject
             final JSONObject myLeadDtl = pProject.getJSONObject("lead");
             theLead = theServer.getUser(myLeadDtl.getString(JiraUser.FIELD_NAME));
 
-            /* Allocate the maps */
+            /* Allocate the maps and lists */
             theIssues = new HashMap<>();
+            theIssueSummaries = new HashMap<>();
             theIssueTypes = new ArrayList<>();
             theComponents = new HashMap<>();
             theVersions = new HashMap<>();
@@ -133,8 +134,8 @@ public class ThemisJiraProject
             loadVersions();
             loadRoles(pProject);
 
-            /* Load the issue keys */
-            theIssueKeys = theClient.getIssueKeysForProject(getKey());
+            /* Load the issue summaries */
+            loadIssues();
         } catch (JSONException e) {
             /* Pass the exception on */
             throw new ThemisIOException("Failed to parse project", e);
@@ -198,11 +199,11 @@ public class ThemisJiraProject
     }
 
     /**
-     * Get the issueKeys iterator.
+     * Get the issueSummaries iterator.
      * @return the iterator
      */
-    public Iterator<String> issueKeyIterator() {
-        return theIssueKeys.iterator();
+    public Iterator<ThemisJiraShortIssue> issueSummariesIterator() {
+        return theIssueSummaries.values().iterator();
     }
 
     /**
@@ -258,7 +259,7 @@ public class ThemisJiraProject
         /* If not in the cache */
         if (myIssue == null) {
             /* Check that it is a valid issue */
-            if (!theIssueKeys.contains(pKey)) {
+            if (!theIssueSummaries.containsKey(pKey)) {
                 /* throw exception */
                 throw new ThemisLogicException("Invalid Issue: " + pKey);
             }
@@ -363,6 +364,23 @@ public class ThemisJiraProject
         } catch (JSONException e) {
             /* Pass the exception on */
             throw new ThemisIOException("Failed to load project roles", e);
+        }
+    }
+
+    /**
+     * Load Issues.
+     * @throws OceanusException on error
+     */
+    private void loadIssues() throws OceanusException {
+        /* Load the issue summaries */
+        final List<JSONObject> myIssues = theClient.getIssueKeysForProject(getKey());
+
+        /* Access the roles */
+        final Iterator<JSONObject> myIterator = myIssues.iterator();
+        while (myIterator.hasNext()) {
+            final JSONObject myIssue = myIterator.next();
+            final String myKey = myIssue.getString("key");
+            theIssueSummaries.put(myKey, new ThemisJiraShortIssue(theServer, this, myIssue));
         }
     }
 

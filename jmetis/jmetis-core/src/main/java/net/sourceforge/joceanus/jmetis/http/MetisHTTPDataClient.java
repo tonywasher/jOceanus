@@ -20,13 +20,19 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,11 +70,6 @@ public abstract class MetisHTTPDataClient
     private static final String HEADER_AUTH = "Authorization";
 
     /**
-     * Basic Authorisation header.
-     */
-    private static final String HEADER_AUTH_BASIC = "Basic ";
-
-    /**
      * Accept header.
      */
     private static final String HEADER_ACCEPT = "Accept";
@@ -82,6 +83,11 @@ public abstract class MetisHTTPDataClient
      * OK return code.
      */
     private static final int HTTP_OK = 200;
+
+    /**
+     * Found return code.
+     */
+    private static final int HTTP_FOUND = 302;
 
     /**
      * The Base address for the client.
@@ -103,26 +109,23 @@ public abstract class MetisHTTPDataClient
      * @param pBaseAddress the base address for the client.
      */
     protected MetisHTTPDataClient(final String pBaseAddress) {
-        this(pBaseAddress, null);
+        this(pBaseAddress, MetisHTTPAuthType.NONE, null);
     }
 
     /**
      * Constructor.
      * @param pBaseAddress the base address for the client.
+     * @param pAuthType the authorisation type
      * @param pAuth the authorisation string
      */
     protected MetisHTTPDataClient(final String pBaseAddress,
+                                  final MetisHTTPAuthType pAuthType,
                                   final String pAuth) {
         theBaseAddress = pBaseAddress;
         theClient = HttpClients.createDefault();
 
-        /* If we have an authorisation string */
-        if (pAuth != null) {
-            final byte[] myBytes = TethysDataConverter.stringToByteArray(pAuth);
-            theAuth = HEADER_AUTH_BASIC + TethysDataConverter.byteArrayToBase64(myBytes);
-        } else {
-            theAuth = null;
-        }
+        /* Determine the authorisation string */
+        theAuth = pAuthType.getAuthString(pAuth);
     }
 
     /**
@@ -145,6 +148,23 @@ public abstract class MetisHTTPDataClient
     protected JSONArray getAbsoluteJSONArray(final String pURL) throws OceanusException {
         final JSONTokener myTokener = performJSONQuery(pURL);
         return new JSONArray(myTokener);
+    }
+
+    /**
+     * Post a request.
+     * @param pHeader the header string
+     * @param pRequest the request
+     * @return the resulting object
+     * @throws OceanusException on error
+     */
+    protected JSONObject postRequest(final String pHeader,
+                                     final JSONObject pRequest) throws OceanusException {
+        /* Build the correct URL */
+        final String myURL = buildURL(pHeader, null, null);
+
+        /* Post the request */
+        final JSONTokener myTokener = performJSONPost(myURL, pRequest);
+        return new JSONObject(myTokener);
     }
 
     /**
@@ -360,8 +380,100 @@ public abstract class MetisHTTPDataClient
         }
     }
 
+    /**
+     * Obtain query results as JSON object.
+     * @param pURL the location to be posted to
+     * @param pRequest the details of the post
+     * @return the resulting object
+     * @throws OceanusException on error
+     */
+    private JSONTokener performJSONPost(final String pURL,
+                                        final JSONObject pRequest) throws OceanusException {
+        /* Create the post request */
+        final HttpPost myPost = new HttpPost(pURL);
+
+        /* Build header */
+        myPost.addHeader(HEADER_AUTH, theAuth);
+
+        /* Convert JSONObject to Name/Value Pairs */
+        final List<NameValuePair> myRequest = new ArrayList<>();
+        for (String myKey : pRequest.keySet()) {
+            myRequest.add(new BasicNameValuePair(myKey, pRequest.getString(myKey)));
+        }
+
+        /* Build the content */
+        EntityBuilder myBuilder = EntityBuilder.create();
+        myBuilder.setParameters(myRequest);
+        myPost.setEntity(myBuilder.build());
+
+        /* Protect against exceptions */
+        try (CloseableHttpResponse myResponse = theClient.execute(myPost)) {
+            /* Access the entity */
+            final StatusLine myStatusLine = myResponse.getStatusLine();
+
+            /* If we were successful */
+            if (myStatusLine.getStatusCode() == HTTP_FOUND) {
+                /* Access the response as a JSON Object */
+                final HttpEntity myEntity = myResponse.getEntity();
+
+                /* Parse into string to prevent timeouts */
+                final String myRes = EntityUtils.toString(myEntity);
+
+                /* Extract URL of new object and query it */
+                final int myBase = myRes.indexOf(theBaseAddress);
+                final int myEnd = myRes.indexOf("/;");
+                return performJSONQuery(myRes.substring(myBase, myEnd));
+            }
+
+            /* Notify of failure */
+            throw new MetisDataException(myStatusLine, HTTPERROR_QUERY);
+
+            /* Catch exceptions */
+        } catch (IOException e) {
+            throw new MetisIOException(HTTPERROR_QUERY, e);
+        }
+    }
+
     @Override
     public void close() throws IOException {
         theClient.close();
+    }
+
+    /**
+     * AuthorizationType.
+     */
+    public enum MetisHTTPAuthType {
+        /**
+         * None.
+         */
+        NONE,
+
+        /**
+         * Basic.
+         */
+        BASIC,
+
+        /**
+         * Bearer.
+         */
+        BEARER;
+
+        /**
+         * Build authString.
+         * @param pSecret the secret
+         * @return the authString
+         */
+        String getAuthString(final String pSecret) {
+            switch (this) {
+                case BASIC:
+                    final byte[] myBytes = TethysDataConverter.stringToByteArray(pSecret);
+                    return "Basic " + TethysDataConverter.byteArrayToBase64(myBytes);
+                case BEARER:
+                    return "Bearer " + pSecret;
+                case NONE:
+                default:
+                    return null;
+            }
+        }
     }
 }
