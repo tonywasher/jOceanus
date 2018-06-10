@@ -30,7 +30,7 @@ import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraNamedDesc
  * Jira REST Client.
  * @author Tony Washer
  */
-public class ThemisHTTPJiraClient
+public class ThemisJiraClient
         extends MetisHTTPDataClient {
     /**
      * Server location.
@@ -83,7 +83,7 @@ public class ThemisHTTPJiraClient
      * @param pAuth the authorisation string
      * @throws OceanusException on error
      */
-    public ThemisHTTPJiraClient(final String pWebLoc,
+    public ThemisJiraClient(final String pWebLoc,
                                 final String pAuth) throws OceanusException {
         /* Initialise underlying class */
         super(pWebLoc + JIRA_WEBLOC, MetisHTTPAuthType.BASIC, pAuth);

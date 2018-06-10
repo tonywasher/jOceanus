@@ -30,9 +30,9 @@ public interface ThemisSfPreference {
      */
     enum ThemisSfPreferenceKey implements MetisPreferenceKey {
         /**
-         * SourceForge Project.
+         * SourceForge User.
          */
-        PROJECT("Project", "Project Name"),
+        USER("User", "User Name"),
 
         /**
          * SourceForge TicketSet.
@@ -92,7 +92,7 @@ public interface ThemisSfPreference {
 
         @Override
         protected void definePreferences() {
-            defineStringPreference(ThemisSfPreferenceKey.PROJECT);
+            defineStringPreference(ThemisSfPreferenceKey.USER);
             defineStringPreference(ThemisSfPreferenceKey.TICKETSET);
             defineStringPreference(ThemisSfPreferenceKey.BEARER);
         }
@@ -100,9 +100,9 @@ public interface ThemisSfPreference {
         @Override
         public void autoCorrectPreferences() {
             /* Make sure that the project is specified */
-            MetisStringPreference<ThemisSfPreferenceKey> myPref = getStringPreference(ThemisSfPreferenceKey.PROJECT);
+            MetisStringPreference<ThemisSfPreferenceKey> myPref = getStringPreference(ThemisSfPreferenceKey.USER);
             if (!myPref.isAvailable()) {
-                myPref.setValue("joceanus");
+                myPref.setValue("User");
             }
 
             /* Make sure that the ticketSet is specified */

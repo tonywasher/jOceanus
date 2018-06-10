@@ -92,17 +92,17 @@ public class ThemisJiraShortIssue
         try {
             /* Access fields */
             final JSONObject myFields = pIssue.getJSONObject("fields");
-            theSummary = myFields.getString(ThemisHTTPJiraClient.JIRANAME_SUMMARY);
+            theSummary = myFields.getString(ThemisJiraClient.JIRANAME_SUMMARY);
             theDesc = myFields.optString(JiraNamedDescIdObject.FIELD_DESC, null);
 
             /* Determine Status etc */
-            JSONObject myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_ISSUETYPE);
+            JSONObject myObject = myFields.getJSONObject(ThemisJiraClient.JIRANAME_ISSUETYPE);
             theIssueType = theServer.getIssueType(myObject.getString(JiraIssueType.FIELD_NAME));
-            myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_STATUS);
+            myObject = myFields.getJSONObject(ThemisJiraClient.JIRANAME_STATUS);
             theStatus = theServer.getStatus(myObject.getString(JiraStatus.FIELD_NAME));
-            myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_PRIORITY);
+            myObject = myFields.getJSONObject(ThemisJiraClient.JIRANAME_PRIORITY);
             thePriority = theServer.getPriority(myObject.getString(JiraStatus.FIELD_NAME));
-            myObject = myFields.optJSONObject(ThemisHTTPJiraClient.JIRANAME_RESOLUTION);
+            myObject = myFields.optJSONObject(ThemisJiraClient.JIRANAME_RESOLUTION);
             theResolution = myObject == null
                                              ? null
                                              : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));

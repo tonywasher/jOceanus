@@ -31,63 +31,17 @@ import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraProject.JiraComponen
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraProject.JiraVersion;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraSecurity.JiraUser;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraIssueLinkType;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraIssueType;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraKeyedIdObject;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraNamedDescIdObject;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraPriority;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraResolution;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer.JiraStatus;
 
 /**
  * Represents a Jira issue.
  * @author Tony Washer
  */
 public class ThemisJiraIssue
-        extends JiraKeyedIdObject {
-    /**
-     * Server.
-     */
-    private final ThemisJiraServer theServer;
-
-    /**
-     * Project of Issue.
-     */
-    private final ThemisJiraProject theProject;
-
+        extends ThemisJiraShortIssue {
     /**
      * Parent of Issue.
      */
     private final JiraIssueReference theParent;
-
-    /**
-     * Summary of Issue.
-     */
-    private final String theSummary;
-
-    /**
-     * Description of Issue.
-     */
-    private final String theDesc;
-
-    /**
-     * Type of Issue.
-     */
-    private final JiraIssueType theIssueType;
-
-    /**
-     * Status of Issue.
-     */
-    private final JiraStatus theStatus;
-
-    /**
-     * Resolution of Issue.
-     */
-    private final JiraResolution theResolution;
-
-    /**
-     * Priority of Issue.
-     */
-    private final JiraPriority thePriority;
 
     /**
      * Assignee of Issue.
@@ -162,52 +116,35 @@ public class ThemisJiraIssue
     /**
      * Constructor.
      * @param pServer the server
+     * @param pProject the project
      * @param pIssue the underlying issue
      * @throws OceanusException on error
      */
     protected ThemisJiraIssue(final ThemisJiraServer pServer,
+                              final ThemisJiraProject pProject,
                               final JSONObject pIssue) throws OceanusException {
         /* Store parameters */
-        super(pIssue);
-        theServer = pServer;
+        super(pServer, pProject, pIssue);
 
         /* Protect against exceptions */
         try {
             /* Access fields */
             final JSONObject myFields = pIssue.getJSONObject("fields");
-            theSummary = myFields.getString(ThemisHTTPJiraClient.JIRANAME_SUMMARY);
-            theDesc = myFields.optString(JiraNamedDescIdObject.FIELD_DESC, null);
             theEnvironment = myFields.optString("environment", null);
             theCreated = ThemisJiraServer.parseJiraDateTime(myFields.getString("created"));
             theDueDate = ThemisJiraServer.parseJiraDateTime(myFields.optString("duedate", null));
             theUpdated = ThemisJiraServer.parseJiraDateTime(myFields.getString("updated"));
             theResolved = ThemisJiraServer.parseJiraDateTime(myFields.optString("resolutiondate", null));
 
-            /* Determine the project */
-            JSONObject myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_PROJECT);
-            theProject = theServer.getProject(myObject.getString(ThemisJiraProject.FIELD_KEY));
-
-            /* Determine Status etc */
-            myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_ISSUETYPE);
-            theIssueType = theServer.getIssueType(myObject.getString(JiraIssueType.FIELD_NAME));
-            myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_STATUS);
-            theStatus = theServer.getStatus(myObject.getString(JiraStatus.FIELD_NAME));
-            myObject = myFields.getJSONObject(ThemisHTTPJiraClient.JIRANAME_PRIORITY);
-            thePriority = theServer.getPriority(myObject.getString(JiraStatus.FIELD_NAME));
-            myObject = myFields.optJSONObject(ThemisHTTPJiraClient.JIRANAME_RESOLUTION);
-            theResolution = myObject == null
-                                             ? null
-                                             : theServer.getResolution(myObject.getString(JiraResolution.FIELD_NAME));
-
             /* Determine the assignee and reporter */
-            myObject = myFields.getJSONObject("creator");
-            theCreator = theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
+            JSONObject myObject = myFields.getJSONObject("creator");
+            theCreator = getServer().getUser(myObject.getString(JiraUser.FIELD_NAME));
             myObject = myFields.getJSONObject("reporter");
-            theReporter = theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
+            theReporter = getServer().getUser(myObject.getString(JiraUser.FIELD_NAME));
             myObject = myFields.optJSONObject("assignee");
             theAssignee = myObject == null
                                            ? null
-                                           : theServer.getUser(myObject.getString(JiraUser.FIELD_NAME));
+                                           : getServer().getUser(myObject.getString(JiraUser.FIELD_NAME));
 
             /* Create the lists */
             theIssueLinks = new ArrayList<>();
@@ -248,7 +185,7 @@ public class ThemisJiraIssue
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
                 final JSONObject myCompDtl = myArray.getJSONObject(i);
-                final JiraComponent myComp = theProject.getComponent(myCompDtl.getString(JiraComponent.FIELD_NAME));
+                final JiraComponent myComp = getProject().getComponent(myCompDtl.getString(JiraComponent.FIELD_NAME));
                 theComponents.add(myComp);
             }
 
@@ -257,7 +194,7 @@ public class ThemisJiraIssue
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
                 final JSONObject myVersDtl = myArray.getJSONObject(i);
-                final JiraVersion myVers = theProject.getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
+                final JiraVersion myVers = getProject().getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
                 theAffectsVers.add(myVers);
             }
 
@@ -266,12 +203,12 @@ public class ThemisJiraIssue
             iNumEntries = myArray.length();
             for (int i = 0; i < iNumEntries; i++) {
                 final JSONObject myVersDtl = myArray.getJSONObject(i);
-                final JiraVersion myVers = theProject.getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
+                final JiraVersion myVers = getProject().getVersion(myVersDtl.getString(JiraVersion.FIELD_NAME));
                 theFixVers.add(myVers);
             }
 
             /* Resolve parent */
-            if (theIssueType.isSubTask()) {
+            if (getIssueType().isSubTask()) {
                 final JSONObject myParDtl = myFields.getJSONObject("parent");
                 theParent = new JiraIssueReference(myParDtl.getString(FIELD_KEY));
             } else {
@@ -285,43 +222,11 @@ public class ThemisJiraIssue
     }
 
     /**
-     * Get the server.
-     * @return the server
-     */
-    ThemisJiraServer getServer() {
-        return theServer;
-    }
-
-    /**
-     * Get the summary.
-     * @return the summary
-     */
-    public String getSummary() {
-        return theSummary;
-    }
-
-    /**
-     * Get the description of the issue.
-     * @return the description
-     */
-    public String getDesc() {
-        return theDesc;
-    }
-
-    /**
      * Get the environment of the issue.
      * @return the environment
      */
     public String getEnvironment() {
         return theEnvironment;
-    }
-
-    /**
-     * Get the project of the issue.
-     * @return the project
-     */
-    public ThemisJiraProject getProject() {
-        return theProject;
     }
 
     /**
@@ -333,38 +238,6 @@ public class ThemisJiraIssue
         return theParent == null
                                  ? null
                                  : theParent.getIssue();
-    }
-
-    /**
-     * Get the issue type of the issue.
-     * @return the issue type
-     */
-    public JiraIssueType getIssueType() {
-        return theIssueType;
-    }
-
-    /**
-     * Get the status of the issue.
-     * @return the status
-     */
-    public JiraStatus getStatus() {
-        return theStatus;
-    }
-
-    /**
-     * Get the resolution of the issue.
-     * @return the resolution
-     */
-    public JiraResolution getResolution() {
-        return theResolution;
-    }
-
-    /**
-     * Get the priority of the issue.
-     * @return the priority
-     */
-    public JiraPriority getPriority() {
-        return thePriority;
     }
 
     /**

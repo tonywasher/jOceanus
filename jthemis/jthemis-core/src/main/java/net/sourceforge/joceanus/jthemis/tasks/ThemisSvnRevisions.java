@@ -19,9 +19,13 @@ package net.sourceforge.joceanus.jthemis.tasks;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfTicket;
 import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract.ThemisSvnBranchExtractPlan;
 import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract.ThemisSvnExtractPlan;
@@ -34,7 +38,8 @@ import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract.ThemisSvnTagExtra
  * This is used to parse the comments to extract and remove the Jira reference in preparation for
  * migration to SourceForge tickets
  */
-public class ThemisSvnRevisions {
+public class ThemisSvnRevisions
+        implements MetisFieldItem {
     /**
      * Issue prefix.
      */
@@ -61,7 +66,20 @@ public class ThemisSvnRevisions {
     static final String STR_NEWLINE = "\n";
 
     /**
-     * The map of revision to comment.
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSvnRevisions> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnRevisions.class);
+
+    /**
+     * Repository field id.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.GIT_REVISIONMAP, ThemisSvnRevisions::getRevisionMap);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_KEYMAP, ThemisSvnRevisions::getKeyMap);
+    }
+
+    /**
+     * The map of revision# to revision.
      */
     private final Map<Long, ThemisSvnRevision> theRevisionMap;
 
@@ -77,19 +95,44 @@ public class ThemisSvnRevisions {
     public ThemisSvnRevisions(final ThemisSvnExtract pExtract) {
         /* Create the hashMaps */
         theRevisionMap = new HashMap<>();
-        theKeyMap = new HashMap<>();
+        theKeyMap = new LinkedHashMap<>();
 
         /* Process the extractPlans */
         processPlans(pExtract);
     }
 
+    @Override
+    public MetisFieldSet<ThemisSvnRevisions> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String toString() {
+        return FIELD_DEFS.getName();
+    }
+
     /**
-     * Is issue referenced?
-     * @param pIssueKey the issueKey
-     * @return true/false
+     * Obtain the revision map.
+     * @return the revision map
      */
-    public boolean isIssueReferenced(final String pIssueKey) {
-        return theKeyMap.containsKey(pIssueKey);
+    private Map<Long, ThemisSvnRevision> getRevisionMap() {
+        return theRevisionMap;
+    }
+
+    /**
+     * Obtain the key map.
+     * @return the key map
+     */
+    private Map<String, List<ThemisSvnRevision>> getKeyMap() {
+        return theKeyMap;
+    }
+
+    /**
+     * Obtain the keyIterator.
+     * @return the key iterator
+     */
+    public Iterator<String> keyIterator() {
+        return theKeyMap.keySet().iterator();
     }
 
     /**
@@ -174,13 +217,47 @@ public class ThemisSvnRevisions {
         final String myComment = pView.getLogMessage().trim();
 
         /* Update the revision map */
-        theRevisionMap.computeIfAbsent(myRevision, r -> new ThemisSvnRevision(r, myComment));
+        theRevisionMap.computeIfAbsent(myRevision, r -> new ThemisSvnRevision(this, r, myComment));
+    }
+
+    /**
+     * Register the issue to the revision.
+     * @param pIssue the issue
+     * @param pRevision the revision
+     */
+    void registerIssue(final String pIssue,
+                       final ThemisSvnRevision pRevision) {
+        /* Add this revision to the list of revisions referred to by the issue */
+        final List<ThemisSvnRevision> myList = theKeyMap.computeIfAbsent(pIssue, i -> new ArrayList<>());
+        myList.add(pRevision);
     }
 
     /**
      * The revision.
      */
-    private class ThemisSvnRevision {
+    private static class ThemisSvnRevision
+            implements MetisFieldItem {
+        /**
+         * Report fields.
+         */
+        private static final MetisFieldSet<ThemisSvnRevision> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSvnRevision.class);
+
+        /**
+         * Repository field id.
+         */
+        static {
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_LOGMSG, ThemisSvnRevision::getOriginal);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISION, ThemisSvnRevision::getRevision);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_ISSUES, ThemisSvnRevision::getJiraIssues);
+            FIELD_DEFS.declareLocalField(ThemisResource.TICKETSET_TICKETS, ThemisSvnRevision::getSfTickets);
+            FIELD_DEFS.declareLocalField(ThemisResource.SVN_COMMENT, ThemisSvnRevision::getComment);
+        }
+
+        /**
+         * The revisionsSet.
+         */
+        private final ThemisSvnRevisions theRevisions;
+
         /**
          * The original comment.
          */
@@ -208,12 +285,15 @@ public class ThemisSvnRevisions {
 
         /**
          * Constructor.
+         * @param pRevisions the revisionSet
          * @param pRevision the revision
          * @param pComment the log comment
          */
-        ThemisSvnRevision(final Long pRevision,
+        ThemisSvnRevision(final ThemisSvnRevisions pRevisions,
+                          final Long pRevision,
                           final String pComment) {
             /* Store values */
+            theRevisions = pRevisions;
             theOriginal = pComment.trim();
             theComment = theOriginal;
             theRevision = pRevision;
@@ -226,6 +306,11 @@ public class ThemisSvnRevisions {
             processIssueNo();
             processBugId();
             processWorking();
+        }
+
+        @Override
+        public MetisFieldSet<ThemisSvnRevision> getDataFieldSet() {
+            return FIELD_DEFS;
         }
 
         @Override
@@ -245,6 +330,38 @@ public class ThemisSvnRevisions {
          */
         private void registerTicket(final ThemisSfTicket pTicket) {
             theSfTickets.add(pTicket);
+        }
+
+        /**
+         * Obtain the original.
+         * @return the original
+         */
+        private String getOriginal() {
+            return theOriginal;
+        }
+
+        /**
+         * Obtain the revision.
+         * @return the revision
+         */
+        private Long getRevision() {
+            return theRevision;
+        }
+
+        /**
+         * Obtain the list of jiraIssues.
+         * @return the issues
+         */
+        private List<String> getJiraIssues() {
+            return theJiraIssues;
+        }
+
+        /**
+         * Obtain the list of sourceForge tickets.
+         * @return the issues
+         */
+        private List<ThemisSfTicket> getSfTickets() {
+            return theSfTickets;
         }
 
         /**
@@ -352,8 +469,7 @@ public class ThemisSvnRevisions {
                 theJiraIssues.add(pIssue);
 
                 /* Add this revision to the list of revisions referred to by the issue */
-                final List<ThemisSvnRevision> myList = theKeyMap.computeIfAbsent(pIssue, i -> new ArrayList<>());
-                myList.add(this);
+                theRevisions.registerIssue(pIssue, this);
             }
         }
     }

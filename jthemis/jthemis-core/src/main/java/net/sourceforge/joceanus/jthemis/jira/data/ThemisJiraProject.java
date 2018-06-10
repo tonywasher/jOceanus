@@ -56,7 +56,7 @@ public class ThemisJiraProject
     /**
      * The client.
      */
-    private final ThemisHTTPJiraClient theClient;
+    private final ThemisJiraClient theClient;
 
     /**
      * Description of Project.
@@ -266,7 +266,7 @@ public class ThemisJiraProject
 
             /* Obtain the issue and register it */
             final JSONObject myIssueDtl = theClient.getIssue(pKey);
-            myIssue = new ThemisJiraIssue(theServer, myIssueDtl);
+            myIssue = new ThemisJiraIssue(theServer, this, myIssueDtl);
             theIssues.put(pKey, myIssue);
         }
 

@@ -38,7 +38,7 @@ public class ThemisJiraSecurity {
     /**
      * HTTP Client.
      */
-    private final ThemisHTTPJiraClient theClient;
+    private final ThemisJiraClient theClient;
 
     /**
      * Users.
@@ -67,7 +67,7 @@ public class ThemisJiraSecurity {
      * Get the client.
      * @return the client
      */
-    ThemisHTTPJiraClient getClient() {
+    ThemisJiraClient getClient() {
         return theClient;
     }
 

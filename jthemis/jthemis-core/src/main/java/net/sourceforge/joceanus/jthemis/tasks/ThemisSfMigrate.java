@@ -20,14 +20,14 @@ import java.util.Iterator;
 
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
 import net.sourceforge.joceanus.jtethys.OceanusException;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraProject;
+import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraIssue;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraServer;
-import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraShortIssue;
+import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfProject;
 import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfServer;
 import net.sourceforge.joceanus.jthemis.sf.data.ThemisSfTicket;
 
 /**
- * Migrate Jira Issues to Sourceforge.
+ * Migrate Jira Issues to SourceForge.
  */
 public final class ThemisSfMigrate {
     /**
@@ -49,23 +49,22 @@ public final class ThemisSfMigrate {
 
         /* Create the SourceForge Client */
         final ThemisSfServer mySf = new ThemisSfServer(pPreferences);
+        final ThemisSfProject myProject = mySf.getProject(pExtract.getName());
 
         /* Create the Jira Client and obtain the list of issues */
         final ThemisJiraServer myJira = new ThemisJiraServer(pPreferences);
-        final ThemisJiraProject myProject = myJira.getProject("FIN");
 
         /* Loop through the issues */
-        final Iterator<ThemisJiraShortIssue> myIterator = myProject.issueSummariesIterator();
+        final Iterator<String> myIterator = myRevisions.keyIterator();
         while (myIterator.hasNext()) {
-            final ThemisJiraShortIssue myIssue = myIterator.next();
+            final String myKey = myIterator.next();
 
-            /* If the issue is open or referenced */
-            if ("OPEN".equals(myIssue.getStatus().getName())
-                || myRevisions.isIssueReferenced(myIssue.getKey())) {
-                /* Access or create the sourceForge revision */
-                final ThemisSfTicket myTicket = mySf.matchTicket(myIssue);
-                myRevisions.registerTicket(myIssue.getKey(), myTicket);
-            }
+            /* Access the issue */
+            final ThemisJiraIssue myIssue = myJira.getIssue(myKey);
+
+            /* Access or create the sourceForge ticket */
+            final ThemisSfTicket myTicket = mySf.matchTicket(myProject, myIssue);
+            myRevisions.registerTicket(myKey, myTicket);
         }
     }
 }

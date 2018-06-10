@@ -23,12 +23,35 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
  * Sourceforge Ticket.
  */
-public class ThemisSfTicket {
+public class ThemisSfTicket
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSfTicket> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSfTicket.class);
+
+    /**
+     * Repository field id.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSfTicket::getTicketSet);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_ID, ThemisSfTicket::getNumber);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_SUMMARY, ThemisSfTicket::getSummary);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_DESC, ThemisSfTicket::getDescription);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_LABELS, ThemisSfTicket::getLabels);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_STATUS, ThemisSfTicket::getStatus);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_REPORTEDBY, ThemisSfTicket::getReportedBy);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKET_ASSIGNEDTO, ThemisSfTicket::getAssignedTo);
+    }
+
     /**
      * The ticketSet.
      */
@@ -96,14 +119,32 @@ public class ThemisSfTicket {
         theLabels = new ArrayList<>();
 
         /* Access optional details */
-        theDesc = pDetails.optString("description");
-        theStatus = pDetails.optString("status");
-        theReportedBy = pDetails.optString("reported_by");
-        theAssignedTo = pDetails.optString("assigned_to");
+        theDesc = pDetails.optString("description", null);
+        theStatus = pDetails.optString("status", null);
+        theReportedBy = pDetails.optString("reported_by", null);
+        theAssignedTo = pDetails.optString("assigned_to", null);
         theDiscussionURL = getDiscussionURL(pDetails);
 
         /* Process the labels */
         processLabels(pDetails);
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSfTicket> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String toString() {
+        /* Build the ticket# */
+        final StringBuilder myBuilder = new StringBuilder();
+        if (!theTicketSet.isSingleton()) {
+            myBuilder.append(theTicketSet.getName());
+            myBuilder.append(":");
+        }
+        myBuilder.append("#");
+        myBuilder.append(theTicketNo);
+        return myBuilder.toString();
     }
 
     /**
@@ -179,6 +220,14 @@ public class ThemisSfTicket {
     }
 
     /**
+     * Obtain the labels.
+     * @return the labels
+     */
+    private List<String> getLabels() {
+        return theLabels;
+    }
+
+    /**
      * Obtain the label iterator.
      * @return the iterator
      */
@@ -202,11 +251,12 @@ public class ThemisSfTicket {
     public String getReference() {
         /* Build the reference */
         final StringBuilder myBuilder = new StringBuilder();
-        myBuilder.append("[#");
+        myBuilder.append("[");
         if (!theTicketSet.isSingleton()) {
             myBuilder.append(theTicketSet.getName());
             myBuilder.append(":");
         }
+        myBuilder.append("#");
         myBuilder.append(theTicketNo);
         myBuilder.append("]");
         return myBuilder.toString();
@@ -217,7 +267,7 @@ public class ThemisSfTicket {
      * @param pClient the client
      * @throws OceanusException on error
      */
-    protected void discoverDetails(final ThemisHTTPSfClient pClient) throws OceanusException {
+    protected void discoverDetails(final ThemisSfClient pClient) throws OceanusException {
         /* Access the ticket */
         final JSONObject myDetails = pClient.getTicket(this);
         final JSONObject myTicket = myDetails.getJSONObject("ticket");
@@ -228,6 +278,14 @@ public class ThemisSfTicket {
         theReportedBy = myTicket.getString("reported_by");
         theAssignedTo = myTicket.optString("assigned_to");
         theDiscussionURL = getDiscussionURL(myTicket);
+
+        /* Null some fields out if they are blank */
+        if (theDesc.length() == 0) {
+            theDesc = null;
+        }
+        if (theAssignedTo.length() == 0) {
+            theAssignedTo = null;
+        }
 
         /* Process the labels */
         processLabels(myTicket);

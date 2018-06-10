@@ -25,31 +25,41 @@ import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraShortIssue;
 /**
  * HTTP Client for Sourceforge.
  */
-public class ThemisHTTPSfClient
+public class ThemisSfClient
         extends MetisHTTPDataClient {
     /**
      * Server location.
      */
-    private static final String SF_WEBLOC = "https://sourceforge.net/rest/";
+    private static final String SF_WEBLOC = "https://sourceforge.net/rest";
 
     /**
      * Constructor.
      * @param pAuth the authorisation string
      * @throws OceanusException on error
      */
-    public ThemisHTTPSfClient(final String pAuth) throws OceanusException {
+    public ThemisSfClient(final String pAuth) throws OceanusException {
         /* Initialise underlying class */
         super(SF_WEBLOC, MetisHTTPAuthType.BEARER, pAuth);
     }
 
     /**
-     * Obtain project details.
-     * @param pName the name of the project
+     * Obtain user details.
+     * @param pName the userName
      * @return the details
      * @throws OceanusException on error
      */
-    public JSONObject getProject(final String pName) throws OceanusException {
-        return getJSONObject("p/" + pName);
+    public JSONObject getUser(final String pName) throws OceanusException {
+        return getJSONObject("/u/" + pName + "/profile");
+    }
+
+    /**
+     * Obtain project details.
+     * @param pProject the project
+     * @return the details
+     * @throws OceanusException on error
+     */
+    public JSONObject getProject(final ThemisSfProject pProject) throws OceanusException {
+        return getJSONObject(pProject.getURL());
     }
 
     /**

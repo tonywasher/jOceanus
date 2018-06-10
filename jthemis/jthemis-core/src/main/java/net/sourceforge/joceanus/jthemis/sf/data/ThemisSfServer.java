@@ -29,17 +29,17 @@ public class ThemisSfServer {
     /**
      * The Http Client.
      */
-    private final ThemisHTTPSfClient theClient;
+    private final ThemisSfClient theClient;
 
     /**
-     * The SourceForge project.
+     * The SourceForge user.
      */
-    private final ThemisSfProject theProject;
+    private final ThemisSfUser theUser;
 
     /**
-     * The SourceForge ticketSet.
+     * The TicketSet.
      */
-    private final ThemisSfTicketSet theTicketSet;
+    private final String theTicketSet;
 
     /**
      * Constructor.
@@ -49,28 +49,56 @@ public class ThemisSfServer {
     public ThemisSfServer(final MetisPreferenceManager pManager) throws OceanusException {
         /* Access the SourceForge preferences */
         final ThemisSfPreferences myPreferences = pManager.getPreferenceSet(ThemisSfPreferences.class);
-        final String myProject = myPreferences.getStringValue(ThemisSfPreferenceKey.PROJECT);
-        final String myTicketSet = myPreferences.getStringValue(ThemisSfPreferenceKey.TICKETSET);
+        final String myUser = myPreferences.getStringValue(ThemisSfPreferenceKey.USER);
         final String myBearer = myPreferences.getStringValue(ThemisSfPreferenceKey.BEARER);
+        theTicketSet = myPreferences.getStringValue(ThemisSfPreferenceKey.TICKETSET);
 
         /* Access the SourceForge Client */
-        theClient = new ThemisHTTPSfClient(myBearer);
+        theClient = new ThemisSfClient(myBearer);
 
-        /* Access the project */
-        theProject = new ThemisSfProject(theClient.getProject(myProject));
-        theProject.discoverDetails(theClient);
+        /* Access the user */
+        theUser = new ThemisSfUser(theClient.getUser(myUser));
+        theUser.discoverDetails(theClient);
+    }
 
-        /* Access the ticketSet */
-        theTicketSet = theProject.getTicketSet(myTicketSet);
+    /**
+     * Obtain the named project (ignoring case).
+     * @param pName the project name
+     * @return the project
+     */
+    public ThemisSfProject getProject(final String pName) {
+        return theUser.getProject(pName);
+    }
+
+    /**
+     * Obtain the ticketSet for the project.
+     * @param pProject the project
+     * @return the active TicketSet
+     */
+    private ThemisSfTicketSet getTicketSet(final ThemisSfProject pProject) {
+        return pProject.getTicketSet(theTicketSet);
+    }
+
+    /**
+     * Obtain/Create the matching ticket.
+     * @param pProject the project
+     * @param pIssue the jiraIssue
+     * @return the matching sourceForge ticket (created if it did not exist)
+     * @throws OceanusException on error
+     */
+    public ThemisSfTicket matchTicket(final ThemisSfProject pProject,
+                                      final ThemisJiraShortIssue pIssue) throws OceanusException {
+        return getTicketSet(pProject).matchTicket(theClient, pIssue);
     }
 
     /**
      * Obtain the matching ticket.
+     * @param pProject the project
      * @param pIssue the jiraIssue
-     * @return the matching sourceForge ticket
-     * @throws OceanusException on error
+     * @return the matching sourceForge ticket (or null)
      */
-    public ThemisSfTicket matchTicket(final ThemisJiraShortIssue pIssue) throws OceanusException {
-        return theTicketSet.matchTicket(theClient, pIssue);
+    public ThemisSfTicket obtainMatchingTicket(final ThemisSfProject pProject,
+                                               final ThemisJiraShortIssue pIssue) {
+        return getTicketSet(pProject).obtainMatchingTicket(pIssue.getKey());
     }
 }

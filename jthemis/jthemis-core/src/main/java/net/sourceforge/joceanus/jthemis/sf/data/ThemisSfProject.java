@@ -23,16 +23,36 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 
 /**
  * SourceForge Project.
  */
-public class ThemisSfProject {
+public class ThemisSfProject
+        implements MetisFieldItem {
     /**
-     * The id of the project.
+     * Report fields.
      */
-    private final String theId;
+    private static final MetisFieldSet<ThemisSfProject> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSfProject.class);
+
+    /**
+     * Repository field id.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSfProject::getOwner);
+        FIELD_DEFS.declareLocalField(ThemisResource.PROJECT_NAME, ThemisSfProject::getName);
+        FIELD_DEFS.declareLocalField(ThemisResource.PROJECT_SUMMARY, ThemisSfProject::getSummary);
+        FIELD_DEFS.declareLocalField(ThemisResource.PROJECT_DESC, ThemisSfProject::getDescription);
+        FIELD_DEFS.declareLocalField(ThemisResource.PROJECT_TICKETSETS, ThemisSfProject::getTicketSets);
+    }
+
+    /**
+     * The owner of the project.
+     */
+    private final ThemisSfUser theOwner;
 
     /**
      * The name of the project.
@@ -40,24 +60,24 @@ public class ThemisSfProject {
     private final String theName;
 
     /**
-     * The short name of the project.
-     */
-    private final String theShortName;
-
-    /**
      * The summary of the project.
      */
     private final String theSummary;
 
     /**
-     * The description of the project.
-     */
-    private final String theDesc;
-
-    /**
      * The URL of the project.
      */
     private final String theURL;
+
+    /**
+     * The description of the project.
+     */
+    private String theDesc;
+
+    /**
+     * The id of the project.
+     */
+    private String theId;
 
     /**
      * The List of TicketSets.
@@ -66,32 +86,39 @@ public class ThemisSfProject {
 
     /**
      * Constructor.
+     * @param pOwner the owner
      * @param pDetails the project details
      */
-    public ThemisSfProject(final JSONObject pDetails) {
+    public ThemisSfProject(final ThemisSfUser pOwner,
+                           final JSONObject pDetails) {
+        /* Store parameters */
+        theOwner = pOwner;
+
         /* Access details */
-        theId = pDetails.getString("_id");
         theName = pDetails.getString("name");
-        theShortName = pDetails.getString("shortname");
         theSummary = pDetails.getString("summary");
-        theDesc = pDetails.getString("short_description");
-        theURL = "p/" + theShortName;
+        theURL = pDetails.getString("url");
 
         /* Create the list */
         theTicketSets = new ArrayList<>();
+    }
 
-        /* Access the tools */
-        final JSONArray myTools = pDetails.getJSONArray("tools");
-        final int iNumEntries = myTools.length();
-        for (int i = 0; i < iNumEntries; i++) {
-            /* Only interested in Ticket Tools */
-            final JSONObject myTool = myTools.getJSONObject(i);
-            final String myType = myTool.getString("name");
-            if ("tickets".equals(myType)) {
-                /* Add the ticketSet */
-                theTicketSets.add(new ThemisSfTicketSet(this, myTool));
-            }
-        }
+    @Override
+    public MetisFieldSet<ThemisSfProject> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    /**
+     * Obtain the owner of the project.
+     * @return the id
+     */
+    public ThemisSfUser getOwner() {
+        return theOwner;
     }
 
     /**
@@ -108,14 +135,6 @@ public class ThemisSfProject {
      */
     public String getName() {
         return theName;
-    }
-
-    /**
-     * Obtain the shortName of the project.
-     * @return the name
-     */
-    public String getShortName() {
-        return theShortName;
     }
 
     /**
@@ -139,10 +158,27 @@ public class ThemisSfProject {
      * @param pClient the client
      * @throws OceanusException on error
      */
-    public void discoverDetails(final ThemisHTTPSfClient pClient) throws OceanusException {
-        /* Loop through the ticketSets */
-        for (ThemisSfTicketSet mySet : theTicketSets) {
-            mySet.discoverDetails(pClient);
+    public void discoverDetails(final ThemisSfClient pClient) throws OceanusException {
+        /* Access the ticket */
+        final JSONObject myDetails = pClient.getProject(this);
+
+        /* Update the details */
+        theDesc = myDetails.getString("short_description");
+        theId = myDetails.getString("_id");
+
+        /* Access the tools */
+        final JSONArray myTools = myDetails.getJSONArray("tools");
+        final int iNumEntries = myTools.length();
+        for (int i = 0; i < iNumEntries; i++) {
+            /* Only interested in Ticket Tools */
+            final JSONObject myTool = myTools.getJSONObject(i);
+            final String myType = myTool.getString("name");
+            if ("tickets".equals(myType)) {
+                /* Add the ticketSet */
+                final ThemisSfTicketSet mySet = new ThemisSfTicketSet(this, myTool);
+                mySet.discoverDetails(pClient);
+                theTicketSets.add(mySet);
+            }
         }
     }
 
@@ -152,6 +188,14 @@ public class ThemisSfProject {
      */
     public String getURL() {
         return theURL;
+    }
+
+    /**
+     * Obtain the ticketSets.
+     * @return the ticketSets
+     */
+    private List<ThemisSfTicketSet> getTicketSets() {
+        return theTicketSets;
     }
 
     /**
@@ -170,7 +214,7 @@ public class ThemisSfProject {
     public ThemisSfTicketSet getTicketSet(final String pName) {
         /* Loop through the ticketSets */
         for (ThemisSfTicketSet mySet : theTicketSets) {
-            if (pName.endsWith(mySet.getName())) {
+            if (pName.equals(mySet.getName())) {
                 return mySet;
             }
         }

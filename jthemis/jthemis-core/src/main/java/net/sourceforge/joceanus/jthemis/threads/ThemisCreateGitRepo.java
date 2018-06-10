@@ -26,6 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jthemis.git.data.ThemisGitRepository;
 import net.sourceforge.joceanus.jthemis.svn.data.ThemisSvnComponent;
 import net.sourceforge.joceanus.jthemis.tasks.ThemisGitBuild;
+import net.sourceforge.joceanus.jthemis.tasks.ThemisSfMigrate;
 import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
 
 /**
@@ -78,7 +79,10 @@ public class ThemisCreateGitRepo<N, I>
     public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
         /* Access the thread manager */
         final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+
+        /* Migrate the jiraIssues */
         final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
+        ThemisSfMigrate.migrate(myPreferences, theExtract);
 
         /* Create a new Git repository */
         final ThemisGitBuild myBuild = new ThemisGitBuild(theSource, theExtract);

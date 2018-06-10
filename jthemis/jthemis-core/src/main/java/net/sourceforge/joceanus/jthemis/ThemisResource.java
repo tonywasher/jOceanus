@@ -173,6 +173,16 @@ public enum ThemisResource
     SVN_LOGMSG("svn.logMessage"),
 
     /**
+     * SVN Issues.
+     */
+    SVN_ISSUES("svn.issues"),
+
+    /**
+     * SVN Comment.
+     */
+    SVN_COMMENT("svn.comment"),
+
+    /**
      * SVN Type.
      */
     SVN_TYPE("svn.type"),
@@ -216,6 +226,16 @@ public enum ThemisResource
      * SVN AnchorMap.
      */
     SVN_ANCHORMAP("svn.anchorMap"),
+
+    /**
+     * SVN Revisions.
+     */
+    SVN_REVISIONS("svn.revisions"),
+
+    /**
+     * SVN KeyMap.
+     */
+    SVN_KEYMAP("svn.keyMap"),
 
     /**
      * Git CommitMap.
@@ -278,7 +298,87 @@ public enum ThemisResource
     GIT_CONFLICTS("git.hasConflicts"),
 
     /**
-     * MAVEN Group. ]
+     * Project Name.
+     */
+    USER_USERNAME("user.userName"),
+
+    /**
+     * User Name.
+     */
+    USER_NAME("user.name"),
+
+    /**
+     * User Projects.
+     */
+    USER_PROJECTS("user.projects"),
+
+    /**
+     * Project Name.
+     */
+    PROJECT_NAME(USER_NAME),
+
+    /**
+     * Project Summary.
+     */
+    PROJECT_SUMMARY("project.summary"),
+
+    /**
+     * Project Description.
+     */
+    PROJECT_DESC("project.desc"),
+
+    /**
+     * Project TicketSets.
+     */
+    PROJECT_TICKETSETS("project.ticketSets"),
+
+    /**
+     * TicketSet Name.
+     */
+    TICKETSET_NAME(PROJECT_NAME),
+
+    /**
+     * TicketSet Tickets.
+     */
+    TICKETSET_TICKETS("ticketSet.tickets"),
+
+    /**
+     * Ticket Id.
+     */
+    TICKET_ID("ticket.id"),
+
+    /**
+     * Ticket Summary.
+     */
+    TICKET_SUMMARY(PROJECT_SUMMARY),
+
+    /**
+     * Ticket Description.
+     */
+    TICKET_DESC(PROJECT_DESC),
+
+    /**
+     * Ticket Labels.
+     */
+    TICKET_LABELS("ticket.labels"),
+
+    /**
+     * Ticket Status.
+     */
+    TICKET_STATUS(SVN_STATUS),
+
+    /**
+     * Ticket ReportedBy.
+     */
+    TICKET_REPORTEDBY("ticket.reportedBy"),
+
+    /**
+     * Ticket ReportedBy.
+     */
+    TICKET_ASSIGNEDTO("ticket.assignedTo"),
+
+    /**
+     * MAVEN Group.
      */
     MAVEN_GROUP("maven.group"),
 
@@ -329,6 +429,14 @@ public enum ThemisResource
      */
     ThemisResource(final String pKeyName) {
         theKeyName = pKeyName;
+    }
+
+    /**
+     * Constructor.
+     * @param pSource the source key
+     */
+    ThemisResource(final TethysBundleId pSource) {
+        theKeyName = pSource.getKeyName();
     }
 
     @Override

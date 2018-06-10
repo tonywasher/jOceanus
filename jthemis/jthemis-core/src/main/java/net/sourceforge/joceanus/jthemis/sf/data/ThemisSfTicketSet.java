@@ -23,13 +23,31 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
+import net.sourceforge.joceanus.jmetis.field.MetisFieldSet;
 import net.sourceforge.joceanus.jtethys.OceanusException;
+import net.sourceforge.joceanus.jthemis.ThemisResource;
 import net.sourceforge.joceanus.jthemis.jira.data.ThemisJiraShortIssue;
 
 /**
  * SourceForge TickeSet.
  */
-public class ThemisSfTicketSet {
+public class ThemisSfTicketSet
+        implements MetisFieldItem {
+    /**
+     * Report fields.
+     */
+    private static final MetisFieldSet<ThemisSfTicketSet> FIELD_DEFS = MetisFieldSet.newFieldSet(ThemisSfTicketSet.class);
+
+    /**
+     * Repository field id.
+     */
+    static {
+        FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSfTicketSet::getProject);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKETSET_NAME, ThemisSfTicketSet::getName);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKETSET_TICKETS, ThemisSfTicketSet::getTickets);
+    }
+
     /**
      * The max number of tickets at a time.
      */
@@ -65,10 +83,20 @@ public class ThemisSfTicketSet {
         /* Access details */
         theProject = pProject;
         theName = pDetails.getString("mount_label");
-        theURL = pProject.getURL() + "/" + pDetails.getString("mount_point");
+        theURL = pProject.getURL() + pDetails.getString("mount_point");
 
         /* Create the list */
         theTickets = new ArrayList<>();
+    }
+
+    @Override
+    public MetisFieldSet<ThemisSfTicketSet> getDataFieldSet() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     /**
@@ -96,6 +124,14 @@ public class ThemisSfTicketSet {
     }
 
     /**
+     * Obtain the tickets.
+     * @return the tickets
+     */
+    private List<ThemisSfTicket> getTickets() {
+        return theTickets;
+    }
+
+    /**
      * Obtain the ticket iterator.
      * @return the iterator
      */
@@ -108,7 +144,7 @@ public class ThemisSfTicketSet {
      * @return true/false
      */
     public boolean isSingleton() {
-        return theProject.hasMultiTicketSets();
+        return !theProject.hasMultiTicketSets();
     }
 
     /**
@@ -116,7 +152,7 @@ public class ThemisSfTicketSet {
      * @param pClient the client
      * @throws OceanusException on error
      */
-    protected void discoverDetails(final ThemisHTTPSfClient pClient) throws OceanusException {
+    protected void discoverDetails(final ThemisSfClient pClient) throws OceanusException {
         /* Access the initial ticket query */
         final JSONObject myFirst = pClient.getTicketSet(this, MAX_TICKETS);
         updateDetails(myFirst);
@@ -162,7 +198,7 @@ public class ThemisSfTicketSet {
      * @return the matching sourceForge ticket
      * @throws OceanusException on error
      */
-    public ThemisSfTicket matchTicket(final ThemisHTTPSfClient pClient,
+    public ThemisSfTicket matchTicket(final ThemisSfClient pClient,
                                       final ThemisJiraShortIssue pIssue) throws OceanusException {
         /* Look for a matching ticket and create a new ticket if there is no match */
         final ThemisSfTicket myTicket = obtainMatchingTicket(pIssue.getKey());
@@ -176,7 +212,7 @@ public class ThemisSfTicketSet {
      * @param pLabel the label
      * @return the matching ticket (or null)
      */
-    private ThemisSfTicket obtainMatchingTicket(final String pLabel) {
+    public ThemisSfTicket obtainMatchingTicket(final String pLabel) {
         /* Loop through the tickets */
         final Iterator<ThemisSfTicket> myIterator = theTickets.iterator();
         while (myIterator.hasNext()) {
@@ -197,7 +233,7 @@ public class ThemisSfTicketSet {
      * @return the new ticket
      * @throws OceanusException on error
      */
-    private ThemisSfTicket createTicket(final ThemisHTTPSfClient pClient,
+    private ThemisSfTicket createTicket(final ThemisSfClient pClient,
                                         final ThemisJiraShortIssue pIssue) throws OceanusException {
         /* Create the ticket */
         final JSONObject myDetails = pClient.createTicket(this, pIssue);

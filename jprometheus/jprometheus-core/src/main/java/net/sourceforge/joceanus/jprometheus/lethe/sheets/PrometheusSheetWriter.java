@@ -137,7 +137,8 @@ public abstract class PrometheusSheetWriter<T extends DataSet<T, ?>> {
             /* Write the data to the work book */
             writeWorkBook(myStream);
 
-        } catch (IOException e) {
+        } catch (IOException
+                | OceanusException e) {
             /* Report the error */
             writeFailed = true;
             throw new PrometheusIOException("Failed to create Backup Workbook: " + pFile.getName(), e);

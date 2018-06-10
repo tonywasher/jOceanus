@@ -50,7 +50,7 @@ public final class ThemisJiraServer {
     /**
      * The Http Client.
      */
-    private final ThemisHTTPJiraClient theClient;
+    private final ThemisJiraClient theClient;
 
     /**
      * The Security.
@@ -120,7 +120,7 @@ public final class ThemisJiraServer {
 
         /* Access the Jira Client */
         final String myAuth = myUser + ":" + new String(myPass);
-        theClient = new ThemisHTTPJiraClient(myBaseUrl, myAuth);
+        theClient = new ThemisJiraClient(myBaseUrl, myAuth);
 
         /* Allocate the security class */
         theSecurity = new ThemisJiraSecurity(this);
@@ -142,7 +142,7 @@ public final class ThemisJiraServer {
      * Obtain the client.
      * @return the client
      */
-    ThemisHTTPJiraClient getClient() {
+    ThemisJiraClient getClient() {
         return theClient;
     }
 

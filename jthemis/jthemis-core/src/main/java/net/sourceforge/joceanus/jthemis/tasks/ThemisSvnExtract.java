@@ -78,6 +78,7 @@ public class ThemisSvnExtract
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_BRANCHES, ThemisSvnExtract::getBranches);
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_TAGS, ThemisSvnExtract::getTags);
         FIELD_DEFS.declareLocalField(ThemisResource.SVN_ANCHORMAP, ThemisSvnExtract::getGitAnchorMap);
+        FIELD_DEFS.declareLocalField(ThemisResource.SVN_REVISIONS, ThemisSvnExtract::getSvnRevisions);
     }
 
     /**
