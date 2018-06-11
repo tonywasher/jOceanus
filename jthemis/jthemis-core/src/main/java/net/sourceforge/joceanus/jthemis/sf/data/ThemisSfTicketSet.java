@@ -45,6 +45,7 @@ public class ThemisSfTicketSet
     static {
         FIELD_DEFS.declareLocalField(ThemisResource.SCM_OWNER, ThemisSfTicketSet::getProject);
         FIELD_DEFS.declareLocalField(ThemisResource.TICKETSET_NAME, ThemisSfTicketSet::getName);
+        FIELD_DEFS.declareLocalField(ThemisResource.TICKETSET_MOUNT, ThemisSfTicketSet::getMount);
         FIELD_DEFS.declareLocalField(ThemisResource.TICKETSET_TICKETS, ThemisSfTicketSet::getTickets);
     }
 
@@ -62,6 +63,11 @@ public class ThemisSfTicketSet
      * The name of the ticketSet.
      */
     private final String theName;
+
+    /**
+     * The mount of the ticketSet.
+     */
+    private final String theMount;
 
     /**
      * The URL.
@@ -83,7 +89,8 @@ public class ThemisSfTicketSet
         /* Access details */
         theProject = pProject;
         theName = pDetails.getString("mount_label");
-        theURL = pProject.getURL() + pDetails.getString("mount_point");
+        theMount = pDetails.getString("mount_point");
+        theURL = pProject.getURL() + theMount;
 
         /* Create the list */
         theTickets = new ArrayList<>();
@@ -113,6 +120,14 @@ public class ThemisSfTicketSet
      */
     public String getName() {
         return theName;
+    }
+
+    /**
+     * Obtain the mount of the ticketSet.
+     * @return the mount
+     */
+    public String getMount() {
+        return theMount;
     }
 
     /**

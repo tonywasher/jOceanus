@@ -338,6 +338,11 @@ public enum ThemisResource
     TICKETSET_NAME(PROJECT_NAME),
 
     /**
+     * TicketSet Mount.
+     */
+    TICKETSET_MOUNT("ticketSet.mount"),
+
+    /**
      * TicketSet Tickets.
      */
     TICKETSET_TICKETS("ticketSet.tickets"),

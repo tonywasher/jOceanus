@@ -139,7 +139,7 @@ public class ThemisSfTicket
         /* Build the ticket# */
         final StringBuilder myBuilder = new StringBuilder();
         if (!theTicketSet.isSingleton()) {
-            myBuilder.append(theTicketSet.getName());
+            myBuilder.append(theTicketSet.getMount());
             myBuilder.append(":");
         }
         myBuilder.append("#");
