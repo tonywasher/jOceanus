@@ -36,14 +36,13 @@
     </developer>
   </developers>
   <issueManagement>
-    <system>Jira</system>
-    <url>http://${scmHost}:8080/</url>
+    <system>Sourceforge</system>
+    <url>https://sourceforge.net/p/joceanus/tickets/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://${scmHost}/svn/${scmRepository}/${scmBase}</connection>
-    <developerConnection>scm:svn:https://${scmHost}/svn/${scmRepository}/${scmBase}</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://${scmHost}/viewvc/${scmRepository}/${scmBase}</url>
+    <connection>scm:git:git://sourceforge.net/p/joceanus/git</connection>
+    <developerConnection>scm:git:ssh:sourceforge.net/p/joceanus/git</developerConnection>
+    <url>http://sourceforge.net/p/joceanus/git</url>
   </scm>
   <repositories>
     <repository>
