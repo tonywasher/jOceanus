@@ -45,6 +45,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDS
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAPublicKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSASigner;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSAAsymKey.BouncyDSAValidator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPrivateKey;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDiffieHellmanAsymKey.BouncyDiffieHellmanPublicKey;
@@ -59,6 +62,9 @@ import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.Bou
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncyECValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Signer;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyEllipticAsymKey.BouncySM2Validator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTKeyPairGenerator;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTSigner;
+import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyGOSTAsymKey.BouncyGOSTValidator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceCCA2KeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyMcElieceAsymKey.BouncyMcElieceKeyPairGenerator;
 import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyNewHopeAsymKey.BouncyNewHopeKeyPairGenerator;
@@ -207,6 +213,7 @@ import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
 
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 /**
  * Factory for BouncyCastle Classes.
@@ -386,7 +393,7 @@ public final class BouncyFactory
     }
 
     @Override
-    public BiPredicate<GordianKeyPair, GordianSignatureSpec> supportedSignatures() {
+    public Predicate<GordianSignatureSpec> supportedSignatureSpec() {
         return this::validSignatureSpec;
     }
 
@@ -394,7 +401,7 @@ public final class BouncyFactory
     public GordianSigner createSigner(final GordianKeyPair pKeyPair,
                                       final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
+        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -406,7 +413,7 @@ public final class BouncyFactory
     public GordianValidator createValidator(final GordianKeyPair pKeyPair,
                                             final GordianSignatureSpec pSignatureSpec) throws OceanusException {
         /* Check validity of Signature */
-        if (!supportedSignatures().test(pKeyPair, pSignatureSpec)) {
+        if (!validSignatureSpecForKeyPair(pKeyPair, pSignatureSpec)) {
             throw new GordianDataException(getInvalidText(pSignatureSpec));
         }
 
@@ -964,9 +971,11 @@ public final class BouncyFactory
                 return new BouncyRSAKeyPairGenerator(this, pKeySpec);
             case EC:
             case SM2:
-            case DSTU4145:
-            case GOST2012:
                 return new BouncyECKeyPairGenerator(this, pKeySpec);
+            case DSTU4145:
+                return new BouncyDSTUKeyPairGenerator(this, pKeySpec);
+            case GOST2012:
+                return new BouncyGOSTKeyPairGenerator(this, pKeySpec);
             case DSA:
                 return new BouncyDSAKeyPairGenerator(this, pKeySpec);
             case DIFFIEHELLMAN:
@@ -1003,9 +1012,11 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSASigner(this, (BouncyRSAPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case EC:
-            case DSTU4145:
-            case GOST2012:
                 return new BouncyECSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case DSTU4145:
+                return new BouncyDSTUSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
+            case GOST2012:
+                return new BouncyGOSTSigner(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), pSignatureSpec, getRandom());
             case SM2:
                 return new BouncySM2Signer(this, (BouncyECPrivateKey) pKeyPair.getPrivateKey(), getRandom());
             case DSA:
@@ -1036,9 +1047,11 @@ public final class BouncyFactory
             case RSA:
                 return new BouncyRSAValidator(this, (BouncyRSAPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case EC:
-            case DSTU4145:
-            case GOST2012:
                 return new BouncyECValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case DSTU4145:
+                return new BouncyDSTUValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
+            case GOST2012:
+                return new BouncyGOSTValidator(this, (BouncyECPublicKey) pKeyPair.getPublicKey(), pSignatureSpec);
             case SM2:
                 return new BouncySM2Validator(this, (BouncyECPublicKey) pKeyPair.getPublicKey());
             case DSA:

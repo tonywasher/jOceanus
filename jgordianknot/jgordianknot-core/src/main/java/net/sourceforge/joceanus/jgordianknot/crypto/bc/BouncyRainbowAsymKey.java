@@ -246,7 +246,7 @@ public final class BouncyRainbowAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) {
             final BouncyRainbowPrivateKey myPrivateKey = BouncyRainbowPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final RainbowPrivateKeyParameters myParms = myPrivateKey.getPrivateKey();
             final BCRainbowPrivateKey myKey = new BCRainbowPrivateKey(myParms);
@@ -254,8 +254,8 @@ public final class BouncyRainbowAsymKey {
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final RainbowPrivateKey myKey = RainbowPrivateKey.getInstance(myInfo.parsePrivateKey());

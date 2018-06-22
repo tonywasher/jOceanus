@@ -283,7 +283,9 @@ public final class GordianAsymKeySpec {
         }
 
         /* Match subfields */
-        return theSubKeyType == myThat.theSubKeyType;
+        return theSubKeyType == null
+               ? myThat.theSubKeyType == null
+               : theSubKeyType.equals(myThat.theSubKeyType);
     }
 
     @Override

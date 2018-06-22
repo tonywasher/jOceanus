@@ -239,6 +239,7 @@ public final class BouncyDiffieHellmanAsymKey {
             final DHParameters myParms = myModulus.getDHParameters();
             final DHKeyGenerationParameters myParams = new DHKeyGenerationParameters(getRandom(), myParms);
 
+
             /* Create and initialise the generator */
             theGenerator = new DHKeyPairGenerator();
             theGenerator.init(myParams);
@@ -253,7 +254,7 @@ public final class BouncyDiffieHellmanAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws GordianCryptoException {
             try {
                 final BouncyDiffieHellmanPrivateKey myPrivateKey = BouncyDiffieHellmanPrivateKey.class.cast(getPrivateKey(pKeyPair));
                 final DHPrivateKeyParameters myKey = myPrivateKey.getPrivateKey();
@@ -267,8 +268,8 @@ public final class BouncyDiffieHellmanAsymKey {
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final BCDHPrivateKey myKey = new BCDHPrivateKey(myInfo);

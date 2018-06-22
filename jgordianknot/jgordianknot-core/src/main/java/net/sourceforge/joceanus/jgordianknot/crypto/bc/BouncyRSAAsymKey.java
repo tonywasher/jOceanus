@@ -285,7 +285,7 @@ public final class BouncyRSAAsymKey {
         }
 
         @Override
-        protected PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
+        public PKCS8EncodedKeySpec getPKCS8Encoding(final GordianKeyPair pKeyPair) throws OceanusException {
             final BouncyRSAPrivateKey myPrivateKey = BouncyRSAPrivateKey.class.cast(getPrivateKey(pKeyPair));
             final RSAPrivateCrtKeyParameters myParms = myPrivateKey.getPrivateKey();
             final byte[] myBytes = KeyUtil.getEncodedPrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE),
@@ -295,8 +295,8 @@ public final class BouncyRSAAsymKey {
         }
 
         @Override
-        protected BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
-                                              final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
+        public BouncyKeyPair deriveKeyPair(final X509EncodedKeySpec pPublicKey,
+                                           final PKCS8EncodedKeySpec pPrivateKey) throws OceanusException {
             try {
                 final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pPrivateKey.getEncoded());
                 final RSAPrivateKey myKey = RSAPrivateKey.getInstance(myInfo.parsePrivateKey());

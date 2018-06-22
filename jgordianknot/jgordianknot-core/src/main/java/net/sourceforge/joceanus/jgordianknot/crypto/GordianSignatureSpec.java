@@ -85,6 +85,17 @@ public class GordianSignatureSpec {
     }
 
     /**
+     * Create DSASpec.
+     * @param pSignatureType the signatureType
+     * @param pDigestSpec the digestSpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec dsa(final GordianSignatureType pSignatureType,
+                                           final GordianDigestSpec pDigestSpec) {
+        return new GordianSignatureSpec(GordianAsymKeyType.DSA, pSignatureType, pDigestSpec);
+    }
+
+    /**
      * Create ECSpec.
      * @param pSignatureType the signatureType
      * @param pDigestSpec the digestSpec
@@ -155,6 +166,40 @@ public class GordianSignatureSpec {
     public static GordianSignatureSpec xmssmt(final GordianDigestSpec pDigestSpec) {
         return new GordianSignatureSpec(GordianAsymKeyType.XMSSMT, pDigestSpec);
     }
+
+    /**
+     * Create default signatureSpec for key.
+     * @param pKeySpec the keySpec
+     * @return the SignatureSpec
+     */
+    public static GordianSignatureSpec defaultForKey(final GordianAsymKeySpec pKeySpec) {
+        switch (pKeySpec.getKeyType()) {
+            case RSA:
+                return rsa(GordianSignatureType.PSS, GordianDigestSpec.sha3(GordianLength.LEN_512));
+            case DSA:
+                return dsa(GordianSignatureType.DSA, GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case EC:
+                return ec(GordianSignatureType.DSA, GordianDigestSpec.sha3(GordianLength.LEN_512));
+            case SM2:
+                return sm2();
+            case DSTU4145:
+                return dstu4145();
+            case GOST2012:
+                return gost2012(GordianLength.LEN_512);
+            case RAINBOW:
+                return rainbow(GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case SPHINCS:
+                return sphincs(GordianSPHINCSKeyType.SHA2.equals(pKeySpec.getSPHINCSType())
+                               ? GordianDigestSpec.sha2(GordianLength.LEN_512)
+                               : GordianDigestSpec.sha3(GordianLength.LEN_512));
+            case XMSS:
+                return xmss(GordianDigestSpec.sha2(GordianLength.LEN_512));
+            case XMSSMT:
+                return xmssmt(GordianDigestSpec.sha2(GordianLength.LEN_512));
+            default:
+                return null;
+        }
+     }
 
     /**
      * Obtain the AsymKeyType.

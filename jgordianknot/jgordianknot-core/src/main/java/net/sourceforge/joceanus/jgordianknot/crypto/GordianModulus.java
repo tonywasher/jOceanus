@@ -16,6 +16,9 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
+import java.math.BigInteger;
+
+import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.crypto.agreement.DHStandardGroups;
 import org.bouncycastle.crypto.params.DHParameters;
 
@@ -132,6 +135,41 @@ public enum GordianModulus {
             default:
                 return GordianLength.LEN_256;
         }
+    }
+
+    /**
+     * Obtain the modulus for a BigInteger.
+     * @param pValue the integer
+     * @return the modulus
+     */
+    public static GordianModulus getModulusForInteger(final BigInteger pValue) {
+        /* Loop through the values */
+        final int myLen = pValue.bitLength();
+        for(GordianModulus myModulus: values()) {
+            if (myModulus.getModulus() == myLen) {
+                return myModulus;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtain the modulus for DHParameter.
+     * @param pParams the parameters
+     * @return the modulus
+     */
+    public static GordianModulus getModulusForDHParams(final DHParameter pParams) {
+        /* Determine the modulus  */
+        GordianModulus myModulus = getModulusForInteger(pParams.getP());
+
+        /* Check that the parameters match */
+        if (myModulus != null) {
+            final DHParameters myDHParms = myModulus.getDHParameters();
+            if (!myDHParms.getG().equals(pParams.getG())) {
+                myModulus = null;
+            }
+        }
+        return myModulus;
     }
 
     @Override

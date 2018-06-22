@@ -120,6 +120,25 @@ public class GordianTestSuite {
     }
 
     /**
+     * Test key representations
+     * @throws OceanusException on error
+     */
+    public void testKeyRepresentations() throws OceanusException {
+        /* Create new Password Hash */
+        final GordianParameters mySrcParams = new GordianParameters(false);
+        mySrcParams.setFactoryType(GordianFactoryType.JCA);
+        GordianHashManager mySource = theCreator.newSecureManager(mySrcParams);
+
+        /* Create new Password Hash */
+        final GordianParameters myTgtParams = new GordianParameters(false);
+        myTgtParams.setFactoryType(GordianFactoryType.BC);
+        GordianHashManager myTarget = theCreator.newSecureManager(myTgtParams);
+
+        GordianTestAsymmetric.checkKeyPair(mySource.getSecurityFactory(), myTarget.getSecurityFactory());
+        GordianTestAsymmetric.checkKeyPair(myTarget.getSecurityFactory(), mySource.getSecurityFactory());
+    }
+
+    /**
      * Test security algorithms.
      * @param pRestricted is the factory restricted
      * @param pType the type of factory
