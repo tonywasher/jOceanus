@@ -26,7 +26,6 @@ import java.util.Map;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.ECGOST3410NamedCurves;
 import org.bouncycastle.asn1.cryptopro.GOST3410PublicKeyAlgParameters;
-import org.bouncycastle.asn1.gm.GMNamedCurves;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.DHParameter;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -58,29 +57,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 /**
  * Mappings from EncodedId to AsymKeySpec.
  */
-
 public class GordianAsymAlgId {
-    /**
-     * Obtain KeySpec from X509KeySpec.
-     * @param pEncoded key
-     * @return the keySpec
-     */
-    public static GordianAsymKeySpec detesrmineKeySpec(final X509EncodedKeySpec pEncoded) {
-        try {
-            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncoded.getEncoded());
-            final AlgorithmIdentifier myId = myInfo.getAlgorithm();
-            final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();
-            if (myAlgId.equals(PKCSObjectIdentifiers.dhKeyAgreement)) {
-                final DHParameter params = DHParameter.getInstance(myId.getParameters());
-                final int myL = params.getP().bitLength();
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.DIFFIEHELLMAN;
-            } else if (myAlgId.equals(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256)) {
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.GOST2012;
-            }
-        } catch (Exception e) {}
-        return null;
-    }
-
     /**
      * The parser map.
      */
@@ -113,6 +90,7 @@ public class GordianAsymAlgId {
      * Obtain KeySpec from X509KeySpec.
      * @param pEncoded X509 keySpec
      * @return the keySpec
+     * @throws OceanusException on error
      */
     public GordianAsymKeySpec determineKeySpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
         /* Determine the algorithm Id. */
@@ -132,6 +110,7 @@ public class GordianAsymAlgId {
      * Obtain KeySpec from X509KeySpec.
      * @param pEncoded X509 keySpec
      * @return the keySpec
+     * @throws OceanusException on error
      */
     public GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
         /* Determine the algorithm Id. */
@@ -150,6 +129,7 @@ public class GordianAsymAlgId {
     /**
      * register the parser.
      * @param pAlgId the algorithm Id.
+     * @param pParser the parser
      */
     void registerParser(final ASN1ObjectIdentifier pAlgId,
                         final GordianEncodedParser pParser) {
@@ -174,7 +154,7 @@ public class GordianAsymAlgId {
          * @return the keySpec
          * @throws OceanusException on error
          */
-        GordianAsymKeySpec determineKeySpec(final PrivateKeyInfo pInfo) throws OceanusException;
+        GordianAsymKeySpec determineKeySpec(PrivateKeyInfo pInfo) throws OceanusException;
     }
 
     /**
@@ -183,13 +163,14 @@ public class GordianAsymAlgId {
     private static class GordianRSAEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PKCSObjectIdentifiers.rsaEncryption, new GordianRSAEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Parse the publicKey */
@@ -237,13 +218,14 @@ public class GordianAsymAlgId {
     private static class GordianDSAEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(X9ObjectIdentifiers.id_dsa, new GordianDSAEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DSAParameter myParms = DSAParameter.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -278,13 +260,14 @@ public class GordianAsymAlgId {
     private static class GordianDHEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PKCSObjectIdentifiers.dhKeyAgreement, new GordianDHEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DHParameter myParms = DHParameter.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -319,13 +302,14 @@ public class GordianAsymAlgId {
     private static class GordianECEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(X9ObjectIdentifiers.id_ecPublicKey, new GordianECEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final X962Parameters myParms = X962Parameters.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -351,8 +335,8 @@ public class GordianAsymAlgId {
             }
 
             /* Check for EC named surve */
-            final ASN1ObjectIdentifier myId = (ASN1ObjectIdentifier)pParms.getParameters();
-            String myName = ECNamedCurveTable.getName(myId);
+            final ASN1ObjectIdentifier myId = (ASN1ObjectIdentifier) pParms.getParameters();
+            final String myName = ECNamedCurveTable.getName(myId);
             if (myName != null) {
                 final GordianDSAElliptic myDSACurve = GordianDSAElliptic.getCurveForName(myName);
                 if (myDSACurve != null) {
@@ -365,16 +349,6 @@ public class GordianAsymAlgId {
                 throw new GordianDataException("Unsupported curve: " + myName);
             }
 
-            /* Check for SM2 named curve */
-            //myName = GMNamedCurves.getName(myId);
-            //if (myName != null) {
-              //  final GordianSM2Elliptic myCurve = GordianSM2Elliptic.getCurveForName(myName);
-                //if (myCurve == null) {
-                  //  throw new GordianDataException("Unsupported curve: + myName");
-                //}
-                //return GordianAsymKeySpec.sm2(myCurve);
-            //}
-
             /* Curve is not supported */
             throw new GordianDataException("Unsupported curve: " + pParms.toString());
         }
@@ -386,13 +360,14 @@ public class GordianAsymAlgId {
     private static class GordianDSTUEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(UAObjectIdentifiers.dstu4145be, new GordianDSTUEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final DSTU4145Params  myParms = DSTU4145Params.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -430,7 +405,7 @@ public class GordianAsymAlgId {
             if (!pParms.isNamedCurve()) {
                 throw new GordianDataException("Not a named curve");
             }
-            return determineKeySpec((ASN1ObjectIdentifier)pParms.getParameters());
+            return determineKeySpec((ASN1ObjectIdentifier) pParms.getParameters());
         }
 
         /**
@@ -441,7 +416,7 @@ public class GordianAsymAlgId {
          */
         private static  GordianAsymKeySpec determineKeySpec(final ASN1ObjectIdentifier pId) throws OceanusException {
             /* Check for EC named surve */
-            String myName = pId.toString();
+            final String myName = pId.toString();
             final ECDomainParameters myParms = DSTU4145NamedCurves.getByOID(pId);
             final GordianDSTU4145Elliptic myCurve = GordianDSTU4145Elliptic.getCurveForName(myName);
             if (myParms == null || myCurve == null) {
@@ -457,6 +432,7 @@ public class GordianAsymAlgId {
     private static class GordianGOSTEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             final GordianGOSTEncodedParser myParser = new GordianGOSTEncodedParser();
@@ -465,7 +441,7 @@ public class GordianAsymAlgId {
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
              return determineKeySpec(pInfo.getAlgorithm());
         }
 
@@ -506,13 +482,14 @@ public class GordianAsymAlgId {
     private static class GordianRainbowEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.rainbow, new GordianRainbowEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             return GordianAsymKeySpec.rainbow();
         }
 
@@ -528,13 +505,14 @@ public class GordianAsymAlgId {
     private static class GordianNewHopeEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.newHope, new GordianNewHopeEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             return GordianAsymKeySpec.newHope();
         }
 
@@ -550,13 +528,14 @@ public class GordianAsymAlgId {
     private static class GordianSPHINCSEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.sphincs256, new GordianSPHINCSEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final SPHINCS256KeyParams myParms = SPHINCS256KeyParams.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -595,6 +574,7 @@ public class GordianAsymAlgId {
     private static class GordianXMSSEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss, new GordianXMSSEncodedParser());
@@ -602,7 +582,7 @@ public class GordianAsymAlgId {
 
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSKeyParams myParms = XMSSKeyParams.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -657,6 +637,7 @@ public class GordianAsymAlgId {
     private static class GordianXMSSMTEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.xmss_mt, new GordianXMSSMTEncodedParser());
@@ -664,7 +645,7 @@ public class GordianAsymAlgId {
 
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             final AlgorithmIdentifier myId = pInfo.getAlgorithm();
             final XMSSMTKeyParams myParms = XMSSMTKeyParams.getInstance(myId.getParameters());
             return determineKeySpec(myParms);
@@ -695,13 +676,14 @@ public class GordianAsymAlgId {
     private static class GordianMcElieceEncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.mcEliece, new GordianMcElieceEncodedParser());
         }
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             return GordianAsymKeySpec.mcEliece(GordianMcElieceKeySpec.standard());
         }
 
@@ -717,6 +699,7 @@ public class GordianAsymAlgId {
     private static class GordianMcElieceCCA2EncodedParser implements GordianEncodedParser {
         /**
          * Registrar.
+         * @param pIdManager the idManager
          */
         static void register(final GordianAsymAlgId pIdManager) {
             pIdManager.registerParser(PQCObjectIdentifiers.mcElieceCca2, new GordianMcElieceCCA2EncodedParser());
@@ -724,7 +707,7 @@ public class GordianAsymAlgId {
 
 
         @Override
-        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException{
+        public GordianAsymKeySpec determineKeySpec(final SubjectPublicKeyInfo pInfo) throws OceanusException {
             /* Protect against exceptions */
             try {
                 /* Parse public key */

@@ -57,14 +57,15 @@ public class GordianSignatureAlgId {
     private final Map<AlgorithmIdentifier, GordianSignatureSpec> theIdentifierMap;
 
     /**
-     *  The predicate for valid for SignatureSpecs
+     *  The predicate for valid for SignatureSpecs.
      */
     private final Predicate<GordianSignatureSpec> thePredicate;
 
     /**
-     *  The list of possible digestSpecs
+     *  The list of possible digestSpecs.
      */
     private final List<GordianDigestSpec> theDigests;
+
     /**
      * Constructor.
      * @param pFactory the factory
@@ -84,7 +85,7 @@ public class GordianSignatureAlgId {
         addECSignatures();
 
         /* Loop through the possible AsymKeys */
-        for(GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
+        for (GordianAsymKeyType myKeyType : GordianAsymKeyType.values()) {
             addSignatures(myKeyType);
         }
 
@@ -105,8 +106,9 @@ public class GordianSignatureAlgId {
      * Obtain SignatureSpec for Identifier.
      * @param pIdentifier the identifier.
      * @return the signatureSpec
+     * @throws OceanusException on error
      */
-    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException{
+    public GordianSignatureSpec getSpecForIdentifier(final AlgorithmIdentifier pIdentifier) throws OceanusException {
         final GordianSignatureSpec mySpec = theIdentifierMap.get(pIdentifier);
         if (mySpec == null) {
             throw new GordianDataException("Invalid identifier " + pIdentifier);
@@ -215,7 +217,7 @@ public class GordianSignatureAlgId {
     /**
      * Create PSS Parameters.
      * @param pHash the hash algorithmId
-     * @param pSaltSize
+     * @param pSaltSize the saltSize
      * @return the params
      */
     private static RSASSAPSSparams createPSSParams(final ASN1ObjectIdentifier pHash,
@@ -259,26 +261,25 @@ public class GordianSignatureAlgId {
     /**
      * Create Identifier for a signatureSpec.
      * @param pSigSpec the signatureSpec
-     * @return the params
      */
     private void addSignature(final GordianSignatureSpec pSigSpec) {
         /* Create a branch for signatures based on the AsymKeyType */
         final GordianAsymKeyType myKeyType = pSigSpec.getAsymKeyType();
-        ASN1ObjectIdentifier myId = BASEOID.branch(Integer.toString(myKeyType.ordinal()+1));
+        ASN1ObjectIdentifier myId = BASEOID.branch(Integer.toString(myKeyType.ordinal() + 1));
 
         /* Create a branch for signatures based on the SignatureType */
         final GordianSignatureType mySigType = pSigSpec.getSignatureType();
-        myId = myId.branch(Integer.toString(mySigType.ordinal()+1));
+        myId = myId.branch(Integer.toString(mySigType.ordinal() + 1));
 
         /* Create a branch for digest based on the DigestType/Length/State */
         final GordianDigestSpec myDigestSpec = pSigSpec.getDigestSpec();
-        myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal()+1));
-        myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal()+1));
+        myId = myId.branch(Integer.toString(myDigestSpec.getDigestType().ordinal() + 1));
+        myId = myId.branch(Integer.toString(myDigestSpec.getDigestLength().ordinal() + 1));
 
         /* Add an additional branch if there is a stateLength */
         final GordianLength myState = myDigestSpec.getStateLength();
         if (myState != null) {
-            myId = myId.branch(Integer.toString(myState.ordinal()+1));
+            myId = myId.branch(Integer.toString(myState.ordinal() + 1));
         }
 
         /* Add the id to the maps */

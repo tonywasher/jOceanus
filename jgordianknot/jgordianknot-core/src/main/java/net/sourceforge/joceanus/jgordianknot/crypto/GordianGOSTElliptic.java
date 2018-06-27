@@ -83,7 +83,7 @@ public enum GordianGOSTElliptic implements GordianElliptic {
      */
     public static GordianGOSTElliptic getCurveForName(final String pName) {
         /* Loop through the curves */
-        for(GordianGOSTElliptic myCurve: values()) {
+        for (GordianGOSTElliptic myCurve: values()) {
             if (pName.equals(myCurve.getCurveName())) {
                 return myCurve;
             }

@@ -212,7 +212,6 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.paddings.TBCPadding;
 import org.bouncycastle.crypto.paddings.X923Padding;
 
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 /**

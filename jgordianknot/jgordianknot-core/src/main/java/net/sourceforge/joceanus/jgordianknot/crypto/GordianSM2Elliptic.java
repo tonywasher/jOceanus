@@ -68,7 +68,7 @@ public enum GordianSM2Elliptic implements GordianElliptic {
      */
     public static GordianSM2Elliptic getCurveForName(final String pName) {
         /* Loop through the curves */
-        for(GordianSM2Elliptic myCurve: values()) {
+        for (GordianSM2Elliptic myCurve: values()) {
             if (pName.equals(myCurve.getCurveName())) {
                 return myCurve;
             }

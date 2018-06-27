@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jgordianknot.crypto;
 
-import java.math.BigInteger;
-
 import org.bouncycastle.asn1.x509.DSAParameter;
 
 /**
@@ -90,7 +88,7 @@ public enum GordianDSAKeyType {
         /* Loop through the values */
         final int myLen = pParams.getP().bitLength();
         final int myHashSize = pParams.getQ().bitLength();
-        for(GordianDSAKeyType myType: values()) {
+        for (GordianDSAKeyType myType: values()) {
             if (myType.getKeySize() == myLen
                 && myType.getHashSize() == myHashSize) {
                 return myType;

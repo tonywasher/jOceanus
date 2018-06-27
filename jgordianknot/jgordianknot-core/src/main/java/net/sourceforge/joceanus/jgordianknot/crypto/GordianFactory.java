@@ -22,6 +22,8 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianKeyEncapsulation.Gord
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 import java.security.SecureRandom;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -90,6 +92,11 @@ public abstract class GordianFactory {
      * SignatureId.
      */
     private GordianSignatureAlgId theSignatureId;
+
+    /**
+     * AsymAlgId.
+     */
+    private GordianAsymAlgId theAsymAlgId;
 
     /**
      * Obfuscater.
@@ -173,6 +180,18 @@ public abstract class GordianFactory {
         }
         return theSignatureId;
     }
+
+    /**
+     * Obtain the asymAlgorithmIdManager.
+     * @return the algorithmIdManager
+     */
+    GordianAsymAlgId getAlgorithmIdManager() {
+        if (theAsymAlgId == null) {
+            theAsymAlgId = new GordianAsymAlgId();
+        }
+        return theAsymAlgId;
+    }
+
     /**
      * Obtain the obfuscater.
      * @return the obfuscater
@@ -479,6 +498,28 @@ public abstract class GordianFactory {
      * @throws OceanusException on error
      */
     public abstract GordianKeyPairGenerator getKeyPairGenerator(GordianAsymKeySpec pKeySpec) throws OceanusException;
+
+    /**
+     * Determine KeySpec from PKCS8EncodedKeySpec.
+     * @param pEncoded the encodedKeySpec
+     * @return the keySpec
+     * @throws OceanusException on error
+     */
+    GordianAsymKeySpec determineKeySpec(final PKCS8EncodedKeySpec pEncoded) throws OceanusException {
+        final GordianAsymAlgId myAlgId = getAlgorithmIdManager();
+        return myAlgId.determineKeySpec(pEncoded);
+    }
+
+    /**
+     * Determine KeySpec from X509EncodedKeySpec.
+     * @param pEncoded the encodedKeySpec
+     * @return the keySpec
+     * @throws OceanusException on error
+     */
+    public  GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) throws OceanusException {
+        final GordianAsymAlgId myAlgId = getAlgorithmIdManager();
+        return myAlgId.determineKeySpec(pEncoded);
+    }
 
     /**
      * generate random SymKey.
@@ -1022,7 +1063,7 @@ public abstract class GordianFactory {
 
 
         /* Check that the signatureSpec is supported */
-        if (!validSignatureSpec(pSignSpec)){
+        if (!validSignatureSpec(pSignSpec)) {
             return false;
         }
 

@@ -220,7 +220,6 @@ public class GordianTestAsymmetric {
         final PKCS8EncodedKeySpec myPrivate = mySrcGen.getPKCS8Encoding(myPair);
         checkKeySpec(myPublic, pKeySpec);
         checkKeySpec(myPrivate, pKeySpec);
-        if (false) {
 
         /* Derive identical keyPair */
         final GordianKeyPair myMirror = mySrcGen.deriveKeyPair(myPublic, myPrivate);
@@ -262,7 +261,7 @@ public class GordianTestAsymmetric {
         myValidator.update(myMessage);
         if (!myValidator.verify(mySignature)) {
             System.out.println("Failed to verify returned signature");
-        }}
+        }
     }
 
     /**
@@ -289,117 +288,6 @@ public class GordianTestAsymmetric {
         if (!pSpec.equals(mySpec)) {
             System.out.println("Help");
         }
-    }
-    /**
-     * Obtain KeySpec from PrivateKey
-     * @param pEncoded key
-     * @return the keySpec
-     */
-    private static GordianAsymKeySpec determineKeySpec(final PKCS8EncodedKeySpec pEncoded) {
-        try {
-        final PrivateKeyInfo myInfo = PrivateKeyInfo.getInstance(pEncoded.getEncoded());
-        final AlgorithmIdentifier myId = myInfo.getPrivateKeyAlgorithm();
-        final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();
-        if (myAlgId.equals(PKCSObjectIdentifiers.rsaEncryption)) {
-            final RSAPrivateKey myPrivate = RSAPrivateKey.getInstance(myInfo.parsePrivateKey());
-            final BigInteger myModulus = myPrivate.getModulus();
-            final int myStrength = myModulus.bitLength();
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.RSA;
-        } else if (myAlgId.equals(X9ObjectIdentifiers.id_ecPublicKey)) {
-            final X962Parameters params = X962Parameters.getInstance(myId.getParameters());
-            if (params.isNamedCurve()) {
-                final String myName = ECNamedCurveTable.getName((ASN1ObjectIdentifier)params.getParameters());
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.EC;
-            }
-        } else if (myAlgId.equals(X9ObjectIdentifiers.id_dsa)) {
-            final DSAParameter params = DSAParameter.getInstance(myId.getParameters());
-            final int myL = params.getP().bitLength();
-            final int myN = params.getQ().bitLength();
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.DSA;
-        } else if (myAlgId.equals(PKCSObjectIdentifiers.dhKeyAgreement)) {
-            final DHParameter params = DHParameter.getInstance(myId.getParameters());
-            final int myL = params.getP().bitLength();
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.DIFFIEHELLMAN;
-        } else if (myAlgId.equals(UAObjectIdentifiers.dstu4145be)) {
-            final X962Parameters params = X962Parameters.getInstance(myId.getParameters());
-            final String myName = params.getParameters().toString();
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.DSTU4145;
-        } else if (myAlgId.equals(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256)) {
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.GOST2012;
-        } else if (myAlgId.equals(PQCObjectIdentifiers.rainbow)) {
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.RAINBOW;
-        } else if (myAlgId.equals(PQCObjectIdentifiers.newHope)) {
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.NEWHOPE;
-        } else if (myAlgId.equals(PQCObjectIdentifiers.sphincs256)) {
-            final SPHINCS256KeyParams params = SPHINCS256KeyParams.getInstance(myId.getParameters());
-            final GordianSPHINCSKeyType myType = params.getTreeDigest().getAlgorithm().equals(NISTObjectIdentifiers.id_sha512_256)
-                                                 ? GordianSPHINCSKeyType.SHA2 : GordianSPHINCSKeyType.SHA3;
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.SPHINCS;
-        } else if (myAlgId.equals(PQCObjectIdentifiers.xmss)) {
-            final XMSSKeyParams params = XMSSKeyParams.getInstance(myId.getParameters());
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.XMSS;
-        } else if (myAlgId.equals(PQCObjectIdentifiers.xmss_mt)) {
-            final XMSSMTKeyParams params = XMSSMTKeyParams.getInstance(myId.getParameters());
-            final GordianAsymKeyType myKeyType = GordianAsymKeyType.XMSSMT;
-        }
-        } catch (Exception e) {}
-        return null;
-    }
-
-    /**
-     * Obtain KeySpec from PrivateKey
-     * @param pEncoded key
-     * @return the keySpec
-     */
-    private static GordianAsymKeySpec determineKeySpec(final X509EncodedKeySpec pEncoded) {
-        try {
-            final SubjectPublicKeyInfo myInfo = SubjectPublicKeyInfo.getInstance(pEncoded.getEncoded());
-            final AlgorithmIdentifier myId = myInfo.getAlgorithm();
-            final ASN1ObjectIdentifier myAlgId = myId.getAlgorithm();
-            if (myAlgId.equals(PKCSObjectIdentifiers.rsaEncryption)) {
-                final RSAPublicKey myPublic = RSAPublicKey.getInstance(myInfo.parsePublicKey());
-                final BigInteger myModulus = myPublic.getModulus();
-                final int myStrength = myModulus.bitLength();
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.RSA;
-            } else if (myAlgId.equals(X9ObjectIdentifiers.id_ecPublicKey)) {
-                final X962Parameters params = X962Parameters.getInstance(myId.getParameters());
-                if (params.isNamedCurve()) {
-                    final String myName = ECNamedCurveTable.getName((ASN1ObjectIdentifier)params.getParameters());
-                    final GordianAsymKeyType myKeyType = GordianAsymKeyType.EC;
-                }
-            } else if (myAlgId.equals(X9ObjectIdentifiers.id_dsa)) {
-                final DSAParameter params = DSAParameter.getInstance(myId.getParameters());
-                final int myL = params.getP().bitLength();
-                final int myN = params.getQ().bitLength();
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.DSA;
-            } else if (myAlgId.equals(PKCSObjectIdentifiers.dhKeyAgreement)) {
-                final DHParameter params = DHParameter.getInstance(myId.getParameters());
-                final int myL = params.getP().bitLength();
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.DIFFIEHELLMAN;
-            } else if (myAlgId.equals(UAObjectIdentifiers.dstu4145be)) {
-                final DSTU4145Params params = DSTU4145Params.getInstance(myId.getParameters());
-                final String myName = params.getNamedCurve().toString();
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.DSTU4145;
-            } else if (myAlgId.equals(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_256)) {
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.GOST2012;
-            } else if (myAlgId.equals(PQCObjectIdentifiers.rainbow)) {
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.RAINBOW;
-            } else if (myAlgId.equals(PQCObjectIdentifiers.newHope)) {
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.NEWHOPE;
-            } else if (myAlgId.equals(PQCObjectIdentifiers.sphincs256)) {
-                final SPHINCS256KeyParams params = SPHINCS256KeyParams.getInstance(myId.getParameters());
-                final GordianSPHINCSKeyType myType = params.getTreeDigest().getAlgorithm().equals(NISTObjectIdentifiers.id_sha512_256)
-                                                     ? GordianSPHINCSKeyType.SHA2 : GordianSPHINCSKeyType.SHA3;
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.SPHINCS;
-            } else if (myAlgId.equals(PQCObjectIdentifiers.xmss)) {
-                final XMSSKeyParams params = XMSSKeyParams.getInstance(myId.getParameters());
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.XMSS;
-            } else if (myAlgId.equals(PQCObjectIdentifiers.xmss_mt)) {
-                final XMSSMTKeyParams params = XMSSMTKeyParams.getInstance(myId.getParameters());
-                final GordianAsymKeyType myKeyType = GordianAsymKeyType.XMSSMT;
-            }
-        } catch (Exception e) {}
-        return null;
     }
 
     /**

@@ -28,7 +28,6 @@ import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.crypto.DSA;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.signers.DSASigner;
-import org.bouncycastle.crypto.signers.DSTU4145Signer;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.ECNRSigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
@@ -38,7 +37,6 @@ import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeySpec;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianAsymKeyType;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianConsumer;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianSignatureSpec;
-import net.sourceforge.joceanus.jgordianknot.crypto.bc.BouncyDSTUAsymKey.BouncyDSTUCoder;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**

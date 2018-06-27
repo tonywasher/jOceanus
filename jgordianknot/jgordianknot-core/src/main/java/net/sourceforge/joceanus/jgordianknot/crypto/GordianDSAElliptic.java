@@ -408,7 +408,7 @@ public enum GordianDSAElliptic implements GordianElliptic {
      */
     public static GordianDSAElliptic getCurveForName(final String pName) {
         /* Loop through the curves */
-        for(GordianDSAElliptic myCurve: values()) {
+        for (GordianDSAElliptic myCurve: values()) {
             if (pName.equals(myCurve.getCurveName())) {
                 return myCurve;
             }

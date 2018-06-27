@@ -70,6 +70,21 @@ public final class BouncyGOSTAsymKey {
     private static final String ALGO = "ECGOST3410-2012";
 
     /**
+     * Length 32.
+     */
+    private static final int LEN32 = 32;
+
+    /**
+     * Length 32.
+     */
+    private static final int LEN64 = 64;
+
+    /**
+     * Encoding id.
+     */
+    private static final byte ENCODING_ID = 0x04;
+
+    /**
      * Private constructor.
      */
     private BouncyGOSTAsymKey() {
@@ -198,25 +213,24 @@ public final class BouncyGOSTAsymKey {
         private ECPublicKeyParameters deriveFromPubKeyInfo(final SubjectPublicKeyInfo pKeyInfo) throws OceanusException {
             final ASN1ObjectIdentifier algOid = pKeyInfo.getAlgorithm().getAlgorithm();
             final DERBitString bits = pKeyInfo.getPublicKeyData();
-            ASN1OctetString key;
+            final ASN1OctetString key;
 
             try {
-                key = (ASN1OctetString)ASN1Primitive.fromByteArray(bits.getBytes());
+                key = (ASN1OctetString) ASN1Primitive.fromByteArray(bits.getBytes());
             } catch (IOException ex) {
                 throw new GordianDataException("error recovering public key");
             }
 
             final byte[] keyEnc = key.getOctets();
-            int fieldSize = 32;
+            int fieldSize = LEN32;
             if (algOid.equals(RosstandartObjectIdentifiers.id_tc26_gost_3410_12_512)) {
-                fieldSize = 64;
+                fieldSize = LEN64;
             }
 
             final int keySize = 2 * fieldSize;
             final byte[] x9Encoding = new byte[1 + keySize];
-            x9Encoding[0] = 0x04;
-            for (int i = 1; i <= fieldSize; ++i)
-            {
+            x9Encoding[0] = ENCODING_ID;
+            for (int i = 1; i <= fieldSize; ++i) {
                 x9Encoding[i            ] = keyEnc[fieldSize - i];
                 x9Encoding[i + fieldSize] = keyEnc[keySize - i];
             }
@@ -234,7 +248,7 @@ public final class BouncyGOSTAsymKey {
         private ECPrivateKeyParameters deriveFromPrivKeyInfo(final PrivateKeyInfo pKeyInfo) throws OceanusException {
             try {
                 final ASN1Encodable privKey = pKeyInfo.parsePrivateKey();
-                BigInteger myD;
+                final BigInteger myD;
                 if (privKey instanceof ASN1Integer) {
                     myD = ASN1Integer.getInstance(privKey).getPositiveValue();
                 } else {
@@ -260,7 +274,7 @@ public final class BouncyGOSTAsymKey {
      */
     static final class BouncyGOSTCoder implements BouncyDSACoder {
         /**
-         * The fixed length (if any)
+         * The fixed length (if any).
          */
         private final Integer theLen;
 

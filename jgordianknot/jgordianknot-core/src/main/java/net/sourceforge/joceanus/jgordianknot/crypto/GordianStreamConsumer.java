@@ -43,7 +43,7 @@ public class GordianStreamConsumer extends OutputStream {
 
     @Override
     public void write(final int pByte) throws IOException {
-         theConsumer.update((byte)pByte);
+         theConsumer.update((byte) pByte);
     }
 
     @Override

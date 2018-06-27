@@ -145,7 +145,7 @@ public enum GordianModulus {
     public static GordianModulus getModulusForInteger(final BigInteger pValue) {
         /* Loop through the values */
         final int myLen = pValue.bitLength();
-        for(GordianModulus myModulus: values()) {
+        for (GordianModulus myModulus: values()) {
             if (myModulus.getModulus() == myLen) {
                 return myModulus;
             }

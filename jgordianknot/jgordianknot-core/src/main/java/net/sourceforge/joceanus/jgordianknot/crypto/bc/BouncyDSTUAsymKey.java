@@ -209,10 +209,10 @@ public final class BouncyDSTUAsymKey {
          */
         private ECPublicKeyParameters deriveFromPubKeyInfo(final SubjectPublicKeyInfo pKeyInfo) throws OceanusException {
             final DERBitString bits = pKeyInfo.getPublicKeyData();
-            ASN1OctetString key;
+            final ASN1OctetString key;
 
             try {
-                key = (ASN1OctetString)ASN1Primitive.fromByteArray(bits.getBytes());
+                key = (ASN1OctetString) ASN1Primitive.fromByteArray(bits.getBytes());
             } catch (IOException ex) {
                 throw new GordianDataException("error recovering public key");
             }
@@ -231,7 +231,7 @@ public final class BouncyDSTUAsymKey {
         private ECPrivateKeyParameters deriveFromPrivKeyInfo(final PrivateKeyInfo pKeyInfo) throws OceanusException {
             try {
                 final ASN1Encodable privKey = pKeyInfo.parsePrivateKey();
-                BigInteger myD;
+                final BigInteger myD;
                 if (privKey instanceof ASN1Integer) {
                     myD = ASN1Integer.getInstance(privKey).getPositiveValue();
                 } else {
@@ -300,14 +300,13 @@ public final class BouncyDSTUAsymKey {
      * Obtain new digest for DSTU signer.
      * @return the new digest
      */
-    private static Digest newDigest()
-    {
+    private static Digest newDigest() {
         final byte[] myCompressed = DSTU4145Params.getDefaultDKE();
         final byte[] myExpanded = new byte[EXPANDED_LEN];
 
         for (int i = 0; i < myCompressed.length; i++) {
-            myExpanded[i * 2] = (byte)((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
-            myExpanded[i * 2 + 1] = (byte)(myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
+            myExpanded[i * 2] = (byte) ((myCompressed[i] >> TethysDataConverter.NYBBLE_SHIFT) & TethysDataConverter.NYBBLE_MASK);
+            myExpanded[i * 2 + 1] = (byte) (myCompressed[i] & TethysDataConverter.NYBBLE_MASK);
         }
         return new GOST3411Digest(myExpanded);
     }
