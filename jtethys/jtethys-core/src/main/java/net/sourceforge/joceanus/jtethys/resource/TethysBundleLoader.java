@@ -48,6 +48,7 @@ public final class TethysBundleLoader {
     /**
      * Standard constructor.
      * @param pBundleName the Bundle Name
+     * @param pLoader the loader
      */
     private TethysBundleLoader(final String pBundleName,
                                final Function<String, ResourceBundle> pLoader) {

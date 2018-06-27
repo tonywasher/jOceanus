@@ -402,7 +402,7 @@ public abstract class MetisHTTPDataClient
         }
 
         /* Build the content */
-        EntityBuilder myBuilder = EntityBuilder.create();
+        final EntityBuilder myBuilder = EntityBuilder.create();
         myBuilder.setParameters(myRequest);
         myPost.setEntity(myBuilder.build());
 

@@ -28,11 +28,10 @@ public interface TethysIconId extends TethysResourceId {
     /**
      * Default icon width.
      */
-    public static final int DEFAULT_ICONWIDTH = 16;
+    int DEFAULT_ICONWIDTH = 16;
 
     /**
      * Obtain resource as bytes.
-     * @param pId the icon Id
      * @return the bytes
      * @throws IOException on error
      */

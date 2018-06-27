@@ -29,12 +29,11 @@ import net.sourceforge.joceanus.jtethys.TethysDataException;
 /**
  * Resource Loader.
  */
-public class TethysResourceLoader {
+public final class TethysResourceLoader {
     /**
      * Private constructor.
-     * @param pLoader the resource loader
      */
-    public TethysResourceLoader() {
+    private TethysResourceLoader() {
     }
 
     /**
