@@ -16,21 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Region;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 
 /**
  * javaFX Scroll Pane Manager.
  */
 public class TethysFXScrollPaneManager
-        extends TethysScrollPaneManager<Node, Node> {
+        extends TethysScrollPaneManager {
     /**
      * The node.
      */
-    private Region theNode;
+    private TethysFXNode theNode;
 
     /**
      * ScrollPane.
@@ -40,22 +39,22 @@ public class TethysFXScrollPaneManager
     /**
      * Content.
      */
-    private TethysNode<Node> theContent;
+    private TethysComponent theContent;
 
     /**
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysFXScrollPaneManager(final TethysFXGuiFactory pFactory) {
+    TethysFXScrollPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theScrollPane = new ScrollPane();
-        theNode = theScrollPane;
+        theNode = new TethysFXNode(theScrollPane);
         theScrollPane.setFitToHeight(true);
         theScrollPane.setFitToWidth(true);
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -74,44 +73,37 @@ public class TethysFXScrollPaneManager
     }
 
     @Override
-    public void setContent(final TethysNode<Node> pNode) {
+    public void setContent(final TethysComponent pNode) {
         theContent = pNode;
         theScrollPane.setContent(pNode == null
                                                ? null
-                                               : pNode.getNode());
+                                               : TethysFXNode.getNode(pNode));
     }
 
     @Override
-    public TethysNode<Node> getContent() {
+    public TethysComponent getContent() {
         return theContent;
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        theScrollPane.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        theScrollPane.setPrefHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theScrollPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

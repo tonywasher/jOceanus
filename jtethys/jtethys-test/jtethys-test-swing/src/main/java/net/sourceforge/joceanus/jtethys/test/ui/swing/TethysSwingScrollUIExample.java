@@ -46,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
 
@@ -71,7 +72,7 @@ public class TethysSwingScrollUIExample {
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<JComponent, Icon> theHelper;
+    private final TethysScrollUITestHelper theHelper;
 
     /**
      * The popUp menu.
@@ -153,7 +154,7 @@ public class TethysSwingScrollUIExample {
      */
     public TethysSwingScrollUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create GUI Factory */
         theGuiFactory = new TethysSwingGuiFactory();
@@ -202,8 +203,9 @@ public class TethysSwingScrollUIExample {
             final TethysSwingGridPaneManager myPanel = myExample.buildPanel();
 
             /* Attach the panel to the frame */
-            myPanel.getNode().setOpaque(true);
-            myFrame.setContentPane(myPanel.getNode());
+            final JComponent myNode = TethysSwingNode.getComponent(myPanel);
+            myNode.setOpaque(true);
+            myFrame.setContentPane(myNode);
             myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             /* Show the frame */

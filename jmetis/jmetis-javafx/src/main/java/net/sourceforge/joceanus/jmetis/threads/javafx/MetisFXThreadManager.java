@@ -17,7 +17,7 @@
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.concurrent.Worker.State;
-import javafx.scene.Node;
+
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * javaFX Thread manager.
  */
 public class MetisFXThreadManager
-        extends MetisThreadManager<Node, Node> {
+        extends MetisThreadManager {
     /**
      * The Toolkit.
      */
@@ -46,8 +46,9 @@ public class MetisFXThreadManager
 
     /**
      * Constructor.
+     *
      * @param pToolkit the toolkit
-     * @param pSlider use slider status
+     * @param pSlider  use slider status
      */
     public MetisFXThreadManager(final MetisFXToolkit pToolkit,
                                 final boolean pSlider) {
@@ -58,12 +59,12 @@ public class MetisFXThreadManager
     @Override
     public String getTaskName() {
         return theWorker == null
-                                 ? null
-                                 : theWorker.getTaskName();
+               ? null
+               : theWorker.getTaskName();
     }
 
     @Override
-    protected <T> Runnable wrapThread(final MetisThread<T, Node, Node> pThread) {
+    protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
         theWorker = new MetisFXThread<>(theToolkit, pThread);
         theWorker.stateProperty().addListener((v, o, n) -> handleThreadState(n));
@@ -85,7 +86,7 @@ public class MetisFXThreadManager
     @Override
     public void checkForCancellation() throws OceanusException {
         if (theWorker != null
-            && theWorker.isCancelled()) {
+                && theWorker.isCancelled()) {
             throw new MetisThreadCancelException("Cancelled");
         }
     }
@@ -112,6 +113,7 @@ public class MetisFXThreadManager
 
     /**
      * Handle thread state.
+     *
      * @param pState the state
      */
     private void handleThreadState(final State pState) {
@@ -162,6 +164,7 @@ public class MetisFXThreadManager
 
     /**
      * Handle failure.
+     *
      * @param pException the exception
      */
     private void handleFailure(final Throwable pException) {

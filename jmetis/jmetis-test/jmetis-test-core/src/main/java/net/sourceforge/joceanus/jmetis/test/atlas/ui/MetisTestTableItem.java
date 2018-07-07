@@ -82,7 +82,7 @@ public class MetisTestTableItem
      * @param pName the Name
      * @throws OceanusException on error
      */
-    public void initValues(final TethysScrollUITestHelper<?, ?> pHelper,
+    public void initValues(final TethysScrollUITestHelper pHelper,
                            final String pName) throws OceanusException {
         /* Initialise values */
         setName(pName);

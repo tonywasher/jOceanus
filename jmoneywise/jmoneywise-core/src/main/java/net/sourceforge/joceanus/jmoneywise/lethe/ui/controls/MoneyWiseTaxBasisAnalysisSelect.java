@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -41,11 +42,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * TaxBasisAnalysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseTaxBasisAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseTaxBasisAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TaxBasis Label.
      */
@@ -69,27 +68,27 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The basis button.
      */
-    private final TethysScrollButtonManager<TaxBasisBucket, N, I> theBasisButton;
+    private final TethysScrollButtonManager<TaxBasisBucket> theBasisButton;
 
     /**
      * The account button.
      */
-    private final TethysScrollButtonManager<TaxBasisAccountBucket, N, I> theAccountButton;
+    private final TethysScrollButtonManager<TaxBasisAccountBucket> theAccountButton;
 
     /**
      * Tax menu.
      */
-    private final TethysScrollMenu<TaxBasisBucket, I> theTaxMenu;
+    private final TethysScrollMenu<TaxBasisBucket> theTaxMenu;
 
     /**
      * Account menu.
      */
-    private final TethysScrollMenu<TaxBasisAccountBucket, I> theAccountMenu;
+    private final TethysScrollMenu<TaxBasisAccountBucket> theAccountMenu;
 
     /**
      * The active tax basis bucket list.
@@ -110,7 +109,7 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTaxBasisAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseTaxBasisAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the buttons */
         theBasisButton = pFactory.newScrollButton();
         theAccountButton = pFactory.newScrollButton();
@@ -119,8 +118,8 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel<N, I> myBasisLabel = pFactory.newLabel(NLS_BASIS + TethysLabel.STR_COLON);
-        final TethysLabel<N, I> myAccountLabel = pFactory.newLabel(NLS_ACCOUNT + TethysLabel.STR_COLON);
+        final TethysLabel myBasisLabel = pFactory.newLabel(NLS_BASIS + TethysLabel.STR_COLON);
+        final TethysLabel myAccountLabel = pFactory.newLabel(NLS_ACCOUNT + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -154,7 +153,7 @@ public class MoneyWiseTaxBasisAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

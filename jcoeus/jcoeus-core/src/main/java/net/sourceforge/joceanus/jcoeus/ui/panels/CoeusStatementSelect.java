@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
@@ -42,11 +43,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Filter Select.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public final class CoeusStatementSelect<N, I>
-        implements TethysEventProvider<CoeusDataEvent>, TethysNode<N> {
+public final class CoeusStatementSelect
+        implements TethysEventProvider<CoeusDataEvent>, TethysComponent {
     /**
      * Text for Market Label.
      */
@@ -95,42 +94,42 @@ public final class CoeusStatementSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * Totals scroll button.
      */
-    private final TethysScrollButtonManager<CoeusTotalSet, N, I> theTotalsButton;
+    private final TethysScrollButtonManager<CoeusTotalSet> theTotalsButton;
 
     /**
      * Market scroll button.
      */
-    private final TethysScrollButtonManager<CoeusMarketProvider, N, I> theMarketButton;
+    private final TethysScrollButtonManager<CoeusMarketProvider> theMarketButton;
 
     /**
      * Market type scroll button.
      */
-    private final TethysScrollButtonManager<CoeusMarketType, N, I> theMarketTypeButton;
+    private final TethysScrollButtonManager<CoeusMarketType> theMarketTypeButton;
 
     /**
      * Loan scroll button.
      */
-    private final TethysScrollButtonManager<CoeusLoan, N, I> theLoanButton;
+    private final TethysScrollButtonManager<CoeusLoan> theLoanButton;
 
     /**
      * Month scroll button.
      */
-    private final TethysScrollButtonManager<Month, N, I> theMonthButton;
+    private final TethysScrollButtonManager<Month> theMonthButton;
 
     /**
      * Date select.
      */
-    private final TethysDateButtonManager<N, I> theDateButton;
+    private final TethysDateButtonManager theDateButton;
 
     /**
      * Card Panel.
      */
-    private final TethysCardPaneManager<N, I, TethysBoxPaneManager<N, I>> theCardPane;
+    private final TethysCardPaneManager<TethysBoxPaneManager> theCardPane;
 
     /**
      * Current state.
@@ -147,7 +146,7 @@ public final class CoeusStatementSelect<N, I>
      * @param pFactory the GUI factory
      * @param pCache the cache
      */
-    public CoeusStatementSelect(final TethysGuiFactory<N, I> pFactory,
+    public CoeusStatementSelect(final TethysGuiFactory pFactory,
                                 final CoeusMarketCache pCache) {
         /* Store parameters */
         theCache = pCache;
@@ -176,15 +175,15 @@ public final class CoeusStatementSelect<N, I>
         theState = new CoeusStatementState(this, pCache.getCalendar());
 
         /* Create the labels */
-        final TethysLabel<N, I> myTotLabel = pFactory.newLabel(NLS_TOTALS);
-        final TethysLabel<N, I> myMktLabel = pFactory.newLabel(NLS_MARKET);
-        final TethysLabel<N, I> myTypLabel = pFactory.newLabel(NLS_TYPE);
-        final TethysLabel<N, I> myMonLabel = pFactory.newLabel(NLS_MONTH);
-        final TethysLabel<N, I> myLonLabel = pFactory.newLabel(NLS_LOAN);
+        final TethysLabel myTotLabel = pFactory.newLabel(NLS_TOTALS);
+        final TethysLabel myMktLabel = pFactory.newLabel(NLS_MARKET);
+        final TethysLabel myTypLabel = pFactory.newLabel(NLS_TYPE);
+        final TethysLabel myMonLabel = pFactory.newLabel(NLS_MONTH);
+        final TethysLabel myLonLabel = pFactory.newLabel(NLS_LOAN);
 
         /* Create Card Pane */
         theCardPane = pFactory.newCardPane();
-        TethysBoxPaneManager<N, I> myBox = pFactory.newHBoxPane();
+        TethysBoxPaneManager myBox = pFactory.newHBoxPane();
         myBox.addNode(myLonLabel);
         myBox.addNode(theLoanButton);
         theCardPane.addCard(CoeusMarketType.SNAPSHOT.toString(), myBox);
@@ -242,7 +241,7 @@ public final class CoeusStatementSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -279,7 +278,7 @@ public final class CoeusStatementSelect<N, I>
      * Build totals menu.
      * @param pMenu the menu to build
      */
-    private void handleTotalSetMenu(final TethysScrollMenu<CoeusTotalSet, I> pMenu) {
+    private void handleTotalSetMenu(final TethysScrollMenu<CoeusTotalSet> pMenu) {
         /* Reset menu */
         pMenu.removeAllItems();
 
@@ -300,7 +299,7 @@ public final class CoeusStatementSelect<N, I>
      * Build month menu.
      * @param pMenu the menu to build
      */
-    private void handleMonthMenu(final TethysScrollMenu<Month, I> pMenu) {
+    private void handleMonthMenu(final TethysScrollMenu<Month> pMenu) {
         /* Reset menu */
         pMenu.removeAllItems();
 
@@ -321,7 +320,7 @@ public final class CoeusStatementSelect<N, I>
      * Build loan menu.
      * @param pMenu the menu to build
      */
-    private void handleLoanMenu(final TethysScrollMenu<CoeusLoan, I> pMenu) {
+    private void handleLoanMenu(final TethysScrollMenu<CoeusLoan> pMenu) {
         /* Reset menu */
         pMenu.removeAllItems();
 
@@ -337,7 +336,7 @@ public final class CoeusStatementSelect<N, I>
      */
     private void buildMarketMenu() {
         /* Create builder */
-        final TethysScrollMenu<CoeusMarketProvider, ?> myBuilder = theMarketButton.getMenu();
+        final TethysScrollMenu<CoeusMarketProvider> myBuilder = theMarketButton.getMenu();
 
         /* Loop through the markets */
         for (final CoeusMarketProvider myMarket : CoeusMarketProvider.values()) {
@@ -351,7 +350,7 @@ public final class CoeusStatementSelect<N, I>
      */
     private void buildMarketTypeMenu() {
         /* Create builder */
-        final TethysScrollMenu<CoeusMarketType, ?> myBuilder = theMarketTypeButton.getMenu();
+        final TethysScrollMenu<CoeusMarketType> myBuilder = theMarketTypeButton.getMenu();
 
         /* Loop through the marketTypes */
         for (final CoeusMarketType myType : CoeusMarketType.values()) {

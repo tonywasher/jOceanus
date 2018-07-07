@@ -22,11 +22,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Tethys Button.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysButton<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysButton
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * Default icon width.
      */
@@ -61,7 +59,7 @@ public abstract class TethysButton<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysButton(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysButton(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
         theWidth = DEFAULT_ICONWIDTH;
@@ -161,7 +159,7 @@ public abstract class TethysButton<N, I>
      * Set icon for button.
      * @param pIcon the icon
      */
-    public abstract void setIcon(I pIcon);
+    public abstract void setIcon(TethysIcon pIcon);
 
     /**
      * Set toolTip for button.

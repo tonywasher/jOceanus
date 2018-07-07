@@ -23,9 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
@@ -104,7 +101,7 @@ public class TransactionPanel
     /**
      * Analysis selection panel.
      */
-    private final MoneyWiseAnalysisSelect<JComponent, Icon> theAnalysisSelect;
+    private final MoneyWiseAnalysisSelect theAnalysisSelect;
 
     /**
      * TransactionBuilder.
@@ -139,8 +136,8 @@ public class TransactionPanel
                             final MetisSwingFieldManager pFieldMgr,
                             final UpdateSet<MoneyWiseDataType> pUpdateSet,
                             final TransactionBuilder pBuilder,
-                            final MoneyWiseAnalysisSelect<JComponent, Icon> pAnalysisSelect,
-                            final MetisErrorPanel<JComponent, Icon> pError) {
+                            final MoneyWiseAnalysisSelect pAnalysisSelect,
+                            final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
         theAnalysisSelect = pAnalysisSelect;
@@ -694,7 +691,7 @@ public class TransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildAccountMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
+    public void buildAccountMenu(final TethysScrollMenu<TransactionAsset> pMenu,
                                  final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -712,7 +709,7 @@ public class TransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildPartnerMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
+    public void buildPartnerMenu(final TethysScrollMenu<TransactionAsset> pMenu,
                                  final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -734,7 +731,7 @@ public class TransactionPanel
      * @param pList the asset list
      * @param pTrans the transaction to build for
      */
-    private static <T extends AssetBase<T>> void buildAssetMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
+    private static <T extends AssetBase<T>> void buildAssetMenu(final TethysScrollMenu<TransactionAsset> pMenu,
                                                                 final AssetBaseList<T> pList,
                                                                 final boolean pIsAccount,
                                                                 final Transaction pTrans) {
@@ -745,7 +742,7 @@ public class TransactionPanel
                                                    ? myAccount
                                                    : pTrans.getPartner();
         TethysScrollMenuItem<TransactionAsset> myActive = null;
-        TethysScrollSubMenu<TransactionAsset, Icon> myMenu = null;
+        TethysScrollSubMenu<TransactionAsset> myMenu = null;
 
         /* Loop through the available values */
         final Iterator<T> myIterator = pList.iterator();
@@ -791,7 +788,7 @@ public class TransactionPanel
      * @param pIsAccount is this item the account rather than partner
      * @param pTrans the transaction to build for
      */
-    private static void buildHoldingMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
+    private static void buildHoldingMenu(final TethysScrollMenu<TransactionAsset> pMenu,
                                          final boolean pIsAccount,
                                          final Transaction pTrans) {
         /* Record active item */
@@ -801,7 +798,7 @@ public class TransactionPanel
                                                    ? myAccount
                                                    : pTrans.getPartner();
         TethysScrollMenuItem<TransactionAsset> myActive = null;
-        TethysScrollSubMenu<TransactionAsset, Icon> myMenu = null;
+        TethysScrollSubMenu<TransactionAsset> myMenu = null;
 
         /* Access Portfolios and Holdings Map */
         final MoneyWiseData myData = pTrans.getDataSet();
@@ -812,7 +809,7 @@ public class TransactionPanel
         final Iterator<Portfolio> myPortIterator = myPortfolios.iterator();
         while (myPortIterator.hasNext()) {
             final Portfolio myPortfolio = myPortIterator.next();
-            TethysScrollSubMenu<TransactionAsset, Icon> myCoreMenu = null;
+            TethysScrollSubMenu<TransactionAsset> myCoreMenu = null;
 
             /* Ignore deleted or closed */
             if (myPortfolio.isDeleted()
@@ -863,7 +860,7 @@ public class TransactionPanel
                 /* If there are new elements */
                 if (myNewIterator != null) {
                     /* Loop through them */
-                    TethysScrollSubMenu<TransactionAsset, Icon> mySubMenu = null;
+                    TethysScrollSubMenu<TransactionAsset> mySubMenu = null;
                     while (myNewIterator.hasNext()) {
                         final SecurityHolding myHolding = myNewIterator.next();
                         final Security mySecurity = myHolding.getSecurity();
@@ -908,7 +905,7 @@ public class TransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<TransactionCategory, Icon> pMenu,
+    public void buildCategoryMenu(final TethysScrollMenu<TransactionCategory> pMenu,
                                   final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -920,7 +917,7 @@ public class TransactionPanel
         TethysScrollMenuItem<TransactionCategory> myItem;
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<TransactionCategory, Icon>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
 
         /* Access Categories */
         final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
@@ -946,7 +943,7 @@ public class TransactionPanel
             /* If we have a parent */
             if (myParent != null) {
                 final String myParentName = myParent.getName();
-                TethysScrollSubMenu<TransactionCategory, Icon> myMenu = myMap.get(myParentName);
+                TethysScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
 
                 /* If this is a new subMenu */
                 if (myMenu == null) {
@@ -981,7 +978,7 @@ public class TransactionPanel
      * @param pMenu the menu
      * @param pTrans the transaction to build for
      */
-    public void buildReturnedAccountMenu(final TethysScrollMenu<TransactionAsset, Icon> pMenu,
+    public void buildReturnedAccountMenu(final TethysScrollMenu<TransactionAsset> pMenu,
                                          final Transaction pTrans) {
         /* Clear the menu */
         pMenu.removeAllItems();

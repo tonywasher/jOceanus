@@ -21,8 +21,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -33,12 +31,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Coeus Swing Main Panel.
  */
 public class CoeusSwingMainPanel
-        extends CoeusMainPanel<JComponent, Icon> {
+        extends CoeusMainPanel {
     /**
      * The frame.
      */
@@ -58,7 +57,7 @@ public class CoeusSwingMainPanel
         theFrame.setJMenuBar(getMenuBar().getNode());
 
         /* Attach the panel to the frame */
-        theFrame.setContentPane(getTabs().getNode());
+        theFrame.setContentPane(TethysSwingNode.getComponent(getTabs()));
         theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         theFrame.addWindowListener(new WindowClose());
 

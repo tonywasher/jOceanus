@@ -37,11 +37,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * LoaderThread extension to create an XML backup.
  * @param <T> the DataSet type
  * @param <E> the Data list type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements MetisThread<Void, N, I> {
+public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
+        implements MetisThread<Void> {
     /**
      * Buffer length.
      */
@@ -60,7 +58,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     /**
      * Data Control.
      */
-    private final DataControl<T, E, N, I> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Is this a Secure backup?
@@ -72,7 +70,7 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
      * @param pControl data control
      * @param pSecure is this a secure backup
      */
-    public PrometheusThreadCreateXmlFile(final DataControl<T, E, N, I> pControl,
+    public PrometheusThreadCreateXmlFile(final DataControl<T, E> pControl,
                                          final boolean pSecure) {
         isSecure = pSecure;
         theControl = pControl;
@@ -86,9 +84,9 @@ public class PrometheusThreadCreateXmlFile<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
         final GordianHashManager mySecurity = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;

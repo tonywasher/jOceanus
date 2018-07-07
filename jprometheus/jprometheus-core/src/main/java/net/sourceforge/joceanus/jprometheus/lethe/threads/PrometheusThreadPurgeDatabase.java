@@ -29,21 +29,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * marked as new so that it will be written to the database via the store command.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements MetisThread<Void, N, I> {
+public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends Enum<E>>
+        implements MetisThread<Void> {
     /**
      * Data Control.
      */
-    private final DataControl<T, E, N, I> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadPurgeDatabase(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadPurgeDatabase(final DataControl<T, E> pControl) {
         theControl = pControl;
     }
 
@@ -53,9 +51,9 @@ public class PrometheusThreadPurgeDatabase<T extends DataSet<T, E>, E extends En
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());

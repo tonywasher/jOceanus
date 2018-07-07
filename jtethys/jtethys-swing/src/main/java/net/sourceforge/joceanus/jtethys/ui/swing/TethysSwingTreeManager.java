@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -32,7 +30,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <T> the data type
  */
 public class TethysSwingTreeManager<T>
-        extends TethysTreeManager<T, JComponent, Icon> {
+        extends TethysTreeManager<T> {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The treeView.
      */
@@ -57,7 +60,7 @@ public class TethysSwingTreeManager<T>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysSwingTreeManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingTreeManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -67,6 +70,9 @@ public class TethysSwingTreeManager<T>
         theTree = new JTree(theTreeModel);
         final TreeSelectionModel mySelectionModel = theTree.getSelectionModel();
         setRoot(theRoot);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theTree);
 
         /* Configure the tree */
         theTree.setEditable(false);
@@ -79,8 +85,8 @@ public class TethysSwingTreeManager<T>
     }
 
     @Override
-    public JTree getNode() {
-        return theTree;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -161,7 +167,7 @@ public class TethysSwingTreeManager<T>
     }
 
     @Override
-    public TethysSwingTreeItem<T> addChildItem(final TethysTreeItem<T, JComponent, Icon> pParent,
+    public TethysSwingTreeItem<T> addChildItem(final TethysTreeItem<T> pParent,
                                                final String pName,
                                                final T pItem) {
         return new TethysSwingTreeItem<>(this, (TethysSwingTreeItem<T>) pParent, pName, pItem);
@@ -199,7 +205,7 @@ public class TethysSwingTreeManager<T>
      * @param <T> the data type
      */
     public static class TethysSwingTreeItem<T>
-            extends TethysTreeItem<T, JComponent, Icon> {
+            extends TethysTreeItem<T> {
         /**
          * Associated Node.
          */

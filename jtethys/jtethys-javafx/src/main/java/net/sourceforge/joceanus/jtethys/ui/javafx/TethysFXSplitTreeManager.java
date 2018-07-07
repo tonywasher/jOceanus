@@ -17,16 +17,22 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
 
 /**
  * Split Manager, hosting a Tree and HTML in a split window.
+ *
  * @param <T> the item type
  */
 public final class TethysFXSplitTreeManager<T>
-        extends TethysSplitTreeManager<T, Node, Node> {
+        extends TethysSplitTreeManager<T> {
+    /**
+     * The Node.
+     */
+    private final TethysFXNode theNode;
+
     /**
      * Split pane.
      */
@@ -34,9 +40,10 @@ public final class TethysFXSplitTreeManager<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXSplitTreeManager(final TethysFXGuiFactory pFactory) {
+    TethysFXSplitTreeManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -47,7 +54,11 @@ public final class TethysFXSplitTreeManager<T>
         /* Create the split pane */
         theSplit = new SplitPane();
         theSplit.setOrientation(Orientation.HORIZONTAL);
-        theSplit.getItems().addAll(getTreeManager().getNode(), myHTMLPane.getNode());
+        theSplit.getItems().addAll(TethysFXNode.getNode(getTreeManager()),
+                TethysFXNode.getNode(myHTMLPane));
+
+        /* create the node */
+        theNode = new TethysFXNode(theSplit);
     }
 
     @Override
@@ -66,8 +77,8 @@ public final class TethysFXSplitTreeManager<T>
     }
 
     @Override
-    public Node getNode() {
-        return theSplit;
+    public TethysFXNode getNode() {
+        return theNode;
     }
 
     @Override

@@ -20,9 +20,6 @@ import java.util.Currency;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.field.MetisFieldRequired;
@@ -96,7 +93,7 @@ public class SecurityPanel
                          final SwingView pView,
                          final MetisSwingFieldManager pFieldMgr,
                          final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                         final MetisErrorPanel<JComponent, Icon> pError) {
+                         final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -435,7 +432,7 @@ public class SecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildSecTypeMenu(final TethysScrollMenu<SecurityType, Icon> pMenu,
+    public void buildSecTypeMenu(final TethysScrollMenu<SecurityType> pMenu,
                                  final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -479,7 +476,7 @@ public class SecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee, Icon> pMenu,
+    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
                                 final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -525,7 +522,7 @@ public class SecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildRegionMenu(final TethysScrollMenu<Region, Icon> pMenu,
+    public void buildRegionMenu(final TethysScrollMenu<Region> pMenu,
                                 final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -569,7 +566,7 @@ public class SecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildStockMenu(final TethysScrollMenu<Security, Icon> pMenu,
+    public void buildStockMenu(final TethysScrollMenu<Security> pMenu,
                                final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -614,7 +611,7 @@ public class SecurityPanel
      * @param pMenu the menu
      * @param pSecurity the security to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
                                   final Security pSecurity) {
         /* Clear the menu */
         pMenu.removeAllItems();

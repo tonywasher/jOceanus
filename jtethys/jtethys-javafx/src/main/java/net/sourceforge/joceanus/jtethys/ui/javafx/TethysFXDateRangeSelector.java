@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
  */
 public class TethysFXDateRangeSelector
-        extends TethysDateRangeSelector<Node, Node> {
+        extends TethysDateRangeSelector {
     /**
      * Minimum width.
      */
@@ -33,33 +33,43 @@ public class TethysFXDateRangeSelector
     /**
      * The Node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
+
+    /**
+     * The Pane.
+     */
+    private final Region thePane;
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory     the GUI factory
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    protected TethysFXDateRangeSelector(final TethysFXGuiFactory pFactory,
-                                        final boolean pBaseIsStart) {
+    TethysFXDateRangeSelector(final TethysFXGuiFactory pFactory,
+                              final boolean pBaseIsStart) {
         /* Initialise the underlying class */
         super(pFactory, pBaseIsStart);
 
         /* Record the Node and Create minimum width for panel */
-        theNode = getControl().getNode();
-        theNode.setMinWidth(MIN_WIDTH);
+        thePane = (Region) TethysFXNode.getNode(getControl());
+        thePane.setMinWidth(MIN_WIDTH);
+
+        /* Craeet the node */
+        theNode = new TethysFXNode(thePane);
 
         /* Create the full sub-panel */
         applyState();
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
     /**
      * Obtain the control.
+     *
      * @return the control
      */
     @Override
@@ -80,30 +90,23 @@ public class TethysFXDateRangeSelector
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        theNode.setPrefWidth(pWidth);
+        thePane.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        theNode.setPrefHeight(pHeight);
+        thePane.setPrefHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), getControl().getNode());
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

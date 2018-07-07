@@ -16,17 +16,17 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysProgressBar;
 
 /**
  * JavaFX ProgressBar.
  */
 public class TethysFXProgressBar
-        extends TethysProgressBar<Node, Node> {
+        extends TethysProgressBar {
     /**
      * The progressBar style.
      */
@@ -40,7 +40,7 @@ public class TethysFXProgressBar
     /**
      * The node.
      */
-    private Node theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The Stack.
@@ -59,9 +59,10 @@ public class TethysFXProgressBar
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXProgressBar(final TethysFXGuiFactory pFactory) {
+    TethysFXProgressBar(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -69,7 +70,7 @@ public class TethysFXProgressBar
         theProgress = new ProgressBar();
         thePercent = new Text();
         theStack = new StackPane();
-        theNode = theStack;
+        theNode = new TethysFXNode(theStack);
         theProgress.getStyleClass().add(STYLE_PROGRESS);
 
         /* Build the stack Pane */
@@ -77,7 +78,7 @@ public class TethysFXProgressBar
     }
 
     @Override
-    public Node getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -117,19 +118,12 @@ public class TethysFXProgressBar
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theStack);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

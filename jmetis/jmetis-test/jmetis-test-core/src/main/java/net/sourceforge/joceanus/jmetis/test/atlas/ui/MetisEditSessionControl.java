@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -44,25 +45,23 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Edit Session Control.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisEditSessionControl<N, I>
-        implements TethysNode<N>, TethysEventProvider<MetisUIEvent> {
+public class MetisEditSessionControl
+        implements TethysComponent, TethysEventProvider<MetisUIEvent> {
     /**
      * The overall pane.
      */
-    private final TethysBorderPaneManager<N, I> thePane;
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The data panel.
      */
-    private final TethysNode<N> theDataPanel;
+    private final TethysComponent theDataPanel;
 
     /**
      * The card panel.
      */
-    private final TethysCardPaneManager<N, I, TethysNode<N>> theCard;
+    private final TethysCardPaneManager<TethysComponent> theCard;
 
     /**
      * The error panel.
@@ -102,7 +101,7 @@ public class MetisEditSessionControl<N, I>
     /**
      * The viewer window.
      */
-    private final MetisViewerWindow<N, I> theViewer;
+    private final MetisViewerWindow theViewer;
 
     /**
      * The ListKey.
@@ -142,17 +141,17 @@ public class MetisEditSessionControl<N, I>
      * @param pDataPanel the dataPanel
      * @throws OceanusException on error
      */
-    public MetisEditSessionControl(final MetisToolkit<N, I> pToolkit,
+    public MetisEditSessionControl(final MetisToolkit pToolkit,
                                    final MetisListEditSession pSession,
                                    final MetisListSetVersioned pUpdateSet,
-                                   final TethysNode<N> pDataPanel) throws OceanusException {
+                                   final TethysComponent pDataPanel) throws OceanusException {
         /* Record the parameters */
         theSession = pSession;
         theUpdateSet = pUpdateSet;
         theDataPanel = pDataPanel;
 
         /* Access the GUI factory */
-        TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
+        TethysGuiFactory myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -197,7 +196,7 @@ public class MetisEditSessionControl<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePane.getNode();
     }
 
@@ -357,19 +356,17 @@ public class MetisEditSessionControl<N, I>
      * Edit Session Control.
      */
     private class MetisEditPanel
-            implements TethysNode<N> {
+            implements TethysComponent {
         /**
          * The panel.
          */
-        private final TethysToolBarManager<N, I> thePanel;
+        private final TethysToolBarManager thePanel;
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
-         * @param pSession the session
-         * @param pListKey the listKey
          */
-        public MetisEditPanel(final TethysGuiFactory<N, I> pFactory) {
+        MetisEditPanel(final TethysGuiFactory pFactory) {
             /* Create the toolBar Manager */
             thePanel = pFactory.newToolBar();
             thePanel.setIconWidth(MetisIcon.ICON_SIZE);
@@ -395,7 +392,7 @@ public class MetisEditSessionControl<N, I>
         }
 
         @Override
-        public N getNode() {
+        public TethysNode getNode() {
             return thePanel.getNode();
         }
 
@@ -419,7 +416,7 @@ public class MetisEditSessionControl<N, I>
                 /* Else look at the edit state */
             } else {
                 /* Determine whether we have changes */
-                boolean hasUpdates = theSession.activeSession();
+                final boolean hasUpdates = theSession.activeSession();
                 thePanel.setEnabled(MetisIcon.UNDO, hasUpdates);
                 thePanel.setEnabled(MetisIcon.RESET, hasUpdates);
                 thePanel.setEnabled(MetisIcon.COMMIT, hasUpdates);
@@ -470,7 +467,7 @@ public class MetisEditSessionControl<N, I>
          * Create new item.
          */
         private void createNewItem() {
-            MetisFieldVersionedItem myItem = theSession.createNewItem(theListKey);
+            final MetisFieldVersionedItem myItem = theSession.createNewItem(theListKey);
             if (myItem != null) {
                 theEventManager.fireEvent(MetisUIEvent.NEWITEM, myItem);
             }
@@ -488,19 +485,17 @@ public class MetisEditSessionControl<N, I>
      * Browse Session Control.
      */
     private class MetisBrowsePanel
-            implements TethysNode<N> {
+            implements TethysComponent {
         /**
          * The panel.
          */
-        private final TethysToolBarManager<N, I> thePanel;
+        private final TethysToolBarManager thePanel;
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
-         * @param pSession the session
-         * @param pListKey the listKey
          */
-        public MetisBrowsePanel(final TethysGuiFactory<N, I> pFactory) {
+        MetisBrowsePanel(final TethysGuiFactory pFactory) {
             /* Create the toolBar Manager */
             thePanel = pFactory.newToolBar();
             thePanel.setIconWidth(MetisIcon.ICON_SIZE);
@@ -524,7 +519,7 @@ public class MetisEditSessionControl<N, I>
         }
 
         @Override
-        public N getNode() {
+        public TethysNode getNode() {
             return thePanel.getNode();
         }
 
@@ -546,7 +541,7 @@ public class MetisEditSessionControl<N, I>
                 /* Else look at the edit state */
             } else {
                 /* Determine whether we have changes */
-                boolean hasUpdates = theSession.activeBaseSession();
+                final boolean hasUpdates = theSession.activeBaseSession();
                 thePanel.setEnabled(MetisIcon.UNDO, hasUpdates);
                 thePanel.setEnabled(MetisIcon.RESET, hasUpdates);
                 thePanel.setEnabled(MetisIcon.SAVE, hasUpdates);
@@ -587,32 +582,32 @@ public class MetisEditSessionControl<N, I>
      * Error panel.
      */
     private class MetisErrorPanel
-            implements TethysNode<N> {
+            implements TethysComponent {
         /**
          * The Panel.
          */
-        private final TethysBoxPaneManager<N, I> thePanel;
+        private final TethysBoxPaneManager thePanel;
 
         /**
          * The error field.
          */
-        private final TethysLabel<N, I> theErrorField;
+        private final TethysLabel theErrorField;
 
         /**
          * The clear button.
          */
-        private final TethysButton<N, I> theClearButton;
+        private final TethysButton theClearButton;
 
         /**
          * The Viewer button.
          */
-        private final TethysButton<N, I> theViewerButton;
+        private final TethysButton theViewerButton;
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
          */
-        public MetisErrorPanel(final TethysGuiFactory<N, I> pFactory) {
+        MetisErrorPanel(final TethysGuiFactory pFactory) {
             /* Create the error field */
             theErrorField = pFactory.newLabel();
             theErrorField.setErrorText();
@@ -649,7 +644,7 @@ public class MetisEditSessionControl<N, I>
         }
 
         @Override
-        public N getNode() {
+        public TethysNode getNode() {
             return thePanel.getNode();
         }
 

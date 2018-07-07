@@ -24,11 +24,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 /**
  * Split Manager, hosting a Tree and HTML in a split window.
  * @param <T> the item type
- * @param <N> the Node type
- * @param <I> the icon type
  */
-public abstract class TethysSplitTreeManager<T, N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysSplitTreeManager<T>
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The id.
      */
@@ -42,23 +40,23 @@ public abstract class TethysSplitTreeManager<T, N, I>
     /**
      * The HTMLPane.
      */
-    private final TethysBorderPaneManager<N, I> theHTMLPane;
+    private final TethysBorderPaneManager theHTMLPane;
 
     /**
      * The Tree Manager.
      */
-    private final TethysTreeManager<T, N, I> theTreeManager;
+    private final TethysTreeManager<T> theTreeManager;
 
     /**
      * The HTML Manager.
      */
-    private final TethysHTMLManager<N, I> theHTMLManager;
+    private final TethysHTMLManager theHTMLManager;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysSplitTreeManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysSplitTreeManager(final TethysGuiFactory pFactory) {
         /* Create instances */
         theId = pFactory.getNextId();
         theTreeManager = pFactory.newTreeManager();
@@ -84,7 +82,7 @@ public abstract class TethysSplitTreeManager<T, N, I>
      * Obtain the Tree Manager.
      * @return the tree manager
      */
-    public TethysTreeManager<T, N, I> getTreeManager() {
+    public TethysTreeManager<T> getTreeManager() {
         return theTreeManager;
     }
 
@@ -92,7 +90,7 @@ public abstract class TethysSplitTreeManager<T, N, I>
      * Obtain the HTML Manager.
      * @return the HTML manager
      */
-    public TethysHTMLManager<N, I> getHTMLManager() {
+    public TethysHTMLManager getHTMLManager() {
         return theHTMLManager;
     }
 
@@ -100,7 +98,7 @@ public abstract class TethysSplitTreeManager<T, N, I>
      * Obtain the HTML Pane.
      * @return the HTML pane
      */
-    protected TethysBorderPaneManager<N, I> getHTMLPane() {
+    protected TethysBorderPaneManager getHTMLPane() {
         return theHTMLPane;
     }
 
@@ -113,7 +111,7 @@ public abstract class TethysSplitTreeManager<T, N, I>
      * Set control Pane.
      * @param pPane the control Pane
      */
-    public void setControlPane(final TethysNode<N> pPane) {
+    public void setControlPane(final TethysComponent pPane) {
         theHTMLPane.setNorth(pPane);
     }
 

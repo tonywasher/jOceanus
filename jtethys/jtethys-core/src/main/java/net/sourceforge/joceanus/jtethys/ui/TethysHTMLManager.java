@@ -28,11 +28,9 @@ import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
 
 /**
  * Tree Manager.
- * @param <N> the Node type
- * @param <I> the icon type
  */
-public abstract class TethysHTMLManager<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysHTMLManager
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * StyleSheetId.
      */
@@ -62,7 +60,7 @@ public abstract class TethysHTMLManager<N, I>
     /**
      * The HTMLToFile Manager.
      */
-    private final TethysHTMLToFile<N, I> theHTMLToFile;
+    private final TethysHTMLToFile theHTMLToFile;
 
     /**
      * The ValueSet.
@@ -93,13 +91,13 @@ public abstract class TethysHTMLManager<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysHTMLManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysHTMLManager(final TethysGuiFactory pFactory) {
         /* Build standard fields */
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
 
         /* Create the HTMLtoFile Manager */
-        theHTMLToFile = new TethysHTMLToFile<>(pFactory, this);
+        theHTMLToFile = new TethysHTMLToFile(pFactory, this);
 
         /* Obtain the valueSet */
         theValueSet = pFactory.getValueSet();

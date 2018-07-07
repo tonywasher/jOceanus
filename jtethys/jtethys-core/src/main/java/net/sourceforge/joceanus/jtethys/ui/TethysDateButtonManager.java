@@ -37,11 +37,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysDateButton;
  * <dt>EDITFOCUSLOST
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysDateButtonManager<N, I>
-        implements TethysDateButton, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysDateButtonManager
+        implements TethysDateButton, TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The Event Manager.
      */
@@ -50,7 +48,7 @@ public abstract class TethysDateButtonManager<N, I>
     /**
      * The button.
      */
-    private final TethysButton<N, I> theButton;
+    private final TethysButton theButton;
 
     /**
      * The date formatter.
@@ -92,7 +90,7 @@ public abstract class TethysDateButtonManager<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysDateButtonManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysDateButtonManager(final TethysGuiFactory pFactory) {
         /* Create configuration */
         theFormatter = pFactory.getDataFormatter().getDateFormatter();
         theConfig = new TethysDateConfig(theFormatter);
@@ -121,7 +119,7 @@ public abstract class TethysDateButtonManager<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theButton.getNode();
     }
 
@@ -129,7 +127,7 @@ public abstract class TethysDateButtonManager<N, I>
      * Obtain button.
      * @return the button
      */
-    protected TethysButton<N, I> getButton() {
+    protected TethysButton getButton() {
         return theButton;
     }
 

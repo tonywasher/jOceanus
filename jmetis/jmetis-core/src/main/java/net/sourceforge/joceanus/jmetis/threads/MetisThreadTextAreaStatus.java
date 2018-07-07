@@ -20,16 +20,15 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
  * Thread TextArea Status Manager.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisThreadTextAreaStatus<N, I>
-        implements MetisThreadStatusManager<N> {
+public class MetisThreadTextAreaStatus
+        implements MetisThreadStatusManager {
     /**
      * Cancel button text.
      */
@@ -58,32 +57,32 @@ public class MetisThreadTextAreaStatus<N, I>
     /**
      * The Thread Manager.
      */
-    private final MetisThreadManager<N, I> theThreadManager;
+    private final MetisThreadManager theThreadManager;
 
     /**
      * GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * Pane.
      */
-    private final TethysBorderPaneManager<N, I> thePane;
+    private final TethysBorderPaneManager thePane;
 
     /**
      * TextArea.
      */
-    private final TethysTextArea<N, I> theTextArea;
+    private final TethysTextArea theTextArea;
 
     /**
      * Cancel Button.
      */
-    private final TethysButton<N, I> theCancelButton;
+    private final TethysButton theCancelButton;
 
     /**
      * Clear Button.
      */
-    private final TethysButton<N, I> theClearButton;
+    private final TethysButton theClearButton;
 
     /**
      * The current status.
@@ -105,8 +104,8 @@ public class MetisThreadTextAreaStatus<N, I>
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected MetisThreadTextAreaStatus(final MetisThreadManager<N, I> pManager,
-                                        final TethysGuiFactory<N, I> pFactory) {
+    MetisThreadTextAreaStatus(final MetisThreadManager pManager,
+                              final TethysGuiFactory pFactory) {
         /* Store parameters */
         theThreadManager = pManager;
         theGuiFactory = pFactory;
@@ -124,11 +123,11 @@ public class MetisThreadTextAreaStatus<N, I>
         theCancelButton.setVisible(false);
 
         /* Create a scroll manager */
-        final TethysScrollPaneManager<N, I> myScroll = theGuiFactory.newScrollPane();
+        final TethysScrollPaneManager myScroll = theGuiFactory.newScrollPane();
         myScroll.setContent(theTextArea);
 
         /* Create a new subPanel for the buttons */
-        final TethysBoxPaneManager<N, I> myButtonPanel = theGuiFactory.newHBoxPane();
+        final TethysBoxPaneManager myButtonPanel = theGuiFactory.newHBoxPane();
         myButtonPanel.addNode(theClearButton);
         myButtonPanel.addNode(theCancelButton);
 
@@ -151,7 +150,7 @@ public class MetisThreadTextAreaStatus<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePane.getNode();
     }
 

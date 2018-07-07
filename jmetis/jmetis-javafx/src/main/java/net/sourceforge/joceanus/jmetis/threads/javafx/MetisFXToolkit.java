@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
-import javafx.scene.Node;
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.javafx.GordianFXHashManager;
@@ -37,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
  * Metis javaFX Toolkit.
  */
 public class MetisFXToolkit
-        extends MetisToolkit<Node, Node> {
+        extends MetisToolkit {
     /**
      * Constructor.
      * @throws OceanusException on error
@@ -102,7 +101,7 @@ public class MetisFXToolkit
     }
 
     @Override
-    protected MetisFXThreadProgressStatus newThreadSliderStatus(final MetisThreadManager<Node, Node> pManager) {
+    protected MetisFXThreadProgressStatus newThreadSliderStatus(final MetisThreadManager pManager) {
         return new MetisFXThreadProgressStatus(pManager, getGuiFactory());
     }
 

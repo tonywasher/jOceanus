@@ -76,7 +76,7 @@ public class AnalysisView
     /**
      * The View.
      */
-    private final View<?, ?> theView;
+    private final View theView;
 
     /**
      * The UpdateSet.
@@ -123,7 +123,7 @@ public class AnalysisView
      * @param pView the view
      * @param pUpdateSet the update set
      */
-    public AnalysisView(final View<?, ?> pView,
+    public AnalysisView(final View pView,
                         final UpdateSet<MoneyWiseDataType> pUpdateSet) {
         /* Store update set */
         theView = pView;

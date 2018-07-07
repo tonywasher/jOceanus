@@ -16,14 +16,12 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingColorButtonField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataButtonField.TethysSwingDateButtonField;
@@ -48,7 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
  * Tethys GUI Manager.
  */
 public class TethysSwingGuiFactory
-        extends TethysGuiFactory<JComponent, Icon> {
+        extends TethysGuiFactory {
     /**
      * The Field Adjuster.
      */
@@ -110,7 +108,7 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public Icon resolveIcon(final TethysIconId pIconId,
+    public TethysSwingIcon resolveIcon(final TethysIconId pIconId,
                             final int pWidth) {
         return pIconId == null
                                ? null
@@ -247,7 +245,7 @@ public class TethysSwingGuiFactory
     }
 
     @Override
-    public <P extends TethysNode<JComponent>> TethysSwingCardPaneManager<P> newCardPane() {
+    public <P extends TethysComponent> TethysSwingCardPaneManager<P> newCardPane() {
         return new TethysSwingCardPaneManager<>(this);
     }
 

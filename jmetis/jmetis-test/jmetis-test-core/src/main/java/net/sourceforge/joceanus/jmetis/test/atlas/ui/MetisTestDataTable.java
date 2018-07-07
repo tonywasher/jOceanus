@@ -41,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysListId;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconState;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
@@ -49,11 +50,9 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Test Table.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisTestDataTable<N, I>
-        implements TethysNode<N> {
+public class MetisTestDataTable
+        implements TethysComponent {
     /**
      * Create a logger.
      */
@@ -62,12 +61,12 @@ public class MetisTestDataTable<N, I>
     /**
      * The TableManager.
      */
-    private final MetisTableManager<MetisTestTableItem, N, I> theTable;
+    private final MetisTableManager<MetisTestTableItem> theTable;
 
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<?, ?> theHelper;
+    private final TethysScrollUITestHelper theHelper;
 
     /**
      * The ListSet.
@@ -92,16 +91,16 @@ public class MetisTestDataTable<N, I>
     /**
      * The Session Control.
      */
-    private final MetisEditSessionControl<N, I> theSessionControl;
+    private final MetisEditSessionControl theSessionControl;
 
     /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    public MetisTestDataTable(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public MetisTestDataTable(final MetisToolkit pToolkit) throws OceanusException {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create listSet */
         theListSet = MetisListBaseManager.newListSet();
@@ -132,7 +131,7 @@ public class MetisTestDataTable<N, I>
         MetisListBaseManager.refresh(theListSet);
 
         /* Create the session control */
-        theSessionControl = new MetisEditSessionControl<>(pToolkit, theSession, theUpdateSet, theTable);
+        theSessionControl = new MetisEditSessionControl(pToolkit, theSession, theUpdateSet, theTable);
         theSessionControl.setActiveKey(MetisTestItemKey.TEST);
         theSessionControl.getEventRegistrar().addEventListener(e -> theTable.setEditable(theSessionControl.isEditing()));
 
@@ -161,7 +160,7 @@ public class MetisTestDataTable<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theSessionControl.getNode();
     }
 
@@ -191,7 +190,7 @@ public class MetisTestDataTable<N, I>
         theTable.declareDateColumn(MetisTestDataField.DATE);
 
         /* Create the short column */
-        final MetisTableShortColumn<MetisTestTableItem, N, I> myShortColumn = theTable.declareShortColumn(MetisTestDataField.SHORT);
+        final MetisTableShortColumn<MetisTestTableItem> myShortColumn = theTable.declareShortColumn(MetisTestDataField.SHORT);
         myShortColumn.setValidator((v, r) -> v < 0
                                                    ? "Must be positive"
                                                    : null);
@@ -224,13 +223,13 @@ public class MetisTestDataTable<N, I>
         theTable.declareDilutedPriceColumn(MetisTestDataField.DILUTEDPRICE);
 
         /* Create the boolean column */
-        final MetisTableIconColumn<Boolean, MetisTestTableItem, N, I> myBoolColumn = theTable.declareIconColumn(MetisTestDataField.BOOLEAN, Boolean.class);
+        final MetisTableIconColumn<Boolean, MetisTestTableItem> myBoolColumn = theTable.declareIconColumn(MetisTestDataField.BOOLEAN, Boolean.class);
         myBoolColumn.setName("B");
         final TethysIconMapSet<Boolean> myMapSet = theHelper.buildSimpleIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE);
         myBoolColumn.setIconMapSet(p -> myMapSet);
 
         /* Create the extra boolean column */
-        final MetisTableIconColumn<Boolean, MetisTestTableItem, N, I> myXtraBoolColumn = theTable.declareIconColumn(MetisTestDataField.XTRABOOL, Boolean.class);
+        final MetisTableIconColumn<Boolean, MetisTestTableItem> myXtraBoolColumn = theTable.declareIconColumn(MetisTestDataField.XTRABOOL, Boolean.class);
         myXtraBoolColumn.setName("X");
         myXtraBoolColumn.setCellEditable(MetisTestTableItem::getBoolean);
         final Map<IconState, TethysIconMapSet<Boolean>> myMap = theHelper.buildStateIconState(TethysHelperIcon.OPENFALSE, TethysHelperIcon.OPENTRUE, TethysHelperIcon.CLOSEDTRUE);
@@ -240,11 +239,11 @@ public class MetisTestDataTable<N, I>
         myXtraBoolColumn.setRepaintColumnId(MetisTestDataField.BOOLEAN);
 
         /* Create the scroll column */
-        final MetisTableScrollColumn<String, MetisTestTableItem, N, I> myScrollColumn = theTable.declareScrollColumn(MetisTestDataField.SCROLL, String.class);
+        final MetisTableScrollColumn<String, MetisTestTableItem> myScrollColumn = theTable.declareScrollColumn(MetisTestDataField.SCROLL, String.class);
         myScrollColumn.setMenuConfigurator((r, c) -> theHelper.buildContextMenu(c));
 
         /* Create the list column */
-        final MetisTableListColumn<TethysListId, MetisTestTableItem, N, I> myListColumn = theTable.declareListColumn(MetisTestDataField.LIST);
+        final MetisTableListColumn<TethysListId, MetisTestTableItem> myListColumn = theTable.declareListColumn(MetisTestDataField.LIST);
         myListColumn.setSelectables(r -> theHelper.buildSelectableList());
 
         /* Create the password column */

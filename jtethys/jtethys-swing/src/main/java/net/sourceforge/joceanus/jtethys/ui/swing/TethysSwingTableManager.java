@@ -29,8 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -61,11 +59,17 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter.TethysSw
 
 /**
  * JavaSwing Table manager.
+ *
  * @param <C> the column identity
  * @param <R> the row type
  */
 public class TethysSwingTableManager<C, R>
-        extends TethysTableManager<C, R, JComponent, Icon> {
+        extends TethysTableManager<C, R> {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The Scroll Pane.
      */
@@ -108,6 +112,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
     protected TethysSwingTableManager(final TethysSwingGuiFactory pFactory) {
@@ -132,11 +137,14 @@ public class TethysSwingTableManager<C, R>
         /* Create the scrollPane */
         theScroll = new JScrollPane();
         theScroll.setViewportView(theTable);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theScroll);
     }
 
     @Override
-    public JComponent getNode() {
-        return theScroll;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -153,22 +161,22 @@ public class TethysSwingTableManager<C, R>
     @Override
     public Iterator<R> itemIterator() {
         return theItems == null
-                                ? Collections.emptyIterator()
-                                : theItems.iterator();
+               ? Collections.emptyIterator()
+               : theItems.iterator();
     }
 
     @Override
     public Iterator<R> sortedIterator() {
         return theItems == null
-                                ? Collections.emptyIterator()
-                                : theSorter.sortIterator();
+               ? Collections.emptyIterator()
+               : theSorter.sortIterator();
     }
 
     @Override
     public Iterator<R> viewIterator() {
         return theItems == null
-                                ? Collections.emptyIterator()
-                                : theSorter.viewIterator();
+               ? Collections.emptyIterator()
+               : theSorter.viewIterator();
     }
 
     @Override
@@ -190,14 +198,16 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the table model.
+     *
      * @return the table model
      */
-    protected TethysSwingTableModel getTableModel() {
+    TethysSwingTableModel getTableModel() {
         return theModel;
     }
 
     /**
      * Obtain the columnList.
+     *
      * @return the columnModel
      */
     List<R> getItems() {
@@ -206,6 +216,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the columnList.
+     *
      * @return the columnModel
      */
     List<TethysSwingTableColumn<?, C, R>> getColumnList() {
@@ -214,6 +225,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the columnModel.
+     *
      * @return the columnModel
      */
     TableColumnModel getColumnModel() {
@@ -222,6 +234,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the cell factory.
+     *
      * @return the cell factory
      */
     TethysSwingTableCellFactory<C, R> getCellFactory() {
@@ -230,6 +243,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the sorter.
+     *
      * @return the sorter
      */
     TethysSwingTableSorter<R> getSorter() {
@@ -238,12 +252,13 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the column for the model index.
+     *
      * @param pIndex the index of the column
      * @return the table column
      */
     TethysSwingTableColumn<?, C, R> getIndexedColumn(final int pIndex) {
         if (pIndex < 0
-            || pIndex > theColumnList.size()) {
+                || pIndex > theColumnList.size()) {
             throw new IllegalArgumentException();
         }
         return theColumnList.get(pIndex);
@@ -251,6 +266,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Obtain the row for the model index.
+     *
      * @param pIndex the index of the column
      * @return the table column
      */
@@ -259,7 +275,7 @@ public class TethysSwingTableManager<C, R>
             return null;
         }
         if (pIndex < 0
-            || pIndex > theItems.size()) {
+                || pIndex > theItems.size()) {
             throw new IllegalArgumentException();
         }
         return theItems.get(pIndex);
@@ -267,6 +283,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Set the table items.
+     *
      * @param pItems the items
      */
     public void setItems(final List<R> pItems) {
@@ -370,15 +387,16 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Fire TableRow added.
+     *
      * @param pRowIndex the index of the row that has been added
      */
     public void fireTableRowAdded(final int pRowIndex) {
-        final int myIndex = pRowIndex;
-        theModel.fireTableRowsInserted(myIndex, myIndex);
+        theModel.fireTableRowsInserted(pRowIndex, pRowIndex);
     }
 
     /**
      * Fire TableRow changed.
+     *
      * @param pRowIndex the index of the row that has changed
      */
     public void fireTableRowChanged(final int pRowIndex) {
@@ -388,6 +406,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Fire TableRow deleted.
+     *
      * @param pRowIndex the index of the row that has been deleted
      */
     public void fireTableRowDeleted(final int pRowIndex) {
@@ -397,6 +416,7 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Fire TableCell updated.
+     *
      * @param pRowIndex the row index of the cell that has been updated
      * @param pColIndex the column index of the cell that has been updated
      */
@@ -409,13 +429,14 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * handle listSelection.
+     *
      * @param pEvent the event
      */
     private void handleSelection(final ListSelectionEvent pEvent) {
         final ListSelectionModel myModel = (ListSelectionModel) pEvent.getSource();
         final R mySelected = myModel.isSelectionEmpty()
-                                                        ? null
-                                                        : theModel.getItemAtIndex(myModel.getMinSelectionIndex());
+                             ? null
+                             : theModel.getItemAtIndex(myModel.getMinSelectionIndex());
         processOnSelect(mySelected);
     }
 
@@ -457,8 +478,8 @@ public class TethysSwingTableManager<C, R>
         @Override
         public int getRowCount() {
             return getItems() == null
-                                      ? 0
-                                      : getItems().size();
+                   ? 0
+                   : getItems().size();
         }
 
         @Override
@@ -499,9 +520,10 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Notify model that the row has been updated.
+         *
          * @param pRowIndex the view row index
          */
-        protected void fireTableRowUpdated(final int pRowIndex) {
+        void fireTableRowUpdated(final int pRowIndex) {
             fireTableRowsUpdated(pRowIndex, pRowIndex);
             getSorter().reportMappingChanged();
         }
@@ -509,12 +531,13 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Column Definition.
+     *
      * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the row type
      */
     public abstract static class TethysSwingTableColumn<T, C, R>
-            extends TethysBaseTableColumn<T, C, R, JComponent, Icon> {
+            extends TethysBaseTableColumn<T, C, R> {
         /**
          * The underlying column.
          */
@@ -532,13 +555,14 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the owning table
-         * @param pId the column id
-         * @param pType the type of the column
+         * @param pId    the column id
+         * @param pType  the type of the column
          */
-        protected TethysSwingTableColumn(final TethysSwingTableManager<C, R> pTable,
-                                         final C pId,
-                                         final TethysFieldType pType) {
+        TethysSwingTableColumn(final TethysSwingTableManager<C, R> pTable,
+                               final C pId,
+                               final TethysFieldType pType) {
             /* Initialise underlying class */
             super(pTable, pId, pType);
 
@@ -560,6 +584,7 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Set cell value Factory.
+         *
          * @param pFactory the cell factory
          */
         public void setCellValueFactory(final Function<R, T> pFactory) {
@@ -568,9 +593,10 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Declare cell.
+         *
          * @param pCell the cell
          */
-        protected void declareCell(final TethysSwingTableCell<T, C, R> pCell) {
+        void declareCell(final TethysSwingTableCell<T, C, R> pCell) {
             theCell = pCell;
             theColumn.setCellRenderer(theCell.getRenderer());
             theColumn.setCellEditor(theCell.getEditor());
@@ -604,6 +630,7 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Is the cell editable?
+         *
          * @param pIndex the row index
          * @return true/false
          */
@@ -613,6 +640,7 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the cell value.
+         *
          * @param pIndex the row index
          * @return the value
          */
@@ -623,6 +651,7 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Set the cell value.
+         *
          * @param pIndex the row index
          * @param pValue the new value
          */
@@ -644,10 +673,11 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the row for the index.
+         *
          * @param pIndex the row index
          * @return true/false
          */
-        protected R getRowForIndex(final int pIndex) {
+        R getRowForIndex(final int pIndex) {
             return getTable().getIndexedRow(pIndex);
         }
 
@@ -664,15 +694,17 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the column index.
+         *
          * @return the index
          */
-        protected int getColumnIndex() {
+        int getColumnIndex() {
             return theColumn.getModelIndex();
         }
     }
 
     /**
      * Column Definition.
+     *
      * @param <T> the value type
      * @param <C> the column identity
      * @param <R> the row type
@@ -687,13 +719,14 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the containing table
-         * @param pId the id of the column
-         * @param pType the type of the column
+         * @param pId    the id of the column
+         * @param pType  the type of the column
          */
-        protected TethysSwingTableValidatedColumn(final TethysSwingTableManager<C, R> pTable,
-                                                  final C pId,
-                                                  final TethysFieldType pType) {
+        TethysSwingTableValidatedColumn(final TethysSwingTableManager<C, R> pTable,
+                                        final C pId,
+                                        final TethysFieldType pType) {
             /* Call super-constructor */
             super(pTable, pId, pType);
 
@@ -708,28 +741,31 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the validator.
+         *
          * @return the validator
          */
-        protected BiFunction<T, R, String> getValidator() {
+        BiFunction<T, R, String> getValidator() {
             return theValidator;
         }
     }
 
     /**
      * String Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableStringColumn<C, R>
             extends TethysSwingTableValidatedColumn<String, C, R>
-            implements TethysTableStringColumn<C, R, JComponent, Icon> {
+            implements TethysTableStringColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableStringColumn(final TethysSwingTableManager<C, R> pTable,
-                                               final C pId) {
+        TethysSwingTableStringColumn(final TethysSwingTableManager<C, R> pTable,
+                                     final C pId) {
             super(pTable, pId, TethysFieldType.STRING);
             declareCell(getTable().getCellFactory().stringCell(this));
         }
@@ -737,19 +773,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * CharArray Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableCharArrayColumn<C, R>
             extends TethysSwingTableValidatedColumn<char[], C, R>
-            implements TethysTableCharArrayColumn<C, R, JComponent, Icon> {
+            implements TethysTableCharArrayColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableCharArrayColumn(final TethysSwingTableManager<C, R> pTable,
-                                                  final C pId) {
+        TethysSwingTableCharArrayColumn(final TethysSwingTableManager<C, R> pTable,
+                                        final C pId) {
             super(pTable, pId, TethysFieldType.CHARARRAY);
             declareCell(getTable().getCellFactory().charArrayCell(this));
         }
@@ -757,19 +795,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Short Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableShortColumn<C, R>
             extends TethysSwingTableValidatedColumn<Short, C, R>
-            implements TethysTableShortColumn<C, R, JComponent, Icon> {
+            implements TethysTableShortColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableShortColumn(final TethysSwingTableManager<C, R> pTable,
-                                              final C pId) {
+        TethysSwingTableShortColumn(final TethysSwingTableManager<C, R> pTable,
+                                    final C pId) {
             super(pTable, pId, TethysFieldType.SHORT);
             declareCell(getTable().getCellFactory().shortCell(this));
         }
@@ -777,19 +817,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Integer Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableIntegerColumn<C, R>
             extends TethysSwingTableValidatedColumn<Integer, C, R>
-            implements TethysTableIntegerColumn<C, R, JComponent, Icon> {
+            implements TethysTableIntegerColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableIntegerColumn(final TethysSwingTableManager<C, R> pTable,
-                                                final C pId) {
+        TethysSwingTableIntegerColumn(final TethysSwingTableManager<C, R> pTable,
+                                      final C pId) {
             super(pTable, pId, TethysFieldType.INTEGER);
             declareCell(getTable().getCellFactory().integerCell(this));
         }
@@ -797,19 +839,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Long Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableLongColumn<C, R>
             extends TethysSwingTableValidatedColumn<Long, C, R>
-            implements TethysTableLongColumn<C, R, JComponent, Icon> {
+            implements TethysTableLongColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableLongColumn(final TethysSwingTableManager<C, R> pTable,
-                                             final C pId) {
+        TethysSwingTableLongColumn(final TethysSwingTableManager<C, R> pTable,
+                                   final C pId) {
             super(pTable, pId, TethysFieldType.LONG);
             declareCell(getTable().getCellFactory().longCell(this));
         }
@@ -817,12 +861,13 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * RawDecimal Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableRawDecimalColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysDecimal, C, R>
-            implements TethysTableRawDecimalColumn<C, R, JComponent, Icon> {
+            implements TethysTableRawDecimalColumn<C, R> {
         /**
          * Raw decimals supplier.
          */
@@ -830,11 +875,12 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableRawDecimalColumn(final TethysSwingTableManager<C, R> pTable,
-                                                   final C pId) {
+        TethysSwingTableRawDecimalColumn(final TethysSwingTableManager<C, R> pTable,
+                                         final C pId) {
             super(pTable, pId, TethysFieldType.DECIMAL);
             declareCell(getTable().getCellFactory().rawDecimalCell(this));
             theSupplier = p -> TethysRawDecimalEditConverter.DEFAULT_DECIMALS;
@@ -847,21 +893,23 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the raw decimals supplier.
+         *
          * @return the supplier
          */
-        protected Function<R, Integer> getNumDecimals() {
+        Function<R, Integer> getNumDecimals() {
             return theSupplier;
         }
     }
 
     /**
      * Money Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableMoneyColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysMoney, C, R>
-            implements TethysTableMoneyColumn<C, R, JComponent, Icon> {
+            implements TethysTableMoneyColumn<C, R> {
         /**
          * Currency supplier.
          */
@@ -869,11 +917,12 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableMoneyColumn(final TethysSwingTableManager<C, R> pTable,
-                                              final C pId) {
+        TethysSwingTableMoneyColumn(final TethysSwingTableManager<C, R> pTable,
+                                    final C pId) {
             super(pTable, pId, TethysFieldType.MONEY);
             declareCell(getTable().getCellFactory().moneyCell(this));
             theSupplier = p -> null;
@@ -886,21 +935,23 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the currency supplier.
+         *
          * @return the supplier
          */
-        protected Function<R, Currency> getDeemedCurrency() {
+        Function<R, Currency> getDeemedCurrency() {
             return theSupplier;
         }
     }
 
     /**
      * Price Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTablePriceColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysPrice, C, R>
-            implements TethysTablePriceColumn<C, R, JComponent, Icon> {
+            implements TethysTablePriceColumn<C, R> {
         /**
          * Currency supplier.
          */
@@ -908,11 +959,12 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTablePriceColumn(final TethysSwingTableManager<C, R> pTable,
-                                              final C pId) {
+        TethysSwingTablePriceColumn(final TethysSwingTableManager<C, R> pTable,
+                                    final C pId) {
             super(pTable, pId, TethysFieldType.PRICE);
             declareCell(getTable().getCellFactory().priceCell(this));
             theSupplier = p -> null;
@@ -925,28 +977,31 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the currency supplier.
+         *
          * @return the supplier
          */
-        protected Function<R, Currency> getDeemedCurrency() {
+        Function<R, Currency> getDeemedCurrency() {
             return theSupplier;
         }
     }
 
     /**
      * Rate Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableRateColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysRate, C, R>
-            implements TethysTableRateColumn<C, R, JComponent, Icon> {
+            implements TethysTableRateColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableRateColumn(final TethysSwingTableManager<C, R> pTable,
-                                             final C pId) {
+        TethysSwingTableRateColumn(final TethysSwingTableManager<C, R> pTable,
+                                   final C pId) {
             super(pTable, pId, TethysFieldType.RATE);
             declareCell(getTable().getCellFactory().rateCell(this));
         }
@@ -954,19 +1009,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Units Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableUnitsColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysUnits, C, R>
-            implements TethysTableUnitsColumn<C, R, JComponent, Icon> {
+            implements TethysTableUnitsColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableUnitsColumn(final TethysSwingTableManager<C, R> pTable,
-                                              final C pId) {
+        TethysSwingTableUnitsColumn(final TethysSwingTableManager<C, R> pTable,
+                                    final C pId) {
             super(pTable, pId, TethysFieldType.UNITS);
             declareCell(getTable().getCellFactory().unitsCell(this));
         }
@@ -974,19 +1031,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Dilution Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableDilutionColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysDilution, C, R>
-            implements TethysTableDilutionColumn<C, R, JComponent, Icon> {
+            implements TethysTableDilutionColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableDilutionColumn(final TethysSwingTableManager<C, R> pTable,
-                                                 final C pId) {
+        TethysSwingTableDilutionColumn(final TethysSwingTableManager<C, R> pTable,
+                                       final C pId) {
             super(pTable, pId, TethysFieldType.DILUTION);
             declareCell(getTable().getCellFactory().dilutionCell(this));
         }
@@ -994,19 +1053,21 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * Ratio Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableRatioColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysRatio, C, R>
-            implements TethysTableRatioColumn<C, R, JComponent, Icon> {
+            implements TethysTableRatioColumn<C, R> {
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableRatioColumn(final TethysSwingTableManager<C, R> pTable,
-                                              final C pId) {
+        TethysSwingTableRatioColumn(final TethysSwingTableManager<C, R> pTable,
+                                    final C pId) {
             super(pTable, pId, TethysFieldType.RATIO);
             declareCell(getTable().getCellFactory().ratioCell(this));
         }
@@ -1014,12 +1075,13 @@ public class TethysSwingTableManager<C, R>
 
     /**
      * DilutedPrice Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableDilutedPriceColumn<C, R>
             extends TethysSwingTableValidatedColumn<TethysDilutedPrice, C, R>
-            implements TethysTableDilutedPriceColumn<C, R, JComponent, Icon> {
+            implements TethysTableDilutedPriceColumn<C, R> {
         /**
          * Currency supplier.
          */
@@ -1027,11 +1089,12 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableDilutedPriceColumn(final TethysSwingTableManager<C, R> pTable,
-                                                     final C pId) {
+        TethysSwingTableDilutedPriceColumn(final TethysSwingTableManager<C, R> pTable,
+                                           final C pId) {
             super(pTable, pId, TethysFieldType.DILUTEDPRICE);
             declareCell(getTable().getCellFactory().dilutedPriceCell(this));
             theSupplier = p -> null;
@@ -1044,21 +1107,23 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the currency supplier.
+         *
          * @return the supplier
          */
-        protected Function<R, Currency> getDeemedCurrency() {
+        Function<R, Currency> getDeemedCurrency() {
             return theSupplier;
         }
     }
 
     /**
      * Date Column.
+     *
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableDateColumn<C, R>
             extends TethysSwingTableColumn<TethysDate, C, R>
-            implements TethysTableDateColumn<C, R, JComponent, Icon> {
+            implements TethysTableDateColumn<C, R> {
         /**
          * Date configurator.
          */
@@ -1066,11 +1131,12 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableDateColumn(final TethysSwingTableManager<C, R> pTable,
-                                             final C pId) {
+        TethysSwingTableDateColumn(final TethysSwingTableManager<C, R> pTable,
+                                   final C pId) {
             super(pTable, pId, TethysFieldType.DATE);
             declareCell(getTable().getCellFactory().dateCell(this));
             theConfigurator = (r, c) -> {
@@ -1084,36 +1150,39 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the date configurator.
+         *
          * @return the configurator
          */
-        protected BiConsumer<R, TethysDateConfig> getDateConfigurator() {
+        BiConsumer<R, TethysDateConfig> getDateConfigurator() {
             return theConfigurator;
         }
     }
 
     /**
      * Scroll Column.
+     *
      * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableScrollColumn<T, C, R>
             extends TethysSwingTableColumn<T, C, R>
-            implements TethysTableScrollColumn<T, C, R, JComponent, Icon> {
+            implements TethysTableScrollColumn<T, C, R> {
         /**
          * Menu configurator.
          */
-        private BiConsumer<R, TethysScrollMenu<T, Icon>> theConfigurator;
+        private BiConsumer<R, TethysScrollMenu<T>> theConfigurator;
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          * @param pClazz the item class
          */
-        protected TethysSwingTableScrollColumn(final TethysSwingTableManager<C, R> pTable,
-                                               final C pId,
-                                               final Class<T> pClazz) {
+        TethysSwingTableScrollColumn(final TethysSwingTableManager<C, R> pTable,
+                                     final C pId,
+                                     final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.SCROLL);
             declareCell(getTable().getCellFactory().scrollCell(this, pClazz));
             theConfigurator = (r, c) -> {
@@ -1121,28 +1190,30 @@ public class TethysSwingTableManager<C, R>
         }
 
         @Override
-        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T, Icon>> pConfigurator) {
+        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
             theConfigurator = pConfigurator;
         }
 
         /**
          * Obtain the menu configurator.
+         *
          * @return the configurator
          */
-        protected BiConsumer<R, TethysScrollMenu<T, Icon>> getMenuConfigurator() {
+        BiConsumer<R, TethysScrollMenu<T>> getMenuConfigurator() {
             return theConfigurator;
         }
     }
 
     /**
      * List Column.
+     *
      * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableListColumn<T extends Comparable<T>, C, R>
             extends TethysSwingTableColumn<List<T>, C, R>
-            implements TethysTableListColumn<T, C, R, JComponent, Icon> {
+            implements TethysTableListColumn<T, C, R> {
         /**
          * Selectable supplier.
          */
@@ -1150,11 +1221,12 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          */
-        protected TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
-                                             final C pId) {
+        TethysSwingTableListColumn(final TethysSwingTableManager<C, R> pTable,
+                                   final C pId) {
             super(pTable, pId, TethysFieldType.LIST);
             declareCell(getTable().getCellFactory().listCell(this));
             theSelectables = r -> Collections.emptyIterator();
@@ -1167,22 +1239,24 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the selectable supplier.
+         *
          * @return the supplier
          */
-        protected Function<R, Iterator<T>> getSelectables() {
+        Function<R, Iterator<T>> getSelectables() {
             return theSelectables;
         }
     }
 
     /**
      * Icon Column.
+     *
      * @param <T> the column type
      * @param <C> the column identity
      * @param <R> the table item class
      */
     public static class TethysSwingTableIconColumn<T, C, R>
             extends TethysSwingTableColumn<T, C, R>
-            implements TethysTableIconColumn<T, C, R, JComponent, Icon> {
+            implements TethysTableIconColumn<T, C, R> {
         /**
          * IconMapSet supplier.
          */
@@ -1190,13 +1264,14 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Constructor.
+         *
          * @param pTable the table
-         * @param pId the id
+         * @param pId    the id
          * @param pClazz the item class
          */
-        protected TethysSwingTableIconColumn(final TethysSwingTableManager<C, R> pTable,
-                                             final C pId,
-                                             final Class<T> pClazz) {
+        TethysSwingTableIconColumn(final TethysSwingTableManager<C, R> pTable,
+                                   final C pId,
+                                   final Class<T> pClazz) {
             super(pTable, pId, TethysFieldType.ICON);
             declareCell(getTable().getCellFactory().iconCell(this, pClazz));
             theSupplier = p -> null;
@@ -1209,9 +1284,10 @@ public class TethysSwingTableManager<C, R>
 
         /**
          * Obtain the mapSet supplier.
+         *
          * @return the supplier
          */
-        protected Function<R, TethysIconMapSet<T>> getIconMapSet() {
+        Function<R, TethysIconMapSet<T>> getIconMapSet() {
             return theSupplier;
         }
     }

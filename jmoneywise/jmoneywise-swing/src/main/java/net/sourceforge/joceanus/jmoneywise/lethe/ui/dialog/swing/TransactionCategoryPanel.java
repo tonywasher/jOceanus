@@ -18,9 +18,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
 import java.util.Iterator;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -56,7 +53,7 @@ public class TransactionCategoryPanel
     public TransactionCategoryPanel(final TethysSwingGuiFactory pFactory,
                                     final MetisSwingFieldManager pFieldMgr,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                    final MetisErrorPanel<JComponent, Icon> pError) {
+                                    final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -168,7 +165,7 @@ public class TransactionCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    public void buildCategoryTypeMenu(final TethysScrollMenu<TransactionCategoryType, Icon> pMenu,
+    public void buildCategoryTypeMenu(final TethysScrollMenu<TransactionCategoryType> pMenu,
                                       final TransactionCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -216,7 +213,7 @@ public class TransactionCategoryPanel
      * @param pMenu the menu
      * @param pCategory the category to build for
      */
-    private void buildParentMenu(final TethysScrollMenu<TransactionCategory, Icon> pMenu,
+    private void buildParentMenu(final TethysScrollMenu<TransactionCategory> pMenu,
                                  final TransactionCategory pCategory) {
         /* Clear the menu */
         pMenu.removeAllItems();

@@ -20,9 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -68,6 +65,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -133,7 +131,7 @@ public class CashCategoryTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The table model.
@@ -148,7 +146,7 @@ public class CashCategoryTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The filter panel.
@@ -178,7 +176,7 @@ public class CashCategoryTable
     /**
      * Category menu builder.
      */
-    private final TethysScrollMenu<CashCategory, ?> theCategoryMenu;
+    private final TethysScrollMenu<CashCategory> theCategoryMenu;
 
     /**
      * Cash Categories.
@@ -198,7 +196,7 @@ public class CashCategoryTable
      */
     public CashCategoryTable(final SwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final MetisErrorPanel<JComponent, Icon> pError) {
+                             final MetisErrorPanel pError) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
@@ -250,11 +248,11 @@ public class CashCategoryTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Create a Category panel */
         theActiveCategory = new CashCategoryPanel(myFactory, theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveCategory.getNode(), BorderLayout.PAGE_END);
+        thePanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.PAGE_END);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -276,8 +274,8 @@ public class CashCategoryTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**
@@ -853,7 +851,7 @@ public class CashCategoryTable
          * @param pMenu the menu to build
          */
         private void buildCategoryTypeMenu(final Integer pRowIndex,
-                                           final TethysScrollMenu<CashCategoryType, Icon> pMenu) {
+                                           final TethysScrollMenu<CashCategoryType> pMenu) {
             /* Record active item */
             final CashCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 

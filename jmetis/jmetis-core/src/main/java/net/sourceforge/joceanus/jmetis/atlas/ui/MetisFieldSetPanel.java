@@ -48,6 +48,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -55,15 +56,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * FieldSet Panel.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisFieldSetPanel<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public class MetisFieldSetPanel
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The event manager.
@@ -73,12 +72,12 @@ public class MetisFieldSetPanel<N, I>
     /**
      * The field map.
      */
-    private final Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
+    private final Map<MetisDataFieldId, MetisFieldSetPanelItem<?>> theFieldMap;
 
     /**
      * The VBox.
      */
-    private final TethysBoxPaneManager<N, I> theNode;
+    private final TethysBoxPaneManager theNode;
 
     /**
      * The current item.
@@ -88,7 +87,7 @@ public class MetisFieldSetPanel<N, I>
     /**
      * The field elements.
      */
-    private List<MetisFieldSetPanelItem<?, N, I>> theItems;
+    private List<MetisFieldSetPanelItem<?>> theItems;
 
     /**
      * The editable state.
@@ -97,27 +96,30 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected MetisFieldSetPanel(final TethysGuiFactory<N, I> pFactory) {
+    protected MetisFieldSetPanel(final TethysGuiFactory pFactory) {
         this(pFactory, new HashMap<>());
     }
 
     /**
      * Constructor.
+     *
      * @param pParent the parent pair
      */
-    protected MetisFieldSetPanel(final MetisFieldSetPanelPair<N, I> pParent) {
+    MetisFieldSetPanel(final MetisFieldSetPanelPair pParent) {
         this(pParent.getGuiFactory(), pParent.getFieldMap());
     }
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory  the GUI factory
      * @param pFieldMap the fieldMap
      */
-    private MetisFieldSetPanel(final TethysGuiFactory<N, I> pFactory,
-                               final Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> pFieldMap) {
+    private MetisFieldSetPanel(final TethysGuiFactory pFactory,
+                               final Map<MetisDataFieldId, MetisFieldSetPanelItem<?>> pFieldMap) {
         theGuiFactory = pFactory;
         theFieldMap = pFieldMap;
         theItems = new ArrayList<>();
@@ -131,7 +133,7 @@ public class MetisFieldSetPanel<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theNode.getNode();
     }
 
@@ -147,14 +149,16 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Obtain the GUI Factory.
+     *
      * @return the factory
      */
-    protected TethysGuiFactory<N, I> getGuiFactory() {
+    protected TethysGuiFactory getGuiFactory() {
         return theGuiFactory;
     }
 
     /**
      * Set the item.
+     *
      * @param pItem the item to set
      */
     public void setItem(final MetisFieldItem pItem) {
@@ -164,6 +168,7 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * obtain the item.
+     *
      * @return the item
      */
     public MetisFieldItem getItem() {
@@ -172,6 +177,7 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * is the panel editable.
+     *
      * @return true/false
      */
     public boolean isEditable() {
@@ -180,12 +186,13 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Register field.
-     * @param <X> the item
-     * @param <T> the field type
+     *
+     * @param <X>    the item
+     * @param <T>    the field type
      * @param pField the field
      * @return the field
      */
-    private <X extends MetisFieldSetPanelItem<T, N, I>, T> X registerField(final X pField) {
+    private <X extends MetisFieldSetPanelItem<T>, T> X registerField(final X pField) {
         theFieldMap.put(pField.getField(), pField);
         theItems.add(pField);
         theNode.addNode(pField.getBorderPane());
@@ -194,6 +201,7 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Refresh item values.
+     *
      * @return has visible fields true/false
      */
     public boolean refreshItem() {
@@ -202,8 +210,8 @@ public class MetisFieldSetPanel<N, I>
 
         /* access version control */
         final MetisFieldVersionedItem myVersioned = theItem instanceof MetisFieldVersionedItem
-                                                                                               ? (MetisFieldVersionedItem) theItem
-                                                                                               : null;
+                                                    ? (MetisFieldVersionedItem) theItem
+                                                    : null;
 
         /* If the item is non-null */
         if (theItem != null) {
@@ -211,9 +219,9 @@ public class MetisFieldSetPanel<N, I>
             final MetisFieldSetDef myFieldSet = theItem.getDataFieldSet();
 
             /* Loop through the elements */
-            final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+            final Iterator<MetisFieldSetPanelItem<?>> myIterator = theItems.iterator();
             while (myIterator.hasNext()) {
-                final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+                final MetisFieldSetPanelItem<?> myChild = myIterator.next();
 
                 /* Obtain the field value */
                 final MetisFieldDef myField = myFieldSet.getField(myChild.getField());
@@ -221,7 +229,7 @@ public class MetisFieldSetPanel<N, I>
 
                 /* Determine font and colour */
                 final boolean isChanged = myVersioned != null
-                                          && myVersioned.fieldChanged(myField).isDifferent();
+                        && myVersioned.fieldChanged(myField).isDifferent();
 
                 /* Set the value */
                 hasVisible |= myChild.setValue(myValue, isChanged);
@@ -234,6 +242,7 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Set editable state.
+     *
      * @param pEditable the editable state
      */
     public void setEditable(final boolean pEditable) {
@@ -243,9 +252,9 @@ public class MetisFieldSetPanel<N, I>
             isEditable = pEditable;
 
             /* Loop through the elements */
-            final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+            final Iterator<MetisFieldSetPanelItem<?>> myIterator = theItems.iterator();
             while (myIterator.hasNext()) {
-                final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+                final MetisFieldSetPanelItem<?> myChild = myIterator.next();
 
                 /* Set the editable state of the field */
                 myChild.setEditable(pEditable && !myChild.isReadOnly());
@@ -260,13 +269,14 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Set readOnly field.
-     * @param pField the field
+     *
+     * @param pField    the field
      * @param pReadOnly the readOnly state
      */
     public void setReadOnlyField(final MetisDataFieldId pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
-        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.setReadOnly(pReadOnly);
@@ -275,29 +285,30 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Set deemed currency.
-     * @param pField the field
+     *
+     * @param pField    the field
      * @param pCurrency the currency supplier
      */
     public void setDeemedCurrency(final MetisDataFieldId pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
-        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
-        if ((myChild != null)
-            && myChild instanceof TethysCurrencyEditField) {
+        final MetisFieldSetPanelItem<?> myChild = theFieldMap.get(pField);
+        if (myChild instanceof TethysCurrencyEditField) {
             /* Set the currency */
-            ((TethysCurrencyEditField<?, ?, ?>) myChild).setDeemedCurrency(pCurrency);
+            ((TethysCurrencyEditField<?>) myChild).setDeemedCurrency(pCurrency);
         }
     }
 
     /**
      * Show the command button.
+     *
      * @param pField the field
-     * @param pShow true/false
+     * @param pShow  true/false
      */
     public void showCmdButton(final MetisDataFieldId pField,
                               final boolean pShow) {
         /* Look up the field */
-        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.showCmdButton(pShow);
@@ -306,155 +317,171 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Add string field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetStringItem<N, I> addStringField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetStringItem<>(this, pField));
+    public MetisFieldSetStringItem addStringField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetStringItem(this, pField));
     }
 
     /**
      * Add charArray field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetCharArrayItem<N, I> addCharArrayField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetCharArrayItem<>(this, pField));
+    public MetisFieldSetCharArrayItem addCharArrayField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetCharArrayItem(this, pField));
     }
 
     /**
      * Add short field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetShortItem<N, I> addShortField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetShortItem<>(this, pField));
+    public MetisFieldSetShortItem addShortField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetShortItem(this, pField));
     }
 
     /**
      * Add integer field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetIntegerItem<N, I> addIntegerField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetIntegerItem<>(this, pField));
+    public MetisFieldSetIntegerItem addIntegerField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetIntegerItem(this, pField));
     }
 
     /**
      * Add long field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetLongItem<N, I> addLongField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetLongItem<>(this, pField));
+    public MetisFieldSetLongItem addLongField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetLongItem(this, pField));
     }
 
     /**
      * Add money field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetMoneyItem<N, I> addMoneyField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetMoneyItem<>(this, pField));
+    public MetisFieldSetMoneyItem addMoneyField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetMoneyItem(this, pField));
     }
 
     /**
      * Add price field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetPriceItem<N, I> addPriceField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetPriceItem<>(this, pField));
+    public MetisFieldSetPriceItem addPriceField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetPriceItem(this, pField));
     }
 
     /**
      * Add rate field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetRateItem<N, I> addRateField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetRateItem<>(this, pField));
+    public MetisFieldSetRateItem addRateField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetRateItem(this, pField));
     }
 
     /**
      * Add units field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetUnitsItem<N, I> addUnitsField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetUnitsItem<>(this, pField));
+    public MetisFieldSetUnitsItem addUnitsField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetUnitsItem(this, pField));
     }
 
     /**
      * Add dilution field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetDilutionItem<N, I> addDilutionField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetDilutionItem<>(this, pField));
+    public MetisFieldSetDilutionItem addDilutionField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetDilutionItem(this, pField));
     }
 
     /**
      * Add ratio field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetRatioItem<N, I> addRatioField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetRatioItem<>(this, pField));
+    public MetisFieldSetRatioItem addRatioField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetRatioItem(this, pField));
     }
 
     /**
      * Add dateButton field.
+     *
      * @param pField the field
      * @return the field
      */
-    public MetisFieldSetDateItem<N, I> addDateButtonField(final MetisDataFieldId pField) {
-        return registerField(new MetisFieldSetDateItem<>(this, pField));
+    public MetisFieldSetDateItem addDateButtonField(final MetisDataFieldId pField) {
+        return registerField(new MetisFieldSetDateItem(this, pField));
     }
 
     /**
      * Add scrollButton field.
-     * @param <T> the item type
+     *
+     * @param <T>    the item type
      * @param pField the field
      * @param pClass the item class
      * @return the field
      */
-    public <T> MetisFieldSetScrollItem<T, N, I> addScrollButtonField(final MetisDataFieldId pField,
-                                                                     final Class<T> pClass) {
+    public <T> MetisFieldSetScrollItem<T> addScrollButtonField(final MetisDataFieldId pField,
+                                                               final Class<T> pClass) {
         return registerField(new MetisFieldSetScrollItem<>(this, pField, pClass));
     }
 
     /**
      * Add listButton field.
-     * @param <T> the item type
+     *
+     * @param <T>    the item type
      * @param pField the field
      * @return the list field
      */
-    public <T extends Comparable<T>> MetisFieldSetListItem<T, N, I> addListButtonField(final MetisDataFieldId pField) {
+    public <T extends Comparable<T>> MetisFieldSetListItem<T> addListButtonField(final MetisDataFieldId pField) {
         return registerField(new MetisFieldSetListItem<>(this, pField));
     }
 
     /**
      * Add simpleIconButton field.
-     * @param <T> the item type
+     *
+     * @param <T>    the item type
      * @param pField the field
      * @param pClass the item class
      * @return the icon field
      */
-    public <T> MetisFieldSetIconItem<T, N, I> addIconButtonField(final MetisDataFieldId pField,
-                                                                 final Class<T> pClass) {
+    public <T> MetisFieldSetIconItem<T> addIconButtonField(final MetisDataFieldId pField,
+                                                           final Class<T> pClass) {
         return registerField(new MetisFieldSetIconItem<>(this, pField, pClass));
     }
 
     /**
      * Is the panel visible?
+     *
      * @return true/false
      */
     protected boolean isVisible() {
         /* Loop through the elements */
-        final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+        final Iterator<MetisFieldSetPanelItem<?>> myIterator = theItems.iterator();
         while (myIterator.hasNext()) {
-            final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+            final MetisFieldSetPanelItem<?> myChild = myIterator.next();
             /* If any child is visible return true */
             if (myChild.isVisible()) {
                 return true;
@@ -475,6 +502,7 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Determine width of largest label.
+     *
      * @return the largest width
      */
     private int widestLabel() {
@@ -482,9 +510,9 @@ public class MetisFieldSetPanel<N, I>
         int myWidth = 0;
 
         /* Loop through the elements */
-        final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+        final Iterator<MetisFieldSetPanelItem<?>> myIterator = theItems.iterator();
         while (myIterator.hasNext()) {
-            final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+            final MetisFieldSetPanelItem<?> myChild = myIterator.next();
             /* Adjust largest width */
             final int myCurrWidth = myChild.getLabelWidth();
             if (myCurrWidth > myWidth) {
@@ -498,13 +526,14 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Set label width.
+     *
      * @param pWidth the width
      */
     private void setLabelWidth(final int pWidth) {
         /* Loop through the elements */
-        final Iterator<MetisFieldSetPanelItem<?, N, I>> myIterator = theItems.iterator();
+        final Iterator<MetisFieldSetPanelItem<?>> myIterator = theItems.iterator();
         while (myIterator.hasNext()) {
-            final MetisFieldSetPanelItem<?, N, I> myChild = myIterator.next();
+            final MetisFieldSetPanelItem<?> myChild = myIterator.next();
             /* Adjust width */
             myChild.setLabelWidth(pWidth);
         }
@@ -512,6 +541,7 @@ public class MetisFieldSetPanel<N, I>
 
     /**
      * Fire event.
+     *
      * @param pEventId the event id
      * @param pDetails the details
      */

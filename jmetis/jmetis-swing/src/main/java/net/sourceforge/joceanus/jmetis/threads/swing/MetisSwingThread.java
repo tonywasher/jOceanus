@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
@@ -48,12 +46,12 @@ public class MetisSwingThread<T>
     /**
      * The ThreadStatusManager.
      */
-    private final MetisThreadStatusManager<JComponent> theStatusMgr;
+    private final MetisThreadStatusManager theStatusMgr;
 
     /**
      * The wrapped thread.
      */
-    private final MetisThread<T, JComponent, Icon> theThread;
+    private final MetisThread<T> theThread;
 
     /**
      * The task name.
@@ -71,7 +69,7 @@ public class MetisSwingThread<T>
      * @param pThread the thread to wrap
      */
     protected MetisSwingThread(final MetisSwingToolkit pToolkit,
-                               final MetisThread<T, JComponent, Icon> pThread) {
+                               final MetisThread<T> pThread) {
         theToolkit = pToolkit;
         theManager = theToolkit.getThreadManager();
         theStatusMgr = theManager.getStatusManager();

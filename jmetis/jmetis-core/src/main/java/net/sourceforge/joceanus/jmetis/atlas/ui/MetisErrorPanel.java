@@ -29,17 +29,16 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Error panel.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisErrorPanel<N, I>
-        implements TethysEventProvider<MetisUIEvent>, TethysNode<N> {
+public class MetisErrorPanel
+        implements TethysEventProvider<MetisUIEvent>, TethysComponent {
     /**
      * Text for Clear Button.
      */
@@ -58,17 +57,17 @@ public class MetisErrorPanel<N, I>
     /**
      * The Panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The error field.
      */
-    private final TethysLabel<N, I> theErrorField;
+    private final TethysLabel theErrorField;
 
     /**
      * The clear button.
      */
-    private final TethysButton<N, I> theClearButton;
+    private final TethysButton theClearButton;
 
     /**
      * The viewer entry for the error.
@@ -86,7 +85,7 @@ public class MetisErrorPanel<N, I>
      * @param pViewerMgr the Viewer manager
      * @param pParent the parent viewer entry
      */
-    public MetisErrorPanel(final TethysGuiFactory<N, I> pFactory,
+    public MetisErrorPanel(final TethysGuiFactory pFactory,
                            final MetisViewerManager pViewerMgr,
                            final MetisViewerEntry pParent) {
         /* Create the error viewer entry for this view */
@@ -130,7 +129,7 @@ public class MetisErrorPanel<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -222,7 +221,7 @@ public class MetisErrorPanel<N, I>
     /**
      * Clear error indication for this window.
      */
-    public void clearErrors() {
+    private void clearErrors() {
         /* If we currently have an error */
         if (hasError()) {
             /* Clear the error */

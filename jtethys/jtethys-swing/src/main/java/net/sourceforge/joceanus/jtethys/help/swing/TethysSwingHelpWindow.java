@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -31,6 +30,7 @@ import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
 
@@ -38,7 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
  * Help Window class, responsible for displaying the help.
  */
 public class TethysSwingHelpWindow
-        extends TethysHelpWindow<JComponent, Icon> {
+        extends TethysHelpWindow {
     /**
      * The frame.
      */
@@ -124,7 +124,7 @@ public class TethysSwingHelpWindow
 
             /* Create the help panel */
             final JPanel myPanel = new JPanel();
-            final JComponent mySplit = getSplitTreeManager().getNode();
+            final JComponent mySplit = TethysSwingNode.getComponent(getSplitTreeManager());
             myPanel.add(mySplit);
             mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 

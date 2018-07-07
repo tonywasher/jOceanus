@@ -21,11 +21,9 @@ import java.util.List;
 
 /**
  * Grid Pane Manager.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public abstract class TethysGridPaneManager<N, I>
-        implements TethysNode<N> {
+public abstract class TethysGridPaneManager
+        implements TethysComponent {
     /**
      * Grid Gap default.
      */
@@ -39,7 +37,7 @@ public abstract class TethysGridPaneManager<N, I>
     /**
      * Node List.
      */
-    private final List<TethysNode<N>> theNodeList;
+    private final List<TethysComponent> theNodeList;
 
     /**
      * The Padding.
@@ -75,7 +73,7 @@ public abstract class TethysGridPaneManager<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysGridPaneManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysGridPaneManager(final TethysGuiFactory pFactory) {
         /* Initialise values */
         theId = pFactory.getNextId();
         theNodeList = new ArrayList<>();
@@ -168,7 +166,7 @@ public abstract class TethysGridPaneManager<N, I>
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        for (TethysNode<N> myNode : theNodeList) {
+        for (TethysComponent myNode : theNodeList) {
             myNode.setEnabled(pEnabled);
         }
     }
@@ -193,7 +191,7 @@ public abstract class TethysGridPaneManager<N, I>
      * Add cell at current column and increment column #.
      * @param pNode the node to add
      */
-    public void addCell(final TethysNode<N> pNode) {
+    public void addCell(final TethysComponent pNode) {
         /* add the node */
         addCellAtPosition(pNode, theRowIndex, theColIndex);
 
@@ -206,7 +204,7 @@ public abstract class TethysGridPaneManager<N, I>
      * @param pNode the node to add
      * @param pNumCols the number of columns to span
      */
-    public void addCell(final TethysNode<N> pNode,
+    public void addCell(final TethysComponent pNode,
                         final int pNumCols) {
         /* add the node */
         addCellAtPosition(pNode, theRowIndex, theColIndex);
@@ -224,7 +222,7 @@ public abstract class TethysGridPaneManager<N, I>
      * @param pRow the row to add the cell at
      * @param pColumn the column to add the cell at
      */
-    public abstract void addCellAtPosition(TethysNode<N> pNode,
+    public abstract void addCellAtPosition(TethysComponent pNode,
                                            int pRow,
                                            int pColumn);
 
@@ -233,34 +231,34 @@ public abstract class TethysGridPaneManager<N, I>
      * @param pNode the node to set column span on
      * @param pNumCols the number of columns to span
      */
-    public abstract void setCellColumnSpan(TethysNode<N> pNode,
+    public abstract void setCellColumnSpan(TethysComponent pNode,
                                            int pNumCols);
 
     /**
      * Set final cell.
      * @param pNode the node to set as final cell in row
      */
-    public abstract void setFinalCell(TethysNode<N> pNode);
+    public abstract void setFinalCell(TethysComponent pNode);
 
     /**
      * Allow Cell as growth.
      * @param pNode the node to allow growth on
      */
-    public abstract void allowCellGrowth(TethysNode<N> pNode);
+    public abstract void allowCellGrowth(TethysComponent pNode);
 
     /**
      * Set cell alignment.
      * @param pNode the node to align
      * @param pAlign the cell alignment
      */
-    public abstract void setCellAlignment(TethysNode<N> pNode,
+    public abstract void setCellAlignment(TethysComponent pNode,
                                           TethysAlignment pAlign);
 
     /**
      * Add simple Node.
      * @param pNode the node to add
      */
-    protected void addNode(final TethysNode<N> pNode) {
+    protected void addNode(final TethysComponent pNode) {
         theNodeList.add(pNode);
     }
 }

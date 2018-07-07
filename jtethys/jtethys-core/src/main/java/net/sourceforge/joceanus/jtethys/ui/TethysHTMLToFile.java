@@ -35,10 +35,8 @@ import net.sourceforge.joceanus.jtethys.TethysDataException;
 
 /**
  * HTML to File.
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public class TethysHTMLToFile<N, I> {
+public class TethysHTMLToFile {
     /**
      * The logger.
      */
@@ -67,7 +65,7 @@ public class TethysHTMLToFile<N, I> {
     /**
      * The HTML Manager.
      */
-    private final TethysHTMLManager<N, I> theHTMLManager;
+    private final TethysHTMLManager theHTMLManager;
 
     /**
      * The File Selector.
@@ -79,8 +77,8 @@ public class TethysHTMLToFile<N, I> {
      * @param pFactory the GUI Factory
      * @param pHTMLManager the HTML Manager
      */
-    public TethysHTMLToFile(final TethysGuiFactory<N, I> pFactory,
-                            final TethysHTMLManager<N, I> pHTMLManager) {
+    public TethysHTMLToFile(final TethysGuiFactory pFactory,
+                            final TethysHTMLManager pHTMLManager) {
         /* Store parameters */
         theHTMLManager = pHTMLManager;
         theFileSelector = pFactory.newFileSelector();

@@ -79,7 +79,7 @@ public enum PrometheusIcon implements TethysIconId {
      * Configure goto scroll button.
      * @param pButton the button manager
      */
-    public static void configureGoToScrollButton(final TethysScrollButtonManager<?, ?, ?> pButton) {
+    public static void configureGoToScrollButton(final TethysScrollButtonManager<?> pButton) {
         pButton.setNullMargins();
         pButton.setSimpleDetails(GOTO, MetisIcon.ICON_SIZE, TIP_GOTO);
     }

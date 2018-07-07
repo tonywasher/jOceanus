@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -46,11 +47,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Deposit Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseDepositAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseDepositAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -69,27 +68,27 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The deposit button.
      */
-    private final TethysScrollButtonManager<DepositBucket, N, I> theDepositButton;
+    private final TethysScrollButtonManager<DepositBucket> theDepositButton;
 
     /**
      * The category button.
      */
-    private final TethysScrollButtonManager<DepositCategory, N, I> theCatButton;
+    private final TethysScrollButtonManager<DepositCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<DepositCategory, I> theCategoryMenu;
+    private final TethysScrollMenu<DepositCategory> theCategoryMenu;
 
     /**
      * Deposit menu.
      */
-    private final TethysScrollMenu<DepositBucket, I> theDepositMenu;
+    private final TethysScrollMenu<DepositBucket> theDepositMenu;
 
     /**
      * The active category bucket list.
@@ -115,7 +114,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseDepositAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseDepositAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the deposit button */
         theDepositButton = pFactory.newScrollButton();
 
@@ -126,8 +125,8 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        final TethysLabel<N, I> myDepLabel = pFactory.newLabel(NLS_DEPOSIT + TethysLabel.STR_COLON);
+        final TethysLabel myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel myDepLabel = pFactory.newLabel(NLS_DEPOSIT + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -161,7 +160,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -295,7 +294,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<DepositCategory, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<DepositCategory>> myMap = new HashMap<>();
 
         /* Record active item */
         final DepositCategory myCurrent = theState.getCategory();
@@ -314,7 +313,7 @@ public class MoneyWiseDepositAnalysisSelect<N, I>
             /* Determine menu to add to */
             final DepositCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<DepositCategory, ?> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<DepositCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {

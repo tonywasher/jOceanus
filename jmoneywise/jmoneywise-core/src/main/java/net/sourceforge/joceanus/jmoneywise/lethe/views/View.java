@@ -39,11 +39,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDateRange;
 
 /**
  * Data Control for MoneyWiseApp.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class View<N, I>
-        extends DataControl<MoneyWiseData, MoneyWiseDataType, N, I> {
+public class View
+        extends DataControl<MoneyWiseData, MoneyWiseDataType> {
     /**
      * The TaxFactory.
      */
@@ -79,7 +77,7 @@ public class View<N, I>
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
-    public View(final JOceanusUtilitySet<N, I> pUtilitySet,
+    public View(final JOceanusUtilitySet pUtilitySet,
                 final MoneyWiseTaxFactory pTaxFactory) {
         /* Call super-constructor */
         super(pUtilitySet);

@@ -113,7 +113,6 @@ public abstract class GordianKeyGenerator<T> {
      * Generate a new Key.
      * @param pBytes the bytes for the key.
      * @return the new Key
-     * @throws OceanusException on error
      */
     protected abstract GordianKey<T> buildKeyFromBytes(byte[] pBytes);
 

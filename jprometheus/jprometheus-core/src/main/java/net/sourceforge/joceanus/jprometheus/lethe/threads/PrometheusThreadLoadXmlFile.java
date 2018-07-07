@@ -37,11 +37,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysFileSelector;
  * LoaderThread extension to load an XML backup.
  * @param <T> the DataSet type
  * @param <E> the Data list type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements MetisThread<T, N, I> {
+public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum<E>>
+        implements MetisThread<T> {
     /**
      * Select Backup Task.
      */
@@ -50,13 +48,13 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     /**
      * Data control.
      */
-    private final DataControl<T, E, N, I> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadLoadXmlFile(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadLoadXmlFile(final DataControl<T, E> pControl) {
         theControl = pControl;
     }
 
@@ -66,9 +64,9 @@ public class PrometheusThreadLoadXmlFile<T extends DataSet<T, E>, E extends Enum
     }
 
     @Override
-    public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public T performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
         final GordianHashManager mySecurity = pToolkit.getSecurityManager();
 
         /* Initialise the status window */

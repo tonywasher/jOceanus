@@ -34,18 +34,19 @@ import javafx.print.PageOrientation;
 import javafx.print.Paper;
 import javafx.print.Printer;
 import javafx.print.PrinterJob;
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
+
 import netscape.javascript.JSObject;
 
 /**
  * JavaFX HTML Manager.
  */
 public class TethysFXHTMLManager
-        extends TethysHTMLManager<Node, Node> {
+        extends TethysHTMLManager {
     /**
      * The logger.
      */
@@ -82,6 +83,11 @@ public class TethysFXHTMLManager
     private final TethysFXGuiFactory theFactory;
 
     /**
+     * The Node.
+     */
+    private final TethysFXNode theNode;
+
+    /**
      * Pane.
      */
     private final BorderPane thePane;
@@ -108,9 +114,10 @@ public class TethysFXHTMLManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXHTMLManager(final TethysFXGuiFactory pFactory) {
+    TethysFXHTMLManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -119,17 +126,22 @@ public class TethysFXHTMLManager
 
         /* Allocate the Pane */
         thePane = new BorderPane();
+        theNode = new TethysFXNode(thePane);
 
         /* Attach a listener to the Factory */
-        theFactory.getEventRegistrar().addEventListener(e -> allocateWebView());
+        if (theFactory.getStage() == null) {
+            theFactory.getEventRegistrar().addEventListener(e -> allocateWebView());
+        } else {
+            allocateWebView();
+        }
 
         /* Create the hyperLink listener */
         theListener = this::handleClick;
     }
 
     @Override
-    public Node getNode() {
-        return thePane;
+    public TethysFXNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -232,6 +244,7 @@ public class TethysFXHTMLManager
 
     /**
      * Obtain JSObject Double.
+     *
      * @param pObject the returned number (either Double or Integer)
      * @return the Double
      */
@@ -247,6 +260,7 @@ public class TethysFXHTMLManager
 
     /**
      * Obtain JSObject Integer.
+     *
      * @param pObject the returned number (either Double or Integer)
      * @return the Integer
      */
@@ -262,6 +276,7 @@ public class TethysFXHTMLManager
 
     /**
      * Handle click.
+     *
      * @param pEvent the event
      */
     private void handleClick(final Event pEvent) {
@@ -272,6 +287,7 @@ public class TethysFXHTMLManager
 
     /**
      * Handle load state change.
+     *
      * @param pNewState the new state
      */
     private void handleStateChange(final State pNewState) {
@@ -285,7 +301,7 @@ public class TethysFXHTMLManager
         /* Prepare to print the webPage */
         final PrinterJob job = PrinterJob.createPrinterJob();
         if (job != null
-            && job.showPrintDialog(theFactory.getStage())) {
+                && job.showPrintDialog(theFactory.getStage())) {
             /* Access printer and determine orientation */
             final Printer myPrinter = job.getPrinter();
 

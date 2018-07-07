@@ -16,11 +16,7 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
-
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 
@@ -28,11 +24,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
  * Swing checkBox.
  */
 public class TethysSwingCheckBox
-        extends TethysCheckBox<JComponent, Icon> {
+        extends TethysCheckBox {
     /**
-     * The node.
+     * The Node.
      */
-    private JComponent theNode;
+    private final TethysSwingNode theNode;
 
     /**
      * CheckBox.
@@ -50,14 +46,18 @@ public class TethysSwingCheckBox
      */
     protected TethysSwingCheckBox(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
+
+        /* Create the checkBox */
         theAdjuster = pFactory.getFieldAdjuster();
         theCheckBox = new JCheckBox();
-        theNode = theCheckBox;
         theCheckBox.addActionListener(e -> handleSelected(theCheckBox.isSelected()));
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theCheckBox);
     }
 
     @Override
-    public JComponent getNode() {
+    public TethysSwingNode getNode() {
         return theNode;
     }
 
@@ -89,34 +89,23 @@ public class TethysSwingCheckBox
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theNode.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theNode.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theNode.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theNode.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysSwingGuiUtils.addPanelBorder(getBorderTitle(), getBorderPadding(), theCheckBox);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

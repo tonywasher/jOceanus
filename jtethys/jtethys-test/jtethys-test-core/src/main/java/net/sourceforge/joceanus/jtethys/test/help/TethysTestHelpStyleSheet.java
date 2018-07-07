@@ -27,7 +27,7 @@ public enum TethysTestHelpStyleSheet implements TethysStyleSheetId {
     /**
      * Help StyleSheet.
      */
-    CSS_HELP("CoeusReports.css");
+    CSS_HELP("TethysHelp.css");
 
     /**
      * The Source.

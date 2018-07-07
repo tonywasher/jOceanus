@@ -17,21 +17,23 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.CardLayout;
-import java.awt.Dimension;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Tethys Swing Card panel manager.
  * @param <P> the card panel type
  */
-public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
-        extends TethysCardPaneManager<JComponent, Icon, P> {
+public class TethysSwingCardPaneManager<P extends TethysComponent>
+        extends TethysCardPaneManager<P> {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The panel.
      */
@@ -46,16 +48,21 @@ public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysSwingCardPaneManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingCardPaneManager(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
+
+        /* Create the panel */
         thePanel = new JPanel();
         theLayout = new CardLayout();
         thePanel.setLayout(theLayout);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(thePanel);
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -73,7 +80,7 @@ public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
     public void addCard(final String pName,
                         final P pCard) {
         super.addCard(pName, pCard);
-        thePanel.add(pCard.getNode(), pName);
+        thePanel.add(TethysSwingNode.getComponent(pCard), pName);
     }
 
     @Override
@@ -89,34 +96,23 @@ public class TethysSwingCardPaneManager<P extends TethysNode<JComponent>>
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

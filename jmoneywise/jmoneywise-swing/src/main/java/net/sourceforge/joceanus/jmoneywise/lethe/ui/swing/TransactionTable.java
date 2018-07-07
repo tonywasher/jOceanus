@@ -21,9 +21,6 @@ import java.awt.Dimension;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -92,6 +89,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Analysis Statement.
@@ -276,17 +274,17 @@ public class TransactionTable
     /**
      * Analysis Selection panel.
      */
-    private final MoneyWiseAnalysisSelect<JComponent, Icon> theSelect;
+    private final MoneyWiseAnalysisSelect theSelect;
 
     /**
      * The action buttons.
      */
-    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
+    private final PrometheusActionButtons theActionButtons;
 
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The table model.
@@ -301,7 +299,7 @@ public class TransactionTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The new button.
@@ -380,10 +378,10 @@ public class TransactionTable
         theAnalysisView = new AnalysisView(theView, theUpdateSet);
 
         /* Create the Analysis Selection */
-        theSelect = new MoneyWiseAnalysisSelect<>(myFactory, theView, theAnalysisView, theNewButton);
+        theSelect = new MoneyWiseAnalysisSelect(myFactory, theView, theAnalysisView, theNewButton);
 
         /* Create the action buttons */
-        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
         theError = theView.getToolkit().newErrorPanel(myRegister);
@@ -406,12 +404,12 @@ public class TransactionTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(myHeader.getNode(), BorderLayout.PAGE_START);
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(TethysSwingNode.getComponent(myHeader), BorderLayout.PAGE_START);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Create a transaction panel */
         theActiveTrans = new TransactionPanel(myFactory, theFieldMgr, theUpdateSet, theBuilder, theSelect, theError);
-        thePanel.add(theActiveTrans.getNode(), BorderLayout.PAGE_END);
+        thePanel.add(TethysSwingNode.getComponent(theActiveTrans), BorderLayout.PAGE_END);
 
         /* Prevent reordering of columns and auto-resizing */
         myTable.getTableHeader().setReorderingAllowed(false);
@@ -445,8 +443,8 @@ public class TransactionTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**
@@ -472,7 +470,7 @@ public class TransactionTable
      * Select Statement.
      * @param pSelect the selection
      */
-    protected void selectStatement(final StatementSelect<JComponent, Icon> pSelect) {
+    protected void selectStatement(final StatementSelect pSelect) {
         /* Update selection */
         theSelect.selectStatement(pSelect);
 
@@ -641,7 +639,7 @@ public class TransactionTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        super.getNode().setEnabled(!isError);
+        super.getNode().getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);
@@ -1632,7 +1630,7 @@ public class TransactionTable
          * @param pMenu the menu to build
          */
         private void buildAccountMenu(final Integer pRowIndex,
-                                      final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
+                                      final TethysScrollMenu<TransactionAsset> pMenu) {
             /* Record active item */
             final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
@@ -1646,7 +1644,7 @@ public class TransactionTable
          * @param pMenu the menu to build
          */
         private void buildPartnerMenu(final Integer pRowIndex,
-                                      final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
+                                      final TethysScrollMenu<TransactionAsset> pMenu) {
             /* Record active item */
             final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
@@ -1660,7 +1658,7 @@ public class TransactionTable
          * @param pMenu the menu to build
          */
         private void buildCategoryMenu(final Integer pRowIndex,
-                                       final TethysScrollMenu<TransactionCategory, Icon> pMenu) {
+                                       final TethysScrollMenu<TransactionCategory> pMenu) {
             /* Record active item */
             final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 
@@ -1674,7 +1672,7 @@ public class TransactionTable
          * @param pMenu the menu to build
          */
         private void buildReturnedMenu(final Integer pRowIndex,
-                                       final TethysScrollMenu<TransactionAsset, Icon> pMenu) {
+                                       final TethysScrollMenu<TransactionAsset> pMenu) {
             /* Record active item */
             final Transaction myTrans = theModel.getItemAtIndex(pRowIndex);
 

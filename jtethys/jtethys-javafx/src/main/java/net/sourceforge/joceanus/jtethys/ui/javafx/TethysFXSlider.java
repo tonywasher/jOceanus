@@ -16,15 +16,15 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.Slider;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysSlider;
 
 /**
  * JavaFX Slider.
  */
 public class TethysFXSlider
-        extends TethysSlider<Node, Node> {
+        extends TethysSlider {
     /**
      * The slider style.
      */
@@ -33,7 +33,7 @@ public class TethysFXSlider
     /**
      * The node.
      */
-    private Node theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The Slider.
@@ -42,13 +42,14 @@ public class TethysFXSlider
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXSlider(final TethysFXGuiFactory pFactory) {
+    TethysFXSlider(final TethysFXGuiFactory pFactory) {
         /* Create resources */
         super(pFactory);
         theSlider = new Slider();
-        theNode = theSlider;
+        theNode = new TethysFXNode(theSlider);
         theSlider.setMin(0);
         theSlider.setShowTickMarks(true);
         theSlider.getStyleClass().add(STYLE_SLIDER);
@@ -58,7 +59,7 @@ public class TethysFXSlider
     }
 
     @Override
-    public Node getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -109,19 +110,12 @@ public class TethysFXSlider
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theSlider);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

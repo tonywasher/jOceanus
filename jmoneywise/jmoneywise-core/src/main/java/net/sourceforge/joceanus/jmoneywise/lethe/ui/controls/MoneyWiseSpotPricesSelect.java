@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
@@ -49,11 +50,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * SpotPrice selection panel.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseSpotPricesSelect<N, I>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<N> {
+public class MoneyWiseSpotPricesSelect
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Text for Date Label.
      */
@@ -92,47 +91,47 @@ public class MoneyWiseSpotPricesSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The data view.
      */
-    private final View<N, I> theView;
+    private final View theView;
 
     /**
      * The date button.
      */
-    private final TethysDateButtonManager<N, I> theDateButton;
+    private final TethysDateButtonManager theDateButton;
 
     /**
      * The showClosed checkBox.
      */
-    private final TethysCheckBox<N, I> theShowClosed;
+    private final TethysCheckBox theShowClosed;
 
     /**
      * The next button.
      */
-    private final TethysButton<N, I> theNext;
+    private final TethysButton theNext;
 
     /**
      * The previous button.
      */
-    private final TethysButton<N, I> thePrev;
+    private final TethysButton thePrev;
 
     /**
      * The download button.
      */
-    private final TethysButton<N, I> theDownloadButton;
+    private final TethysButton theDownloadButton;
 
     /**
      * The portfolio button.
      */
-    private final TethysScrollButtonManager<PortfolioBucket, N, I> thePortButton;
+    private final TethysScrollButtonManager<PortfolioBucket> thePortButton;
 
     /**
      * The portfolio menu.
      */
-    private final TethysScrollMenu<PortfolioBucket, I> thePortMenu;
+    private final TethysScrollMenu<PortfolioBucket> thePortMenu;
 
     /**
      * The Portfolio list.
@@ -159,8 +158,8 @@ public class MoneyWiseSpotPricesSelect<N, I>
      * @param pFactory the GUI factory
      * @param pView the data view
      */
-    public MoneyWiseSpotPricesSelect(final TethysGuiFactory<N, I> pFactory,
-                                     final View<N, I> pView) {
+    public MoneyWiseSpotPricesSelect(final TethysGuiFactory pFactory,
+                                     final View pView) {
         /* Store table and view details */
         theView = pView;
 
@@ -168,8 +167,8 @@ public class MoneyWiseSpotPricesSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create Labels */
-        final TethysLabel<N, I> myDate = pFactory.newLabel(NLS_DATE);
-        final TethysLabel<N, I> myPort = pFactory.newLabel(NLS_PORT);
+        final TethysLabel myDate = pFactory.newLabel(NLS_DATE);
+        final TethysLabel myPort = pFactory.newLabel(NLS_PORT);
 
         /* Create the check box */
         theShowClosed = pFactory.newCheckBox(NLS_CLOSED);
@@ -244,7 +243,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -556,7 +555,7 @@ public class MoneyWiseSpotPricesSelect<N, I>
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final TethysDateButtonManager<N, I> pButton) {
+        private boolean setDate(final TethysDateButtonManager pButton) {
             /* Adjust the date and build the new range */
             final TethysDate myDate = new TethysDate(pButton.getSelectedDate());
             if (!MetisDataDifference.isEqual(myDate, theDate)) {

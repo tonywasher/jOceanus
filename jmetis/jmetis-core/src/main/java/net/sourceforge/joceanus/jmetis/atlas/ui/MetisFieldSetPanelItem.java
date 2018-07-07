@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyField;
@@ -59,31 +60,30 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * FieldSet Panel Item.
+ *
  * @param <T> the item type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class MetisFieldSetPanelItem<T, N, I>
-        implements TethysNode<N> {
+public abstract class MetisFieldSetPanelItem<T>
+        implements TethysComponent {
     /**
      * The panel.
      */
-    private final MetisFieldSetPanel<N, I> thePanel;
+    private final MetisFieldSetPanel thePanel;
 
     /**
      * The node.
      */
-    private final TethysBorderPaneManager<N, I> theNode;
+    private final TethysBorderPaneManager theNode;
 
     /**
      * The label.
      */
-    private final TethysLabel<N, I> theLabel;
+    private final TethysLabel theLabel;
 
     /**
      * The edit field.
      */
-    private final TethysDataEditField<T, N, I> theEdit;
+    private final TethysDataEditField<T> theEdit;
 
     /**
      * The item class.
@@ -107,28 +107,30 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Constructor.
+     *
      * @param pPanel the panel
      * @param pField the field definition
-     * @param pEdit the edit field
+     * @param pEdit  the edit field
      */
-    protected MetisFieldSetPanelItem(final MetisFieldSetPanel<N, I> pPanel,
-                                     final MetisDataFieldId pField,
-                                     final TethysDataEditField<T, N, I> pEdit) {
+    MetisFieldSetPanelItem(final MetisFieldSetPanel pPanel,
+                           final MetisDataFieldId pField,
+                           final TethysDataEditField<T> pEdit) {
         /* Set fields */
         this(pPanel, pField, null, pEdit);
     }
 
     /**
      * Constructor.
+     *
      * @param pPanel the panel
      * @param pField the field definition
      * @param pClazz the item class
-     * @param pEdit the edit field
+     * @param pEdit  the edit field
      */
-    protected MetisFieldSetPanelItem(final MetisFieldSetPanel<N, I> pPanel,
-                                     final MetisDataFieldId pField,
-                                     final Class<T> pClazz,
-                                     final TethysDataEditField<T, N, I> pEdit) {
+    MetisFieldSetPanelItem(final MetisFieldSetPanel pPanel,
+                           final MetisDataFieldId pField,
+                           final Class<T> pClazz,
+                           final TethysDataEditField<T> pEdit) {
         /* Set fields */
         thePanel = pPanel;
         theField = pField;
@@ -137,7 +139,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
         isVisible = true;
 
         /* Obtain the GuiFactory */
-        final TethysGuiFactory<N, I> myGuiFactory = pPanel.getGuiFactory();
+        final TethysGuiFactory myGuiFactory = pPanel.getGuiFactory();
 
         /* Create the label */
         theLabel = myGuiFactory.newLabel();
@@ -158,9 +160,10 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * obtain the panel.
+     *
      * @return the panel
      */
-    protected MetisFieldSetPanel<N, I> getPanel() {
+    protected MetisFieldSetPanel getPanel() {
         return thePanel;
     }
 
@@ -170,15 +173,16 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theNode.getNode();
     }
 
     /**
      * Obtain the border pane.
+     *
      * @return the pane
      */
-    protected TethysBorderPaneManager<N, I> getBorderPane() {
+    TethysBorderPaneManager getBorderPane() {
         return theNode;
     }
 
@@ -193,14 +197,16 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Obtain edit field.
+     *
      * @return the edit field
      */
-    protected TethysDataEditField<T, N, I> getEditField() {
+    TethysDataEditField<T> getEditField() {
         return theEdit;
     }
 
     /**
      * obtain the field.
+     *
      * @return the field
      */
     public MetisDataFieldId getField() {
@@ -209,6 +215,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * is the field visible?
+     *
      * @return true/false
      */
     public boolean isVisible() {
@@ -217,9 +224,10 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * is the field readOnly?
+     *
      * @return true/false
      */
-    public boolean isReadOnly() {
+    boolean isReadOnly() {
         return isReadOnly;
     }
 
@@ -230,6 +238,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Set the readOnly state of the item.
+     *
      * @param pReadOnly true/false
      */
     public void setReadOnly(final boolean pReadOnly) {
@@ -247,6 +256,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Show/Hide the command button.
+     *
      * @param pShow true/false
      */
     public void showCmdButton(final boolean pShow) {
@@ -255,7 +265,8 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Set the value.
-     * @param pValue the value
+     *
+     * @param pValue    the value
      * @param isChanged is the value changed?
      * @return is the field visible
      */
@@ -263,8 +274,8 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
                                final boolean isChanged) {
         /* Determine whether we should show the field */
         final boolean showField = pValue == null
-                                                 ? thePanel.isEditable() && !isReadOnly
-                                                 : isInstance(pValue);
+                                  ? thePanel.isEditable() && !isReadOnly
+                                  : isInstance(pValue);
         setVisible(showField);
 
         /* If we are showing the field */
@@ -282,6 +293,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Obtain the cast value.
+     *
      * @param pValue the value
      * @return the cast value
      */
@@ -291,6 +303,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Is the object an instance of the class.
+     *
      * @param pValue the value
      * @return the cast value
      */
@@ -300,6 +313,7 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Set the editable state.
+     *
      * @param pEditable the editable state
      */
     protected void setEditable(final boolean pEditable) {
@@ -308,22 +322,25 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * Get label width.
+     *
      * @return the label width
      */
-    protected int getLabelWidth() {
+    int getLabelWidth() {
         return theLabel.getWidth();
     }
 
     /**
      * Set label width.
+     *
      * @param pWidth the label width
      */
-    protected void setLabelWidth(final int pWidth) {
+    void setLabelWidth(final int pWidth) {
         theLabel.setPreferredWidth(pWidth);
     }
 
     /**
      * Cascade the event.
+     *
      * @param pEvent the event
      */
     private void cascadeEvent(final TethysEvent<TethysUIEvent> pEvent) {
@@ -333,78 +350,77 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * ValidatedItem.
+     *
      * @param <T> the item type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetValidatedItem<T, N, I>
-            extends MetisFieldSetPanelItem<T, N, I>
+    public static class MetisFieldSetValidatedItem<T>
+            extends MetisFieldSetPanelItem<T>
             implements TethysValidatedField<T> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          * @param pClazz the item class
-         * @param pEdit the edit field
+         * @param pEdit  the edit field
          */
-        protected MetisFieldSetValidatedItem(final MetisFieldSetPanel<N, I> pPanel,
-                                             final MetisDataFieldId pField,
-                                             final Class<T> pClazz,
-                                             final TethysValidatedEditField<T, N, I> pEdit) {
+        MetisFieldSetValidatedItem(final MetisFieldSetPanel pPanel,
+                                   final MetisDataFieldId pField,
+                                   final Class<T> pClazz,
+                                   final TethysValidatedEditField<T> pEdit) {
             /* Initialise underlying class */
             super(pPanel, pField, pClazz, pEdit);
         }
 
         @Override
         public void setValidator(final Function<T, String> pValidator) {
-            ((TethysValidatedEditField<T, N, I>) getEditField()).setValidator(pValidator);
+            ((TethysValidatedEditField<T>) getEditField()).setValidator(pValidator);
         }
     }
 
     /**
      * CurrencyItem.
+     *
      * @param <T> the item type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetCurrencyItem<T extends TethysMoney, N, I>
-            extends MetisFieldSetValidatedItem<T, N, I>
+    public static class MetisFieldSetCurrencyItem<T extends TethysMoney>
+            extends MetisFieldSetValidatedItem<T>
             implements TethysCurrencyField {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          * @param pClazz the item class
-         * @param pEdit the edit field
+         * @param pEdit  the edit field
          */
-        protected MetisFieldSetCurrencyItem(final MetisFieldSetPanel<N, I> pPanel,
-                                            final MetisDataFieldId pField,
-                                            final Class<T> pClazz,
-                                            final TethysCurrencyEditField<T, N, I> pEdit) {
+        MetisFieldSetCurrencyItem(final MetisFieldSetPanel pPanel,
+                                  final MetisDataFieldId pField,
+                                  final Class<T> pClazz,
+                                  final TethysCurrencyEditField<T> pEdit) {
             /* Initialise underlying class */
             super(pPanel, pField, pClazz, pEdit);
         }
 
         @Override
         public void setDeemedCurrency(final Supplier<Currency> pSupplier) {
-            ((TethysCurrencyEditField<T, N, I>) getEditField()).setDeemedCurrency(pSupplier);
+            ((TethysCurrencyEditField<T>) getEditField()).setDeemedCurrency(pSupplier);
         }
     }
 
     /**
      * StringItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetStringItem<N, I>
-            extends MetisFieldSetValidatedItem<String, N, I> {
+    public static class MetisFieldSetStringItem
+            extends MetisFieldSetValidatedItem<String> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetStringItem(final MetisFieldSetPanel<N, I> pPanel,
-                                          final MetisDataFieldId pField) {
+        MetisFieldSetStringItem(final MetisFieldSetPanel pPanel,
+                                final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, String.class, pPanel.getGuiFactory().newStringField());
         }
@@ -412,18 +428,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * CharArrayItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetCharArrayItem<N, I>
-            extends MetisFieldSetValidatedItem<char[], N, I> {
+    public static class MetisFieldSetCharArrayItem
+            extends MetisFieldSetValidatedItem<char[]> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetCharArrayItem(final MetisFieldSetPanel<N, I> pPanel,
-                                             final MetisDataFieldId pField) {
+        MetisFieldSetCharArrayItem(final MetisFieldSetPanel pPanel,
+                                   final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, char[].class, pPanel.getGuiFactory().newCharArrayField());
         }
@@ -431,18 +446,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * ShortItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetShortItem<N, I>
-            extends MetisFieldSetValidatedItem<Short, N, I> {
+    public static class MetisFieldSetShortItem
+            extends MetisFieldSetValidatedItem<Short> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetShortItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataFieldId pField) {
+        MetisFieldSetShortItem(final MetisFieldSetPanel pPanel,
+                               final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, Short.class, pPanel.getGuiFactory().newShortField());
         }
@@ -450,18 +464,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * IntegerItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetIntegerItem<N, I>
-            extends MetisFieldSetValidatedItem<Integer, N, I> {
+    public static class MetisFieldSetIntegerItem
+            extends MetisFieldSetValidatedItem<Integer> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetIntegerItem(final MetisFieldSetPanel<N, I> pPanel,
-                                           final MetisDataFieldId pField) {
+        MetisFieldSetIntegerItem(final MetisFieldSetPanel pPanel,
+                                 final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, Integer.class, pPanel.getGuiFactory().newIntegerField());
         }
@@ -469,18 +482,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * LongItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetLongItem<N, I>
-            extends MetisFieldSetValidatedItem<Long, N, I> {
+    public static class MetisFieldSetLongItem
+            extends MetisFieldSetValidatedItem<Long> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetLongItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataFieldId pField) {
+        MetisFieldSetLongItem(final MetisFieldSetPanel pPanel,
+                              final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, Long.class, pPanel.getGuiFactory().newLongField());
         }
@@ -488,18 +500,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * MoneyItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetMoneyItem<N, I>
-            extends MetisFieldSetCurrencyItem<TethysMoney, N, I> {
+    public static class MetisFieldSetMoneyItem
+            extends MetisFieldSetCurrencyItem<TethysMoney> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetMoneyItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataFieldId pField) {
+        MetisFieldSetMoneyItem(final MetisFieldSetPanel pPanel,
+                               final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysMoney.class, pPanel.getGuiFactory().newMoneyField());
         }
@@ -507,18 +518,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * PriceItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetPriceItem<N, I>
-            extends MetisFieldSetCurrencyItem<TethysPrice, N, I> {
+    public static class MetisFieldSetPriceItem
+            extends MetisFieldSetCurrencyItem<TethysPrice> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetPriceItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataFieldId pField) {
+        MetisFieldSetPriceItem(final MetisFieldSetPanel pPanel,
+                               final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysPrice.class, pPanel.getGuiFactory().newPriceField());
         }
@@ -526,17 +536,16 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * RateItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetRateItem<N, I>
-            extends MetisFieldSetValidatedItem<TethysRate, N, I> {
+    public static class MetisFieldSetRateItem
+            extends MetisFieldSetValidatedItem<TethysRate> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetRateItem(final MetisFieldSetPanel<N, I> pPanel,
+        protected MetisFieldSetRateItem(final MetisFieldSetPanel pPanel,
                                         final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysRate.class, pPanel.getGuiFactory().newRateField());
@@ -545,18 +554,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * UnitsItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetUnitsItem<N, I>
-            extends MetisFieldSetValidatedItem<TethysUnits, N, I> {
+    public static class MetisFieldSetUnitsItem
+            extends MetisFieldSetValidatedItem<TethysUnits> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetUnitsItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataFieldId pField) {
+        MetisFieldSetUnitsItem(final MetisFieldSetPanel pPanel,
+                               final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysUnits.class, pPanel.getGuiFactory().newUnitsField());
         }
@@ -564,18 +572,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * RatioItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetRatioItem<N, I>
-            extends MetisFieldSetValidatedItem<TethysRatio, N, I> {
+    public static class MetisFieldSetRatioItem
+            extends MetisFieldSetValidatedItem<TethysRatio> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetRatioItem(final MetisFieldSetPanel<N, I> pPanel,
-                                         final MetisDataFieldId pField) {
+        MetisFieldSetRatioItem(final MetisFieldSetPanel pPanel,
+                               final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysRatio.class, pPanel.getGuiFactory().newRatioField());
         }
@@ -583,18 +590,17 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * DilutionItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetDilutionItem<N, I>
-            extends MetisFieldSetValidatedItem<TethysDilution, N, I> {
+    public static class MetisFieldSetDilutionItem
+            extends MetisFieldSetValidatedItem<TethysDilution> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetDilutionItem(final MetisFieldSetPanel<N, I> pPanel,
-                                            final MetisDataFieldId pField) {
+        MetisFieldSetDilutionItem(final MetisFieldSetPanel pPanel,
+                                  final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysDilution.class, pPanel.getGuiFactory().newDilutionField());
         }
@@ -602,73 +608,72 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
     /**
      * DateItem.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetDateItem<N, I>
-            extends MetisFieldSetPanelItem<TethysDate, N, I>
+    public static class MetisFieldSetDateItem
+            extends MetisFieldSetPanelItem<TethysDate>
             implements TethysDateButton {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetDateItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataFieldId pField) {
+        MetisFieldSetDateItem(final MetisFieldSetPanel pPanel,
+                              final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, TethysDate.class, pPanel.getGuiFactory().newDateField());
         }
 
         @Override
         public void setDateConfigurator(final Consumer<TethysDateConfig> pConfigurator) {
-            ((TethysDateButtonField<N, I>) getEditField()).setDateConfigurator(pConfigurator);
+            ((TethysDateButtonField) getEditField()).setDateConfigurator(pConfigurator);
         }
     }
 
     /**
      * ScrollItem.
+     *
      * @param <T> the item class
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetScrollItem<T, N, I>
-            extends MetisFieldSetPanelItem<T, N, I>
-            implements TethysScrollButton<T, I> {
+    public static class MetisFieldSetScrollItem<T>
+            extends MetisFieldSetPanelItem<T>
+            implements TethysScrollButton<T> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          * @param pClass the item class
          */
-        protected MetisFieldSetScrollItem(final MetisFieldSetPanel<N, I> pPanel,
-                                          final MetisDataFieldId pField,
-                                          final Class<T> pClass) {
+        MetisFieldSetScrollItem(final MetisFieldSetPanel pPanel,
+                                final MetisDataFieldId pField,
+                                final Class<T> pClass) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, pPanel.getGuiFactory().newScrollField());
         }
 
         @Override
-        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, I>> pConfigurator) {
-            ((TethysScrollButtonField<T, N, I>) getEditField()).setMenuConfigurator(pConfigurator);
+        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T>> pConfigurator) {
+            ((TethysScrollButtonField<T>) getEditField()).setMenuConfigurator(pConfigurator);
         }
     }
 
     /**
      * ListItem.
+     *
      * @param <T> the item class
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetListItem<T extends Comparable<T>, N, I>
-            extends MetisFieldSetPanelItem<List<T>, N, I>
+    public static class MetisFieldSetListItem<T extends Comparable<T>>
+            extends MetisFieldSetPanelItem<List<T>>
             implements TethysListButton<T> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          */
-        protected MetisFieldSetListItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataFieldId pField) {
+        MetisFieldSetListItem(final MetisFieldSetPanel pPanel,
+                              final MetisDataFieldId pField) {
             /* Initialise underlying class */
             super(pPanel, pField, pPanel.getGuiFactory().newListField());
         }
@@ -686,35 +691,35 @@ public abstract class MetisFieldSetPanelItem<T, N, I>
 
         @Override
         public void setSelectables(final Supplier<Iterator<T>> pSelectables) {
-            ((TethysListButtonField<T, N, I>) getEditField()).setSelectables(pSelectables);
+            ((TethysListButtonField<T>) getEditField()).setSelectables(pSelectables);
         }
     }
 
     /**
      * SimpleIconItem.
+     *
      * @param <T> the item class
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisFieldSetIconItem<T, N, I>
-            extends MetisFieldSetPanelItem<T, N, I>
+    public static class MetisFieldSetIconItem<T>
+            extends MetisFieldSetPanelItem<T>
             implements TethysIconButton<T> {
         /**
          * Constructor.
+         *
          * @param pPanel the panel
          * @param pField the field
          * @param pClass the item class
          */
-        protected MetisFieldSetIconItem(final MetisFieldSetPanel<N, I> pPanel,
-                                        final MetisDataFieldId pField,
-                                        final Class<T> pClass) {
+        MetisFieldSetIconItem(final MetisFieldSetPanel pPanel,
+                              final MetisDataFieldId pField,
+                              final Class<T> pClass) {
             /* Initialise underlying class */
             super(pPanel, pField, pClass, pPanel.getGuiFactory().newIconField());
         }
 
         @Override
         public void setIconMapSet(final Supplier<TethysIconMapSet<T>> pSupplier) {
-            ((TethysIconButtonField<T, N, I>) getEditField()).setIconMapSet(pSupplier);
+            ((TethysIconButtonField<T>) getEditField()).setIconMapSet(pSupplier);
         }
     }
 }

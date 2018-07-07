@@ -16,10 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
+import java.util.EnumMap;
+import java.util.Map;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+
+import net.sourceforge.joceanus.jtethys.resource.TethysResourceLoader;
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 
 /**
@@ -67,6 +70,11 @@ public enum TethysFXArrowIcon {
     DOUBLERIGHT(new Point2D(1, 1), new Point2D(1, 9), new Point2D(5, 5), new Point2D(5, 9), new Point2D(9, 5), new Point2D(5, 1), new Point2D(5, 5));
 
     /**
+     * The Icon Map.
+     */
+    private static final Map<TethysArrowIconId, TethysFXIcon> ICON_MAP = buildIconMap();
+
+    /**
      * locations of points.
      */
     private final Double[] thePoints;
@@ -108,30 +116,29 @@ public enum TethysFXArrowIcon {
     }
 
     /**
+     * Build icon map.
+     * @return the map
+     */
+    private static Map<TethysArrowIconId, TethysFXIcon> buildIconMap() {
+        /* Create the map and return it */
+        final Map<TethysArrowIconId, TethysFXIcon> myMap = new EnumMap<>(TethysArrowIconId.class);
+        myMap.put(TethysArrowIconId.UP, new TethysFXIcon(UP.getArrow()));
+        myMap.put(TethysArrowIconId.DOWN, new TethysFXIcon(DOWN.getArrow()));
+        myMap.put(TethysArrowIconId.LEFT, new TethysFXIcon(LEFT.getArrow()));
+        myMap.put(TethysArrowIconId.RIGHT, new TethysFXIcon(RIGHT.getArrow()));
+        myMap.put(TethysArrowIconId.DOUBLEUP, new TethysFXIcon(DOUBLEUP.getArrow()));
+        myMap.put(TethysArrowIconId.DOUBLEDOWN, new TethysFXIcon(DOUBLEDOWN.getArrow()));
+        myMap.put(TethysArrowIconId.DOUBLELEFT, new TethysFXIcon(DOUBLELEFT.getArrow()));
+        myMap.put(TethysArrowIconId.DOUBLERIGHT, new TethysFXIcon(DOUBLERIGHT.getArrow()));
+        return myMap;
+    }
+
+    /**
      * Obtain icon for id.
      * @param pId the id
      * @return the icon
      */
-    protected static Node getIconForId(final TethysArrowIconId pId) {
-        switch (pId) {
-            case UP:
-                return UP.getArrow();
-            case DOWN:
-                return DOWN.getArrow();
-            case LEFT:
-                return LEFT.getArrow();
-            case RIGHT:
-                return RIGHT.getArrow();
-            case DOUBLEUP:
-                return DOUBLEUP.getArrow();
-            case DOUBLEDOWN:
-                return DOUBLEDOWN.getArrow();
-            case DOUBLELEFT:
-                return DOUBLELEFT.getArrow();
-            case DOUBLERIGHT:
-                return DOUBLERIGHT.getArrow();
-            default:
-                return null;
-        }
+    protected static TethysFXIcon getIconForId(final TethysArrowIconId pId) {
+        return TethysResourceLoader.getIconForEnum(ICON_MAP, pId);
     }
 }

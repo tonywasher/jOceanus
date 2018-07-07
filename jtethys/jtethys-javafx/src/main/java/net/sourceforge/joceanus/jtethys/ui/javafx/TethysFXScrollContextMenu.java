@@ -45,9 +45,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
@@ -61,10 +63,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * Scroll-able version of ContextMenu.
  * <p>
  * Implemented as Stage since ContextMenu does not allow control of individual elements.
+ *
  * @param <T> the value type
  */
 public class TethysFXScrollContextMenu<T>
-        implements TethysScrollMenu<T, Node>, TethysEventProvider<TethysUIEvent> {
+        implements TethysScrollMenu<T>, TethysEventProvider<TethysUIEvent> {
     /**
      * StyleSheet Name.
      */
@@ -179,6 +182,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Constructor.
+     *
      * @param pMaxDisplayItems the maximum number of items to display
      */
     TethysFXScrollContextMenu(final int pMaxDisplayItems) {
@@ -187,6 +191,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Constructor.
+     *
      * @param pParent the parent scroll menu
      */
     TethysFXScrollContextMenu(final TethysFXScrollSubMenu<T> pParent) {
@@ -195,7 +200,8 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Constructor.
-     * @param pParent the parent scroll menu
+     *
+     * @param pParent          the parent scroll menu
      * @param pMaxDisplayItems the maximum number of items to display
      */
     private TethysFXScrollContextMenu(final TethysFXScrollSubMenu<T> pParent,
@@ -212,8 +218,8 @@ public class TethysFXScrollContextMenu<T>
         theMaxDisplayItems = pMaxDisplayItems;
         theParentMenu = pParent;
         theParentContext = theParentMenu == null
-                                                 ? null
-                                                 : theParentMenu.getContext();
+                           ? null
+                           : theParentMenu.getContext();
 
         /* Initially need reBuild */
         needReBuild = true;
@@ -297,6 +303,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Obtain the maximum # of items in the displayed PopUp window.
+     *
      * @return the # of items
      */
     public int getMaxDisplayItems() {
@@ -311,11 +318,12 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Is the menu showing?
+     *
      * @return true/false
      */
     public boolean isShowing() {
         return theStage != null
-               && theStage.isShowing();
+                && theStage.isShowing();
     }
 
     @Override
@@ -352,8 +360,9 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Show the menu at position.
+     *
      * @param pAnchor the anchor node
-     * @param pSide the side of the anchor node
+     * @param pSide   the side of the anchor node
      */
     public void showMenuAtPosition(final Node pAnchor,
                                    final Side pSide) {
@@ -375,9 +384,10 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Show the menu at position.
+     *
      * @param pAnchor the anchor node
-     * @param pX the relative X position
-     * @param pY the relative Y position
+     * @param pX      the relative X position
+     * @param pY      the relative Y position
      */
     public void showMenuAtPosition(final Node pAnchor,
                                    final double pX,
@@ -401,6 +411,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Show the menu at location.
+     *
      * @param pLocation the location
      */
     private void showMenuAtLocation(final Point2D pLocation) {
@@ -445,6 +456,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Set the selected item.
+     *
      * @param pItem the selected item
      */
     void setSelectedItem(final TethysFXScrollMenuItem<T> pItem) {
@@ -509,12 +521,13 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Handle focusChange.
+     *
      * @param pState the focus state
      */
     private void handleFocusChange(final Boolean pState) {
         /* If we've lost focus to other than the active subMenu */
         if (!pState
-            && theActiveMenu == null) {
+                && theActiveMenu == null) {
             /* fire cancellation event */
             if (theParentMenu == null) {
                 theEventManager.fireEvent(TethysUIEvent.WINDOWCLOSED);
@@ -529,6 +542,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Handle keyPress.
+     *
      * @param pEvent the event
      */
     private void handleKeyPress(final KeyEvent pEvent) {
@@ -546,6 +560,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Handle scroll.
+     *
      * @param pEvent the event
      */
     private void handleScroll(final ScrollEvent pEvent) {
@@ -559,6 +574,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Handle activeItem.
+     *
      * @param pItem the item
      */
     void handleActiveItem(final TethysFXScrollMenuItem<T> pItem) {
@@ -571,12 +587,13 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Handle activeMenu.
+     *
      * @param pMenu the menu
      */
     void handleActiveMenu(final TethysFXScrollSubMenu<T> pMenu) {
         /* Hide any existing menu that is not us */
         if (theActiveMenu != null
-            && theActiveMenu.getIndex() != pMenu.getIndex()) {
+                && theActiveMenu.getIndex() != pMenu.getIndex()) {
             theActiveMenu.hide();
         }
 
@@ -611,6 +628,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Obtain count of menu Items.
+     *
      * @return the count
      */
     protected int getItemCount() {
@@ -620,6 +638,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Ensure item at index will be visible when displayed.
+     *
      * @param pIndex the index to show
      */
     void scrollToIndex(final int pIndex) {
@@ -634,13 +653,14 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Ensure index shown.
+     *
      * @param pIndex the index to show
      */
     private void showIndex(final int pIndex) {
         /* Ignore if index is out of range */
         final int myCount = theMenuItems.size();
         if (pIndex < 0
-            || pIndex >= myCount) {
+                || pIndex >= myCount) {
             return;
         }
 
@@ -653,8 +673,8 @@ public class TethysFXScrollContextMenu<T>
 
         /* If index is beyond last visible index */
         final int myLastIndex = theFirstIndex
-                                + theMaxDisplayItems
-                                - 1;
+                + theMaxDisplayItems
+                - 1;
         if (myLastIndex < pIndex) {
             /* Scroll window downwards */
             requestScroll(pIndex - myLastIndex);
@@ -676,7 +696,7 @@ public class TethysFXScrollContextMenu<T>
 
     @Override
     public TethysScrollMenuItem<T> addItem(final T pValue,
-                                           final Node pGraphic) {
+                                           final TethysIcon pGraphic) {
         /* Use standard name */
         return addItem(pValue, pValue.toString(), pGraphic);
     }
@@ -689,7 +709,7 @@ public class TethysFXScrollContextMenu<T>
 
     @Override
     public TethysScrollMenuItem<T> addNullItem(final String pName,
-                                               final Node pGraphic) {
+                                               final TethysIcon pGraphic) {
         /* Use given name */
         return addItem(null, pName, pGraphic);
     }
@@ -697,7 +717,7 @@ public class TethysFXScrollContextMenu<T>
     @Override
     public TethysScrollMenuItem<T> addItem(final T pValue,
                                            final String pName,
-                                           final Node pGraphic) {
+                                           final TethysIcon pGraphic) {
         /* Check state */
         if (isShowing()) {
             throw new IllegalStateException();
@@ -713,14 +733,14 @@ public class TethysFXScrollContextMenu<T>
     }
 
     @Override
-    public TethysScrollSubMenu<T, Node> addSubMenu(final String pName) {
+    public TethysScrollSubMenu<T> addSubMenu(final String pName) {
         /* Use given name */
         return addSubMenu(pName, null);
     }
 
     @Override
-    public TethysScrollSubMenu<T, Node> addSubMenu(final String pName,
-                                                   final Node pGraphic) {
+    public TethysScrollSubMenu<T> addSubMenu(final String pName,
+                                             final TethysIcon pGraphic) {
         /* Check state */
         if (isShowing()) {
             throw new IllegalStateException();
@@ -835,11 +855,11 @@ public class TethysFXScrollContextMenu<T>
 
                 /* Ensure that the starting point is not too late */
                 int myMaxIndex = theFirstIndex
-                                 + myScroll;
+                        + myScroll;
                 if (myMaxIndex > myCount) {
                     /* Adjust the first index */
                     theFirstIndex = myCount
-                                    - myScroll;
+                            - myScroll;
                     myMaxIndex = myCount;
                 }
 
@@ -934,6 +954,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * request scroll.
+     *
      * @param pDelta the delta to scroll.
      */
     void requestScroll(final int pDelta) {
@@ -984,11 +1005,12 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Constructor.
-         * @param pName the display name
+         *
+         * @param pName    the display name
          * @param pGraphic the icon for the item
          */
         private TethysFXScrollElement(final String pName,
-                                      final Node pGraphic) {
+                                      final TethysIcon pGraphic) {
             /* Create the borderPane */
             theBorderPane = new BorderPane();
 
@@ -999,7 +1021,7 @@ public class TethysFXScrollContextMenu<T>
 
             /* Create a Label for the graphic */
             theIcon = new Label();
-            theIcon.setGraphic(pGraphic);
+            theIcon.setGraphic(TethysFXIcon.getIcon(pGraphic));
             theIcon.setMinWidth(TethysIconId.DEFAULT_ICONWIDTH);
 
             /* Add the children */
@@ -1012,6 +1034,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Obtain the label.
+         *
          * @return the label
          */
         BorderPane getBorderPane() {
@@ -1020,8 +1043,9 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Add event filter.
-         * @param <T> the event type
-         * @param pEvent the event
+         *
+         * @param <T>     the event type
+         * @param pEvent  the event
          * @param pFilter the filter
          */
         <T extends Event> void addEventFilter(final EventType<T> pEvent,
@@ -1031,6 +1055,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Obtain the text.
+         *
          * @return the text
          */
         public String getText() {
@@ -1039,10 +1064,11 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Set the graphic.
+         *
          * @param pGraphic the graphic
          */
-        protected void setIcon(final Node pGraphic) {
-            theIcon.setGraphic(pGraphic);
+        protected void setIcon(final TethysFXIcon pGraphic) {
+            theIcon.setGraphic(TethysFXIcon.getIcon(pGraphic));
         }
 
         /**
@@ -1057,6 +1083,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Scroll item.
+     *
      * @param <T> the value type
      */
     protected static class TethysFXScrollMenuItem<T>
@@ -1079,15 +1106,16 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pContext the parent context menu
-         * @param pValue the value
-         * @param pName the display name
+         * @param pValue   the value
+         * @param pName    the display name
          * @param pGraphic the icon for the item
          */
         protected TethysFXScrollMenuItem(final TethysFXScrollContextMenu<T> pContext,
                                          final T pValue,
                                          final String pName,
-                                         final Node pGraphic) {
+                                         final TethysIcon pGraphic) {
             /* Call super-constructor */
             super(pName, pGraphic);
 
@@ -1118,6 +1146,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Scroll item.
+     *
      * @param <T> the value type
      */
     private static final class TethysFXScrollToggleItem<T>
@@ -1130,9 +1159,10 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pContext the parent context menu
-         * @param pValue the value
-         * @param pName the display name
+         * @param pValue   the value
+         * @param pName    the display name
          */
         TethysFXScrollToggleItem(final TethysFXScrollContextMenu<T> pContext,
                                  final T pValue,
@@ -1150,8 +1180,8 @@ public class TethysFXScrollContextMenu<T>
         public void setSelected(final boolean pSelected) {
             isSelected = pSelected;
             setIcon(isSelected
-                               ? TethysFXGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconId.DEFAULT_ICONWIDTH)
-                               : null);
+                    ? TethysFXGuiUtils.getIconAtSize(TethysScrollIcon.CHECKMARK, TethysIconId.DEFAULT_ICONWIDTH)
+                    : null);
         }
 
         @Override
@@ -1162,11 +1192,12 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * Scroll menu.
+     *
      * @param <T> the value type
      */
     public static final class TethysFXScrollSubMenu<T>
             extends TethysFXScrollElement
-            implements TethysScrollSubMenu<T, Node> {
+            implements TethysScrollSubMenu<T> {
         /**
          * Parent contextMenu.
          */
@@ -1184,13 +1215,14 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pContext the parent context menu
-         * @param pName the name
+         * @param pName    the name
          * @param pGraphic the icon for the menu
          */
         TethysFXScrollSubMenu(final TethysFXScrollContextMenu<T> pContext,
                               final String pName,
-                              final Node pGraphic) {
+                              final TethysIcon pGraphic) {
             /* Call super-constructor */
             super(pName, pGraphic);
 
@@ -1215,6 +1247,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Obtain the parent.
+         *
          * @return the parent
          */
         TethysFXScrollContextMenu<T> getContext() {
@@ -1228,6 +1261,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Obtain the index.
+         *
          * @return the index
          */
         int getIndex() {
@@ -1243,6 +1277,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Set the number of items in the scrolling portion of the menu.
+         *
          * @param pMaxDisplayItems the maximum number of items to display
          * @throws IllegalArgumentException if pMaxDisplayItems is 0 or negative
          */
@@ -1285,7 +1320,8 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Constructor.
-         * @param pIcon the icon
+         *
+         * @param pIcon      the icon
          * @param pIncrement the increment
          */
         ScrollControl(final Polygon pIcon,
@@ -1321,6 +1357,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Obtain the label.
+         *
          * @return the label
          */
         Label getLabel() {
@@ -1329,6 +1366,7 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Set visibility.
+         *
          * @param pVisible true/false
          */
         void setVisible(final boolean pVisible) {
@@ -1370,6 +1408,7 @@ public class TethysFXScrollContextMenu<T>
 
     /**
      * ContextEvent.
+     *
      * @param <T> the value type
      */
     public static final class TethysFXContextEvent<T>
@@ -1401,12 +1440,13 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Constructor.
+         *
          * @param pItem the selected item
          */
         public TethysFXContextEvent(final TethysFXScrollMenuItem<T> pItem) {
             super(pItem instanceof TethysFXScrollToggleItem
-                                                            ? MENU_TOGGLE
-                                                            : MENU_SELECT);
+                  ? MENU_TOGGLE
+                  : MENU_SELECT);
             theItem = pItem;
         }
 
@@ -1420,22 +1460,24 @@ public class TethysFXScrollContextMenu<T>
 
         /**
          * Obtain the toggled item.
+         *
          * @return the item
          */
         public TethysFXScrollToggleItem<T> getToggledItem() {
             return theItem instanceof TethysFXScrollToggleItem
-                                                               ? (TethysFXScrollToggleItem<T>) theItem
-                                                               : null;
+                   ? (TethysFXScrollToggleItem<T>) theItem
+                   : null;
         }
 
         /**
          * Obtain the selected item.
+         *
          * @return the item
          */
         public TethysFXScrollMenuItem<T> getSelectedItem() {
             return theItem instanceof TethysFXScrollToggleItem
-                                                               ? null
-                                                               : theItem;
+                   ? null
+                   : theItem;
         }
     }
 }

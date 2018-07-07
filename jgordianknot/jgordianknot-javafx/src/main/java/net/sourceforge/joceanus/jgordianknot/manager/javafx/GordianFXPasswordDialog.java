@@ -23,21 +23,23 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+
 import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
 public class GordianFXPasswordDialog
-        extends GordianPasswordDialog<Node, Node> {
+        extends GordianPasswordDialog {
     /**
      * approximate width.
      */
@@ -60,13 +62,14 @@ public class GordianFXPasswordDialog
 
     /**
      * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pTitle the title
+     *
+     * @param pFactory     the GUI Factory
+     * @param pTitle       the title
      * @param pNeedConfirm true/false
      */
-    protected GordianFXPasswordDialog(final TethysFXGuiFactory pFactory,
-                                      final String pTitle,
-                                      final boolean pNeedConfirm) {
+    GordianFXPasswordDialog(final TethysFXGuiFactory pFactory,
+                            final String pTitle,
+                            final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(pFactory, pNeedConfirm);
 
@@ -78,7 +81,7 @@ public class GordianFXPasswordDialog
         theStage.setTitle(pTitle);
 
         /* Create the scene */
-        final Scene myScene = new Scene(getContainer().getNode());
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(getContainer()));
         theStage.setScene(myScene);
 
         /* Sort out factory */
@@ -108,7 +111,7 @@ public class GordianFXPasswordDialog
     /**
      * show the dialog.
      */
-    public void showDialog() {
+    private void showDialog() {
         /* Centre on parent */
         final Window myParent = theStage.getOwner();
         if (myParent != null) {
@@ -125,14 +128,15 @@ public class GordianFXPasswordDialog
 
     /**
      * Create the dialog under an invokeAndWait clause.
-     * @param pFactory the GUI Factory
-     * @param pTitle the title
+     *
+     * @param pFactory     the GUI Factory
+     * @param pTitle       the title
      * @param pNeedConfirm true/false
      * @return the new dialog
      */
-    protected static GordianFXPasswordDialog createTheDialog(final TethysFXGuiFactory pFactory,
-                                                             final String pTitle,
-                                                             final boolean pNeedConfirm) {
+    static GordianFXPasswordDialog createTheDialog(final TethysFXGuiFactory pFactory,
+                                                   final String pTitle,
+                                                   final boolean pNeedConfirm) {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
             /* invoke the dialog directly */
@@ -161,10 +165,11 @@ public class GordianFXPasswordDialog
 
     /**
      * Show the dialog under an invokeAndWait clause.
+     *
      * @param pDialog the dialog to show
      * @return successful dialog usage true/false
      */
-    protected static boolean showTheDialog(final GordianFXPasswordDialog pDialog) {
+    static boolean showTheDialog(final GordianFXPasswordDialog pDialog) {
         /* If this is the event dispatcher thread */
         if (Platform.isFxApplicationThread()) {
             /* invoke the dialog directly */

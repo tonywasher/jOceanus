@@ -17,24 +17,23 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
-import javafx.scene.layout.Region;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 
 /**
  * FX Tab Manager.
  */
 public class TethysFXTabPaneManager
-        extends TethysTabPaneManager<Node, Node> {
+        extends TethysTabPaneManager {
     /**
      * The Node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The TabPane.
@@ -48,16 +47,17 @@ public class TethysFXTabPaneManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXTabPaneManager(final TethysFXGuiFactory pFactory) {
+    TethysFXTabPaneManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the pane */
         theTabPane = new TabPane();
         theModel = theTabPane.getSelectionModel();
-        theNode = theTabPane;
+        theNode = new TethysFXNode(theTabPane);
 
         /* Tabs cannot be closed */
         theTabPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
@@ -67,12 +67,13 @@ public class TethysFXTabPaneManager
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
     /**
      * Obtain the tabPane.
+     *
      * @return the tabPane
      */
     TabPane getTabPane() {
@@ -81,6 +82,7 @@ public class TethysFXTabPaneManager
 
     /**
      * Obtain the selection model.
+     *
      * @return the selection model
      */
     SingleSelectionModel<Tab> getSelectionModel() {
@@ -95,7 +97,7 @@ public class TethysFXTabPaneManager
 
     @Override
     public TethysFXTabItem addTabItem(final String pName,
-                                      final TethysNode<Node> pItem) {
+                                      final TethysComponent pItem) {
         return new TethysFXTabItem(this, pName, pItem);
     }
 
@@ -122,31 +124,24 @@ public class TethysFXTabPaneManager
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theTabPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**
      * TabItem class.
      */
     public static class TethysFXTabItem
-            extends TethysTabItem<Node, Node> {
+            extends TethysTabItem {
         /**
          * The Node.
          */
-        private final TethysNode<Node> theNode;
+        private final TethysComponent theNode;
 
         /**
          * The Tab.
@@ -160,19 +155,20 @@ public class TethysFXTabPaneManager
 
         /**
          * Constructor.
+         *
          * @param pPane the containing pane
          * @param pName the name of the tab
          * @param pItem the item
          */
-        protected TethysFXTabItem(final TethysFXTabPaneManager pPane,
-                                  final String pName,
-                                  final TethysNode<Node> pItem) {
+        TethysFXTabItem(final TethysFXTabPaneManager pPane,
+                        final String pName,
+                        final TethysComponent pItem) {
             /* Initialise the underlying class */
             super(pPane, pName);
 
             /* Create the pane */
             theTab = new Tab();
-            theTab.setContent(pItem.getNode());
+            theTab.setContent(TethysFXNode.getNode(pItem));
             theTab.setText(pName);
             theTab.setUserData(this);
             theNode = pItem;
@@ -188,8 +184,8 @@ public class TethysFXTabPaneManager
         }
 
         @Override
-        public Node getNode() {
-            return theTab.getContent();
+        public TethysFXNode getNode() {
+            return (TethysFXNode) theNode.getNode();
         }
 
         @Override

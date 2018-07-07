@@ -36,10 +36,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollS
 
 /**
  * Helper functions for Scroll Examples.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class TethysScrollUITestHelper<N, I> {
+public class TethysScrollUITestHelper {
     /**
      * The max items.
      */
@@ -99,7 +97,7 @@ public class TethysScrollUITestHelper<N, I> {
      * Build the context menu.
      * @param pMenu the menu to build
      */
-    public void buildContextMenu(final TethysScrollMenu<String, ?> pMenu) {
+    public void buildContextMenu(final TethysScrollMenu<String> pMenu) {
         /* Set the display count */
         pMenu.setMaxDisplayItems(MAX_ITEMS);
         pMenu.removeAllItems();
@@ -109,7 +107,7 @@ public class TethysScrollUITestHelper<N, I> {
         addMenuItem(pMenu, "Second");
         addMenuItem(pMenu, "Third");
         addMenuItem(pMenu, "Fourth");
-        final TethysScrollSubMenu<String, ?> myMenu = addSubMenu(pMenu, "SubMenu");
+        final TethysScrollSubMenu<String> myMenu = addSubMenu(pMenu, "SubMenu");
         addSubMenuItem(myMenu, "AAAAA");
         addSubMenuItem(myMenu, "BBBBB");
         addMenuItem(pMenu, "Fifth");
@@ -131,7 +129,7 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pMenu the menu to add to
      * @param pValue the value to add
      */
-    private static void addMenuItem(final TethysScrollMenu<String, ?> pMenu,
+    private static void addMenuItem(final TethysScrollMenu<String> pMenu,
                                     final String pValue) {
         /* Add to context menu */
         pMenu.addItem(pValue);
@@ -143,8 +141,8 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pValue the name to add
      * @return the subMenu
      */
-    private static TethysScrollSubMenu<String, ?> addSubMenu(final TethysScrollMenu<String, ?> pMenu,
-                                                             final String pValue) {
+    private static TethysScrollSubMenu<String> addSubMenu(final TethysScrollMenu<String> pMenu,
+                                                          final String pValue) {
         /* Add to context menu */
         return pMenu.addSubMenu(pValue);
     }
@@ -154,7 +152,7 @@ public class TethysScrollUITestHelper<N, I> {
      * @param pMenu the subMenu
      * @param pValue the value to add
      */
-    private static void addSubMenuItem(final TethysScrollSubMenu<String, ?> pMenu,
+    private static void addSubMenuItem(final TethysScrollSubMenu<String> pMenu,
                                        final String pValue) {
         /* Add to sub menu */
         pMenu.getSubMenu().addItem(pValue);
@@ -241,8 +239,8 @@ public class TethysScrollUITestHelper<N, I> {
      * build State button.
      * @param pManager the button manager
      */
-    public void buildStateButton(final TethysScrollButtonManager<IconState, N, I> pManager) {
-        final TethysScrollMenu<IconState, I> myMenu = pManager.getMenu();
+    public void buildStateButton(final TethysScrollButtonManager<IconState> pManager) {
+        final TethysScrollMenu<IconState> myMenu = pManager.getMenu();
         myMenu.addItem(IconState.OPEN);
         myMenu.addItem(IconState.CLOSED);
         pManager.setValue(IconState.CLOSED);

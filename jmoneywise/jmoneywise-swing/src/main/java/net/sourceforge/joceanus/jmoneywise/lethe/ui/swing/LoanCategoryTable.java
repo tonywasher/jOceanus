@@ -20,9 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -68,6 +65,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -133,7 +131,7 @@ public class LoanCategoryTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The table model.
@@ -148,7 +146,7 @@ public class LoanCategoryTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The filter panel.
@@ -178,7 +176,7 @@ public class LoanCategoryTable
     /**
      * Category menu builder.
      */
-    private final TethysScrollMenu<LoanCategory, ?> theCategoryMenu;
+    private final TethysScrollMenu<LoanCategory> theCategoryMenu;
 
     /**
      * Loan Categories.
@@ -198,7 +196,7 @@ public class LoanCategoryTable
      */
     public LoanCategoryTable(final SwingView pView,
                              final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                             final MetisErrorPanel<JComponent, Icon> pError) {
+                             final MetisErrorPanel pError) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
@@ -250,11 +248,11 @@ public class LoanCategoryTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Create a Category panel */
         theActiveCategory = new LoanCategoryPanel(myFactory, theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveCategory.getNode(), BorderLayout.PAGE_END);
+        thePanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.PAGE_END);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -276,8 +274,8 @@ public class LoanCategoryTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**
@@ -852,7 +850,7 @@ public class LoanCategoryTable
          * @param pMenu the menu to build
          */
         private void buildCategoryTypeMenu(final Integer pRowIndex,
-                                           final TethysScrollMenu<LoanCategoryType, Icon> pMenu) {
+                                           final TethysScrollMenu<LoanCategoryType> pMenu) {
             /* Record active item */
             final LoanCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 

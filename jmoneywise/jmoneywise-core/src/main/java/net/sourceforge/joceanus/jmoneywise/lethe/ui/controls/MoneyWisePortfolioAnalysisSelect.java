@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -39,11 +40,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Portfolio Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWisePortfolioAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWisePortfolioAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Portfolio Label.
      */
@@ -57,17 +56,17 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The portfolio button.
      */
-    private final TethysScrollButtonManager<PortfolioBucket, N, I> thePortButton;
+    private final TethysScrollButtonManager<PortfolioBucket> thePortButton;
 
     /**
      * Portfolio menu.
      */
-    private final TethysScrollMenu<PortfolioBucket, I> thePortfolioMenu;
+    private final TethysScrollMenu<PortfolioBucket> thePortfolioMenu;
 
     /**
      * The active portfolio bucket list.
@@ -88,7 +87,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWisePortfolioAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWisePortfolioAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the portfolio button */
         thePortButton = pFactory.newScrollButton();
 
@@ -96,7 +95,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
+        final TethysLabel myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -123,7 +122,7 @@ public class MoneyWisePortfolioAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

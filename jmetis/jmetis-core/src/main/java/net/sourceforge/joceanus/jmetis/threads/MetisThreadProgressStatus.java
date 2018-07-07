@@ -22,15 +22,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgressBar;
 
 /**
  * Thread ProgressBar Status Manager.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class MetisThreadProgressStatus<N, I>
-        implements MetisThreadStatusManager<N> {
+public abstract class MetisThreadProgressStatus
+        implements MetisThreadStatusManager {
     /**
      * Timer duration.
      */
@@ -94,67 +93,67 @@ public abstract class MetisThreadProgressStatus<N, I>
     /**
      * The Thread Manager.
      */
-    private final MetisThreadManager<N, I> theThreadManager;
+    private final MetisThreadManager theThreadManager;
 
     /**
      * GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * Task Name.
      */
-    private final TethysLabel<N, I> theTaskField;
+    private final TethysLabel theTaskField;
 
     /**
      * Task Progress Bar.
      */
-    private final TethysProgressBar<N, I> theTaskProgress;
+    private final TethysProgressBar theTaskProgress;
 
     /**
      * Stage Name.
      */
-    private final TethysLabel<N, I> theStageField;
+    private final TethysLabel theStageField;
 
     /**
      * Steps Progress Bar.
      */
-    private final TethysProgressBar<N, I> theStageProgress;
+    private final TethysProgressBar theStageProgress;
 
     /**
      * Cancel Button.
      */
-    private final TethysButton<N, I> theCancelButton;
+    private final TethysButton theCancelButton;
 
     /**
      * Status Label.
      */
-    private final TethysLabel<N, I> theStatusField;
+    private final TethysLabel theStatusField;
 
     /**
      * Clear Button.
      */
-    private final TethysButton<N, I> theClearButton;
+    private final TethysButton theClearButton;
 
     /**
      * The Status Node.
      */
-    private final TethysBorderPaneManager<N, I> theStatusNode;
+    private final TethysBorderPaneManager theStatusNode;
 
     /**
      * The Progress Node.
      */
-    private final TethysBorderPaneManager<N, I> theProgressNode;
+    private final TethysBorderPaneManager theProgressNode;
 
     /**
      * The Stage Panel.
      */
-    private final TethysBorderPaneManager<N, I> theStagePanel;
+    private final TethysBorderPaneManager theStagePanel;
 
     /**
      * The Node.
      */
-    private final TethysCardPaneManager<N, I, TethysBorderPaneManager<N, I>> theNode;
+    private final TethysCardPaneManager<TethysBorderPaneManager> theNode;
 
     /**
      * is the progress pane showing?
@@ -171,8 +170,8 @@ public abstract class MetisThreadProgressStatus<N, I>
      * @param pManager the Thread Manager
      * @param pFactory the GUI factory
      */
-    protected MetisThreadProgressStatus(final MetisThreadManager<N, I> pManager,
-                                        final TethysGuiFactory<N, I> pFactory) {
+    protected MetisThreadProgressStatus(final MetisThreadManager pManager,
+                                        final TethysGuiFactory pFactory) {
         /* Store parameters */
         theThreadManager = pManager;
         theGuiFactory = pFactory;
@@ -200,7 +199,7 @@ public abstract class MetisThreadProgressStatus<N, I>
         theStatusNode.setBorderTitle(NLS_STATUS);
 
         /* Create the task progress pane */
-        final TethysBorderPaneManager<N, I> myTaskProgress = theGuiFactory.newBorderPane();
+        final TethysBorderPaneManager myTaskProgress = theGuiFactory.newBorderPane();
         myTaskProgress.setHGap(GAP_WIDTH);
         myTaskProgress.setCentre(theTaskProgress);
         myTaskProgress.setWest(theTaskField);
@@ -212,7 +211,7 @@ public abstract class MetisThreadProgressStatus<N, I>
         theStagePanel.setWest(theStageField);
 
         /* Create the stage progress pane */
-        final TethysGridPaneManager<N, I> myProgressGrid = theGuiFactory.newGridPane();
+        final TethysGridPaneManager myProgressGrid = theGuiFactory.newGridPane();
         myProgressGrid.setHGap(GAP_WIDTH);
         myProgressGrid.addCell(myTaskProgress);
         myProgressGrid.allowCellGrowth(myTaskProgress);
@@ -242,7 +241,7 @@ public abstract class MetisThreadProgressStatus<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theNode.getNode();
     }
 
@@ -260,7 +259,7 @@ public abstract class MetisThreadProgressStatus<N, I>
      * get Thread Manager.
      * @return the thread manager
      */
-    protected MetisThreadManager<N, I> getThreadManager() {
+    protected MetisThreadManager getThreadManager() {
         return theThreadManager;
     }
 
@@ -268,7 +267,7 @@ public abstract class MetisThreadProgressStatus<N, I>
      * Obtain the GUI factory.
      * @return the factory
      */
-    protected TethysGuiFactory<N, I> getGuiFactory() {
+    protected TethysGuiFactory getGuiFactory() {
         return theGuiFactory;
     }
 

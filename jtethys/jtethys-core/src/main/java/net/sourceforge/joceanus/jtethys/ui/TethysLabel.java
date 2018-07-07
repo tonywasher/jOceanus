@@ -18,11 +18,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 /**
  * Label.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysLabel<N, I>
-        implements TethysNode<N> {
+public abstract class TethysLabel
+        implements TethysComponent {
     /**
      * The colon indicator.
      */
@@ -47,7 +45,7 @@ public abstract class TethysLabel<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysLabel(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysLabel(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
     }
 

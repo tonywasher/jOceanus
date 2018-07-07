@@ -27,6 +27,8 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -73,7 +75,7 @@ public class MetisSwingThreadTester {
     /**
      * the status panel.
      */
-    private final MetisThreadStatusManager<JComponent> theStatusPanel;
+    private final MetisThreadStatusManager theStatusPanel;
 
     /**
      * the main panel.
@@ -186,7 +188,7 @@ public class MetisSwingThreadTester {
         theDebugButton.getEventRegistrar().addEventListener(e -> showDebug());
 
         /* Return the node */
-        return theMainPanel.getNode();
+        return TethysSwingNode.getComponent(theMainPanel);
     }
 
     /**
@@ -207,7 +209,7 @@ public class MetisSwingThreadTester {
      * launch thread.
      */
     private void launchThread() {
-        theThreadMgr.startThread(new MetisTestThread<>());
+        theThreadMgr.startThread(new MetisTestThread());
     }
 
     /**

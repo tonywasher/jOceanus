@@ -18,24 +18,24 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 
 /**
  * Tethys FX Button.
  */
 public class TethysFXButton
-        extends TethysButton<Node, Node> {
+        extends TethysButton {
     /**
      * The node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The button.
@@ -44,17 +44,18 @@ public class TethysFXButton
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXButton(final TethysFXGuiFactory pFactory) {
+    TethysFXButton(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theButton = new Button();
-        theNode = theButton;
+        theNode = new TethysFXNode(theButton);
         theButton.setOnAction(e -> handlePressed());
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -85,15 +86,15 @@ public class TethysFXButton
     }
 
     @Override
-    public void setIcon(final Node pIcon) {
-        theButton.setGraphic(pIcon);
+    public void setIcon(final TethysIcon pIcon) {
+        theButton.setGraphic(TethysFXIcon.getIcon(pIcon));
     }
 
     @Override
     public void setToolTip(final String pTip) {
         final Tooltip myToolTip = pTip == null
-                                               ? null
-                                               : new Tooltip(pTip);
+                                  ? null
+                                  : new Tooltip(pTip);
         theButton.setTooltip(myToolTip);
     }
 
@@ -126,30 +127,23 @@ public class TethysFXButton
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        theButton.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        theButton.setPrefHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theButton);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

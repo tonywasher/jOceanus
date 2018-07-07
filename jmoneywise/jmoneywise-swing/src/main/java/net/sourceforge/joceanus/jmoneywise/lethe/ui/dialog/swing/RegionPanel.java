@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -48,7 +45,7 @@ public class RegionPanel
     public RegionPanel(final TethysSwingGuiFactory pFactory,
                        final MetisSwingFieldManager pFieldMgr,
                        final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                       final MetisErrorPanel<JComponent, Icon> pError) {
+                       final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 

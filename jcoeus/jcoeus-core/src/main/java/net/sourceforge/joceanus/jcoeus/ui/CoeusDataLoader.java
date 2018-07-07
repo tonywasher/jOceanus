@@ -47,7 +47,7 @@ public class CoeusDataLoader {
      * Constructor.
      * @param pToolkit the toolkit
      */
-    public CoeusDataLoader(final MetisToolkit<?, ?> pToolkit) {
+    public CoeusDataLoader(final MetisToolkit pToolkit) {
         /* Access the formatter */
         theFormatter = new MetisDataFormatter();
 

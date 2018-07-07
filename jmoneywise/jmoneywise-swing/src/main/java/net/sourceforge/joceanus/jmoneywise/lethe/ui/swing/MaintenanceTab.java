@@ -18,9 +18,7 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
 import java.awt.BorderLayout;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisPreferenceView;
 import net.sourceforge.joceanus.jmetis.preference.MetisPreferenceManager;
@@ -54,10 +52,11 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
@@ -66,7 +65,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.Tethy
  * @author Tony Washer
  */
 public class MaintenanceTab
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Preferences tab title.
      */
@@ -110,7 +109,7 @@ public class MaintenanceTab
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The Tabs.
@@ -135,7 +134,7 @@ public class MaintenanceTab
     /**
      * The Preferences Panel.
      */
-    private final MetisPreferenceView<JComponent, Icon> thePreferences;
+    private final MetisPreferenceView thePreferences;
 
     /**
      * Refreshing flag.
@@ -192,7 +191,7 @@ public class MaintenanceTab
 
         /* Create the Preferences Tab */
         final MetisPreferenceManager myPrefs = theView.getPreferenceManager();
-        thePreferences = new MetisPreferenceView<>(myFactory, myPrefs);
+        thePreferences = new MetisPreferenceView(myFactory, myPrefs);
         theTabs.addTabItem(TITLE_PREFERENCES, thePreferences);
 
         /* Add interesting preferences */
@@ -203,7 +202,7 @@ public class MaintenanceTab
         /* Create the layout for the panel */
         final BorderLayout myLayout = new BorderLayout();
         thePanel.setLayout(myLayout);
-        thePanel.add(theTabs.getNode());
+        thePanel.add(TethysSwingNode.getComponent(theTabs));
 
         /* Create a listeners */
         theTabs.getEventRegistrar().addEventListener(e -> determineFocus());
@@ -248,8 +247,8 @@ public class MaintenanceTab
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     @Override
@@ -415,7 +414,7 @@ public class MaintenanceTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        final TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
+        final TethysTabItem myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }
@@ -454,7 +453,7 @@ public class MaintenanceTab
     protected void determineFocus() {
         /* Access the selected component */
         final TethysSwingTabItem myItem = theTabs.getSelectedTab();
-        final JComponent myComponent = myItem.getNode();
+        final JComponent myComponent = TethysSwingNode.getComponent(myItem);
 
         /* If the selected component is Account */
         if (myComponent.equals(theAccountTab.getNode())) {

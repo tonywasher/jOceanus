@@ -96,7 +96,7 @@ public class CoeusMarketCache
      * Constructor.
      * @param pToolkit the toolkit
      */
-    public CoeusMarketCache(final MetisToolkit<?, ?> pToolkit) {
+    public CoeusMarketCache(final MetisToolkit pToolkit) {
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
 

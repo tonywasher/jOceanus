@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -46,11 +47,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Cash Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseCashAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseCashAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -69,27 +68,27 @@ public class MoneyWiseCashAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The cash button.
      */
-    private final TethysScrollButtonManager<CashBucket, N, I> theCashButton;
+    private final TethysScrollButtonManager<CashBucket> theCashButton;
 
     /**
      * The category button.
      */
-    private final TethysScrollButtonManager<CashCategory, N, I> theCatButton;
+    private final TethysScrollButtonManager<CashCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<CashCategory, I> theCategoryMenu;
+    private final TethysScrollMenu<CashCategory> theCategoryMenu;
 
     /**
      * Cash menu.
      */
-    private final TethysScrollMenu<CashBucket, I> theCashMenu;
+    private final TethysScrollMenu<CashBucket> theCashMenu;
 
     /**
      * The active category bucket list.
@@ -115,7 +114,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseCashAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseCashAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the cash button */
         theCashButton = pFactory.newScrollButton();
 
@@ -126,8 +125,8 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        final TethysLabel<N, I> myCshLabel = pFactory.newLabel(NLS_CASH + TethysLabel.STR_COLON);
+        final TethysLabel myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel myCshLabel = pFactory.newLabel(NLS_CASH + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -161,7 +160,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -295,7 +294,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<CashCategory, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<CashCategory>> myMap = new HashMap<>();
 
         /* Record active item */
         final CashCategory myCurrent = theState.getCategory();
@@ -314,7 +313,7 @@ public class MoneyWiseCashAnalysisSelect<N, I>
             /* Determine menu to add to */
             final CashCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<CashCategory, ?> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {

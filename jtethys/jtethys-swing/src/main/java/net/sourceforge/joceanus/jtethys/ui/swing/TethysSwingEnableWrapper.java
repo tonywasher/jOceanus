@@ -20,10 +20,9 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Wrappers for simple Swing objects that enable/disable child elements.
@@ -34,7 +33,7 @@ public interface TethysSwingEnableWrapper {
      */
     class TethysSwingEnablePanel
             extends JPanel
-            implements TethysNode<JComponent> {
+            implements TethysComponent {
         /**
          * Serial Id.
          */
@@ -44,6 +43,11 @@ public interface TethysSwingEnableWrapper {
          * List of components.
          */
         private final transient List<Component> theList = new ArrayList<>();
+
+        /**
+         * List of components.
+         */
+        private final transient TethysSwingNode theNode = new TethysSwingNode(this);
 
         @Override
         public Component add(final Component pComponent) {
@@ -83,8 +87,8 @@ public interface TethysSwingEnableWrapper {
         }
 
         @Override
-        public JComponent getNode() {
-            return this;
+        public TethysSwingNode getNode() {
+            return theNode;
         }
     }
 }

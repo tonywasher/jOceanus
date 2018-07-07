@@ -50,11 +50,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * Tethys Table Manager.
  * @param <C> the column identity
  * @param <R> the row type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysTableManager<C, R, N, I>
-        implements TethysNode<N> {
+public abstract class TethysTableManager<C, R>
+        implements TethysComponent {
     /**
      * The Id.
      */
@@ -63,12 +61,12 @@ public abstract class TethysTableManager<C, R, N, I>
     /**
      * The map of columns.
      */
-    private final Map<C, TethysBaseTableColumn<?, C, R, N, I>> theColumnMap;
+    private final Map<C, TethysBaseTableColumn<?, C, R>> theColumnMap;
 
     /**
      * The last child item.
      */
-    private TethysBaseTableColumn<?, C, R, N, I> theLastChild;
+    private TethysBaseTableColumn<?, C, R> theLastChild;
 
     /**
      * The Error Predicate.
@@ -124,7 +122,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysTableManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysTableManager(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theColumnMap = new HashMap<>();
         isEditable = true;
@@ -347,7 +345,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the id of the column
      * @return the table column
      */
-    public TethysTableColumn<?, C, R, N, I> getColumn(final C pId) {
+    public TethysTableColumn<?, C, R> getColumn(final C pId) {
         return theColumnMap.get(pId);
     }
 
@@ -356,7 +354,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      */
     public void repaintColumn(final C pId) {
-        final TethysTableColumn<?, C, R, N, I> myCol = theColumnMap.get(pId);
+        final TethysTableColumn<?, C, R> myCol = theColumnMap.get(pId);
         if ((myCol != null)
             && (myCol.isVisible())) {
             myCol.setVisible(false);
@@ -368,7 +366,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * Register the column.
      * @param pColumn the column
      */
-    private void registerColumn(final TethysBaseTableColumn<?, C, R, N, I> pColumn) {
+    private void registerColumn(final TethysBaseTableColumn<?, C, R> pColumn) {
         theColumnMap.put(pColumn.getId(), pColumn);
     }
 
@@ -376,7 +374,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * Repaint on Commit.
      * @param pCell the cell that was committed.
      */
-    public void rePaintOnCommit(final TethysTableCell<?, C, R, N, I> pCell) {
+    public void rePaintOnCommit(final TethysTableCell<?, C, R> pCell) {
         /* If we should rePaint the row on commit */
         if (doRePaintRowOnCommit) {
             /* Action the repaint */
@@ -387,7 +385,7 @@ public abstract class TethysTableManager<C, R, N, I>
         final C myId = pCell.getColumnId();
 
         /* Loop through the columns */
-        for (TethysBaseTableColumn<?, C, R, N, I> myColumn : theColumnMap.values()) {
+        for (TethysBaseTableColumn<?, C, R> myColumn : theColumnMap.values()) {
             /* If we should rePaint the column on commit */
             if (myColumn.doRePaintColumnOnCommit()) {
                 /* Action the repaint */
@@ -407,98 +405,98 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableStringColumn<C, R, N, I> declareStringColumn(C pId);
+    public abstract TethysTableStringColumn<C, R> declareStringColumn(C pId);
 
     /**
      * Declare charArray column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableCharArrayColumn<C, R, N, I> declareCharArrayColumn(C pId);
+    public abstract TethysTableCharArrayColumn<C, R> declareCharArrayColumn(C pId);
 
     /**
      * Declare short column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableShortColumn<C, R, N, I> declareShortColumn(C pId);
+    public abstract TethysTableShortColumn<C, R> declareShortColumn(C pId);
 
     /**
      * Declare integer column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableIntegerColumn<C, R, N, I> declareIntegerColumn(C pId);
+    public abstract TethysTableIntegerColumn<C, R> declareIntegerColumn(C pId);
 
     /**
      * Declare long column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableLongColumn<C, R, N, I> declareLongColumn(C pId);
+    public abstract TethysTableLongColumn<C, R> declareLongColumn(C pId);
 
     /**
      * Declare rawDecimal column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableRawDecimalColumn<C, R, N, I> declareRawDecimalColumn(C pId);
+    public abstract TethysTableRawDecimalColumn<C, R> declareRawDecimalColumn(C pId);
 
     /**
      * Declare money column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableMoneyColumn<C, R, N, I> declareMoneyColumn(C pId);
+    public abstract TethysTableMoneyColumn<C, R> declareMoneyColumn(C pId);
 
     /**
      * Declare price column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTablePriceColumn<C, R, N, I> declarePriceColumn(C pId);
+    public abstract TethysTablePriceColumn<C, R> declarePriceColumn(C pId);
 
     /**
      * Declare rate column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableRateColumn<C, R, N, I> declareRateColumn(C pId);
+    public abstract TethysTableRateColumn<C, R> declareRateColumn(C pId);
 
     /**
      * Declare units column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableUnitsColumn<C, R, N, I> declareUnitsColumn(C pId);
+    public abstract TethysTableUnitsColumn<C, R> declareUnitsColumn(C pId);
 
     /**
      * Declare dilution column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableDilutionColumn<C, R, N, I> declareDilutionColumn(C pId);
+    public abstract TethysTableDilutionColumn<C, R> declareDilutionColumn(C pId);
 
     /**
      * Declare ratio column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableRatioColumn<C, R, N, I> declareRatioColumn(C pId);
+    public abstract TethysTableRatioColumn<C, R> declareRatioColumn(C pId);
 
     /**
      * Declare dilutedPrice column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableDilutedPriceColumn<C, R, N, I> declareDilutedPriceColumn(C pId);
+    public abstract TethysTableDilutedPriceColumn<C, R> declareDilutedPriceColumn(C pId);
 
     /**
      * Declare date column.
      * @param pId the column id
      * @return the column
      */
-    public abstract TethysTableDateColumn<C, R, N, I> declareDateColumn(C pId);
+    public abstract TethysTableDateColumn<C, R> declareDateColumn(C pId);
 
     /**
      * Declare scroll column.
@@ -507,8 +505,8 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClazz the column class
      * @return the column
      */
-    public abstract <T> TethysTableScrollColumn<T, C, R, N, I> declareScrollColumn(C pId,
-                                                                                   Class<T> pClazz);
+    public abstract <T> TethysTableScrollColumn<T, C, R> declareScrollColumn(C pId,
+                                                                             Class<T> pClazz);
 
     /**
      * Declare list column.
@@ -516,7 +514,7 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pId the column id
      * @return the column
      */
-    public abstract <T extends Comparable<T>> TethysTableListColumn<T, C, R, N, I> declareListColumn(C pId);
+    public abstract <T extends Comparable<T>> TethysTableListColumn<T, C, R> declareListColumn(C pId);
 
     /**
      * Declare icon column.
@@ -525,24 +523,22 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param pClazz the column class
      * @return the column
      */
-    public abstract <T> TethysTableIconColumn<T, C, R, N, I> declareIconColumn(C pId,
-                                                                               Class<T> pClazz);
+    public abstract <T> TethysTableIconColumn<T, C, R> declareIconColumn(C pId,
+                                                                         Class<T> pClazz);
 
     /**
      * Column Definition.
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableColumn<T, C, R, N, I>
+    public interface TethysTableColumn<T, C, R>
             extends TethysEventProvider<TethysUIEvent> {
         /**
          * Obtain the table manager.
          * @return the table manager
          */
-        TethysTableManager<C, R, N, I> getTable();
+        TethysTableManager<C, R> getTable();
 
         /**
          * Obtain the id of the column.
@@ -658,60 +654,50 @@ public abstract class TethysTableManager<C, R, N, I>
      * String Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableStringColumn<C, R, N, I>
+    public interface TethysTableStringColumn<C, R>
             extends TethysTableValidatedColumn<String, R>,
-            TethysTableColumn<String, C, R, N, I> {
+            TethysTableColumn<String, C, R> {
     }
 
     /**
      * CharArray Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableCharArrayColumn<C, R, N, I>
+    public interface TethysTableCharArrayColumn<C, R>
             extends TethysTableValidatedColumn<char[], R>,
-            TethysTableColumn<char[], C, R, N, I> {
+            TethysTableColumn<char[], C, R> {
     }
 
     /**
      * Short Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableShortColumn<C, R, N, I>
+    public interface TethysTableShortColumn<C, R>
             extends TethysTableValidatedColumn<Short, R>,
-            TethysTableColumn<Short, C, R, N, I> {
+            TethysTableColumn<Short, C, R> {
     }
 
     /**
      * Integer Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableIntegerColumn<C, R, N, I>
+    public interface TethysTableIntegerColumn<C, R>
             extends TethysTableValidatedColumn<Integer, R>,
-            TethysTableColumn<Integer, C, R, N, I> {
+            TethysTableColumn<Integer, C, R> {
     }
 
     /**
      * Long Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableLongColumn<C, R, N, I>
+    public interface TethysTableLongColumn<C, R>
             extends TethysTableValidatedColumn<Long, R>,
-            TethysTableColumn<Long, C, R, N, I> {
+            TethysTableColumn<Long, C, R> {
     }
 
     /**
@@ -745,96 +731,80 @@ public abstract class TethysTableManager<C, R, N, I>
      * RawDecimal Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableRawDecimalColumn<C, R, N, I>
+    public interface TethysTableRawDecimalColumn<C, R>
             extends TethysTableDecimalColumn<R>,
-            TethysTableColumn<TethysDecimal, C, R, N, I> {
+            TethysTableColumn<TethysDecimal, C, R> {
     }
 
     /**
      * Money Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableMoneyColumn<C, R, N, I>
+    public interface TethysTableMoneyColumn<C, R>
             extends TethysTableCurrencyColumn<TethysMoney, R>,
-            TethysTableColumn<TethysMoney, C, R, N, I> {
+            TethysTableColumn<TethysMoney, C, R> {
     }
 
     /**
      * Price Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTablePriceColumn<C, R, N, I>
+    public interface TethysTablePriceColumn<C, R>
             extends TethysTableCurrencyColumn<TethysPrice, R>,
-            TethysTableColumn<TethysPrice, C, R, N, I> {
+            TethysTableColumn<TethysPrice, C, R> {
     }
 
     /**
      * Units Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableUnitsColumn<C, R, N, I>
+    public interface TethysTableUnitsColumn<C, R>
             extends TethysTableValidatedColumn<TethysUnits, R>,
-            TethysTableColumn<TethysUnits, C, R, N, I> {
+            TethysTableColumn<TethysUnits, C, R> {
     }
 
     /**
      * Rate Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableRateColumn<C, R, N, I>
+    public interface TethysTableRateColumn<C, R>
             extends TethysTableValidatedColumn<TethysRate, R>,
-            TethysTableColumn<TethysRate, C, R, N, I> {
+            TethysTableColumn<TethysRate, C, R> {
     }
 
     /**
      * Dilution Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableDilutionColumn<C, R, N, I>
+    public interface TethysTableDilutionColumn<C, R>
             extends TethysTableValidatedColumn<TethysDilution, R>,
-            TethysTableColumn<TethysDilution, C, R, N, I> {
+            TethysTableColumn<TethysDilution, C, R> {
     }
 
     /**
      * Ratio Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableRatioColumn<C, R, N, I>
+    public interface TethysTableRatioColumn<C, R>
             extends TethysTableValidatedColumn<TethysRatio, R>,
-            TethysTableColumn<TethysRatio, C, R, N, I> {
+            TethysTableColumn<TethysRatio, C, R> {
     }
 
     /**
      * DilutedPrice Column Definition.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableDilutedPriceColumn<C, R, N, I>
+    public interface TethysTableDilutedPriceColumn<C, R>
             extends TethysTableCurrencyColumn<TethysDilutedPrice, R>,
-            TethysTableColumn<TethysDilutedPrice, C, R, N, I> {
+            TethysTableColumn<TethysDilutedPrice, C, R> {
     }
 
     /**
@@ -855,12 +825,10 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    public interface TethysTableIconColumn<T, C, R, N, I>
+    public interface TethysTableIconColumn<T, C, R>
             extends TethysTableIconConfig<T, R>,
-            TethysTableColumn<T, C, R, N, I> {
+            TethysTableColumn<T, C, R> {
     }
 
     /**
@@ -879,26 +847,23 @@ public abstract class TethysTableManager<C, R, N, I>
      * DateTableColumn.
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    public interface TethysTableDateColumn<C, R, N, I>
+    public interface TethysTableDateColumn<C, R>
             extends TethysTableDateConfig<R>,
-            TethysTableColumn<TethysDate, C, R, N, I> {
+            TethysTableColumn<TethysDate, C, R> {
     }
 
     /**
      * ScrollTableColumn.
      * @param <T> the data type
      * @param <R> the row type
-     * @param <I> the Icon type
      */
-    public interface TethysTableScrollConfig<T, R, I> {
+    public interface TethysTableScrollConfig<T, R> {
         /**
          * Set the Menu configurator.
          * @param pConfigurator the configurator
          */
-        void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T, I>> pConfigurator);
+        void setMenuConfigurator(BiConsumer<R, TethysScrollMenu<T>> pConfigurator);
     }
 
     /**
@@ -906,12 +871,10 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    public interface TethysTableScrollColumn<T, C, R, N, I>
-            extends TethysTableScrollConfig<T, R, I>,
-            TethysTableColumn<T, C, R, N, I> {
+    public interface TethysTableScrollColumn<T, C, R>
+            extends TethysTableScrollConfig<T, R>,
+            TethysTableColumn<T, C, R> {
     }
 
     /**
@@ -932,12 +895,10 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    public interface TethysTableListColumn<T extends Comparable<T>, C, R, N, I>
+    public interface TethysTableListColumn<T extends Comparable<T>, C, R>
             extends TethysTableListConfig<T, R>,
-            TethysTableColumn<List<T>, C, R, N, I> {
+            TethysTableColumn<List<T>, C, R> {
     }
 
     /**
@@ -945,15 +906,13 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <T> the data type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public abstract static class TethysBaseTableColumn<T, C, R, N, I>
-            implements TethysTableColumn<T, C, R, N, I> {
+    public abstract static class TethysBaseTableColumn<T, C, R>
+            implements TethysTableColumn<T, C, R> {
         /**
          * The table.
          */
-        private final TethysTableManager<C, R, N, I> theTable;
+        private final TethysTableManager<C, R> theTable;
 
         /**
          * The event manager.
@@ -978,7 +937,7 @@ public abstract class TethysTableManager<C, R, N, I>
         /**
          * The previous sibling of this item.
          */
-        private TethysBaseTableColumn<?, C, R, N, I> thePrevSibling;
+        private TethysBaseTableColumn<?, C, R> thePrevSibling;
 
         /**
          * Is the column visible?
@@ -1016,7 +975,7 @@ public abstract class TethysTableManager<C, R, N, I>
          * @param pId the id of the column
          * @param pType the type of the column
          */
-        protected TethysBaseTableColumn(final TethysTableManager<C, R, N, I> pTable,
+        protected TethysBaseTableColumn(final TethysTableManager<C, R> pTable,
                                         final C pId,
                                         final TethysFieldType pType) {
             /* Store parameters */
@@ -1031,7 +990,7 @@ public abstract class TethysTableManager<C, R, N, I>
             theEventManager = new TethysEventManager<>();
 
             /* If the table already has children */
-            final TethysBaseTableColumn<?, C, R, N, I> myChild = theTable.theLastChild;
+            final TethysBaseTableColumn<?, C, R> myChild = theTable.theLastChild;
             if (myChild != null) {
                 /* Link to last child */
                 thePrevSibling = myChild;
@@ -1053,7 +1012,7 @@ public abstract class TethysTableManager<C, R, N, I>
         }
 
         @Override
-        public TethysTableManager<C, R, N, I> getTable() {
+        public TethysTableManager<C, R> getTable() {
             return theTable;
         }
 
@@ -1148,7 +1107,7 @@ public abstract class TethysTableManager<C, R, N, I>
         protected int countPreviousVisibleSiblings() {
             /* Determine the previous visible sibling */
             int myCount = 0;
-            TethysBaseTableColumn<?, C, R, N, I> mySibling = thePrevSibling;
+            TethysBaseTableColumn<?, C, R> mySibling = thePrevSibling;
             while (mySibling != null) {
                 if (mySibling.isVisible) {
                     myCount++;
@@ -1197,27 +1156,25 @@ public abstract class TethysTableManager<C, R, N, I>
      * @param <T> the value type
      * @param <C> the column identity
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public interface TethysTableCell<T, C, R, N, I> {
+    public interface TethysTableCell<T, C, R> {
         /**
          * Obtain the table.
          * @return the column
          */
-        TethysTableManager<C, R, N, I> getTable();
+        TethysTableManager<C, R> getTable();
 
         /**
          * Obtain the column.
          * @return the column
          */
-        TethysTableColumn<T, C, R, N, I> getColumn();
+        TethysTableColumn<T, C, R> getColumn();
 
         /**
          * Obtain the control.
          * @return the field
          */
-        TethysDataEditField<T, N, I> getControl();
+        TethysDataEditField<T> getControl();
 
         /**
          * obtain the current row.

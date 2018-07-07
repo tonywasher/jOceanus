@@ -75,7 +75,7 @@ public enum TethysSwingArrowIcon implements Icon {
     /**
      * The Icon Map.
      */
-    private static final Map<TethysArrowIconId, Icon> ICON_MAP = buildIconMap();
+    private static final Map<TethysArrowIconId, TethysSwingIcon> ICON_MAP = buildIconMap();
 
     /**
      * The size of the icon.
@@ -152,17 +152,17 @@ public enum TethysSwingArrowIcon implements Icon {
      * Build icon map.
      * @return the map
      */
-    private static Map<TethysArrowIconId, Icon> buildIconMap() {
+    private static Map<TethysArrowIconId, TethysSwingIcon> buildIconMap() {
         /* Create the map and return it */
-        final Map<TethysArrowIconId, Icon> myMap = new EnumMap<>(TethysArrowIconId.class);
-        myMap.put(TethysArrowIconId.UP, UP);
-        myMap.put(TethysArrowIconId.DOWN, DOWN);
-        myMap.put(TethysArrowIconId.LEFT, LEFT);
-        myMap.put(TethysArrowIconId.RIGHT, RIGHT);
-        myMap.put(TethysArrowIconId.DOUBLEUP, DOUBLEUP);
-        myMap.put(TethysArrowIconId.DOUBLEDOWN, DOUBLEDOWN);
-        myMap.put(TethysArrowIconId.DOUBLELEFT, DOUBLELEFT);
-        myMap.put(TethysArrowIconId.DOUBLERIGHT, DOUBLERIGHT);
+        final Map<TethysArrowIconId, TethysSwingIcon> myMap = new EnumMap<>(TethysArrowIconId.class);
+        myMap.put(TethysArrowIconId.UP, new TethysSwingIcon(UP));
+        myMap.put(TethysArrowIconId.DOWN, new TethysSwingIcon(DOWN));
+        myMap.put(TethysArrowIconId.LEFT, new TethysSwingIcon(LEFT));
+        myMap.put(TethysArrowIconId.RIGHT, new TethysSwingIcon(RIGHT));
+        myMap.put(TethysArrowIconId.DOUBLEUP, new TethysSwingIcon(DOUBLEUP));
+        myMap.put(TethysArrowIconId.DOUBLEDOWN, new TethysSwingIcon(DOUBLEDOWN));
+        myMap.put(TethysArrowIconId.DOUBLELEFT, new TethysSwingIcon(DOUBLELEFT));
+        myMap.put(TethysArrowIconId.DOUBLERIGHT, new TethysSwingIcon(DOUBLERIGHT));
         return myMap;
     }
 
@@ -171,7 +171,7 @@ public enum TethysSwingArrowIcon implements Icon {
      * @param pId the id
      * @return the icon
      */
-    protected static Icon getIconForId(final TethysArrowIconId pId) {
+    protected static TethysSwingIcon getIconForId(final TethysArrowIconId pId) {
         return TethysResourceLoader.getIconForEnum(ICON_MAP, pId);
     }
 }

@@ -17,42 +17,37 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Side;
-import javafx.scene.Node;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysListButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * PopUp menu that displays a list of checkMenu items.
+ *
  * @param <T> the item type
  */
 public final class TethysFXListButtonManager<T extends Comparable<T>>
-        extends TethysListButtonManager<T, Node, Node> {
-    /**
-     * The node.
-     */
-    private Region theNode;
-
+        extends TethysListButtonManager<T> {
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXListButtonManager(final TethysFXGuiFactory pFactory) {
+    TethysFXListButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the underlying class */
         super(pFactory);
-        theNode = (Region) super.getNode();
     }
 
     @Override
-    public Region getNode() {
-        return theNode;
+    public TethysFXNode getNode() {
+        return (TethysFXNode) super.getNode();
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theNode.setManaged(pVisible);
-        theNode.setVisible(pVisible);
+        getNode().setManaged(pVisible);
+        getNode().setVisible(pVisible);
     }
 
     @Override
@@ -70,35 +65,28 @@ public final class TethysFXListButtonManager<T extends Comparable<T>>
 
     @Override
     protected void showMenu() {
-        getMenu().showMenuAtPosition(getNode(), Side.BOTTOM);
+        getMenu().showMenuAtPosition(getNode().getNode(), Side.BOTTOM);
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        getNode().setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        getNode().setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

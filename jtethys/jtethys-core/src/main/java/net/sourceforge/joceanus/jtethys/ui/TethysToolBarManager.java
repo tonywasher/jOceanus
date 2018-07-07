@@ -26,11 +26,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * ToolBar Manager.
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public abstract class TethysToolBarManager<N, I>
-        implements TethysNode<N> {
+public abstract class TethysToolBarManager
+        implements TethysComponent {
     /**
      * Default icon width.
      */
@@ -44,7 +42,7 @@ public abstract class TethysToolBarManager<N, I>
     /**
      * The Element Map.
      */
-    private final Map<Object, TethysToolElement<?, N, I>> theElementMap;
+    private final Map<Object, TethysToolElement<?>> theElementMap;
 
     /**
      * The icon Width.
@@ -55,7 +53,7 @@ public abstract class TethysToolBarManager<N, I>
      * Constructor.
      * @param pFactory the Gui factory
      */
-    protected TethysToolBarManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysToolBarManager(final TethysGuiFactory pFactory) {
         /* Create the map */
         theElementMap = new HashMap<>();
         theId = pFactory.getNextId();
@@ -92,7 +90,7 @@ public abstract class TethysToolBarManager<N, I>
      */
     public <E> void setVisible(final E pId,
                                final boolean pVisible) {
-        final TethysToolElement<?, N, I> myElement = theElementMap.get(pId);
+        final TethysToolElement<?> myElement = theElementMap.get(pId);
         if (myElement != null) {
             myElement.setVisible(pVisible);
         }
@@ -106,7 +104,7 @@ public abstract class TethysToolBarManager<N, I>
      */
     public <E> void setEnabled(final E pId,
                                final boolean pEnabled) {
-        final TethysToolElement<?, N, I> myElement = theElementMap.get(pId);
+        final TethysToolElement<?> myElement = theElementMap.get(pId);
         if (myElement != null) {
             myElement.setEnabled(pEnabled);
         }
@@ -123,7 +121,7 @@ public abstract class TethysToolBarManager<N, I>
                                                            final String pText,
                                                            final TethysEventListener<TethysUIEvent> pListener) {
         /* Create the new element with Icon and text */
-        final TethysToolElement<K, N, I> myElement = newIcon(pId);
+        final TethysToolElement<K> myElement = newIcon(pId);
         myElement.setIcon(pId);
         myElement.setText(pText);
         myElement.setToolTip(pText);
@@ -138,7 +136,7 @@ public abstract class TethysToolBarManager<N, I>
      * @return the new element
      */
 
-    public abstract <E> TethysToolElement<E, N, I> newIcon(E pId);
+    public abstract <E> TethysToolElement<E> newIcon(E pId);
 
     /**
      * Add Separator.
@@ -152,25 +150,23 @@ public abstract class TethysToolBarManager<N, I>
      * @return the subMenu
      */
     @SuppressWarnings("unchecked")
-    public <E> TethysToolElement<E, N, I> lookUpIcon(final E pId) {
-        final TethysToolElement<?, N, I> myElement = theElementMap.get(pId);
+    public <E> TethysToolElement<E> lookUpIcon(final E pId) {
+        final TethysToolElement<?> myElement = theElementMap.get(pId);
         return myElement instanceof TethysToolElement
-                                                      ? (TethysToolElement<E, N, I>) myElement
+                                                      ? (TethysToolElement<E>) myElement
                                                       : null;
     }
 
     /**
      * ToolElement.
      * @param <E> the id type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    public abstract static class TethysToolElement<E, N, I>
+    public abstract static class TethysToolElement<E>
             implements TethysEventProvider<TethysUIEvent> {
         /**
          * The Manager.
          */
-        private final TethysToolBarManager<N, I> theManager;
+        private final TethysToolBarManager theManager;
 
         /**
          * The Id.
@@ -192,7 +188,7 @@ public abstract class TethysToolBarManager<N, I>
          * @param pManager the manager
          * @param pId the id
          */
-        protected TethysToolElement(final TethysToolBarManager<N, I> pManager,
+        protected TethysToolElement(final TethysToolBarManager pManager,
                                     final E pId) {
             /* record details */
             theManager = pManager;
@@ -201,7 +197,7 @@ public abstract class TethysToolBarManager<N, I>
 
             /* Access the element map */
             theEventManager = new TethysEventManager<>();
-            final Map<Object, TethysToolElement<?, N, I>> myElementMap = pManager.theElementMap;
+            final Map<Object, TethysToolElement<?>> myElementMap = pManager.theElementMap;
 
             /* Check uniqueness of item */
             if (myElementMap.containsKey(pId)) {
@@ -240,13 +236,13 @@ public abstract class TethysToolBarManager<N, I>
          * Set icon for button.
          * @param pIcon the icon
          */
-        public abstract void setIcon(I pIcon);
+        public abstract void setIcon(TethysIcon pIcon);
 
         /**
          * Obtain the manager.
          * @return the manager
          */
-        protected TethysToolBarManager<N, I> getManager() {
+        protected TethysToolBarManager getManager() {
             return theManager;
         }
 

@@ -21,6 +21,7 @@ import java.util.Arrays;
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
@@ -28,10 +29,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysPasswordField;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class GordianPasswordDialog<N, I> {
+public abstract class GordianPasswordDialog {
     /**
      * Minimum password length.
      */
@@ -90,37 +89,37 @@ public abstract class GordianPasswordDialog<N, I> {
     /**
      * The GUI factory.
      */
-    private final TethysGuiFactory<N, I> theFactory;
+    private final TethysGuiFactory theFactory;
 
     /**
      * The container box.
      */
-    private final TethysBorderPaneManager<N, I> theContainer;
+    private final TethysBorderPaneManager theContainer;
 
     /**
      * OK Button.
      */
-    private final TethysButton<N, I> theOKButton;
+    private final TethysButton theOKButton;
 
     /**
      * Cancel Button.
      */
-    private final TethysButton<N, I> theCancelButton;
+    private final TethysButton theCancelButton;
 
     /**
      * Error field.
      */
-    private final TethysLabel<N, I> theErrorField;
+    private final TethysLabel theErrorField;
 
     /**
      * Password field.
      */
-    private final TethysPasswordField<N, I> thePassField;
+    private final TethysPasswordField thePassField;
 
     /**
      * Confirmation field.
      */
-    private final TethysPasswordField<N, I> theConfirmField;
+    private final TethysPasswordField theConfirmField;
 
     /**
      * Is the password set.
@@ -147,7 +146,7 @@ public abstract class GordianPasswordDialog<N, I> {
      * @param pFactory the GUI factory
      * @param pNeedConfirm true/false
      */
-    protected GordianPasswordDialog(final TethysGuiFactory<N, I> pFactory,
+    protected GordianPasswordDialog(final TethysGuiFactory pFactory,
                                     final boolean pNeedConfirm) {
 
         /* Store the parameters */
@@ -155,10 +154,10 @@ public abstract class GordianPasswordDialog<N, I> {
         needConfirm = pNeedConfirm;
 
         /* Create the Password label */
-        final TethysLabel<N, I> myPassLabel = pFactory.newLabel(NLS_PASSWORD);
+        final TethysLabel myPassLabel = pFactory.newLabel(NLS_PASSWORD);
 
         /* Create the confirm label */
-        final TethysLabel<N, I> myConfLabel = pFactory.newLabel(NLS_CONFIRM);
+        final TethysLabel myConfLabel = pFactory.newLabel(NLS_CONFIRM);
 
         /* Create OK button */
         theOKButton = pFactory.newButton();
@@ -191,7 +190,7 @@ public abstract class GordianPasswordDialog<N, I> {
         theErrorField.setErrorText();
 
         /* Create the panel */
-        final TethysGridPaneManager<N, I> myForm = pFactory.newGridPane();
+        final TethysGridPaneManager myForm = pFactory.newGridPane();
         myForm.setHGap(PADDING_SIZE);
         myForm.setVGap(PADDING_SIZE);
 
@@ -219,7 +218,7 @@ public abstract class GordianPasswordDialog<N, I> {
      * Obtain the factory.
      * @return the factory
      */
-    protected TethysGuiFactory<N, I> getFactory() {
+    protected TethysGuiFactory getFactory() {
         return theFactory;
     }
 
@@ -227,7 +226,7 @@ public abstract class GordianPasswordDialog<N, I> {
      * Obtain the container.
      * @return the container
      */
-    protected TethysBorderPaneManager<N, I> getContainer() {
+    protected TethysBorderPaneManager getContainer() {
         return theContainer;
     }
 
@@ -235,32 +234,32 @@ public abstract class GordianPasswordDialog<N, I> {
      * Obtain the passwordNode.
      * @return the node
      */
-    protected N getPasswordNode() {
-        return thePassField.getNode();
+    protected TethysComponent getPasswordNode() {
+        return thePassField;
     }
 
     /**
      * Obtain the confirmNode.
      * @return the node
      */
-    protected N getConfirmNode() {
-        return theConfirmField.getNode();
+    protected TethysComponent getConfirmNode() {
+        return theConfirmField;
     }
 
     /**
      * Obtain the okButtonNode.
      * @return the node
      */
-    protected N getOKButtonNode() {
-        return theOKButton.getNode();
+    protected TethysComponent getOKButtonNode() {
+        return theOKButton;
     }
 
     /**
      * Obtain the cancelButtonNode.
      * @return the node
      */
-    protected N getCancelButtonNode() {
-        return theCancelButton.getNode();
+    protected TethysComponent getCancelButtonNode() {
+        return theCancelButton;
     }
 
     /**

@@ -29,21 +29,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MoneyWiseThreadLoadArchive<N, I>
-        implements MetisThread<MoneyWiseData, N, I> {
+public class MoneyWiseThreadLoadArchive
+        implements MetisThread<MoneyWiseData> {
     /**
      * Data Control.
      */
-    private final View<N, I> theView;
+    private final View theView;
 
     /**
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadLoadArchive(final View<N, I> pView) {
+    public MoneyWiseThreadLoadArchive(final View pView) {
         theView = pView;
     }
 
@@ -53,9 +51,9 @@ public class MoneyWiseThreadLoadArchive<N, I>
     }
 
     @Override
-    public MoneyWiseData performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public MoneyWiseData performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());

@@ -41,13 +41,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 /**
  * Generic class for displaying and editing a data field.
  * @param <T> the data type
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public interface TethysDataEditField<T, N, I>
-        extends
-        TethysEventProvider<TethysUIEvent>,
-        TethysNode<N> {
+public interface TethysDataEditField<T>
+        extends TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * Set Editable state.
      * @param pEditable true/false.
@@ -82,7 +78,7 @@ public interface TethysDataEditField<T, N, I>
      * Set the command menu configurator.
      * @param pConfigurator the configurator.
      */
-    void setCmdMenuConfigurator(Consumer<TethysScrollMenu<String, I>> pConfigurator);
+    void setCmdMenuConfigurator(Consumer<TethysScrollMenu<String>> pConfigurator);
 
     /**
      * Set the attribute state.
@@ -131,11 +127,9 @@ public interface TethysDataEditField<T, N, I>
     /**
      * DataEditConverter interface.
      * @param <T> the data type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    abstract class TethysBaseDataEditField<T, N, I>
-            implements TethysDataEditField<T, N, I> {
+    abstract class TethysBaseDataEditField<T>
+            implements TethysDataEditField<T> {
         /**
          * The Event Manager.
          */
@@ -164,19 +158,19 @@ public interface TethysDataEditField<T, N, I>
         /**
          * The CommandMenu.
          */
-        private TethysScrollMenu<String, I> theCmdMenu;
+        private TethysScrollMenu<String> theCmdMenu;
 
         /**
          * The CommandMenu Configurator.
          */
-        private Consumer<TethysScrollMenu<String, I>> theCmdMenuConfigurator = c -> {
+        private Consumer<TethysScrollMenu<String>> theCmdMenuConfigurator = c -> {
         };
 
         /**
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysBaseDataEditField(final TethysGuiFactory<N, I> pFactory) {
+        protected TethysBaseDataEditField(final TethysGuiFactory pFactory) {
             /* Create event manager */
             theId = pFactory.getNextId();
             theEventManager = new TethysEventManager<>();
@@ -245,12 +239,12 @@ public interface TethysDataEditField<T, N, I>
          * Obtain the command menu.
          * @return the command menu
          */
-        protected TethysScrollMenu<String, I> getCmdMenu() {
+        protected TethysScrollMenu<String> getCmdMenu() {
             return theCmdMenu;
         }
 
         @Override
-        public void setCmdMenuConfigurator(final Consumer<TethysScrollMenu<String, I>> pConfigurator) {
+        public void setCmdMenuConfigurator(final Consumer<TethysScrollMenu<String>> pConfigurator) {
             theCmdMenuConfigurator = pConfigurator;
         }
 
@@ -311,7 +305,7 @@ public interface TethysDataEditField<T, N, I>
          * Declare command menu.
          * @param pMenu the menu
          */
-        protected void declareCmdMenu(final TethysScrollMenu<String, I> pMenu) {
+        protected void declareCmdMenu(final TethysScrollMenu<String> pMenu) {
             /* Store the menu */
             theCmdMenu = pMenu;
         }
@@ -334,10 +328,8 @@ public interface TethysDataEditField<T, N, I>
     /**
      * ValidatedTextFieldControl.
      * @param <T> the item class
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysValidatedEditField<T, N, I> extends TethysDataEditField<T, N, I>, TethysValidatedField<T> {
+    interface TethysValidatedEditField<T> extends TethysDataEditField<T>, TethysValidatedField<T> {
     }
 
     /**
@@ -353,7 +345,7 @@ public interface TethysDataEditField<T, N, I>
         /**
          * The Field.
          */
-        private final TethysBaseDataEditField<T, ?, ?> theField;
+        private final TethysBaseDataEditField<T> theField;
 
         /**
          * The DataConverter.
@@ -395,7 +387,7 @@ public interface TethysDataEditField<T, N, I>
          * @param pField the owing field
          * @param pConverter the data converter
          */
-        public TethysDataEditTextFieldControl(final TethysBaseDataEditField<T, ?, ?> pField,
+        public TethysDataEditTextFieldControl(final TethysBaseDataEditField<T> pField,
                                               final TethysDataEditConverter<T> pConverter) {
             theField = pField;
             theConverter = pConverter;
@@ -536,10 +528,8 @@ public interface TethysDataEditField<T, N, I>
 
     /**
      * RawDecimalTextFieldControl.
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysRawDecimalEditField<N, I> extends TethysValidatedEditField<TethysDecimal, N, I>, TethysRawDecimalField {
+    interface TethysRawDecimalEditField extends TethysValidatedEditField<TethysDecimal>, TethysRawDecimalField {
     }
 
     /**
@@ -556,10 +546,8 @@ public interface TethysDataEditField<T, N, I>
     /**
      * CurrencyTextFieldControl.
      * @param <T> the data type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysCurrencyEditField<T extends TethysMoney, N, I> extends TethysValidatedEditField<T, N, I>, TethysCurrencyField {
+    interface TethysCurrencyEditField<T extends TethysMoney> extends TethysValidatedEditField<T>, TethysCurrencyField {
     }
 
     /**
@@ -577,10 +565,8 @@ public interface TethysDataEditField<T, N, I>
     /**
      * IconButtonFieldControl.
      * @param <T> the data type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysIconButtonField<T, N, I> extends TethysDataEditField<T, N, I>, TethysIconButton<T> {
+    interface TethysIconButtonField<T> extends TethysDataEditField<T>, TethysIconButton<T> {
     }
 
     /**
@@ -596,32 +582,27 @@ public interface TethysDataEditField<T, N, I>
 
     /**
      * DateButton Field.
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysDateButtonField<N, I> extends TethysDataEditField<TethysDate, N, I>, TethysDateButton {
+    interface TethysDateButtonField extends TethysDataEditField<TethysDate>, TethysDateButton {
     }
 
     /**
      * Scroll Button Configuration.
      * @param <T> the value type
-     * @param <I> the Icon type
      */
-    interface TethysScrollButton<T, I> {
+    interface TethysScrollButton<T> {
         /**
          * Set the menu configurator.
          * @param pConfigurator the configurator
          */
-        void setMenuConfigurator(Consumer<TethysScrollMenu<T, I>> pConfigurator);
+        void setMenuConfigurator(Consumer<TethysScrollMenu<T>> pConfigurator);
     }
 
     /**
      * Scroll Button Field.
      * @param <T> the value type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysScrollButtonField<T, N, I> extends TethysDataEditField<T, N, I>, TethysScrollButton<T, I> {
+    interface TethysScrollButtonField<T> extends TethysDataEditField<T>, TethysScrollButton<T> {
     }
 
     /**
@@ -639,9 +620,7 @@ public interface TethysDataEditField<T, N, I>
     /**
      * List Button Field.
      * @param <T> the value type
-     * @param <N> the Node type
-     * @param <I> the Icon type
      */
-    interface TethysListButtonField<T extends Comparable<T>, N, I> extends TethysDataEditField<List<T>, N, I>, TethysListButton<T> {
+    interface TethysListButtonField<T extends Comparable<T>> extends TethysDataEditField<List<T>>, TethysListButton<T> {
     }
 }

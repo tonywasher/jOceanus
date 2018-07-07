@@ -22,7 +22,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -32,10 +31,12 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram;
 import net.sourceforge.joceanus.jmetis.profile.MetisProgram.MetisApplication;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIcon;
 
 /**
  * javaFX Splash Panel.
@@ -63,6 +64,7 @@ public class MetisFXSplash {
 
     /**
      * Constructor.
+     *
      * @param pInfo the program information
      */
     public MetisFXSplash(final MetisProgram pInfo) {
@@ -74,8 +76,8 @@ public class MetisFXSplash {
 
         /* Load the image */
         final TethysProgram myApp = pInfo.getProgramDefinitions();
-        final ImageView myImageView = TethysFXGuiUtils.getIcon(myApp.getSplash());
-        theImage = myImageView.getImage();
+        final TethysFXIcon myImage = TethysFXGuiUtils.getIcon(myApp.getSplash());
+        theImage = myImage.getImage();
 
         /* Create the name and version */
         final HBox myName = getCentredText(myApp.getName());
@@ -85,12 +87,13 @@ public class MetisFXSplash {
         final Region mySpacer = new Region();
         VBox.setVgrow(mySpacer, Priority.ALWAYS);
         myBox.getChildren().addAll(mySpacer, myName, myVers, myXtra);
-        thePane.getChildren().addAll(myImageView, myBox);
+        thePane.getChildren().addAll(myImage.getIcon(), myBox);
         thePane.setStyle("-fx-background-color: transparent;");
     }
 
     /**
      * Attach to stage.
+     *
      * @param pStage the stage
      */
     public void attachToStage(final Stage pStage) {
@@ -112,6 +115,7 @@ public class MetisFXSplash {
 
     /**
      * Handle State change.
+     *
      * @param pEvent the event
      */
     public void handleStateChange(final StateChangeNotification pEvent) {
@@ -134,6 +138,7 @@ public class MetisFXSplash {
 
     /**
      * Create centred box.
+     *
      * @param pText the text for the box
      * @return the box
      */

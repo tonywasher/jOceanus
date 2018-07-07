@@ -18,8 +18,8 @@ package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.Node;
 import javafx.util.Duration;
+
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadProgressStatus;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
@@ -28,7 +28,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
  * JavaFX Thread ProgressBar Status Manager.
  */
 public class MetisFXThreadProgressStatus
-        extends MetisThreadProgressStatus<Node, Node> {
+        extends MetisThreadProgressStatus {
     /**
      * Timer.
      */
@@ -36,10 +36,11 @@ public class MetisFXThreadProgressStatus
 
     /**
      * Constructor.
+     *
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisFXThreadProgressStatus(final MetisThreadManager<Node, Node> pManager,
+    protected MetisFXThreadProgressStatus(final MetisThreadManager pManager,
                                           final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);

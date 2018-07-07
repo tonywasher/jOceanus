@@ -16,29 +16,30 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollPaneManager;
 
 /**
  * javaFX Scroll Pane Manager.
  */
 public class TethysSwingScrollPaneManager
-        extends TethysScrollPaneManager<JComponent, Icon> {
+        extends TethysScrollPaneManager {
     /**
-     * The node.
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
+    /**
+     * The pane.
      */
     private final JScrollPane theScrollPane;
 
     /**
      * Content.
      */
-    private TethysNode<JComponent> theContent;
+    private TethysComponent theContent;
 
     /**
      * Constructor.
@@ -47,11 +48,12 @@ public class TethysSwingScrollPaneManager
     protected TethysSwingScrollPaneManager(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
         theScrollPane = new JScrollPane();
+        theNode = new TethysSwingNode(theScrollPane);
     }
 
     @Override
-    public JComponent getNode() {
-        return theScrollPane;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -64,52 +66,41 @@ public class TethysSwingScrollPaneManager
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theScrollPane.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
-    public void setContent(final TethysNode<JComponent> pNode) {
+    public void setContent(final TethysComponent pNode) {
         theContent = pNode;
         theScrollPane.setViewportView(pNode == null
                                                     ? null
-                                                    : pNode.getNode());
+                                                    : TethysSwingNode.getComponent(pNode));
     }
 
     @Override
-    public TethysNode<JComponent> getContent() {
+    public TethysComponent getContent() {
         return theContent;
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theScrollPane.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theScrollPane.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theScrollPane.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theScrollPane.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theScrollPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

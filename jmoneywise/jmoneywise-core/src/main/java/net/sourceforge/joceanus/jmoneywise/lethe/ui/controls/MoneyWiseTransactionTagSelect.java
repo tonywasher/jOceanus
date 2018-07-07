@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -39,11 +40,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * TransactionTag Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseTransactionTagSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseTransactionTagSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransactionTag Label.
      */
@@ -57,17 +56,17 @@ public class MoneyWiseTransactionTagSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The tag button.
      */
-    private final TethysScrollButtonManager<TransactionTagBucket, N, I> theTagButton;
+    private final TethysScrollButtonManager<TransactionTagBucket> theTagButton;
 
     /**
      * Tag menu.
      */
-    private final TethysScrollMenu<TransactionTagBucket, I> theTagMenu;
+    private final TethysScrollMenu<TransactionTagBucket> theTagMenu;
 
     /**
      * The active transaction tag list.
@@ -88,7 +87,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTransactionTagSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseTransactionTagSelect(final TethysGuiFactory pFactory) {
         /* Create the tags button */
         theTagButton = pFactory.newScrollButton();
 
@@ -96,7 +95,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the label */
-        final TethysLabel<N, I> myTagLabel = pFactory.newLabel(NLS_TAG + TethysLabel.STR_COLON);
+        final TethysLabel myTagLabel = pFactory.newLabel(NLS_TAG + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -121,7 +120,7 @@ public class MoneyWiseTransactionTagSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

@@ -17,9 +17,10 @@
 package net.sourceforge.joceanus.jtethys.test.ui.javafx;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysHelperIcon;
@@ -38,6 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXLabel;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 
@@ -46,8 +48,7 @@ import java.util.Map;
 /**
  * Scroll utilities examples.
  */
-public class
-TethysFXScrollUIExample
+public class TethysFXScrollUIExample
         extends Application {
     /**
      * Value width.
@@ -62,7 +63,7 @@ TethysFXScrollUIExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<Node, Node> theHelper;
+    private final TethysScrollUITestHelper theHelper;
 
     /**
      * The context menu.
@@ -144,7 +145,7 @@ TethysFXScrollUIExample
      */
     public TethysFXScrollUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create GUI Factory */
         theGuiFactory = new TethysFXGuiFactory();
@@ -228,7 +229,7 @@ TethysFXScrollUIExample
             setScrollValue(e.getDetails(String.class));
             pStage.sizeToScene();
         });
-        theScrollButtonMgr.setMenuConfigurator(p -> theHelper.buildContextMenu(p));
+        theScrollButtonMgr.setMenuConfigurator(theHelper::buildContextMenu);
 
         /* Create list button line */
         theListButtonMgr.setBorderTitle("ListButton");
@@ -336,7 +337,7 @@ TethysFXScrollUIExample
         myGrid.setBorderPadding(3);
 
         /* Create scene */
-        final Scene myScene = new Scene(myGrid.getNode());
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(myGrid));
         theGuiFactory.registerScene(myScene);
         pStage.setTitle("JavaFXScroll Demo");
         pStage.setScene(myScene);
@@ -368,8 +369,8 @@ TethysFXScrollUIExample
     private void setDateValue(final TethysDate pValue) {
         /* Record the value */
         theDateValue.setText(pValue == null
-                                            ? null
-                                            : pValue.toString());
+                             ? null
+                             : pValue.toString());
     }
 
     /**

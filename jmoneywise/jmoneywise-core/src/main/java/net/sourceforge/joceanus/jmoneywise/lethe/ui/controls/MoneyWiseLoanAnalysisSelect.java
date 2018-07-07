@@ -38,6 +38,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -46,11 +47,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Loan Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseLoanAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseLoanAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Category Label.
      */
@@ -69,27 +68,27 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The loan button.
      */
-    private final TethysScrollButtonManager<LoanBucket, N, I> theLoanButton;
+    private final TethysScrollButtonManager<LoanBucket> theLoanButton;
 
     /**
      * The category button.
      */
-    private final TethysScrollButtonManager<LoanCategory, N, I> theCatButton;
+    private final TethysScrollButtonManager<LoanCategory> theCatButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<LoanCategory, I> theCategoryMenu;
+    private final TethysScrollMenu<LoanCategory> theCategoryMenu;
 
     /**
      * Loan menu.
      */
-    private final TethysScrollMenu<LoanBucket, I> theLoanMenu;
+    private final TethysScrollMenu<LoanBucket> theLoanMenu;
 
     /**
      * The active category bucket list.
@@ -115,7 +114,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseLoanAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseLoanAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the loan button */
         theLoanButton = pFactory.newScrollButton();
 
@@ -126,8 +125,8 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel<N, I> myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
-        final TethysLabel<N, I> myLoanLabel = pFactory.newLabel(NLS_LOAN + TethysLabel.STR_COLON);
+        final TethysLabel myCatLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel myLoanLabel = pFactory.newLabel(NLS_LOAN + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -161,7 +160,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -295,7 +294,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<LoanCategory, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
 
         /* Record active item */
         final LoanCategory myCurrent = theState.getCategory();
@@ -314,7 +313,7 @@ public class MoneyWiseLoanAnalysisSelect<N, I>
             /* Determine menu to add to */
             final LoanCategory myParent = myBucket.getAccountCategory().getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<LoanCategory, ?> myMenu = myMap.get(myParent.getName());
+            TethysScrollSubMenu<LoanCategory> myMenu = myMap.get(myParent.getName());
 
             /* If this is a new menu */
             if (myMenu == null) {

@@ -173,8 +173,8 @@ public class MetisReportManager<F>
      */
     protected String hideSection(final String pId) throws OceanusException {
         /* Ignore if we have no document or transformer */
-        if ((theDocument == null)
-            || (theXformer == null)) {
+        if (theDocument == null
+            || theXformer == null) {
             /* Return no change */
             return null;
         }
@@ -270,10 +270,10 @@ public class MetisReportManager<F>
      * @return the modified text
      * @throws OceanusException on error
      */
-    public String restoreSection(final String pId) throws OceanusException {
+    String restoreSection(final String pId) throws OceanusException {
         /* Ignore if we have no document or transformer */
-        if ((theDocument == null)
-            || (theXformer == null)) {
+        if (theDocument == null
+            || theXformer == null) {
             /* Return current text */
             return theText;
         }
@@ -321,7 +321,7 @@ public class MetisReportManager<F>
      * @param pHTMLPane the HTML pane
      */
     public void processReference(final String pId,
-                                 final TethysHTMLManager<?, ?> pHTMLPane) {
+                                 final TethysHTMLManager pHTMLPane) {
         /* Process the reference */
         final String myText = processReference(pId);
 

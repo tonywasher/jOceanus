@@ -16,18 +16,24 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Tree Manager.
+ *
  * @param <T> the data type
  */
 public class TethysFXTreeManager<T>
-        extends TethysTreeManager<T, Node, Node> {
+        extends TethysTreeManager<T> {
+    /**
+     * The Node.
+     */
+    private final TethysFXNode theNode;
+
     /**
      * The treeView.
      */
@@ -45,15 +51,17 @@ public class TethysFXTreeManager<T>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXTreeManager(final TethysFXGuiFactory pFactory) {
+    TethysFXTreeManager(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Create the tree */
         theRoot = new TethysFXTreeItem<>(this);
         theTree = new TreeView<>(theRoot.getNode());
+        theNode = new TethysFXNode(theTree);
         setRoot(theRoot);
 
         /* Configure the tree */
@@ -63,17 +71,17 @@ public class TethysFXTreeManager<T>
         /* Add listener */
         theTree.getSelectionModel().selectedItemProperty().addListener((v, o, n) -> {
             final TethysFXTreeItem<T> myValue = n == null
-                                                          ? null
-                                                          : n.getValue();
+                                                ? null
+                                                : n.getValue();
             fireEvent(TethysUIEvent.NEWVALUE, myValue == null
-                                                              ? null
-                                                              : myValue.getItem());
+                                              ? null
+                                              : myValue.getItem());
         });
     }
 
     @Override
-    public Node getNode() {
-        return theTree;
+    public TethysFXNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -90,11 +98,11 @@ public class TethysFXTreeManager<T>
     public T getSelectedItem() {
         final TreeItem<TethysFXTreeItem<T>> myItem = theTree.getSelectionModel().getSelectedItem();
         final TethysFXTreeItem<T> myValue = myItem == null
-                                                           ? null
-                                                           : myItem.getValue();
+                                            ? null
+                                            : myItem.getValue();
         return myValue == null
-                               ? null
-                               : myValue.getItem();
+               ? null
+               : myValue.getItem();
     }
 
     @Override
@@ -131,6 +139,7 @@ public class TethysFXTreeManager<T>
 
     /**
      * Set focused item.
+     *
      * @param pItem the item
      */
     void setFocusedItem(final TethysFXTreeItem<T> pItem) {
@@ -163,7 +172,7 @@ public class TethysFXTreeManager<T>
     }
 
     @Override
-    public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T, Node, Node> pParent,
+    public TethysFXTreeItem<T> addChildItem(final TethysTreeItem<T> pParent,
                                             final String pName,
                                             final T pItem) {
         return new TethysFXTreeItem<>(this, (TethysFXTreeItem<T>) pParent, pName, pItem);
@@ -171,10 +180,11 @@ public class TethysFXTreeManager<T>
 
     /**
      * TreeItem class.
+     *
      * @param <T> the data type
      */
     public static class TethysFXTreeItem<T>
-            extends TethysTreeItem<T, Node, Node> {
+            extends TethysTreeItem<T> {
         /**
          * Associated Node.
          */
@@ -182,6 +192,7 @@ public class TethysFXTreeManager<T>
 
         /**
          * Constructor for root item.
+         *
          * @param pTree the tree
          */
         TethysFXTreeItem(final TethysFXTreeManager<T> pTree) {
@@ -194,10 +205,11 @@ public class TethysFXTreeManager<T>
 
         /**
          * Constructor.
-         * @param pTree the tree
+         *
+         * @param pTree   the tree
          * @param pParent the parent
-         * @param pName the unique name of the item
-         * @param pItem the tree item
+         * @param pName   the unique name of the item
+         * @param pItem   the tree item
          */
         public TethysFXTreeItem(final TethysFXTreeManager<T> pTree,
                                 final TethysFXTreeItem<T> pParent,
@@ -219,6 +231,7 @@ public class TethysFXTreeManager<T>
 
         /**
          * Obtain the node.
+         *
          * @return the node
          */
         TethysFXTreeNode<T> getNode() {
@@ -253,7 +266,7 @@ public class TethysFXTreeManager<T>
 
             /* Delete reference if we are not root */
             if (theNode != null
-                && myParent != null) {
+                    && myParent != null) {
                 /* remove from list of children */
                 myParent.getNode().getChildren().remove(theNode);
                 theNode = null;
@@ -283,12 +296,14 @@ public class TethysFXTreeManager<T>
 
     /**
      * TreeNode class.
+     *
      * @param <X> the data type
      */
     private static final class TethysFXTreeNode<X>
             extends TreeItem<TethysFXTreeItem<X>> {
         /**
          * Constructor.
+         *
          * @param pItem the tree item
          */
         TethysFXTreeNode(final TethysFXTreeItem<X> pItem) {
@@ -299,8 +314,8 @@ public class TethysFXTreeManager<T>
         public String toString() {
             final TethysFXTreeItem<X> myValue = getValue();
             return myValue == null
-                                   ? null
-                                   : myValue.toString();
+                   ? null
+                   : myValue.toString();
         }
     }
 }

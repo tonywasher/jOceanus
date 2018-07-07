@@ -40,11 +40,9 @@ import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
 
 /**
  * Thread to handle analysis of repository.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class ThemisDiscoverData<N, I>
-        implements MetisThread<Void, N, I> {
+public class ThemisDiscoverData
+        implements MetisThread<Void> {
     /**
      * The SubVersion Repository.
      */
@@ -145,11 +143,11 @@ public class ThemisDiscoverData<N, I>
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Protect against exceptions */
         try {
             /* Access the thread manager */
-            final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+            final MetisThreadManager myManager = pToolkit.getThreadManager();
             final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
             /* Start the analyse svnRepository task */

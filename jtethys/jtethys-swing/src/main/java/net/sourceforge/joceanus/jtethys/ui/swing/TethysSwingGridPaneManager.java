@@ -16,26 +16,29 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Swing Grid Pane Manager.
  */
 public class TethysSwingGridPaneManager
-        extends TethysGridPaneManager<JComponent, Icon> {
+        extends TethysGridPaneManager {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The Pane.
      */
@@ -55,31 +58,32 @@ public class TethysSwingGridPaneManager
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysSwingGridPaneManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingGridPaneManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise the panel */
         super(pFactory);
         thePanel = new JPanel();
         theLayout = new GridBagLayout();
         thePanel.setLayout(theLayout);
         theConstraintMap = new HashMap<>();
+        theNode = new TethysSwingNode(thePanel);
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        thePanel.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
-    public void addCellAtPosition(final TethysNode<JComponent> pNode,
+    public void addCellAtPosition(final TethysComponent pNode,
                                   final int pRow,
                                   final int pColumn) {
         /* Access the node */
-        final JComponent myNode = pNode.getNode();
+        final JComponent myNode = TethysSwingNode.getComponent(pNode);
 
         /* Obtain the padding size */
         final Integer myHPad = getHGap() >> 1;
@@ -101,71 +105,60 @@ public class TethysSwingGridPaneManager
     }
 
     @Override
-    public void setCellColumnSpan(final TethysNode<JComponent> pNode,
+    public void setCellColumnSpan(final TethysComponent pNode,
                                   final int pNumCols) {
         final GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.gridwidth = pNumCols;
-            theLayout.setConstraints(pNode.getNode(), myConstraints);
+            theLayout.setConstraints(TethysSwingNode.getComponent(pNode), myConstraints);
         }
     }
 
     @Override
-    public void setFinalCell(final TethysNode<JComponent> pNode) {
+    public void setFinalCell(final TethysComponent pNode) {
         setCellColumnSpan(pNode, GridBagConstraints.REMAINDER);
     }
 
     @Override
-    public void allowCellGrowth(final TethysNode<JComponent> pNode) {
+    public void allowCellGrowth(final TethysComponent pNode) {
         final GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.weightx = 1.0;
-            theLayout.setConstraints(pNode.getNode(), myConstraints);
+            theLayout.setConstraints(TethysSwingNode.getComponent(pNode), myConstraints);
         }
     }
 
     @Override
-    public void setCellAlignment(final TethysNode<JComponent> pNode,
+    public void setCellAlignment(final TethysComponent pNode,
                                  final TethysAlignment pAlign) {
         final GridBagConstraints myConstraints = theConstraintMap.get(pNode.getId());
         if (myConstraints != null) {
             myConstraints.anchor = determineAlignment(pAlign);
             myConstraints.fill = GridBagConstraints.VERTICAL;
-            theLayout.setConstraints(pNode.getNode(), myConstraints);
+            theLayout.setConstraints(TethysSwingNode.getComponent(pNode), myConstraints);
         }
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**

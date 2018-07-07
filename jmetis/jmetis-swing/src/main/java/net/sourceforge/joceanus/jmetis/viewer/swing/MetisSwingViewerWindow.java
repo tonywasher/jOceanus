@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -33,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
 
@@ -40,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTreeManager;
  * JavaSwing Data Viewer Manager.
  */
 public class MetisSwingViewerWindow
-        extends MetisViewerWindow<JComponent, Icon> {
+        extends MetisViewerWindow {
     /**
      * The frame.
      */
@@ -97,7 +97,7 @@ public class MetisSwingViewerWindow
     @Override
     public void hideDialog() {
         /* If the dialog exists */
-        if ((theDialog != null)
+        if (theDialog != null
             && theDialog.isShowing()) {
             /* Make sure that the dialog is hidden */
             theDialog.hideDialog();
@@ -136,7 +136,7 @@ public class MetisSwingViewerWindow
 
             /* Create the help panel */
             final JPanel myPanel = new JPanel();
-            final JComponent mySplit = getSplitTreeManager().getNode();
+            final JComponent mySplit = TethysSwingNode.getComponent(getSplitTreeManager());
             myPanel.add(mySplit);
             mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 

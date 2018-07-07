@@ -18,16 +18,15 @@ package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import java.util.List;
 
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
 
 /**
  * JavaFX CheckBox.
  */
 public class TethysFXCheckBox
-        extends TethysCheckBox<Node, Node> {
+        extends TethysCheckBox {
     /**
      * The dataField style.
      */
@@ -41,7 +40,7 @@ public class TethysFXCheckBox
     /**
      * The node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * CheckBox.
@@ -50,12 +49,13 @@ public class TethysFXCheckBox
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
     protected TethysFXCheckBox(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theCheckBox = new CheckBox();
-        theNode = theCheckBox;
+        theNode = new TethysFXNode(theCheckBox);
         theCheckBox.selectedProperty().addListener((v, o, n) -> handleSelected(n));
 
         /* Declare the CheckBox style */
@@ -63,7 +63,7 @@ public class TethysFXCheckBox
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -100,30 +100,23 @@ public class TethysFXCheckBox
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        theCheckBox.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        theCheckBox.setPrefHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theCheckBox);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

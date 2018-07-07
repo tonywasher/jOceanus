@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -64,6 +61,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * SpotRates panel.
@@ -133,7 +131,7 @@ public class SpotRatesTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The column model.
@@ -143,12 +141,12 @@ public class SpotRatesTable
     /**
      * The SpotRates selection panel.
      */
-    private final MoneyWiseSpotRatesSelect<JComponent, Icon> theSelect;
+    private final MoneyWiseSpotRatesSelect theSelect;
 
     /**
      * The action buttons.
      */
-    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
+    private final PrometheusActionButtons theActionButtons;
 
     /**
      * The viewer entry.
@@ -158,12 +156,12 @@ public class SpotRatesTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The exchange rates list.
      */
-    private SpotExchangeList<JComponent, Icon> theRates;
+    private SpotExchangeList theRates;
 
     /**
      * The selected date.
@@ -212,18 +210,18 @@ public class SpotRatesTable
 
         /* Create the sub panels */
         final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
-        theSelect = new MoneyWiseSpotRatesSelect<>(myFactory, theView);
-        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
+        theSelect = new MoneyWiseSpotRatesSelect(myFactory, theView);
+        theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
         theError = theView.getToolkit().newErrorPanel(theViewerPrice);
 
         /* Create the header panel */
-        final JPanel myHeader = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
-        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
+        myHeader.add(TethysSwingNode.getComponent(theSelect), BorderLayout.CENTER);
+        myHeader.add(TethysSwingNode.getComponent(theError), BorderLayout.PAGE_START);
+        myHeader.add(TethysSwingNode.getComponent(theActionButtons), BorderLayout.LINE_END);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -231,7 +229,7 @@ public class SpotRatesTable
         /* Create the layout for the panel */
         thePanel.setLayout(new BorderLayout());
         thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -246,8 +244,8 @@ public class SpotRatesTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     @Override
@@ -315,7 +313,7 @@ public class SpotRatesTable
         /* If selection is valid */
         if (theDate != null) {
             /* Create the new list */
-            theRates = new SpotExchangeList<>(theView, pDate);
+            theRates = new SpotExchangeList(theView, pDate);
 
             /* Update Next/Previous values */
             theSelect.setAdjacent(theRates.getPrev(), theRates.getNext());
@@ -375,7 +373,7 @@ public class SpotRatesTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        super.getNode().setEnabled(!isError);
+        super.getNode().getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);

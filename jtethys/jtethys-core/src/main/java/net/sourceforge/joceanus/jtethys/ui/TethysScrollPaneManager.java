@@ -18,11 +18,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 /**
  * Scroll Pane Manager.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysScrollPaneManager<N, I>
-        implements TethysNode<N> {
+public abstract class TethysScrollPaneManager
+        implements TethysComponent {
     /**
      * The id.
      */
@@ -42,7 +40,7 @@ public abstract class TethysScrollPaneManager<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysScrollPaneManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysScrollPaneManager(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
     }
 
@@ -55,13 +53,13 @@ public abstract class TethysScrollPaneManager<N, I>
      * Set the content.
      * @param pNode the content.
      */
-    public abstract void setContent(TethysNode<N> pNode);
+    public abstract void setContent(TethysComponent pNode);
 
     /**
      * Get the content.
      * @return the content.
      */
-    public abstract TethysNode<N> getContent();
+    public abstract TethysComponent getContent();
 
     /**
      * Obtain the Border Padding.

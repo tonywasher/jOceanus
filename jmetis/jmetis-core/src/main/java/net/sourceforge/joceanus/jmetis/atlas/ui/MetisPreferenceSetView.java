@@ -42,6 +42,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCheckBox;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysScrollButtonField;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysValidatedEditField;
@@ -59,12 +60,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Panel for editing a preference Set.
+ *
  * @param <K> the key type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I>
-        implements TethysEventProvider<MetisPreferenceEvent>, TethysNode<N> {
+public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey>
+        implements TethysEventProvider<MetisPreferenceEvent>, TethysComponent {
     /**
      * Text for Preferences Title.
      */
@@ -88,17 +88,17 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
     /**
      * The Border Pane.
      */
-    private final TethysBorderPaneManager<N, I> thePane;
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The Grid Pane.
      */
-    private final TethysGridPaneManager<N, I> theGrid;
+    private final TethysGridPaneManager theGrid;
 
     /**
      * The GUI factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The Element list.
@@ -108,15 +108,16 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
     /**
      * The Options Pane.
      */
-    private TethysFlowPaneManager<N, I> theOptions;
+    private TethysFlowPaneManager theOptions;
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory       the GUI factory
      * @param pPreferenceSet the preference set
      */
-    protected MetisPreferenceSetView(final TethysGuiFactory<N, I> pFactory,
-                                     final MetisPreferenceSet<K> pPreferenceSet) {
+    MetisPreferenceSetView(final TethysGuiFactory pFactory,
+                           final MetisPreferenceSet<K> pPreferenceSet) {
         /* Store parameters */
         theGuiFactory = pFactory;
         thePreferences = pPreferenceSet;
@@ -165,7 +166,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePane.getNode();
     }
 
@@ -186,16 +187,17 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
     /**
      * Does the Preference Set have changes.
+     *
      * @return does the set have changes
      */
-    protected boolean hasChanges() {
+    boolean hasChanges() {
         return thePreferences.hasChanges();
     }
 
     /**
      * Reset changes.
      */
-    protected void resetChanges() {
+    void resetChanges() {
         /* Reset changes and clear flag */
         thePreferences.resetChanges();
 
@@ -205,9 +207,10 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
     /**
      * Store changes.
+     *
      * @throws OceanusException on error
      */
-    protected void storeChanges() throws OceanusException {
+    void storeChanges() throws OceanusException {
         /* Reset changes and clear flag */
         thePreferences.storeChanges();
 
@@ -245,6 +248,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
     /**
      * Allocate element.
+     *
      * @param pItem the preference item
      * @return the element
      */
@@ -309,21 +313,22 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<String, N, I> theField;
+        private final TethysDataEditField<String> theField;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private StringPreferenceElement(final MetisStringPreference<K> pItem) {
+        StringPreferenceElement(final MetisStringPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newStringField();
             theField.setEditable(true);
 
             /* Create the label */
-            final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
-                                                                     + TethysLabel.STR_COLON);
+            final TethysLabel myLabel = theGuiFactory.newLabel(pItem.getDisplay()
+                    + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Add to the Grid Pane */
@@ -368,18 +373,19 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysValidatedEditField<Integer, N, I> theField;
+        private final TethysValidatedEditField<Integer> theField;
 
         /**
          * The Label item.
          */
-        private final TethysLabel<N, I> theRangeLabel;
+        private final TethysLabel theRangeLabel;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private IntegerPreferenceElement(final MetisIntegerPreference<K> pItem) {
+        IntegerPreferenceElement(final MetisIntegerPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newIntegerField();
@@ -387,8 +393,8 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
             theField.setPreferredWidth(TethysFieldType.INTEGER.getDefaultWidth());
 
             /* Create the label */
-            final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
-                                                                     + TethysLabel.STR_COLON);
+            final TethysLabel myLabel = theGuiFactory.newLabel(pItem.getDisplay()
+                    + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Create the range label */
@@ -437,8 +443,8 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
             /* Set the valid range */
             theField.setValidator(p -> (p < myMin) || (p > myMax)
-                                                                  ? MetisPreferenceResource.UI_RANGE_ERROR.getValue()
-                                                                  : null);
+                                       ? MetisPreferenceResource.UI_RANGE_ERROR.getValue()
+                                       : null);
             theRangeLabel.setText(null);
 
             /* If we have a minimum or maximum */
@@ -482,13 +488,14 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The CheckBox item.
          */
-        private final TethysCheckBox<N, I> theCheckBox;
+        private final TethysCheckBox theCheckBox;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private BooleanPreferenceElement(final MetisBooleanPreference<K> pItem) {
+        BooleanPreferenceElement(final MetisBooleanPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theCheckBox = theGuiFactory.newCheckBox(pItem.getDisplay());
@@ -544,25 +551,26 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<TethysDate, N, I> theField;
+        private final TethysDataEditField<TethysDate> theField;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private DatePreferenceElement(final MetisDatePreference<K> pItem) {
+        DatePreferenceElement(final MetisDatePreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newDateField();
             theField.setEditable(true);
 
             /* Create the label */
-            final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
-                                                                     + TethysLabel.STR_COLON);
+            final TethysLabel myLabel = theGuiFactory.newLabel(pItem.getDisplay()
+                    + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Create the place-holder */
-            final TethysLabel<N, I> myStub = theGuiFactory.newLabel();
+            final TethysLabel myStub = theGuiFactory.newLabel();
 
             /* Add to the Grid Pane */
             theGrid.addCell(myLabel);
@@ -595,6 +603,7 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
     /**
      * Enum preference element.
+     *
      * @param <E> the enum type
      */
     private final class EnumPreferenceElement<E extends Enum<E>>
@@ -607,25 +616,26 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysScrollButtonField<E, N, I> theField;
+        private final TethysScrollButtonField<E> theField;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private EnumPreferenceElement(final MetisEnumPreference<K, E> pItem) {
+        EnumPreferenceElement(final MetisEnumPreference<K, E> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newScrollField();
             theField.setEditable(true);
 
             /* Create the label */
-            final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
-                                                                     + TethysLabel.STR_COLON);
+            final TethysLabel myLabel = theGuiFactory.newLabel(pItem.getDisplay()
+                    + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Create the place-holder */
-            final TethysLabel<N, I> myStub = theGuiFactory.newLabel();
+            final TethysLabel myStub = theGuiFactory.newLabel();
 
             /* Add to the Grid Pane */
             theGrid.addCell(myLabel);
@@ -646,9 +656,10 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
         /**
          * Build menu.
+         *
          * @param pMenu the menu
          */
-        private void buildMenu(final TethysScrollMenu<E, I> pMenu) {
+        private void buildMenu(final TethysScrollMenu<E> pMenu) {
             /* reset the menu */
             pMenu.removeAllItems();
 
@@ -692,25 +703,26 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<String, N, I> theField;
+        private final TethysDataEditField<String> theField;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private ColorPreferenceElement(final MetisStringPreference<K> pItem) {
+        ColorPreferenceElement(final MetisStringPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newColorField();
             theField.setEditable(true);
 
             /* Create the label */
-            final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
-                                                                     + TethysLabel.STR_COLON);
+            final TethysLabel myLabel = theGuiFactory.newLabel(pItem.getDisplay()
+                    + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Create the place-holder */
-            final TethysLabel<N, I> myStub = theGuiFactory.newLabel();
+            final TethysLabel myStub = theGuiFactory.newLabel();
 
             /* Add to the Grid Pane */
             theGrid.addCell(myLabel);
@@ -754,12 +766,12 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<String, N, I> theField;
+        private final TethysDataEditField<String> theField;
 
         /**
          * The Button.
          */
-        private final TethysButton<N, I> theButton;
+        private final TethysButton theButton;
 
         /**
          * The File Selector.
@@ -768,9 +780,10 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private FilePreferenceElement(final MetisStringPreference<K> pItem) {
+        FilePreferenceElement(final MetisStringPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newStringField();
@@ -848,12 +861,12 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<String, N, I> theField;
+        private final TethysDataEditField<String> theField;
 
         /**
          * The Button.
          */
-        private final TethysButton<N, I> theButton;
+        private final TethysButton theButton;
 
         /**
          * The Directory Selector.
@@ -862,9 +875,10 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private DirectoryPreferenceElement(final MetisStringPreference<K> pItem) {
+        DirectoryPreferenceElement(final MetisStringPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newStringField();
@@ -942,21 +956,22 @@ public class MetisPreferenceSetView<K extends Enum<K> & MetisPreferenceKey, N, I
         /**
          * The Field item.
          */
-        private final TethysDataEditField<char[], N, I> theField;
+        private final TethysDataEditField<char[]> theField;
 
         /**
          * Constructor.
+         *
          * @param pItem the item
          */
-        private CharArrayPreferenceElement(final MetisCharArrayPreference<K> pItem) {
+        CharArrayPreferenceElement(final MetisCharArrayPreference<K> pItem) {
             /* Store parameters */
             theItem = pItem;
             theField = theGuiFactory.newCharArrayField();
             theField.setEditable(true);
 
             /* Create the label */
-            final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(pItem.getDisplay()
-                                                                     + TethysLabel.STR_COLON);
+            final TethysLabel myLabel = theGuiFactory.newLabel(pItem.getDisplay()
+                    + TethysLabel.STR_COLON);
             myLabel.setAlignment(TethysAlignment.EAST);
 
             /* Add to the Grid Pane */

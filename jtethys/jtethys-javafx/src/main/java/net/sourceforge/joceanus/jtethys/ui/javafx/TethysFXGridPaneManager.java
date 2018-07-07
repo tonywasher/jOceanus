@@ -21,20 +21,20 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * javaFX Grid Pane Manager.
  */
 public class TethysFXGridPaneManager
-        extends TethysGridPaneManager<Node, Node> {
+        extends TethysGridPaneManager {
     /**
      * The Node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The Pane.
@@ -43,18 +43,19 @@ public class TethysFXGridPaneManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXGridPaneManager(final TethysFXGuiFactory pFactory) {
+    TethysFXGridPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theGridPane = new GridPane();
         theGridPane.setHgap(getHGap());
         theGridPane.setVgap(getVGap());
-        theNode = theGridPane;
+        theNode = new TethysFXNode(theGridPane);
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -77,11 +78,11 @@ public class TethysFXGridPaneManager
     }
 
     @Override
-    public void addCellAtPosition(final TethysNode<Node> pNode,
+    public void addCellAtPosition(final TethysComponent pNode,
                                   final int pRow,
                                   final int pColumn) {
         /* Access the node */
-        final Node myNode = pNode.getNode();
+        final Node myNode = TethysFXNode.getNode(pNode);
 
         /* add the node */
         theGridPane.add(myNode, pColumn, pRow);
@@ -89,25 +90,25 @@ public class TethysFXGridPaneManager
     }
 
     @Override
-    public void setCellColumnSpan(final TethysNode<Node> pNode,
+    public void setCellColumnSpan(final TethysComponent pNode,
                                   final int pNumCols) {
-        GridPane.setColumnSpan(pNode.getNode(), pNumCols);
+        GridPane.setColumnSpan(TethysFXNode.getNode(pNode), pNumCols);
     }
 
     @Override
-    public void setFinalCell(final TethysNode<Node> pNode) {
-        GridPane.setColumnSpan(pNode.getNode(), GridPane.REMAINING);
+    public void setFinalCell(final TethysComponent pNode) {
+        GridPane.setColumnSpan(TethysFXNode.getNode(pNode), GridPane.REMAINING);
     }
 
     @Override
-    public void allowCellGrowth(final TethysNode<Node> pNode) {
-        GridPane.setHgrow(pNode.getNode(), Priority.ALWAYS);
+    public void allowCellGrowth(final TethysComponent pNode) {
+        GridPane.setHgrow(TethysFXNode.getNode(pNode), Priority.ALWAYS);
     }
 
     @Override
-    public void setCellAlignment(final TethysNode<Node> pNode,
+    public void setCellAlignment(final TethysComponent pNode,
                                  final TethysAlignment pAlign) {
-        final Node myNode = pNode.getNode();
+        final Node myNode = TethysFXNode.getNode(pNode);
         GridPane.setFillWidth(myNode, false);
         GridPane.setHalignment(myNode, determineHAlignment(pAlign));
         GridPane.setValignment(myNode, determineVAlignment(pAlign));
@@ -126,24 +127,18 @@ public class TethysFXGridPaneManager
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theGridPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**
      * Translate horizontal alignment.
+     *
      * @param pAlign the alignment
      * @return the FX alignment
      */
@@ -167,6 +162,7 @@ public class TethysFXGridPaneManager
 
     /**
      * Translate vertical alignment.
+     *
      * @param pAlign the alignment
      * @return the FX alignment
      */

@@ -20,16 +20,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataFormatter;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysValueSet;
@@ -56,7 +55,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
  * Tethys GUI Factory.
  */
 public class TethysFXGuiFactory
-        extends TethysGuiFactory<Node, Node>
+        extends TethysGuiFactory
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * Base StyleSheet Class.
@@ -205,8 +204,8 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public Node resolveIcon(final TethysIconId pIconId,
-                            final int pWidth) {
+    public TethysFXIcon resolveIcon(final TethysIconId pIconId,
+                                    final int pWidth) {
         return pIconId == null
                                ? null
                                : TethysFXGuiUtils.getIconAtSize(pIconId, pWidth);
@@ -342,7 +341,7 @@ public class TethysFXGuiFactory
     }
 
     @Override
-    public <P extends TethysNode<Node>> TethysFXCardPaneManager<P> newCardPane() {
+    public <P extends TethysComponent> TethysFXCardPaneManager<P> newCardPane() {
         return new TethysFXCardPaneManager<>(this);
     }
 

@@ -116,7 +116,7 @@ public class MoneyWiseData
      * @param pUtilitySet the utility set
      * @param pTaxFactory the tax factory
      */
-    public MoneyWiseData(final JOceanusUtilitySet<?, ?> pUtilitySet,
+    public MoneyWiseData(final JOceanusUtilitySet pUtilitySet,
                          final MoneyWiseTaxFactory pTaxFactory) {
         /* Call Super-constructor */
         super(MoneyWiseDataType.class, pUtilitySet);

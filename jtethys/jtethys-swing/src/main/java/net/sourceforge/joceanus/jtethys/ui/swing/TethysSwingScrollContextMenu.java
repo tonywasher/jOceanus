@@ -38,7 +38,6 @@ import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -49,6 +48,8 @@ import javax.swing.SwingUtilities;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
+import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent;
@@ -66,7 +67,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.Tethys
  * @param <T> the value type
  */
 public class TethysSwingScrollContextMenu<T>
-        implements TethysScrollMenu<T, Icon>, TethysEventProvider<TethysUIEvent> {
+        implements TethysScrollMenu<T>, TethysEventProvider<TethysUIEvent> {
     /**
      * Background active colour.
      */
@@ -214,8 +215,8 @@ public class TethysSwingScrollContextMenu<T>
         theEventManager = new TethysEventManager<>();
 
         /* Create the scroll items */
-        theUpItem = new ScrollControl(TethysSwingArrowIcon.UP, -1);
-        theDownItem = new ScrollControl(TethysSwingArrowIcon.DOWN, 1);
+        theUpItem = new ScrollControl(TethysSwingArrowIcon.getIconForId(TethysArrowIconId.UP), -1);
+        theDownItem = new ScrollControl(TethysSwingArrowIcon.getIconForId(TethysArrowIconId.DOWN), 1);
 
         /* Allocate the list */
         theMenuItems = new ArrayList<>();
@@ -703,7 +704,7 @@ public class TethysSwingScrollContextMenu<T>
 
     @Override
     public TethysScrollMenuItem<T> addItem(final T pValue,
-                                           final Icon pGraphic) {
+                                           final TethysIcon pGraphic) {
         /* Use standard name */
         return addItem(pValue, pValue.toString(), pGraphic);
     }
@@ -716,7 +717,7 @@ public class TethysSwingScrollContextMenu<T>
 
     @Override
     public TethysScrollMenuItem<T> addNullItem(final String pName,
-                                               final Icon pGraphic) {
+                                               final TethysIcon pGraphic) {
         /* Use given name */
         return addItem(null, pName, pGraphic);
     }
@@ -724,7 +725,7 @@ public class TethysSwingScrollContextMenu<T>
     @Override
     public TethysScrollMenuItem<T> addItem(final T pValue,
                                            final String pName,
-                                           final Icon pGraphic) {
+                                           final TethysIcon pGraphic) {
         /* Check state */
         if (theDialog != null
             && theDialog.isVisible()) {
@@ -741,14 +742,14 @@ public class TethysSwingScrollContextMenu<T>
     }
 
     @Override
-    public TethysScrollSubMenu<T, Icon> addSubMenu(final String pName) {
+    public TethysScrollSubMenu<T> addSubMenu(final String pName) {
         /* Use given name */
         return addSubMenu(pName, null);
     }
 
     @Override
-    public TethysScrollSubMenu<T, Icon> addSubMenu(final String pName,
-                                                   final Icon pGraphic) {
+    public TethysScrollSubMenu<T> addSubMenu(final String pName,
+                                             final TethysIcon pGraphic) {
         /* Check state */
         if (theDialog != null
             && theDialog.isVisible()) {
@@ -1075,7 +1076,7 @@ public class TethysSwingScrollContextMenu<T>
          * @param pGraphic the icon for the item
          */
         private TethysSwingScrollElement(final String pName,
-                                         final Icon pGraphic) {
+                                         final TethysIcon pGraphic) {
             /* Create the panel */
             thePanel = new TethysSwingEnablePanel();
 
@@ -1090,7 +1091,7 @@ public class TethysSwingScrollContextMenu<T>
 
             /* Create a Label for the graphic */
             theIcon = new JLabel();
-            theIcon.setIcon(pGraphic);
+            theIcon.setIcon(TethysSwingIcon.getIcon(pGraphic));
             final Dimension myDim = new Dimension(TethysIconId.DEFAULT_ICONWIDTH, DEFAULT_ROWHEIGHT);
             theIcon.setMinimumSize(myDim);
             theIcon.setPreferredSize(myDim);
@@ -1105,7 +1106,7 @@ public class TethysSwingScrollContextMenu<T>
          * Constructor.
          * @param pGraphic the icon for the item
          */
-        private TethysSwingScrollElement(final Icon pGraphic) {
+        private TethysSwingScrollElement(final TethysIcon pGraphic) {
             /* Create the panel */
             thePanel = new TethysSwingEnablePanel();
 
@@ -1114,7 +1115,7 @@ public class TethysSwingScrollContextMenu<T>
 
             /* Create a Label for the graphic */
             theIcon = new JLabel();
-            theIcon.setIcon(pGraphic);
+            theIcon.setIcon(TethysSwingIcon.getIcon(pGraphic));
             theIcon.setHorizontalAlignment(SwingConstants.CENTER);
 
             /* Add the children */
@@ -1141,8 +1142,8 @@ public class TethysSwingScrollContextMenu<T>
          * Set the graphic.
          * @param pGraphic the graphic
          */
-        protected void setIcon(final Icon pGraphic) {
-            theIcon.setIcon(pGraphic);
+        protected void setIcon(final TethysIcon pGraphic) {
+            theIcon.setIcon(TethysSwingIcon.getIcon(pGraphic));
         }
 
         /**
@@ -1204,7 +1205,7 @@ public class TethysSwingScrollContextMenu<T>
         protected TethysSwingScrollMenuItem(final TethysSwingScrollContextMenu<T> pContext,
                                             final T pValue,
                                             final String pName,
-                                            final Icon pGraphic) {
+                                            final TethysIcon pGraphic) {
             /* Call super-constructor */
             super(pName, pGraphic);
 
@@ -1311,7 +1312,7 @@ public class TethysSwingScrollContextMenu<T>
      */
     public static final class TethysSwingScrollSubMenu<T>
             extends TethysSwingScrollElement
-            implements TethysScrollSubMenu<T, Icon> {
+            implements TethysScrollSubMenu<T> {
         /**
          * Parent contextMenu.
          */
@@ -1335,7 +1336,7 @@ public class TethysSwingScrollContextMenu<T>
          */
         TethysSwingScrollSubMenu(final TethysSwingScrollContextMenu<T> pContext,
                                  final String pName,
-                                 final Icon pGraphic) {
+                                 final TethysIcon pGraphic) {
             /* Call super-constructor */
             super(pName, pGraphic);
 
@@ -1452,7 +1453,7 @@ public class TethysSwingScrollContextMenu<T>
          * @param pIcon the icon
          * @param pIncrement the increment
          */
-        ScrollControl(final Icon pIcon,
+        ScrollControl(final TethysIcon pIcon,
                       final int pIncrement) {
             /* Set the icon for the item */
             super(pIcon);

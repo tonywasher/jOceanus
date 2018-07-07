@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -103,14 +102,14 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
     protected MoneyWiseItemPanel(final TethysSwingGuiFactory pFactory,
                                  final MetisSwingFieldManager pFieldMgr,
                                  final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                 final MetisErrorPanel<JComponent, Icon> pError) {
+                                 final MetisErrorPanel pError) {
         super(pFactory, pFieldMgr, pUpdateSet, pError);
         theGoToFilterList = new ArrayList<>();
         theGoToItemList = new ArrayList<>();
     }
 
     @Override
-    protected void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> pMenu) {
+    protected void buildGoToMenu(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>> pMenu) {
         /* Clear the goTo lists */
         theGoToFilterList.clear();
         theGoToItemList.clear();
@@ -171,12 +170,12 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * Process goTo items.
      * @param pMenu the menu
      */
-    private void processGoToItems(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> pMenu) {
+    private void processGoToItems(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>> pMenu) {
         /* Process goTo filters */
         processGoToFilters(pMenu);
 
         /* Create a simple map for top-level categories */
-        final Map<MoneyWiseDataType, TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?>> myMap = new EnumMap<>(MoneyWiseDataType.class);
+        final Map<MoneyWiseDataType, TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>>> myMap = new EnumMap<>(MoneyWiseDataType.class);
 
         /* Loop through the items */
         final Iterator<DataItem<MoneyWiseDataType>> myIterator = theGoToItemList.iterator();
@@ -185,7 +184,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
             /* Determine DataType and obtain parent menu */
             final MoneyWiseDataType myType = myItem.getItemType();
-            TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> myMenu = myMap.get(myType);
+            TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>> myMenu = myMap.get(myType);
 
             /* If this is a new menu */
             if (myMenu == null) {
@@ -231,9 +230,9 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
      * Process goTo filters.
      * @param pMenu the menu
      */
-    private void processGoToFilters(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> pMenu) {
+    private void processGoToFilters(final TethysScrollMenu<PrometheusGoToEvent<MoneyWiseGoToId>> pMenu) {
         /* Create a simple map for top-level categories */
-        TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>, ?> myMenu = null;
+        TethysScrollSubMenu<PrometheusGoToEvent<MoneyWiseGoToId>> myMenu = null;
 
         /* Loop through the items */
         final Iterator<AnalysisFilter<?, ?>> myIterator = theGoToFilterList.iterator();
@@ -247,7 +246,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
             }
 
             /* Determine action */
-            final StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(null, myFilter);
+            final StatementSelect myStatement = new StatementSelect(null, myFilter);
             final MoneyWiseGoToId myId = MoneyWiseGoToId.STATEMENT;
 
             /* Build the item */
@@ -717,7 +716,7 @@ public abstract class MoneyWiseItemPanel<T extends DataItem<MoneyWiseDataType> &
 
         @Override
         public JComponent getPanel() {
-            return theTable.getNode();
+            return theTable.getNode().getNode();
         }
 
         @Override

@@ -52,7 +52,7 @@ public class TethysSwingTableItem {
      * XtraBoolean property.
      */
     private Boolean theXtraBoolean;
-    
+
     /**
      * Short property.
      */
@@ -128,7 +128,7 @@ public class TethysSwingTableItem {
      * @param pHelper the Helper
      * @param pName the Name
      */
-    protected TethysSwingTableItem(final TethysScrollUITestHelper<?, ?> pHelper,
+    protected TethysSwingTableItem(final TethysScrollUITestHelper pHelper,
                                    final String pName) {
         theName = pName;
         theDate = new TethysDate();

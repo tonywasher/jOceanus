@@ -44,24 +44,22 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Main Panel.
- * @param <N> Node type
- * @param <I> Icon type
  */
-public abstract class CoeusMainPanel<N, I> {
+public abstract class CoeusMainPanel {
     /**
      * The Totals Table.
      */
-    private final CoeusStatementTable<N, I> theTotalsTable;
+    private final CoeusStatementTable theTotalsTable;
 
     /**
      * The tabs.
      */
-    private final TethysTabPaneManager<N, I> theTabs;
+    private final TethysTabPaneManager theTabs;
 
     /**
      * The Totals Tab.
      */
-    private final TethysTabItem<N, I> theTotalsTab;
+    private final TethysTabItem theTotalsTab;
 
     /**
      * The menuBar.
@@ -71,21 +69,21 @@ public abstract class CoeusMainPanel<N, I> {
     /**
      * The data window.
      */
-    private final MetisViewerWindow<N, I> theDataWdw;
+    private final MetisViewerWindow theDataWdw;
 
     /**
      * The about box.
      */
-    private final TethysAbout<N, I> theAboutBox;
+    private final TethysAbout theAboutBox;
 
     /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected CoeusMainPanel(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    protected CoeusMainPanel(final MetisToolkit pToolkit) throws OceanusException {
         /* Access Gui Factory and Preference Manager */
-        final TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
+        final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
         final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();
 
         /* Create the Cache */
@@ -101,7 +99,7 @@ public abstract class CoeusMainPanel<N, I> {
         theTabs = myFactory.newTabPane();
 
         /* Create the report panel */
-        final CoeusReportPanel<N, I> myReports = new CoeusReportPanel<>(pToolkit, myMarketCache);
+        final CoeusReportPanel myReports = new CoeusReportPanel(pToolkit, myMarketCache);
         theTabs.addTabItem(CoeusUIResource.TAB_REPORTS.getValue(), myReports);
 
         /* Listen to filter requests */
@@ -109,11 +107,11 @@ public abstract class CoeusMainPanel<N, I> {
         myRegistrar.addEventListener(CoeusDataEvent.GOTOSTATEMENT, this::handleGoToEvent);
 
         /* Create the totals table */
-        theTotalsTable = new CoeusStatementTable<>(pToolkit, myMarketCache);
+        theTotalsTable = new CoeusStatementTable(pToolkit, myMarketCache);
         theTotalsTab = theTabs.addTabItem(CoeusUIResource.TAB_STATEMENTS.getValue(), theTotalsTable);
 
         /* Create the Preferences Tab */
-        final MetisPreferenceView<N, I> myPrefPanel = new MetisPreferenceView<>(myFactory, myPreferences);
+        final MetisPreferenceView myPrefPanel = new MetisPreferenceView(myFactory, myPreferences);
         theTabs.addTabItem(CoeusUIResource.TAB_PREFERENCES.getValue(), myPrefPanel);
 
         /* Create the menu bar */
@@ -143,7 +141,7 @@ public abstract class CoeusMainPanel<N, I> {
      * Obtain the tabs.
      * @return the Tabs
      */
-    protected TethysTabPaneManager<N, I> getTabs() {
+    protected TethysTabPaneManager getTabs() {
         return theTabs;
     }
 

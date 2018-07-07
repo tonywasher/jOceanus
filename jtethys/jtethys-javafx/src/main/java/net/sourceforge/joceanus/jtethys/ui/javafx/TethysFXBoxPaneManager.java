@@ -25,18 +25,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * FX Box Pane Manager.
  */
 public class TethysFXBoxPaneManager
-        extends TethysBoxPaneManager<Node, Node> {
+        extends TethysBoxPaneManager {
     /**
      * The Node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The BoxPane.
@@ -45,11 +46,12 @@ public class TethysFXBoxPaneManager
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory    the GUI factory
      * @param pHorizontal horizontal box true/false
      */
-    protected TethysFXBoxPaneManager(final TethysFXGuiFactory pFactory,
-                                     final boolean pHorizontal) {
+    TethysFXBoxPaneManager(final TethysFXGuiFactory pFactory,
+                           final boolean pHorizontal) {
         super(pFactory);
         if (pHorizontal) {
             final HBox myBox = new HBox(getGap());
@@ -60,11 +62,11 @@ public class TethysFXBoxPaneManager
             myBox.setAlignment(Pos.CENTER);
             theBoxPane = myBox;
         }
-        theNode = theBoxPane;
+        theNode = new TethysFXNode(theBoxPane);
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -75,16 +77,16 @@ public class TethysFXBoxPaneManager
     }
 
     @Override
-    public void addNode(final TethysNode<Node> pNode) {
+    public void addNode(final TethysComponent pNode) {
         super.addNode(pNode);
-        theBoxPane.getChildren().add(pNode.getNode());
+        theBoxPane.getChildren().add(TethysFXNode.getNode(pNode));
     }
 
     @Override
-    public void setChildVisible(final TethysNode<Node> pChild,
+    public void setChildVisible(final TethysComponent pChild,
                                 final boolean pVisible) {
         /* Handle nothing to do */
-        final Node myChildNode = pChild.getNode();
+        final Node myChildNode = TethysFXNode.getNode(pChild);
         final boolean isVisible = myChildNode.isVisible();
         if (isVisible == pVisible) {
             return;
@@ -95,9 +97,9 @@ public class TethysFXBoxPaneManager
             /* Count visible prior siblings */
             final int myId = pChild.getId();
             int myIndex = 0;
-            final Iterator<TethysNode<Node>> myIterator = iterator();
+            final Iterator<TethysComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final TethysNode<Node> myNode = myIterator.next();
+                final TethysComponent myNode = myIterator.next();
                 final Integer myNodeId = myNode.getId();
 
                 /* If we have found the node */
@@ -109,7 +111,7 @@ public class TethysFXBoxPaneManager
                 }
 
                 /* Increment count if node is visible */
-                if (myNode.getNode().isVisible()) {
+                if (TethysFXNode.getNode(myNode).isVisible()) {
                     myIndex++;
                 }
             }
@@ -145,41 +147,39 @@ public class TethysFXBoxPaneManager
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theBoxPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void addSpacer() {
         final TethysFXSpacer mySpacer = new TethysFXSpacer(true);
         addSpacerNode(mySpacer);
-        theBoxPane.getChildren().add(mySpacer.getNode());
+        theBoxPane.getChildren().add(TethysFXNode.getNode(mySpacer));
     }
 
     @Override
     public void addStrut() {
         final TethysFXSpacer mySpacer = new TethysFXSpacer(false);
         addSpacerNode(mySpacer);
-        theBoxPane.getChildren().add(mySpacer.getNode());
+        theBoxPane.getChildren().add(TethysFXNode.getNode(mySpacer));
     }
 
     /**
      * Spacer node.
      */
     private final class TethysFXSpacer
-            implements TethysNode<Node> {
+            implements TethysComponent {
+        /**
+         * The Node.
+         */
+        private TethysFXNode theNode;
+
         /**
          * Region.
          */
@@ -187,6 +187,7 @@ public class TethysFXBoxPaneManager
 
         /**
          * Constructor.
+         *
          * @param pExpand true/false
          */
         TethysFXSpacer(final boolean pExpand) {
@@ -197,11 +198,12 @@ public class TethysFXBoxPaneManager
                 HBox.setHgrow(theRegion, Priority.ALWAYS);
                 VBox.setVgrow(theRegion, Priority.ALWAYS);
             }
+            theNode = new TethysFXNode(theRegion);
         }
 
         @Override
-        public Node getNode() {
-            return theRegion;
+        public TethysFXNode getNode() {
+            return theNode;
         }
 
         @Override

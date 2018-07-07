@@ -54,9 +54,8 @@ public abstract class TethysScrollMenuContent {
     /**
      * ScrollMenu.
      * @param <T> the value type
-     * @param <I> the Icon type
      */
-    public interface TethysScrollMenu<T, I> {
+    public interface TethysScrollMenu<T> {
         /**
          * Obtain the selected value.
          * @return the selected value
@@ -110,7 +109,7 @@ public abstract class TethysScrollMenuContent {
          * @return the item added
          */
         TethysScrollMenuItem<T> addItem(T pValue,
-                                        I pGraphic);
+                                        TethysIcon pGraphic);
 
         /**
          * Add Null Element.
@@ -126,7 +125,7 @@ public abstract class TethysScrollMenuContent {
          * @return the item added
          */
         TethysScrollMenuItem<T> addNullItem(String pName,
-                                            I pGraphic);
+                                            TethysIcon pGraphic);
 
         /**
          * Add Element.
@@ -137,14 +136,14 @@ public abstract class TethysScrollMenuContent {
          */
         TethysScrollMenuItem<T> addItem(T pValue,
                                         String pName,
-                                        I pGraphic);
+                                        TethysIcon pGraphic);
 
         /**
          * Add subMenu.
          * @param pName the display name
          * @return the menu added
          */
-        TethysScrollSubMenu<T, I> addSubMenu(String pName);
+        TethysScrollSubMenu<T> addSubMenu(String pName);
 
         /**
          * Add subMenu.
@@ -152,8 +151,8 @@ public abstract class TethysScrollMenuContent {
          * @param pGraphic the icon for the menu
          * @return the menu added
          */
-        TethysScrollSubMenu<T, I> addSubMenu(String pName,
-                                             I pGraphic);
+        TethysScrollSubMenu<T> addSubMenu(String pName,
+                                          TethysIcon pGraphic);
 
         /**
          * Add New toggle item.
@@ -222,14 +221,13 @@ public abstract class TethysScrollMenuContent {
     /**
      * ScrollSubMenu.
      * @param <T> the value type
-     * @param <I> the Icon type
-     */
+      */
     @FunctionalInterface
-    public interface TethysScrollSubMenu<T, I> {
+    public interface TethysScrollSubMenu<T> {
         /**
          * Obtain the subMenu.
          * @return the subMenu
          */
-        TethysScrollMenu<T, I> getSubMenu();
+        TethysScrollMenu<T> getSubMenu();
     }
 }

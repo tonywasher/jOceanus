@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
@@ -32,7 +31,6 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -74,7 +72,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * @param <T> the data type
  */
 public abstract class TethysSwingDataTextField<T>
-        extends TethysBaseDataEditField<T, JComponent, Icon> {
+        extends TethysBaseDataEditField<T> {
     /**
      * The label name.
      */
@@ -96,9 +94,14 @@ public abstract class TethysSwingDataTextField<T>
     private final TethysSwingDataFieldAdjust theAdjuster;
 
     /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
+    /**
      * The panel.
      */
-    private final JPanel theNode;
+    private final JPanel theCard;
 
     /**
      * The edit node.
@@ -139,7 +142,7 @@ public abstract class TethysSwingDataTextField<T>
         theGuiFactory = pFactory;
 
         /* Create resources */
-        theNode = new JPanel();
+        theCard = new JPanel();
         theLabel = pLabel;
         theEditNode = new JPanel();
         theEditControl = pEditControl;
@@ -162,9 +165,12 @@ public abstract class TethysSwingDataTextField<T>
 
         /* Default to readOnly */
         theLayout = new CardLayout();
-        theNode.setLayout(theLayout);
-        theNode.add(theLabel, NAME_LABEL);
-        theNode.add(theEditNode, NAME_EDIT);
+        theCard.setLayout(theLayout);
+        theCard.add(theLabel, NAME_LABEL);
+        theCard.add(theEditNode, NAME_EDIT);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theCard);
 
         /* Set command button action handler */
         theCmdButton.addActionListener(e -> handleCmdMenuRequest());
@@ -175,7 +181,7 @@ public abstract class TethysSwingDataTextField<T>
     }
 
     @Override
-    public JPanel getNode() {
+    public TethysSwingNode getNode() {
         return theNode;
     }
 
@@ -188,7 +194,7 @@ public abstract class TethysSwingDataTextField<T>
      * Obtain the error colour.
      * @return the colour.
      */
-    protected Color getErrorColour() {
+    Color getErrorColour() {
         return theAdjuster.getErrorColor();
     }
 
@@ -253,7 +259,7 @@ public abstract class TethysSwingDataTextField<T>
         /* If we are changing */
         if (pEditable != isEditable) {
             /* Set correct component */
-            theLayout.show(theNode, pEditable
+            theLayout.show(theCard, pEditable
                                               ? NAME_EDIT
                                               : NAME_LABEL);
 
@@ -289,16 +295,12 @@ public abstract class TethysSwingDataTextField<T>
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theNode.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theNode.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theNode.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theNode.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     /**
@@ -307,7 +309,7 @@ public abstract class TethysSwingDataTextField<T>
      */
     public abstract static class TethysSwingTextEditField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysValidatedEditField<T, JComponent, Icon> {
+            implements TethysValidatedEditField<T> {
         /**
          * The standard border.
          */
@@ -344,9 +346,9 @@ public abstract class TethysSwingDataTextField<T>
          * @param pConverter the text converter
          * @param pLabel the label
          */
-        protected TethysSwingTextEditField(final TethysSwingGuiFactory pFactory,
-                                           final TethysDataEditConverter<T> pConverter,
-                                           final JLabel pLabel) {
+        TethysSwingTextEditField(final TethysSwingGuiFactory pFactory,
+                                 final TethysDataEditConverter<T> pConverter,
+                                 final JLabel pLabel) {
             /* Initialise underlying class */
             super(pFactory, new JTextField(), pLabel);
 
@@ -454,7 +456,7 @@ public abstract class TethysSwingDataTextField<T>
         /**
          * Handle focusGained.
          */
-        protected void handleFocusGained() {
+        void handleFocusGained() {
             theTextField.setText(theErrorText == null
                                                       ? theControl.getEditText()
                                                       : theErrorText);
@@ -600,7 +602,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingCharArrayTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingCharArrayTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -629,7 +631,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingShortTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingShortTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -658,7 +660,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingIntegerTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingIntegerTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -687,7 +689,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingLongTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingLongTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -712,12 +714,12 @@ public abstract class TethysSwingDataTextField<T>
      */
     public static class TethysSwingRawDecimalTextField
             extends TethysSwingTextEditField<TethysDecimal>
-            implements TethysRawDecimalEditField<JComponent, Icon> {
+            implements TethysRawDecimalEditField {
         /**
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingRawDecimalTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingRawDecimalTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -753,16 +755,16 @@ public abstract class TethysSwingDataTextField<T>
      */
     protected abstract static class TethysSwingCurrencyTextFieldBase<T extends TethysMoney>
             extends TethysSwingTextEditField<T>
-            implements TethysCurrencyEditField<T, JComponent, Icon> {
+            implements TethysCurrencyEditField<T> {
         /**
          * Constructor.
          * @param pFactory the GUI factory
          * @param pConverter the converter
          * @param pLabel the label
          */
-        protected TethysSwingCurrencyTextFieldBase(final TethysSwingGuiFactory pFactory,
-                                                   final TethysMoneyEditConverterBase<T> pConverter,
-                                                   final JLabel pLabel) {
+        TethysSwingCurrencyTextFieldBase(final TethysSwingGuiFactory pFactory,
+                                         final TethysMoneyEditConverterBase<T> pConverter,
+                                         final JLabel pLabel) {
             super(pFactory, pConverter, pLabel);
         }
 
@@ -786,7 +788,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingMoneyTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingMoneyTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -815,7 +817,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingPriceTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingPriceTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -844,7 +846,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingDilutedPriceTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingDilutedPriceTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -873,7 +875,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingRateTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingRateTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -902,7 +904,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingUnitsTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingUnitsTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -931,7 +933,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingDilutionTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingDilutionTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -960,7 +962,7 @@ public abstract class TethysSwingDataTextField<T>
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingRatioTextField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingRatioTextField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 

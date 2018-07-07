@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.atlas.ui.javafx;
 
-import javafx.scene.Node;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableCalculator;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableCharArrayColumn;
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisTableColumn.MetisTableDateColumn;
@@ -71,7 +70,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXT
  * @param <R> the item type
  */
 public class MetisFXTableManager<R extends MetisFieldTableItem>
-        extends MetisTableManager<R, Node, Node> {
+        extends MetisTableManager<R> {
     /**
      * Table List.
      */
@@ -265,14 +264,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableStringColumn<R extends MetisFieldTableItem>
-            extends MetisTableStringColumn<R, Node, Node> {
+            extends MetisTableStringColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableStringColumn(final MetisFXTableManager<R> pTable,
-                                           final TethysFXTableStringColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableStringColumn(final MetisFXTableManager<R> pTable,
+                                 final TethysFXTableStringColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -283,14 +282,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableCharArrayColumn<R extends MetisFieldTableItem>
-            extends MetisTableCharArrayColumn<R, Node, Node> {
+            extends MetisTableCharArrayColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableCharArrayColumn(final MetisFXTableManager<R> pTable,
-                                              final TethysFXTableCharArrayColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableCharArrayColumn(final MetisFXTableManager<R> pTable,
+                                    final TethysFXTableCharArrayColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -301,14 +300,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableShortColumn<R extends MetisFieldTableItem>
-            extends MetisTableShortColumn<R, Node, Node> {
+            extends MetisTableShortColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableShortColumn(final MetisFXTableManager<R> pTable,
-                                          final TethysFXTableShortColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableShortColumn(final MetisFXTableManager<R> pTable,
+                                final TethysFXTableShortColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -319,14 +318,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableIntegerColumn<R extends MetisFieldTableItem>
-            extends MetisTableIntegerColumn<R, Node, Node> {
+            extends MetisTableIntegerColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableIntegerColumn(final MetisFXTableManager<R> pTable,
-                                            final TethysFXTableIntegerColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableIntegerColumn(final MetisFXTableManager<R> pTable,
+                                  final TethysFXTableIntegerColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -337,14 +336,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableLongColumn<R extends MetisFieldTableItem>
-            extends MetisTableLongColumn<R, Node, Node> {
+            extends MetisTableLongColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableLongColumn(final MetisFXTableManager<R> pTable,
-                                         final TethysFXTableLongColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableLongColumn(final MetisFXTableManager<R> pTable,
+                               final TethysFXTableLongColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -355,14 +354,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableRawDecimalColumn<R extends MetisFieldTableItem>
-            extends MetisTableRawDecimalColumn<R, Node, Node> {
+            extends MetisTableRawDecimalColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableRawDecimalColumn(final MetisFXTableManager<R> pTable,
-                                               final TethysFXTableRawDecimalColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableRawDecimalColumn(final MetisFXTableManager<R> pTable,
+                                     final TethysFXTableRawDecimalColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -373,14 +372,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableMoneyColumn<R extends MetisFieldTableItem>
-            extends MetisTableMoneyColumn<R, Node, Node> {
+            extends MetisTableMoneyColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableMoneyColumn(final MetisFXTableManager<R> pTable,
-                                          final TethysFXTableMoneyColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableMoneyColumn(final MetisFXTableManager<R> pTable,
+                                final TethysFXTableMoneyColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -391,14 +390,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTablePriceColumn<R extends MetisFieldTableItem>
-            extends MetisTablePriceColumn<R, Node, Node> {
+            extends MetisTablePriceColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTablePriceColumn(final MetisFXTableManager<R> pTable,
-                                          final TethysFXTablePriceColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTablePriceColumn(final MetisFXTableManager<R> pTable,
+                                final TethysFXTablePriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -409,14 +408,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableRateColumn<R extends MetisFieldTableItem>
-            extends MetisTableRateColumn<R, Node, Node> {
+            extends MetisTableRateColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableRateColumn(final MetisFXTableManager<R> pTable,
-                                         final TethysFXTableRateColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableRateColumn(final MetisFXTableManager<R> pTable,
+                               final TethysFXTableRateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -427,14 +426,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableUnitsColumn<R extends MetisFieldTableItem>
-            extends MetisTableUnitsColumn<R, Node, Node> {
+            extends MetisTableUnitsColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableUnitsColumn(final MetisFXTableManager<R> pTable,
-                                          final TethysFXTableUnitsColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableUnitsColumn(final MetisFXTableManager<R> pTable,
+                                final TethysFXTableUnitsColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -445,14 +444,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableRatioColumn<R extends MetisFieldTableItem>
-            extends MetisTableRatioColumn<R, Node, Node> {
+            extends MetisTableRatioColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableRatioColumn(final MetisFXTableManager<R> pTable,
-                                          final TethysFXTableRatioColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableRatioColumn(final MetisFXTableManager<R> pTable,
+                                final TethysFXTableRatioColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -463,14 +462,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableDilutionColumn<R extends MetisFieldTableItem>
-            extends MetisTableDilutionColumn<R, Node, Node> {
+            extends MetisTableDilutionColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableDilutionColumn(final MetisFXTableManager<R> pTable,
-                                             final TethysFXTableDilutionColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableDilutionColumn(final MetisFXTableManager<R> pTable,
+                                   final TethysFXTableDilutionColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -481,14 +480,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableDilutedPriceColumn<R extends MetisFieldTableItem>
-            extends MetisTableDilutedPriceColumn<R, Node, Node> {
+            extends MetisTableDilutedPriceColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableDilutedPriceColumn(final MetisFXTableManager<R> pTable,
-                                                 final TethysFXTableDilutedPriceColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableDilutedPriceColumn(final MetisFXTableManager<R> pTable,
+                                       final TethysFXTableDilutedPriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -499,14 +498,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableDateColumn<R extends MetisFieldTableItem>
-            extends MetisTableDateColumn<R, Node, Node> {
+            extends MetisTableDateColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableDateColumn(final MetisFXTableManager<R> pTable,
-                                         final TethysFXTableDateColumn<MetisDataFieldId, R> pColumn) {
+        MetisFXTableDateColumn(final MetisFXTableManager<R> pTable,
+                               final TethysFXTableDateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -518,14 +517,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableIconColumn<T, R extends MetisFieldTableItem>
-            extends MetisTableIconColumn<T, R, Node, Node> {
+            extends MetisTableIconColumn<T, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableIconColumn(final MetisFXTableManager<R> pTable,
-                                         final TethysFXTableIconColumn<T, MetisDataFieldId, R> pColumn) {
+        MetisFXTableIconColumn(final MetisFXTableManager<R> pTable,
+                               final TethysFXTableIconColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -537,14 +536,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableScrollColumn<T, R extends MetisFieldTableItem>
-            extends MetisTableScrollColumn<T, R, Node, Node> {
+            extends MetisTableScrollColumn<T, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableScrollColumn(final MetisFXTableManager<R> pTable,
-                                           final TethysFXTableScrollColumn<T, MetisDataFieldId, R> pColumn) {
+        MetisFXTableScrollColumn(final MetisFXTableManager<R> pTable,
+                                 final TethysFXTableScrollColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }
@@ -556,14 +555,14 @@ public class MetisFXTableManager<R extends MetisFieldTableItem>
      * @param <R> the item type
      */
     public static class MetisFXTableListColumn<T extends Comparable<T>, R extends MetisFieldTableItem>
-            extends MetisTableListColumn<T, R, Node, Node> {
+            extends MetisTableListColumn<T, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisFXTableListColumn(final MetisFXTableManager<R> pTable,
-                                         final TethysFXTableListColumn<T, MetisDataFieldId, R> pColumn) {
+        MetisFXTableListColumn(final MetisFXTableManager<R> pTable,
+                               final TethysFXTableListColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
             pTable.configureColumn(pColumn, getField());
         }

@@ -20,9 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Iterator;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -69,6 +66,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -134,7 +132,7 @@ public class TransactionCategoryTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The table model.
@@ -149,7 +147,7 @@ public class TransactionCategoryTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The filter panel.
@@ -179,7 +177,7 @@ public class TransactionCategoryTable
     /**
      * Category menu builder.
      */
-    private final TethysScrollMenu<TransactionCategory, ?> theCategoryMenu;
+    private final TethysScrollMenu<TransactionCategory> theCategoryMenu;
 
     /**
      * Event Categories.
@@ -199,7 +197,7 @@ public class TransactionCategoryTable
      */
     public TransactionCategoryTable(final SwingView pView,
                                     final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                                    final MetisErrorPanel<JComponent, Icon> pError) {
+                                    final MetisErrorPanel pError) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
@@ -251,11 +249,11 @@ public class TransactionCategoryTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Create a Category panel */
         theActiveCategory = new TransactionCategoryPanel(myFactory, theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveCategory.getNode(), BorderLayout.PAGE_END);
+        thePanel.add(TethysSwingNode.getComponent(theActiveCategory), BorderLayout.PAGE_END);
 
         /* Initialise the columns */
         theColumns.setColumns();
@@ -277,8 +275,8 @@ public class TransactionCategoryTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**
@@ -858,7 +856,7 @@ public class TransactionCategoryTable
          * @param pMenu the menu to build
          */
         private void buildCategoryTypeMenu(final Integer pRowIndex,
-                                           final TethysScrollMenu<TransactionCategoryType, Icon> pMenu) {
+                                           final TethysScrollMenu<TransactionCategoryType> pMenu) {
             /* Record active item */
             final TransactionCategory myCategory = theModel.getItemAtIndex(pRowIndex);
 

@@ -22,11 +22,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Check Box.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysCheckBox<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysCheckBox
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * Event Manager.
      */
@@ -56,7 +54,7 @@ public abstract class TethysCheckBox<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysCheckBox(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysCheckBox(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
     }

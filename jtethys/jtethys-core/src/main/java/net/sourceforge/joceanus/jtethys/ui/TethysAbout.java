@@ -18,11 +18,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 /**
  * About Box.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public abstract class TethysAbout<N, I>
-        implements TethysNode<N> {
+public abstract class TethysAbout
+        implements TethysComponent {
     /**
      * Version Prompt.
      */
@@ -51,28 +49,28 @@ public abstract class TethysAbout<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysAbout(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysAbout(final TethysGuiFactory pFactory) {
         /* Access application details */
         final TethysProgram myApp = pFactory.getProgramDefinitions();
 
         /* Create the components */
-        final TethysLabel<N, I> myProduct = pFactory.newLabel(myApp.getName());
-        final TethysLabel<N, I> myVersion = pFactory.newLabel(PROMPT_VERSION + " "
+        final TethysLabel myProduct = pFactory.newLabel(myApp.getName());
+        final TethysLabel myVersion = pFactory.newLabel(PROMPT_VERSION + " "
                                                               + myApp.getVersion());
-        final TethysLabel<N, I> myRevision = pFactory.newLabel(PROMPT_REVISION + " "
+        final TethysLabel myRevision = pFactory.newLabel(PROMPT_REVISION + " "
                                                                + myApp.getRevision());
-        final TethysLabel<N, I> myBuild = pFactory.newLabel(PROMPT_BUILDDATE + " "
+        final TethysLabel myBuild = pFactory.newLabel(PROMPT_BUILDDATE + " "
                                                             + myApp.getBuiltOn());
-        final TethysLabel<N, I> myCopyright = pFactory.newLabel(myApp.getCopyright());
+        final TethysLabel myCopyright = pFactory.newLabel(myApp.getCopyright());
 
         /* Build the OK button */
-        final TethysButton<N, I> myOKButton = pFactory.newButton();
+        final TethysButton myOKButton = pFactory.newButton();
         myOKButton.setText(TEXT_OK);
         myOKButton.getEventRegistrar().addEventListener(e -> closeDialog());
 
@@ -100,7 +98,7 @@ public abstract class TethysAbout<N, I>
     protected abstract void closeDialog();
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

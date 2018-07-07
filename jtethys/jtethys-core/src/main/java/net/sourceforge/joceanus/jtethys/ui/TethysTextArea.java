@@ -18,11 +18,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 /**
  * Non-editable text area.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysTextArea<N, I>
-        implements TethysNode<N> {
+public abstract class TethysTextArea
+        implements TethysComponent {
     /**
      * The id.
      */
@@ -42,7 +40,7 @@ public abstract class TethysTextArea<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysTextArea(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysTextArea(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
     }
 

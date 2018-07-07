@@ -424,7 +424,7 @@ public class TethysDecimal
      * In order to avoid losing significant digits at either end of the calculation we calculate
      * (x/y) in integer arithmetic.
      * <p>
-     * <code>x/y = m, x%y = n => x=my + n</code> where m and n are integers, and
+     * <code>x/y = m, x%y = n =&gt; x=my + n</code> where m and n are integers, and
      * <p>
      * <code>(x/y).10<sup>a-b</sup> = (my +n).10<sup>a-b</sup>/y = (m + (n/y)).10<sup>a-b</sup></code>
      * <p>

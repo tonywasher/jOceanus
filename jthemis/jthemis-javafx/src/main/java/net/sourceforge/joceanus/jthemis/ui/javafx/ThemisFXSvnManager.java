@@ -18,11 +18,11 @@ package net.sourceforge.joceanus.jthemis.ui.javafx;
 
 import java.util.Arrays;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
@@ -30,13 +30,14 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jthemis.ui.ThemisSvnManager;
 
 /**
  * Top level javaFX SvnManager window.
  */
 public class ThemisFXSvnManager
-        extends ThemisSvnManager<Node, Node> {
+        extends ThemisSvnManager {
     /**
      * The Toolkit.
      */
@@ -49,6 +50,7 @@ public class ThemisFXSvnManager
 
     /**
      * Constructor.
+     *
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
@@ -62,11 +64,12 @@ public class ThemisFXSvnManager
         /* Create the borderPane */
         thePane = new BorderPane();
         thePane.setTop(getMenuBar().getNode());
-        thePane.setCenter(getTabs().getNode());
+        thePane.setCenter(TethysFXNode.getNode(getTabs()));
     }
 
     /**
      * Attach to stage.
+     *
      * @param pStage the stage
      */
     protected void attachToStage(final Stage pStage) {

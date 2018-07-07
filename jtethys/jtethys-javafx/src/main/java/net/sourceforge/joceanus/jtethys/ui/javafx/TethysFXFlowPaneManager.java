@@ -20,19 +20,19 @@ import java.util.Iterator;
 
 import javafx.scene.Node;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Region;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysFlowPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * FX Flow Pane Manager.
  */
 public class TethysFXFlowPaneManager
-        extends TethysFlowPaneManager<Node, Node> {
+        extends TethysFlowPaneManager {
     /**
      * The Node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The FlowPane.
@@ -41,16 +41,17 @@ public class TethysFXFlowPaneManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXFlowPaneManager(final TethysFXGuiFactory pFactory) {
+    TethysFXFlowPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theFlowPane = new FlowPane();
-        theNode = theFlowPane;
+        theNode = new TethysFXNode(theFlowPane);
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -61,16 +62,16 @@ public class TethysFXFlowPaneManager
     }
 
     @Override
-    public void addNode(final TethysNode<Node> pNode) {
+    public void addNode(final TethysComponent pNode) {
         super.addNode(pNode);
-        theFlowPane.getChildren().add(pNode.getNode());
+        theFlowPane.getChildren().add(TethysFXNode.getNode(pNode));
     }
 
     @Override
-    public void setChildVisible(final TethysNode<Node> pChild,
+    public void setChildVisible(final TethysComponent pChild,
                                 final boolean pVisible) {
         /* Handle nothing to do */
-        final Node myChildNode = pChild.getNode();
+        final Node myChildNode = TethysFXNode.getNode(pChild);
         final boolean isVisible = myChildNode.isVisible();
         if (isVisible == pVisible) {
             return;
@@ -81,9 +82,9 @@ public class TethysFXFlowPaneManager
             /* Count visible prior siblings */
             final int myId = pChild.getId();
             int myIndex = 0;
-            final Iterator<TethysNode<Node>> myIterator = iterator();
+            final Iterator<TethysComponent> myIterator = iterator();
             while (myIterator.hasNext()) {
-                final TethysNode<Node> myNode = myIterator.next();
+                final TethysComponent myNode = myIterator.next();
                 final Integer myNodeId = myNode.getId();
 
                 /* If we have found the node */
@@ -95,7 +96,7 @@ public class TethysFXFlowPaneManager
                 }
 
                 /* Increment count if node is visible */
-                if (myNode.getNode().isVisible()) {
+                if (TethysFXNode.getNode(myNode).isVisible()) {
                     myIndex++;
                 }
             }
@@ -121,19 +122,12 @@ public class TethysFXFlowPaneManager
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theFlowPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

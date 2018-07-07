@@ -16,25 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
  */
 public class TethysSwingDateRangeSelector
-        extends TethysDateRangeSelector<JComponent, Icon> {
+        extends TethysDateRangeSelector {
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    public TethysSwingDateRangeSelector(final TethysSwingGuiFactory pFactory,
-                                        final boolean pBaseIsStart) {
+    TethysSwingDateRangeSelector(final TethysSwingGuiFactory pFactory,
+                                 final boolean pBaseIsStart) {
         /* Initialise the underlying class */
         super(pFactory, pBaseIsStart);
 
@@ -43,43 +38,30 @@ public class TethysSwingDateRangeSelector
     }
 
     @Override
-    public JComponent getNode() {
-        return getControl().getNode();
+    public TethysSwingNode getNode() {
+        return (TethysSwingNode) getControl().getNode();
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        final JComponent myNode = getNode();
-        Dimension myDim = myNode.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        myNode.setPreferredSize(myDim);
+        getNode().setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        final JComponent myNode = getNode();
-        Dimension myDim = myNode.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        myNode.setPreferredSize(myDim);
+        getNode().setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), getNode());
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override

@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jtethys.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.WindowAdapter;
@@ -29,7 +28,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -40,11 +38,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysColorPicker;
  * Swing Colour Picker.
  */
 public class TethysSwingColorPicker
-        extends TethysColorPicker<JComponent, Icon> {
+        extends TethysColorPicker {
     /**
-     * The node.
+     * The Node.
      */
-    private JComponent theNode;
+    private final TethysSwingNode theNode;
 
     /**
      * Button.
@@ -70,13 +68,15 @@ public class TethysSwingColorPicker
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSwingColorPicker(final TethysSwingGuiFactory pFactory) {
+    TethysSwingColorPicker(final TethysSwingGuiFactory pFactory) {
         /* Create components */
         super(pFactory);
         theButton = new JButton();
-        theNode = theButton;
         theChooser = new JColorChooser();
         theChooser.setPreviewPanel(new JPanel());
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theButton);
 
         /* Add listener for selection */
         theChooser.getSelectionModel().addChangeListener(e -> handleSelection());
@@ -87,7 +87,7 @@ public class TethysSwingColorPicker
     }
 
     @Override
-    public JComponent getNode() {
+    public TethysSwingNode getNode() {
         return theNode;
     }
 
@@ -134,35 +134,24 @@ public class TethysSwingColorPicker
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theNode.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theNode.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theNode.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theNode.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysSwingGuiUtils.addPanelBorder(getBorderTitle(), getBorderPadding(), theButton);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**

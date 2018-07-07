@@ -20,10 +20,11 @@ import net.sourceforge.joceanus.jmetis.test.atlas.ui.MetisTestDataTable;
 import net.sourceforge.joceanus.jmetis.threads.swing.MetisSwingToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -52,7 +53,7 @@ public class MetisSwingTestTable {
     /**
      * The Table.
      */
-    private final MetisTestDataTable<JComponent, Icon> theTable;
+    private final MetisTestDataTable theTable;
 
     /**
      * Frame.
@@ -71,7 +72,7 @@ public class MetisSwingTestTable {
         theGuiFactory = theToolkit.getGuiFactory();
 
         /* Create table */
-        theTable = new MetisTestDataTable<>(theToolkit);
+        theTable = new MetisTestDataTable(theToolkit);
 
         /* Create the Panels */
         theFrame = new JFrame("MetisTable Demo");
@@ -97,11 +98,11 @@ public class MetisSwingTestTable {
     private static void createAndShowGUI() {
         try {
             /* Create the UI */
-            MetisSwingTestTable myTable = new MetisSwingTestTable();
-            JFrame myFrame = myTable.theFrame;
+            final MetisSwingTestTable myTable = new MetisSwingTestTable();
+            final JFrame myFrame = myTable.theFrame;
 
             /* Attach the panel to the frame */
-            JComponent myPanel = myTable.theTable.getNode();
+            final JComponent myPanel = TethysSwingNode.getComponent(myTable.theTable);
             myPanel.setOpaque(true);
             myFrame.setContentPane(myPanel);
             myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

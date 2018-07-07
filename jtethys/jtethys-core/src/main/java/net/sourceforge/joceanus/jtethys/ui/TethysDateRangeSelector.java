@@ -31,11 +31,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 
 /**
  * DateRange Selector.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysDateRangeSelector<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysDateRangeSelector
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * ToolTip for Next Button.
      */
@@ -74,7 +72,7 @@ public abstract class TethysDateRangeSelector<N, I>
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The Event Manager.
@@ -89,57 +87,57 @@ public abstract class TethysDateRangeSelector<N, I>
     /**
      * The Control.
      */
-    private final TethysBoxPaneManager<N, I> theControl;
+    private final TethysBoxPaneManager theControl;
 
     /**
      * The Period Box.
      */
-    private final TethysBoxPaneManager<N, I> thePeriodBox;
+    private final TethysBoxPaneManager thePeriodBox;
 
     /**
      * The Standard Box.
      */
-    private final TethysBoxPaneManager<N, I> theStandardBox;
+    private final TethysBoxPaneManager theStandardBox;
 
     /**
      * The Period Box.
      */
-    private final TethysBoxPaneManager<N, I> theCustomBox;
+    private final TethysBoxPaneManager theCustomBox;
 
     /**
      * The Standard Label.
      */
-    private final TethysLabel<N, I> theStandardLabel;
+    private final TethysLabel theStandardLabel;
 
     /**
      * The Next button.
      */
-    private final TethysButton<N, I> theNextButton;
+    private final TethysButton theNextButton;
 
     /**
      * The Previous button.
      */
-    private final TethysButton<N, I> thePrevButton;
+    private final TethysButton thePrevButton;
 
     /**
      * The Start Date button.
      */
-    private final TethysDateButtonManager<N, I> theStartButton;
+    private final TethysDateButtonManager theStartButton;
 
     /**
      * The End Date button.
      */
-    private final TethysDateButtonManager<N, I> theEndButton;
+    private final TethysDateButtonManager theEndButton;
 
     /**
      * The Base Date button.
      */
-    private final TethysDateButtonManager<N, I> theBaseButton;
+    private final TethysDateButtonManager theBaseButton;
 
     /**
      * The Period Button.
      */
-    private final TethysScrollButtonManager<TethysDatePeriod, N, I> thePeriodButton;
+    private final TethysScrollButtonManager<TethysDatePeriod> thePeriodButton;
 
     /**
      * The Published DateRange.
@@ -171,7 +169,7 @@ public abstract class TethysDateRangeSelector<N, I>
      * @param pFactory the GUI factory
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      */
-    protected TethysDateRangeSelector(final TethysGuiFactory<N, I> pFactory,
+    protected TethysDateRangeSelector(final TethysGuiFactory pFactory,
                                       final boolean pBaseIsStart) {
         /* Store the parameters */
         theFormatter = pFactory.getDataFormatter().getDateFormatter();
@@ -193,7 +191,7 @@ public abstract class TethysDateRangeSelector<N, I>
         buildPeriodMenu(thePeriodButton.getMenu());
 
         /* Create the period box */
-        final TethysLabel<N, I> myPeriodLabel = pFactory.newLabel(NLS_PERIOD);
+        final TethysLabel myPeriodLabel = pFactory.newLabel(NLS_PERIOD);
         thePeriodBox = pFactory.newHBoxPane();
         thePeriodBox.addNode(myPeriodLabel);
         thePeriodBox.addNode(thePeriodButton);
@@ -212,8 +210,8 @@ public abstract class TethysDateRangeSelector<N, I>
 
         /* Create the Custom HBox */
         theCustomBox = pFactory.newHBoxPane();
-        final TethysLabel<N, I> myStartLabel = pFactory.newLabel(NLS_START);
-        final TethysLabel<N, I> myEndLabel = pFactory.newLabel(NLS_END);
+        final TethysLabel myStartLabel = pFactory.newLabel(NLS_START);
+        final TethysLabel myEndLabel = pFactory.newLabel(NLS_END);
         theCustomBox.addNode(myStartLabel);
         theCustomBox.addNode(theStartButton);
         theCustomBox.addNode(myEndLabel);
@@ -307,7 +305,7 @@ public abstract class TethysDateRangeSelector<N, I>
      * Obtain the control.
      * @return the control
      */
-    protected TethysBoxPaneManager<N, I> getControl() {
+    protected TethysBoxPaneManager getControl() {
         return theControl;
     }
 
@@ -315,7 +313,7 @@ public abstract class TethysDateRangeSelector<N, I>
      * Build period menu.
      * @param pMenu the menu
      */
-    private static void buildPeriodMenu(final TethysScrollMenu<TethysDatePeriod, ?> pMenu) {
+    private static void buildPeriodMenu(final TethysScrollMenu<TethysDatePeriod> pMenu) {
         /* Loop through the periods */
         for (TethysDatePeriod myPeriod : TethysDatePeriod.values()) {
             /* Add as long as it is not the datesUpTo period */
@@ -383,7 +381,7 @@ public abstract class TethysDateRangeSelector<N, I>
      * Copy date selection from other box.
      * @param pSource the source box
      */
-    public void setSelection(final TethysDateRangeSelector<N, I> pSource) {
+    public void setSelection(final TethysDateRangeSelector pSource) {
         /* Access the state */
         final TethysDateRangeState myState = pSource.getState();
 

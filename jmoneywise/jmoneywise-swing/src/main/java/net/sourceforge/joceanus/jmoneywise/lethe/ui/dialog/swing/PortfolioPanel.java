@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -72,7 +69,7 @@ public class PortfolioPanel
     public PortfolioPanel(final TethysSwingGuiFactory pFactory,
                           final MetisSwingFieldManager pFieldMgr,
                           final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                          final MetisErrorPanel<JComponent, Icon> pError) {
+                          final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -320,7 +317,7 @@ public class PortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildTypeMenu(final TethysScrollMenu<PortfolioType, Icon> pMenu,
+    public void buildTypeMenu(final TethysScrollMenu<PortfolioType> pMenu,
                               final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -358,7 +355,7 @@ public class PortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee, Icon> pMenu,
+    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
                                 final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -403,7 +400,7 @@ public class PortfolioPanel
      * @param pMenu the menu
      * @param pPortfolio the portfolio to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
                                   final Portfolio pPortfolio) {
         /* Clear the menu */
         pMenu.removeAllItems();
