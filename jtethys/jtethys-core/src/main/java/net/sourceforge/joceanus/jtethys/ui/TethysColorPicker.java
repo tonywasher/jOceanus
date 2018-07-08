@@ -22,11 +22,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Colour Picker.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysColorPicker<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysColorPicker
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The Event Manager.
      */
@@ -56,7 +54,7 @@ public abstract class TethysColorPicker<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysColorPicker(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysColorPicker(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
     }

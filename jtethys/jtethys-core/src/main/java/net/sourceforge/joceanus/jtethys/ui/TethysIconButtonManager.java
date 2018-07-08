@@ -35,15 +35,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysIconButton;
  * Detail is new value
  * </dl>
  * @param <T> the object type
- * @param <N> the button type
- * @param <I> the Icon type
  */
-public abstract class TethysIconButtonManager<T, N, I>
-        implements TethysIconButton<T>, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysIconButtonManager<T>
+        implements TethysIconButton<T>, TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The Factory.
      */
-    private final TethysGuiFactory<N, I> theFactory;
+    private final TethysGuiFactory theFactory;
 
     /**
      * The Event Manager.
@@ -53,12 +51,12 @@ public abstract class TethysIconButtonManager<T, N, I>
     /**
      * The icon button.
      */
-    private final TethysButton<N, I> theButton;
+    private final TethysButton theButton;
 
     /**
      * The iconMap.
      */
-    private final Map<TethysIconId, I> theIconMap;
+    private final Map<TethysIconId, TethysIcon> theIconMap;
 
     /**
      * The icon Width.
@@ -89,7 +87,7 @@ public abstract class TethysIconButtonManager<T, N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysIconButtonManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysIconButtonManager(final TethysGuiFactory pFactory) {
         /* Store parameters */
         theFactory = pFactory;
 
@@ -119,7 +117,7 @@ public abstract class TethysIconButtonManager<T, N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theButton.getNode();
     }
 
@@ -127,7 +125,7 @@ public abstract class TethysIconButtonManager<T, N, I>
      * Obtain button.
      * @return the button
      */
-    protected TethysButton<N, I> getButton() {
+    protected TethysButton getButton() {
         return theButton;
     }
 
@@ -264,14 +262,14 @@ public abstract class TethysIconButtonManager<T, N, I>
      * @param pIconId the iconId
      * @return the icon
      */
-    private I resolveIcon(final TethysIconId pIconId) {
+    private TethysIcon resolveIcon(final TethysIconId pIconId) {
         /* Handle null icon */
         if (pIconId == null) {
             return null;
         }
 
         /* Look up icon */
-        I myIcon = theIconMap.get(pIconId);
+        TethysIcon myIcon = theIconMap.get(pIconId);
         if (myIcon == null) {
             myIcon = theFactory.resolveIcon(pIconId, theWidth);
             theIconMap.put(pIconId, myIcon);

@@ -21,7 +21,6 @@ import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -33,12 +32,13 @@ import org.apache.logging.log4j.Logger;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianPasswordDialog;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
  */
 public class GordianSwingPasswordDialog
-        extends GordianPasswordDialog<JComponent, Icon> {
+        extends GordianPasswordDialog {
     /**
      * Logger.
      */
@@ -51,13 +51,14 @@ public class GordianSwingPasswordDialog
 
     /**
      * Constructor.
-     * @param pFactory the GUI Factory
-     * @param pTitle the title
+     *
+     * @param pFactory     the GUI Factory
+     * @param pTitle       the title
      * @param pNeedConfirm true/false
      */
-    protected GordianSwingPasswordDialog(final TethysSwingGuiFactory pFactory,
-                                         final String pTitle,
-                                         final boolean pNeedConfirm) {
+    GordianSwingPasswordDialog(final TethysSwingGuiFactory pFactory,
+                               final String pTitle,
+                               final boolean pNeedConfirm) {
         /* Initialise underlying class */
         super(new TethysSwingGuiFactory(), pNeedConfirm);
 
@@ -68,13 +69,13 @@ public class GordianSwingPasswordDialog
         /* If we are confirming */
         if (pNeedConfirm) {
             /* Set a focus traversal policy */
-            final JComponent myNode = getContainer().getNode();
+            final JComponent myNode = TethysSwingNode.getComponent(getContainer());
             myNode.setFocusTraversalPolicy(new TraversalPolicy());
             myNode.setFocusTraversalPolicyProvider(true);
         }
 
         /* Set this to be the main panel */
-        theDialog.add(getContainer().getNode());
+        theDialog.add(TethysSwingNode.getComponent(getContainer()));
         theDialog.pack();
 
         /* Set the relative location */
@@ -106,6 +107,7 @@ public class GordianSwingPasswordDialog
 
     /**
      * Show the dialog under an invokeAndWait clause.
+     *
      * @param pDialog the dialog to show
      * @return successful dialog usage true/false
      */
@@ -140,16 +142,16 @@ public class GordianSwingPasswordDialog
                                            final Component pCurrent) {
             /* Handle field order */
             if (pCurrent.equals(getPasswordNode())) {
-                return getConfirmNode();
+                return TethysSwingNode.getComponent(getConfirmNode());
             }
             if (pCurrent.equals(getConfirmNode())) {
-                return getOKButtonNode();
+                return TethysSwingNode.getComponent(getOKButtonNode());
             }
             if (pCurrent.equals(getOKButtonNode())) {
-                return getCancelButtonNode();
+                return TethysSwingNode.getComponent(getCancelButtonNode());
             }
             if (pCurrent.equals(getCancelButtonNode())) {
-                return getPasswordNode();
+                return TethysSwingNode.getComponent(getPasswordNode());
             }
 
             /* Return a default value */
@@ -161,16 +163,16 @@ public class GordianSwingPasswordDialog
                                             final Component pCurrent) {
             /* Handle field order */
             if (pCurrent.equals(getPasswordNode())) {
-                return getCancelButtonNode();
+                return TethysSwingNode.getComponent(getCancelButtonNode());
             }
             if (pCurrent.equals(getConfirmNode())) {
-                return getPasswordNode();
+                return TethysSwingNode.getComponent(getPasswordNode());
             }
             if (pCurrent.equals(getOKButtonNode())) {
-                return getConfirmNode();
+                return TethysSwingNode.getComponent(getConfirmNode());
             }
             if (pCurrent.equals(getCancelButtonNode())) {
-                return getOKButtonNode();
+                return TethysSwingNode.getComponent(getOKButtonNode());
             }
 
             /* Return a default value */
@@ -184,12 +186,12 @@ public class GordianSwingPasswordDialog
 
         @Override
         public Component getFirstComponent(final Container pRoot) {
-            return getPasswordNode();
+            return TethysSwingNode.getComponent(getPasswordNode());
         }
 
         @Override
         public Component getLastComponent(final Container pRoot) {
-            return getCancelButtonNode();
+            return TethysSwingNode.getComponent(getCancelButtonNode());
         }
     }
 }

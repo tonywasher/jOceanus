@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -43,8 +42,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
 
 /**
@@ -53,7 +53,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableSorter;
  * @param <E> the data type enum class
  */
 public abstract class PrometheusDataTable<T extends PrometheusTableItem & Comparable<? super T>, E extends Enum<E>>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Panel height.
      */
@@ -73,6 +73,11 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * The Id.
      */
     private final Integer theId;
+
+    /**
+     * The Node.
+     */
+    private TethysSwingNode theNode;
 
     /**
      * The Event Manager.
@@ -135,6 +140,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
         /* Store parameters */
         theTable = new JTable();
         theRowHdrModel = new PrometheusRowTableModel<>(this);
+        theNode = new TethysSwingNode(theTable);
 
         /* Set the selection mode */
         theTable.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -190,7 +196,8 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * @return true/false
      */
     public boolean hasUpdates() {
-        return (theUpdateSet != null) && theUpdateSet.hasUpdates();
+        return theUpdateSet != null
+                && theUpdateSet.hasUpdates();
     }
 
     /**
@@ -206,7 +213,8 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
      * @return true/false
      */
     public boolean hasErrors() {
-        return (theUpdateSet != null) && theUpdateSet.hasErrors();
+        return theUpdateSet != null
+                && theUpdateSet.hasErrors();
     }
 
     /**
@@ -242,8 +250,8 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
     }
 
     @Override
-    public JComponent getNode() {
-        return theScroll;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -343,6 +351,7 @@ public abstract class PrometheusDataTable<T extends PrometheusTableItem & Compar
         theScroll.setRowHeaderView(myRowHdrTable);
         theScroll.getRowHeader().setPreferredSize(new Dimension(PrometheusDataTableColumnModel.WIDTH_ROWHDR, HEIGHT_PANEL));
         theScroll.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, myRowHdrTable.getTableHeader());
+        theNode = new TethysSwingNode(theScroll);
     }
 
     /**

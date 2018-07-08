@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jprometheus.lethe.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisFieldColours.MetisColorPreferences;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldConfig;
 import net.sourceforge.joceanus.jmetis.lethe.field.swing.MetisSwingFieldManager;
@@ -35,7 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * JOceanus Swing Utility Set.
  */
 public class JOceanusSwingUtilitySet
-        extends JOceanusUtilitySet<JComponent, Icon> {
+        extends JOceanusUtilitySet {
     /**
      * Field Manager.
      */

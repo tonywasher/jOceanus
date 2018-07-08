@@ -60,6 +60,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDataTextField.TethysFX
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXLabel;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 
@@ -86,7 +87,7 @@ public class TethysFXEditUIExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<Node, Node> theHelper;
+    private final TethysScrollUITestHelper theHelper;
 
     /**
      * The string edit field.
@@ -97,7 +98,7 @@ public class TethysFXEditUIExample
      * The password edit field.
      */
     private final TethysFXCharArrayTextField thePassField;
-    
+
     /**
      * The short edit field.
      */
@@ -208,7 +209,7 @@ public class TethysFXEditUIExample
      */
     public TethysFXEditUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create GUI Factory */
         theGuiFactory = new TethysFXGuiFactory();
@@ -296,7 +297,7 @@ public class TethysFXEditUIExample
         myMain.setPreferredWidth(VALUE_WIDTH);
 
         /* Return the panel */
-        return myMain.getNode();
+        return TethysFXNode.getNode(myMain);
     }
 
     /**

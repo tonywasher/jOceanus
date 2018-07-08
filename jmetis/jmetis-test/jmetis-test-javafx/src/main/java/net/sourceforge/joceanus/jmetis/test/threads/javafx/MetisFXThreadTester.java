@@ -17,8 +17,8 @@
 package net.sourceforge.joceanus.jmetis.test.threads.javafx;
 
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import net.sourceforge.joceanus.jmetis.test.threads.MetisTestThread;
@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXButton;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,7 +75,7 @@ public class MetisFXThreadTester
     /**
      * the status panel.
      */
-    private final MetisThreadStatusManager<Node> theStatusPanel;
+    private final MetisThreadStatusManager theStatusPanel;
 
     /**
      * the main panel.
@@ -128,7 +129,7 @@ public class MetisFXThreadTester
         buildPanel();
 
         /* Create scene */
-        final Scene myScene = new Scene(theMainPanel.getNode());
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(theMainPanel));
         pStage.setTitle("MetisFXThread Demo");
         pStage.setScene(myScene);
 
@@ -193,7 +194,7 @@ public class MetisFXThreadTester
      * launch thread.
      */
     private void launchThread() {
-        theThreadMgr.startThread(new MetisTestThread<>());
+        theThreadMgr.startThread(new MetisTestThread());
     }
 
     /**

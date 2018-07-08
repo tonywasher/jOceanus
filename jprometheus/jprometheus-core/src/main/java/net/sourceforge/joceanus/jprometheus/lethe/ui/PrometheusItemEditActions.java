@@ -23,16 +23,15 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Item Edit Action buttons.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusItemEditActions<N, I>
-        implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
+public class PrometheusItemEditActions
+        implements TethysEventProvider<PrometheusUIEvent>, TethysComponent {
     /**
      * ItemEditParent interface.
      */
@@ -71,7 +70,7 @@ public class PrometheusItemEditActions<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The Event Manager.
@@ -86,29 +85,29 @@ public class PrometheusItemEditActions<N, I>
     /**
      * The Commit button.
      */
-    private final TethysButton<N, I> theCommitButton;
+    private final TethysButton theCommitButton;
 
     /**
      * The Undo button.
      */
-    private final TethysButton<N, I> theUndoButton;
+    private final TethysButton theUndoButton;
 
     /**
      * The Reset button.
      */
-    private final TethysButton<N, I> theResetButton;
+    private final TethysButton theResetButton;
 
     /**
      * The Cancel button.
      */
-    private final TethysButton<N, I> theCancelButton;
+    private final TethysButton theCancelButton;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    public PrometheusItemEditActions(final TethysGuiFactory<N, I> pFactory,
+    public PrometheusItemEditActions(final TethysGuiFactory pFactory,
                                      final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
@@ -159,7 +158,7 @@ public class PrometheusItemEditActions<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

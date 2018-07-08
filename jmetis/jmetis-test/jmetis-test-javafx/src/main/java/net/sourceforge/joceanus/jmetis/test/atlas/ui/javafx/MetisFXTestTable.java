@@ -19,12 +19,14 @@ package net.sourceforge.joceanus.jmetis.test.atlas.ui.javafx;
 import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jmetis.test.atlas.ui.MetisTestDataTable;
 import net.sourceforge.joceanus.jmetis.threads.javafx.MetisFXToolkit;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 
 /**
  * Table Tester.
@@ -43,7 +45,7 @@ public class MetisFXTestTable extends Application {
     /**
      * The Table.
      */
-    private final MetisTestDataTable<Node, Node> theTable;
+    private final MetisTestDataTable theTable;
 
     /**
      * Constructor.
@@ -57,7 +59,7 @@ public class MetisFXTestTable extends Application {
         theGuiFactory = theToolkit.getGuiFactory();
 
         /* Create table */
-        theTable = new MetisTestDataTable<>(theToolkit);
+        theTable = new MetisTestDataTable(theToolkit);
     }
 
     /**
@@ -75,7 +77,7 @@ public class MetisFXTestTable extends Application {
         myMainPanel.setCentre(theTable);
 
         /* Create scene */
-        final Scene myScene = new Scene(myMainPanel.getNode());
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(myMainPanel));
         pStage.setTitle("MetisFXTable Demo");
         pStage.setScene(myScene);
 

@@ -61,6 +61,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.Tethys
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
 
@@ -85,7 +86,7 @@ public class TethysSwingEditUIExample {
      * The value width.
      */
     private static final int VALUE_WIDTH = 300;
-    
+
     /**
      * The GuiFactory.
      */
@@ -94,7 +95,7 @@ public class TethysSwingEditUIExample {
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<JComponent, Icon> theHelper;
+    private final TethysScrollUITestHelper theHelper;
 
     /**
      * The string edit field.
@@ -216,7 +217,7 @@ public class TethysSwingEditUIExample {
      */
     public TethysSwingEditUIExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create GUI Factory */
         theGuiFactory = new TethysSwingGuiFactory();
@@ -317,7 +318,7 @@ public class TethysSwingEditUIExample {
         myMain.setPreferredWidth(VALUE_WIDTH);
 
         /* Return the panel */
-        return myMain.getNode();
+        return TethysSwingNode.getComponent(myMain);
     }
 
     /**

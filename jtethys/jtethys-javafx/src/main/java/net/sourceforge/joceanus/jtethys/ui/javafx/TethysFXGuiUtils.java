@@ -443,9 +443,10 @@ public final class TethysFXGuiUtils {
      * @param pId the icon Id
      * @return the icon
      */
-    public static ImageView getIcon(final TethysIconId pId) {
+    public static TethysFXIcon getIcon(final TethysIconId pId) {
         final Image myImage = new Image(pId.getInputStream());
-        return new ImageView(myImage);
+        final ImageView myView = new ImageView(myImage);
+        return new TethysFXIcon(myView);
     }
 
     /**
@@ -467,13 +468,13 @@ public final class TethysFXGuiUtils {
      * @param pWidth the new width for the icon
      * @return the icon
      */
-    public static ImageView getIconAtSize(final TethysIconId pId,
-                                          final int pWidth) {
-        final ImageView myNewImage = getIcon(pId);
+    public static TethysFXIcon getIconAtSize(final TethysIconId pId,
+                                             final int pWidth) {
+        final ImageView myNewImage = getIcon(pId).getImageView();
         myNewImage.setFitWidth(pWidth);
         myNewImage.setPreserveRatio(true);
         myNewImage.setSmooth(true);
         myNewImage.setCache(true);
-        return myNewImage;
+        return new TethysFXIcon(myNewImage);
     }
 }

@@ -33,20 +33,18 @@ import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnBackup;
 
 /**
  * Thread to handle subVersion backups.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class ThemisSubversionRestore<N, I>
-        implements MetisThread<Void, N, I> {
+public class ThemisSubversionRestore
+        implements MetisThread<Void> {
     @Override
     public String getTaskName() {
         return ThemisThreadId.RESTORESVN.toString();
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access details from toolkit */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
         final MetisPreferenceManager myPreferenceMgr = pToolkit.getPreferenceManager();
         final GordianHashManager mySecureMgr = pToolkit.getSecurityManager();
 

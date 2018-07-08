@@ -116,7 +116,7 @@ public class TethysSwingDataFieldAdjust {
     protected void adjustCheckBox(final TethysSwingCheckBox pCheckBox,
                                   final boolean pChanged) {
         /* Access the component */
-        final JComponent myBox = pCheckBox.getNode();
+        final JComponent myBox = TethysSwingNode.getComponent(pCheckBox);
 
         /* Determine the font */
         final Font myFont = pChanged

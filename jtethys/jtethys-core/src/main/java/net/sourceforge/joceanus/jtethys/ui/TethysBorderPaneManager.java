@@ -20,15 +20,13 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory.TethysParentNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory.TethysParentComponent;
 
 /**
  * Border Pane Manager.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public abstract class TethysBorderPaneManager<N, I>
-        implements TethysNode<N>, TethysParentNode<N> {
+public abstract class TethysBorderPaneManager
+        implements TethysComponent, TethysParentComponent {
     /**
      * Border Gap default.
      */
@@ -37,7 +35,7 @@ public abstract class TethysBorderPaneManager<N, I>
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The id.
@@ -72,13 +70,13 @@ public abstract class TethysBorderPaneManager<N, I>
     /**
      * Node Map.
      */
-    private final Map<TethysBorderLocation, TethysNode<N>> theNodeMap;
+    private final Map<TethysBorderLocation, TethysComponent> theNodeMap;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysBorderPaneManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysBorderPaneManager(final TethysGuiFactory pFactory) {
         theGuiFactory = pFactory;
         theId = theGuiFactory.getNextId();
         theIdMap = new HashMap<>();
@@ -172,7 +170,7 @@ public abstract class TethysBorderPaneManager<N, I>
      * Set the Centre Node.
      * @param pNode the node
      */
-    public void setCentre(final TethysNode<N> pNode) {
+    public void setCentre(final TethysComponent pNode) {
         setNodeLocation(TethysBorderLocation.CENTRE, pNode);
     }
 
@@ -180,7 +178,7 @@ public abstract class TethysBorderPaneManager<N, I>
      * Set the North Node.
      * @param pNode the node
      */
-    public void setNorth(final TethysNode<N> pNode) {
+    public void setNorth(final TethysComponent pNode) {
         setNodeLocation(TethysBorderLocation.NORTH, pNode);
     }
 
@@ -188,7 +186,7 @@ public abstract class TethysBorderPaneManager<N, I>
      * Set the South Node.
      * @param pNode the node
      */
-    public void setSouth(final TethysNode<N> pNode) {
+    public void setSouth(final TethysComponent pNode) {
         setNodeLocation(TethysBorderLocation.SOUTH, pNode);
     }
 
@@ -196,7 +194,7 @@ public abstract class TethysBorderPaneManager<N, I>
      * Set the West Node.
      * @param pNode the node
      */
-    public void setWest(final TethysNode<N> pNode) {
+    public void setWest(final TethysComponent pNode) {
         setNodeLocation(TethysBorderLocation.WEST, pNode);
     }
 
@@ -204,19 +202,19 @@ public abstract class TethysBorderPaneManager<N, I>
      * Set the East Node.
      * @param pNode the node
      */
-    public void setEast(final TethysNode<N> pNode) {
+    public void setEast(final TethysComponent pNode) {
         setNodeLocation(TethysBorderLocation.EAST, pNode);
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        for (final TethysNode<N> myNode : theNodeMap.values()) {
+        for (final TethysComponent myNode : theNodeMap.values()) {
             myNode.setEnabled(pEnabled);
         }
     }
 
     @Override
-    public void setChildVisible(final TethysNode<N> pChild,
+    public void setChildVisible(final TethysComponent pChild,
                                 final boolean pVisible) {
         /* Look for location */
         final TethysBorderLocation myLoc = theIdMap.get(pChild.getId());
@@ -239,9 +237,9 @@ public abstract class TethysBorderPaneManager<N, I>
      * @param pNode the Node
      */
     protected void setNodeLocation(final TethysBorderLocation pLocation,
-                                   final TethysNode<N> pNode) {
+                                   final TethysComponent pNode) {
         /* Look for existing node */
-        final TethysNode<N> myNode = theNodeMap.get(pLocation);
+        final TethysComponent myNode = theNodeMap.get(pLocation);
         if (myNode != null) {
             /* Remove node details */
             removeNode(myNode);
@@ -270,7 +268,7 @@ public abstract class TethysBorderPaneManager<N, I>
      * @param pLocation the location
      * @return the node or null
      */
-    protected TethysNode<N> getNodeForLocation(final TethysBorderLocation pLocation) {
+    protected TethysComponent getNodeForLocation(final TethysBorderLocation pLocation) {
         return theNodeMap.get(pLocation);
     }
 
@@ -278,7 +276,7 @@ public abstract class TethysBorderPaneManager<N, I>
      * Remove node.
      * @param pNode the node to remove
      */
-    protected void removeNode(final TethysNode<N> pNode) {
+    protected void removeNode(final TethysComponent pNode) {
         theIdMap.remove(pNode.getId());
     }
 

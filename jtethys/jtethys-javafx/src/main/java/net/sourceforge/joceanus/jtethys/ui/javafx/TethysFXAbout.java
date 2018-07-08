@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
@@ -28,7 +27,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
  * javaFX About Box.
  */
 public class TethysFXAbout
-        extends TethysAbout<Node, Node> {
+        extends TethysAbout {
     /**
      * The GuiFactory.
      */
@@ -43,7 +42,7 @@ public class TethysFXAbout
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public TethysFXAbout(final TethysFXGuiFactory pFactory) {
+    TethysFXAbout(final TethysFXGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -52,8 +51,8 @@ public class TethysFXAbout
     }
 
     @Override
-    public Region getNode() {
-        return (Region) super.getNode();
+    public TethysFXNode getNode() {
+        return (TethysFXNode) super.getNode();
     }
 
     @Override
@@ -77,7 +76,7 @@ public class TethysFXAbout
         theDialog.initModality(Modality.WINDOW_MODAL);
 
         /* Define style of Box */
-        final Region myPanel = getNode();
+        final Region myPanel = (Region) getNode().getNode();
         myPanel.getStyleClass().add("-jtethys-about");
 
         /* Create the scene and attach it */

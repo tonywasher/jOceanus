@@ -19,7 +19,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -44,11 +43,12 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Class to enable display/editing of and individual dataItem.
@@ -57,7 +57,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * @param <E> the data type enum class
  */
 public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Comparable<? super T>, G extends Enum<G>, E extends Enum<E>>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent>, PrometheusItemEditParent {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent, PrometheusItemEditParent {
     /**
      * Details Tab Title.
      */
@@ -111,7 +111,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The ErrorPanel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The MainPanel.
@@ -121,12 +121,12 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     /**
      * The Item Actions.
      */
-    private final PrometheusItemActions<G, JComponent, Icon> theItemActions;
+    private final PrometheusItemActions<G> theItemActions;
 
     /**
      * The Item Actions.
      */
-    private final PrometheusItemEditActions<JComponent, Icon> theEditActions;
+    private final PrometheusItemEditActions theEditActions;
 
     /**
      * The Item.
@@ -164,7 +164,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     protected PrometheusDataItemPanel(final TethysSwingGuiFactory pFactory,
                                       final MetisSwingFieldManager pFieldMgr,
                                       final UpdateSet<E> pUpdateSet,
-                                      final MetisErrorPanel<JComponent, Icon> pError) {
+                                      final MetisErrorPanel pError) {
         /* Store parameters */
         theUpdateSet = pUpdateSet;
         theError = pError;
@@ -188,7 +188,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
 
         /* create the action panels */
         theItemActions = new PrometheusItemActions<>(pFactory, this);
-        theEditActions = new PrometheusItemEditActions<>(pFactory, this);
+        theEditActions = new PrometheusItemEditActions(pFactory, this);
 
         /* Create listener */
         theUpdateSet.getEventRegistrar().addEventListener(e -> refreshAfterUpdate());
@@ -204,7 +204,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
         /* Listen to the Actions */
         myRegistrar = theItemActions.getEventRegistrar();
         myRegistrar.addEventListener(PrometheusUIEvent.BUILDGOTO,
-                e -> buildGoToMenu((TethysScrollMenu<PrometheusGoToEvent<G>, ?>) e.getDetails(TethysScrollMenu.class)));
+                e -> buildGoToMenu((TethysScrollMenu<PrometheusGoToEvent<G>>) e.getDetails(TethysScrollMenu.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.GOTO, e -> processGoToRequest(e.getDetails(PrometheusGoToEvent.class)));
         myRegistrar.addEventListener(PrometheusUIEvent.EDIT, e -> requestEdit());
         myRegistrar.addEventListener(PrometheusUIEvent.DELETE, e -> requestDelete());
@@ -221,8 +221,8 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
     }
 
     @Override
-    public JPanel getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     @Override
@@ -320,9 +320,9 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      */
     protected void layoutPanel() {
         /* Layout the panel */
-        thePanel.add(theItemActions.getNode(), BorderLayout.LINE_START);
+        thePanel.add(TethysSwingNode.getComponent(theItemActions), BorderLayout.LINE_START);
         thePanel.add(theMainPanel, BorderLayout.CENTER);
-        thePanel.add(theEditActions.getNode(), BorderLayout.LINE_END);
+        thePanel.add(TethysSwingNode.getComponent(theEditActions), BorderLayout.LINE_END);
 
         /* Set visibility */
         thePanel.setVisible(false);
@@ -479,9 +479,9 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * @param pNode the node to restrict
      * @param pWidth field width in characters
      */
-    protected void restrictField(final TethysNode<JComponent> pNode,
+    protected void restrictField(final TethysComponent pNode,
                                  final int pWidth) {
-        restrictField(pNode.getNode(), pWidth);
+        restrictField(TethysSwingNode.getComponent(pNode), pWidth);
     }
 
     /**
@@ -637,7 +637,7 @@ public abstract class PrometheusDataItemPanel<T extends PrometheusTableItem & Co
      * Build goTo menu.
      * @param pMenu the menu to build
      */
-    protected abstract void buildGoToMenu(TethysScrollMenu<PrometheusGoToEvent<G>, ?> pMenu);
+    protected abstract void buildGoToMenu(TethysScrollMenu<PrometheusGoToEvent<G>> pMenu);
 
     /**
      * Create a GoTo event.

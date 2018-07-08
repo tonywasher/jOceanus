@@ -16,22 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysColorPicker;
 
 /**
  * JavaFX Colour Picker.
  */
 public class TethysFXColorPicker
-        extends TethysColorPicker<Node, Node> {
+        extends TethysColorPicker {
     /**
      * The node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * ColorPicker.
@@ -45,13 +44,14 @@ public class TethysFXColorPicker
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXColorPicker(final TethysFXGuiFactory pFactory) {
+    TethysFXColorPicker(final TethysFXGuiFactory pFactory) {
         /* Initialise class */
         super(pFactory);
         thePicker = new ColorPicker();
-        theNode = thePicker;
+        theNode = new TethysFXNode(thePicker);
 
         /* Listen to colour selection */
         thePicker.setOnAction(e -> handleSelection());
@@ -61,7 +61,7 @@ public class TethysFXColorPicker
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -85,6 +85,7 @@ public class TethysFXColorPicker
 
     /**
      * Obtain the colour.
+     *
      * @return the colour
      */
     public Color getColour() {
@@ -93,6 +94,7 @@ public class TethysFXColorPicker
 
     /**
      * Obtain a swatch of the selected colour.
+     *
      * @return the swatch
      */
     public Rectangle getSwatch() {
@@ -101,31 +103,24 @@ public class TethysFXColorPicker
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        thePicker.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        thePicker.setPrefHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), thePicker);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**
@@ -149,6 +144,7 @@ public class TethysFXColorPicker
 
         /**
          * Constructor.
+         *
          * @param pColor the colour.
          */
         TethysSwatch(final Color pColor) {

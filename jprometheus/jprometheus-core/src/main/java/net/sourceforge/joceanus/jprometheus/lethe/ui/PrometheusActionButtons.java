@@ -24,16 +24,15 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Action buttons.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusActionButtons<N, I>
-        implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
+public class PrometheusActionButtons
+        implements TethysEventProvider<PrometheusUIEvent>, TethysComponent {
     /**
      * Strut width.
      */
@@ -57,29 +56,29 @@ public class PrometheusActionButtons<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The Commit button.
      */
-    private final TethysButton<N, I> theCommitButton;
+    private final TethysButton theCommitButton;
 
     /**
      * The Undo button.
      */
-    private final TethysButton<N, I> theUndoButton;
+    private final TethysButton theUndoButton;
 
     /**
      * The Reset button.
      */
-    private final TethysButton<N, I> theResetButton;
+    private final TethysButton theResetButton;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pUpdateSet the update set
      */
-    public PrometheusActionButtons(final TethysGuiFactory<N, I> pFactory,
+    public PrometheusActionButtons(final TethysGuiFactory pFactory,
                                    final UpdateSet<?> pUpdateSet) {
         this(pFactory, pUpdateSet, true);
     }
@@ -90,7 +89,7 @@ public class PrometheusActionButtons<N, I>
      * @param pUpdateSet the update set
      * @param pHorizontal is this horizontal panel?
      */
-    public PrometheusActionButtons(final TethysGuiFactory<N, I> pFactory,
+    public PrometheusActionButtons(final TethysGuiFactory pFactory,
                                    final UpdateSet<?> pUpdateSet,
                                    final boolean pHorizontal) {
         /* Record the update set */
@@ -137,7 +136,7 @@ public class PrometheusActionButtons<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

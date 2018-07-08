@@ -16,10 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JSlider;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysSlider;
@@ -28,7 +24,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSlider;
  * Swing Slider.
  */
 public class TethysSwingSlider
-        extends TethysSlider<JComponent, Icon> {
+        extends TethysSlider {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * Slider.
      */
@@ -38,12 +39,15 @@ public class TethysSwingSlider
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSwingSlider(final TethysSwingGuiFactory pFactory) {
+    TethysSwingSlider(final TethysSwingGuiFactory pFactory) {
         /* Create resources */
         super(pFactory);
         theSlider = new JSlider();
         theSlider.setMinimum(0);
         theSlider.setPaintTicks(true);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theSlider);
 
         /* Handle events */
         theSlider.addChangeListener(e -> {
@@ -54,8 +58,8 @@ public class TethysSwingSlider
     }
 
     @Override
-    public JComponent getNode() {
-        return theSlider;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -93,34 +97,23 @@ public class TethysSwingSlider
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theSlider.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theSlider.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theSlider.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theSlider.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theSlider);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

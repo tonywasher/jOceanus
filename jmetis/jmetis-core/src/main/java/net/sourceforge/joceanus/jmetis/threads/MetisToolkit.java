@@ -53,10 +53,8 @@ import java.nio.file.Path;
 
 /**
  * Metis Toolkit.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class MetisToolkit<N, I> {
+public abstract class MetisToolkit {
     /**
      * Logger.
      */
@@ -80,7 +78,7 @@ public abstract class MetisToolkit<N, I> {
     /**
      * GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * Security Manager.
@@ -90,7 +88,7 @@ public abstract class MetisToolkit<N, I> {
     /**
      * Thread Manager.
      */
-    private final MetisThreadManager<N, I> theThreadManager;
+    private final MetisThreadManager theThreadManager;
 
     /**
      * The Profile Viewer Entry.
@@ -199,7 +197,7 @@ public abstract class MetisToolkit<N, I> {
      * Obtain the GUI Factory.
      * @return the factory
      */
-    public TethysGuiFactory<N, I> getGuiFactory() {
+    public TethysGuiFactory getGuiFactory() {
         return theGuiFactory;
     }
 
@@ -215,7 +213,7 @@ public abstract class MetisToolkit<N, I> {
      * Obtain the Thread Manager.
      * @return the factory
      */
-    public MetisThreadManager<N, I> getThreadManager() {
+    public MetisThreadManager getThreadManager() {
         return theThreadManager;
     }
 
@@ -223,29 +221,29 @@ public abstract class MetisToolkit<N, I> {
      * Create a GUI Factory.
      * @return the factory
      */
-    protected abstract TethysGuiFactory<N, I> newGuiFactory();
+    protected abstract TethysGuiFactory newGuiFactory();
 
     /**
      * Create a Thread Manager.
      * @param pSlider use slider status
      * @return the thread manager
      */
-    protected abstract MetisThreadManager<N, I> newThreadManager(boolean pSlider);
+    protected abstract MetisThreadManager newThreadManager(boolean pSlider);
 
     /**
      * Create a Thread Slider Status.
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    protected abstract MetisThreadProgressStatus<N, I> newThreadSliderStatus(MetisThreadManager<N, I> pManager);
+    protected abstract MetisThreadProgressStatus newThreadSliderStatus(MetisThreadManager pManager);
 
     /**
      * Create a Thread TextArea Status.
      * @param pManager the thread manager
      * @return the thread status manager
      */
-    protected MetisThreadTextAreaStatus<N, I> newThreadTextAreaStatus(final MetisThreadManager<N, I> pManager) {
-        return new MetisThreadTextAreaStatus<>(pManager, theGuiFactory);
+    protected MetisThreadTextAreaStatus newThreadTextAreaStatus(final MetisThreadManager pManager) {
+        return new MetisThreadTextAreaStatus(pManager, theGuiFactory);
     }
 
     /**
@@ -260,7 +258,7 @@ public abstract class MetisToolkit<N, I> {
      * Create a Help Window.
      * @return the help Window
      */
-    public abstract TethysHelpWindow<N, I> newHelpWindow();
+    public abstract TethysHelpWindow newHelpWindow();
 
     /**
      * Create a ReadOnly TableManager.
@@ -269,8 +267,8 @@ public abstract class MetisToolkit<N, I> {
      * @param pList the base list
      * @return the table manager
      */
-    public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(Class<R> pClazz,
-                                                                                               MetisListIndexed<R> pList);
+    public abstract <R extends MetisFieldTableItem> MetisTableManager<R> newTableManager(Class<R> pClazz,
+                                                                                         MetisListIndexed<R> pList);
 
     /**
      * Create an editable TableManager.
@@ -279,16 +277,16 @@ public abstract class MetisToolkit<N, I> {
      * @param pSession the editSession
      * @return the table manager
      */
-    public abstract <R extends MetisFieldTableItem> MetisTableManager<R, N, I> newTableManager(MetisListKey pItemType,
-                                                                                               MetisListEditSession pSession);
+    public abstract <R extends MetisFieldTableItem> MetisTableManager<R> newTableManager(MetisListKey pItemType,
+                                                                                         MetisListEditSession pSession);
 
     /**
      * Create an ErrorPanel.
      * @param pParent the parent viewer entry
      * @return the error panel
      */
-    public MetisErrorPanel<N, I> newErrorPanel(final MetisViewerEntry pParent) {
-        return new MetisErrorPanel<>(theGuiFactory, theViewerManager, pParent);
+    public MetisErrorPanel newErrorPanel(final MetisViewerEntry pParent) {
+        return new MetisErrorPanel(theGuiFactory, theViewerManager, pParent);
     }
 
     /**
@@ -296,22 +294,22 @@ public abstract class MetisToolkit<N, I> {
      * @return the viewer Window
      * @throws OceanusException on error
      */
-    public abstract MetisViewerWindow<N, I> newViewerWindow() throws OceanusException;
+    public abstract MetisViewerWindow newViewerWindow() throws OceanusException;
 
     /**
      * Create a new Preference View.
      * @return the view
      */
-    public MetisPreferenceView<N, I> newPreferenceView() {
-        return new MetisPreferenceView<>(getGuiFactory(), thePreferenceManager);
+    public MetisPreferenceView newPreferenceView() {
+        return new MetisPreferenceView(getGuiFactory(), thePreferenceManager);
     }
 
     /**
      * Create a new FieldSetPanelPair.
      * @return the panelPair
      */
-    public MetisFieldSetPanelPair<N, I> newFieldSetPanelPair() {
-        return new MetisFieldSetPanelPair<>(getGuiFactory());
+    public MetisFieldSetPanelPair newFieldSetPanelPair() {
+        return new MetisFieldSetPanelPair(getGuiFactory());
     }
 
     /**
@@ -319,7 +317,7 @@ public abstract class MetisToolkit<N, I> {
      */
     private void processColorPreferences() {
         /* Update the value Set with the preferences */
-        final TethysGuiFactory<?, ?> myFactory = getGuiFactory();
+        final TethysGuiFactory myFactory = getGuiFactory();
         final TethysValueSet myValueSet = myFactory.getValueSet();
         theColorPreferences.updateValueSet(myValueSet);
     }

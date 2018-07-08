@@ -36,6 +36,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -44,11 +45,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Transaction Category Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseTransCategoryAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseTransCategoryAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for TransCategory Label.
      */
@@ -62,17 +61,17 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<TransactionCategoryBucket, N, I> theButton;
+    private final TethysScrollButtonManager<TransactionCategoryBucket> theButton;
 
     /**
      * Category menu.
      */
-    private final TethysScrollMenu<TransactionCategoryBucket, I> theCategoryMenu;
+    private final TethysScrollMenu<TransactionCategoryBucket> theCategoryMenu;
 
     /**
      * The active transaction categories bucket list.
@@ -93,12 +92,12 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseTransCategoryAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseTransCategoryAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the button */
         theButton = pFactory.newScrollButton();
 
         /* Create the label */
-        final TethysLabel<N, I> myLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
+        final TethysLabel myLabel = pFactory.newLabel(NLS_CATEGORY + TethysLabel.STR_COLON);
 
         /* Create Event Manager */
         theEventManager = new TethysEventManager<>();
@@ -128,7 +127,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -237,7 +236,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
         theCategoryMenu.removeAllItems();
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<TransactionCategoryBucket, ?>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<TransactionCategoryBucket>> myMap = new HashMap<>();
 
         /* Record active item */
         final TransactionCategoryBucket myCurrent = theState.getEventCategory();
@@ -258,7 +257,7 @@ public class MoneyWiseTransCategoryAnalysisSelect<N, I>
             final TransactionCategory myCategory = myBucket.getTransactionCategory();
             final TransactionCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<TransactionCategoryBucket, ?> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<TransactionCategoryBucket> myMenu = myMap.get(myParentName);
 
             /* If this is a new menu */
             if (myMenu == null) {

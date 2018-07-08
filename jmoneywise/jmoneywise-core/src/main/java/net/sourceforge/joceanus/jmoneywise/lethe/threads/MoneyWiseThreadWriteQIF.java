@@ -44,11 +44,9 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * WorkerThread extension to create a QIF archive.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MoneyWiseThreadWriteQIF<N, I>
-        implements MetisThread<Void, N, I> {
+public class MoneyWiseThreadWriteQIF
+        implements MetisThread<Void> {
     /**
      * Logger.
      */
@@ -57,13 +55,13 @@ public class MoneyWiseThreadWriteQIF<N, I>
     /**
      * Data View.
      */
-    private final View<N, I> theView;
+    private final View theView;
 
     /**
      * Constructor (Event Thread).
      * @param pView the view
      */
-    public MoneyWiseThreadWriteQIF(final View<N, I> pView) {
+    public MoneyWiseThreadWriteQIF(final View pView) {
         theView = pView;
     }
 
@@ -73,9 +71,9 @@ public class MoneyWiseThreadWriteQIF<N, I>
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask("Analysing Data");

@@ -18,30 +18,6 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 /**
  * Node definition.
- * @param <N> Node type
  */
-public interface TethysNode<N> {
-    /**
-     * Obtain the Node.
-     * @return the node
-     */
-    N getNode();
-
-    /**
-     * Set Enabled status.
-     * @param pEnabled true/false
-     */
-    void setEnabled(boolean pEnabled);
-
-    /**
-     * Set Visible.
-     * @param pVisible true/false
-     */
-    void setVisible(boolean pVisible);
-
-    /**
-     * Obtain the Id.
-     * @return the id
-     */
-    Integer getId();
+public interface TethysNode {
 }

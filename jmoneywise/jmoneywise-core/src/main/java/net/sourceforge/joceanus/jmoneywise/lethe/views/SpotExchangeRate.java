@@ -81,7 +81,7 @@ public final class SpotExchangeRate
      * @param pList the Spot Rate List
      * @param pCurrency the currency
      */
-    private SpotExchangeRate(final SpotExchangeList<?, ?> pList,
+    private SpotExchangeRate(final SpotExchangeList pList,
                              final AssetCurrency pCurrency) {
         super(pList);
 
@@ -186,10 +186,8 @@ public final class SpotExchangeRate
 
     /**
      * The Spot Rates List class.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class SpotExchangeList<N, I>
+    public static class SpotExchangeList
             extends ExchangeRateBaseList<SpotExchangeRate> {
         /**
          * Report fields.
@@ -215,7 +213,7 @@ public final class SpotExchangeRate
         /**
          * The view.
          */
-        private final View<N, I> theView;
+        private final View theView;
 
         /**
          * The currency.
@@ -237,7 +235,7 @@ public final class SpotExchangeRate
          * @param pView the view
          * @param pDate the date
          */
-        public SpotExchangeList(final View<N, I> pView,
+        public SpotExchangeList(final View pView,
                                 final TethysDate pDate) {
             /* Build initial list */
             super(pView.getData(), SpotExchangeRate.class, MoneyWiseDataType.SECURITYPRICE);
@@ -341,7 +339,7 @@ public final class SpotExchangeRate
         }
 
         @Override
-        protected SpotExchangeList<N, I> getEmptyList(final ListStyle pStyle) {
+        protected SpotExchangeList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 

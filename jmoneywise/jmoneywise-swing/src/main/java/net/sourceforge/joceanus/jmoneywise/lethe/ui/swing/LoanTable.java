@@ -20,9 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -70,6 +67,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingButton;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Loan Table.
@@ -149,7 +147,7 @@ public class LoanTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The Table Model.
@@ -164,7 +162,7 @@ public class LoanTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The filter panel.
@@ -204,7 +202,7 @@ public class LoanTable
      */
     public LoanTable(final SwingView pView,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel<JComponent, Icon> pError) {
+                     final MetisErrorPanel pError) {
         /* initialise the underlying class */
         super(pView.getGuiFactory());
 
@@ -256,11 +254,11 @@ public class LoanTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Create an account panel */
         theActiveAccount = new LoanPanel(myFactory, theFieldMgr, theUpdateSet, theError);
-        thePanel.add(theActiveAccount.getNode(), BorderLayout.PAGE_END);
+        thePanel.add(TethysSwingNode.getComponent(theActiveAccount), BorderLayout.PAGE_END);
 
         /* Create the selection model */
         theSelectionModel = new PrometheusDataTableSelection<>(this, theActiveAccount);
@@ -276,8 +274,8 @@ public class LoanTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**
@@ -824,7 +822,7 @@ public class LoanTable
          * @param pMenu the menu to build
          */
         private void buildParentMenu(final Integer pRowIndex,
-                                     final TethysScrollMenu<Payee, Icon> pMenu) {
+                                     final TethysScrollMenu<Payee> pMenu) {
             /* Record active item */
             final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
 
@@ -838,7 +836,7 @@ public class LoanTable
          * @param pMenu the menu to build
          */
         private void buildCategoryMenu(final Integer pRowIndex,
-                                       final TethysScrollMenu<LoanCategory, Icon> pMenu) {
+                                       final TethysScrollMenu<LoanCategory> pMenu) {
             /* Record active item */
             final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
 
@@ -852,7 +850,7 @@ public class LoanTable
          * @param pMenu the menu to build
          */
         private void buildCurrencyMenu(final Integer pRowIndex,
-                                       final TethysScrollMenu<AssetCurrency, Icon> pMenu) {
+                                       final TethysScrollMenu<AssetCurrency> pMenu) {
             /* Record active item */
             final Loan myLoan = theModel.getItemAtIndex(pRowIndex);
 

@@ -30,7 +30,7 @@ public final class CoeusReportState {
     /**
      * ReportSelect.
      */
-    private final CoeusReportSelect<?, ?> theSelect;
+    private final CoeusReportSelect theSelect;
 
     /**
      * Calendar.
@@ -62,7 +62,7 @@ public final class CoeusReportState {
      * @param pSelect the selector
      * @param pCalendar the Calendar
      */
-    CoeusReportState(final CoeusReportSelect<?, ?> pSelect,
+    CoeusReportState(final CoeusReportSelect pSelect,
                      final CoeusCalendar pCalendar) {
         /* Store parameters */
         theSelect = pSelect;
@@ -128,7 +128,7 @@ public final class CoeusReportState {
      * @param pSelect the Panel with the new date
      * @return true/false did a change occur
      */
-    boolean setDate(final TethysDateButtonManager<?, ?> pSelect) {
+    boolean setDate(final TethysDateButtonManager pSelect) {
         /* Obtain the date and adjust it */
         final TethysDate mySelected = pSelect.getSelectedDate();
         final TethysDate myDate = mySelected == null

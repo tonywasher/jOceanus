@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -75,7 +72,7 @@ public class LoanPanel
     public LoanPanel(final TethysSwingGuiFactory pFactory,
                      final MetisSwingFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel<JComponent, Icon> pError) {
+                     final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -311,7 +308,7 @@ public class LoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<LoanCategory, Icon> pMenu,
+    public void buildCategoryMenu(final TethysScrollMenu<LoanCategory> pMenu,
                                   final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -324,7 +321,7 @@ public class LoanPanel
         final LoanCategoryList myCategories = getDataList(MoneyWiseDataType.LOANCATEGORY, LoanCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<LoanCategory, Icon>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<LoanCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         final Iterator<LoanCategory> myIterator = myCategories.iterator();
@@ -340,7 +337,7 @@ public class LoanPanel
             /* Determine menu to add to */
             final LoanCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<LoanCategory, Icon> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<LoanCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new subMenu */
             if (myMenu == null) {
@@ -369,7 +366,7 @@ public class LoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildParentMenu(final TethysScrollMenu<Payee, Icon> pMenu,
+    public void buildParentMenu(final TethysScrollMenu<Payee> pMenu,
                                 final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -415,7 +412,7 @@ public class LoanPanel
      * @param pMenu the menu
      * @param pLoan the loan to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
                                   final Loan pLoan) {
         /* Clear the menu */
         pMenu.removeAllItems();

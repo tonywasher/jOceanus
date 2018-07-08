@@ -16,20 +16,21 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import java.awt.Dimension;
-
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager;
 
 /**
  * Swing Tab Manager.
  */
 public class TethysSwingTabPaneManager
-        extends TethysTabPaneManager<JComponent, Icon> {
+        extends TethysTabPaneManager {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The TabPane.
      */
@@ -46,11 +47,14 @@ public class TethysSwingTabPaneManager
         /* Create the pane */
         theTabPane = new JTabbedPane();
         theTabPane.addChangeListener(e -> notifySelection(getSelectedTab()));
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theTabPane);
     }
 
     @Override
-    public JComponent getNode() {
-        return theTabPane;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     /**
@@ -73,7 +77,7 @@ public class TethysSwingTabPaneManager
 
     @Override
     public TethysSwingTabItem addTabItem(final String pName,
-                                         final TethysNode<JComponent> pItem) {
+                                         final TethysComponent pItem) {
         return new TethysSwingTabItem(this, pName, pItem);
     }
 
@@ -89,51 +93,40 @@ public class TethysSwingTabPaneManager
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theTabPane.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theTabPane.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theTabPane.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theTabPane.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theTabPane.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theTabPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**
      * TabItem class.
      */
     public static class TethysSwingTabItem
-            extends TethysTabItem<JComponent, Icon> {
+            extends TethysTabItem {
         /**
          * The component.
          */
-        private final TethysNode<JComponent> theNode;
+        private final TethysComponent theComponent;
 
         /**
          * Constructor.
@@ -143,13 +136,13 @@ public class TethysSwingTabPaneManager
          */
         TethysSwingTabItem(final TethysSwingTabPaneManager pPane,
                            final String pName,
-                           final TethysNode<JComponent> pItem) {
+                           final TethysComponent pItem) {
             /* Initialise the underlying class */
             super(pPane, pName);
 
             /* Add to the TabPane */
-            theNode = pItem;
-            pPane.getTabPane().addTab(pName, theNode.getNode());
+            theComponent = pItem;
+            pPane.getTabPane().addTab(pName, TethysSwingNode.getComponent(theComponent));
         }
 
         @Override
@@ -158,14 +151,15 @@ public class TethysSwingTabPaneManager
         }
 
         @Override
-        public JComponent getNode() {
-            return theNode.getNode();
+        public TethysSwingNode getNode() {
+            return (TethysSwingNode) theComponent.getNode();
         }
 
         @Override
         protected void attachToPane() {
             final int myIndex = countPreviousVisibleSiblings();
-            getPane().getTabPane().insertTab(getName(), null, theNode.getNode(), null, myIndex);
+            getPane().getTabPane().insertTab(getName(), null,
+                    TethysSwingNode.getComponent(theComponent), null, myIndex);
         }
 
         @Override
@@ -186,7 +180,7 @@ public class TethysSwingTabPaneManager
         protected void enableTab(final boolean pEnabled) {
             final int myIndex = countPreviousVisibleSiblings();
             getPane().getTabPane().setEnabledAt(myIndex, pEnabled);
-            theNode.setEnabled(pEnabled);
+            theComponent.setEnabled(pEnabled);
         }
     }
 }

@@ -54,14 +54,12 @@ import net.sourceforge.joceanus.jthemis.threads.ThemisThreadId;
 
 /**
  * Top level SvnManager window.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class ThemisSvnManager<N, I> {
+public abstract class ThemisSvnManager {
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The Preference Manager.
@@ -81,7 +79,7 @@ public abstract class ThemisSvnManager<N, I> {
     /**
      * The Thread Manager.
      */
-    private final MetisThreadManager<N, I> theThreadMgr;
+    private final MetisThreadManager theThreadMgr;
 
     /**
      * The Date entry.
@@ -101,24 +99,24 @@ public abstract class ThemisSvnManager<N, I> {
     /**
      * The tabs.
      */
-    private final TethysTabPaneManager<N, I> theTabs;
+    private final TethysTabPaneManager theTabs;
 
     /**
      * The data window.
      */
-    private final MetisViewerWindow<N, I> theDataWdw;
+    private final MetisViewerWindow theDataWdw;
 
     /**
      * The about box.
      */
-    private final TethysAbout<N, I> theAboutBox;
+    private final TethysAbout theAboutBox;
 
     /**
      * Constructor.
      * @param pToolkit the toolkit
      * @throws OceanusException on error
      */
-    protected ThemisSvnManager(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    protected ThemisSvnManager(final MetisToolkit pToolkit) throws OceanusException {
         /* Access GuiFactory/Preference Manager */
         theGuiFactory = pToolkit.getGuiFactory();
         thePrefMgr = pToolkit.getPreferenceManager();
@@ -141,7 +139,7 @@ public abstract class ThemisSvnManager<N, I> {
         theTabs = theGuiFactory.newTabPane();
 
         /* Create the Preferences Tab */
-        final MetisPreferenceView<N, I> myPrefPanel = new MetisPreferenceView<>(theGuiFactory, thePrefMgr);
+        final MetisPreferenceView myPrefPanel = new MetisPreferenceView(theGuiFactory, thePrefMgr);
         theTabs.addTabItem("Status", theThreadMgr.getStatusManager());
         theTabs.addTabItem("Preferences", myPrefPanel);
 
@@ -181,7 +179,7 @@ public abstract class ThemisSvnManager<N, I> {
         theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> completeTask(e.getDetails()));
 
         /* Create and run discoverData thread */
-        final ThemisDiscoverData<N, I> myThread = new ThemisDiscoverData<>();
+        final ThemisDiscoverData myThread = new ThemisDiscoverData();
         runThread(myThread);
     }
 
@@ -213,7 +211,7 @@ public abstract class ThemisSvnManager<N, I> {
      * Obtain tabs.
      * @return the tabs
      */
-    protected TethysTabPaneManager<N, I> getTabs() {
+    protected TethysTabPaneManager getTabs() {
         return theTabs;
     }
 
@@ -221,7 +219,7 @@ public abstract class ThemisSvnManager<N, I> {
      * Declare subversion data.
      * @param pData the discover thread
      */
-    protected void setSubversionData(final ThemisDiscoverData<?, ?> pData) {
+    protected void setSubversionData(final ThemisDiscoverData pData) {
         /* TODO clear data entries */
 
         /* Declare subversion repository to data manager */
@@ -280,7 +278,7 @@ public abstract class ThemisSvnManager<N, I> {
         /* If this is the discoverData thread */
         if (pTask instanceof ThemisDiscoverData) {
             /* Access correctly */
-            final ThemisDiscoverData<?, ?> myThread = (ThemisDiscoverData<?, ?>) pTask;
+            final ThemisDiscoverData myThread = (ThemisDiscoverData) pTask;
 
             /* Report data to manager */
             setSubversionData(myThread);
@@ -295,7 +293,7 @@ public abstract class ThemisSvnManager<N, I> {
      */
     private void backupSubversion() {
         /* Create the worker thread */
-        final ThemisSubversionBackup<N, I> myThread = new ThemisSubversionBackup<>();
+        final ThemisSubversionBackup myThread = new ThemisSubversionBackup();
         runThread(myThread);
     }
 
@@ -304,7 +302,7 @@ public abstract class ThemisSvnManager<N, I> {
      */
     private void restoreSubversion() {
         /* Create the worker thread */
-        final ThemisSubversionRestore<N, I> myThread = new ThemisSubversionRestore<>();
+        final ThemisSubversionRestore myThread = new ThemisSubversionRestore();
         runThread(myThread);
     }
 
@@ -316,7 +314,7 @@ public abstract class ThemisSvnManager<N, I> {
     private void createGitRepo(final ThemisSvnComponent pSource,
                                final ThemisSvnExtract pExtract) {
         /* Create the worker thread */
-        final ThemisCreateGitRepo<N, I> myThread = new ThemisCreateGitRepo<>(pSource, pExtract);
+        final ThemisCreateGitRepo myThread = new ThemisCreateGitRepo(pSource, pExtract);
         runThread(myThread);
     }
 
@@ -324,7 +322,7 @@ public abstract class ThemisSvnManager<N, I> {
      * Run thread.
      * @param pThread the thread
      */
-    private void runThread(final MetisThread<?, N, I> pThread) {
+    private void runThread(final MetisThread<?> pThread) {
         theMenuBar.setEnabled(ThemisSvnMenuItem.TASKS, false);
         theThreadMgr.startThread(pThread);
     }

@@ -32,6 +32,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -39,11 +40,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Payee Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWisePayeeAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWisePayeeAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Payee Label.
      */
@@ -57,17 +56,17 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The select button.
      */
-    private final TethysScrollButtonManager<PayeeBucket, N, I> theButton;
+    private final TethysScrollButtonManager<PayeeBucket> theButton;
 
     /**
      * Payee menu.
      */
-    private final TethysScrollMenu<PayeeBucket, I> thePayeeMenu;
+    private final TethysScrollMenu<PayeeBucket> thePayeeMenu;
 
     /**
      * The active payee bucket list.
@@ -88,7 +87,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWisePayeeAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWisePayeeAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the button */
         theButton = pFactory.newScrollButton();
 
@@ -96,7 +95,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the label */
-        final TethysLabel<N, I> myLabel = pFactory.newLabel(NLS_PAYEE + TethysLabel.STR_COLON);
+        final TethysLabel myLabel = pFactory.newLabel(NLS_PAYEE + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -123,7 +122,7 @@ public class MoneyWisePayeeAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

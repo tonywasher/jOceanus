@@ -21,18 +21,17 @@ import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter.AllFilter;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * All transactions Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseAllSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N> {
+public class MoneyWiseAllSelect
+        implements MoneyWiseAnalysisFilterSelection {
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The filter.
@@ -43,7 +42,7 @@ public class MoneyWiseAllSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseAllSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseAllSelect(final TethysGuiFactory pFactory) {
         /* Create the filter */
         thePanel = pFactory.newHBoxPane();
         theFilter = new AllFilter();
@@ -55,7 +54,7 @@ public class MoneyWiseAllSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

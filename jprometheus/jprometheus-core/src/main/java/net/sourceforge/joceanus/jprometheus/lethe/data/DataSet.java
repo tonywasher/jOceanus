@@ -168,7 +168,7 @@ public abstract class DataSet<T extends DataSet<T, E>, E extends Enum<E>>
      * @param pUtilitySet the utility set
      */
     protected DataSet(final Class<E> pEnumClass,
-                      final JOceanusUtilitySet<?, ?> pUtilitySet) {
+                      final JOceanusUtilitySet pUtilitySet) {
         /* Store the security manager and Enum class */
         theSecurity = pUtilitySet.getSecureManager();
         theEnumClass = pEnumClass;

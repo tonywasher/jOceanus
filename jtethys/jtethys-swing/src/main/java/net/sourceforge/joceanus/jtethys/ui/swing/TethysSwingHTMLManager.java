@@ -20,8 +20,6 @@ import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -35,10 +33,10 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * JavaFX HTML Manager.
+ * Swing HTML Manager.
  */
 public class TethysSwingHTMLManager
-        extends TethysHTMLManager<JComponent, Icon> {
+        extends TethysHTMLManager {
     /**
      * The logger.
      */
@@ -48,6 +46,11 @@ public class TethysSwingHTMLManager
      * The stream close error.
      */
     private static final String ERROR_STREAM = "Failed to close stream";
+
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
 
     /**
      * EditorPane.
@@ -68,7 +71,7 @@ public class TethysSwingHTMLManager
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSwingHTMLManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingHTMLManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -90,11 +93,14 @@ public class TethysSwingHTMLManager
 
         /* Add hyperLink listener */
         theEditor.addHyperlinkListener(new HTMLListener());
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theEditor);
     }
 
     @Override
-    public JComponent getNode() {
-        return theEditor;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override

@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
@@ -27,7 +25,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysSplitTreeManager;
  * @param <T> the item type
  */
 public final class TethysSwingSplitTreeManager<T>
-        extends TethysSplitTreeManager<T, JComponent, Icon> {
+        extends TethysSplitTreeManager<T> {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * Split pane.
      */
@@ -37,7 +40,7 @@ public final class TethysSwingSplitTreeManager<T>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSwingSplitTreeManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingSplitTreeManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -52,8 +55,13 @@ public final class TethysSwingSplitTreeManager<T>
         myHTMLPane.setCentre(myHTMLScroll);
 
         /* Create the split pane */
-        theSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll.getNode(), myHTMLPane.getNode());
+        theSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+                TethysSwingNode.getComponent(myTreeScroll),
+                TethysSwingNode.getComponent(myHTMLPane));
         theSplit.setOneTouchExpandable(true);
+
+        /* create the node */
+        theNode = new TethysSwingNode(theSplit);
     }
 
     @Override
@@ -72,8 +80,8 @@ public final class TethysSwingSplitTreeManager<T>
     }
 
     @Override
-    public JComponent getNode() {
-        return theSplit;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -83,6 +91,6 @@ public final class TethysSwingSplitTreeManager<T>
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theSplit.setVisible(pVisible);
+        theNode.setVisible(pVisible);
     }
 }

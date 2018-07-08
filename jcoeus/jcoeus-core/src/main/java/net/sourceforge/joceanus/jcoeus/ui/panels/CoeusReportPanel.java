@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysHTMLManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -52,11 +53,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Report Panel.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class CoeusReportPanel<N, I>
-        implements TethysEventProvider<CoeusDataEvent>, TethysNode<N> {
+public class CoeusReportPanel
+        implements TethysEventProvider<CoeusDataEvent>, TethysComponent {
     /**
      * The Event Manager.
      */
@@ -70,17 +69,17 @@ public class CoeusReportPanel<N, I>
     /**
      * The Panel.
      */
-    private final TethysBorderPaneManager<N, I> thePanel;
+    private final TethysBorderPaneManager thePanel;
 
     /**
      * The HTML pane.
      */
-    private final TethysHTMLManager<N, I> theHTMLPane;
+    private final TethysHTMLManager theHTMLPane;
 
     /**
      * The Report selection Panel.
      */
-    private final CoeusReportSelect<N, I> theSelect;
+    private final CoeusReportSelect theSelect;
 
     /**
      * The Market Entry.
@@ -90,7 +89,7 @@ public class CoeusReportPanel<N, I>
     /**
      * The Error Panel.
      */
-    private final MetisErrorPanel<N, I> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The Report Manager.
@@ -108,13 +107,13 @@ public class CoeusReportPanel<N, I>
      * @param pCache the market cache
      * @throws OceanusException on error
      */
-    public CoeusReportPanel(final MetisToolkit<N, I> pToolkit,
+    public CoeusReportPanel(final MetisToolkit pToolkit,
                             final CoeusMarketCache pCache) throws OceanusException {
         /* Store the parameters */
         theCache = pCache;
 
         /* Access the GUI factory */
-        final TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
+        final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
 
         /* Create the event manager */
         theEventManager = new TethysEventManager<>();
@@ -139,13 +138,13 @@ public class CoeusReportPanel<N, I>
         theBuilder = new CoeusReportBuilder(theManager);
 
         /* Create the Report Selection panel */
-        theSelect = new CoeusReportSelect<>(myFactory, theCache.getCalendar());
+        theSelect = new CoeusReportSelect(myFactory, theCache.getCalendar());
 
         /* Create the error panel for this view */
         theError = pToolkit.newErrorPanel(myReport);
 
         /* Create a scroll pane */
-        final TethysScrollPaneManager<N, I> myHTMLScroll = myFactory.newScrollPane();
+        final TethysScrollPaneManager myHTMLScroll = myFactory.newScrollPane();
         myHTMLScroll.setContent(theHTMLPane);
 
         /* Now define the panel */
@@ -180,7 +179,7 @@ public class CoeusReportPanel<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

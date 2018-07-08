@@ -50,7 +50,7 @@ public final class YQLDownloader {
      * @return changeMade true/false
      * @throws OceanusException on error
      */
-    public static boolean downloadPrices(final SpotSecurityList<?, ?> pPrices) throws OceanusException {
+    public static boolean downloadPrices(final SpotSecurityList pPrices) throws OceanusException {
         /* Determine currency for the prices */
         final MoneyWiseData myData = pPrices.getDataSet();
         final AssetCurrency myCurrency = myData.getDefaultCurrency();
@@ -117,7 +117,7 @@ public final class YQLDownloader {
      * @return changeMade true/false
      * @throws OceanusException on error
      */
-    public static boolean downloadRates(final SpotExchangeList<?, ?> pRates) throws OceanusException {
+    public static boolean downloadRates(final SpotExchangeList pRates) throws OceanusException {
         /* Determine currency for the prices */
         final MoneyWiseData myData = pRates.getDataSet();
         final AssetCurrency myCurrency = myData.getDefaultCurrency();

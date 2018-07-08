@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import org.w3c.dom.Document;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -51,19 +48,20 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 
 /**
  * Report panel.
  */
 public class ReportTab
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Text for DataEntry Title.
      */
@@ -92,7 +90,7 @@ public class ReportTab
     /**
      * The Report selection Panel.
      */
-    private final MoneyWiseReportSelect<JComponent, Icon> theSelect;
+    private final MoneyWiseReportSelect theSelect;
 
     /**
      * The Spot Analysis Entry.
@@ -102,7 +100,7 @@ public class ReportTab
     /**
      * The Error Panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The Report Manager.
@@ -149,7 +147,7 @@ public class ReportTab
         theBuilder = new MoneyWiseReportBuilder(theManager);
 
         /* Create the Report Selection panel */
-        theSelect = new MoneyWiseReportSelect<>(myFactory);
+        theSelect = new MoneyWiseReportSelect(myFactory);
 
         /* Create the error panel for this view */
         theError = theView.getToolkit().newErrorPanel(myReport);
@@ -195,7 +193,7 @@ public class ReportTab
     }
 
     @Override
-    public JComponent getNode() {
+    public TethysSwingNode getNode() {
         return thePanel.getNode();
     }
 
@@ -316,8 +314,8 @@ public class ReportTab
             /* else we are selecting a statement */
         } else {
             /* Create the details of the report */
-            final TethysDateRangeSelector<JComponent, Icon> mySelect = theSelect.getDateRangeSelector();
-            final StatementSelect<JComponent, Icon> myStatement = new StatementSelect<>(mySelect, myFilter);
+            final TethysDateRangeSelector mySelect = theSelect.getDateRangeSelector();
+            final StatementSelect myStatement = new StatementSelect(mySelect, myFilter);
 
             /* Request the action */
             theEventManager.fireEvent(PrometheusDataEvent.GOTOWINDOW, new PrometheusGoToEvent<>(MoneyWiseGoToId.STATEMENT, myStatement));

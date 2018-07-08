@@ -16,19 +16,20 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.help.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+
 import net.sourceforge.joceanus.jtethys.help.TethysHelpEntry;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpResource;
 import net.sourceforge.joceanus.jtethys.help.TethysHelpWindow;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 
@@ -36,7 +37,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
  * Help Window class, responsible for displaying the help.
  */
 public class TethysFXHelpWindow
-        extends TethysHelpWindow<Node, Node> {
+        extends TethysHelpWindow {
     /**
      * The help dialog.
      */
@@ -44,6 +45,7 @@ public class TethysFXHelpWindow
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
     public TethysFXHelpWindow(final TethysFXGuiFactory pFactory) {
@@ -117,7 +119,7 @@ public class TethysFXHelpWindow
 
             /* Create the scene */
             final BorderPane myContainer = new BorderPane();
-            myContainer.setCenter(getSplitTreeManager().getNode());
+            myContainer.setCenter(TethysFXNode.getNode(getSplitTreeManager()));
             final Scene myScene = new Scene(myContainer);
             theStage.setScene(myScene);
 

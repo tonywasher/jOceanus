@@ -19,6 +19,7 @@ package net.sourceforge.joceanus.jmetis.viewer;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
@@ -30,11 +31,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Viewer Control bar.
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public class MetisViewerControl<N, I>
-        implements TethysNode<N> {
+public class MetisViewerControl
+        implements TethysComponent {
     /**
      * The item text.
      */
@@ -63,60 +62,60 @@ public class MetisViewerControl<N, I>
     /**
      * The panel.
      */
-    private final TethysBorderPaneManager<N, I> thePane;
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The viewer.
      */
-    private final MetisViewerWindow<N, I> theViewer;
+    private final MetisViewerWindow theViewer;
 
     /**
      * The parent button.
      */
-    private final TethysButton<N, I> theParentButton;
+    private final TethysButton theParentButton;
 
     /**
      * The mode button.
      */
-    private final TethysScrollButtonManager<MetisViewerMode, N, I> theModeButton;
+    private final TethysScrollButtonManager<MetisViewerMode> theModeButton;
 
     /**
      * The next button.
      */
-    private final TethysButton<N, I> theNextButton;
+    private final TethysButton theNextButton;
 
     /**
      * The previous button.
      */
-    private final TethysButton<N, I> thePrevButton;
+    private final TethysButton thePrevButton;
 
     /**
      * The label.
      */
-    private final TethysLabel<N, I> theLabel;
+    private final TethysLabel theLabel;
 
     /**
      * The slider.
      */
-    private final TethysSlider<N, I> theSlider;
+    private final TethysSlider theSlider;
 
     /**
      * The slider panel.
      */
-    private final TethysBorderPaneManager<N, I> theSliderPane;
+    private final TethysBorderPaneManager theSliderPane;
 
     /**
      * The buttons panel.
      */
-    private final TethysBoxPaneManager<N, I> theButtonsPane;
+    private final TethysBoxPaneManager theButtonsPane;
 
     /**
      * Constructor.
      * @param pFactory the GuiFactory
      * @param pViewer the viewer window
      */
-    protected MetisViewerControl(final TethysGuiFactory<N, I> pFactory,
-                                 final MetisViewerWindow<N, I> pViewer) {
+    protected MetisViewerControl(final TethysGuiFactory pFactory,
+                                 final MetisViewerWindow pViewer) {
         /* Store parameters */
         theViewer = pViewer;
 
@@ -147,7 +146,7 @@ public class MetisViewerControl<N, I>
         theSlider.getEventRegistrar().addEventListener(e -> theViewer.handleExplicitPage(theSlider.getValue() + 1));
 
         /* Create the Inner Slider Pane */
-        final TethysBorderPaneManager<N, I> myInnerPane = pFactory.newBorderPane();
+        final TethysBorderPaneManager myInnerPane = pFactory.newBorderPane();
         myInnerPane.setCentre(theSlider);
         myInnerPane.setEast(theNextButton);
         myInnerPane.setWest(thePrevButton);
@@ -171,7 +170,7 @@ public class MetisViewerControl<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePane.getNode();
     }
 
@@ -197,7 +196,7 @@ public class MetisViewerControl<N, I>
      * @param pButton the button
      * @param pId the icon id
      */
-    private static <K extends Enum<K> & TethysIconId> void configureButton(final TethysButton<?, ?> pButton,
+    private static <K extends Enum<K> & TethysIconId> void configureButton(final TethysButton pButton,
                                                                            final K pId) {
         pButton.setIconOnly();
         pButton.setIcon(pId);
@@ -274,7 +273,7 @@ public class MetisViewerControl<N, I>
      */
     private void buildModeMenu(final MetisViewerPage pPage) {
         /* Access the menu and reset it */
-        final TethysScrollMenu<MetisViewerMode, I> myMenu = theModeButton.getMenu();
+        final TethysScrollMenu<MetisViewerMode> myMenu = theModeButton.getMenu();
         myMenu.removeAllItems();
 
         /* Loop through the modes */

@@ -62,6 +62,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysArrowIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
@@ -72,11 +73,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Selection panel for Analysis Statement.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseAnalysisSelect<N, I>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<N> {
+public class MoneyWiseAnalysisSelect
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Text for DateRange Label.
      */
@@ -130,117 +129,117 @@ public class MoneyWiseAnalysisSelect<N, I>
     /**
      * View.
      */
-    private final View<N, I> theView;
+    private final View theView;
 
     /**
      * Panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * Range Button.
      */
-    private final TethysButton<N, I> theRangeButton;
+    private final TethysButton theRangeButton;
 
     /**
      * Filter Button.
      */
-    private final TethysButton<N, I> theFilterButton;
+    private final TethysButton theFilterButton;
 
     /**
      * Filter Type Button.
      */
-    private final TethysScrollButtonManager<AnalysisType, N, I> theFilterTypeButton;
+    private final TethysScrollButtonManager<AnalysisType> theFilterTypeButton;
 
     /**
      * Bucket Type Button.
      */
-    private final TethysScrollButtonManager<BucketAttribute, N, I> theBucketButton;
+    private final TethysScrollButtonManager<BucketAttribute> theBucketButton;
 
     /**
      * ColumnSet Button.
      */
-    private final TethysScrollButtonManager<AnalysisColumnSet, N, I> theColumnButton;
+    private final TethysScrollButtonManager<AnalysisColumnSet> theColumnButton;
 
     /**
      * The bucket label.
      */
-    private final TethysLabel<N, I> theBucketLabel;
+    private final TethysLabel theBucketLabel;
 
     /**
      * The column label.
      */
-    private final TethysLabel<N, I> theColumnLabel;
+    private final TethysLabel theColumnLabel;
 
     /**
      * The filter detail panel.
      */
-    private final TethysBoxPaneManager<N, I> theFilterDetail;
+    private final TethysBoxPaneManager theFilterDetail;
 
     /**
      * DateRange Select Panel.
      */
-    private final TethysDateRangeSelector<N, I> theRangeSelect;
+    private final TethysDateRangeSelector theRangeSelect;
 
     /**
      * Filter Select Panel.
      */
-    private final TethysBoxPaneManager<N, I> theFilterSelect;
+    private final TethysBoxPaneManager theFilterSelect;
 
     /**
      * Deposit Select Panel.
      */
-    private final MoneyWiseDepositAnalysisSelect<N, I> theDepositSelect;
+    private final MoneyWiseDepositAnalysisSelect theDepositSelect;
 
     /**
      * Cash Select Panel.
      */
-    private final MoneyWiseCashAnalysisSelect<N, I> theCashSelect;
+    private final MoneyWiseCashAnalysisSelect theCashSelect;
 
     /**
      * Loan Select Panel.
      */
-    private final MoneyWiseLoanAnalysisSelect<N, I> theLoanSelect;
+    private final MoneyWiseLoanAnalysisSelect theLoanSelect;
 
     /**
      * Security Select Panel.
      */
-    private final MoneyWiseSecurityAnalysisSelect<N, I> theSecuritySelect;
+    private final MoneyWiseSecurityAnalysisSelect theSecuritySelect;
 
     /**
      * Portfolio Select Panel.
      */
-    private final MoneyWisePortfolioAnalysisSelect<N, I> thePortfolioSelect;
+    private final MoneyWisePortfolioAnalysisSelect thePortfolioSelect;
 
     /**
      * Payee Select Panel.
      */
-    private final MoneyWisePayeeAnalysisSelect<N, I> thePayeeSelect;
+    private final MoneyWisePayeeAnalysisSelect thePayeeSelect;
 
     /**
      * TransCategory Select Panel.
      */
-    private final MoneyWiseTransCategoryAnalysisSelect<N, I> theCategorySelect;
+    private final MoneyWiseTransCategoryAnalysisSelect theCategorySelect;
 
     /**
      * TaxBasis Select Panel.
      */
-    private final MoneyWiseTaxBasisAnalysisSelect<N, I> theTaxBasisSelect;
+    private final MoneyWiseTaxBasisAnalysisSelect theTaxBasisSelect;
 
     /**
      * TransactionTag Select Panel.
      */
-    private final MoneyWiseTransactionTagSelect<N, I> theTagSelect;
+    private final MoneyWiseTransactionTagSelect theTagSelect;
 
     /**
      * All Select Panel.
      */
-    private final MoneyWiseAllSelect<N, I> theAllSelect;
+    private final MoneyWiseAllSelect theAllSelect;
 
     /**
      * The card panel.
      */
-    private final TethysCardPaneManager<N, I, MoneyWiseAnalysisFilterSelection<N>> theCardPanel;
+    private final TethysCardPaneManager<MoneyWiseAnalysisFilterSelection> theCardPanel;
 
     /**
      * The analysis view.
@@ -250,22 +249,22 @@ public class MoneyWiseAnalysisSelect<N, I>
     /**
      * Select panel map.
      */
-    private final Map<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> theMap;
+    private final Map<AnalysisType, MoneyWiseAnalysisFilterSelection> theMap;
 
     /**
      * AnalysisType menu.
      */
-    private final TethysScrollMenu<AnalysisType, I> theTypeMenu;
+    private final TethysScrollMenu<AnalysisType> theTypeMenu;
 
     /**
      * Bucket menu.
      */
-    private final TethysScrollMenu<BucketAttribute, I> theBucketMenu;
+    private final TethysScrollMenu<BucketAttribute> theBucketMenu;
 
     /**
      * Column menu.
      */
-    private final TethysScrollMenu<AnalysisColumnSet, I> theColumnMenu;
+    private final TethysScrollMenu<AnalysisColumnSet> theColumnMenu;
 
     /**
      * Analysis.
@@ -304,10 +303,10 @@ public class MoneyWiseAnalysisSelect<N, I>
      * @param pAnalysisView the analysis view
      * @param pNewButton the new button
      */
-    public MoneyWiseAnalysisSelect(final TethysGuiFactory<N, I> pFactory,
-                                   final View<N, I> pView,
+    public MoneyWiseAnalysisSelect(final TethysGuiFactory pFactory,
+                                   final View pView,
                                    final AnalysisView pAnalysisView,
-                                   final TethysButton<N, I> pNewButton) {
+                                   final TethysButton pNewButton) {
         /* Access the analysis manager */
         theView = pView;
         theAnalysisView = pAnalysisView;
@@ -344,16 +343,16 @@ public class MoneyWiseAnalysisSelect<N, I>
         theMap = new EnumMap<>(AnalysisType.class);
 
         /* Create the filter selection panels */
-        theDepositSelect = new MoneyWiseDepositAnalysisSelect<>(pFactory);
-        theCashSelect = new MoneyWiseCashAnalysisSelect<>(pFactory);
-        theLoanSelect = new MoneyWiseLoanAnalysisSelect<>(pFactory);
-        theSecuritySelect = new MoneyWiseSecurityAnalysisSelect<>(pFactory);
-        thePortfolioSelect = new MoneyWisePortfolioAnalysisSelect<>(pFactory);
-        thePayeeSelect = new MoneyWisePayeeAnalysisSelect<>(pFactory);
-        theCategorySelect = new MoneyWiseTransCategoryAnalysisSelect<>(pFactory);
-        theTaxBasisSelect = new MoneyWiseTaxBasisAnalysisSelect<>(pFactory);
-        theTagSelect = new MoneyWiseTransactionTagSelect<>(pFactory);
-        theAllSelect = new MoneyWiseAllSelect<>(pFactory);
+        theDepositSelect = new MoneyWiseDepositAnalysisSelect(pFactory);
+        theCashSelect = new MoneyWiseCashAnalysisSelect(pFactory);
+        theLoanSelect = new MoneyWiseLoanAnalysisSelect(pFactory);
+        theSecuritySelect = new MoneyWiseSecurityAnalysisSelect(pFactory);
+        thePortfolioSelect = new MoneyWisePortfolioAnalysisSelect(pFactory);
+        thePayeeSelect = new MoneyWisePayeeAnalysisSelect(pFactory);
+        theCategorySelect = new MoneyWiseTransCategoryAnalysisSelect(pFactory);
+        theTaxBasisSelect = new MoneyWiseTaxBasisAnalysisSelect(pFactory);
+        theTagSelect = new MoneyWiseTransactionTagSelect(pFactory);
+        theAllSelect = new MoneyWiseAllSelect(pFactory);
 
         /* Create the card panel */
         theCardPanel = pFactory.newCardPane();
@@ -365,7 +364,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         theFilterSelect = buildFilterSelect(pFactory);
 
         /* Create the control panel */
-        final TethysBoxPaneManager<N, I> myPanel = buildControlPanel(pFactory, pNewButton);
+        final TethysBoxPaneManager myPanel = buildControlPanel(pFactory, pNewButton);
 
         /* Create the panel */
         thePanel = pFactory.newVBoxPane();
@@ -380,7 +379,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Create initial state */
         theState = new AnalysisState();
         theState.showColumns(true);
-        final StatementSelect<N, I> mySelect = new StatementSelect<>(theRangeSelect, new AllFilter());
+        final StatementSelect mySelect = new StatementSelect(theRangeSelect, new AllFilter());
         selectStatement(mySelect);
 
         /* Access the menus */
@@ -428,7 +427,7 @@ public class MoneyWiseAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 
@@ -478,13 +477,13 @@ public class MoneyWiseAnalysisSelect<N, I>
      * @param pNewButton the new button
      * @return the panel
      */
-    private TethysBoxPaneManager<N, I> buildControlPanel(final TethysGuiFactory<N, I> pFactory,
-                                                         final TethysButton<N, I> pNewButton) {
+    private TethysBoxPaneManager buildControlPanel(final TethysGuiFactory pFactory,
+                                                   final TethysButton pNewButton) {
         /* Create the control panel */
-        final TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
+        final TethysBoxPaneManager myPanel = pFactory.newHBoxPane();
 
         /* Create the labels */
-        final TethysLabel<N, I> myRangeLabel = pFactory.newLabel(NLS_RANGE);
+        final TethysLabel myRangeLabel = pFactory.newLabel(NLS_RANGE);
 
         /* Create the panel */
         myPanel.setBorderTitle(NLS_TITLE);
@@ -504,12 +503,12 @@ public class MoneyWiseAnalysisSelect<N, I>
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private TethysBoxPaneManager<N, I> buildFilterDetail(final TethysGuiFactory<N, I> pFactory) {
+    private TethysBoxPaneManager buildFilterDetail(final TethysGuiFactory pFactory) {
         /* Create the control panel */
-        final TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
+        final TethysBoxPaneManager myPanel = pFactory.newHBoxPane();
 
         /* Create the labels */
-        final TethysLabel<N, I> myFilterLabel = pFactory.newLabel(NLS_FILTER);
+        final TethysLabel myFilterLabel = pFactory.newLabel(NLS_FILTER);
 
         /* Create the panel */
         myPanel.addNode(myFilterLabel);
@@ -529,12 +528,12 @@ public class MoneyWiseAnalysisSelect<N, I>
      * @param pFactory the GUI factory
      * @return the panel
      */
-    private TethysBoxPaneManager<N, I> buildFilterSelect(final TethysGuiFactory<N, I> pFactory) {
+    private TethysBoxPaneManager buildFilterSelect(final TethysGuiFactory pFactory) {
         /* Create the filter panel */
-        final TethysBoxPaneManager<N, I> myPanel = pFactory.newHBoxPane();
+        final TethysBoxPaneManager myPanel = pFactory.newHBoxPane();
 
         /* Create the labels */
-        final TethysLabel<N, I> myTypeLabel = pFactory.newLabel(NLS_FILTERTYPE);
+        final TethysLabel myTypeLabel = pFactory.newLabel(NLS_FILTERTYPE);
 
         /* Add to the card panels */
         theCardPanel.addCard(AnalysisType.DEPOSIT.name(), theDepositSelect);
@@ -575,12 +574,12 @@ public class MoneyWiseAnalysisSelect<N, I>
      * Select Statement.
      * @param pSelect the selection
      */
-    public void selectStatement(final StatementSelect<N, I> pSelect) {
+    public void selectStatement(final StatementSelect pSelect) {
         /* Set refreshing flag */
         isRefreshing = true;
 
         /* Update the range */
-        final TethysDateRangeSelector<N, I> mySelect = pSelect.getRangeSelect();
+        final TethysDateRangeSelector mySelect = pSelect.getRangeSelect();
         if (mySelect != null) {
             theRangeSelect.setSelection(mySelect);
             theRangeSelect.lockPeriod(false);
@@ -595,7 +594,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* Access the filter and the selection panel */
         final AnalysisFilter<?, ?> myFilter = pSelect.getFilter();
         final AnalysisType myType = myFilter.getAnalysisType();
-        final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+        final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
 
         /* Move correct card to front and update it */
         theCardPanel.selectCard(myType.name());
@@ -651,7 +650,7 @@ public class MoneyWiseAnalysisSelect<N, I>
     private void updateFilter() {
         /* Access the active panel */
         final AnalysisType myType = theState.getType();
-        final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+        final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
 
         /* Update filters */
         if (myPanel != null) {
@@ -727,9 +726,9 @@ public class MoneyWiseAnalysisSelect<N, I>
      */
     private boolean isAvailable() {
         /* Loop through the panels */
-        final Iterator<MoneyWiseAnalysisFilterSelection<N>> myIterator = theMap.values().iterator();
+        final Iterator<MoneyWiseAnalysisFilterSelection> myIterator = theMap.values().iterator();
         while (myIterator.hasNext()) {
-            final MoneyWiseAnalysisFilterSelection<N> myEntry = myIterator.next();
+            final MoneyWiseAnalysisFilterSelection myEntry = myIterator.next();
 
             /* If the filter is possible */
             if (myEntry.isAvailable()) {
@@ -752,7 +751,7 @@ public class MoneyWiseAnalysisSelect<N, I>
         /* If the type is selected */
         if (myType != null) {
             /* Check that the filter is appropriate */
-            final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+            final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
             if (myPanel.isAvailable()) {
                 /* We are OK */
                 final AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
@@ -762,12 +761,12 @@ public class MoneyWiseAnalysisSelect<N, I>
         }
 
         /* Loop through the panels */
-        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>>> myIterator = theMap.entrySet().iterator();
+        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> myEntry = myIterator.next();
+            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection> myEntry = myIterator.next();
 
             /* If the filter is possible */
-            final MoneyWiseAnalysisFilterSelection<?> myPanel = myEntry.getValue();
+            final MoneyWiseAnalysisFilterSelection myPanel = myEntry.getValue();
             if (myPanel.isAvailable()) {
                 /* Access Analysis type */
                 myType = myEntry.getKey();
@@ -807,9 +806,9 @@ public class MoneyWiseAnalysisSelect<N, I>
         theTypeMenu.removeAllItems();
 
         /* Loop through the panels */
-        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>>> myIterator = theMap.entrySet().iterator();
+        final Iterator<Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection>> myIterator = theMap.entrySet().iterator();
         while (myIterator.hasNext()) {
-            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection<N>> myEntry = myIterator.next();
+            final Map.Entry<AnalysisType, MoneyWiseAnalysisFilterSelection> myEntry = myIterator.next();
 
             /* If the filter is possible */
             if (myEntry.getValue().isAvailable()) {
@@ -1076,7 +1075,7 @@ public class MoneyWiseAnalysisSelect<N, I>
             theCardPanel.selectCard(myType.name());
 
             /* Obtain the relevant filter */
-            final MoneyWiseAnalysisFilterSelection<?> myPanel = theMap.get(myType);
+            final MoneyWiseAnalysisFilterSelection myPanel = theMap.get(myType);
             final AnalysisFilter<?, ?> myFilter = myPanel.getFilter();
             myFilter.setCurrentAttribute(myType.getDefaultValue());
 
@@ -1199,7 +1198,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * Determine selection from panels.
          * @param pFilter selection panel
          */
-        private void determineState(final MoneyWiseAnalysisFilterSelection<?> pFilter) {
+        private void determineState(final MoneyWiseAnalysisFilterSelection pFilter) {
             /* Update the selection panels */
             theRange = theRangeSelect.getRange();
             theFilter = pFilter.getFilter();
@@ -1214,7 +1213,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * @param pSelect the selection panel
          * @return true/false did a change occur
          */
-        private boolean setRange(final TethysDateRangeSelector<N, I> pSelect) {
+        private boolean setRange(final TethysDateRangeSelector pSelect) {
             /* Adjust the selected account */
             final TethysDateRange myRange = pSelect.getRange();
             if (!MetisDataDifference.isEqual(myRange, theRange)) {
@@ -1317,14 +1316,12 @@ public class MoneyWiseAnalysisSelect<N, I>
 
     /**
      * The Statement Select class.
-     * @param <N> the node type
-     * @param <I> the Icon Type
      */
-    public static final class StatementSelect<N, I> {
+    public static final class StatementSelect {
         /**
          * The Range Selection.
          */
-        private final TethysDateRangeSelector<N, I> theRangeSelect;
+        private final TethysDateRangeSelector theRangeSelect;
 
         /**
          * The AnalysisFilter.
@@ -1336,7 +1333,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * @param pRangeSelect the range selection
          * @param pFilter the analysis filter
          */
-        public StatementSelect(final TethysDateRangeSelector<N, I> pRangeSelect,
+        public StatementSelect(final TethysDateRangeSelector pRangeSelect,
                                final AnalysisFilter<?, ?> pFilter) {
             /* Store parameters */
             theRangeSelect = pRangeSelect;
@@ -1347,7 +1344,7 @@ public class MoneyWiseAnalysisSelect<N, I>
          * Obtain the RangeSelection.
          * @return the filter
          */
-        public TethysDateRangeSelector<N, I> getRangeSelect() {
+        public TethysDateRangeSelector getRangeSelect() {
             return theRangeSelect;
         }
 

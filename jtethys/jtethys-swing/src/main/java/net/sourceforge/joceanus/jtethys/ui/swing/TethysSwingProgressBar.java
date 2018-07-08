@@ -17,10 +17,7 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Color;
-import java.awt.Dimension;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JProgressBar;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
@@ -30,11 +27,16 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgressBar;
  * Swing ProgressBar.
  */
 public class TethysSwingProgressBar
-        extends TethysProgressBar<JComponent, Icon> {
+        extends TethysProgressBar {
     /**
      * Field Adjuster.
      */
     private final TethysSwingDataFieldAdjust theAdjuster;
+
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
 
     /**
      * Progress Bar.
@@ -45,7 +47,7 @@ public class TethysSwingProgressBar
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSwingProgressBar(final TethysSwingGuiFactory pFactory) {
+    TethysSwingProgressBar(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -63,11 +65,14 @@ public class TethysSwingProgressBar
 
         /* Set the colour */
         setProgressColour();
+
+        /* Create the node */
+        theNode = new TethysSwingNode(theProgress);
     }
 
     @Override
-    public JComponent getNode() {
-        return theProgress;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -94,35 +99,24 @@ public class TethysSwingProgressBar
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = theProgress.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        theProgress.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = theProgress.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        theProgress.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), theProgress);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**

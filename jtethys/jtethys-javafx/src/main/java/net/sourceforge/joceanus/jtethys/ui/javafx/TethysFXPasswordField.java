@@ -16,20 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysPasswordField;
 
 /**
  * javaFX Password Field.
  */
 public class TethysFXPasswordField
-        extends TethysPasswordField<Node, Node> {
+        extends TethysPasswordField {
     /**
      * The Node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The Password field.
@@ -38,33 +37,34 @@ public class TethysFXPasswordField
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXPasswordField(final TethysFXGuiFactory pFactory) {
+    TethysFXPasswordField(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theField = new PasswordField();
-        theNode = theField;
+        theNode = new TethysFXNode(theField);
         theField.setOnAction(e -> fireEvent());
     }
 
     @Override
     public void setPassword(final char[] pPassword) {
         theField.setText(pPassword == null
-                                           ? null
-                                           : new String(pPassword));
+                         ? null
+                         : new String(pPassword));
     }
 
     @Override
     public char[] getPassword() {
         final String myText = theField.getText();
         return myText == null
-               || myText.length() == 0
-                                       ? null
-                                       : myText.toCharArray();
+                       || myText.length() == 0
+               ? null
+               : myText.toCharArray();
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -81,30 +81,23 @@ public class TethysFXPasswordField
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        theField.setPrefWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        theField.setPrefHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theField);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

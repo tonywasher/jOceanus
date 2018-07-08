@@ -43,10 +43,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
  * Provides top-level control of data.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N, I>
+public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>>
         implements TethysEventProvider<PrometheusDataEvent> {
     /**
      * The Event Manager.
@@ -71,12 +69,12 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * The UtilitySet.
      */
-    private final JOceanusUtilitySet<N, I> theUtilitySet;
+    private final JOceanusUtilitySet theUtilitySet;
 
     /**
      * The Toolkit.
      */
-    private final MetisToolkit<N, I> theToolkit;
+    private final MetisToolkit theToolkit;
 
     /**
      * The Viewer Entry hashMap.
@@ -87,7 +85,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * Constructor for default control.
      * @param pUtilitySet the utility set
      */
-    protected DataControl(final JOceanusUtilitySet<N, I> pUtilitySet) {
+    protected DataControl(final JOceanusUtilitySet pUtilitySet) {
         /* Store the parameters */
         theUtilitySet = pUtilitySet;
         theToolkit = pUtilitySet.getToolkit();
@@ -198,7 +196,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * Obtain UtilitySet.
      * @return the UtilitySet
      */
-    public JOceanusUtilitySet<N, I> getUtilitySet() {
+    public JOceanusUtilitySet getUtilitySet() {
         return theUtilitySet;
     }
 
@@ -238,7 +236,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * Obtain GuiFactory.
      * @return the GuiFactory
      */
-    public TethysGuiFactory<N, I> getGuiFactory() {
+    public TethysGuiFactory getGuiFactory() {
         return theToolkit.getGuiFactory();
     }
 
@@ -246,7 +244,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
      * Obtain Toolkit.
      * @return the Toolkit
      */
-    public MetisToolkit<N, I> getToolkit() {
+    public MetisToolkit getToolkit() {
         return theToolkit;
     }
 
@@ -319,7 +317,7 @@ public abstract class DataControl<T extends DataSet<T, E>, E extends Enum<E>, N,
     /**
      * refresh the data view.
      */
-    protected final void refreshViews() {
+    final void refreshViews() {
         /* Obtain the active profile */
         MetisProfile myTask = getActiveTask();
         myTask = myTask.startTask("refreshViews");

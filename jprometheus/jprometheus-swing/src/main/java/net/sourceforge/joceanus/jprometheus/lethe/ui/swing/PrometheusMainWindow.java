@@ -46,10 +46,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMen
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -61,6 +62,7 @@ import java.awt.event.WindowEvent;
 
 /**
  * Main window for application.
+ *
  * @param <T> the data set type
  * @param <E> the data list enum class
  */
@@ -93,7 +95,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
     /**
      * The data view.
      */
-    private DataControl<T, E, JComponent, Icon> theView;
+    private DataControl<T, E> theView;
 
     /**
      * The frame.
@@ -137,6 +139,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Constructor.
+     *
      * @throws OceanusException on error
      */
     protected PrometheusMainWindow() throws OceanusException {
@@ -146,14 +149,16 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Get the data view.
+     *
      * @return the data view
      */
-    public DataControl<T, E, JComponent, Icon> getView() {
+    public DataControl<T, E> getView() {
         return theView;
     }
 
     /**
      * Get the panel.
+     *
      * @return the panel
      */
     public JPanel getPanel() {
@@ -162,6 +167,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Get the menu bar.
+     *
      * @return the menu bar
      */
     protected TethysMenuBarManager getMenuBar() {
@@ -170,6 +176,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Build the main panel.
+     *
      * @return the main panel
      * @throws OceanusException on error
      */
@@ -177,6 +184,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Obtain the Help Module.
+     *
      * @return the help module
      * @throws OceanusException on error
      */
@@ -184,11 +192,12 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Build the main window.
-     * @param pView the Data view
+     *
+     * @param pView       the Data view
      * @param pUtilitySet the utility set
      * @throws OceanusException on error
      */
-    public void buildMainWindow(final DataControl<T, E, JComponent, Icon> pView,
+    public void buildMainWindow(final DataControl<T, E> pView,
                                 final JOceanusSwingUtilitySet pUtilitySet) throws OceanusException {
         /* Store the view */
         theView = pView;
@@ -210,7 +219,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
         final JComponent myMainPanel = buildMainPanel();
 
         /* Access the status bar and set to invisible */
-        theStatusBar = theThreadMgr.getStatusManager().getNode();
+        theStatusBar = TethysSwingNode.getComponent(theThreadMgr.getStatusManager());
         theStatusBar.setVisible(false);
         theThreadMgr.getEventRegistrar().addEventListener(MetisThreadEvent.THREADEND, e -> {
             setVisibility();
@@ -219,7 +228,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
         /* Create the layout */
         thePanel.setLayout(new BorderLayout());
-        thePanel.add(theThreadMgr.getStatusManager().getNode(), BorderLayout.NORTH);
+        thePanel.add(TethysSwingNode.getComponent(theThreadMgr.getStatusManager()), BorderLayout.NORTH);
         thePanel.add(myMainPanel, BorderLayout.CENTER);
 
         /* Attach the panel to the frame */
@@ -274,6 +283,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Add Data Menu items.
+     *
      * @param pMenu the menu
      */
     protected void addDataMenuItems(final TethysMenuSubMenu<?> pMenu) {
@@ -286,6 +296,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Add EditMenu items.
+     *
      * @param pMenu the menu
      */
     protected void addEditMenuItems(final TethysMenuSubMenu<?> pMenu) {
@@ -296,6 +307,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Add Backup Menu items.
+     *
      * @param pMenu the menu
      */
     protected void addBackupMenuItems(final TethysMenuSubMenu<?> pMenu) {
@@ -309,6 +321,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Add Security Menu items.
+     *
      * @param pMenu the menu
      */
     protected void addSecurityMenuItems(final TethysMenuSubMenu<?> pMenu) {
@@ -319,6 +332,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Add Help Menu items.
+     *
      * @param pMenu the menu
      */
     protected void addHelpMenuItems(final TethysMenuSubMenu<?> pMenu) {
@@ -382,6 +396,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Has the underlying data got changes.
+     *
      * @return true/false
      */
     protected final boolean hasChanges() {
@@ -390,12 +405,14 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Has the window got updates.
+     *
      * @return true/false
      */
     protected abstract boolean hasUpdates();
 
     /**
      * Is a worker active.
+     *
      * @return true/false
      */
     protected final boolean hasWorker() {
@@ -404,9 +421,10 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
 
     /**
      * Start a thread.
+     *
      * @param pThread the thread to start
      */
-    protected void startThread(final MetisThread<?, JComponent, Icon> pThread) {
+    protected void startThread(final MetisThread<?> pThread) {
         /* Execute the thread and record it */
         theThreadMgr.startThread(pThread);
 
@@ -420,7 +438,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void loadDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadLoadDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadDatabase<>(theView);
+        final PrometheusThreadLoadDatabase<T, E> myThread = new PrometheusThreadLoadDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -429,7 +447,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void storeDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadStoreDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadStoreDatabase<>(theView);
+        final PrometheusThreadStoreDatabase<T, E> myThread = new PrometheusThreadStoreDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -438,7 +456,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadCreateDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateDatabase<>(theView);
+        final PrometheusThreadCreateDatabase<T, E> myThread = new PrometheusThreadCreateDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -447,7 +465,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void purgeDatabase() {
         /* Create the worker thread */
-        final PrometheusThreadPurgeDatabase<T, E, JComponent, Icon> myThread = new PrometheusThreadPurgeDatabase<>(theView);
+        final PrometheusThreadPurgeDatabase<T, E> myThread = new PrometheusThreadPurgeDatabase<>(theView);
         startThread(myThread);
     }
 
@@ -490,7 +508,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void writeBackup() {
         /* Create the worker thread */
-        final PrometheusThreadCreateBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateBackup<>(theView);
+        final PrometheusThreadCreateBackup<T, E> myThread = new PrometheusThreadCreateBackup<>(theView);
         startThread(myThread);
     }
 
@@ -499,7 +517,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void restoreBackup() {
         /* Create the worker thread */
-        final PrometheusThreadLoadBackup<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadBackup<>(theView);
+        final PrometheusThreadLoadBackup<T, E> myThread = new PrometheusThreadLoadBackup<>(theView);
         startThread(myThread);
     }
 
@@ -508,7 +526,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createXmlBackup() {
         /* Create the worker thread */
-        final PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
+        final PrometheusThreadCreateXmlFile<T, E> myThread = new PrometheusThreadCreateXmlFile<>(theView, true);
         startThread(myThread);
     }
 
@@ -517,7 +535,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void createXmlXtract() {
         /* Create the worker thread */
-        final PrometheusThreadCreateXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
+        final PrometheusThreadCreateXmlFile<T, E> myThread = new PrometheusThreadCreateXmlFile<>(theView, false);
         startThread(myThread);
     }
 
@@ -526,7 +544,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void loadXmlFile() {
         /* Create the worker thread */
-        final PrometheusThreadLoadXmlFile<T, E, JComponent, Icon> myThread = new PrometheusThreadLoadXmlFile<>(theView);
+        final PrometheusThreadLoadXmlFile<T, E> myThread = new PrometheusThreadLoadXmlFile<>(theView);
         startThread(myThread);
     }
 
@@ -535,7 +553,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void updatePassword() {
         /* Create the worker thread */
-        final PrometheusThreadUpdatePassword<T, E, JComponent, Icon> myThread = new PrometheusThreadUpdatePassword<>(theView);
+        final PrometheusThreadUpdatePassword<T, E> myThread = new PrometheusThreadUpdatePassword<>(theView);
         startThread(myThread);
     }
 
@@ -544,7 +562,7 @@ public abstract class PrometheusMainWindow<T extends DataSet<T, E>, E extends En
      */
     private void reNewSecurity() {
         /* Create the worker thread */
-        final PrometheusThreadRenewSecurity<T, E, JComponent, Icon> myThread = new PrometheusThreadRenewSecurity<>(theView);
+        final PrometheusThreadRenewSecurity<T, E> myThread = new PrometheusThreadRenewSecurity<>(theView);
         startThread(myThread);
     }
 

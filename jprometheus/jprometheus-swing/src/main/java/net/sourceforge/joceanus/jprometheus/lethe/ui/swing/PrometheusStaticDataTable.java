@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.jprometheus.lethe.ui.swing;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -52,6 +49,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMap
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -91,7 +89,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     /**
      * The Data view.
      */
-    private final DataControl<?, E, JComponent, Icon> theControl;
+    private final DataControl<?, E> theControl;
 
     /**
      * The field manager.
@@ -101,7 +99,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The new button.
@@ -111,7 +109,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     /**
      * MenuBuilder.
      */
-    private final TethysScrollMenu<S, ?> theMenu;
+    private final TethysScrollMenu<S> theMenu;
 
     /**
      * The ItemType.
@@ -151,7 +149,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     /**
      * The Error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * Constructor.
@@ -162,10 +160,10 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
      * @param pItemType the item type
      * @param pListClass the list class
      */
-    public PrometheusStaticDataTable(final DataControl<?, E, JComponent, Icon> pControl,
+    public PrometheusStaticDataTable(final DataControl<?, E> pControl,
                                      final UpdateSet<E> pUpdateSet,
                                      final JOceanusSwingUtilitySet pUtilitySet,
-                                     final MetisErrorPanel<JComponent, Icon> pError,
+                                     final MetisErrorPanel pError,
                                      final E pItemType,
                                      final Class<L> pListClass) {
         /* initialise the underlying class */
@@ -209,7 +207,7 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(super.getNode());
+        thePanel.add(super.getNode().getNode());
 
         /* Add listeners */
         final TethysEventRegistrar<TethysUIEvent> myRegistrar = theNewButton.getEventRegistrar();
@@ -220,8 +218,8 @@ public class PrometheusStaticDataTable<L extends StaticList<T, S, E>, T extends 
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**

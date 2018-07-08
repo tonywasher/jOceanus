@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager.TethysFXTableDateColumn;
@@ -69,14 +70,14 @@ public class TethysFXTableExample
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<?, ?> theHelper;
-    
+    private final TethysScrollUITestHelper theHelper;
+
     /**
      * Constructor.
      */
     public TethysFXTableExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create test Data */
         final ObservableList<TethysFXTableItem> myData = FXCollections.observableArrayList(p -> new Observable[]
@@ -221,7 +222,7 @@ public class TethysFXTableExample
         final BorderPane myPane = new BorderPane();
         final Scene myScene = new Scene(myPane);
         theGuiFactory.registerScene(myScene);
-        myPane.setCenter(theTable.getNode());
+        myPane.setCenter(TethysFXNode.getNode(theTable));
         pStage.setTitle("JavaFXTable Demo");
         pStage.setScene(myScene);
         pStage.show();

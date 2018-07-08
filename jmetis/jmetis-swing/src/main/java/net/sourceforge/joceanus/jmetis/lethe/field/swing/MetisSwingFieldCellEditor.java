@@ -29,7 +29,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -47,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -304,7 +304,7 @@ public final class MetisSwingFieldCellEditor {
             theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
-            return theButton.getNode();
+            return TethysSwingNode.getComponent(theButton);
         }
 
         @Override
@@ -338,7 +338,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                final Rectangle myRect = theButton.getNode().getBounds();
+                final Rectangle myRect = TethysSwingNode.getComponent(theButton).getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -416,7 +416,7 @@ public final class MetisSwingFieldCellEditor {
          * Set Menu configurator.
          * @param pConfigurator the configurator
          */
-        public void setMenuConfigurator(final BiConsumer<Integer, TethysScrollMenu<T, Icon>> pConfigurator) {
+        public void setMenuConfigurator(final BiConsumer<Integer, TethysScrollMenu<T>> pConfigurator) {
             theButton.setMenuConfigurator(c -> pConfigurator.accept(thePoint.y, c));
         }
 
@@ -448,7 +448,7 @@ public final class MetisSwingFieldCellEditor {
             theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
-            return theButton.getNode();
+            return TethysSwingNode.getComponent(theButton);
         }
 
         @Override
@@ -480,7 +480,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                final Rectangle myRect = theButton.getNode().getBounds();
+                final Rectangle myRect = TethysSwingNode.getComponent(theButton).getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -585,7 +585,7 @@ public final class MetisSwingFieldCellEditor {
             theTable.addMouseListener(theMouseListener);
 
             /* Return the button */
-            return theButton.getNode();
+            return TethysSwingNode.getComponent(theButton);
         }
 
         @Override
@@ -617,7 +617,7 @@ public final class MetisSwingFieldCellEditor {
                 extends MouseAdapter {
             @Override
             public void mouseReleased(final MouseEvent e) {
-                final Rectangle myRect = theButton.getNode().getBounds();
+                final Rectangle myRect = TethysSwingNode.getComponent(theButton).getBounds();
                 if (!myRect.contains(e.getPoint())) {
                     cancelCellEditing();
                 }
@@ -701,7 +701,7 @@ public final class MetisSwingFieldCellEditor {
             theButton.setSelectedDate(theValue);
 
             /* Return the button */
-            return theButton.getNode();
+            return TethysSwingNode.getComponent(theButton);
         }
 
         @Override

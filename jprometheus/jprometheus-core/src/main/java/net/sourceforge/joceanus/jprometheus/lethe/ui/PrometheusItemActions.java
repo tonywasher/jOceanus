@@ -24,6 +24,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
@@ -32,11 +33,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 /**
  * Item Action buttons.
  * @param <G> the goto id type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusItemActions<G extends Enum<G>, N, I>
-        implements TethysEventProvider<PrometheusUIEvent>, TethysNode<N> {
+public class PrometheusItemActions<G extends Enum<G>>
+        implements TethysEventProvider<PrometheusUIEvent>, TethysComponent {
     /**
      * The Border padding.
      */
@@ -55,29 +54,29 @@ public class PrometheusItemActions<G extends Enum<G>, N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The GoTo button.
      */
-    private final TethysScrollButtonManager<PrometheusGoToEvent<G>, N, I> theGoToButton;
+    private final TethysScrollButtonManager<PrometheusGoToEvent<G>> theGoToButton;
 
     /**
      * The Edit button.
      */
-    private final TethysButton<N, I> theEditButton;
+    private final TethysButton theEditButton;
 
     /**
      * The Delete button.
      */
-    private final TethysButton<N, I> theDeleteButton;
+    private final TethysButton theDeleteButton;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pParent the parent
      */
-    public PrometheusItemActions(final TethysGuiFactory<N, I> pFactory,
+    public PrometheusItemActions(final TethysGuiFactory pFactory,
                                  final PrometheusItemEditParent pParent) {
         /* Record the parent */
         theParent = pParent;
@@ -116,7 +115,7 @@ public class PrometheusItemActions<G extends Enum<G>, N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

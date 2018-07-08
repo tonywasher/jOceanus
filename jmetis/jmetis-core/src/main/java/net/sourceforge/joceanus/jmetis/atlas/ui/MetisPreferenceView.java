@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysButton;
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
@@ -46,11 +47,9 @@ import java.util.List;
 
 /**
  * Panel for editing preference Sets.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisPreferenceView<N, I>
-        implements TethysEventProvider<MetisPreferenceEvent>, TethysNode<N> {
+public class MetisPreferenceView
+        implements TethysEventProvider<MetisPreferenceEvent>, TethysComponent {
     /**
      * Text for OK.
      */
@@ -94,54 +93,54 @@ public class MetisPreferenceView<N, I>
     /**
      * The GUI factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The Border Pane.
      */
-    private final TethysBorderPaneManager<N, I> thePane;
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The selection button.
      */
-    private final TethysScrollButtonManager<MetisPreferenceSetView<?, N, I>, N, I> theSelectButton;
+    private final TethysScrollButtonManager<MetisPreferenceSetView<?>> theSelectButton;
 
     /**
      * Preference menu.
      */
-    private final TethysScrollMenu<MetisPreferenceSetView<?, N, I>, I> thePrefMenu;
+    private final TethysScrollMenu<MetisPreferenceSetView<?>> thePrefMenu;
 
     /**
      * The Properties Pane.
      */
-    private final TethysCardPaneManager<N, I, MetisPreferenceSetView<?, N, I>> theProperties;
+    private final TethysCardPaneManager<MetisPreferenceSetView<?>> theProperties;
 
     /**
      * The Buttons Pane.
      */
-    private final TethysBoxPaneManager<N, I> theButtons;
+    private final TethysBoxPaneManager theButtons;
 
     /**
      * The OK button.
      */
-    private final TethysButton<N, I> theOKButton;
+    private final TethysButton theOKButton;
 
     /**
      * The reset button.
      */
-    private final TethysButton<N, I> theResetButton;
+    private final TethysButton theResetButton;
 
     /**
      * The list of views.
      */
-    private final List<MetisPreferenceSetView<?, N, I>> theViews;
+    private final List<MetisPreferenceSetView<?>> theViews;
 
     /**
      * Constructor.
      * @param pFactory the GUI factory
      * @param pPreferenceMgr the preference manager
      */
-    public MetisPreferenceView(final TethysGuiFactory<N, I> pFactory,
+    public MetisPreferenceView(final TethysGuiFactory pFactory,
                                final MetisPreferenceManager pPreferenceMgr) {
         /* Store parameters */
         theGuiFactory = pFactory;
@@ -186,12 +185,12 @@ public class MetisPreferenceView<N, I>
         pPreferenceMgr.getEventRegistrar().addEventListener(this::handleNewPropertySet);
 
         /* Create selection button and label */
-        final TethysLabel<N, I> myLabel = theGuiFactory.newLabel(NLS_SET);
+        final TethysLabel myLabel = theGuiFactory.newLabel(NLS_SET);
         theSelectButton = pFactory.newScrollButton();
         thePrefMenu = theSelectButton.getMenu();
 
         /* Create the selection panel */
-        final TethysBoxPaneManager<N, I> mySelection = theGuiFactory.newHBoxPane();
+        final TethysBoxPaneManager mySelection = theGuiFactory.newHBoxPane();
         mySelection.setBorderTitle(NLS_SELECT);
 
         /* Create the layout for the selection panel */
@@ -205,7 +204,7 @@ public class MetisPreferenceView<N, I>
         theSelectButton.setMenuConfigurator(c -> buildPreferenceMenu());
 
         /* Create a new Scroll Pane and add the card to it */
-        final TethysScrollPaneManager<N, I> myScrollPane = theGuiFactory.newScrollPane();
+        final TethysScrollPaneManager myScrollPane = theGuiFactory.newScrollPane();
         myScrollPane.setContent(theProperties);
 
         /* Create the border pane */
@@ -225,7 +224,7 @@ public class MetisPreferenceView<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePane.getNode();
     }
 
@@ -248,7 +247,7 @@ public class MetisPreferenceView<N, I>
      * handle propertySetSelect event.
      */
     private void handlePropertySetSelect() {
-        final MetisPreferenceSetView<?, N, I> myView = theSelectButton.getValue();
+        final MetisPreferenceSetView<?> myView = theSelectButton.getValue();
         theProperties.selectCard(myView.toString());
     }
 
@@ -275,7 +274,7 @@ public class MetisPreferenceView<N, I>
         /* Ignore hidden sets */
         if (!pSet.isHidden()) {
             /* Create the underlying view */
-            final MetisPreferenceSetView<?, N, I> myView = new MetisPreferenceSetView<>(theGuiFactory, pSet);
+            final MetisPreferenceSetView<?> myView = new MetisPreferenceSetView<>(theGuiFactory, pSet);
 
             /* Add the view */
             theProperties.addCard(myView.toString(), myView);
@@ -294,7 +293,7 @@ public class MetisPreferenceView<N, I>
      */
     public void determineFocus() {
         /* Request the focus */
-        final MetisPreferenceSetView<?, N, I> myPanel = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?> myPanel = theProperties.getActiveCard();
         if (myPanel != null) {
             myPanel.determineFocus();
         }
@@ -305,7 +304,7 @@ public class MetisPreferenceView<N, I>
      * @return true/false
      */
     public boolean hasUpdates() {
-        final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
         return (myView != null)
                && myView.hasChanges();
     }
@@ -323,7 +322,7 @@ public class MetisPreferenceView<N, I>
      */
     private void saveUpdates() {
         try {
-            final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+            final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
             myView.storeChanges();
         } catch (OceanusException e) {
             LOGGER.error(ERROR_STORE, e);
@@ -341,7 +340,7 @@ public class MetisPreferenceView<N, I>
      */
     private void resetUpdates() {
         /* Reset all changes */
-        final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
         myView.resetChanges();
 
         /* Set correct visibility */
@@ -356,7 +355,7 @@ public class MetisPreferenceView<N, I>
      */
     private void setVisibility() {
         /* Enable selection */
-        final MetisPreferenceSetView<?, N, I> myView = theProperties.getActiveCard();
+        final MetisPreferenceSetView<?> myView = theProperties.getActiveCard();
         theSelectButton.setEnabled((myView != null)
                                    && !myView.hasChanges());
 
@@ -385,9 +384,9 @@ public class MetisPreferenceView<N, I>
         final String myActiveName = theProperties.getActiveName();
 
         /* Loop through the views */
-        final Iterator<MetisPreferenceSetView<?, N, I>> myIterator = theViews.iterator();
+        final Iterator<MetisPreferenceSetView<?>> myIterator = theViews.iterator();
         while (myIterator.hasNext()) {
-            final MetisPreferenceSetView<?, N, I> myView = myIterator.next();
+            final MetisPreferenceSetView<?> myView = myIterator.next();
 
             /* Create a new MenuItem and add it to the popUp */
             final TethysScrollMenuItem<?> myItem = thePrefMenu.addItem(myView);

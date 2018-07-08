@@ -82,7 +82,7 @@ public class UpdateSet<E extends Enum<E>>
     /**
      * The DataControl.
      */
-    private final DataControl<?, E, ?, ?> theControl;
+    private final DataControl<?, E> theControl;
 
     /**
      * The version.
@@ -99,7 +99,7 @@ public class UpdateSet<E extends Enum<E>>
      * @param pControl the Data Control
      * @param pClass the enum class
      */
-    public UpdateSet(final DataControl<?, E, ?, ?> pControl,
+    public UpdateSet(final DataControl<?, E> pControl,
                      final Class<E> pClass) {
         /* Store the Control */
         theControl = pControl;
@@ -556,7 +556,7 @@ public class UpdateSet<E extends Enum<E>>
      * @param pError the error panel
      */
     public void processCommand(final PrometheusUIEvent pCmd,
-                               final MetisErrorPanel<?, ?> pError) {
+                               final MetisErrorPanel pError) {
         /* Create a new profile */
         final MetisProfile myTask = theControl.getNewProfile("EditCommand");
 
@@ -595,7 +595,7 @@ public class UpdateSet<E extends Enum<E>>
      */
     public void processEditCommand(final PrometheusUIEvent pCmd,
                                    final int pVersion,
-                                   final MetisErrorPanel<?, ?> pError) {
+                                   final MetisErrorPanel pError) {
         /* Create a new profile */
         final MetisProfile myTask = theControl.getNewProfile("ItemCommand");
 

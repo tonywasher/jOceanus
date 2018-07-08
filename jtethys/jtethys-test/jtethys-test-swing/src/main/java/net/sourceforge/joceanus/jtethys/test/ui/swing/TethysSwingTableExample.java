@@ -34,6 +34,7 @@ import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper;
 import net.sourceforge.joceanus.jtethys.test.ui.TethysScrollUITestHelper.IconState;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableCharArrayColumn;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager.TethysSwingTableDateColumn;
@@ -73,7 +74,7 @@ public class TethysSwingTableExample {
      * Logger.
      */
     private static final Logger LOGGER = LogManager.getLogger(TethysSwingTableExample.class);
-    
+
     /**
      * The GUI Factory.
      */
@@ -87,14 +88,14 @@ public class TethysSwingTableExample {
     /**
      * The Test helper.
      */
-    private final TethysScrollUITestHelper<?, ?> theHelper;
+    private final TethysScrollUITestHelper theHelper;
 
     /**
      * Constructor.
      */
     public TethysSwingTableExample() {
         /* Create helper */
-        theHelper = new TethysScrollUITestHelper<>();
+        theHelper = new TethysScrollUITestHelper();
 
         /* Create test Data */
         final List<TethysSwingTableItem> myData = new ArrayList<>();
@@ -105,7 +106,7 @@ public class TethysSwingTableExample {
         /* Create tableView */
         theTable = theGuiFactory.newTable();
         theTable.setItems(myData);
-        theTable.getNode().setPreferredSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
+        TethysSwingNode.getComponent(theTable).setPreferredSize(new Dimension(SCROLL_WIDTH, SCROLL_HEIGHT));
         theTable.setRepaintRowOnCommit(true);
         theTable.setComparator((l, r) -> l.getName().compareTo(r.getName()));
         theTable.setOnCommit(TethysSwingTableItem::incrementUpdates);
@@ -227,7 +228,7 @@ public class TethysSwingTableExample {
      * @param args the arguments
      */
     public static void main(final String[] args) {
-        SwingUtilities.invokeLater(() -> createAndShowGUI());
+        SwingUtilities.invokeLater(TethysSwingTableExample::createAndShowGUI);
     }
 
     /**
@@ -245,7 +246,7 @@ public class TethysSwingTableExample {
             final TethysSwingTableExample myExample = new TethysSwingTableExample();
 
             /* Build the panel */
-            final JComponent myPanel = myExample.theTable.getNode();
+            final JComponent myPanel = TethysSwingNode.getComponent(myExample.theTable);
 
             /* Attach the panel to the frame */
             myPanel.setOpaque(true);

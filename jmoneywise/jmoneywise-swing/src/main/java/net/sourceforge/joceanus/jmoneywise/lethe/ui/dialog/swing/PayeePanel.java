@@ -19,9 +19,6 @@ package net.sourceforge.joceanus.jmoneywise.lethe.ui.dialog.swing;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -69,7 +66,7 @@ public class PayeePanel
     public PayeePanel(final TethysSwingGuiFactory pFactory,
                       final MetisSwingFieldManager pFieldMgr,
                       final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                      final MetisErrorPanel<JComponent, Icon> pError) {
+                      final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -298,7 +295,7 @@ public class PayeePanel
      * @param pMenu the menu
      * @param pPayee the payee to build for
      */
-    public void buildPayeeTypeMenu(final TethysScrollMenu<PayeeType, Icon> pMenu,
+    public void buildPayeeTypeMenu(final TethysScrollMenu<PayeeType> pMenu,
                                    final Payee pPayee) {
         /* Clear the menu */
         pMenu.removeAllItems();

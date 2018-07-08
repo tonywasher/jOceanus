@@ -37,7 +37,7 @@ public class TethysFXMenuBarManager
     /**
      * Constructor.
      */
-    public TethysFXMenuBarManager() {
+    TethysFXMenuBarManager() {
         theMenuBar = new MenuBar();
     }
 

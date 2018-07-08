@@ -35,10 +35,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * Thread Manager.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class MetisThreadManager<N, I>
+public abstract class MetisThreadManager
         implements TethysEventProvider<MetisThreadEvent>, MetisThreadStatusReport {
     /**
      * Thread Executor.
@@ -53,12 +51,12 @@ public abstract class MetisThreadManager<N, I>
     /**
      * The Toolkit.
      */
-    private final MetisToolkit<N, I> theToolkit;
+    private final MetisToolkit theToolkit;
 
     /**
      * The StatusManager.
      */
-    private final MetisThreadStatusManager<N> theStatusManager;
+    private final MetisThreadStatusManager theStatusManager;
 
     /**
      * The status data.
@@ -78,7 +76,7 @@ public abstract class MetisThreadManager<N, I>
     /**
      * The Active thread.
      */
-    private MetisThread<?, N, I> theThread;
+    private MetisThread<?> theThread;
 
     /**
      * The Active Profile.
@@ -100,7 +98,7 @@ public abstract class MetisThreadManager<N, I>
      * @param pToolkit the toolkit
      * @param pSlider use slider status
      */
-    protected MetisThreadManager(final MetisToolkit<N, I> pToolkit,
+    protected MetisThreadManager(final MetisToolkit pToolkit,
                                  final boolean pSlider) {
         /* record parameters */
         theToolkit = pToolkit;
@@ -142,7 +140,7 @@ public abstract class MetisThreadManager<N, I>
      * Obtain the status manager.
      * @return the status Manager
      */
-    public MetisThreadStatusManager<N> getStatusManager() {
+    public MetisThreadStatusManager getStatusManager() {
         return theStatusManager;
     }
 
@@ -150,7 +148,7 @@ public abstract class MetisThreadManager<N, I>
      * Obtain the GUI factory.
      * @return the factory
      */
-    public TethysGuiFactory<N, I> getGuiFactory() {
+    public TethysGuiFactory getGuiFactory() {
         return theToolkit.getGuiFactory();
     }
 
@@ -173,7 +171,7 @@ public abstract class MetisThreadManager<N, I>
      * @param <T> the thread result
      * @param pThread the thread to start
      */
-    public <T> void startThread(final MetisThread<T, N, I> pThread) {
+    public <T> void startThread(final MetisThread<T> pThread) {
         /* Set new profile */
         final String myName = pThread.getTaskName();
         setNewProfile(myName);
@@ -224,14 +222,14 @@ public abstract class MetisThreadManager<N, I>
      * @param pThread the thread to wrap
      * @return the runnable thread
      */
-    protected abstract <T> Runnable wrapThread(MetisThread<T, N, I> pThread);
+    protected abstract <T> Runnable wrapThread(MetisThread<T> pThread);
 
     /**
      * Register thread completion.
      */
     protected void threadCompleted() {
         /* Remove reference */
-        final MetisThread<?, N, I> myThread = theThread;
+        final MetisThread<?> myThread = theThread;
         theThread = null;
 
         /* Note that thread has completed */

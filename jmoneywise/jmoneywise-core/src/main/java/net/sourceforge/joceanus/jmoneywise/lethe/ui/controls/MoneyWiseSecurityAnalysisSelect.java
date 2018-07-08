@@ -33,6 +33,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
+import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
@@ -40,11 +41,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Security Analysis Selection.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public class MoneyWiseSecurityAnalysisSelect<N, I>
-        implements MoneyWiseAnalysisFilterSelection<N>, TethysEventProvider<PrometheusDataEvent> {
+public class MoneyWiseSecurityAnalysisSelect
+        implements MoneyWiseAnalysisFilterSelection, TethysEventProvider<PrometheusDataEvent> {
     /**
      * Text for Portfolio Label.
      */
@@ -63,27 +62,27 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
     /**
      * The panel.
      */
-    private final TethysBoxPaneManager<N, I> thePanel;
+    private final TethysBoxPaneManager thePanel;
 
     /**
      * The security button.
      */
-    private final TethysScrollButtonManager<SecurityBucket, N, I> theSecButton;
+    private final TethysScrollButtonManager<SecurityBucket> theSecButton;
 
     /**
      * The portfolio button.
      */
-    private final TethysScrollButtonManager<PortfolioBucket, N, I> thePortButton;
+    private final TethysScrollButtonManager<PortfolioBucket> thePortButton;
 
     /**
      * Portfolio menu.
      */
-    private final TethysScrollMenu<PortfolioBucket, I> thePortfolioMenu;
+    private final TethysScrollMenu<PortfolioBucket> thePortfolioMenu;
 
     /**
      * Security menu.
      */
-    private final TethysScrollMenu<SecurityBucket, I> theSecurityMenu;
+    private final TethysScrollMenu<SecurityBucket> theSecurityMenu;
 
     /**
      * The active portfolio bucket list.
@@ -104,7 +103,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected MoneyWiseSecurityAnalysisSelect(final TethysGuiFactory<N, I> pFactory) {
+    protected MoneyWiseSecurityAnalysisSelect(final TethysGuiFactory pFactory) {
         /* Create the security button */
         theSecButton = pFactory.newScrollButton();
 
@@ -115,8 +114,8 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
         theEventManager = new TethysEventManager<>();
 
         /* Create the labels */
-        final TethysLabel<N, I> myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
-        final TethysLabel<N, I> mySecLabel = pFactory.newLabel(NLS_SECURITY + TethysLabel.STR_COLON);
+        final TethysLabel myPortLabel = pFactory.newLabel(NLS_PORTFOLIO + TethysLabel.STR_COLON);
+        final TethysLabel mySecLabel = pFactory.newLabel(NLS_SECURITY + TethysLabel.STR_COLON);
 
         /* Define the layout */
         thePanel = pFactory.newHBoxPane();
@@ -150,7 +149,7 @@ public class MoneyWiseSecurityAnalysisSelect<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePanel.getNode();
     }
 

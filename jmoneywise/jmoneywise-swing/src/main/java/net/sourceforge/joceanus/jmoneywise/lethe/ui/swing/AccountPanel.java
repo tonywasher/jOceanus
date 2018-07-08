@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
@@ -45,7 +42,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBorderPaneManager;
@@ -53,13 +50,14 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingBoxPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
  * Top-level panel for Accounts.
  */
 public class AccountPanel
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Strut width.
      */
@@ -103,7 +101,7 @@ public class AccountPanel
     /**
      * The card panel.
      */
-    private final TethysSwingCardPaneManager<TethysNode<JComponent>> theCardPanel;
+    private final TethysSwingCardPaneManager<TethysComponent> theCardPanel;
 
     /**
      * The select panel.
@@ -113,7 +111,7 @@ public class AccountPanel
     /**
      * The filter card panel.
      */
-    private final TethysSwingCardPaneManager<TethysNode<JComponent>> theFilterCardPanel;
+    private final TethysSwingCardPaneManager<TethysComponent> theFilterCardPanel;
 
     /**
      * Deposit Table.
@@ -158,12 +156,12 @@ public class AccountPanel
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The action buttons panel.
      */
-    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
+    private final PrometheusActionButtons theActionButtons;
 
     /**
      * Are we refreshing?
@@ -205,7 +203,7 @@ public class AccountPanel
         theError = pView.getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the table panels */
         thePayeeTable = new PayeeTable(pView, theUpdateSet, theError);
@@ -304,7 +302,7 @@ public class AccountPanel
     }
 
     @Override
-    public JComponent getNode() {
+    public TethysSwingNode getNode() {
         return thePanel.getNode();
     }
 
@@ -325,7 +323,7 @@ public class AccountPanel
      */
     private void buildSelectMenu() {
         /* Create builder */
-        final TethysScrollMenu<PanelName, ?> myMenu = theSelectButton.getMenu();
+        final TethysScrollMenu<PanelName> myMenu = theSelectButton.getMenu();
 
         /* Loop through the panels */
         for (PanelName myPanel : PanelName.values()) {

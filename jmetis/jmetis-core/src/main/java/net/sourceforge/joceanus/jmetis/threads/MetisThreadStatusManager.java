@@ -16,14 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Thread Status Manager.
- * @param <N> the node type
  */
-public interface MetisThreadStatusManager<N>
-        extends TethysNode<N> {
+public interface MetisThreadStatusManager
+        extends TethysComponent {
     /**
      * set Progress.
      * @param pStatus the status to apply

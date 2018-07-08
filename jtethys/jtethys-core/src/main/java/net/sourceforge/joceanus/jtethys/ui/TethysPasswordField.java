@@ -22,11 +22,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Password Field.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysPasswordField<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysPasswordField
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The Bullet character.
      */
@@ -56,7 +54,7 @@ public abstract class TethysPasswordField<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysPasswordField(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysPasswordField(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
     }

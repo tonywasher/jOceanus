@@ -45,12 +45,13 @@ import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel.TethysFi
 import net.sourceforge.joceanus.jmetis.lethe.field.MetisLetheFieldModel.TethysFieldModelString;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDataTextField.TethysSwingStringTextField;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIconButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingListButtonManager;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTextArea;
@@ -177,8 +178,8 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
                                                                                                final TethysSwingScrollPaneManager pScrollPane,
                                                                                                final MetisDataType pClass) {
         /* Split into scrollPane and child */
-        final JScrollPane myScroll = (JScrollPane) pScrollPane.getNode();
-        final TethysNode<JComponent> myComp = pScrollPane.getContent();
+        final JScrollPane myScroll = (JScrollPane) TethysSwingNode.getComponent(pScrollPane);
+        final TethysComponent myComp = pScrollPane.getContent();
 
         /* Handle invalid child */
         if (myComp == null) {
@@ -521,7 +522,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
         private MetisFieldArea(final TethysSwingTextArea pComponent,
                                final TethysFieldModelString<T> pModel) {
             /* Call super-constructor */
-            super(pComponent.getNode(), pModel);
+            super(TethysSwingNode.getComponent(pComponent), pModel);
 
             /* Store parameters */
             theComponent = getUnderlyingComponent();
@@ -643,7 +644,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
         protected MetisFieldDate(final TethysSwingDateButtonManager pComponent,
                                  final TethysFieldModelDate<T> pModel) {
             /* Call super-constructor */
-            super(pComponent.getNode(), pModel);
+            super(TethysSwingNode.getComponent(pComponent), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
@@ -689,7 +690,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
         protected MetisFieldScrollButton(final TethysSwingScrollButtonManager<I> pComponent,
                                          final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
-            super(pComponent.getNode(), pModel);
+            super(TethysSwingNode.getComponent(pComponent), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
@@ -738,7 +739,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
         protected MetisFieldScrollListButton(final TethysSwingListButtonManager<I> pComponent,
                                              final TethysFieldModelObjectList<I, T> pModel) {
             /* Call super-constructor */
-            super(pComponent.getNode(), pModel);
+            super(TethysSwingNode.getComponent(pComponent), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
@@ -786,7 +787,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
         protected MetisFieldIconButton(final TethysSwingIconButtonManager<I> pComponent,
                                        final TethysFieldModelObject<I, T> pModel) {
             /* Call super-constructor */
-            super(pComponent.getNode(), pModel);
+            super(TethysSwingNode.getComponent(pComponent), pModel);
 
             /* Store parameters */
             theComponent = pComponent;
@@ -803,7 +804,7 @@ public abstract class MetisSwingFieldComponent<T extends MetisFieldSetItem> {
 
             /* Display it */
             theComponent.setValue(myValue);
-            final Icon myIcon = ((JButton) theComponent.getNode()).getIcon();
+            final Icon myIcon = ((JButton) TethysSwingNode.getComponent(theComponent)).getIcon();
             if (myIcon != null) {
                 getReadOnlyLabel().setIcon(myIcon);
             }

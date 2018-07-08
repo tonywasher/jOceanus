@@ -17,20 +17,22 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Swing BorderPane Manager.
  */
 public class TethysSwingBorderPaneManager
-        extends TethysBorderPaneManager<JComponent, Icon> {
+        extends TethysBorderPaneManager {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The BorderPane.
      */
@@ -45,7 +47,7 @@ public class TethysSwingBorderPaneManager
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysSwingBorderPaneManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingBorderPaneManager(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
@@ -57,11 +59,14 @@ public class TethysSwingBorderPaneManager
         /* Create the panel */
         thePanel = new JPanel();
         thePanel.setLayout(theLayout);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(thePanel);
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -82,38 +87,38 @@ public class TethysSwingBorderPaneManager
     }
 
     @Override
-    public void setCentre(final TethysNode<JComponent> pNode) {
+    public void setCentre(final TethysComponent pNode) {
         super.setCentre(pNode);
         addNodeAtLocation(pNode, TethysBorderLocation.CENTRE);
     }
 
     @Override
-    public void setNorth(final TethysNode<JComponent> pNode) {
+    public void setNorth(final TethysComponent pNode) {
         super.setNorth(pNode);
         addNodeAtLocation(pNode, TethysBorderLocation.NORTH);
     }
 
     @Override
-    public void setSouth(final TethysNode<JComponent> pNode) {
+    public void setSouth(final TethysComponent pNode) {
         super.setSouth(pNode);
         addNodeAtLocation(pNode, TethysBorderLocation.SOUTH);
     }
 
     @Override
-    public void setWest(final TethysNode<JComponent> pNode) {
+    public void setWest(final TethysComponent pNode) {
         super.setWest(pNode);
         addNodeAtLocation(pNode, TethysBorderLocation.WEST);
     }
 
     @Override
-    public void setEast(final TethysNode<JComponent> pNode) {
+    public void setEast(final TethysComponent pNode) {
         super.setEast(pNode);
         addNodeAtLocation(pNode, TethysBorderLocation.EAST);
     }
 
     @Override
-    protected void removeNode(final TethysNode<JComponent> pNode) {
-        thePanel.remove(pNode.getNode());
+    protected void removeNode(final TethysComponent pNode) {
+        thePanel.remove(TethysSwingNode.getComponent(pNode));
         super.removeNode(pNode);
     }
 
@@ -129,10 +134,10 @@ public class TethysSwingBorderPaneManager
      * @param pNode the node
      * @param pLocation the location
      */
-    private void addNodeAtLocation(final TethysNode<JComponent> pNode,
+    private void addNodeAtLocation(final TethysComponent pNode,
                                    final TethysBorderLocation pLocation) {
         if (pNode != null) {
-            thePanel.add(pNode.getNode(), getLayoutForLocation(pLocation));
+            thePanel.add(TethysSwingNode.getComponent(pNode), getLayoutForLocation(pLocation));
         }
     }
 
@@ -159,34 +164,23 @@ public class TethysSwingBorderPaneManager
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

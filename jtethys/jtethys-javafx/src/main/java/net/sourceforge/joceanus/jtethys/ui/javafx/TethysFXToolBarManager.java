@@ -17,12 +17,13 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
+
+import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
 
@@ -30,7 +31,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
  * JavaFX ToolBar Manager.
  */
 public class TethysFXToolBarManager
-        extends TethysToolBarManager<Node, Node> {
+        extends TethysToolBarManager {
+    /**
+     * The Node.
+     */
+    private final TethysFXNode theNode;
+
     /**
      * The ToolBar.
      */
@@ -38,16 +44,18 @@ public class TethysFXToolBarManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the factory
      */
-    public TethysFXToolBarManager(final TethysFXGuiFactory pFactory) {
+    TethysFXToolBarManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theToolBar = new ToolBar();
+        theNode = new TethysFXNode(theToolBar);
     }
 
     @Override
-    public ToolBar getNode() {
-        return theToolBar;
+    public TethysFXNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -74,10 +82,11 @@ public class TethysFXToolBarManager
 
     /**
      * JavaFXIcon.
+     *
      * @param <S> the id type
      */
     public static class TethysFXIconElement<S>
-            extends TethysToolElement<S, Node, Node> {
+            extends TethysToolElement<S> {
         /**
          * The Button.
          */
@@ -85,11 +94,12 @@ public class TethysFXToolBarManager
 
         /**
          * Constructor.
+         *
          * @param pManager the manager
-         * @param pId the Id
+         * @param pId      the Id
          */
-        protected TethysFXIconElement(final TethysFXToolBarManager pManager,
-                                      final S pId) {
+        TethysFXIconElement(final TethysFXToolBarManager pManager,
+                            final S pId) {
             super(pManager, pId);
             theButton = new Button();
             theButton.setOnAction(e -> handlePressed());
@@ -97,6 +107,7 @@ public class TethysFXToolBarManager
 
         /**
          * Obtain the button.
+         *
          * @return the button
          */
         protected Button getButton() {
@@ -126,8 +137,8 @@ public class TethysFXToolBarManager
         @Override
         public void setToolTip(final String pTip) {
             final Tooltip myToolTip = pTip == null
-                                                   ? null
-                                                   : new Tooltip(pTip);
+                                      ? null
+                                      : new Tooltip(pTip);
             theButton.setTooltip(myToolTip);
         }
 
@@ -137,8 +148,8 @@ public class TethysFXToolBarManager
         }
 
         @Override
-        public void setIcon(final Node pIcon) {
-            theButton.setGraphic(pIcon);
+        public void setIcon(final TethysIcon pIcon) {
+            theButton.setGraphic(TethysFXIcon.getIcon(pIcon));
         }
 
         @Override

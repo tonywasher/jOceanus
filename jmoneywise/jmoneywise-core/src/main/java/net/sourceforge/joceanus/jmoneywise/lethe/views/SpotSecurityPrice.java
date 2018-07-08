@@ -93,7 +93,7 @@ public final class SpotSecurityPrice
      * @param pList the Spot Price List
      * @param pSecurity the price for the date
      */
-    private SpotSecurityPrice(final SpotSecurityList<?, ?> pList,
+    private SpotSecurityPrice(final SpotSecurityList pList,
                               final Security pSecurity) {
         super(pList);
 
@@ -226,10 +226,8 @@ public final class SpotSecurityPrice
 
     /**
      * The Spot Prices List class.
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class SpotSecurityList<N, I>
+    public static class SpotSecurityList
             extends SecurityPriceBaseList<SpotSecurityPrice> {
         /**
          * Report fields.
@@ -255,7 +253,7 @@ public final class SpotSecurityPrice
         /**
          * The view.
          */
-        private final View<N, I> theView;
+        private final View theView;
 
         /**
          * The portfolio.
@@ -278,7 +276,7 @@ public final class SpotSecurityPrice
          * @param pPortfolio the portfolio
          * @param pDate the date
          */
-        public SpotSecurityList(final View<N, I> pView,
+        public SpotSecurityList(final View pView,
                                 final Portfolio pPortfolio,
                                 final TethysDate pDate) {
             /* Build initial list */
@@ -385,7 +383,7 @@ public final class SpotSecurityPrice
         }
 
         @Override
-        protected SpotSecurityList<N, I> getEmptyList(final ListStyle pStyle) {
+        protected SpotSecurityList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 

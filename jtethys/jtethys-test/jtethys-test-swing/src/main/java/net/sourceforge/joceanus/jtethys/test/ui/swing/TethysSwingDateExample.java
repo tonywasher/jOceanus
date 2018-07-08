@@ -44,6 +44,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollContextMenu;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTableManager;
@@ -217,7 +218,7 @@ public class TethysSwingDateExample {
 
             /* Create the panel */
             final TethysSwingGridPaneManager myPanel = myProgram.makePanel();
-            final JComponent myNode = myPanel.getNode();
+            final JComponent myNode = TethysSwingNode.getComponent(myPanel);
 
             /* Attach the panel to the frame */
             myNode.setOpaque(true);

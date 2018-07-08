@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadCancelException;
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -29,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * Swing Thread manager.
  */
 public class MetisSwingThreadManager
-        extends MetisThreadManager<JComponent, Icon> {
+        extends MetisThreadManager {
     /**
      * The Toolkit.
      */
@@ -59,7 +56,7 @@ public class MetisSwingThreadManager
     }
 
     @Override
-    protected <T> Runnable wrapThread(final MetisThread<T, JComponent, Icon> pThread) {
+    protected <T> Runnable wrapThread(final MetisThread<T> pThread) {
         /* Create the wrapped thread and listen to state transition */
         theWorker = new MetisSwingThread<>(theToolkit, pThread);
 

@@ -30,6 +30,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import net.sourceforge.joceanus.jtethys.TethysLogConfig;
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
@@ -45,6 +46,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXDateRangeSelector;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXLabel;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXScrollContextMenu;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTableManager;
@@ -211,7 +213,7 @@ public final class TethysFXDateExample
     @Override
     public void start(final Stage pStage) {
         final TethysFXGridPaneManager myGrid = makePanel();
-        final Scene myScene = new Scene(myGrid.getNode());
+        final Scene myScene = new Scene((Region) TethysFXNode.getNode(myGrid));
         theGuiFactory.registerScene(myScene);
         pStage.setTitle("TethysDate JavaFX Demo");
         pStage.setScene(myScene);

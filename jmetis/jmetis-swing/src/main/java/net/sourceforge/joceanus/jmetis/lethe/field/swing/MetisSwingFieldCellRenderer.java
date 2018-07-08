@@ -32,9 +32,11 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateFormatter;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimal;
 import net.sourceforge.joceanus.jtethys.decimal.TethysDecimalFormatter;
+import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingIcon;
 
 /**
  * Cell renderers.
@@ -206,7 +208,7 @@ public final class MetisSwingFieldCellRenderer {
         /**
          * The iconMap.
          */
-        private final transient Map<TethysIconId, Icon> theIconMap;
+        private final transient Map<TethysIconId, TethysIcon> theIconMap;
 
         /**
          * The MapSet supplier.
@@ -308,12 +310,12 @@ public final class MetisSwingFieldCellRenderer {
             }
 
             /* Look up icon */
-            Icon myIcon = theIconMap.get(pIconId);
+            TethysIcon myIcon = theIconMap.get(pIconId);
             if (myIcon == null) {
                 myIcon = theFactory.resolveIcon(pIconId, TethysIconId.DEFAULT_ICONWIDTH);
                 theIconMap.put(pIconId, myIcon);
             }
-            return myIcon;
+            return TethysSwingIcon.getIcon(myIcon);
         }
     }
 

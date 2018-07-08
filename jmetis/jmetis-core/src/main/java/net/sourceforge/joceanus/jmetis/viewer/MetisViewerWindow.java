@@ -35,10 +35,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * Viewer Manager class, responsible for displaying the debug view.
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public abstract class MetisViewerWindow<N, I>
+public abstract class MetisViewerWindow
         implements TethysEventProvider<TethysUIEvent> {
     /**
      * The Name of the current page.
@@ -68,17 +66,17 @@ public abstract class MetisViewerWindow<N, I>
     /**
      * The split tree.
      */
-    private final TethysSplitTreeManager<MetisViewerEntry, N, I> theSplitTree;
+    private final TethysSplitTreeManager<MetisViewerEntry> theSplitTree;
 
     /**
      * The tree manager.
      */
-    private final TethysTreeManager<MetisViewerEntry, N, I> theTree;
+    private final TethysTreeManager<MetisViewerEntry> theTree;
 
     /**
      * The HTML manager.
      */
-    private final TethysHTMLManager<N, I> theHtml;
+    private final TethysHTMLManager theHtml;
 
     /**
      * The Formatter.
@@ -93,7 +91,7 @@ public abstract class MetisViewerWindow<N, I>
     /**
      * The Control Window.
      */
-    private final MetisViewerControl<N, I> theControl;
+    private final MetisViewerControl theControl;
 
     /**
      * The Active page.
@@ -106,7 +104,7 @@ public abstract class MetisViewerWindow<N, I>
      * @param pDataManager the viewer data manager
      * @throws OceanusException on error
      */
-    protected MetisViewerWindow(final TethysGuiFactory<N, I> pFactory,
+    protected MetisViewerWindow(final TethysGuiFactory pFactory,
                                 final MetisViewerManager pDataManager) throws OceanusException {
         /* Record the data manager */
         theDataManager = pDataManager;
@@ -120,7 +118,7 @@ public abstract class MetisViewerWindow<N, I>
         theHtml = theSplitTree.getHTMLManager();
 
         /* Create the Control */
-        theControl = new MetisViewerControl<>(pFactory, this);
+        theControl = new MetisViewerControl(pFactory, this);
         theSplitTree.setControlPane(theControl);
 
         /* Create the registration lists */
@@ -148,7 +146,7 @@ public abstract class MetisViewerWindow<N, I>
      * Obtain the SplitTree Manager.
      * @return the tree manager
      */
-    public TethysSplitTreeManager<MetisViewerEntry, N, I> getSplitTreeManager() {
+    public TethysSplitTreeManager<MetisViewerEntry> getSplitTreeManager() {
         return theSplitTree;
     }
 
@@ -156,7 +154,7 @@ public abstract class MetisViewerWindow<N, I>
      * Obtain the Tree Manager.
      * @return the tree manager
      */
-    public TethysTreeManager<MetisViewerEntry, N, I> getTreeManager() {
+    public TethysTreeManager<MetisViewerEntry> getTreeManager() {
         return theTree;
     }
 
@@ -164,7 +162,7 @@ public abstract class MetisViewerWindow<N, I>
      * Obtain the HTML Manager.
      * @return the HTML manager
      */
-    public TethysHTMLManager<N, I> getHTMLManager() {
+    public TethysHTMLManager getHTMLManager() {
         return theHtml;
     }
 
@@ -183,7 +181,7 @@ public abstract class MetisViewerWindow<N, I>
             final MetisViewerEntry myEntry = myIterator.next();
 
             /* Create a new root entry */
-            final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
+            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.addRootItem(myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */
@@ -227,7 +225,7 @@ public abstract class MetisViewerWindow<N, I>
      * create child items.
      * @param pItem the parent of the child items
      */
-    private void createChildEntries(final TethysTreeItem<MetisViewerEntry, N, I> pItem) {
+    private void createChildEntries(final TethysTreeItem<MetisViewerEntry> pItem) {
         /* Access the item */
         final MetisViewerEntry myItem = pItem.getItem();
 
@@ -237,7 +235,7 @@ public abstract class MetisViewerWindow<N, I>
             final MetisViewerEntry myEntry = myIterator.next();
 
             /* Create a new child entry */
-            final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.addChildItem(pItem, myEntry.getUniqueName(), myEntry);
+            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.addChildItem(pItem, myEntry.getUniqueName(), myEntry);
             myTreeItem.setVisible(myEntry.isVisible());
 
             /* Create child entries */
@@ -268,7 +266,7 @@ public abstract class MetisViewerWindow<N, I>
     private void handleVisibilityEvent(final TethysEvent<MetisViewerEvent> pEvent) {
         /* Look up item and set visibility */
         final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
-        final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
+        final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
         if (myTreeItem != null) {
             myTreeItem.setVisible(myEntry.isVisible());
         }
@@ -282,7 +280,7 @@ public abstract class MetisViewerWindow<N, I>
         /* Look up item and rebuild */
         final MetisViewerEntry myEntry = pEvent.getDetails(MetisViewerEntry.class);
         final boolean isSelected = myEntry.equals(theTree.getSelectedItem());
-        final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
+        final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.lookUpItem(myEntry.getUniqueName());
 
         /* Remove the children of the item and rebuild them */
         myTreeItem.removeChildren();
@@ -312,7 +310,7 @@ public abstract class MetisViewerWindow<N, I>
             /* else we are a child */
         } else {
             /* Look up the parent and add child */
-            final TethysTreeItem<MetisViewerEntry, N, I> myTreeItem = theTree.lookUpItem(myParent.getUniqueName());
+            final TethysTreeItem<MetisViewerEntry> myTreeItem = theTree.lookUpItem(myParent.getUniqueName());
             theTree.addChildItem(myTreeItem, myEntry.getUniqueName(), myEntry);
         }
     }

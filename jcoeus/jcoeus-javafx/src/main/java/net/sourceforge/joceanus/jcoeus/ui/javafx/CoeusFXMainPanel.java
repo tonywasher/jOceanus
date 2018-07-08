@@ -18,7 +18,6 @@ package net.sourceforge.joceanus.jcoeus.ui.javafx;
 
 import java.util.Arrays;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -31,12 +30,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysProgram;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiUtils;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXMenuBarManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 
 /**
  * Coeus javaFX Main Panel.
  */
 public class CoeusFXMainPanel
-        extends CoeusMainPanel<Node, Node> {
+        extends CoeusMainPanel {
     /**
      * The Toolkit.
      */
@@ -62,7 +62,7 @@ public class CoeusFXMainPanel
         /* Create the borderPane */
         thePane = new BorderPane();
         thePane.setTop(getMenuBar().getNode());
-        thePane.setCenter(getTabs().getNode());
+        thePane.setCenter(TethysFXNode.getNode(getTabs()));
     }
 
     /**

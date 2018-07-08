@@ -17,24 +17,27 @@
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.sourceforge.joceanus.jtethys.ui.TethysBoxPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Swing Box Pane Manager.
  */
 public class TethysSwingBoxPaneManager
-        extends TethysBoxPaneManager<JComponent, Icon> {
+        extends TethysBoxPaneManager {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The Panel.
      */
@@ -64,11 +67,14 @@ public class TethysSwingBoxPaneManager
         /* Create the panel */
         thePanel = new JPanel();
         setLayout(thePanel);
+
+        /* Create the node */
+        theNode = new TethysSwingNode(thePanel);
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -77,9 +83,9 @@ public class TethysSwingBoxPaneManager
     }
 
     @Override
-    public void addNode(final TethysNode<JComponent> pNode) {
+    public void addNode(final TethysComponent pNode) {
         super.addNode(pNode);
-        final JPanel myPanel = createContainer(pNode.getNode());
+        final JPanel myPanel = createContainer(TethysSwingNode.getComponent(pNode));
         theNodeMap.put(pNode.getId(), myPanel);
         thePanel.add(myPanel);
     }
@@ -125,7 +131,7 @@ public class TethysSwingBoxPaneManager
     }
 
     @Override
-    public void setChildVisible(final TethysNode<JComponent> pChild,
+    public void setChildVisible(final TethysComponent pChild,
                                 final boolean pVisible) {
         /* Obtain the required node */
         final JPanel myPanel = theNodeMap.get(pChild.getId());
@@ -138,35 +144,24 @@ public class TethysSwingBoxPaneManager
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(pWidth, myDim.height);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        Dimension myDim = thePanel.getPreferredSize();
-        myDim = new Dimension(myDim.width, pHeight);
-        thePanel.setPreferredSize(myDim);
+        theNode.setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        TethysSwingGuiUtils.setPanelBorder(getBorderTitle(), getBorderPadding(), thePanel);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override

@@ -72,19 +72,17 @@ import net.sourceforge.joceanus.jtethys.ui.TethysTableManager.TethysTableValidat
  * Table Column.
  * @param <T> the value type
  * @param <R> the row type
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
+public abstract class MetisTableColumn<T, R extends MetisFieldTableItem> {
     /**
      * The underlying table.
      */
-    private final MetisTableManager<R, N, I> theTable;
+    private final MetisTableManager<R> theTable;
 
     /**
      * The underlying column.
      */
-    private final TethysTableColumn<T, MetisDataFieldId, R, N, I> theColumn;
+    private final TethysTableColumn<T, MetisDataFieldId, R> theColumn;
 
     /**
      * The underlying field.
@@ -96,8 +94,8 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
      * @param pTable the table
      * @param pColumn the column
      */
-    protected MetisTableColumn(final MetisTableManager<R, N, I> pTable,
-                               final TethysTableColumn<T, MetisDataFieldId, R, N, I> pColumn) {
+    protected MetisTableColumn(final MetisTableManager<R> pTable,
+                               final TethysTableColumn<T, MetisDataFieldId, R> pColumn) {
         /* Store parameters */
         theTable = pTable;
         theColumn = pColumn;
@@ -131,7 +129,7 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
      * Obtain the table.
      * @return the table
      */
-    public MetisTableManager<R, N, I> getTable() {
+    public MetisTableManager<R> getTable() {
         return theTable;
     }
 
@@ -139,7 +137,7 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
      * Obtain the column.
      * @return the column
      */
-    protected TethysTableColumn<T, MetisDataFieldId, R, N, I> getColumn() {
+    protected TethysTableColumn<T, MetisDataFieldId, R> getColumn() {
         return theColumn;
     }
 
@@ -267,25 +265,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * String column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableStringColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<String, R, N, I>
+    public static class MetisTableStringColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<String, R>
             implements TethysTableValidatedColumn<String, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableStringColumn(final MetisTableManager<R, N, I> pTable,
-                                         final TethysTableStringColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableStringColumn(final MetisTableManager<R> pTable,
+                                         final TethysTableStringColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableStringColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableStringColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableStringColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableStringColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -297,25 +293,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * CharArray column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableCharArrayColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<char[], R, N, I>
+    public static class MetisTableCharArrayColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<char[], R>
             implements TethysTableValidatedColumn<char[], R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableCharArrayColumn(final MetisTableManager<R, N, I> pTable,
-                                            final TethysTableCharArrayColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableCharArrayColumn(final MetisTableManager<R> pTable,
+                                            final TethysTableCharArrayColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableCharArrayColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableCharArrayColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableCharArrayColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableCharArrayColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -327,25 +321,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Short column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableShortColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<Short, R, N, I>
+    public static class MetisTableShortColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<Short, R>
             implements TethysTableValidatedColumn<Short, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableShortColumn(final MetisTableManager<R, N, I> pTable,
-                                        final TethysTableShortColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableShortColumn(final MetisTableManager<R> pTable,
+                                        final TethysTableShortColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableShortColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableShortColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableShortColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableShortColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -357,25 +349,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Integer column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableIntegerColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<Integer, R, N, I>
+    public static class MetisTableIntegerColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<Integer, R>
             implements TethysTableValidatedColumn<Integer, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableIntegerColumn(final MetisTableManager<R, N, I> pTable,
-                                          final TethysTableIntegerColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableIntegerColumn(final MetisTableManager<R> pTable,
+                                          final TethysTableIntegerColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableIntegerColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableIntegerColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableIntegerColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableIntegerColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -387,25 +377,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Long column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableLongColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<Long, R, N, I>
+    public static class MetisTableLongColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<Long, R>
             implements TethysTableValidatedColumn<Long, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableLongColumn(final MetisTableManager<R, N, I> pTable,
-                                       final TethysTableLongColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableLongColumn(final MetisTableManager<R> pTable,
+                                       final TethysTableLongColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableLongColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableLongColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableLongColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableLongColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -417,25 +405,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * RawDecimals column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableRawDecimalColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysDecimal, R, N, I>
+    public static class MetisTableRawDecimalColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysDecimal, R>
             implements TethysTableDecimalColumn<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableRawDecimalColumn(final MetisTableManager<R, N, I> pTable,
-                                             final TethysTableRawDecimalColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableRawDecimalColumn(final MetisTableManager<R> pTable,
+                                             final TethysTableRawDecimalColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableRawDecimalColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableRawDecimalColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableRawDecimalColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableRawDecimalColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -452,25 +438,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Money column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableMoneyColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysMoney, R, N, I>
+    public static class MetisTableMoneyColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysMoney, R>
             implements TethysTableCurrencyColumn<TethysMoney, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableMoneyColumn(final MetisTableManager<R, N, I> pTable,
-                                        final TethysTableMoneyColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableMoneyColumn(final MetisTableManager<R> pTable,
+                                        final TethysTableMoneyColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableMoneyColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableMoneyColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableMoneyColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableMoneyColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -487,25 +471,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Price column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTablePriceColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysPrice, R, N, I>
+    public static class MetisTablePriceColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysPrice, R>
             implements TethysTableCurrencyColumn<TethysPrice, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTablePriceColumn(final MetisTableManager<R, N, I> pTable,
-                                        final TethysTablePriceColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTablePriceColumn(final MetisTableManager<R> pTable,
+                                        final TethysTablePriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTablePriceColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTablePriceColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTablePriceColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTablePriceColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -522,25 +504,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Units column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableUnitsColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysUnits, R, N, I>
+    public static class MetisTableUnitsColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysUnits, R>
             implements TethysTableValidatedColumn<TethysUnits, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableUnitsColumn(final MetisTableManager<R, N, I> pTable,
-                                        final TethysTableUnitsColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableUnitsColumn(final MetisTableManager<R> pTable,
+                                        final TethysTableUnitsColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableUnitsColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableUnitsColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableUnitsColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableUnitsColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -552,25 +532,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Rate column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableRateColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysRate, R, N, I>
+    public static class MetisTableRateColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysRate, R>
             implements TethysTableValidatedColumn<TethysRate, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableRateColumn(final MetisTableManager<R, N, I> pTable,
-                                       final TethysTableRateColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableRateColumn(final MetisTableManager<R> pTable,
+                                       final TethysTableRateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableRateColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableRateColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableRateColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableRateColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -582,25 +560,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Ratio column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableRatioColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysRatio, R, N, I>
+    public static class MetisTableRatioColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysRatio, R>
             implements TethysTableValidatedColumn<TethysRatio, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableRatioColumn(final MetisTableManager<R, N, I> pTable,
-                                        final TethysTableRatioColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableRatioColumn(final MetisTableManager<R> pTable,
+                                        final TethysTableRatioColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableRatioColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableRatioColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableRatioColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableRatioColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -612,25 +588,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Dilution column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableDilutionColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysDilution, R, N, I>
+    public static class MetisTableDilutionColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysDilution, R>
             implements TethysTableValidatedColumn<TethysDilution, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableDilutionColumn(final MetisTableManager<R, N, I> pTable,
-                                           final TethysTableDilutionColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableDilutionColumn(final MetisTableManager<R> pTable,
+                                           final TethysTableDilutionColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableDilutionColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableDilutionColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableDilutionColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableDilutionColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -642,25 +616,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * DilutedPrice column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableDilutedPriceColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysDilutedPrice, R, N, I>
+    public static class MetisTableDilutedPriceColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysDilutedPrice, R>
             implements TethysTableCurrencyColumn<TethysDilutedPrice, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableDilutedPriceColumn(final MetisTableManager<R, N, I> pTable,
-                                               final TethysTableDilutedPriceColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableDilutedPriceColumn(final MetisTableManager<R> pTable,
+                                               final TethysTableDilutedPriceColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableDilutedPriceColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableDilutedPriceColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableDilutedPriceColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableDilutedPriceColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -678,25 +650,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
      * Icon column.
      * @param <T> the item type
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableIconColumn<T, R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<T, R, N, I>
+    public static class MetisTableIconColumn<T, R extends MetisFieldTableItem>
+            extends MetisTableColumn<T, R>
             implements TethysTableIconConfig<T, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableIconColumn(final MetisTableManager<R, N, I> pTable,
-                                       final TethysTableIconColumn<T, MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableIconColumn(final MetisTableManager<R> pTable,
+                                       final TethysTableIconColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableIconColumn<T, MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableIconColumn<T, MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableIconColumn<T, MetisDataFieldId, R> getColumn() {
+            return (TethysTableIconColumn<T, MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -708,25 +678,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
     /**
      * Date column.
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableDateColumn<R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<TethysDate, R, N, I>
+    public static class MetisTableDateColumn<R extends MetisFieldTableItem>
+            extends MetisTableColumn<TethysDate, R>
             implements TethysTableDateConfig<R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableDateColumn(final MetisTableManager<R, N, I> pTable,
-                                       final TethysTableDateColumn<MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableDateColumn(final MetisTableManager<R> pTable,
+                                       final TethysTableDateColumn<MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableDateColumn<MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableDateColumn<MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableDateColumn<MetisDataFieldId, R> getColumn() {
+            return (TethysTableDateColumn<MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
@@ -739,29 +707,27 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
      * Scroll column.
      * @param <T> the item type
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableScrollColumn<T, R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<T, R, N, I>
-            implements TethysTableScrollConfig<T, R, I> {
+    public static class MetisTableScrollColumn<T, R extends MetisFieldTableItem>
+            extends MetisTableColumn<T, R>
+            implements TethysTableScrollConfig<T, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableScrollColumn(final MetisTableManager<R, N, I> pTable,
-                                         final TethysTableScrollColumn<T, MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableScrollColumn(final MetisTableManager<R> pTable,
+                                         final TethysTableScrollColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableScrollColumn<T, MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableScrollColumn<T, MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableScrollColumn<T, MetisDataFieldId, R> getColumn() {
+            return (TethysTableScrollColumn<T, MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override
-        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T, I>> pConfigurator) {
+        public void setMenuConfigurator(final BiConsumer<R, TethysScrollMenu<T>> pConfigurator) {
             getColumn().setMenuConfigurator(pConfigurator);
         }
     }
@@ -770,25 +736,23 @@ public abstract class MetisTableColumn<T, R extends MetisFieldTableItem, N, I> {
      * List column.
      * @param <T> the item type
      * @param <R> the row type
-     * @param <N> the node type
-     * @param <I> the icon type
      */
-    public static class MetisTableListColumn<T extends Comparable<T>, R extends MetisFieldTableItem, N, I>
-            extends MetisTableColumn<List<T>, R, N, I>
+    public static class MetisTableListColumn<T extends Comparable<T>, R extends MetisFieldTableItem>
+            extends MetisTableColumn<List<T>, R>
             implements TethysTableListConfig<T, R> {
         /**
          * Constructor.
          * @param pTable the table
          * @param pColumn the column
          */
-        protected MetisTableListColumn(final MetisTableManager<R, N, I> pTable,
-                                       final TethysTableListColumn<T, MetisDataFieldId, R, N, I> pColumn) {
+        protected MetisTableListColumn(final MetisTableManager<R> pTable,
+                                       final TethysTableListColumn<T, MetisDataFieldId, R> pColumn) {
             super(pTable, pColumn);
         }
 
         @Override
-        protected TethysTableListColumn<T, MetisDataFieldId, R, N, I> getColumn() {
-            return (TethysTableListColumn<T, MetisDataFieldId, R, N, I>) super.getColumn();
+        protected TethysTableListColumn<T, MetisDataFieldId, R> getColumn() {
+            return (TethysTableListColumn<T, MetisDataFieldId, R>) super.getColumn();
         }
 
         @Override

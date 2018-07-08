@@ -17,8 +17,7 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Side;
-import javafx.scene.Node;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollButtonManager;
@@ -26,34 +25,30 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * JavaFX Button which provides a PopUpMenu selection.
+ *
  * @param <T> the object type
  */
 public final class TethysFXScrollButtonManager<T>
-        extends TethysScrollButtonManager<T, Node, Node> {
-    /**
-     * The node.
-     */
-    private Region theNode;
-
+        extends TethysScrollButtonManager<T> {
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    public TethysFXScrollButtonManager(final TethysFXGuiFactory pFactory) {
+    TethysFXScrollButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the underlying class */
         super(pFactory);
-        theNode = (Region) super.getNode();
     }
 
     @Override
-    public Region getNode() {
-        return theNode;
+    public TethysFXNode getNode() {
+        return (TethysFXNode) super.getNode();
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theNode.setManaged(pVisible);
-        theNode.setVisible(pVisible);
+        getNode().setManaged(pVisible);
+        getNode().setVisible(pVisible);
     }
 
     @Override
@@ -71,7 +66,7 @@ public final class TethysFXScrollButtonManager<T>
 
     @Override
     protected void showMenu() {
-        getMenu().showMenuAtPosition(getNode(), Side.BOTTOM);
+        getMenu().showMenuAtPosition(getNode().getNode(), Side.BOTTOM);
     }
 
     @Override
@@ -82,30 +77,23 @@ public final class TethysFXScrollButtonManager<T>
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        getNode().setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        getNode().setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

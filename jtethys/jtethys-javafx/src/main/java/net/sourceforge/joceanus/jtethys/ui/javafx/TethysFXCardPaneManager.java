@@ -16,22 +16,22 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Region;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysCardPaneManager;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Tethys FX Card panel manager.
+ *
  * @param <P> the card panel type
  */
-public class TethysFXCardPaneManager<P extends TethysNode<Node>>
-        extends TethysCardPaneManager<Node, Node, P> {
+public class TethysFXCardPaneManager<P extends TethysComponent>
+        extends TethysCardPaneManager<P> {
     /**
      * The node.
      */
-    private Region theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The panel.
@@ -40,16 +40,17 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    protected TethysFXCardPaneManager(final TethysFXGuiFactory pFactory) {
+    TethysFXCardPaneManager(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theCardPane = new BorderPane();
-        theNode = theCardPane;
+        theNode = new TethysFXNode(theCardPane);
     }
 
     @Override
-    public Region getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -71,7 +72,7 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
         final boolean isActiveCard = getActiveCard() == null;
         super.addCard(pName, pCard);
         if (isActiveCard) {
-            theCardPane.setCenter(pCard.getNode());
+            theCardPane.setCenter(TethysFXNode.getNode(pCard));
         }
     }
 
@@ -81,7 +82,7 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
         final boolean isSelected = super.selectCard(pName);
         if (isSelected) {
             /* Show selected card */
-            theCardPane.setCenter(getActiveCard().getNode());
+            theCardPane.setCenter(TethysFXNode.getNode(getActiveCard()));
         }
         return isSelected;
     }
@@ -99,19 +100,12 @@ public class TethysFXCardPaneManager<P extends TethysNode<Node>>
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theCardPane);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

@@ -17,10 +17,10 @@
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.paint.Color;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysAlignment;
 import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
 
@@ -28,11 +28,11 @@ import net.sourceforge.joceanus.jtethys.ui.TethysLabel;
  * Tethys FX Label.
  */
 public final class TethysFXLabel
-        extends TethysLabel<Node, Node> {
+        extends TethysLabel {
     /**
      * The node.
      */
-    private Node theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The Label.
@@ -51,12 +51,13 @@ public final class TethysFXLabel
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXLabel(final TethysFXGuiFactory pFactory) {
+    TethysFXLabel(final TethysFXGuiFactory pFactory) {
         super(pFactory);
         theLabel = new Label();
-        theNode = theLabel;
+        theNode = new TethysFXNode(theLabel);
         setAlignment(TethysAlignment.WEST);
     }
 
@@ -76,7 +77,7 @@ public final class TethysFXLabel
     }
 
     @Override
-    public Node getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -93,6 +94,7 @@ public final class TethysFXLabel
 
     /**
      * Set context menu.
+     *
      * @param pMenu the context menu.
      */
     public void setContextMenu(final TethysFXScrollContextMenu<?> pMenu) {
@@ -109,6 +111,7 @@ public final class TethysFXLabel
 
     /**
      * Translate alignment.
+     *
      * @param pAlign the alignment
      * @return the FX alignment
      */
@@ -154,24 +157,18 @@ public final class TethysFXLabel
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theLabel);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     /**
      * handleContextMenu.
+     *
      * @param pEvent the event
      */
     private void handleContextMenu(final ContextMenuEvent pEvent) {

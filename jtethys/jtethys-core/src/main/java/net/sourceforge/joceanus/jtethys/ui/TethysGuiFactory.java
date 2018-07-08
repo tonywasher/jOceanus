@@ -38,10 +38,8 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
 
 /**
  * Tethys GUI Factory.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysGuiFactory<N, I> {
+public abstract class TethysGuiFactory {
     /**
      * The Next nodeId.
      */
@@ -60,7 +58,7 @@ public abstract class TethysGuiFactory<N, I> {
     /**
      * The node Map.
      */
-    private final Map<Integer, TethysParentNode<N>> theParentMap;
+    private final Map<Integer, TethysParentComponent> theParentMap;
 
     /**
      * Program Definition.
@@ -68,17 +66,16 @@ public abstract class TethysGuiFactory<N, I> {
     private final TethysProgram theProgram;
 
     /**
-     * ParentNode.
-     * @param <N> the node type
+     * ParentComponent.
      */
     @FunctionalInterface
-    public interface TethysParentNode<N> {
+    public interface TethysParentComponent {
         /**
          * Set child visibility.
          * @param pChild the child
          * @param pVisible the visibility
          */
-        void setChildVisible(TethysNode<N> pChild,
+        void setChildVisible(TethysComponent pChild,
                              boolean pVisible);
     }
 
@@ -124,10 +121,10 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pNode the node
      * @param pVisible true/false
      */
-    public void setNodeVisible(final TethysNode<N> pNode,
+    public void setNodeVisible(final TethysComponent pNode,
                                final boolean pVisible) {
         /* Lookup parent */
-        final TethysParentNode<N> myParent = theParentMap.get(pNode.getId());
+        final TethysParentComponent myParent = theParentMap.get(pNode.getId());
         if (myParent != null) {
             myParent.setChildVisible(pNode, pVisible);
         }
@@ -138,8 +135,8 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pParent the parent
      * @param pChild the child node
      */
-    protected void registerChild(final TethysParentNode<N> pParent,
-                                 final TethysNode<N> pChild) {
+    protected void registerChild(final TethysParentComponent pParent,
+                                 final TethysComponent pChild) {
         theParentMap.put(pChild.getId(), pParent);
     }
 
@@ -147,7 +144,7 @@ public abstract class TethysGuiFactory<N, I> {
      * DeRegister Child.
      * @param pChild the child node
      */
-    protected void deRegisterChild(final TethysNode<N> pChild) {
+    protected void deRegisterChild(final TethysComponent pChild) {
         theParentMap.remove(pChild.getId());
     }
 
@@ -165,124 +162,124 @@ public abstract class TethysGuiFactory<N, I> {
      * @param pWidth the icon width
      * @return the icon
      */
-    public abstract I resolveIcon(TethysIconId pIconId, int pWidth);
+    public abstract TethysIcon resolveIcon(TethysIconId pIconId, int pWidth);
 
     /**
      * Obtain a new label.
      * @return the new label
      */
-    public abstract TethysLabel<N, I> newLabel();
+    public abstract TethysLabel newLabel();
 
     /**
      * Obtain a new label.
      * @param pText the label text
      * @return the new label
      */
-    public abstract TethysLabel<N, I> newLabel(String pText);
+    public abstract TethysLabel newLabel(String pText);
 
     /**
      * Obtain a check box.
      * @return the new check box
      */
-    public abstract TethysCheckBox<N, I> newCheckBox();
+    public abstract TethysCheckBox newCheckBox();
 
     /**
      * Obtain a check box.
      * @param pText the checkBox text
      * @return the new check box
      */
-    public abstract TethysCheckBox<N, I> newCheckBox(String pText);
+    public abstract TethysCheckBox newCheckBox(String pText);
 
     /**
      * Obtain a new button.
      * @return the new button
      */
-    public abstract TethysButton<N, I> newButton();
+    public abstract TethysButton newButton();
 
     /**
      * Obtain a new textArea.
      * @return the new textArea
      */
-    public abstract TethysTextArea<N, I> newTextArea();
+    public abstract TethysTextArea newTextArea();
 
     /**
      * Obtain a context menu.
      * @param <T> the item type
      * @return the new menu
      */
-    public abstract <T> TethysScrollMenu<T, I> newContextMenu();
+    public abstract <T> TethysScrollMenu<T> newContextMenu();
 
     /**
      * Obtain a new date button manager.
      * @return the new manager
      */
-    public abstract TethysDateButtonManager<N, I> newDateButton();
+    public abstract TethysDateButtonManager newDateButton();
 
     /**
      * Obtain a new scroll button manager.
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysScrollButtonManager<T, N, I> newScrollButton();
+    public abstract <T> TethysScrollButtonManager<T> newScrollButton();
 
     /**
      * Obtain a new list button manager.
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T extends Comparable<T>> TethysListButtonManager<T, N, I> newListButton();
+    public abstract <T extends Comparable<T>> TethysListButtonManager<T> newListButton();
 
     /**
      * Obtain a new icon button manager.
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysIconButtonManager<T, N, I> newIconButton();
+    public abstract <T> TethysIconButtonManager<T> newIconButton();
 
     /**
      * Obtain a new dateRange selector.
      * @return the new selector
      */
-    public abstract TethysDateRangeSelector<N, I> newDateRangeSelector();
+    public abstract TethysDateRangeSelector newDateRangeSelector();
 
     /**
      * Obtain a new dateRange selector.
      * @param pBaseIsStart is the baseDate the start of the period? (true/false)
      * @return the new selector
      */
-    public abstract TethysDateRangeSelector<N, I> newDateRangeSelector(boolean pBaseIsStart);
+    public abstract TethysDateRangeSelector newDateRangeSelector(boolean pBaseIsStart);
 
     /**
      * Obtain a new passwordField.
      * @return the new field
      */
-    public abstract TethysPasswordField<N, I> newPasswordField();
+    public abstract TethysPasswordField newPasswordField();
 
     /**
      * Obtain a new colorPicker.
      * @return the new picker
      */
-    public abstract TethysColorPicker<N, I> newColorPicker();
+    public abstract TethysColorPicker newColorPicker();
 
     /**
      * Obtain a new HTML manager.
      * @return the new manager
      */
-    public abstract TethysHTMLManager<N, I> newHTMLManager();
+    public abstract TethysHTMLManager newHTMLManager();
 
     /**
      * Obtain a new Tree manager.
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysTreeManager<T, N, I> newTreeManager();
+    public abstract <T> TethysTreeManager<T> newTreeManager();
 
     /**
      * Obtain a new splitTree manager.
      * @param <T> the item type
      * @return the new manager
      */
-    public abstract <T> TethysSplitTreeManager<T, N, I> newSplitTreeManager();
+    public abstract <T> TethysSplitTreeManager<T> newSplitTreeManager();
 
     /**
      * Obtain a new fileSelector.
@@ -300,13 +297,13 @@ public abstract class TethysGuiFactory<N, I> {
      * Obtain a new progressBar.
      * @return the new progressBar
      */
-    public abstract TethysProgressBar<N, I> newProgressBar();
+    public abstract TethysProgressBar newProgressBar();
 
     /**
      * Obtain a new slider.
      * @return the new slider
      */
-    public abstract TethysSlider<N, I> newSlider();
+    public abstract TethysSlider newSlider();
 
     /**
      * Obtain a new menuBar manager.
@@ -318,167 +315,167 @@ public abstract class TethysGuiFactory<N, I> {
      * Obtain a new toolBar manager.
      * @return the new manager
      */
-    public abstract TethysToolBarManager<N, I> newToolBar();
+    public abstract TethysToolBarManager newToolBar();
 
     /**
      * Obtain a new tabPane manager.
      * @return the new manager
      */
-    public abstract TethysTabPaneManager<N, I> newTabPane();
+    public abstract TethysTabPaneManager newTabPane();
 
     /**
      * Obtain a new cardPane manager.
      * @param <P> the card panel type
      * @return the new manager
      */
-    public abstract <P extends TethysNode<N>> TethysCardPaneManager<N, I, P> newCardPane();
+    public abstract <P extends TethysComponent> TethysCardPaneManager<P> newCardPane();
 
     /**
      * Obtain a new borderPane manager.
      * @return the new manager
      */
-    public abstract TethysBorderPaneManager<N, I> newBorderPane();
+    public abstract TethysBorderPaneManager newBorderPane();
 
     /**
      * Obtain a new flowPane manager.
      * @return the new manager
      */
-    public abstract TethysFlowPaneManager<N, I> newFlowPane();
+    public abstract TethysFlowPaneManager newFlowPane();
 
     /**
      * Obtain a new vertical boxPane manager.
      * @return the new manager
      */
-    public abstract TethysBoxPaneManager<N, I> newVBoxPane();
+    public abstract TethysBoxPaneManager newVBoxPane();
 
     /**
      * Obtain a new horizontal boxPane manager.
      * @return the new manager
      */
-    public abstract TethysBoxPaneManager<N, I> newHBoxPane();
+    public abstract TethysBoxPaneManager newHBoxPane();
 
     /**
      * Obtain a new gridPane manager.
      * @return the new manager
      */
-    public abstract TethysGridPaneManager<N, I> newGridPane();
+    public abstract TethysGridPaneManager newGridPane();
 
     /**
      * Obtain a new scrollPane manager.
      * @return the new manager
      */
-    public abstract TethysScrollPaneManager<N, I> newScrollPane();
+    public abstract TethysScrollPaneManager newScrollPane();
 
     /**
      * Obtain a new string data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<String, N, I> newStringField();
+    public abstract TethysValidatedEditField<String> newStringField();
 
     /**
      * Obtain a new charArray data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<char[], N, I> newCharArrayField();
+    public abstract TethysValidatedEditField<char[]> newCharArrayField();
 
     /**
      * Obtain a new short data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<Short, N, I> newShortField();
+    public abstract TethysValidatedEditField<Short> newShortField();
 
     /**
      * Obtain a new integer data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<Integer, N, I> newIntegerField();
+    public abstract TethysValidatedEditField<Integer> newIntegerField();
 
     /**
      * Obtain a new long data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<Long, N, I> newLongField();
+    public abstract TethysValidatedEditField<Long> newLongField();
 
     /**
      * Obtain a new raw decimal data field.
      * @return the new field
      */
-    public abstract TethysRawDecimalEditField<N, I> newRawDecimalField();
+    public abstract TethysRawDecimalEditField newRawDecimalField();
 
     /**
      * Obtain a new money data field.
      * @return the new field
      */
-    public abstract TethysCurrencyEditField<TethysMoney, N, I> newMoneyField();
+    public abstract TethysCurrencyEditField<TethysMoney> newMoneyField();
 
     /**
      * Obtain a new price data field.
      * @return the new field
      */
-    public abstract TethysCurrencyEditField<TethysPrice, N, I> newPriceField();
+    public abstract TethysCurrencyEditField<TethysPrice> newPriceField();
 
     /**
      * Obtain a new dilutedPrice data field.
      * @return the new field
      */
-    public abstract TethysCurrencyEditField<TethysDilutedPrice, N, I> newDilutedPriceField();
+    public abstract TethysCurrencyEditField<TethysDilutedPrice> newDilutedPriceField();
 
     /**
      * Obtain a new rate data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysRate, N, I> newRateField();
+    public abstract TethysValidatedEditField<TethysRate> newRateField();
 
     /**
      * Obtain a new units data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysUnits, N, I> newUnitsField();
+    public abstract TethysValidatedEditField<TethysUnits> newUnitsField();
 
     /**
      * Obtain a new dilution data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysDilution, N, I> newDilutionField();
+    public abstract TethysValidatedEditField<TethysDilution> newDilutionField();
 
     /**
      * Obtain a new ratio data field.
      * @return the new field
      */
-    public abstract TethysValidatedEditField<TethysRatio, N, I> newRatioField();
+    public abstract TethysValidatedEditField<TethysRatio> newRatioField();
 
     /**
      * Obtain a new date data field.
      * @return the new field
      */
-    public abstract TethysDateButtonField<N, I> newDateField();
+    public abstract TethysDateButtonField newDateField();
 
     /**
      * Obtain a new scroll data field.
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysScrollButtonField<T, N, I> newScrollField();
+    public abstract <T> TethysScrollButtonField<T> newScrollField();
 
     /**
      * Obtain a new list data field.
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T extends Comparable<T>> TethysListButtonField<T, N, I> newListField();
+    public abstract <T extends Comparable<T>> TethysListButtonField<T> newListField();
 
     /**
      * Obtain a new simple icon data field.
      * @param <T> the item type
      * @return the new field
      */
-    public abstract <T> TethysIconButtonField<T, N, I> newIconField();
+    public abstract <T> TethysIconButtonField<T> newIconField();
 
     /**
      * Obtain a new colour data field.
      * @return the new field
      */
-    public abstract TethysDataEditField<String, N, I> newColorField();
+    public abstract TethysDataEditField<String> newColorField();
 
     /**
      * Obtain a new table.
@@ -486,11 +483,11 @@ public abstract class TethysGuiFactory<N, I> {
      * @param <R> the row type
      * @return the new field
      */
-    public abstract <C, R> TethysTableManager<C, R, N, I> newTable();
+    public abstract <C, R> TethysTableManager<C, R> newTable();
 
     /**
      * Obtain a new aboutBox.
      * @return the new box
      */
-    public abstract TethysAbout<N, I> newAboutBox();
+    public abstract TethysAbout newAboutBox();
 }

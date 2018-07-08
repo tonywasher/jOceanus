@@ -18,11 +18,9 @@ package net.sourceforge.joceanus.jtethys.ui;
 
 /**
  * ProgressBar.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysProgressBar<N, I>
-        implements TethysNode<N> {
+public abstract class TethysProgressBar
+        implements TethysComponent {
     /**
      * Maximum Value for double.
      */
@@ -47,7 +45,7 @@ public abstract class TethysProgressBar<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysProgressBar(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysProgressBar(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
     }
 
@@ -113,5 +111,4 @@ public abstract class TethysProgressBar<N, I>
      * @param pHeight the height
      */
     public abstract void setPreferredHeight(Integer pHeight);
-
 }

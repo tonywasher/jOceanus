@@ -39,11 +39,9 @@ import net.sourceforge.joceanus.jtethys.date.TethysDate;
  * @author Tony Washer
  * @param <T> the DataSet type
  * @param <E> the data type enum class
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements MetisThread<Void, N, I> {
+public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enum<E>>
+        implements MetisThread<Void> {
     /**
      * Buffer length.
      */
@@ -57,13 +55,13 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     /**
      * Data Control.
      */
-    private final DataControl<T, E, N, I> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadCreateBackup(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadCreateBackup(final DataControl<T, E> pControl) {
         theControl = pControl;
     }
 
@@ -73,9 +71,9 @@ public class PrometheusThreadCreateBackup<T extends DataSet<T, E>, E extends Enu
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
         final GordianHashManager mySecurityMgr = pToolkit.getSecurityManager();
         boolean doDelete = false;
         File myFile = null;

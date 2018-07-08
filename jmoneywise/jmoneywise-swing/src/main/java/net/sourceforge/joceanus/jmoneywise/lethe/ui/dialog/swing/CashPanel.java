@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.data.MetisDataType;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisField;
@@ -78,7 +75,7 @@ public class CashPanel
     public CashPanel(final TethysSwingGuiFactory pFactory,
                      final MetisSwingFieldManager pFieldMgr,
                      final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                     final MetisErrorPanel<JComponent, Icon> pError) {
+                     final MetisErrorPanel pError) {
         /* Initialise the panel */
         super(pFactory, pFieldMgr, pUpdateSet, pError);
 
@@ -315,7 +312,7 @@ public class CashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    public void buildCategoryMenu(final TethysScrollMenu<CashCategory, Icon> pMenu,
+    public void buildCategoryMenu(final TethysScrollMenu<CashCategory> pMenu,
                                   final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -328,7 +325,7 @@ public class CashPanel
         final CashCategoryList myCategories = getDataList(MoneyWiseDataType.CASHCATEGORY, CashCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<CashCategory, Icon>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<CashCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         final Iterator<CashCategory> myIterator = myCategories.iterator();
@@ -344,7 +341,7 @@ public class CashPanel
             /* Determine menu to add to */
             final CashCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<CashCategory, Icon> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<CashCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new subMenu */
             if (myMenu == null) {
@@ -373,7 +370,7 @@ public class CashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    private void buildAutoExpenseMenu(final TethysScrollMenu<TransactionCategory, Icon> pMenu,
+    private void buildAutoExpenseMenu(final TethysScrollMenu<TransactionCategory> pMenu,
                                       final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -386,7 +383,7 @@ public class CashPanel
         final TransactionCategoryList myCategories = getDataList(MoneyWiseDataType.TRANSCATEGORY, TransactionCategoryList.class);
 
         /* Create a simple map for top-level categories */
-        final Map<String, TethysScrollSubMenu<TransactionCategory, Icon>> myMap = new HashMap<>();
+        final Map<String, TethysScrollSubMenu<TransactionCategory>> myMap = new HashMap<>();
 
         /* Loop through the available category values */
         final Iterator<TransactionCategory> myIterator = myCategories.iterator();
@@ -404,7 +401,7 @@ public class CashPanel
             /* Determine menu to add to */
             final TransactionCategory myParent = myCategory.getParentCategory();
             final String myParentName = myParent.getName();
-            TethysScrollSubMenu<TransactionCategory, Icon> myMenu = myMap.get(myParentName);
+            TethysScrollSubMenu<TransactionCategory> myMenu = myMap.get(myParentName);
 
             /* If this is a new subMenu */
             if (myMenu == null) {
@@ -433,7 +430,7 @@ public class CashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    private void buildAutoPayeeMenu(final TethysScrollMenu<Payee, Icon> pMenu,
+    private void buildAutoPayeeMenu(final TethysScrollMenu<Payee> pMenu,
                                     final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();
@@ -476,7 +473,7 @@ public class CashPanel
      * @param pMenu the menu
      * @param pCash the cash to build for
      */
-    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency, Icon> pMenu,
+    public void buildCurrencyMenu(final TethysScrollMenu<AssetCurrency> pMenu,
                                   final Cash pCash) {
         /* Clear the menu */
         pMenu.removeAllItems();

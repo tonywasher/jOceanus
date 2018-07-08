@@ -16,19 +16,19 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.control.TextArea;
+
 import net.sourceforge.joceanus.jtethys.ui.TethysTextArea;
 
 /**
  * JavaFX TextArea.
  */
 public class TethysFXTextArea
-        extends TethysTextArea<Node, Node> {
+        extends TethysTextArea {
     /**
      * The node.
      */
-    private Node theNode;
+    private final TethysFXNode theNode;
 
     /**
      * The Slider.
@@ -37,18 +37,19 @@ public class TethysFXTextArea
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI Factory
      */
-    protected TethysFXTextArea(final TethysFXGuiFactory pFactory) {
+    TethysFXTextArea(final TethysFXGuiFactory pFactory) {
         /* Create resources */
         super(pFactory);
         theArea = new TextArea();
-        theNode = theArea;
+        theNode = new TethysFXNode(theArea);
         theArea.setEditable(false);
     }
 
     @Override
-    public Node getNode() {
+    public TethysFXNode getNode() {
         return theNode;
     }
 
@@ -76,20 +77,13 @@ public class TethysFXTextArea
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), theArea);
+        theNode.createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override

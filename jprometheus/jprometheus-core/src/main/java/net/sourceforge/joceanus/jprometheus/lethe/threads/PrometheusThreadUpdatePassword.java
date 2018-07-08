@@ -31,21 +31,19 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
  * ready for committing the change to the database.
  * @param <T> the DataSet type
  * @param <E> the data type enum class
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class PrometheusThreadUpdatePassword<T extends DataSet<T, E>, E extends Enum<E>, N, I>
-        implements MetisThread<T, N, I> {
+public class PrometheusThreadUpdatePassword<T extends DataSet<T, E>, E extends Enum<E>>
+        implements MetisThread<T> {
     /**
      * Data Control.
      */
-    private final DataControl<T, E, N, I> theControl;
+    private final DataControl<T, E> theControl;
 
     /**
      * Constructor (Event Thread).
      * @param pControl data control
      */
-    public PrometheusThreadUpdatePassword(final DataControl<T, E, N, I> pControl) {
+    public PrometheusThreadUpdatePassword(final DataControl<T, E> pControl) {
         theControl = pControl;
     }
 
@@ -55,9 +53,9 @@ public class PrometheusThreadUpdatePassword<T extends DataSet<T, E>, E extends E
     }
 
     @Override
-    public T performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public T performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
 
         /* Initialise the status window */
         myManager.initTask(getTaskName());

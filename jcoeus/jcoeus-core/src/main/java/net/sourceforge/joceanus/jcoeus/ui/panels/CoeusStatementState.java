@@ -39,7 +39,7 @@ public final class CoeusStatementState {
     /**
      * ReportSelect.
      */
-    private final CoeusStatementSelect<?, ?> theSelect;
+    private final CoeusStatementSelect theSelect;
 
     /**
      * Calendar.
@@ -86,7 +86,7 @@ public final class CoeusStatementState {
      * @param pSelect the selector
      * @param pCalendar the Calendar
      */
-    CoeusStatementState(final CoeusStatementSelect<?, ?> pSelect,
+    CoeusStatementState(final CoeusStatementSelect pSelect,
                         final CoeusCalendar pCalendar) {
         /* Store parameters */
         theSelect = pSelect;
@@ -356,7 +356,7 @@ public final class CoeusStatementState {
      * Build loans menu.
      * @param pBuilder the menu builder
      */
-    void buildLoansMenu(final TethysScrollMenu<CoeusLoan, ?> pBuilder) {
+    void buildLoansMenu(final TethysScrollMenu<CoeusLoan> pBuilder) {
         /* Only perform for snapShots */
         if (!(theFilter instanceof CoeusSnapShotFilter)) {
             return;

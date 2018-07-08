@@ -16,12 +16,11 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.swing;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
+import net.sourceforge.joceanus.jtethys.ui.TethysIcon;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconId;
 import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
 
@@ -29,7 +28,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysToolBarManager;
  * JavaFX ToolBar Manager.
  */
 public class TethysSwingToolBarManager
-        extends TethysToolBarManager<JComponent, Icon> {
+        extends TethysToolBarManager {
+    /**
+     * The Node.
+     */
+    private final TethysSwingNode theNode;
+
     /**
      * The ToolBar.
      */
@@ -39,15 +43,16 @@ public class TethysSwingToolBarManager
      * Constructor.
      * @param pFactory the factory
      */
-    public TethysSwingToolBarManager(final TethysSwingGuiFactory pFactory) {
+    TethysSwingToolBarManager(final TethysSwingGuiFactory pFactory) {
         super(pFactory);
         theToolBar = new JToolBar();
         theToolBar.setFloatable(false);
+        theNode = new TethysSwingNode(theToolBar);
     }
 
     @Override
-    public JToolBar getNode() {
-        return theToolBar;
+    public TethysSwingNode getNode() {
+        return theNode;
     }
 
     @Override
@@ -77,7 +82,7 @@ public class TethysSwingToolBarManager
      * @param <S> the id type
      */
     public static class TethysSwingIconElement<S>
-            extends TethysToolElement<S, JComponent, Icon> {
+            extends TethysToolElement<S> {
         /**
          * The Button.
          */
@@ -88,8 +93,8 @@ public class TethysSwingToolBarManager
          * @param pManager the manager
          * @param pId the Id
          */
-        protected TethysSwingIconElement(final TethysSwingToolBarManager pManager,
-                                         final S pId) {
+        TethysSwingIconElement(final TethysSwingToolBarManager pManager,
+                               final S pId) {
             super(pManager, pId);
             theButton = new JButton();
             theButton.addActionListener(e -> handlePressed());
@@ -134,8 +139,8 @@ public class TethysSwingToolBarManager
         }
 
         @Override
-        public void setIcon(final Icon pIcon) {
-            theButton.setIcon(pIcon);
+        public void setIcon(final TethysIcon pIcon) {
+            theButton.setIcon(TethysSwingIcon.getIcon(pIcon));
         }
 
         @Override

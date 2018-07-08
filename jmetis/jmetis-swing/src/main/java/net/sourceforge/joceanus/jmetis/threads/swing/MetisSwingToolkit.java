@@ -16,9 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jgordianknot.crypto.GordianParameters;
 import net.sourceforge.joceanus.jgordianknot.manager.GordianHashManager;
 import net.sourceforge.joceanus.jgordianknot.manager.swing.GordianSwingHashManager;
@@ -39,7 +36,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Metis Swing Toolkit.
  */
 public class MetisSwingToolkit
-        extends MetisToolkit<JComponent, Icon> {
+        extends MetisToolkit {
     /**
      * Constructor.
      * @throws OceanusException on error
@@ -104,7 +101,7 @@ public class MetisSwingToolkit
     }
 
     @Override
-    protected MetisSwingThreadProgressStatus newThreadSliderStatus(final MetisThreadManager<JComponent, Icon> pManager) {
+    protected MetisSwingThreadProgressStatus newThreadSliderStatus(final MetisThreadManager pManager) {
         return new MetisSwingThreadProgressStatus(pManager, getGuiFactory());
     }
 

@@ -22,11 +22,9 @@ import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventPr
 
 /**
  * Slider.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class TethysSlider<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysSlider
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * Tick factor.
      */
@@ -56,7 +54,7 @@ public abstract class TethysSlider<N, I>
      * Constructor.
      * @param pFactory the GUI Factory
      */
-    protected TethysSlider(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysSlider(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theEventManager = new TethysEventManager<>();
     }

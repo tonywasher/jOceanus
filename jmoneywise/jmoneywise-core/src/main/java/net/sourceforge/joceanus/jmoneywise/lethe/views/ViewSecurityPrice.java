@@ -246,7 +246,7 @@ public class ViewSecurityPrice
          * @param pUpdateSet the updateSet
          * @throws OceanusException on error
          */
-        public ViewSecurityPriceList(final View<?, ?> pView,
+        public ViewSecurityPriceList(final View pView,
                                      final UpdateSet<MoneyWiseDataType> pUpdateSet) throws OceanusException {
             /* Declare the data and set the style */
             super(pView.getData(), ViewSecurityPrice.class, MoneyWiseDataType.SECURITYPRICE);

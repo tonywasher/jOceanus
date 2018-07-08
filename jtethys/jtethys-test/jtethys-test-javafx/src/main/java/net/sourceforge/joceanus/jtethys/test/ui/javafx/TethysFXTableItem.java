@@ -55,7 +55,7 @@ public class TethysFXTableItem {
      * XtraBoolean property.
      */
     private final ObjectProperty<Boolean> theXtraBoolean = new SimpleObjectProperty<>(this, TethysDataId.XTRABOOL.toString());
-    
+
     /**
      * Short property.
      */
@@ -131,7 +131,7 @@ public class TethysFXTableItem {
      * @param pHelper the Helper
      * @param pName the Name
      */
-    protected TethysFXTableItem(final TethysScrollUITestHelper<?, ?> pHelper,
+    protected TethysFXTableItem(final TethysScrollUITestHelper pHelper,
                                 final String pName) {
         theName.set(pName);
         theDate.set(new TethysDate());

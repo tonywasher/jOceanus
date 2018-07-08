@@ -450,9 +450,10 @@ public final class TethysSwingGuiUtils {
      * @param pId the icon Id
      * @return the icon
      */
-    public static ImageIcon getIcon(final TethysIconId pId) {
+    public static TethysSwingIcon getIcon(final TethysIconId pId) {
         try {
-            return new ImageIcon(pId.loadResourceToBytes());
+            final ImageIcon myIcon = new ImageIcon(pId.loadResourceToBytes());
+            return new TethysSwingIcon(myIcon);
         } catch (IOException e) {
             LOGGER.error("Failed to load Icon " + pId.getSourceName(), e);
             return null;
@@ -478,13 +479,14 @@ public final class TethysSwingGuiUtils {
      * @param pWidth the new width for the icon
      * @return the icon
      */
-    public static ImageIcon getIconAtSize(final TethysIconId pId,
-                                          final int pWidth) {
-        final ImageIcon mySource = getIcon(pId);
+    public static TethysSwingIcon getIconAtSize(final TethysIconId pId,
+                                                final int pWidth) {
+        final TethysSwingIcon mySource = getIcon(pId);
         final Image myImage = mySource.getImage();
         final Image myNewImage = myImage.getScaledInstance(pWidth,
                 pWidth,
                 Image.SCALE_SMOOTH);
-        return new ImageIcon(myNewImage);
+        final ImageIcon myIcon = new ImageIcon(myNewImage);
+        return new TethysSwingIcon(myIcon);
     }
 }

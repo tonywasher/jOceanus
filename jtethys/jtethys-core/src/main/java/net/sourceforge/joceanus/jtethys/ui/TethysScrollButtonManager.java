@@ -37,15 +37,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
  * @param <T> the object type
- * @param <N> the node type
- * @param <I> the Icon type
  */
-public abstract class TethysScrollButtonManager<T, N, I>
-        implements TethysScrollButton<T, I>, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysScrollButtonManager<T>
+        implements TethysScrollButton<T>, TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The GUI Manager.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The Event Manager.
@@ -55,12 +53,12 @@ public abstract class TethysScrollButtonManager<T, N, I>
     /**
      * The Button.
      */
-    private final TethysButton<N, I> theButton;
+    private final TethysButton theButton;
 
     /**
      * The MenuConfigurator.
      */
-    private Consumer<TethysScrollMenu<T, I>> theMenuConfigurator = p -> {
+    private Consumer<TethysScrollMenu<T>> theMenuConfigurator = p -> {
     };
 
     /**
@@ -86,7 +84,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
     /**
      * The ScrollMenu.
      */
-    private TethysScrollMenu<T, I> theMenu;
+    private TethysScrollMenu<T> theMenu;
 
     /**
      * Is the menu Showing?
@@ -97,7 +95,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysScrollButtonManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysScrollButtonManager(final TethysGuiFactory pFactory) {
         /* Allocate resources */
         theGuiFactory = pFactory;
         theEventManager = new TethysEventManager<>();
@@ -126,7 +124,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theButton.getNode();
     }
 
@@ -134,7 +132,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
      * Obtain button.
      * @return the button
      */
-    protected TethysButton<N, I> getButton() {
+    protected TethysButton getButton() {
         return theButton;
     }
 
@@ -142,7 +140,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
      * Obtain menu.
      * @return the menu
      */
-    public TethysScrollMenu<T, I> getMenu() {
+    public TethysScrollMenu<T> getMenu() {
         ensureMenu();
         return theMenu;
     }
@@ -217,7 +215,7 @@ public abstract class TethysScrollButtonManager<T, N, I>
     }
 
     @Override
-    public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, I>> pConfigurator) {
+    public void setMenuConfigurator(final Consumer<TethysScrollMenu<T>> pConfigurator) {
         theMenuConfigurator = pConfigurator;
     }
 

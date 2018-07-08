@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -58,11 +56,11 @@ public final class TethysSwingDataButtonField {
      */
     public static final class TethysSwingIconButtonField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysIconButtonField<T, JComponent, Icon> {
+            implements TethysIconButtonField<T> {
         /**
          * The icon manager.
          */
-        private final TethysIconButtonManager<T, JComponent, Icon> theManager;
+        private final TethysIconButtonManager<T> theManager;
 
         /**
          * The button.
@@ -99,10 +97,10 @@ public final class TethysSwingDataButtonField {
          * @param pLabel the label
          */
         private TethysSwingIconButtonField(final TethysSwingGuiFactory pFactory,
-                                           final TethysIconButtonManager<T, JComponent, Icon> pManager,
+                                           final TethysIconButtonManager<T> pManager,
                                            final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode(), pLabel);
+            super(pFactory, TethysSwingNode.getComponent(pManager), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
@@ -180,7 +178,7 @@ public final class TethysSwingDataButtonField {
      */
     public static final class TethysSwingScrollButtonField<T>
             extends TethysSwingDataTextField<T>
-            implements TethysScrollButtonField<T, JComponent, Icon> {
+            implements TethysScrollButtonField<T> {
         /**
          * The scroll manager.
          */
@@ -189,7 +187,7 @@ public final class TethysSwingDataButtonField {
         /**
          * The configurator.
          */
-        private Consumer<TethysScrollMenu<T, Icon>> theConfigurator;
+        private Consumer<TethysScrollMenu<T>> theConfigurator;
 
         /**
          * The button.
@@ -205,7 +203,7 @@ public final class TethysSwingDataButtonField {
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingScrollButtonField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -229,7 +227,7 @@ public final class TethysSwingDataButtonField {
                                              final TethysSwingScrollButtonManager<T> pManager,
                                              final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode(), pLabel);
+            super(pFactory, TethysSwingNode.getComponent(pManager), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
@@ -262,7 +260,7 @@ public final class TethysSwingDataButtonField {
         }
 
         @Override
-        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, Icon>> pConfigurator) {
+        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T>> pConfigurator) {
             theConfigurator = pConfigurator;
             theManager.setMenuConfigurator(theConfigurator);
         }
@@ -315,7 +313,7 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingDateButtonField
             extends TethysSwingDataTextField<TethysDate>
-            implements TethysDateButtonField<JComponent, Icon> {
+            implements TethysDateButtonField {
         /**
          * The date manager.
          */
@@ -330,7 +328,7 @@ public final class TethysSwingDataButtonField {
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingDateButtonField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -354,7 +352,7 @@ public final class TethysSwingDataButtonField {
                                            final TethysSwingDateButtonManager pManager,
                                            final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode(), pLabel);
+            super(pFactory, TethysSwingNode.getComponent(pManager), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;
@@ -445,7 +443,7 @@ public final class TethysSwingDataButtonField {
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingColorButtonField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingColorButtonField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -469,7 +467,7 @@ public final class TethysSwingDataButtonField {
                                             final TethysSwingColorPicker pPicker,
                                             final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pPicker.getNode(), pLabel);
+            super(pFactory, TethysSwingNode.getComponent(pPicker), pLabel);
 
             /* Store the picker */
             thePicker = pPicker;
@@ -545,7 +543,7 @@ public final class TethysSwingDataButtonField {
      */
     public static class TethysSwingListButtonField<T extends Comparable<T>>
             extends TethysSwingDataTextField<List<T>>
-            implements TethysListButtonField<T, JComponent, Icon> {
+            implements TethysListButtonField<T> {
         /**
          * The icon manager.
          */
@@ -560,7 +558,7 @@ public final class TethysSwingDataButtonField {
          * Constructor.
          * @param pFactory the GUI factory
          */
-        protected TethysSwingListButtonField(final TethysSwingGuiFactory pFactory) {
+        TethysSwingListButtonField(final TethysSwingGuiFactory pFactory) {
             this(pFactory, new JLabel());
         }
 
@@ -584,7 +582,7 @@ public final class TethysSwingDataButtonField {
                                            final TethysSwingListButtonManager<T> pManager,
                                            final JLabel pLabel) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode(), pLabel);
+            super(pFactory, TethysSwingNode.getComponent(pManager), pLabel);
 
             /* Store the manager and button */
             theManager = pManager;

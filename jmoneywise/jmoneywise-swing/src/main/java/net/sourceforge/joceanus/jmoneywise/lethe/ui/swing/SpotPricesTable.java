@@ -20,9 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Currency;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -68,6 +65,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * SpotPrices panel.
@@ -132,7 +130,7 @@ public class SpotPricesTable
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The column model.
@@ -142,12 +140,12 @@ public class SpotPricesTable
     /**
      * The SpotPrices selection panel.
      */
-    private final MoneyWiseSpotPricesSelect<JComponent, Icon> theSelect;
+    private final MoneyWiseSpotPricesSelect theSelect;
 
     /**
      * The action buttons.
      */
-    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
+    private final PrometheusActionButtons theActionButtons;
 
     /**
      * The viewer entry.
@@ -157,12 +155,12 @@ public class SpotPricesTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The account price list.
      */
-    private SpotSecurityList<JComponent, Icon> thePrices;
+    private SpotSecurityList thePrices;
 
     /**
      * The selected date.
@@ -216,18 +214,18 @@ public class SpotPricesTable
 
         /* Create the sub panels */
         final TethysSwingGuiFactory myFactory = pView.getGuiFactory();
-        theSelect = new MoneyWiseSpotPricesSelect<>(myFactory, theView);
-        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
+        theSelect = new MoneyWiseSpotPricesSelect(myFactory, theView);
+        theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the error panel for this view */
         theError = theView.getToolkit().newErrorPanel(theViewerPrice);
 
         /* Create the header panel */
-        final JPanel myHeader = new TethysSwingEnablePanel();
+        final TethysSwingEnablePanel myHeader = new TethysSwingEnablePanel();
         myHeader.setLayout(new BorderLayout());
-        myHeader.add(theSelect.getNode(), BorderLayout.CENTER);
-        myHeader.add(theError.getNode(), BorderLayout.PAGE_START);
-        myHeader.add(theActionButtons.getNode(), BorderLayout.LINE_END);
+        myHeader.add(TethysSwingNode.getComponent(theSelect), BorderLayout.CENTER);
+        myHeader.add(TethysSwingNode.getComponent(theError), BorderLayout.PAGE_START);
+        myHeader.add(TethysSwingNode.getComponent(theActionButtons), BorderLayout.LINE_END);
 
         /* Create the panel */
         thePanel = new TethysSwingEnablePanel();
@@ -235,7 +233,7 @@ public class SpotPricesTable
         /* Create the layout for the panel */
         thePanel.setLayout(new BorderLayout());
         thePanel.add(myHeader, BorderLayout.PAGE_START);
-        thePanel.add(super.getNode(), BorderLayout.CENTER);
+        thePanel.add(super.getNode().getNode(), BorderLayout.CENTER);
 
         /* Hide the action buttons initially */
         theActionButtons.setVisible(false);
@@ -250,8 +248,8 @@ public class SpotPricesTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     @Override
@@ -323,7 +321,7 @@ public class SpotPricesTable
         if (theDate != null
             && thePortfolio != null) {
             /* Create the new list */
-            thePrices = new SpotSecurityList<>(theView, pPortfolio, pDate);
+            thePrices = new SpotSecurityList(theView, pPortfolio, pDate);
 
             /* Update Next/Previous values */
             theSelect.setAdjacent(thePrices.getPrev(), thePrices.getNext());
@@ -383,7 +381,7 @@ public class SpotPricesTable
         theSelect.setVisible(!isError);
 
         /* Lock scroll area */
-        super.getNode().setEnabled(!isError);
+        super.getNode().getNode().setEnabled(!isError);
 
         /* Lock Action Buttons */
         theActionButtons.setEnabled(!isError);

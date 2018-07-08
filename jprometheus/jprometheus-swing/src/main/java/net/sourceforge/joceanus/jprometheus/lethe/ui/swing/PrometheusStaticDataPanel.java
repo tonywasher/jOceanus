@@ -20,9 +20,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
-
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
 import net.sourceforge.joceanus.jmetis.lethe.data.MetisFields.MetisLetheFieldEnum;
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
@@ -43,7 +40,7 @@ import net.sourceforge.joceanus.jtethys.event.TethysEvent;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollMenuItem;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -53,6 +50,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCardPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingCheckBox;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingLabel;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
 
 /**
@@ -60,7 +58,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingScrollButtonManager;
  * @param <E> the data type enum class
  */
 public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
-        implements TethysEventProvider<PrometheusDataEvent>, TethysNode<JComponent> {
+        implements TethysEventProvider<PrometheusDataEvent>, TethysComponent {
     /**
      * Text for Selection Title.
      */
@@ -89,7 +87,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * The data control.
      */
-    private final DataControl<?, E, JComponent, Icon> theControl;
+    private final DataControl<?, E> theControl;
 
     /**
      * The Panel.
@@ -119,7 +117,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * Data menu builder.
      */
-    private final TethysScrollMenu<PrometheusStaticDataTable<?, ?, ?, E>, ?> theDataMenu;
+    private final TethysScrollMenu<PrometheusStaticDataTable<?, ?, ?, E>> theDataMenu;
 
     /**
      * The disabled check box.
@@ -129,12 +127,12 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The action buttons panel.
      */
-    private final PrometheusActionButtons<JComponent, Icon> theActionButtons;
+    private final PrometheusActionButtons theActionButtons;
 
     /**
      * The UpdateSet.
@@ -157,7 +155,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
      * @param pUtilitySet the utility set
      * @param pClass the dataType class
      */
-    public PrometheusStaticDataPanel(final DataControl<?, E, JComponent, Icon> pControl,
+    public PrometheusStaticDataPanel(final DataControl<?, E> pControl,
                                      final JOceanusSwingUtilitySet pUtilitySet,
                                      final Class<E> pClass) {
         /* Store control */
@@ -184,7 +182,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
         theError = theControl.getToolkit().newErrorPanel(theViewerEntry);
 
         /* Create the action buttons panel */
-        theActionButtons = new PrometheusActionButtons<>(myFactory, theUpdateSet);
+        theActionButtons = new PrometheusActionButtons(myFactory, theUpdateSet);
 
         /* Create the panel list */
         thePanels = new ArrayList<>();
@@ -253,7 +251,7 @@ public class PrometheusStaticDataPanel<E extends Enum<E> & MetisLetheFieldEnum>
     }
 
     @Override
-    public JComponent getNode() {
+    public TethysSwingNode getNode() {
         return thePanel.getNode();
     }
 

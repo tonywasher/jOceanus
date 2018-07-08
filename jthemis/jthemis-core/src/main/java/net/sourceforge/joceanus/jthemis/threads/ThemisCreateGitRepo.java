@@ -31,11 +31,9 @@ import net.sourceforge.joceanus.jthemis.tasks.ThemisSvnExtract;
 
 /**
  * Thread to handle creation of GitRepo from Subversion component.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class ThemisCreateGitRepo<N, I>
-        implements MetisThread<Void, N, I> {
+public class ThemisCreateGitRepo
+        implements MetisThread<Void> {
     /**
      * The Component.
      */
@@ -76,9 +74,9 @@ public class ThemisCreateGitRepo<N, I>
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the thread manager */
-        final MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        final MetisThreadManager myManager = pToolkit.getThreadManager();
 
         /* Migrate the jiraIssues */
         final MetisPreferenceManager myPreferences = pToolkit.getPreferenceManager();

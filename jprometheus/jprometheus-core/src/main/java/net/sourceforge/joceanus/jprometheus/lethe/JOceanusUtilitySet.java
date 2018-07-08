@@ -26,14 +26,12 @@ import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 
 /**
  * JOceanus Utility Set.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public abstract class JOceanusUtilitySet<N, I> {
+public abstract class JOceanusUtilitySet {
     /**
      * Toolkit.
      */
-    private final MetisToolkit<N, I> theToolkit;
+    private final MetisToolkit theToolkit;
 
     /**
      * Secure Manager.
@@ -53,7 +51,7 @@ public abstract class JOceanusUtilitySet<N, I> {
     /**
      * GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * Viewer Manager.
@@ -63,13 +61,13 @@ public abstract class JOceanusUtilitySet<N, I> {
     /**
      * Thread Manager.
      */
-    private final MetisThreadManager<N, I> theThreadMgr;
+    private final MetisThreadManager theThreadMgr;
 
     /**
      * Constructor.
      * @param pToolkit the toolkit
      */
-    protected JOceanusUtilitySet(final MetisToolkit<N, I> pToolkit) {
+    protected JOceanusUtilitySet(final MetisToolkit pToolkit) {
         /* Access components */
         theToolkit = pToolkit;
         theSecureMgr = pToolkit.getSecurityManager();
@@ -108,7 +106,7 @@ public abstract class JOceanusUtilitySet<N, I> {
      * Obtain the GUI Factory.
      * @return the factory
      */
-    public TethysGuiFactory<N, I> getGuiFactory() {
+    public TethysGuiFactory getGuiFactory() {
         return theGuiFactory;
     }
 
@@ -124,7 +122,7 @@ public abstract class JOceanusUtilitySet<N, I> {
      * Obtain the Thread Manager.
      * @return the thread manager
      */
-    public MetisThreadManager<N, I> getThreadManager() {
+    public MetisThreadManager getThreadManager() {
         return theThreadMgr;
     }
 
@@ -132,7 +130,7 @@ public abstract class JOceanusUtilitySet<N, I> {
      * Obtain the Toolkit.
      * @return the toolkit
      */
-    public MetisToolkit<N, I> getToolkit() {
+    public MetisToolkit getToolkit() {
         return theToolkit;
     }
 }

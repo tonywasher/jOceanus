@@ -25,11 +25,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Thread class.
- * @param <N> the Node type
- * @param <I> the Icon type
  */
-public class MetisTestThread<N, I>
-        implements MetisThread<Void, N, I> {
+public class MetisTestThread
+        implements MetisThread<Void> {
 
     @Override
     public String getTaskName() {
@@ -37,9 +35,9 @@ public class MetisTestThread<N, I>
     }
 
     @Override
-    public Void performTask(final MetisToolkit<N, I> pToolkit) throws OceanusException {
+    public Void performTask(final MetisToolkit pToolkit) throws OceanusException {
         /* Access the Thread Manager */
-        MetisThreadManager<N, I> myManager = pToolkit.getThreadManager();
+        MetisThreadManager myManager = pToolkit.getThreadManager();
 
         /* Set stages */
         myManager.setNumStages(2);
@@ -62,7 +60,7 @@ public class MetisTestThread<N, I>
      * @param pNumSteps the number of steps
      * @throws OceanusException on error
      */
-    private void singleTask(final MetisThreadManager<N, I> pManager,
+    private void singleTask(final MetisThreadManager pManager,
                             final int pNumSteps) throws OceanusException {
         /* Record task details */
         pManager.setNumSteps(500);

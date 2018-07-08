@@ -20,8 +20,6 @@ import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
@@ -31,7 +29,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
  * Swing About Box.
  */
 public class TethysSwingAbout
-        extends TethysAbout<JComponent, Icon> {
+        extends TethysAbout {
     /**
      * The GuiFactory.
      */
@@ -46,12 +44,17 @@ public class TethysSwingAbout
      * Constructor.
      * @param pFactory the GUI factory
      */
-    public TethysSwingAbout(final TethysSwingGuiFactory pFactory) {
+    TethysSwingAbout(final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pFactory);
 
         /* Store parameters */
         theGuiFactory = pFactory;
+    }
+
+    @Override
+    public TethysSwingNode getNode() {
+        return (TethysSwingNode) super.getNode();
     }
 
     @Override
@@ -76,11 +79,11 @@ public class TethysSwingAbout
         theDialog.setModalityType(ModalityType.APPLICATION_MODAL);
 
         /* Attach the node to the dialog */
-        theDialog.getContentPane().add(getNode());
+        theDialog.getContentPane().add(getNode().getNode());
         theDialog.pack();
         theDialog.setLocationRelativeTo(myFrame);
 
-        getNode().setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        getNode().getNode().setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
 
     @Override

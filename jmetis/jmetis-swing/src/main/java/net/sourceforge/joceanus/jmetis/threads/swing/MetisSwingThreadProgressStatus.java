@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.threads.swing;
 
-import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.Timer;
 
 import net.sourceforge.joceanus.jmetis.threads.MetisThreadManager;
@@ -28,7 +26,7 @@ import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
  * Swing Thread ProgressBar Status Manager.
  */
 public class MetisSwingThreadProgressStatus
-        extends MetisThreadProgressStatus<JComponent, Icon> {
+        extends MetisThreadProgressStatus {
     /**
      * Timer.
      */
@@ -39,7 +37,7 @@ public class MetisSwingThreadProgressStatus
      * @param pManager the thread manager
      * @param pFactory the GUI factory
      */
-    protected MetisSwingThreadProgressStatus(final MetisThreadManager<JComponent, Icon> pManager,
+    protected MetisSwingThreadProgressStatus(final MetisThreadManager pManager,
                                              final TethysSwingGuiFactory pFactory) {
         /* Initialise underlying class */
         super(pManager, pFactory);

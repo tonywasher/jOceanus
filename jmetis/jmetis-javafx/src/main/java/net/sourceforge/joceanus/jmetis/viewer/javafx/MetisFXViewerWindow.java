@@ -16,13 +16,13 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmetis.viewer.javafx;
 
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerEntry;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerManager;
 import net.sourceforge.joceanus.jmetis.viewer.MetisViewerResource;
@@ -31,6 +31,7 @@ import net.sourceforge.joceanus.jtethys.OceanusException;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXHTMLManager;
+import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXNode;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXSplitTreeManager;
 import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
 
@@ -38,7 +39,7 @@ import net.sourceforge.joceanus.jtethys.ui.javafx.TethysFXTreeManager;
  * JavaFX Data Viewer Manager.
  */
 public class MetisFXViewerWindow
-        extends MetisViewerWindow<Node, Node> {
+        extends MetisViewerWindow {
     /**
      * The help dialog.
      */
@@ -46,7 +47,8 @@ public class MetisFXViewerWindow
 
     /**
      * Constructor.
-     * @param pFactory the GUI factory
+     *
+     * @param pFactory     the GUI factory
      * @param pDataManager the viewer data manager
      * @throws OceanusException on error
      */
@@ -122,7 +124,7 @@ public class MetisFXViewerWindow
 
             /* Create the scene */
             final BorderPane myContainer = new BorderPane();
-            myContainer.setCenter(getSplitTreeManager().getNode());
+            myContainer.setCenter(TethysFXNode.getNode(getSplitTreeManager()));
             final Scene myScene = new Scene(myContainer);
             theStage.setScene(myScene);
 

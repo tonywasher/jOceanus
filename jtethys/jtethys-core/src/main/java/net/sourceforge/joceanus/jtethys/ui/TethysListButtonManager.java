@@ -43,11 +43,9 @@ import net.sourceforge.joceanus.jtethys.ui.TethysScrollMenuContent.TethysScrollM
  * <dd>fired when the dialog is cancelled without a value being selected.
  * </dl>
  * @param <T> the object type
- * @param <N> the node type
- * @param <I> the Icon type
  */
-public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
-        implements TethysListButton<T>, TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public abstract class TethysListButtonManager<T extends Comparable<T>>
+        implements TethysListButton<T>, TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * Item separator.
      */
@@ -56,7 +54,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
     /**
      * The GUI Manager.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The Event Manager.
@@ -66,12 +64,12 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
     /**
      * The Button.
      */
-    private final TethysButton<N, I> theButton;
+    private final TethysButton theButton;
 
     /**
      * The ScrollListMenu.
      */
-    private TethysScrollMenu<T, I> theMenu;
+    private TethysScrollMenu<T> theMenu;
 
     /**
      * The Padding.
@@ -112,7 +110,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysListButtonManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysListButtonManager(final TethysGuiFactory pFactory) {
         /* Allocate resources */
         theGuiFactory = pFactory;
         theEventManager = new TethysEventManager<>();
@@ -133,7 +131,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theButton.getNode();
     }
 
@@ -141,7 +139,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      * Obtain button.
      * @return the button
      */
-    protected TethysButton<N, I> getButton() {
+    protected TethysButton getButton() {
         return theButton;
     }
 
@@ -149,7 +147,7 @@ public abstract class TethysListButtonManager<T extends Comparable<T>, N, I>
      * Obtain menu.
      * @return the menu
      */
-    public TethysScrollMenu<T, I> getMenu() {
+    public TethysScrollMenu<T> getMenu() {
         ensureMenu();
         return theMenu;
     }

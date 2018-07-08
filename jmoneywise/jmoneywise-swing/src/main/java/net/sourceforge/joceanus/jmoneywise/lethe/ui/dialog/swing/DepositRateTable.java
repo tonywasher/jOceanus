@@ -22,9 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 
 import net.sourceforge.joceanus.jmetis.atlas.ui.MetisErrorPanel;
@@ -58,6 +55,7 @@ import net.sourceforge.joceanus.jtethys.decimal.TethysRate;
 import net.sourceforge.joceanus.jtethys.ui.TethysIconButtonManager.TethysIconMapSet;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingEnableWrapper.TethysSwingEnablePanel;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingGuiFactory;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 
 /**
  * Panel to display a list of DepositRates associated with a Deposit.
@@ -97,12 +95,12 @@ public class DepositRateTable
     /**
      * The error panel.
      */
-    private final MetisErrorPanel<JComponent, Icon> theError;
+    private final MetisErrorPanel theError;
 
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final TethysSwingEnablePanel thePanel;
 
     /**
      * The Table Model.
@@ -149,7 +147,7 @@ public class DepositRateTable
     protected DepositRateTable(final TethysSwingGuiFactory pFactory,
                                final MetisSwingFieldManager pFieldMgr,
                                final UpdateSet<MoneyWiseDataType> pUpdateSet,
-                               final MetisErrorPanel<JComponent, Icon> pError) {
+                               final MetisErrorPanel pError) {
         /* initialise the underlying class */
         super(pFactory);
 
@@ -181,7 +179,7 @@ public class DepositRateTable
         /* Create the layout for the panel */
         thePanel = new TethysSwingEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(super.getNode());
+        thePanel.add(super.getNode().getNode());
     }
 
     @Override
@@ -190,8 +188,8 @@ public class DepositRateTable
     }
 
     @Override
-    public JComponent getNode() {
-        return thePanel;
+    public TethysSwingNode getNode() {
+        return thePanel.getNode();
     }
 
     /**

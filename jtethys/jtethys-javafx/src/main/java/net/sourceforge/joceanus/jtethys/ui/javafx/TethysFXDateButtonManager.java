@@ -16,8 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jtethys.ui.javafx;
 
-import javafx.scene.Node;
-import javafx.scene.layout.Region;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.ui.TethysDateButtonManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
@@ -26,12 +24,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
  * JavaFX DateButton Manager.
  */
 public final class TethysFXDateButtonManager
-        extends TethysDateButtonManager<Node, Node> {
-    /**
-     * The node.
-     */
-    private Region theNode;
-
+        extends TethysDateButtonManager {
     /**
      * The dialog.
      */
@@ -39,27 +32,28 @@ public final class TethysFXDateButtonManager
 
     /**
      * Constructor.
+     *
      * @param pFactory the GuiFactory
      */
-    protected TethysFXDateButtonManager(final TethysFXGuiFactory pFactory) {
+    TethysFXDateButtonManager(final TethysFXGuiFactory pFactory) {
         /* Initialise the super-class */
         super(pFactory);
-        theNode = (Region) super.getNode();
     }
 
     @Override
-    public Region getNode() {
-        return theNode;
+    public TethysFXNode getNode() {
+        return (TethysFXNode) super.getNode();
     }
 
     @Override
     public void setVisible(final boolean pVisible) {
-        theNode.setManaged(pVisible);
-        theNode.setVisible(pVisible);
+        getNode().setManaged(pVisible);
+        getNode().setVisible(pVisible);
     }
 
     /**
      * Obtain the dialog.
+     *
      * @return the dialog
      */
     public TethysFXDateDialog getDialog() {
@@ -90,35 +84,28 @@ public final class TethysFXDateButtonManager
         ensureDialog();
 
         /* Show the dialog under the node */
-        theDialog.showDialogUnderNode(getNode());
+        theDialog.showDialogUnderNode(getNode().getNode());
     }
 
     @Override
     public void setPreferredWidth(final Integer pWidth) {
-        getNode().setPrefWidth(pWidth);
+        getNode().setPreferredWidth(pWidth);
     }
 
     @Override
     public void setPreferredHeight(final Integer pHeight) {
-        getNode().setPrefHeight(pHeight);
+        getNode().setPreferredHeight(pHeight);
     }
 
     @Override
     public void setBorderPadding(final Integer pPadding) {
         super.setBorderPadding(pPadding);
-        createWrapperPane();
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 
     @Override
     public void setBorderTitle(final String pTitle) {
         super.setBorderTitle(pTitle);
-        createWrapperPane();
-    }
-
-    /**
-     * create wrapper pane.
-     */
-    private void createWrapperPane() {
-        theNode = TethysFXGuiUtils.getBorderedPane(getBorderTitle(), getBorderPadding(), super.getNode());
+        getNode().createWrapperPane(getBorderTitle(), getBorderPadding());
     }
 }

@@ -20,19 +20,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory.TethysParentNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory.TethysParentComponent;
 
 /**
  * Flow Pane Manager.
- * @param <N> the node type
- * @param <I> the Icon Type
  */
-public abstract class TethysFlowPaneManager<N, I>
-        implements TethysNode<N>, TethysParentNode<N> {
+public abstract class TethysFlowPaneManager
+        implements TethysComponent, TethysParentComponent {
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The id.
@@ -42,7 +40,7 @@ public abstract class TethysFlowPaneManager<N, I>
     /**
      * Node List.
      */
-    private final List<TethysNode<N>> theNodeList;
+    private final List<TethysComponent> theNodeList;
 
     /**
      * The Padding.
@@ -58,7 +56,7 @@ public abstract class TethysFlowPaneManager<N, I>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysFlowPaneManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysFlowPaneManager(final TethysGuiFactory pFactory) {
         theGuiFactory = pFactory;
         theId = theGuiFactory.getNextId();
         theNodeList = new ArrayList<>();
@@ -117,14 +115,14 @@ public abstract class TethysFlowPaneManager<N, I>
      * Add Node.
      * @param pNode the node
      */
-    public void addNode(final TethysNode<N> pNode) {
+    public void addNode(final TethysComponent pNode) {
         theNodeList.add(pNode);
         theGuiFactory.registerChild(this, pNode);
     }
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        for (TethysNode<N> myNode : theNodeList) {
+        for (TethysComponent myNode : theNodeList) {
             myNode.setEnabled(pEnabled);
         }
     }
@@ -133,7 +131,7 @@ public abstract class TethysFlowPaneManager<N, I>
      * Obtain List iterator.
      * @return the iterator
      */
-    protected Iterator<TethysNode<N>> iterator() {
+    protected Iterator<TethysComponent> iterator() {
         return theNodeList.iterator();
     }
 }

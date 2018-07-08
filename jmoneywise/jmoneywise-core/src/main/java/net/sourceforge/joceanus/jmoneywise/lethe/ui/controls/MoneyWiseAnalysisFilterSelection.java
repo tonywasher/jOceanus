@@ -39,14 +39,13 @@
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.controls;
 
 import net.sourceforge.joceanus.jmoneywise.lethe.views.AnalysisFilter;
-import net.sourceforge.joceanus.jtethys.ui.TethysNode;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 
 /**
  * Analysis Filter Selection.
- * @param <N> The node type
  */
-public interface MoneyWiseAnalysisFilterSelection<N>
-        extends TethysNode<N> {
+public interface MoneyWiseAnalysisFilterSelection
+        extends TethysComponent {
     /**
      * Is selection available?
      * @return true/false

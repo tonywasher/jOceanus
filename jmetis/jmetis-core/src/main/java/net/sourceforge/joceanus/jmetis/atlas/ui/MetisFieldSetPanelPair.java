@@ -29,6 +29,7 @@ import net.sourceforge.joceanus.jmetis.field.MetisFieldItem;
 import net.sourceforge.joceanus.jtethys.event.TethysEventManager;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar;
 import net.sourceforge.joceanus.jtethys.event.TethysEventRegistrar.TethysEventProvider;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysDataEditField.TethysCurrencyEditField;
 import net.sourceforge.joceanus.jtethys.ui.TethysGridPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
@@ -39,15 +40,13 @@ import net.sourceforge.joceanus.jtethys.ui.TethysUIEvent;
 
 /**
  * FieldSet Panel Pair.
- * @param <N> the node type
- * @param <I> the icon type
  */
-public class MetisFieldSetPanelPair<N, I>
-        implements TethysEventProvider<TethysUIEvent>, TethysNode<N> {
+public class MetisFieldSetPanelPair
+        implements TethysEventProvider<TethysUIEvent>, TethysComponent {
     /**
      * The GUI Factory.
      */
-    private final TethysGuiFactory<N, I> theGuiFactory;
+    private final TethysGuiFactory theGuiFactory;
 
     /**
      * The event manager.
@@ -57,22 +56,22 @@ public class MetisFieldSetPanelPair<N, I>
     /**
      * The field map.
      */
-    private final Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> theFieldMap;
+    private final Map<MetisDataFieldId, MetisFieldSetPanelItem<?>> theFieldMap;
 
     /**
      * The Node.
      */
-    private final TethysGridPaneManager<N, I> theNode;
+    private final TethysGridPaneManager theNode;
 
     /**
      * The main panel.
      */
-    private final MetisFieldSetPanel<N, I> theMainPanel;
+    private final MetisFieldSetPanel theMainPanel;
 
     /**
      * The tab manager.
      */
-    private final TethysTabPaneManager<N, I> theTabManager;
+    private final TethysTabPaneManager theTabManager;
 
     /**
      * The list of subPanels.
@@ -86,9 +85,10 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Constructor.
+     *
      * @param pFactory the GUI factory
      */
-    public MetisFieldSetPanelPair(final TethysGuiFactory<N, I> pFactory) {
+    public MetisFieldSetPanelPair(final TethysGuiFactory pFactory) {
         /* Store parameters */
         theGuiFactory = pFactory;
 
@@ -99,7 +99,7 @@ public class MetisFieldSetPanelPair<N, I>
 
         /* Create the panels */
         theTabManager = theGuiFactory.newTabPane();
-        theMainPanel = new MetisFieldSetPanel<>(this);
+        theMainPanel = new MetisFieldSetPanel(this);
         addListeners(theMainPanel);
 
         /* Create the new node */
@@ -116,7 +116,7 @@ public class MetisFieldSetPanelPair<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return theNode.getNode();
     }
 
@@ -137,29 +137,32 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Obtain the GUI Factory.
+     *
      * @return the factory
      */
-    protected TethysGuiFactory<N, I> getGuiFactory() {
+    protected TethysGuiFactory getGuiFactory() {
         return theGuiFactory;
     }
 
     /**
      * Obtain the main panel.
+     *
      * @return the main panel
      */
-    public MetisFieldSetPanel<N, I> getMainPanel() {
+    public MetisFieldSetPanel getMainPanel() {
         return theMainPanel;
     }
 
     /**
      * Add a subPanel.
+     *
      * @param pName the name of the subPanel
      * @return the subPanel
      */
-    public MetisFieldSetPanel<N, I> addSubPanel(final String pName) {
+    public MetisFieldSetPanel addSubPanel(final String pName) {
         /* Create a new subPanel and add to tab manager */
-        final MetisFieldSetPanel<N, I> myPanel = new MetisFieldSetPanel<>(this);
-        final TethysTabItem<N, I> myItem = theTabManager.addTabItem(pName, myPanel);
+        final MetisFieldSetPanel myPanel = new MetisFieldSetPanel(this);
+        final TethysTabItem myItem = theTabManager.addTabItem(pName, myPanel);
         theSubPanelList.add(new SubPanelRegistration(myItem, myPanel));
         addListeners(myPanel);
         return myPanel;
@@ -167,14 +170,16 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Obtain the fieldSet map.
+     *
      * @return the fieldSet map
      */
-    protected Map<MetisDataFieldId, MetisFieldSetPanelItem<?, N, I>> getFieldMap() {
+    protected Map<MetisDataFieldId, MetisFieldSetPanelItem<?>> getFieldMap() {
         return theFieldMap;
     }
 
     /**
      * Set the item.
+     *
      * @param pItem the item to set
      */
     public void setItem(final MetisFieldItem pItem) {
@@ -191,6 +196,7 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * obtain the item.
+     *
      * @return the item
      */
     public MetisFieldItem getItem() {
@@ -199,6 +205,7 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * is the panel editable.
+     *
      * @return true/false
      */
     public boolean isEditable() {
@@ -207,6 +214,7 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Refresh item values.
+     *
      * @return has visible fields true/false
      */
     public boolean refreshItem() {
@@ -232,6 +240,7 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Set editable state.
+     *
      * @param pEditable the editable state
      */
     public void setEditable(final boolean pEditable) {
@@ -254,13 +263,14 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Set readOnly field.
-     * @param pField the field
+     *
+     * @param pField    the field
      * @param pReadOnly the readOnly state
      */
     public void setReadOnlyField(final MetisDataFieldId pField,
                                  final boolean pReadOnly) {
         /* Look up the field */
-        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.setReadOnly(pReadOnly);
@@ -269,29 +279,30 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Set deemed currency.
-     * @param pField the field
+     *
+     * @param pField    the field
      * @param pCurrency the currency supplier
      */
     public void setDeemedCurrency(final MetisDataFieldId pField,
                                   final Supplier<Currency> pCurrency) {
         /* Look up the field and check that it is a currency item */
-        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
-        if ((myChild != null)
-            && myChild instanceof TethysCurrencyEditField) {
+        final MetisFieldSetPanelItem<?> myChild = theFieldMap.get(pField);
+        if (myChild instanceof TethysCurrencyEditField) {
             /* Set the currency */
-            ((TethysCurrencyEditField<?, ?, ?>) myChild).setDeemedCurrency(pCurrency);
+            ((TethysCurrencyEditField<?>) myChild).setDeemedCurrency(pCurrency);
         }
     }
 
     /**
      * Show the command button.
+     *
      * @param pField the field
-     * @param pShow true/false
+     * @param pShow  true/false
      */
     public void showCmdButton(final MetisDataFieldId pField,
                               final boolean pShow) {
         /* Look up the field */
-        final MetisFieldSetPanelItem<?, N, I> myChild = theFieldMap.get(pField);
+        final MetisFieldSetPanelItem<?> myChild = theFieldMap.get(pField);
         if (myChild != null) {
             /* Pass the call on */
             myChild.showCmdButton(pShow);
@@ -315,9 +326,10 @@ public class MetisFieldSetPanelPair<N, I>
 
     /**
      * Add listeners.
+     *
      * @param pPanel the panel
      */
-    private void addListeners(final MetisFieldSetPanel<N, I> pPanel) {
+    private void addListeners(final MetisFieldSetPanel pPanel) {
         final TethysEventRegistrar<TethysUIEvent> myRegistrar = pPanel.getEventRegistrar();
         myRegistrar.addEventListener(TethysUIEvent.NEWVALUE, theEventManager::cascadeEvent);
         myRegistrar.addEventListener(TethysUIEvent.PREPARECMDDIALOG, theEventManager::cascadeEvent);
@@ -331,26 +343,28 @@ public class MetisFieldSetPanelPair<N, I>
         /**
          * The TabItem.
          */
-        private final TethysTabItem<N, I> theTabItem;
+        private final TethysTabItem theTabItem;
 
         /**
          * The panel.
          */
-        private final MetisFieldSetPanel<N, I> thePanel;
+        private final MetisFieldSetPanel thePanel;
 
         /**
          * Constructor.
+         *
          * @param pTabItem the tab item
-         * @param pPanel the sub panel
+         * @param pPanel   the sub panel
          */
-        private SubPanelRegistration(final TethysTabItem<N, I> pTabItem,
-                                     final MetisFieldSetPanel<N, I> pPanel) {
+        private SubPanelRegistration(final TethysTabItem pTabItem,
+                                     final MetisFieldSetPanel pPanel) {
             theTabItem = pTabItem;
             thePanel = pPanel;
         }
 
         /**
          * Set tab visibility.
+         *
          * @param pVisible the visible state
          */
         private void setTabVisible(final boolean pVisible) {
@@ -359,6 +373,7 @@ public class MetisFieldSetPanelPair<N, I>
 
         /**
          * Set the item.
+         *
          * @param pItem the item to set
          */
         private void setItem(final MetisFieldItem pItem) {
@@ -367,6 +382,7 @@ public class MetisFieldSetPanelPair<N, I>
 
         /**
          * Refresh item.
+         *
          * @return has visible fields true/false
          */
         private boolean refreshItem() {
@@ -375,6 +391,7 @@ public class MetisFieldSetPanelPair<N, I>
 
         /**
          * Set editable state.
+         *
          * @param pEditable the editable state
          */
         private void setEditable(final boolean pEditable) {

@@ -17,12 +17,13 @@
 package net.sourceforge.joceanus.jmetis.threads.javafx;
 
 import javafx.concurrent.Task;
-import javafx.scene.Node;
+
 import net.sourceforge.joceanus.jmetis.threads.MetisThread;
 import net.sourceforge.joceanus.jtethys.OceanusException;
 
 /**
  * javaFX Thread wrapper.
+ *
  * @param <T> the thread result
  */
 public class MetisFXThread<T>
@@ -35,7 +36,7 @@ public class MetisFXThread<T>
     /**
      * The wrapped thread.
      */
-    private final MetisThread<T, Node, Node> theThread;
+    private final MetisThread<T> theThread;
 
     /**
      * The task name.
@@ -54,11 +55,12 @@ public class MetisFXThread<T>
 
     /**
      * Constructor.
+     *
      * @param pToolkit the toolkit
-     * @param pThread the thread to wrap
+     * @param pThread  the thread to wrap
      */
     protected MetisFXThread(final MetisFXToolkit pToolkit,
-                            final MetisThread<T, Node, Node> pThread) {
+                            final MetisThread<T> pThread) {
         /* Store parameters */
         theToolkit = pToolkit;
         theThread = pThread;
@@ -67,6 +69,7 @@ public class MetisFXThread<T>
 
     /**
      * obtain the task name.
+     *
      * @return the task name
      */
     protected String getTaskName() {
@@ -88,6 +91,7 @@ public class MetisFXThread<T>
 
     /**
      * Process the result.
+     *
      * @throws OceanusException on error
      */
     protected void processResult() throws OceanusException {

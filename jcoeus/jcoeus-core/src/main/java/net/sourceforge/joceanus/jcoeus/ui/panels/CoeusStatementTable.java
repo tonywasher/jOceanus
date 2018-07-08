@@ -30,16 +30,15 @@ import net.sourceforge.joceanus.jmetis.list.MetisListBaseManager;
 import net.sourceforge.joceanus.jmetis.list.MetisListIndexed;
 import net.sourceforge.joceanus.jmetis.threads.MetisToolkit;
 import net.sourceforge.joceanus.jtethys.ui.TethysBorderPaneManager;
+import net.sourceforge.joceanus.jtethys.ui.TethysComponent;
 import net.sourceforge.joceanus.jtethys.ui.TethysGuiFactory;
 import net.sourceforge.joceanus.jtethys.ui.TethysNode;
 
 /**
  * Statement Panel.
- * @param <N> Node type
- * @param <I> Icon type
  */
-public class CoeusStatementTable<N, I>
-        implements TethysNode<N> {
+public class CoeusStatementTable
+        implements TethysComponent {
     /**
      * The List.
      */
@@ -48,22 +47,22 @@ public class CoeusStatementTable<N, I>
     /**
      * The Table.
      */
-    private final MetisTableManager<CoeusTotals, N, I> theTable;
+    private final MetisTableManager<CoeusTotals> theTable;
 
     /**
      * The Selector.
      */
-    private final CoeusStatementSelect<N, I> theSelector;
+    private final CoeusStatementSelect theSelector;
 
     /**
      * The BorderPane.
      */
-    private final TethysBorderPaneManager<N, I> thePane;
+    private final TethysBorderPaneManager thePane;
 
     /**
      * The Loan Column.
      */
-    private final MetisTableScrollColumn<CoeusLoan, CoeusTotals, N, I> theLoanColumn;
+    private final MetisTableScrollColumn<CoeusLoan, CoeusTotals> theLoanColumn;
 
     /**
      * The Statement Calculator.
@@ -75,10 +74,10 @@ public class CoeusStatementTable<N, I>
      * @param pToolkit the Toolkit
      * @param pCache the market cache
      */
-    public CoeusStatementTable(final MetisToolkit<N, I> pToolkit,
+    public CoeusStatementTable(final MetisToolkit pToolkit,
                                final CoeusMarketCache pCache) {
         /* Access the GUI factory */
-        final TethysGuiFactory<N, I> myFactory = pToolkit.getGuiFactory();
+        final TethysGuiFactory myFactory = pToolkit.getGuiFactory();
 
         /* Create the list */
         theList = new MetisListIndexed<>();
@@ -93,7 +92,7 @@ public class CoeusStatementTable<N, I>
         theTable.declareRawDecimalColumn(CoeusTotalsField.BALANCE);
 
         /* Create the selector */
-        theSelector = new CoeusStatementSelect<>(myFactory, pCache);
+        theSelector = new CoeusStatementSelect(myFactory, pCache);
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.SELECTIONCHANGED, e -> updateStatement(theSelector.getFilter()));
         theSelector.getEventRegistrar().addEventListener(CoeusDataEvent.FILTERCHANGED, e -> filterChanged());
 
@@ -107,7 +106,7 @@ public class CoeusStatementTable<N, I>
     }
 
     @Override
-    public N getNode() {
+    public TethysNode getNode() {
         return thePane.getNode();
     }
 

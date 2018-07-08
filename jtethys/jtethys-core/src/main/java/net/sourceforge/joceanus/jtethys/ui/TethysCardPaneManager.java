@@ -21,12 +21,10 @@ import java.util.Map;
 
 /**
  * Tethys Card panel manager.
- * @param <N> the node type
- * @param <I> the Icon Type
  * @param <P> the card panel type
  */
-public abstract class TethysCardPaneManager<N, I, P extends TethysNode<N>>
-        implements TethysNode<N> {
+public abstract class TethysCardPaneManager<P extends TethysComponent>
+        implements TethysComponent {
     /**
      * The id.
      */
@@ -61,7 +59,7 @@ public abstract class TethysCardPaneManager<N, I, P extends TethysNode<N>>
      * Constructor.
      * @param pFactory the GUI factory
      */
-    protected TethysCardPaneManager(final TethysGuiFactory<N, I> pFactory) {
+    protected TethysCardPaneManager(final TethysGuiFactory pFactory) {
         theId = pFactory.getNextId();
         theMap = new HashMap<>();
     }
@@ -164,7 +162,7 @@ public abstract class TethysCardPaneManager<N, I, P extends TethysNode<N>>
 
     @Override
     public void setEnabled(final boolean pEnabled) {
-        for (TethysNode<N> myPane : theMap.values()) {
+        for (TethysComponent myPane : theMap.values()) {
             myPane.setEnabled(pEnabled);
         }
     }

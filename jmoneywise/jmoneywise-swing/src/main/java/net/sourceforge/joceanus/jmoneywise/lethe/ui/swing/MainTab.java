@@ -16,7 +16,6 @@
  ******************************************************************************/
 package net.sourceforge.joceanus.jmoneywise.lethe.ui.swing;
 
-import javax.swing.Icon;
 import javax.swing.JComponent;
 
 import net.sourceforge.joceanus.jmetis.profile.MetisProfile;
@@ -42,6 +41,7 @@ import net.sourceforge.joceanus.jtethys.ui.TethysAbout;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager;
 import net.sourceforge.joceanus.jtethys.ui.TethysMenuBarManager.TethysMenuSubMenu;
 import net.sourceforge.joceanus.jtethys.ui.TethysTabPaneManager.TethysTabItem;
+import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingNode;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager;
 import net.sourceforge.joceanus.jtethys.ui.swing.TethysSwingTabPaneManager.TethysSwingTabItem;
 
@@ -108,7 +108,7 @@ public class MainTab
     /**
      * The about box.
      */
-    private TethysAbout<JComponent, Icon> theAboutBox;
+    private TethysAbout theAboutBox;
 
     /**
      * Constructor.
@@ -190,7 +190,7 @@ public class MainTab
         myTask.end();
 
         /* Return the panel */
-        return theTabs.getNode();
+        return TethysSwingNode.getComponent(theTabs);
     }
 
     /**
@@ -256,7 +256,7 @@ public class MainTab
      */
     public void loadSpreadsheet() {
         /* Create the worker thread */
-        final MoneyWiseThreadLoadArchive<JComponent, Icon> myThread = new MoneyWiseThreadLoadArchive<>(theView);
+        final MoneyWiseThreadLoadArchive myThread = new MoneyWiseThreadLoadArchive(theView);
         startThread(myThread);
     }
 
@@ -265,7 +265,7 @@ public class MainTab
      */
     public void createQIF() {
         /* Create the worker thread */
-        final MoneyWiseThreadWriteQIF<JComponent, Icon> myThread = new MoneyWiseThreadWriteQIF<>(theView);
+        final MoneyWiseThreadWriteQIF myThread = new MoneyWiseThreadWriteQIF(theView);
         startThread(myThread);
     }
 
@@ -273,7 +273,7 @@ public class MainTab
      * Select a Statement.
      * @param pSelect the statement request
      */
-    private void selectStatement(final StatementSelect<JComponent, Icon> pSelect) {
+    private void selectStatement(final StatementSelect pSelect) {
         /* Pass through to the Register view */
         theRegister.selectStatement(pSelect);
 
@@ -299,7 +299,7 @@ public class MainTab
      */
     private void gotoNamedTab(final String pTabName) {
         /* Look up item and select it */
-        final TethysTabItem<?, ?> myItem = theTabs.findItemByName(pTabName);
+        final TethysTabItem myItem = theTabs.findItemByName(pTabName);
         if (myItem != null) {
             myItem.selectItem();
         }
@@ -362,7 +362,7 @@ public class MainTab
     private void determineFocus() {
         /* Access the selected component */
         final TethysSwingTabItem myItem = theTabs.getSelectedTab();
-        final JComponent myComponent = myItem.getNode();
+        final JComponent myComponent = TethysSwingNode.getComponent(myItem);
 
         /* If the selected component is Register */
         if (myComponent.equals(theRegister.getNode())) {
@@ -404,8 +404,7 @@ public class MainTab
         switch (myEvent.getId()) {
             /* View the requested statement */
             case STATEMENT:
-                @SuppressWarnings("unchecked")
-                final StatementSelect<JComponent, Icon> mySelect = myEvent.getDetails(StatementSelect.class);
+                final StatementSelect mySelect = myEvent.getDetails(StatementSelect.class);
                 selectStatement(mySelect);
                 break;
 

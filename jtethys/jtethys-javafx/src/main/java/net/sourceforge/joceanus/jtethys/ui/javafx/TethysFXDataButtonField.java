@@ -28,6 +28,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+
 import net.sourceforge.joceanus.jtethys.date.TethysDate;
 import net.sourceforge.joceanus.jtethys.date.TethysDateConfig;
 import net.sourceforge.joceanus.jtethys.event.TethysEvent;
@@ -52,15 +53,16 @@ public final class TethysFXDataButtonField {
 
     /**
      * IconButtonField class.
+     *
      * @param <T> the data type
      */
     public static final class TethysFXIconButtonField<T>
             extends TethysFXDataTextField<T>
-            implements TethysIconButtonField<T, Node, Node> {
+            implements TethysIconButtonField<T> {
         /**
          * The icon manager.
          */
-        private final TethysIconButtonManager<T, Node, Node> theManager;
+        private final TethysIconButtonManager<T> theManager;
 
         /**
          * The button.
@@ -74,21 +76,23 @@ public final class TethysFXDataButtonField {
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
-        protected TethysFXIconButtonField(final TethysFXGuiFactory pFactory) {
+        TethysFXIconButtonField(final TethysFXGuiFactory pFactory) {
             this(pFactory, pFactory.newIconButton());
         }
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          * @param pManager the manager
          */
-        protected TethysFXIconButtonField(final TethysFXGuiFactory pFactory,
-                                          final TethysIconButtonManager<T, Node, Node> pManager) {
+        TethysFXIconButtonField(final TethysFXGuiFactory pFactory,
+                                final TethysIconButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, TethysFXNode.getNode(pManager));
 
             /* Store the manager and button */
             theManager = pManager;
@@ -162,11 +166,12 @@ public final class TethysFXDataButtonField {
 
     /**
      * ScrollButtonField class.
+     *
      * @param <T> the data type
      */
     public static final class TethysFXScrollButtonField<T>
             extends TethysFXDataTextField<T>
-            implements TethysScrollButtonField<T, Node, Node> {
+            implements TethysScrollButtonField<T> {
         /**
          * The scroll manager.
          */
@@ -175,7 +180,7 @@ public final class TethysFXDataButtonField {
         /**
          * The configurator.
          */
-        private Consumer<TethysScrollMenu<T, Node>> theConfigurator;
+        private Consumer<TethysScrollMenu<T>> theConfigurator;
 
         /**
          * The button.
@@ -189,21 +194,23 @@ public final class TethysFXDataButtonField {
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
-        protected TethysFXScrollButtonField(final TethysFXGuiFactory pFactory) {
+        TethysFXScrollButtonField(final TethysFXGuiFactory pFactory) {
             this(pFactory, pFactory.newScrollButton());
         }
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          * @param pManager the manager
          */
         private TethysFXScrollButtonField(final TethysFXGuiFactory pFactory,
                                           final TethysFXScrollButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, TethysFXNode.getNode(pManager));
 
             /* Store the manager and button */
             theManager = pManager;
@@ -222,6 +229,7 @@ public final class TethysFXDataButtonField {
 
         /**
          * handle Scroll Button event.
+         *
          * @param pEvent the even
          */
         private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
@@ -239,7 +247,7 @@ public final class TethysFXDataButtonField {
         }
 
         @Override
-        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T, Node>> pConfigurator) {
+        public void setMenuConfigurator(final Consumer<TethysScrollMenu<T>> pConfigurator) {
             theConfigurator = pConfigurator;
             theManager.setMenuConfigurator(theConfigurator);
         }
@@ -287,7 +295,7 @@ public final class TethysFXDataButtonField {
      */
     public static class TethysFXDateButtonField
             extends TethysFXDataTextField<TethysDate>
-            implements TethysDateButtonField<Node, Node> {
+            implements TethysDateButtonField {
         /**
          * The date manager.
          */
@@ -300,21 +308,23 @@ public final class TethysFXDataButtonField {
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
-        protected TethysFXDateButtonField(final TethysFXGuiFactory pFactory) {
+        TethysFXDateButtonField(final TethysFXGuiFactory pFactory) {
             this(pFactory, pFactory.newDateButton());
         }
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          * @param pManager the manager
          */
         private TethysFXDateButtonField(final TethysFXGuiFactory pFactory,
                                         final TethysFXDateButtonManager pManager) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, TethysFXNode.getNode(pManager));
 
             /* Store the manager */
             theManager = pManager;
@@ -328,6 +338,7 @@ public final class TethysFXDataButtonField {
 
         /**
          * handle Date Button event.
+         *
          * @param pEvent the even
          */
         private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
@@ -402,21 +413,23 @@ public final class TethysFXDataButtonField {
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
-        protected TethysFXColorButtonField(final TethysFXGuiFactory pFactory) {
+        TethysFXColorButtonField(final TethysFXGuiFactory pFactory) {
             this(pFactory, pFactory.newColorPicker());
         }
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
-         * @param pPicker the picker
+         * @param pPicker  the picker
          */
         private TethysFXColorButtonField(final TethysFXGuiFactory pFactory,
                                          final TethysFXColorPicker pPicker) {
             /* Initialise underlying class */
-            super(pFactory, pPicker.getNode());
+            super(pFactory, TethysFXNode.getNode(pPicker));
 
             /* Store the picker */
             thePicker = pPicker;
@@ -433,6 +446,7 @@ public final class TethysFXDataButtonField {
 
         /**
          * handle Date Button event.
+         *
          * @param pEvent the even
          */
         private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
@@ -487,11 +501,12 @@ public final class TethysFXDataButtonField {
 
     /**
      * ListButtonField class.
+     *
      * @param <T> the data type
      */
     public static class TethysFXListButtonField<T extends Comparable<T>>
             extends TethysFXDataTextField<List<T>>
-            implements TethysListButtonField<T, Node, Node> {
+            implements TethysListButtonField<T> {
         /**
          * The list manager.
          */
@@ -504,21 +519,23 @@ public final class TethysFXDataButtonField {
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          */
-        protected TethysFXListButtonField(final TethysFXGuiFactory pFactory) {
+        TethysFXListButtonField(final TethysFXGuiFactory pFactory) {
             this(pFactory, pFactory.newListButton());
         }
 
         /**
          * Constructor.
+         *
          * @param pFactory the GUI factory
          * @param pManager the manager
          */
         private TethysFXListButtonField(final TethysFXGuiFactory pFactory,
                                         final TethysFXListButtonManager<T> pManager) {
             /* Initialise underlying class */
-            super(pFactory, pManager.getNode());
+            super(pFactory, TethysFXNode.getNode(pManager));
 
             /* Store the manager */
             theManager = pManager;
@@ -532,6 +549,7 @@ public final class TethysFXDataButtonField {
 
         /**
          * handle List Button event.
+         *
          * @param pEvent the even
          */
         private void handleEvent(final TethysEvent<TethysUIEvent> pEvent) {
